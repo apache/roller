@@ -15,11 +15,12 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-
 package org.apache.roller.weblogger.business.themes;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -29,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.activation.FileTypeMap;
+import javax.activation.MimetypesFileTypeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -47,7 +50,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.util.RollerMessages;
 
-
 /**
  * Base implementation of a ThemeManager.
  * 
@@ -56,152 +58,155 @@ import org.apache.roller.weblogger.util.RollerMessages;
  */
 @com.google.inject.Singleton
 public class ThemeManagerImpl implements ThemeManager {
-    
+
+   static FileTypeMap map = null;
+   static {
+         // TODO: figure out why PNG is missing from Java MIME types
+        map = FileTypeMap.getDefaultFileTypeMap();
+        if (map instanceof MimetypesFileTypeMap) {
+            try {
+                ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
+            } catch (Exception ignored) {}
+        }
+    }
+
     private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
-    
     private final Weblogger roller;
-    
     // directory where themes are kept
     private String themeDir = null;
-    
     // the Map contains ... (theme id, Theme)
     private Map themes = null;
-    
-    
+
     @com.google.inject.Inject
     protected ThemeManagerImpl(Weblogger roller) {
-        
+
         this.roller = roller;
-        
+
         // get theme directory from config and verify it
         this.themeDir = WebloggerConfig.getProperty("themes.dir");
-        if(themeDir == null || themeDir.trim().length() < 1) {
+        if (themeDir == null || themeDir.trim().length() < 1) {
             throw new RuntimeException("couldn't get themes directory from config");
         } else {
             // chop off trailing slash if it exists
-            if(themeDir.endsWith("/")) {
-                themeDir = themeDir.substring(0, themeDir.length()-1);
+            if (themeDir.endsWith("/")) {
+                themeDir = themeDir.substring(0, themeDir.length() - 1);
             }
-            
+
             // make sure it exists and is readable
             File themeDirFile = new File(themeDir);
-            if (!themeDirFile.exists() || 
-                    !themeDirFile.isDirectory() || 
-                    !themeDirFile.canRead()) {
-                throw new RuntimeException("couldn't access theme dir ["+themeDir+"]");
+            if (!themeDirFile.exists()
+                    || !themeDirFile.isDirectory()
+                    || !themeDirFile.canRead()) {
+                throw new RuntimeException("couldn't access theme dir [" + themeDir + "]");
             }
         }
     }
-    
-    
+
     public void initialize() throws InitializationException {
-        
+
         log.debug("Initializing Theme Manager");
-        
-        if(themeDir != null) {
+
+        if (themeDir != null) {
             // rather than be lazy we are going to load all themes from
             // the disk preemptively and cache them
             this.themes = loadAllThemesFromDisk();
-            
-            log.info("Loaded "+this.themes.size()+" themes from disk.");
+
+            log.info("Loaded " + this.themes.size() + " themes from disk.");
         }
     }
-    
-    
+
     /**
      * @see org.apache.roller.weblogger.model.ThemeManager#getTheme(java.lang.String)
      */
-    public SharedTheme getTheme(String id) 
+    public SharedTheme getTheme(String id)
             throws ThemeNotFoundException, WebloggerException {
-        
+
         // try to lookup theme from library
         SharedTheme theme = (SharedTheme) this.themes.get(id);
-        
+
         // no theme?  throw exception.
-        if(theme == null) {
-            throw new ThemeNotFoundException("Couldn't find theme ["+id+"]");
+        if (theme == null) {
+            throw new ThemeNotFoundException("Couldn't find theme [" + id + "]");
         }
-        
+
         return theme;
     }
-    
-    
+
     /**
      * @see org.apache.roller.weblogger.model.ThemeManager#getTheme(weblog)
      */
     public WeblogTheme getTheme(Weblog weblog) throws WebloggerException {
-        
-        if(weblog == null)
+
+        if (weblog == null) {
             return null;
-        
+        }
+
         WeblogTheme weblogTheme = null;
-        
+
         // if theme is custom or null then return a WeblogCustomTheme
-        if(weblog.getEditorTheme() == null || 
-                WeblogTheme.CUSTOM.equals(weblog.getEditorTheme())) {
+        if (weblog.getEditorTheme() == null
+                || WeblogTheme.CUSTOM.equals(weblog.getEditorTheme())) {
             weblogTheme = new WeblogCustomTheme(weblog);
-            
-        // otherwise we are returning a WeblogSharedTheme
+
+            // otherwise we are returning a WeblogSharedTheme
         } else {
             ThemeManager themeMgr = roller.getThemeManager();
             SharedTheme staticTheme =
                     (SharedTheme) this.themes.get(weblog.getEditorTheme());
-            if(staticTheme != null) {
+            if (staticTheme != null) {
                 weblogTheme = new WeblogSharedTheme(weblog, staticTheme);
             } else {
-                log.warn("Unable to lookup theme "+weblog.getEditorTheme());
+                log.warn("Unable to lookup theme " + weblog.getEditorTheme());
             }
         }
-        
+
         // TODO: if somehow the theme is still null should we provide some
         // kind of fallback option like a default theme?
-        
+
         return weblogTheme;
     }
 
-    
     /**
      * @see org.apache.roller.weblogger.model.ThemeManager#getEnabledThemesList()
      *
      * TODO: reimplement enabled vs. disabled logic once we support it
      */
     public List getEnabledThemesList() {
-        
+
         List all_themes = new ArrayList(this.themes.values());
-                
+
         // sort 'em ... default ordering for themes is by name
         Collections.sort(all_themes);
-        
+
         return all_themes;
     }
-    
-    
+
     /**
      * @see org.apache.roller.weblogger.model.ThemeManager#importTheme(website, theme)
      */
     public void importTheme(Weblog website, SharedTheme theme)
             throws WebloggerException {
-        
-        log.debug("Importing theme ["+theme.getName()+"] to weblog ["+website.getName()+"]");
-        
+
+        log.debug("Importing theme [" + theme.getName() + "] to weblog [" + website.getName() + "]");
+
         WeblogManager wmgr = roller.getWeblogManager();
 
         Set importedActionTemplates = new HashSet();
         ThemeTemplate themeTemplate = null;
         ThemeTemplate stylesheetTemplate = theme.getStylesheet();
         Iterator iter = theme.getTemplates().iterator();
-        while ( iter.hasNext() ) {
+        while (iter.hasNext()) {
             themeTemplate = (ThemeTemplate) iter.next();
 
             WeblogTemplate template = null;
 
             // if template is an action, lookup by action
-            if(themeTemplate.getAction() != null &&
-                    !themeTemplate.getAction().equals(WeblogTemplate.ACTION_CUSTOM)) {
+            if (themeTemplate.getAction() != null
+                    && !themeTemplate.getAction().equals(WeblogTemplate.ACTION_CUSTOM)) {
                 importedActionTemplates.add(themeTemplate.getAction());
                 template = wmgr.getPageByAction(website, themeTemplate.getAction());
 
-            // otherwise, lookup by name
+                // otherwise, lookup by name
             } else {
                 template = wmgr.getPageByName(website, themeTemplate.getName());
             }
@@ -220,7 +225,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
             // update template attributes
             // NOTE: we don't want to copy the template data for an existing stylesheet
-            if(newTmpl || !themeTemplate.equals(stylesheetTemplate)) {
+            if (newTmpl || !themeTemplate.equals(stylesheetTemplate)) {
                 template.setAction(themeTemplate.getAction());
                 template.setName(themeTemplate.getName());
                 template.setDescription(themeTemplate.getDescription());
@@ -234,20 +239,20 @@ public class ThemeManagerImpl implements ThemeManager {
                 template.setLastModified(new Date());
 
                 // save it
-                wmgr.savePage( template );
+                wmgr.savePage(template);
             }
         }
 
         // now, see if the weblog has left over action templates that
         // need to be deleted because they aren't in their new theme
-        for(int i=0; i < WeblogTemplate.ACTIONS.length; i++) {
+        for (int i = 0; i < WeblogTemplate.ACTIONS.length; i++) {
             String action = WeblogTemplate.ACTIONS[i];
 
             // if we didn't import this action then see if it should be deleted
-            if(!importedActionTemplates.contains(action)) {
+            if (!importedActionTemplates.contains(action)) {
                 WeblogTemplate toDelete = wmgr.getPageByAction(website, action);
-                if(toDelete != null) {
-                    log.debug("Removing stale action template "+toDelete.getId());
+                if (toDelete != null) {
+                    log.debug("Removing stale action template " + toDelete.getId());
                     wmgr.removePage(toDelete);
                 }
             }
@@ -256,7 +261,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
         // always update this weblog's theme and customStylesheet, then save
         website.setEditorTheme(WeblogTheme.CUSTOM);
-        if(theme.getStylesheet() != null) {
+        if (theme.getStylesheet() != null) {
             website.setCustomStylesheetPath(theme.getStylesheet().getLink());
         }
         wmgr.saveWeblog(website);
@@ -269,46 +274,69 @@ public class ThemeManagerImpl implements ThemeManager {
         Iterator iterat = resources.iterator();
         ThemeResource resource = null;
         MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
-        while ( iterat.hasNext() ) {
+        while (iterat.hasNext()) {
             resource = (ThemeResource) iterat.next();
 
-            log.debug("Importing resource to "+resource.getPath());
-
-            String justPath = resource.getPath()
-                .substring(resource.getPath().lastIndexOf("/"));
-
-            String justName = resource.getPath()
-                .substring(0, resource.getPath().lastIndexOf("/"));
+            log.debug("Importing resource " + resource.getPath());
 
             if (resource.isDirectory()) {
-
                 MediaFileDirectory mdir =
                     fileMgr.getMediaFileDirectoryByPath(website, resource.getPath());
                 if (mdir == null) {
+                    log.debug("    Creating directory: " + resource.getPath());
                     mdir = fileMgr.createMediaFileDirectory(root, resource.getPath());
                     roller.flush();
+                } else {
+                    log.debug("    No action: directory already exists");
                 }
 
             } else {
+                String resourcePath = resource.getPath();
 
-                MediaFileDirectory mdir =
-                    fileMgr.getMediaFileDirectoryByPath(website, justPath);
-                if (mdir == null) {
-                    mdir = fileMgr.createMediaFileDirectory(root, justPath);
+                MediaFileDirectory mdir = null;
+                String justName = null;
+                String justPath = null;
+
+                if (resourcePath.indexOf("/") == -1) {
+                    mdir = root;
+
+                } else {
+                    justPath = resourcePath.substring(0, resourcePath.lastIndexOf("/"));
+                    if (!justPath.startsWith("/")) justPath = "/" + justPath;
+                    justName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
+                    mdir = fileMgr.getMediaFileDirectoryByPath(website, justPath);
+                    if (mdir == null) {
+                        log.debug("    Creating directory: " + justPath);
+                        mdir = fileMgr.createMediaFileDirectoryByPath(website, justPath);
+                        roller.flush();
+                    }
+                }
+
+                MediaFile oldmf = fileMgr.getMediaFileByOriginalPath(website, justPath + "/" + justName);
+                if (oldmf != null) {
+                    fileMgr.removeMediaFile(website, oldmf); 
                 }
 
                 // save file without file-type, quota checks, etc.
+                InputStream is = resource.getInputStream();
                 MediaFile mf = new MediaFile();
                 mf.setDirectory(mdir);
                 mf.setWeblog(website);
                 mf.setName(justName);
-                mf.setOriginalPath(justPath);
-                mf.setContentType("text/plain");
-                mf.setInputStream(resource.getInputStream());
+                mf.setOriginalPath(justPath + "/" + justName);
+                mf.setContentType(map.getContentType(justName)); 
+                mf.setInputStream(is);
                 mf.setLength(resource.getLength());
 
+                log.debug("    Saving file: " + justName);
                 RollerMessages errors = new RollerMessages();
                 fileMgr.createMediaFile(website, mf, errors);
+                try {
+                    resource.getInputStream().close();
+                } catch (IOException ex) {
+                    errors.addError("error.closingStream");
+                    log.debug("ERROR closing inputstream");
+                }
                 if (errors.getErrorCount() > 0) {
                     throw new WebloggerException(errors.toString());
                 }
@@ -316,19 +344,19 @@ public class ThemeManagerImpl implements ThemeManager {
             }
         }
     }
-    
-    
+
     /**
      * This is a convenience method which loads all the theme data from
      * themes stored on the filesystem in the roller webapp /themes/ directory.
      */
     private Map loadAllThemesFromDisk() {
-        
-        Map themes = new HashMap();
-        
+
+        Map themeMap = new HashMap();
+
         // first, get a list of the themes available
         File themesdir = new File(this.themeDir);
         FilenameFilter filter = new FilenameFilter() {
+
             public boolean accept(File dir, String name) {
                 File file =
                         new File(dir.getAbsolutePath() + File.separator + name);
@@ -336,62 +364,59 @@ public class ThemeManagerImpl implements ThemeManager {
             }
         };
         String[] themenames = themesdir.list(filter);
-        
-        if(themenames == null) {
-            log.warn("No themes loaded!  Perhaps you specified the wrong "+
-                    "location for your themes directory?");
+
+        if (themenames == null) {
+            log.warn("No themes loaded!  Perhaps you specified the wrong "
+                    + "location for your themes directory?");
         }
-        
+
         // now go through each theme and load it into a Theme object
-        for(int i=0; i < themenames.length; i++) {
+        for (int i = 0; i < themenames.length; i++) {
             try {
                 Theme theme = new SharedThemeFromDir(this.themeDir + File.separator + themenames[i]);
-                if(theme != null) {
-                    themes.put(theme.getId(), theme);
+                if (theme != null) {
+                    themeMap.put(theme.getId(), theme);
                 }
             } catch (Throwable unexpected) {
                 // shouldn't happen, so let's learn why it did
                 log.error("Problem reading theme " + themenames[i], unexpected);
             }
         }
-        
-        return themes;
+
+        return themeMap;
     }
-    
-	/**
-	 * @see ThemeManager#reLoadThemeFromDisk(String)
-	 */
-	public boolean reLoadThemeFromDisk(String reloadTheme) {
 
-		boolean reloaded = false;
+    /**
+     * @see ThemeManager#reLoadThemeFromDisk(String)
+     */
+    public boolean reLoadThemeFromDisk(String reloadTheme) {
 
-		try {
+        boolean reloaded = false;
 
-			Theme theme = new SharedThemeFromDir(this.themeDir + File.separator
-					+ reloadTheme);
+        try {
 
-			if (theme != null) {
+            Theme theme = new SharedThemeFromDir(this.themeDir + File.separator
+                    + reloadTheme);
 
-				Theme loadedTheme = (Theme) themes.get(theme.getId());
+            if (theme != null) {
 
-				if (loadedTheme != null
-						&& theme.getLastModified()
-								.after(loadedTheme.getLastModified())) {
-					themes.remove(theme.getId());
-					themes.put(theme.getId(), theme);
-					reloaded = true;
-				}
+                Theme loadedTheme = (Theme) themes.get(theme.getId());
 
-			}
+                if (loadedTheme != null
+                        && theme.getLastModified().after(loadedTheme.getLastModified())) {
+                    themes.remove(theme.getId());
+                    themes.put(theme.getId(), theme);
+                    reloaded = true;
+                }
 
-		} catch (Throwable unexpected) {
-			// shouldn't happen, so let's learn why it did
-			log.error("Problem reloading theme " + reloadTheme, unexpected);
-		}
+            }
 
-		return reloaded;
+        } catch (Throwable unexpected) {
+            // shouldn't happen, so let's learn why it did
+            log.error("Problem reloading theme " + reloadTheme, unexpected);
+        }
 
-	}
+        return reloaded;
 
-    
+    }
 }

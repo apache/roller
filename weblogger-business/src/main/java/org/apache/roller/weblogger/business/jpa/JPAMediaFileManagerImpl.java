@@ -383,6 +383,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public MediaFileDirectory getMediaFileDirectoryByPath(Weblog weblog, String path)
             throws WebloggerException {
 
+        path = !path.startsWith("/") ? "/" + path : path;
+        
         log.debug("Looking up weblog|path: " + weblog.getHandle() + "|" + path);
 
         Query q = this.strategy.getNamedQuery(

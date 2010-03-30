@@ -110,11 +110,11 @@ public class ThemeEdit extends UIAction {
             if(WebloggerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
                 
                 // do theme import if necessary
-                SharedTheme importTheme = null;
+                SharedTheme t = null;
                 if(isImportTheme() && !StringUtils.isEmpty(getImportThemeId())) try {
                     ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-                    importTheme = themeMgr.getTheme(getImportThemeId());
-                    themeMgr.importTheme(getActionWeblog(), importTheme);
+                    t = themeMgr.getTheme(getImportThemeId());
+                    themeMgr.importTheme(getActionWeblog(), t);
                 } catch(WebloggerException re) {
                     log.error("Error customizing theme for weblog - "+getActionWeblog().getHandle(), re);
                     // TODO: i18n
@@ -134,8 +134,8 @@ public class ThemeEdit extends UIAction {
                     
                     // TODO: i18n
                     addMessage("Successfully set theme to - "+WeblogTheme.CUSTOM);
-                    if(importTheme != null) {
-                        addMessage("Successfully copied templates from theme - "+importTheme.getName());
+                    if (t != null) {
+                        addMessage("Successfully copied templates from theme - " + t.getName());
                     }
                     
                     // reset import theme options
