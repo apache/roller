@@ -182,10 +182,10 @@ public class MenuHelper {
                     
                     if (includeItem) {
                         // weblog permissions check
-                        if (configTab.getWeblogPermissionActions() != null 
-                                && !configTab.getWeblogPermissionActions().isEmpty()) {                        
-                            WeblogPermission perm = new WeblogPermission(weblog, configTab.getWeblogPermissionActions());
-                            includeTab = umgr.checkPermission(perm, user);
+                        if (configTabItem.getWeblogPermissionActions() != null
+                                && !configTabItem.getWeblogPermissionActions().isEmpty()) {
+                            WeblogPermission perm = new WeblogPermission(weblog, configTabItem.getWeblogPermissionActions());
+                            includeItem = umgr.checkPermission(perm, user);
                         }
                     }
                     

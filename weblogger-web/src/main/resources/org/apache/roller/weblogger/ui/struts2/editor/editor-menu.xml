@@ -23,7 +23,7 @@ Each menu or menu item is governed by four attrbibutes:
 -->
 <menu-bar>
     
-    <menu name="tabbedmenu.weblog" globalPerms="limited" weblogPerms="editor">
+    <menu name="tabbedmenu.weblog" weblogPerms="edit_draft" globalPerms="login" >
         
         <menu-item action="entryAdd" 
                    name="tabbedmenu.weblog.newEntry" 
@@ -39,42 +39,42 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item action="comments" 
                    name="tabbedmenu.admin.commentManagement" 
                    globalPerms="login"
-                   weblogPerms="author" />
+                   weblogPerms="post" />
         
         <menu-item action="categories"   
                    name="tabbedmenu.weblog.categories" 
                    globalPerms="login"
-                   perms="admin"
+                   weblogPerms="post"
                    subactions="categoryAdd,categoryEdit,categoryRemove" />
         
         <menu-item action="bookmarks"    
                    name="tabbedmenu.bookmarks.allFolders" 
                    globalPerms="login"
-                   weblogPerms="post"
+                   weblogPerms="admin"
                    subactions="bookmarkAdd,bookmarkEdit,folderAdd,folderEdit,bookmarksImport" />
 
         <menu-item action="mediaFileView"
                    name="tabbedmenu.weblog.mediaFiles"
                    globalPerms="login"
-                   perms="post"
+                   weblogPerms="post"
                    subactions="mediaFileAdd,mediaFileHierarchicalView,mediaFileSearch" />
 
         <menu-item action="weblogExport"
                    enabledProperty="weblog.export.enabled"
                    name="tabbedmenu.weblog.export"
-                   roles="editor"
-                   perms="author"
+                   globalPerms="login"
+                   weblogPerms="admin"
                    subactions="exportEntries,exportResources"/>
 
          <menu-item action="referrers"
                    name="tabbedmenu.weblog.referers" 
                    globalPerms="login"
-                   weblogPerms="post" 
+                   weblogPerms="admin"
                    enabledProperty="referrers.processing.enabled" />
     </menu>
     
     
-    <menu name="tabbedmenu.design" weblogPerms="editor" enabledProperty="themes.customtheme.allowed">
+    <menu name="tabbedmenu.design" weblogPerms="admin" globalPerms="login" enabledProperty="themes.customtheme.allowed">
         
         <menu-item action="themeEdit"         
                    name="tabbedmenu.website.themes" 
@@ -95,7 +95,7 @@ Each menu or menu item is governed by four attrbibutes:
     </menu>
     
     
-    <menu name="tabbedmenu.website" weblogPerms="editor">
+    <menu name="tabbedmenu.website" weblogPerms="admin">
         
         <menu-item action="weblogConfig"       
                    name="tabbedmenu.website.settings" 
