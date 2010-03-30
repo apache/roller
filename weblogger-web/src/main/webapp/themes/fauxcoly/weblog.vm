@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!-- XFN friendly -->
+<head profile="http://gmpg.org/xfn/11">
+    #includeTemplate($model.weblog "standard_head")
+    <title>$model.weblog.name: $model.weblog.description</title>
+    #showAutodiscoveryLinks($model.weblog)
+    <link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+</head>
+<body>
+
+<!-- use layout yui-t6: 300px sidebar on right -->
+<div id="doc2" class="yui-t6">
+
+
+<!-- *************************************************** -->
+<!-- HEADER -->
+<!-- *************************************************** -->
+<div id="hd">
+<div id="header_content">
+#includeTemplate($model.weblog "standard_header")
+</div>
+</div>
+
+
+<!-- *************************************************** -->
+<!-- BODY -->
+<!-- *************************************************** -->
+<div id="bd">
+
+
+<!-- *************************************************** -->
+<!-- BODY - MAIN -->
+<!-- *************************************************** -->
+<div id="yui-main">
+<div class="yui-b">
+
+<div id="main_content">
+
+<!--
+<div id="flickr_photos">
+    <script type="text/javascript"
+        src="http://www.flickr.com/badge_code_v2.gne?count=7&amp;display=random&amp;size=s&amp;layout=h&amp;source=user&amp;user=YOUR_FLICKR_USERID"></script>
+</div>
+<p class="details">Above: a random selection of photos from my <a href="http://www.flickr.com/photos/YOUR_FLICKR_USERNAME">Flickr photo-stream</a>.</p>
+-->
+
+#set($pager = $model.getWeblogEntriesPager())
+#showWeblogEntriesPager($pager)
+#if ($model.permalink)
+    #showWeblogEntryComments($entry)
+    #showWeblogEntryCommentForm($entry)
+#end
+<div id="nextprev">
+    #showNextPrevEntriesControl($pager)
+</div>
+
+</div>
+
+</div>
+</div>
+
+<!-- *************************************************** -->
+<!-- BODY - SIDEBAR -->
+<!-- *************************************************** -->
+<div class="yui-b">
+
+<div id="sidebar_content">
+
+    <form id="searchForm" method="get" action="$url.search"
+        style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
+          <input type="text" id="q" name="q" size="10"
+              maxlength="255" value="#if($model.term)$model.term#end" />
+          <input type="submit" class="button" value="Search" />
+    </form>
+    <script type="text/javascript">
+        function validateSearch(form) {
+            if (form.q.value == "") {
+                alert("$text.get("macro.weblog.searchalert")");
+                form.q.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+<h3>Welcome</h3>
+
+<p class="details">
+#set($blurb = $model.weblog.about)
+#if ($blurb)
+$model.weblog.about
+#else
+<span class="setup">Add an about message on your Weblog Settings page and it will appear here</span>
+#end
+Click the link below to subscribe via your favorite feed reader:</p>
+
+<div id="subscribe">
+    <a href="$url.feed.entries.atom">
+        <img src='$url.resource("icons/feed-icon-28x28.png")' title="RSS/Atom feed icon" alt="RSS/Atom feed icon" /></a>&nbsp;
+    <a href="$url.feed.entries.atom">Subscribe to this blog</a>
+</div>
+
+<h3>Hot tags</h3>
+
+<p class="details">Below are the thirty most often used tags in the blog. Hover over a tag to see a count of entries, click a tag to see the most recent posts with the tag.</p>
+
+<div id="tagcloud">
+#set($mytags = $model.weblog.getPopularTags(-1, 30))
+#foreach ($tag in $mytags)
+    #if ($tag.count > 5)
+        <a class="tag s${tag.intensity}" href="$url.tag($tag.name)" title="$tag.count">$tag.name</a>
+    #end
+#end
+</div>
+
+</div> <!-- close sidebar_content -->
+</div>
+</div>
+
+<!-- *************************************************** -->
+<!-- FOOTER -->
+<!-- *************************************************** -->
+<div id="ft">
+<div id="footer_content">
+#includeTemplate($model.weblog "standard_footer")
+</div>
+</div>
+
+</div>
+
+</body>
+</html>
+
