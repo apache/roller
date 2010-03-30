@@ -150,7 +150,7 @@ function toggleImportThemeDisplay() {
             </s:if>
 
             <p>
-                <s:checkbox name="importTheme" onclick="$('themeImport').toggle();" />
+                <s:checkbox name="importTheme" onclick="$('#themeImport').toggle();" />
                 <s:text name="themeEditor.import" />
             </p>
         </s:else>
