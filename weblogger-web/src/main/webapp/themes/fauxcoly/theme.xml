@@ -76,17 +76,6 @@
     </template>
 
     <template action="custom">
-        <name>Links</name>
-        <description>Links (legacy)</description>
-	    <link>links</link>
-        <navbar>false</navbar>
-        <hidden>false</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>links.vm</contentsFile>
-    </template>
-
-    <template action="custom">
         <name>Archives</name>
         <description>Calendar browser and links to latest entries</description>
 	    <link>archives</link>
