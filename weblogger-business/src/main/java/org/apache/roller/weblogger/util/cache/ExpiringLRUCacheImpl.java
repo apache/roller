@@ -56,6 +56,7 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
      * We wrap the cached object in our ExpiringCacheEntry object so that we
      * can track when the entry has expired.
      */
+    @Override
     public synchronized void put(String key, Object value) {
         
         ExpiringCacheEntry entry = new ExpiringCacheEntry(value, this.timeout);
@@ -69,7 +70,8 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
      * This LRU cache supports timeouts, so if the cached object has expired
      * then we return null, just as if the entry wasn't found.
      */
-    public Object get(String key) {
+    @Override
+    public synchronized Object get(String key) {
         
         Object value = null;
         ExpiringCacheEntry entry = null;

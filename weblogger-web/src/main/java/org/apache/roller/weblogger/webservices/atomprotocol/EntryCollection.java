@@ -35,19 +35,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import javax.activation.FileTypeMap;
-import javax.activation.MimetypesFileTypeMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -170,7 +166,7 @@ public class EntryCollection {
             if (!RollerAtomHandler.canView(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website: " + handle);
             }
-            List entries = entries = roller.getWeblogEntryManager().getWeblogEntries( 
+            List entries = roller.getWeblogEntryManager().getWeblogEntries( 
                     website,           // website
                     null,              // user
                     null,              // startDate

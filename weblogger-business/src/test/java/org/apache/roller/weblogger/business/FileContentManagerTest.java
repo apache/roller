@@ -50,6 +50,7 @@ public class FileContentManagerTest extends TestCase {
         return new TestSuite(FileContentManagerTest.class);
     }
 
+    @Override
     public void setUp() throws Exception {
 
         // setup weblogger
@@ -57,9 +58,10 @@ public class FileContentManagerTest extends TestCase {
 
     }
 
+    @Override
     public void tearDown() throws Exception {
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        Map config = config = pmgr.getProperties();
+        Map config = pmgr.getProperties();
         ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("30000");
         ((RuntimeConfigProperty) config.get("uploads.types.forbid")).setValue("");
         ((RuntimeConfigProperty) config.get("uploads.types.allowed")).setValue("");
@@ -144,7 +146,7 @@ public class FileContentManagerTest extends TestCase {
 
         FileContentManager fmgr = WebloggerFactory.getWeblogger().getFileContentManager();
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        Map config = config = pmgr.getProperties();
+        Map config = pmgr.getProperties();
         ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("1.00");
         ((RuntimeConfigProperty) config.get("uploads.types.forbid")).setValue("");
         ((RuntimeConfigProperty) config.get("uploads.types.allowed")).setValue("");
