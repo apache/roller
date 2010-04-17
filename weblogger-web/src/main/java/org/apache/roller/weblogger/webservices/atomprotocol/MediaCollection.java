@@ -85,7 +85,7 @@ public class MediaCollection {
     }  
     
     
-    public String postMedia(AtomRequest areq, Entry entry) throws AtomException {
+    public Entry postMedia(AtomRequest areq, Entry entry) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
 
@@ -118,8 +118,12 @@ public class MediaCollection {
                                         
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
-                    String justPath = path.substring(path.lastIndexOf("/"));
-                    String justName = path.substring(0, path.lastIndexOf("/"));
+                    String justPath = path;
+                    int lastSlash = path.lastIndexOf("/");
+                    if (lastSlash > -1) {
+                        justPath = path.substring(lastSlash);
+                    }
+
                     MediaFileDirectory mdir =
                         fileMgr.getMediaFileDirectoryByPath(website, justPath);
 
@@ -155,7 +159,7 @@ public class MediaCollection {
                         Link link = (Link)it.next();
                         if ("edit".equals(link.getRel())) {
                             log.debug("Exiting");
-                            return link.getHrefResolved();
+                            return mediaEntry;
                         }
                     }
                     log.error("ERROR: no edit link found in saved media entry");
@@ -466,9 +470,9 @@ public class MediaCollection {
     }
     
     private Entry createAtomResourceEntry(Weblog website, MediaFile file) {
-        String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-        String filePath = 
-            file.getPath().startsWith("/") ? file.getPath().substring(1) : file.getPath();
+        String filePath = file.getPath().endsWith("/")
+                ? file.getPath() + file.getName()
+                : file.getPath() + "/" + file.getName();
         String editURI = 
                 atomURL+"/"+website.getHandle()
                 + "/resource/" + filePath + ".media-link";
@@ -476,7 +480,6 @@ public class MediaCollection {
                 atomURL+"/"+ website.getHandle()
                 + "/resource/" + filePath;
         URLStrategy urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
-        String viewURI = urlStrategy.getWeblogResourceURL(website, filePath, true);
         
         String contentType = Utilities.getContentTypeFromFileName(file.getName());
         
@@ -485,7 +488,14 @@ public class MediaCollection {
         entry.setTitle(file.getName());
         entry.setUpdated(new Date(file.getLastModified()));
         
-        List otherlinks = new ArrayList();        
+        Link altlink = new Link();
+        altlink.setRel("alternate");
+        altlink.setHref(file.getPermalink());
+        List altlinks = new ArrayList();
+        altlinks.add(altlink);
+        entry.setAlternateLinks(altlinks);
+
+        List otherlinks = new ArrayList();
         entry.setOtherLinks(otherlinks);
         Link editlink = new Link();
             editlink.setRel("edit");
@@ -497,7 +507,7 @@ public class MediaCollection {
             otherlinks.add(editMedialink);
         
         Content content = new Content();
-        content.setSrc(viewURI);
+        content.setSrc(file.getPermalink());
         content.setType(contentType);
         List contents = new ArrayList();
         contents.add(content);

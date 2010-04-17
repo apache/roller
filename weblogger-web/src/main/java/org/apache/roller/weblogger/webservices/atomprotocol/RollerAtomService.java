@@ -113,12 +113,7 @@ public class RollerAtomService extends AtomService {
                     throw new AtomException("Creating weblog entry collection for service doc", e);
                 }
 
-                // Add media collection for upload dir
-                Collection uploadCol = new Collection("Media Files", "text", atomURL + "/" + weblog.getHandle() + "/resources/");
-                uploadCol.setAccepts(uploadAccepts); 
-                workspace.addCollection(uploadCol);
-
-                // And add one media collection for each of weblog's upload sub-directories
+                // And add one media collection for each of weblog's upload directories
                 try {
                     MediaFileManager mgr = roller.getMediaFileManager();
                     List<MediaFileDirectory> dirs = mgr.getMediaFileDirectories(weblog);

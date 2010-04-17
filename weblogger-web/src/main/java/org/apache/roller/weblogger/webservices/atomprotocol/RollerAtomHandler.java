@@ -168,7 +168,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Create entry in the entry collection (a Weblogger blog has only one).
      */
-    public String postEntry(AtomRequest areq, Entry entry) throws AtomException {
+    public Entry postEntry(AtomRequest areq, Entry entry) throws AtomException {
         EntryCollection ecol = new EntryCollection(user, atomURL);
         return ecol.postEntry(areq, entry);
     }
@@ -180,7 +180,7 @@ public class RollerAtomHandler implements AtomHandler {
      * TODO: do we need to handle mutli-part MIME uploads?
      * TODO: use Jakarta Commons File-upload?
      */
-    public String postMedia(AtomRequest areq, Entry entry)
+    public Entry postMedia(AtomRequest areq, Entry entry)
             throws AtomException {
         MediaCollection mcol = new MediaCollection(user, atomURL);
         return mcol.postMedia(areq, entry);

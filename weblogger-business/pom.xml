@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,11 +21,11 @@
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
-	<testMediaDir>  ${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
-	<testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
-	<testThemesDir> ${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
-	<testIndexDir>  ${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
-	<testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
+        <testMediaDir>  ${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
+        <testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
+        <testThemesDir> ${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
+        <testIndexDir>  ${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
+        <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
     </properties>
 
     <dependencies>
@@ -96,24 +96,6 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>rome</groupId>
-            <artifactId>rome</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>rome</groupId>
-            <artifactId>rome-fetcher</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>rome</groupId>
-            <artifactId>rome-propono</artifactId>
             <scope>compile</scope>
         </dependency>
 
@@ -199,13 +181,13 @@
                             <resources>
                                 <resource>
                                     <directory>${basedir}/src/main/resources/sql</directory>
-                                    <filtering>false</filtering>                                   
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>
                 </executions>
-	    </plugin>
+            </plugin>
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -226,7 +208,7 @@
                     </systemProperties>
                     <excludes>
                         <exclude>**/TestUtils.java</exclude>
-			<exclude>**/TestTask.java</exclude>
+                        <exclude>**/TestTask.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -323,7 +305,7 @@
                                         port="3219"
                                         databaseScriptsDir="${project.build.directory}/dbscripts"
                                         skip="${maven.test.skip}" ></stopdb>
-				<delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" /> 
+                                <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -359,8 +341,8 @@
                 </includes>
             </testResource>
             <testResource>
-		<directory>${project.basedir}/src/test/resources</directory>
-		<filtering>true</filtering>
+                <directory>${project.basedir}/src/test/resources</directory>
+                <filtering>true</filtering>
                 <includes>
                     <include>**/**</include>
                 </includes>

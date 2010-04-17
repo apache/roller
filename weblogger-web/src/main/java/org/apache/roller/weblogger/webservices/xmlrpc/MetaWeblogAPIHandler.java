@@ -377,8 +377,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             mf.setInputStream(new ByteArrayInputStream(bits));
             mf.setLength(bits.length);
             
-            String fileLink = WebloggerFactory.getWeblogger().getUrlStrategy()
-                    .getWeblogResourceURL(website, name, true);
+            String fileLink = mf.getPermalink();
             
             Hashtable returnStruct = new Hashtable(1);
             returnStruct.put("url", fileLink);

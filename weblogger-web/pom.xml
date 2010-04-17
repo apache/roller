@@ -112,6 +112,12 @@
             <artifactId>string</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>net.java.dev.rome</groupId>
+            <artifactId>rome-propono</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Spring Security deps -->
 
         <dependency>

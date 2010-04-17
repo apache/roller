@@ -78,7 +78,7 @@ public class EntryCollection {
     }
     
     
-    public String postEntry(AtomRequest areq, Entry entry) throws AtomException {
+    public Entry postEntry(AtomRequest areq, Entry entry) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         try {
@@ -109,13 +109,14 @@ public class EntryCollection {
             if (rollerEntry.isPublished()) {
                 roller.getIndexManager().addEntryReIndexOperation(rollerEntry);
             }
-            
+
+            rollerEntry = mgr.getWeblogEntry(rollerEntry.getId());
             Entry newEntry = createAtomEntry(rollerEntry);
             for (Iterator it = newEntry.getOtherLinks().iterator(); it.hasNext();) {
                 Link link = (Link)it.next();
                 if ("edit".equals(link.getRel())) {
                     log.debug("Exiting");
-                    return link.getHrefResolved();
+                    return createAtomEntry(rollerEntry);
                 }
             }
             log.error("ERROR: no edit link found in saved media entry");
@@ -311,7 +312,7 @@ public class EntryCollection {
         Entry atomEntry = new Entry();
         
         String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-        atomEntry.setId(        absUrl + entry.getPermaLink());
+        atomEntry.setId(        entry.getPermalink());
         atomEntry.setTitle(     entry.getTitle());
         atomEntry.setPublished( entry.getPubTime());
         atomEntry.setUpdated(   entry.getUpdateTime());
@@ -355,7 +356,7 @@ public class EntryCollection {
         
         Link altlink = new Link();
         altlink.setRel("alternate");
-        altlink.setHref(absUrl + entry.getPermaLink());
+        altlink.setHref(entry.getPermalink());
         List altlinks = new ArrayList();
         altlinks.add(altlink);
         atomEntry.setAlternateLinks(altlinks);
@@ -378,62 +379,6 @@ public class EntryCollection {
         
         return atomEntry;
     }
-    
-    private Entry createAtomResourceEntry(Weblog website, ThemeResource file) {
-        String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-        String filePath = 
-            file.getPath().startsWith("/") ? file.getPath().substring(1) : file.getPath();
-        String editURI = 
-                atomURL+"/"+website.getHandle()
-                + "/resource/" + filePath + ".media-link";
-        String editMediaURI = 
-                atomURL+"/"+ website.getHandle()
-                + "/resource/" + filePath;
-        URLStrategy urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
-        String viewURI = urlStrategy.getWeblogResourceURL(website, filePath, true);
-        
-        FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
-        // TODO: figure out why PNG is missing from Java MIME types
-        if (map instanceof MimetypesFileTypeMap) {
-            try {
-                ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
-            } catch (Exception ignored) {}
-        }
-        String contentType = map.getContentType(file.getName());
-        
-        Entry entry = new Entry();
-        entry.setId(editMediaURI);
-        entry.setTitle(file.getName());
-        entry.setUpdated(new Date(file.getLastModified()));
-        
-        List otherlinks = new ArrayList();        
-        entry.setOtherLinks(otherlinks);
-        Link editlink = new Link();
-            editlink.setRel("edit");
-            editlink.setHref(editURI);        
-            otherlinks.add(editlink);            
-        Link editMedialink = new Link();
-            editMedialink.setRel("edit-media");
-            editMedialink.setHref(editMediaURI);        
-            otherlinks.add(editMedialink);
-        
-        Content content = new Content();
-        content.setSrc(viewURI);
-        content.setType(contentType);
-        List contents = new ArrayList();
-        contents.add(content);
-        entry.setContents(contents);
-        
-        List modules = new ArrayList();
-        AppModule app = new AppModuleImpl();
-        app.setDraft(false);
-        app.setEdited(entry.getUpdated());
-        modules.add(app);
-        entry.setModules(modules);
-        
-        return entry;
-    }
-    
     
     /**
      * Copy fields from ROME entry to Weblogger entry.

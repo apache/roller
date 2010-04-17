@@ -22,7 +22,7 @@
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
-	<testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
+        <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
     </properties>
 
     <dependencies>
@@ -73,20 +73,22 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
-
+        
         <dependency>
             <groupId>com.google.code.guice</groupId>
             <artifactId>guice</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>rome</groupId>
+            <groupId>net.java.dev.rome</groupId>
             <artifactId>rome</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>rome</groupId>
+            <groupId>net.java.dev.rome</groupId>
             <artifactId>rome-fetcher</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -151,7 +153,7 @@
                             <resources>
                                 <resource>
                                     <directory>${basedir}/src/main/resources/sql</directory>
-                                    <filtering>false</filtering>                                    
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>
