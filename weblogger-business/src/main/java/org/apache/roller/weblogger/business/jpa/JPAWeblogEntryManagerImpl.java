@@ -286,6 +286,23 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     // TODO: perhaps the createAnchor() and queuePings() items should go outside this method?
     public void saveWeblogEntry(WeblogEntry entry) throws WebloggerException {
+
+        if (entry.getCategory() == null) {
+
+            // Entry is invalid without category, so use weblog client cat
+            WeblogCategory cat = entry.getWebsite().getBloggerCategory();
+            if (cat == null) {
+                // Sill no category, so use first one found
+                cat = (WeblogCategory)
+                    entry.getWebsite().getWeblogCategories().iterator().next();
+            }
+            entry.setCategory(cat);
+        }
+
+        // Entry is invalid without local. if missing use weblog default
+        if (entry.getLocale() == null) {
+            entry.setLocale(entry.getWebsite().getLocale());
+        }
         
         if (entry.getAnchor() == null || entry.getAnchor().trim().equals("")) {
             entry.setAnchor(this.createAnchor(entry));
