@@ -184,7 +184,7 @@
             <dependency>
                 <groupId>net.java.dev.rome</groupId>
                 <artifactId>rome-propono</artifactId>
-                <version>0.9.13</version>
+                <version>1.0.0</version>
             </dependency>
 
             <dependency>
