@@ -267,8 +267,8 @@ public class WeblogEntryTest extends TestCase {
         entries = null;
         entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, null, "en_US", 0, -1);
         assertNotNull(entries);
-        assertEquals(1, entries.size());
-        assertEquals(entry1, entries.get(0));
+        assertEquals(4, entries.size());
+        assertEquals(entry3, entries.get(0));
         
         // get pinned entries only
         entries = null;
