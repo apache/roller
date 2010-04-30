@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.0-BETA2-SNAPSHOT</version>
+        <version>5.0.0-RC1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -18,7 +18,7 @@
     </description>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-planet-business</artifactId>
-    <version>5.0-BETA2-SNAPSHOT</version>
+    <version>${roller.version}</version>
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-core</artifactId>
-            <version>5.0-BETA2-SNAPSHOT</version>
+            <version>${roller.version}</version>
         </dependency>
 
         <dependency>
@@ -73,7 +73,7 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.google.code.guice</groupId>
             <artifactId>guice</artifactId>
@@ -195,7 +195,7 @@
                     <dependency>
                         <groupId>org.apache.roller</groupId>
                         <artifactId>test-utils</artifactId>
-                        <version>5.0-BETA2-SNAPSHOT</version>
+                        <version>${roller.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
@@ -358,4 +358,5 @@
     </profiles>
 
 </project>
+
 

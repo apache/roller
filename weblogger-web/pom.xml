@@ -2,19 +2,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion> 
 
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.0-BETA2-SNAPSHOT</version>
+        <version>5.0.0-RC1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <name>Apache Roller Weblogger Web Application</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-web</artifactId>
-    <version>5.0-BETA2-SNAPSHOT</version>
+    <version>${roller.version}</version>
     <packaging>war</packaging>
 
     <dependencies>
@@ -22,13 +22,13 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-core</artifactId>
-            <version>5.0-BETA2-SNAPSHOT</version>
+            <version>${roller.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-planet-business</artifactId>
-            <version>5.0-BETA2-SNAPSHOT</version>
+            <version>${roller.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>geronimo-jms_1.1_spec</artifactId>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-weblogger-business</artifactId>
-            <version>5.0-BETA2-SNAPSHOT</version>
+            <version>${roller.version}</version>
         </dependency>
 
         <dependency>
@@ -303,7 +303,7 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>test-utils</artifactId>
-            <version>5.0-BETA2-SNAPSHOT</version>
+            <version>${roller.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -388,7 +388,7 @@
                     <dependency>
                         <groupId>org.apache.roller</groupId>
                         <artifactId>test-utils</artifactId>
-                        <version>5.0-BETA2-SNAPSHOT</version>
+                        <version>${roller.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>log4j</groupId>
@@ -398,7 +398,7 @@
                     <dependency>
                         <groupId>org.apache.roller</groupId>
                         <artifactId>test-utils</artifactId>
-                        <version>5.0-BETA2-SNAPSHOT</version>
+                        <version>${roller.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -473,7 +473,7 @@
                     <dependency>
                         <groupId>org.apache.roller</groupId>
                         <artifactId>test-utils</artifactId>
-                        <version>5.0-BETA2-SNAPSHOT</version>
+                        <version>${roller.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>

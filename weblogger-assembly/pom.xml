@@ -17,50 +17,81 @@
  * under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.roller</groupId>
-    <artifactId>roller-project</artifactId>
-    <version>5.0-BETA2-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
+    <parent>
+        <groupId>org.apache.roller</groupId>
+        <artifactId>roller-project</artifactId>
+        <version>5.0.0-RC1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-  <artifactId>roller-webblogger</artifactId>
-  <packaging>pom</packaging>
+    <artifactId>roller-webblogger</artifactId>
+    <packaging>pom</packaging>
 
-  <name>Apache Roller Distribution assembly</name>
-  <description>Assembles Roller into a distribution package</description>
+    <name>Apache Roller Distribution assembly</name>
+    <description>Assembles Roller into a distribution package</description>
 
-  <build>
+    <build>
 
-    <plugins>
+        <plugins>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
 
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/binary.xml</descriptor>
-            <descriptor>src/main/assembly/source.xml</descriptor>
-          </descriptors>
-          <tarLongFileMode>gnu</tarLongFileMode>
-        </configuration>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/binary.xml</descriptor>
+                        <descriptor>src/main/assembly/source.xml</descriptor>
+                    </descriptors>
+                    <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
 
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
 
-      </plugin>
+            </plugin>
 
-    </plugins>
-  </build>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.0-alpha-4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
+
