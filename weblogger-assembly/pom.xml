@@ -26,7 +26,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>roller-webblogger</artifactId>
+    <artifactId>roller-weblogger</artifactId>
     <packaging>pom</packaging>
 
     <name>Apache Roller Distribution assembly</name>
