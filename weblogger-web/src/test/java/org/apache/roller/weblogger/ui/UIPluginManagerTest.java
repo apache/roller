@@ -50,10 +50,11 @@ public class UIPluginManagerTest extends TestCase {
     
     
     public void testEntryEditors() throws Exception {
+    	log.debug("Start");
         
         UIPluginManager pmgr = RollerContext.getUIPluginManager();
         
-        // test getEditors() lis
+        // test getEditors() list
         assertEquals(2, pmgr.getWeblogEntryEditors().size());
         
         // test getting a single editor
@@ -61,6 +62,8 @@ public class UIPluginManagerTest extends TestCase {
         
         // make sure we return default editor if editor id is not found
         assertEquals("editor-text.jsp", pmgr.getWeblogEntryEditor(null).getId());
+        
+    	log.debug("End");
     }
     
 }

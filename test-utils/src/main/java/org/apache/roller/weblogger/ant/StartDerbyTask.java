@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import org.apache.derby.drda.NetworkServerControl;
 import org.apache.roller.util.SQLScriptRunner;
 import org.apache.tools.ant.BuildException;

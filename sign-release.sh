@@ -1,16 +1,13 @@
+export rcstring="-RC2"
+export vstring="5.0.0"
 
-export rcstring="-rc10"
-export vstring="4.0"
+#cp dist/roller-weblogger-${vstring}-binary.tar.gz dist/roller-weblogger-${vstring}${rcstring}-binary.tar.gz
+#cp dist/roller-weblogger-${vstring}-binary.zip    dist/roller-weblogger-${vstring}${rcstring}-binary.zip
+#cp dist/roller-weblogger-${vstring}-source.tar.gz dist/roller-weblogger-${vstring}${rcstring}-source.tar.gz
+#cp dist/roller-weblogger-${vstring}-source.zip    dist/roller-weblogger-${vstring}${rcstring}-source.zip
 
-cp dist/apache-roller-${vstring}.tar.gz dist/apache-roller-${vstring}${rcstring}.tar.gz
-cp dist/apache-roller-${vstring}.zip    dist/apache-roller-${vstring}${rcstring}.zip
-
-cp dist/apache-roller-src-${vstring}.tar.gz dist/apache-roller-src-${vstring}${rcstring}.tar.gz
-cp dist/apache-roller-src-${vstring}.zip    dist/apache-roller-src-${vstring}${rcstring}.zip
-
-gpg --armor --output dist/apache-roller-${vstring}${rcstring}.tar.gz.asc     --detach-sig dist/apache-roller-${vstring}${rcstring}.tar.gz
-gpg --armor --output dist/apache-roller-${vstring}${rcstring}.zip.asc        --detach-sig dist/apache-roller-${vstring}${rcstring}.zip
-
-gpg --armor --output dist/apache-roller-src-${vstring}${rcstring}.tar.gz.asc --detach-sig dist/apache-roller-src-${vstring}${rcstring}.tar.gz
-gpg --armor --output dist/apache-roller-src-${vstring}${rcstring}.zip.asc    --detach-sig dist/apache-roller-src-${vstring}${rcstring}.zip
+gpg --armor --detach-sig dist/roller-weblogger-${vstring}${rcstring}-binary.tar.gz
+gpg --armor --detach-sig dist/roller-weblogger-${vstring}${rcstring}-binary.zip
+gpg --armor --detach-sig dist/roller-weblogger-${vstring}${rcstring}-source.tar.gz 
+gpg --armor --detach-sig dist/roller-weblogger-${vstring}${rcstring}-source.zip
 

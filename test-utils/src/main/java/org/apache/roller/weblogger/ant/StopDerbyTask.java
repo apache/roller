@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ant;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import org.apache.derby.drda.NetworkServerControl;
 import org.apache.roller.util.SQLScriptRunner;
 import org.apache.tools.ant.BuildException;
