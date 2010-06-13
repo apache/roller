@@ -77,7 +77,7 @@
 
             </plugins>
 
-        </pluginManagement>
+        </pluginManagement> 
     </build>
 
     <repositories>
@@ -103,7 +103,7 @@
         </repository>
 
         <repository>
-            <id>java.net</id>
+            <id>oss.sonatype.org</id>
             <url>http://oss.sonatype.org/content/groups/public</url>
         </repository>
 
