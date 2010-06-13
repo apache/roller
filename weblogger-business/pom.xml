@@ -17,7 +17,7 @@
     </description>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-business</artifactId>
-    <version>${roller.version}</version>
+    <version>5.0.0-RC1</version>
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
@@ -28,18 +28,18 @@
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
     </properties>
 
-    <dependencies>
+    <dependencies> 
 
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-core</artifactId>
-            <version>${roller.version}</version>
+            <version>5.0.0-RC1</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-planet-business</artifactId>
-            <version>${roller.version}</version>
+            <version>5.0.0-RC1</version>
         </dependency>
 
         <dependency>
