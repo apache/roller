@@ -28,12 +28,11 @@ import org.apache.roller.weblogger.util.Utilities;
  * Transforms the given String into a subset of HTML.
  */
 public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
-    
-    private static final Log log = LogFactory.getLog(AutoformatPlugin.class);
+    private static final Log log = LogFactory.getLog(HTMLSubsetPlugin.class);
     
     
     public HTMLSubsetPlugin() {
-        // no-op
+        log.debug("Instantiating HTMLSubsetPlugin");
     }
     
     

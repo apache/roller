@@ -21,6 +21,8 @@ package org.apache.roller.weblogger.business.plugins.comment;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -32,10 +34,14 @@ import org.apache.roller.weblogger.util.Utilities;
  * Contributed by Matthew Montgomery.
  */
 public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
+    private static final Log log = LogFactory.getLog(LinkMarkupPlugin.class);
 
     private static final Pattern pattern = Pattern.compile(
-            "http[s]?://[^/][\\S]+", Pattern.CASE_INSENSITIVE);
+            "http[s]?://[^/][\\S]+", Pattern.CASE_INSENSITIVE);  
     
+    public LinkMarkupPlugin() {
+        log.debug("Instantiating LinkMarkupPlugin");
+    }
     
     /**
      * Unique identifier.  This should never change. 
