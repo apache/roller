@@ -297,6 +297,7 @@ Show comments form for weblog entry.
 
     <script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
     <script type="text/javascript">
+    /* <![CDATA[ */
     clientSideInclude('commentAuthenticator', '$url.commentAuthenticator');
 
     var author = getCookie("commentAuthor");
@@ -340,6 +341,7 @@ Show comments form for weblog entry.
             return false;
         }
     }
+    /* ]]> */
     </script>
 
 #else
@@ -746,7 +748,7 @@ Show search again form for a weblog.
         <form method="get" action="$url.search" style="margin: 5px">
             <input type="text" id="q" name="q" class="text medium"
                 maxlength="255" value="$model.term"
-                style="padding-left: 1px" />
+                style="padding-left: 1px" /><br />
 
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
             <select name="cat" class="select">
