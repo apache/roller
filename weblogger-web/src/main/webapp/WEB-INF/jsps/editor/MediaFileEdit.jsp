@@ -18,6 +18,42 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.4.2.min.js" />'></script>
 
+<script type="text/javascript" src='<s:url value="/custom-ui/ZeroClipboard.js" />'></script>
+
+<%-- 
+<!-- Can't distribute ZeroClipboard with Roller, LGPL violates ASF policy -->
+<!-- (1/2) For ZeroClipboard you would add this: -->
+<style type="text/css">
+#d_clip_button {
+    text-align:center;
+    border:1px solid black;
+    background-color:#ccc;
+    margin:5px; padding:5px;
+}
+#d_clip_button.hover { background-color:#eee; }
+#d_clip_button.active { background-color:#aaa; }
+</style>
+
+<script type="text/javascript">
+$("#d_clip_button").ready(function() {
+    // assuming ZeroClipboard is at context/custom-ui path
+    ZeroClipboard.setMoviePath( '<s:url value="/custom-ui/ZeroClipboard.swf" />' );
+    var clip = new ZeroClipboard.Client();
+    clip.setText(''); // will be set later on mouseDownv
+    clip.setHandCursor( true );
+    clip.setCSSEffects( true );
+    clip.addEventListener( 'mouseDown', function(client) {
+        // set text to copy here
+        clip.setText( document.getElementById('clip_text').value );
+        } );
+    clip.addEventListener( 'complete', function(client, text) {
+        alert("Copied link to the Clipboard.");
+    } );
+    clip.glue( 'd_clip_button' );
+});
+</script>
+--%>
+
 <s:if test="bean.isImage">
     <div class="mediaFileThumbnail">
         <a href='<s:property value="bean.permalink" />' target="_blank">
@@ -53,7 +89,7 @@
                 <label for="status"><s:text name="mediaFileEdit.name" /></label>
             </td>
             <td>
-                <s:textfield name="bean.name" size="30" maxlength="100" tabindex="1" />
+                <s:textfield name="bean.name" size="40" maxlength="100" tabindex="1" />
             </td>
        </tr>
 
@@ -72,6 +108,26 @@
                         <s:param value="bean.height" />
                     </s:text>
                 </s:if>
+            </td>
+       </tr>
+
+       <tr>
+            <td class="entryEditFormLabel">
+                <label for="status"><s:text name="mediaFileEdit.permalink" /></label>
+            </td>
+            <td>
+                <a href='<s:text name="bean.permalink" />' target="_blank"
+                   title='<s:text name="mediaFileEdit.linkTitle" />'>
+                   <s:url id="linkIconURL" value="/images/link.png"></s:url>
+                   <img border="0" src='<s:property value="%{linkIconURL}" />'
+                       style="padding:2px 2px;" alt="link" />
+                </a>
+                <input type="text" id="clip_text" size="50" value='<s:text name="bean.permalink" />' readonly />
+
+                <%-- 
+                <!-- (2/2) For ZeroClipboard you would add this: -->
+                <div id="d_clip_button"><s:text name="mediaFileEdit.copyToClipboard" /></div>
+                --%>
             </td>
        </tr>
 

@@ -145,7 +145,7 @@
             "mediafile_edit_lightbox", {
                 modal:    true,
                 width:   "600px",
-                height:  "600px",
+                height:  "700px",
                 visible: false,
                 fixedcenter: true,
                 constraintoviewport: true
