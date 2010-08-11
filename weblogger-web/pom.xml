@@ -1,8 +1,9 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion> 
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.roller</groupId>
@@ -335,6 +336,14 @@
         <plugins>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <archiveClasses>true</archiveClasses>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
                 <configuration>
@@ -406,7 +415,9 @@
                     <execution>
                         <id>copy-test-properties</id>
                         <phase>validate</phase>
-                        <goals><goal>copy-resources</goal></goals>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
                         <configuration>
                             <outputDirectory>${basedir}/target/testsetup</outputDirectory>
                             <resources>
@@ -421,7 +432,9 @@
                     <execution>
                         <id>copy-test-config</id>
                         <phase>validate</phase>
-                        <goals><goal>copy-resources</goal></goals>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
                         <configuration>
                             <outputDirectory>${basedir}/target/</outputDirectory>
                             <resources>
@@ -505,7 +518,8 @@
                                 <startdb databaseDir="${project.build.directory}/derby-system"
                                          port="3223"
                                          databaseScriptsDir="${project.build.directory}/roller/WEB-INF/classes/dbscripts"
-                                         skip="${maven.test.skip}" ></startdb>
+                                         skip="${maven.test.skip}" >
+                                </startdb>
                             </tasks>
                         </configuration>
                     </execution>
@@ -524,7 +538,8 @@
                                 <stopdb databaseDir="${project.build.directory}/derby-system"
                                         port="3223"
                                         databaseScriptsDir="${project.build.directory}/roller/WEB-INF/classes/dbscripts"
-                                        skip="${maven.test.skip}" ></stopdb>
+                                        skip="${maven.test.skip}" >
+                                </stopdb>
                                 <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
                             </tasks>
                         </configuration>
