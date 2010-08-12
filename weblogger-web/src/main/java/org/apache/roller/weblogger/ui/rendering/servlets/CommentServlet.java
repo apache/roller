@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -79,6 +78,7 @@ public class CommentServlet extends HttpServlet {
     /**
      * Initialization.
      */
+    @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         
         super.init(servletConfig);
@@ -142,6 +142,7 @@ public class CommentServlet extends HttpServlet {
      *
      * The CommentServlet does not support GET requests, it's a 404.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -153,6 +154,7 @@ public class CommentServlet extends HttpServlet {
      *
      * Here we handle incoming comment postings.
      */
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         
@@ -232,7 +234,7 @@ public class CommentServlet extends HttpServlet {
         comment.setEmail(commentRequest.getEmail());
         comment.setUrl(commentRequest.getUrl());
         comment.setContent(commentRequest.getContent());
-        comment.setNotify(new Boolean(commentRequest.isNotify()));
+        comment.setNotify(Boolean.valueOf(commentRequest.isNotify()));
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(new Timestamp(System.currentTimeMillis()));
@@ -299,7 +301,7 @@ public class CommentServlet extends HttpServlet {
                     Iterator errors = messages.getErrors();
                     RollerMessage errorKey = null;
                     
-                    StringBuffer buf = new StringBuffer();
+                    StringBuilder buf = new StringBuilder();
                     buf.append("<ul>");
                     while(errors.hasNext()) {
                         errorKey = (RollerMessage)errors.next();
