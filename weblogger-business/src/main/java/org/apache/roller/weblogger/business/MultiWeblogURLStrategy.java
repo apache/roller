@@ -51,7 +51,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                             String locale,
                                             boolean absolute) {
 
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         if (absolute) {
             String weblogAbsoluteURL =
                 WebloggerConfig.getProperty("weblog.absoluteurl." + weblog.getHandle());
@@ -66,7 +66,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
 
         url.append("/").append(weblog.getHandle()).append("/");
 
-        if(locale != null) {
+        if (locale != null) {
             url.append(locale).append("/");
         }
 
@@ -86,7 +86,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         url.append(getWeblogURL(weblog, locale, absolute));
         url.append("entry/").append(URLUtilities.encode(entryAnchor));
@@ -107,7 +107,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         url.append(getWeblogURL(weblog, null, absolute));
         url.append("mediaresource");
         url.append("/");
@@ -168,7 +168,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuffer pathinfo = new StringBuffer();
+        StringBuilder pathinfo = new StringBuilder();
         Map params = new HashMap();
         
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
@@ -218,7 +218,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuffer pathinfo = new StringBuffer();
+        StringBuilder pathinfo = new StringBuilder();
         Map params = new HashMap();
         
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
@@ -265,7 +265,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         url.append(getWeblogURL(weblog, locale, absolute));
         url.append("feed/").append(type).append("/").append(format);
@@ -302,7 +302,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         url.append(getWeblogURL(weblog, locale, absolute));
         url.append("search");
@@ -335,7 +335,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         url.append(getWeblogURL(weblog, null, absolute));
         url.append("resource/");
@@ -371,7 +371,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                     boolean absolute,
                                                     int pageNum) {
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         if (absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -390,7 +390,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         }
         
         if (pageNum > 0) {
-            url.append("?page=" + pageNum);
+            url.append("?page=").append(pageNum);
         }
         
         return url.toString();
@@ -402,7 +402,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         url.append(getWeblogURL(weblog, null, true));
         url.append("feed/entries/atom");
@@ -420,7 +420,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         url.append(getWeblogURL(weblog, null, true));
         url.append("search");
