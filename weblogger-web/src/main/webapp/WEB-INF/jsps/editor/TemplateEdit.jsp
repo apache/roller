@@ -73,7 +73,7 @@
             if (originalLink != document.getElementById('template_bean_link').value) {
                 window.alert("Link changed, not launching page");
             } else {
-                window.open(weblogURL + '/page/' + originalLink, '_blank');
+                window.open(weblogURL + 'page/' + originalLink, '_blank');
             }
         }
         -->
@@ -85,7 +85,7 @@
                 <td class="field">
                     <s:textfield name="bean.link" size="50" onkeyup="updatePageURLDisplay()" />
                     <br />
-                    <s:property value="actionWeblog.absoluteURL" />/page/<span id="linkPreview" style="color:red"><s:property value="bean.link" /></span>
+                    <s:property value="actionWeblog.absoluteURL" />page/<span id="linkPreview" style="color:red"><s:property value="bean.link" /></span>
                     <s:if test="template.link != null">[<a id="launchLink" onClick="launchPage()"><s:text name="pageForm.launch" /></a>]</s:if>
                 </td>
                 <td class="description"></td>
