@@ -565,7 +565,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             whereClause.append(" ?" + size);
         }
 
-        if (filter.getTags() != null) {
+        if (filter.getTags() != null && filter.getTags().size() > 1) {
             whereClause.append(" AND EXISTS (SELECT t FROM MediaFileTag t WHERE t.mediaFile = m and t.name IN (");
             for (String tag : filter.getTags()) {
                 params.add(size++, tag);
@@ -573,6 +573,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             }
             whereClause.deleteCharAt(whereClause.lastIndexOf(","));
             whereClause.append("))");
+        } else if (filter.getTags() != null && filter.getTags().size() == 1) {
+            params.add(size++, filter.getTags().get(0));
+            whereClause.append(" AND EXISTS (SELECT t FROM MediaFileTag t WHERE t.mediaFile = m and t.name = ?").append(size).append(")");
         }
 
         if (filter.getType() != null) {
@@ -613,7 +616,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             query.setFirstResult(filter.getStartIndex());
             query.setMaxResults(filter.getLength());
         }
-
         return query.getResultList();
     }
 
