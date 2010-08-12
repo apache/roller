@@ -73,8 +73,9 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 
                     if (mediaFile.isImageFile()) {
                         link = "<p>" + mediaFile.getName() + "</p>";
-                        link += "<a href='<url>'><img src='<url>' alt='<name>' width='<width>' height='<height>'></img></a>";
-                        link = link.replace("<url>", mediaFile.getThumbnailURL())
+                        link += "<a href='<url>'><img src='<urlt>' alt='<name>' width='<width>' height='<height>'></img></a>";
+                        link = link.replace("<url>", mediaFile.getPermalink())
+                                   .replace("<urlt>", mediaFile.getThumbnailURL())
                                    .replace("<name>", mediaFile.getName())
                                    .replace("<width>", ""+mediaFile.getThumbnailWidth())
                                    .replace("<height>", ""+mediaFile.getThumbnailHeight());

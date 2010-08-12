@@ -71,6 +71,7 @@
 <s:form id="entry" action="entryAddWithMediaFile">
     <s:hidden name="weblog" />
     <s:hidden name="enclosureUrl" id="enclosureUrl" />
+    <input type="hidden" name="type" value="weblog" />
 
 
     <s:if test="newImages.size() > 0">
