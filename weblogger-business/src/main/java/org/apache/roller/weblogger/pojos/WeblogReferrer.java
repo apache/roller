@@ -60,6 +60,7 @@ public class WeblogReferrer implements Serializable {
             String excerpt, Boolean visible,
             Boolean duplicate, Integer dayHits,
             Integer totalHits) {
+        
         //this.id = id;
         this.website = website;
         this.weblogEntry = weblogEntry;
@@ -73,6 +74,10 @@ public class WeblogReferrer implements Serializable {
         this.duplicate = duplicate;
         this.dayHits = dayHits;
         this.totalHits = totalHits;
+
+        if (this.refererUrl != null && this.refererUrl.length() > 255) {
+            this.refererUrl = this.refererUrl.substring(0, 254);
+        }
     }
     
     //------------------------------------------------------- Simple properties
@@ -144,6 +149,9 @@ public class WeblogReferrer implements Serializable {
     
     public void setRefererUrl(String refererUrl) {
         this.refererUrl = refererUrl;
+        if (this.refererUrl != null && this.refererUrl.length() > 255) {
+            this.refererUrl = this.refererUrl.substring(0, 255);
+        }
     }
     
     /**
