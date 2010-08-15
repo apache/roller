@@ -382,6 +382,8 @@ public class JPARefererManagerImpl implements RefererManager {
 
             // now lookup weblog entry if possible
             if (entryAnchor != null) {
+                // sanitize the anchor to avoid "Illegal mix of collations"
+                entryAnchor = Utilities.replaceNonAlphanumeric(entryAnchor, ' ').trim();
                 entry = roller.getWeblogEntryManager().getWeblogEntryByAnchor(weblog, entryAnchor);
             }
         } catch (WebloggerException re) {
