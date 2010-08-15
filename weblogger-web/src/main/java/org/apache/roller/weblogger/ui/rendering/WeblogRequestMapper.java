@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.RequestDispatcher;
@@ -26,12 +27,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 
@@ -72,9 +71,7 @@ public class WeblogRequestMapper implements RequestMapper {
                 WebloggerConfig.getProperty("rendering.weblogMapper.rollerProtectedUrls");
         if(restrictList != null && restrictList.trim().length() > 0) {
             String[] restrict = restrictList.split(",");
-            for(int i=0; i < restrict.length; i++) {
-                this.restricted.add(restrict[i]);
-            }
+            this.restricted.addAll(Arrays.asList(restrict));
         }
         
         // add user restricted list
@@ -82,9 +79,7 @@ public class WeblogRequestMapper implements RequestMapper {
                 WebloggerConfig.getProperty("rendering.weblogMapper.userProtectedUrls");
         if(restrictList != null && restrictList.trim().length() > 0) {
             String[] restrict = restrictList.split(",");
-            for(int i=0; i < restrict.length; i++) {
-                this.restricted.add(restrict[i]);
-            }
+            this.restricted.addAll(Arrays.asList(restrict));
         }
     }
     
@@ -252,7 +247,7 @@ public class WeblogRequestMapper implements RequestMapper {
         
         log.debug(handle+","+locale+","+context+","+data);
         
-        StringBuffer forwardUrl = new StringBuffer();
+        StringBuilder forwardUrl = new StringBuilder();
         
         // POST urls, like comment and trackback servlets
         if("POST".equals(request.getMethod())) {
