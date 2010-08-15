@@ -202,10 +202,20 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
                     cause = cause.getCause();
                 }
                 
-                log.warn("Error updating subscription - "+sub.getFeedURL(), cause);
+                if (log.isDebugEnabled()) {
+                    log.debug("Error updating subscription - "+sub.getFeedURL(), cause);
+                } else {
+                    log.warn("Error updating subscription - "+sub.getFeedURL()
+                        + " turn on debug logging for more info");
+                }
                 
             } catch(Exception ex) {
-                log.warn("Error updating subscription - "+sub.getFeedURL(), ex);
+                if (log.isDebugEnabled()) {
+                    log.warn("Error updating subscription - "+sub.getFeedURL(), ex);
+                } else {
+                    log.warn("Error updating subscription - "+sub.getFeedURL()
+                        + " turn on debug logging for more info");
+                }
             }
         }
     }
