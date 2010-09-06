@@ -131,12 +131,14 @@ public class IndexManagerImpl implements IndexManager {
             if (indexConsistencyMarker.exists()) {
                 getFSDirectory(true);
                 inconsistentAtStartup = true;
+                mLogger.debug("Index inconsistent: marker exists");
             } else {
                 try {
                     File makeIndexDir = new File(indexDir);
                     if (!makeIndexDir.exists()) {
                         makeIndexDir.mkdirs();
                         inconsistentAtStartup = true;
+                        mLogger.debug("Index inconsistent: new");
                     }
                     indexConsistencyMarker.createNewFile();
                 } catch (IOException e) {
@@ -146,8 +148,7 @@ public class IndexManagerImpl implements IndexManager {
             
             if (indexExists()) {
                 if (useRAMIndex) {
-                    Directory filesystem = getFSDirectory(false);
-                    
+                    Directory filesystem = getFSDirectory(false);                    
                     try {
                         fRAMindex = new RAMDirectory(filesystem);
                     } catch (IOException e) {
@@ -155,6 +156,8 @@ public class IndexManagerImpl implements IndexManager {
                     }
                 }
             } else {
+                mLogger.debug("Creating index");
+                inconsistentAtStartup = true;
                 if (useRAMIndex) {
                     fRAMindex = new RAMDirectory();
                     createIndex(fRAMindex);
@@ -165,12 +168,14 @@ public class IndexManagerImpl implements IndexManager {
             
             if (isInconsistentAtStartup()) {
                 mLogger.info(
-                        "Index was inconsistent. Rebuilding index in the background...");
+                    "Index was inconsistent. Rebuilding index in the background...");
                 try {
                     rebuildWebsiteIndex();
                 } catch (WebloggerException e) {
                     mLogger.error("ERROR: scheduling re-index operation");
                 }
+            } else {
+                mLogger.info("Index initialized and ready for use.");
             }
         }
         

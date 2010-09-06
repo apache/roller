@@ -34,9 +34,7 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexUtil;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -72,20 +70,24 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
     //~ Methods ================================================================
     
     public void doRun() {
+
         Date start = new Date();
         
         // since this operation can be run on a separate thread we must treat
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
-        if(this.website != null) {
+        if ( this.website != null) {
+            mLogger.debug("Reindexining weblog " + website.getHandle());
             try {
                 this.website = roller.getWeblogManager().getWeblog(this.website.getId());
             } catch (WebloggerException ex) {
                 mLogger.error("Error getting website object", ex);
                 return;
             }
+        } else {
+            mLogger.debug("Reindexining entire site");
         }
-        
+
         IndexReader reader = beginDeleting();
         
         try {
@@ -115,10 +117,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         try {
             if (writer != null) {
                 WeblogEntryManager weblogManager = roller.getWeblogEntryManager();
-                
-                
-                List entries = weblogManager .getWeblogEntries(
-                        
+                List entries = weblogManager .getWeblogEntries(                        
                         website,                   // website            
                         null,
                         null,                      // startDate
@@ -130,6 +129,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                         null, 
                         null,
                         0, -1);     // offset, length, locale
+                mLogger.debug("Entries to index: " + entries.size());
                 for (Iterator wbItr = entries.iterator(); wbItr.hasNext();) {
                     WeblogEntry entry = (WeblogEntry) wbItr.next();
                     writer.addDocument(getDocument(entry));
