@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
+import java.util.Locale;
 import java.util.Map;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
@@ -102,7 +103,7 @@ public class CalendarModel implements Model {
             calTag.setPageContext(pageContext);
             calTag.setName("calendar");
             calTag.setModel("calendarModel");
-            calTag.setLocale(pageRequest.getLocaleInstance());
+            calTag.setLocale(websiteWrapper.getLocaleInstance());
             if (big) {
                 calTag.setClassSuffix("Big");
             }
