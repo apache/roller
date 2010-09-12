@@ -179,7 +179,7 @@
       </property-def>
       <property-def  name="users.comments.plugins"  key="configForm.commentPlugins">
          <type>string</type>
-         <default-value></default-value>
+         <default-value>HTMLSubset</default-value>
       </property-def>
       <property-def  name="users.comments.emailnotify"  key="configForm.emailComments">
          <type>boolean</type>
