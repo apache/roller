@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.0.0-RC1</version>
+        <version>5.0.0-RC2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -17,7 +17,7 @@
     </description>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-business</artifactId>
-    <version>5.0.0-RC1</version>
+    <version>5.0.0-RC2</version>
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
@@ -33,13 +33,13 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-core</artifactId>
-            <version>5.0.0-RC1</version>
+            <version>5.0.0-RC2</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-planet-business</artifactId>
-            <version>5.0.0-RC1</version>
+            <version>5.0.0-RC2</version>
         </dependency>
 
         <dependency>
