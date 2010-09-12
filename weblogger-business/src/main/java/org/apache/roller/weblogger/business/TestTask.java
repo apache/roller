@@ -1,16 +1,16 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.Date;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 
 public class TestTask extends RollerTaskWithLeasing {
-    
-    public TestTask() {
-        
-    }
+    public static String NAME = "TestTask";
 
-    public String getName() {
-        return "TestTask";
+    public TestTask() {}
+
+    public void init() throws WebloggerException {
+        this.init(TestTask.NAME);
     }
 
     public String getClientId() {
@@ -35,4 +35,5 @@ public class TestTask extends RollerTaskWithLeasing {
 
     public void runTask() {
     }
+
 }

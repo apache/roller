@@ -21,8 +21,6 @@ package org.apache.roller.weblogger.business.runnable;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.util.DateUtil;
@@ -35,24 +33,25 @@ import org.apache.roller.util.DateUtil;
  * specifics.
  */
 public abstract class RollerTask implements Runnable {
-    
-    private static Log log = LogFactory.getLog(RollerTask.class);
-    
+    private String taskName = null;
+
     
     /**
-     * Initialization.  Run once before the task is started.
+     * Initialization. Run once before the task is started.
      */
-    public void init() throws WebloggerException {
-        // no-op by default
+    public void init(String name) throws WebloggerException {
+        this.taskName = name;
     }
-    
-    
+
+
     /**
      * Get the unique name for this task.
      *
      * @return The unique name for this task.
      */
-    public abstract String getName();
+    public final String getName() {
+        return taskName;
+    }
     
     
     /**
@@ -91,9 +90,9 @@ public abstract class RollerTask implements Runnable {
     
     
     /**
-     * How often should the task run, in seconds.
+     * How often should the task run, in minutes.
      *
-     * example: 3600 means this task runs once every hour.
+     * example: 60 means this task runs once every hour.
      *
      * @return The interval the task should be run at, in minutes.
      */
@@ -101,9 +100,9 @@ public abstract class RollerTask implements Runnable {
     
     
     /**
-     * Get the time, in seconds, this task wants to be leased for.
+     * Get the time, in minutes, this task wants to be leased for.
      *
-     * example: 300 means the task is allowed 5 minutes to run.
+     * example: 5 means the task is allowed 5 minutes to run.
      *
      * @return The time this task should lease its lock for, in minutes.
      */

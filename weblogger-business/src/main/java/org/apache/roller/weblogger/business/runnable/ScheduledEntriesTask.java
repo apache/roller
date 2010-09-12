@@ -37,8 +37,10 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * status when their publication time has been reached.
  */
 public class ScheduledEntriesTask extends RollerTaskWithLeasing {
-    
     private static Log log = LogFactory.getLog(ScheduledEntriesTask.class);
+    
+    public static String NAME = "ScheduledEntriesTask";
+
     
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
@@ -53,11 +55,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
     // lease time given to task lock, default is 30 minutes
     private int leaseTime = 30;
     
-    
-    public String getName() {
-        return "ScheduledEntriesTask";
-    }
-    
+
     public String getClientId() {
         return clientId;
     }
@@ -80,7 +78,13 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
     
     
     public void init() throws WebloggerException {
-        
+        this.init(ScheduledEntriesTask.NAME);
+    }
+
+    @Override
+    public void init(String name) throws WebloggerException {
+        super.init(name);
+
         // get relevant props
         Properties props = this.getTaskProperties();
         

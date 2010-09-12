@@ -71,7 +71,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
                 try {
                     Class taskClass = Class.forName(taskClassName);
                     RollerTask task = (RollerTask) taskClass.newInstance();
-                    task.init();
+                    task.init(taskName);
                     
                     // make sure there is a tasklock record in the db
                     TaskLock taskLock = getTaskLockByName(task.getName());

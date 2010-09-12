@@ -31,9 +31,10 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * Reset referer counts.
  */
 public class TurnoverReferersTask extends RollerTaskWithLeasing {
-    
     private static Log log = LogFactory.getLog(TurnoverReferersTask.class);
-    
+
+    public static String NAME = "TurnoverReferersTask";
+
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
     private String clientId = null;
@@ -46,11 +47,7 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
     
     // lease time given to task lock, default is 30 minutes
     private int leaseTime = 30;
-    
-    
-    public String getName() {
-        return "TurnoverReferersTask";
-    }
+
     
     public String getClientId() {
         return clientId;
@@ -72,8 +69,12 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
         return this.leaseTime;
     }
     
-    
     public void init() throws WebloggerException {
+        this.init(TurnoverReferersTask.NAME);
+    }
+
+    public void init(String name) throws WebloggerException {
+        super.init(name);
         
         // get relevant props
         Properties props = this.getTaskProperties();

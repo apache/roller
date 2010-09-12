@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * attempt to acquire a lease before doing its work.
  */
 public abstract class RollerTaskWithLeasing extends RollerTask {
-    
     private static Log log = LogFactory.getLog(RollerTaskWithLeasing.class);
     
     

@@ -64,7 +64,8 @@ public class TaskLockTest extends TestCase {
         ThreadManager mgr = WebloggerFactory.getWeblogger().getThreadManager();
         
         // need a test task to play with
-        RollerTask task = new TestTask();
+        TestTask task = new TestTask();
+        task.init();
         
         // try to acquire a lock
         assertTrue("Failed to acquire lease.",mgr.registerLease(task));

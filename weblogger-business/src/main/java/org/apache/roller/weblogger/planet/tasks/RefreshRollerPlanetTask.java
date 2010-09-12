@@ -41,9 +41,10 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * - Calls Planet business layer to refresh entries
  * </pre>
  */
-public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
-    
+public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {    
     private static Log log = LogFactory.getLog(RefreshRollerPlanetTask.class);
+    
+    public static String NAME = "RefreshRollerPlanetTask";
     
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
@@ -57,11 +58,7 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
     
     // lease time given to task, default is 10 minutes
     private int leaseTime = 10;
-    
-    
-    public String getName() {
-        return "RefreshRollerPlanetTask";
-    }
+
     
     public String getClientId() {
         return clientId;
@@ -83,10 +80,14 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
         return this.leaseTime;
     }
     
-    
-    @Override
     public void init() throws WebloggerException {
-        
+        this.init(RefreshRollerPlanetTask.NAME);
+    }
+
+    @Override
+    public void init(String name) throws WebloggerException {
+        super.init(name);
+
         // get relevant props
         Properties props = this.getTaskProperties();
         

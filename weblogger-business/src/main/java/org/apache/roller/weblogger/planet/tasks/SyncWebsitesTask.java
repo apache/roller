@@ -36,7 +36,6 @@ import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -49,9 +48,10 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * of deleting subsctiptions for weblogs that no longer exist.
  */
 public class SyncWebsitesTask extends RollerTaskWithLeasing {
-    
     private static Log log = LogFactory.getLog(SyncWebsitesTask.class);
-    
+
+    public static String NAME = "SyncWebsitesTask";
+
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
     private String clientId = "unspecifiedClientId";
@@ -64,11 +64,6 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     
     // lease time given to ping task lock, default is 30 minutes
     private int leaseTime = 30;
-    
-    
-    public String getName() {
-        return "SyncWebsitesTask";
-    }
     
     public String getClientId() {
         return clientId;
@@ -92,7 +87,12 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     
     
     public void init() throws WebloggerException {
-        
+        this.init(RefreshRollerPlanetTask.NAME);
+    }
+
+    public void init(String name) throws WebloggerException {
+        super.init(name);
+
         // get relevant props
         Properties props = this.getTaskProperties();
         
@@ -249,7 +249,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
         PlanetFactory.bootstrap(provider);
         
         SyncWebsitesTask task = new SyncWebsitesTask();
-        task.init();
+        task.init(); // use default name
         task.run();
     }
     

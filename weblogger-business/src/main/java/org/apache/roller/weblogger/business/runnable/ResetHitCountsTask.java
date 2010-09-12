@@ -31,9 +31,11 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
  * Reset weblog hit counts.
  */
 public class ResetHitCountsTask extends RollerTaskWithLeasing {
-    
     private static Log log = LogFactory.getLog(ResetHitCountsTask.class);
-    
+
+    public static String NAME = "ResetHitCountsTask";
+
+
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
     private String clientId = null;
@@ -47,10 +49,6 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
     // lease time given to task lock, default is 30 minutes
     private int leaseTime = 30;
     
-    
-    public String getName() {
-        return "ResetHitCountsTask";
-    }
     
     public String getClientId() {
         return clientId;
@@ -74,6 +72,11 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
     
     
     public void init() throws WebloggerException {
+        this.init(ResetHitCountsTask.NAME);
+    }
+
+    public void init(String name) throws WebloggerException {
+        super.init(name);
         
         // get relevant props
         Properties props = this.getTaskProperties();

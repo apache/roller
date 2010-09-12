@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business.pings;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
@@ -26,8 +25,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.weblogger.config.PingConfig;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.runnable.ScheduledEntriesTask;
 
 
 /**
@@ -38,9 +37,10 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class PingQueueTask extends RollerTaskWithLeasing {
-    
     private static Log log = LogFactory.getLog(PingQueueTask.class);
-    
+
+    public static String NAME = "PingQueueTask";
+
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
     private String clientId = null;
@@ -54,10 +54,6 @@ public class PingQueueTask extends RollerTaskWithLeasing {
     // lease time given to task lock, default is 30 minutes
     private int leaseTime = 30;
     
-    
-    public String getName() {
-        return "PingQueueTask";
-    }
     
     public String getClientId() {
         return clientId;
@@ -81,7 +77,12 @@ public class PingQueueTask extends RollerTaskWithLeasing {
     
     
     public void init() throws WebloggerException {
-        
+        this.init(PingQueueTask.NAME);
+    }
+
+    public void init(String name) throws WebloggerException {
+        super.init(name);
+
         // get relevant props
         Properties props = this.getTaskProperties();
         
