@@ -22,12 +22,13 @@ To pull the latest trunk sources you do this.
 Building this version of Roller requires Apache Maven 2 to build.  Version 2.0.10 or
 higher is suggested.
 
-After pulling the source tree and changing directory to its top level, as indicated above,
-the following command will build and run all unit tests:
+After pulling the source tree and changing directory to its top level, as
+indicated above, the following command will build and run all unit tests:
 
   mvn install
 
-After doing this, you should find the newly built Roller webapp in weblogger-web/target/roller.
+After doing this, you should find the newly built Roller webapp in
+weblogger-web/target/roller.
 
 To build a Roller distribution, you do this:
 
@@ -37,7 +38,8 @@ To build a Roller distribution, you do this:
 and you will find Roller distribution files in weblogger-assembly/target
 
 
-NOTE: If you wish to pull a branch other than the trunk, replace the word "trunk"
-in both lines above with the appropriate branch name.  Note that versions of Roller
-before 5.0 have an ant-based build.  In general, you should be able to follow
-instructions accompanying the sources that you pull in order to build that version.
+NOTE: If you wish to pull a branch other than the trunk, replace the word
+"trunk" in both lines above with the appropriate branch name.  Note that
+versions of Roller before 5.0 have an ant-based build.  In general, you should
+be able to follow instructions accompanying the sources that you pull in order
+to build that version.
