@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogtheme>
+    
+    <id>brushedmetal</id>
+    <name>Brushed Metal</name>
+    <author>Bryan Bell</author>
+    
+    <!-- theme preview image -->
+    <preview-image path="brushedmetal-preview.png" />
+    
+    <!-- stylesheet -->
+    <stylesheet>
+        <name>brushedmetal-custom.css</name>
+        <description>Stylesheet for Brushed Metal theme</description>
+	<link>brushedmetal-custom.css</link>
+        <templateLanguage>velocity</templateLanguage>
+        <contentsFile>brushedmetal-custom.css</contentsFile>
+    </stylesheet>
+    
+    <!-- templates -->
+    <template action="weblog">
+        <name>weblog</name>
+        <description>weblog</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>weblog.vm</contentsFile>
+    </template>
+    
+    <template action="permalink">
+        <name>permalink</name>
+        <description>permalink</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>permalink.vm</contentsFile>
+    </template>
+    
+    <template action="search">
+        <name>searchresults</name>
+        <description>searchresults</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>searchresults.vm</contentsFile>
+    </template>
+    
+    <template action="custom">
+        <name>_day</name>
+        <description>_day</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>_day.vm</contentsFile>
+    </template>
+    
+    <template action="custom">
+        <name>sidebar</name>
+        <description>sidebar</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>sidebar.vm</contentsFile>
+    </template>
+    
+    <!-- resources -->
+    <resource path="images/metalBG.jpg" />
+    <resource path="images/metalBGBG.jpg" />
+    <resource path="images/metalLine.gif" />
+    
+</weblogtheme>

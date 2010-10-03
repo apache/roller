@@ -1,0 +1,377 @@
+#**
+ * Comment page links and comment forms.
+ *#
+
+#**
+ * Display the pop-up comments link for a weblog entry.
+ * Use the URL for the href attribute for those who have disabled
+ * javascript or who desire to open the comments window in another (Mozilla) tab.
+ * @param entry WeblogEntryData object for which link is to be displayed.
+ *#
+#macro( showCommentsLink $entry )
+    #set( $commentCount = $entry.commentCount )
+    #if ($entry.commentsStillAllowed || $commentCount > 0)
+        #set( $link = "$url.comments($entry.anchor)?popup=true" )
+        <a href="$link " onclick="window.open('$link', 'comments',
+            'width=480,height=480,scrollbars=yes,status=yes,resizable'); return false;"
+            class="entrycommentslink">$text.get( "macro.weblog.comments" ) [$commentCount]</a>
+    #end
+#end
+
+#**
+ * Display the in-page comments link for a weblog entry.
+ * @param entry WeblogEntryData object for which link is to be displayed.
+ *#
+#macro( showCommentsPageLink $entry )
+    #set( $commentCount = $entry.commentCount )
+    #if ($entry.commentsStillAllowed || $commentCount > 0)
+        #set( $link = "$url.comments($entry.anchor)" )
+        <a href="$link" class="entrycommentslink">$text.get( "macro.weblog.comments" ) [$commentCount]</a>
+    #end
+#end
+
+#**
+ * Display link for comments that renders a dynamically (DHTML) generated
+ * comments form - Matt Raible's "twisty comments" style.
+ * @param entry WeblogEntryData object for which link is to be displayed.
+ *#
+#macro( showCommentsDiv $entry )
+    #set( $commentCount = $entry.commentCount )
+    #if ($entry.commentsStillAllowed || $commentCount > 0)
+        <div class="comments" id="comments">
+            <div id="commentTwisty$entry.Id" class="commentTwisty"
+                onclick="toggleComments('$entry.Id', '$url.home'); return false;">
+            <a href="$url.entry($entry.anchor)" class="plain">
+            #if($commentCount == 0)
+                $text.get( "macro.weblog.addcomment" )
+            #elseif($commentCount == 1)
+                $commentCount $text.get( "macro.weblog.comment" )
+            #else
+                $commentCount $text.get( "macro.weblog.comments" )
+            #end</a></div>
+        </div>
+    #end
+#end
+
+#**
+ * PRIVATE. Macro for displaying Comment details (not content).
+**#
+#macro( showCommentDetails $comment $showPermalink )
+    <p class="comment-details">
+    $text.get("macro.weblog.postedby")
+    #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
+        <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
+    #elseif (!$utils.isEmpty($comment.name))
+        <b>$comment.name</b>
+    #else
+        <b>$comment.remoteHost</b>
+    #end
+
+    $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
+
+    <a href="$url.comment($comment.weblogEntry.anchor, $comment.timestamp)"
+       class="entrypermalink"
+       title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
+    </p>
+#end
+
+#**
+ * Display all comments comments for an entry.
+ * @param entry WeblogEntryData object for which comments are to be displayed.
+ *#
+#macro( showComments $entry )
+    ## replaced by Roller 3.0 version
+    #showWeblogEntryComments($entry)
+#end
+
+#**
+ * Display recent comments for whole blog (not just one entry).
+ * @param numComments Maximum number of comments to be displayed
+**#
+#macro( showRecentComments $numComments )
+    #if( !$numComments ) #set( $numComments = 20 ) #end
+    #if( $numComments > 100 ) #set( $numComments = 50 ) #end
+    #set( $comments = $model.weblog.getRecentComments($numComments) )
+    <div class="comments" id="comments">
+    #foreach( $comment in $comments )
+        <div class="comment" style="border: 1px solid #dadada; padding-left: 3px; padding-right: 5px;" >
+        <p>Commenting on <a class="entrypermalink"
+            href="$url.entry($comment.weblogEntry.anchor)">${comment.weblogEntry.title}</a>:</p>
+        $comment.content
+        #showCommentDetails($comment false)
+        </div>
+    #end
+    </div>
+#end
+
+#**
+ * Display list of most recent comments for a blog.
+ * @param numComments Max number of comments to show.
+ * @param maxWidth    Limit width of comment text to this number of characters
+**#
+#macro( showRecentCommentsListWidth $numComments $maxWidth )
+    #if( !$numComments ) #set( $numComments = 20 ) #end
+    #if( $numComments > 100 ) #set( $numComments = 100 ) #end
+    #set( $minWidth = $maxWidth - 5 )
+    #set( $comments = $model.weblog.getRecentComments($numComments) )
+    <ul class="commentsList">Recent Comments
+    #foreach( $comment in $comments )
+        #set($content = $utils.encodeEmail($comment.content))
+        #set($content = $utils.addNofollow($content))
+        <li class="commentsListItem"><a
+           href="$url.comments($comment.weblogEntry.anchor)"
+           class="entrypermalink"
+           title="$text.get( "macro.weblog.commentpermalink.title" ) to
+               '$utils.removeHTML($comment.weblogEntry.title)'"
+           >$utils.truncateNicely($utils.removeHTML($content), $minWidth, $maxWidth, "...")</a>
+        </li>
+    #end
+    </ul>
+#end
+
+#**
+ * Display list of most recent comments for a blog (with maxWidth = 25)
+ * @param numComments Max number of comments to show.
+**#
+#macro( showRecentCommentsList $numComments )
+#showRecentCommentsListWidth( $numComments 25 )
+#end
+
+#**
+ * Display comment form for a weblog entry.
+ * @param entry WeblogEntry object for which form is to be shown.
+ *#
+#macro( showCommentForm $entry )
+    #set($cform = $model.getCommentForm())
+
+    <div class="comments-form">
+    <div class="comments-head">$text.get("macro.weblog.postcommentHeader")</div><br/>
+
+#if( $entry.commentsStillAllowed )
+
+    #if( $cform.error )
+        <span class="error">$cform.message</span>
+    #end
+    #if( !$cform.error && !$utils.isEmpty($cform.message) )
+        <span class="status">$cform.message</span>
+    #end
+
+    <form method="post" action="$url.entry($entry.anchor)" focus="name"
+        name="form" onsubmit="fixURL(this); return validateComments(this)">
+        
+        #if($requestParameters.popup)
+        <input type="hidden" name="popup" value="true" />
+        #end
+
+        <!-- is this a post or a preview -->
+        <input type="hidden" name="method" value="post" />
+
+        <table cellspacing="0" cellpadding="1" border="0" width="95%">
+        <tr><th>$text.get( "macro.weblog.name" )</th>
+            <td><input type="text" name="name" value="$cform.name" size="50" maxlength="255" /></td>
+        </tr>
+
+        <tr><th>$text.get( "macro.weblog.email" )</th>
+            <td><input type="text" name="email" value="$cform.email" size="50" maxlength="255" /></td>
+        </tr>
+
+        <tr><th>$text.get( "macro.weblog.url" )</th>
+            <td><input type="text" name="url" value="$cform.url" size="50" maxlength="255" /></td>
+        </tr>
+
+        #if ($config.commentEmailNotify)
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="notify" name="notify" #if($cform.notify)CHECKED #end/>
+                <label for="notify">$text.get( "macro.weblog.notifyMeOfComments" )</label>
+            </td>
+        </tr>
+        #end
+
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="rememberInfo" name="rememberInfo" />
+                <label for="rememberInfo">$text.get( "macro.weblog.rememberinfo" )</label>
+            </td>
+        </tr>
+        </table>
+        <br/>
+
+        <table>
+        <tr><th style="text-align: left">$text.get( "macro.weblog.yourcomment" )</th></tr>
+        <tr>
+            <td>
+            <textarea name="content" cols="50" rows="10">$cform.content</textarea><br />
+            <span class="comments-syntax-indicator">
+            $text.get( "macro.weblog.htmlsyntax" )
+            #if($config.commentEscapeHtml)
+                <span class="disabled">$text.get( "macro.weblog.htmldisabled" )</span>
+            #else
+                <span class="enabled">$text.get( "macro.weblog.htmlenabled" )</span>
+            #end
+            </span>
+            </td>
+        </tr>
+        </table>
+        
+        <script type="text/javascript" src="$ctxPath/theme/scripts/clientSideInclude.js"></script>
+        <div id="commentAuthenticator"></div>
+ 
+        <table cellspacing="0" cellpadding="1" border="0" width="95%">
+        <tr>
+            <td align="left" nowrap="nowrap">
+               <input type="button" name="post" value="&nbsp;$text.get( "macro.weblog.preview" )&nbsp;"
+                  onClick="this.form.method.value='preview';this.form.submit()" />
+               <input type="submit" name="post" value="&nbsp;$text.get( "macro.weblog.post" )&nbsp;" />
+            </td>
+            <td align="right">
+               <!-- <input type="button" value="&nbsp;$text.get( "macro.weblog.clear" )&nbsp;" /> -->
+            </td>
+        </tr>
+        </table>
+
+    </form>
+
+    <script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
+    <script type="text/javascript">
+    clientSideInclude('commentAuthenticator', '$url.commentAuthenticator');
+
+    var author = getCookie("commentAuthor");
+    var email = getCookie("commentEmail");
+    var url = getCookie("commentUrl");
+    // check each field - IE will render "null"
+    if (author) {
+        document.form.name.value = author;
+    }
+    if (email) {
+        document.form.email.value = email;
+    }
+    if (url) {
+        document.form.url.value = url;
+    }
+
+    if (author || email || url) {
+        document.form.rememberInfo.checked = true;
+    }
+
+    function fixURL(theForm) {
+        if (theForm.url.value != "" &&
+            theForm.url.value.indexOf("http://") == -1) { //prepend http://
+            theForm.url.value = "http://"+theForm.url.value;
+        }
+        saveUserInformation(theForm);
+    }
+
+    function saveUserInformation(theForm) {
+        if (theForm.rememberInfo.checked) {
+            rememberUser(theForm);
+        } else {
+            forgetUser(theForm);
+        }
+    }
+
+    function validateComments(theForm) {
+        if (theForm.content.value == "") {
+            alert("$text.get( "macro.weblog.commentwarning" )");
+            theForm.content.focus();
+            return false;
+        }
+    }
+    </script>
+
+#else
+    <span class="status">$text.get( "comments.disabled" )</span>
+#end
+
+    </div>
+#end
+
+
+#**
+ * Display hidden comment form for a weblog entry.
+ *
+ * NOTE: this was EOLed a while ago and is totally broken.  
+ *
+ * @param entry WeblogEntry object for which form is to be shown,
+ *#
+#macro( showHiddenCommentForm )
+  <div style="display: none" class="comments">
+    <div id="commentBoxTemplate" class="commentBox">
+    <form class="commentFormBox" id="commentForm"
+        method="post" action="$ctxPath/comment"
+        onsubmit="onSubmitComments(this.entryid.value);fixURL(this);return validateComments(this)">
+
+        <table>
+            <tr class="commentFormRow">
+                <td>$text.get( "macro.weblog.name" )</td>
+                <td>
+                    <input name="name" type="text" class="commentFormInput" size="50"/>
+                    <input type="hidden" name="method" value="updateFromPage" />
+                    <input type="hidden" name="entryid" value="" id="entryid" />
+                </td>
+            </tr>
+            <tr class="commentFormRow">
+                <td>$text.get( "macro.weblog.email" )</td>
+                <td><input name="email" type="text" class="commentFormInput" size="50"/></td>
+           </tr>
+           <tr class="commentFormRow">
+                <td>$text.get( "macro.weblog.url" )</td>
+                <td><input name="url" type="text" class="commentFormInput" size="50"/></td>
+           </tr>
+           #if ($pageModel.emailComments)
+           <tr>
+              <td></td>
+              <td>
+                 <input type="checkbox" id="notify" name="notify" />
+                <label for="notify">$text.get( "macro.weblog.notifyMeOfComments" )</label>
+             </td>
+          </tr>
+          #end
+          <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="rememberInfo" name="rememberInfo" />
+                    <label for="rememberInfo">$text.get( "macro.weblog.rememberinfo" )</label>
+                </td>
+           </tr>
+        </table>
+        <div class="commentFormRow">
+            <textarea name="content" class="commentFormTextarea" rows="4" cols="60"></textarea>
+            <div class="htmlSyntax">
+            $text.get( "macro.weblog.htmlsyntax" )
+            #if( $escapeHtml )
+                <span class="disabled">$text.get( "macro.weblog.htmldisabled" )</span>
+            #else
+                <span class="enabled">$text.get( "macro.weblog.htmlenabled" )</span>
+            #end
+            </div>
+        </div>
+        
+        $pageHelper.commentAuthenticatorHtml
+
+        <div class="commentFormRow">
+           <input type="submit" name="post" value="&nbsp;$text.get( "macro.weblog.postcomment" )&nbsp;" />
+        </div>
+      </form>
+    </div>
+    <script type="text/javascript">
+        // add a target to the iframe on the commentForm
+        var commentForm = document.getElementById("commentForm");
+        commentForm.target = "commentFrame";
+    </script>
+
+    <div id="commentTemplate" class="comment">
+      <div class="commentBody" id="commentBody"></div>
+      <div class="commentByline">
+        <a class="commentAuthor" id="commentAuthorLink"></a>
+        <span>&nbsp;on&nbsp;</span><span id="commentTimestamp"></span>
+      </div>
+    </div>
+
+    <iframe name="commentFrame" src="about:blank"></iframe>
+
+    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js"></script>
+  </div>
+#end

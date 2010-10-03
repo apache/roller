@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /images
+Disallow: /roller-
+Disallow: /theme
+Disallow: /language
+Disallow: /resources
+Disallow: /trackback
+Disallow: /comment
+Disallow: /main.do

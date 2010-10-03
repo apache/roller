@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>$model.weblog.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
+</head>
+
+<body>
+
+<div id="mainContainer">
+
+    ## show header
+    #includeTemplate($model.weblog "header")
+
+    <div id="midColumn">
+        <div class="standardSpacer">&nbsp;</div>
+
+        ## show next/previous paging controls
+        #set($pager = $model.getWeblogEntriesPager()) 
+        <div class="next-previous">
+            #if ($model.results)
+                #showWeblogSearchAgainForm($model.weblog)
+                #showNextPrevSearchControl($pager)
+            #else
+                #showNextPrevEntriesControl($pager)
+            #end
+        </div>
+
+        ## show entries
+        #showWeblogEntriesPager($pager)
+
+        #if ($model.permalink)
+            #showWeblogEntryComments($model.weblogEntry)
+            #showWeblogEntryCommentForm($model.weblogEntry)
+        #end
+    </div>
+
+    <div id="leftColumn">
+        #includeTemplate($model.weblog "sidebar")
+    </div>
+
+    <div style="clear:both">&nbsp;</div>
+
+    <div id="pageFooterBoundingBox"></div>
+</div>
+
+<div id="copyrightBoundingBox">
+  <a class="copyright" href="mailto:$utils.encodeEmail($model.weblog.emailAddress)">&copy; $model.weblog.creator.screenName</a>
+</div>
+
+</body>
+</html>

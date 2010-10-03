@@ -338,7 +338,7 @@
 
         <testResources>
             <testResource>
-                <directory>${project.basedir}/../weblogger-web/src/main/webapp/</directory>
+                <directory>${project.basedir}/../weblogger-webapp/src/main/webapp/</directory>
                 <filtering>false</filtering>
                 <includes>
                     <include>themes/**</include>

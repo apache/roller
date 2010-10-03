@@ -1,0 +1,12 @@
+#foreach( $menu in $menuModel.getMenus() )
+    #if ($menu.isPermitted($req))
+        <ul class="rMenu">
+        #foreach( $item in $menu.getMenuItems() )
+            #if ($menu.isPermitted($req))
+                <li><a href="$item.getUrl( $ctx )">$text.getString( $menu.getName() ):$text.getString( $item.getName() )</a></li>
+            #end
+        #end
+        </ul>
+    #end
+#end
+

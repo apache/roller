@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!-- XFN friendly -->
+<head profile="http://gmpg.org/xfn/11">
+    <title>$model.weblog.name: Entries tagged $model.tags</title>
+    #includeTemplate($model.weblog "standard_head")
+</head>
+<body>
+
+<!-- use layout yui-t6: 300px sidebar on right -->
+<div id="doc2" class="yui-t6">
+
+
+<!-- *************************************************** -->
+<!-- HEADER -->
+<!-- *************************************************** -->
+<div id="hd">
+<div id="header_content">
+#includeTemplate($model.weblog "standard_header")
+</div>
+</div>
+
+
+<!-- *************************************************** -->
+<!-- BODY -->
+<!-- *************************************************** -->
+<div id="bd">
+
+
+<!-- *************************************************** -->
+<!-- BODY - MAIN -->
+<!-- *************************************************** -->
+<div id="yui-main">
+<div class="yui-b">
+
+<div id="main_content">
+
+<h2>Entries tagged $model.tags</h2>
+#set($pager = $model.getWeblogEntriesPager())
+#showWeblogEntriesPager($pager)
+#if ($model.permalink)
+    #showWeblogEntryComments($entry)
+    #showWeblogEntryCommentForm($entry)
+#end
+<div id="nextprev">
+    #showNextPrevEntriesControl($pager)
+</div>
+
+</div>
+
+</div>
+</div>
+
+<!-- *************************************************** -->
+<!-- BODY - SIDEBAR -->
+<!-- *************************************************** -->
+<div class="yui-b">
+
+<div id="sidebar_content">
+
+    <h3>Welcome</h3>
+
+    <p class="details">
+    You're viewing entries tagged <b>$model.tags</b> in the weblog <b>$model.weblog.name</b>.</p>
+
+    <p class="details">
+    From here you can
+    <a href="$url.home">visit the main page</a> of the weblog.</p>
+
+</div> <!-- close sidebar_content -->
+</div>
+</div>
+
+<!-- *************************************************** -->
+<!-- FOOTER -->
+<!-- *************************************************** -->
+<div id="ft">
+<div id="footer_content">
+#includeTemplate($model.weblog "standard_footer")
+</div>
+</div>
+
+</div>
+
+</body>
+</html>
+

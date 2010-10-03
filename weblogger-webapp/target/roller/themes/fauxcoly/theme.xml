@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogtheme>
+    
+    <!-- YUI Grid based Roller theme -->
+    
+    <id>fauxcoly</id>
+    <name>Fauxcoly</name>
+    <author>Dave Johnson</author>
+    
+    <!-- theme preview image -->
+    <preview-image path="images/fauxcoly-preview.png" />
+
+    <!-- stylesheet -->
+    <stylesheet>
+        <name>custom.css</name>
+        <description>Custom style sheet</description>
+	    <link>custom.css</link>
+        <templateLanguage>velocity</templateLanguage>
+        <contentsFile>custom_css.vm</contentsFile>
+    </stylesheet>
+
+    <!-- templates -->
+    <template action="weblog">
+        <name>Weblog</name>
+        <description>Main page of weblog</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>weblog.vm</contentsFile>
+    </template>
+
+    <template action="permalink">
+        <name>Entry</name>
+        <description>Page for one weblog entry</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>entry.vm</contentsFile>
+    </template>
+
+    <template action="tagsIndex">
+        <name>TagsIndex</name>
+        <description>Tag index page</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>tags_index.vm</contentsFile>
+    </template>
+
+    <template action="search">
+        <name>Search</name>
+        <description>Search results page</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>search.vm</contentsFile>
+    </template>
+
+    <template action="custom">
+        <name>_day</name>
+        <description>One day's worth of entries</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>day.vm</contentsFile>
+    </template>
+
+    <template action="custom">
+        <name>Archives</name>
+        <description>Calendar browser and links to latest entries</description>
+	    <link>archives</link>
+        <navbar>true</navbar>
+        <hidden>false</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>archives.vm</contentsFile>
+    </template>
+
+    <template action="custom">
+        <name>standard_head</name>
+        <description>Contents of HTML head</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>std_head.vm</contentsFile>
+    </template>
+
+    <template action="custom">
+        <name>standard_header</name>
+        <description>Displayed in header of each page</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>std_header.vm</contentsFile>
+    </template>
+
+    <template action="custom">
+        <name>standard_footer</name>
+        <description>For footer of each page</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>std_footer.vm</contentsFile>
+    </template>
+
+    <template action="custom">
+        <name>style.css</name>
+        <description>Base stylesheet for theme</description>
+	    <link>style.css</link>
+        <navbar>false</navbar>
+        <hidden>false</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>style_css.vm</contentsFile>
+    </template>
+
+    <template action="custom">
+        <name>searchhi.js</name>
+        <description>3rd party script for search term highlighting</description>
+	    <link>searchhi.js</link>
+        <navbar>false</navbar>
+        <hidden>false</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>searchhi.js</contentsFile>
+    </template>
+
+    <resource path="images/faux-columns-950.png" />
+    <resource path="images/background-950x250.png" />
+
+    <resource path="icons/asf-logo.png" />
+    <resource path="icons/comment.gif" />
+    <resource path="icons/delicious.gif" />
+    <resource path="icons/digman.gif" />
+    <resource path="icons/facebook-logo.png" />
+    <resource path="icons/feed-icon-14x14.png" />
+    <resource path="icons/feed-icon-28x28.png" />
+    <resource path="icons/flickr-icon.png" />
+    <resource path="icons/icon_clock.gif" />
+    <resource path="icons/linkedin-logo.jpg" />
+    <resource path="icons/page_white.png" />
+    <resource path="icons/page_white_acrobat.png" />
+    <resource path="icons/slashdot-13x13.png" />
+    <resource path="icons/tag_blue.png" />
+    <resource path="icons/technorati-16x15.png" />
+    <resource path="icons/twitter-icon.png" />
+
+</weblogtheme>

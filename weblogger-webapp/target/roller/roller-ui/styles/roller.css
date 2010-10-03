@@ -1,0 +1,841 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+*  contributor license agreements.  The ASF licenses this file to You
+* under the Apache License, Version 2.0 (the "License"); you may not
+* use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.  For additional information regarding
+* copyright in this work, please see the NOTICE file in the top level
+* directory of this distribution.
+*/
+
+/*
+roller.css: Base CSS styles for Roller web UI
+
+CUSTOMIZABLE color and background image setttings have been separated out
+and placed in separate colors.css files for different color schemes.
+*/
+
+body {
+    background: white;
+    margin: 0px;
+    padding: 0px;
+    text-align: left;
+}
+
+th, td {
+    border: none;
+    vertical-align: top;
+    padding: 2px;
+}
+
+a {
+    text-decoration: none;
+}
+a:link {
+    text-decoration: none;
+}
+a:visited {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+a:active {
+    text-decoration: underline;
+}
+
+p.subtitle {
+    margin: 5px 0px 15px;
+    font-size: 1em;
+    font-weight: bold;
+    font-size: 120%;
+}
+p.pagetip {
+    margin: 0px 0px 15px 0px;
+}
+img {
+    border: 0px;
+    overflow: auto;
+}
+img.w3c {
+    border: 0px;
+    height: 31px;
+    width: 88px;
+    margin-right: 5px;
+}
+label {
+   line-height: 1.5em;
+}
+
+/* ----------------------------------------------------------------------
+Page element styles: boxes and borders, etc.
+---------------------------------------------------------------------- */
+
+div.bannerStatusBox {
+    height: 2em;
+}
+
+.bannerStatusBox a, .bannerStatusBox a {
+    font-weight: bold;
+}
+.bannerLeft {
+    padding: 4px 15px 4px 10px;
+}
+.bannerRight {
+    padding: 4px 10px 4px 15px;
+    text-align: right;
+}
+.bannerBox {
+    width: 100%;
+    background: #f00;
+}
+.sidebarBodyHead h3, .searchSidebarBody h3 {
+    padding: 5px;
+}
+.sidebarInner {
+    padding: 0.5em 0.5em 0.5em 1em;
+}
+.sidebarBody ul {
+    margin: 0px;
+    padding-left: 5px;
+}
+.sidebarBody li {
+    list-style-position: inside;
+    list-style-image: url(../images/dash.gif);
+    margin-left: 0em;
+    padding-left: 0.5em;
+    padding-top: 3px;
+}
+div.entriesBoxInner {
+    padding: 5px;
+}
+div.entryTitleBox {
+    padding: 4px;
+    margin: 4px 0px 4px 0px;
+    font-size: medium;
+}
+div.entryBox, div.entryBoxPinned {
+    font-family: Arial, Helvetica, sans-serif;
+    border-bottom-width: thin;
+    border-bottom-style: solid;
+    padding: 3px 0px 3px 0px;
+}
+div.entryBoxPinned {
+}
+.entryTitle {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+}
+.entryDetails {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    text-decoration: none;
+}
+.entryDescription {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    text-decoration: none;
+}
+span.hotBlogs, a.hotBlogs, a:active.hotBlogs, a:visited.hotBlogs, ul.hotBlogs {
+    font-size: small;
+    padding-left: 0px;
+    list-style-type: none
+}
+input.searchButton {
+    cursor: pointer;
+    font-family: lucida,arial,sans-serif;
+    height: 1.4em;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 0px 0px 2px 0px;
+    margin: 5px;
+    border: 0px none #000;
+}
+
+
+/* ----------------------------------------------------------------------
+form layout styles
+---------------------------------------------------------------------- */
+
+input, select, option {
+    font: small Verdana,Arial,Sans-serif;
+    color: black;
+    font: small/1.5em Verdana, Arial, Helvetica, sans-serif;
+    font-size: 100%;
+}
+textarea {
+    margin: 3px 0px 0px 0px;
+}
+div.buttonBox {
+    width: 98%;
+    border: 1px solid black;
+    background-color: #f3f3f3;
+    padding: 3px;
+    margin-top: 5em;
+    clear: both;
+}
+.left {
+    font-size: small;
+    width: 136px;
+}
+.leftTitle {
+    font-size: small;
+    font-weight: bold;
+}
+
+.formtable, .formtableNoDesc {
+    width: 100%;
+    border-collapse: collapse;
+}
+.formtable td.label, .formtable td.field, .formtable td.description,
+.formtableNoDesc td.label, .formtableNoDesc td.field, .formtableNoDesc  {
+    vertical-align: top;
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+    border-color: #e3e3e3;
+    padding: 4px 10px 4px 10px;
+}
+.formtable td.label {
+    text-align: right;
+    width: 20%;
+}
+.formtable td.field {
+    width: 30%;
+}
+.formtable td.description {
+    width: 50%;
+    line-height: 140%;
+}
+.formtableNoDesc td.label {
+    text-align: right;
+    width: 40%;
+}
+.formtableNoDesc td.field {
+    width: 40%;
+}
+.formtableNoDesc td.description {
+    width: 0%;
+}
+
+div.row {
+    padding: 2px;
+}
+div.formrow {
+    float: left;
+    width: 80%;
+}
+label.formrow {
+    float: left;
+    text-align: right;
+    width: 20%;
+    padding-right: 1em;
+}
+div.sideformrow {
+    float: left;
+    width: 100%;
+}
+label.sideformrow {
+    float: left;
+    text-align: left;
+    width: 30%;
+    padding-right: 1em;
+    padding-top: 1em;
+    font-size: smaller;
+}
+
+div.yourWeblogBox {
+    padding: 8px 0px 10px 0px;
+}
+
+input#f_openid_identifier {
+    background: url(../../images/openid-logo-small.gif) no-repeat scroll 0 50%;
+    padding-left:18px;
+}
+
+input.f_openid_identifier {
+    background: url(../../images/openid-logo-small.gif) no-repeat scroll 0 50%;
+    padding-left:18px;
+}
+
+/* ----------------------------------------------------------------------
+Table styles
+---------------------------------------------------------------------- */
+
+div.tablenav {
+    font-size: 110%
+}
+table.rollertable {
+    border-collapse: collapse;
+    width: 100%;
+}
+table.rollertable th {
+    border: 1px solid #ccc;
+    font-size: 110%;
+    padding: 3px;
+}
+table.rollertable th {
+    color: white;
+}
+table.rollertable td, table.rollertable tbody td {
+    vertical-align: top;
+}
+table.rollertable tbody td {
+    padding: 3px;
+}
+table.rollertable td.center {
+    text-align: center;
+}
+td.field span.fixedAttr {
+    font-style: italic;
+    font-weight: bold;
+    color: red;
+}
+.rollertable_even td {
+    border: 1px solid #ccc;
+    background: #EEEEEE;
+    color: black;
+    vertical-align: top;
+}
+.rollertable_odd td{
+    border: 1px solid #ccc;
+    background: inherit;
+    vertical-align: top;
+    color: black;
+}
+.rollertable_pending td {
+    border: 1px solid #ccc;
+    background: #ffffcc;
+    color: black;
+    vertical-align: top;
+}
+td.rollertable_entry, div.rollertable_entry {
+    border: 1px solid #ccc;
+    background: inherit;
+    padding: 5px;
+    vertical-align: top;
+}
+td.propname {
+    padding: 0px 0px 0px 3em;
+    vertical-align: top;
+}
+table.edit th {
+    text-align: right;
+    padding-right: 5px;
+}
+tr.actionrow {
+    background: #e5e5e5;
+}
+td.spamcomment {
+    background: #ffcccc;
+}
+td.pendingcomment {
+    background: #ffffcc;
+}
+.approvedCommentBox {
+    background: #ffffff;
+    border: 1px gray solid;
+}
+.pendingCommentBox {
+    background: #ffffcc;
+    border: 1px gray solid;
+}
+.spamCommentBox {
+    background: #ffcccc;
+    border: 1px gray solid;
+}
+td.pendingentry, tr.pendingentry {
+    background: #ffcccc;
+}
+td.draftentry, tr.draftentry {
+    background: #ffffcc;
+}
+.draftEntryBox {
+    background: #ffffcc;
+    border: 1px gray solid;
+}
+.pendingEntryBox {
+    background: #ffcccc;
+    border: 1px gray solid;
+}
+
+/* ----------------------------------------------------------------------
+Calendar styles
+---------------------------------------------------------------------- */
+
+div.archiveCalendar {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    font-size: 11px;
+}
+.hCalendarDay {
+    border-width: thin;
+    font-size: .9em;
+    text-align: center;
+}
+.hCalendarDayCurrent {
+    border-style: dotted;
+    border-width: thin;
+    font-size: .9em;
+    font-weight: bolder;
+    text-align: center;
+}
+.hCalendarDayLinked {
+    border-width: thin;
+    font-size: .9em;
+    font-weight: bolder;
+    text-align: center;
+}
+.hCalendarDayNameRow {
+    font-size: .9em;
+    background-color: #eee;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+.hCalendarDayNotInMonth {
+    background: transparent;
+    color: #AAAAAA;
+    font-size: .9em;
+    text-align: center;
+}
+.hCalendarNextPrev {
+    text-align: center;
+}
+.hCalendarMonthYearRow {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ----------------------------------------------------------------------
+Error and status message styles
+---------------------------------------------------------------------- */
+
+.statusMsg {
+    background: #CCFFCC;
+    border: 1px solid #008000;
+    color: #000000;
+    display: block;
+    font-size: .9em;
+    margin: 0px 0px 10px 0px;
+    padding: 3px;
+    width: 98%;
+}
+.error {
+    background: transparent;
+    color: #FF0000;
+}
+.warning {
+    color: #f00;
+    font-size: larger;
+}
+.errors, .messages, .warnings {
+    padding: 5px;
+    margin: 10px 0px 10px 0px;
+}
+.errors {
+    background-color: #fcc;
+    border: 1px solid red;
+}
+.messages {
+    background-color: #cfc;
+    border: 1px solid green;
+}
+.warnings {
+    background-color: #ffffce;
+    border: 1px solid #f0c000;
+}
+div.notification {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 25px;
+    font-size: larger;
+    background-color: #ffffce;
+    border: 1px solid #f0c000;
+}
+div.error {
+    background-color: #ffcccc;
+    border: 1px solid #000000;
+    color: #aa0000;
+    font-size: 0.9em;
+    font-weight: normal;
+    margin: 5px 10px 5px 0px;
+    padding: 3px;
+    text-align: left;
+    vertical-align: bottom;
+}
+div.output {
+    background-color: #e0e0e0;
+    border: 1px solid #CCCC99;
+    color: #000000;
+    font-size: 0.9em;
+    font-weight: normal;
+    margin: 5px 10px 5px 0px;
+    padding: 3px;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+/* ----------------------------------------------------------------------
+weblog editor styles
+---------------------------------------------------------------------- */
+
+div.previewEntrySummary {
+    border: 1px solid gray;
+    clear: both;
+    height: 12em;
+    width: 98%;
+    padding: 10px;
+    overflow: auto;
+}
+div.previewEntryContent {
+    border: 1px solid gray;
+    clear: both;
+    height: 22em;
+    width: 98%;
+    padding: 10px;
+    overflow: auto;
+}
+div.centerTitle {
+    border: 1px solid #ccc;
+    color: black;
+    font-weight: bolder;
+    font-size: large;
+    text-align: center;
+}
+div.control {
+    width: 100%;
+    height: 2.5em;
+}
+div.controlToggle {
+    width: 100%;
+    height: 25px;
+}
+.control input {
+    margin: 0.5em;
+}
+.control select {
+    margin: 0.5em;
+}
+a.controlToggle {
+    margin: 5px;
+    padding: 5px;
+    color: black;
+    background: transparent;
+    text-decoration: none;
+}
+a.controlToggle:link {
+    margin: 5px;
+    padding: 5px;
+    color: black;
+    background: transparent;
+    text-decoration: none;
+}
+a.controlToggle:visited {
+    margin: 5px;
+    padding: 5px;
+    color: black;
+    background: transparent;
+    text-decoration: none;
+}
+a.controlToggle:hover {
+    margin: 5px;
+    padding: 5px;
+    color: black;
+    background: transparent;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+/* ----------------------------------------------------------------------
+Misc styles
+---------------------------------------------------------------------- */
+
+div.NN4 {
+    display: none;
+}
+div.rNavigationBar {
+    margin-bottom: 20px;
+    margin-right: 10px;
+}
+.entryDate {
+    background: transparent;
+    color: #989898;
+    font-style: italic;
+}
+.commentTitle {
+    background: #FFFFDD;
+    border: 1px solid #000;
+    padding: 3px;
+    margin: 0px 5px 10px 0px;
+    color: #000000;
+    font-size: .9em;
+    width: 98%;
+}
+.version {
+    font-size: x-small;
+    color: #808080;
+}
+.page {
+    visibility: hidden;
+    position: absolute;
+    float: left;
+    background-color: white;
+    border: 1px gray solid;
+    padding: 10px;
+    width: 80%;
+    height: 40em;
+}
+.tab {
+    background-color: white;
+    border-top: 1px gray solid;
+    border-left: 1px gray solid;
+    border-right: 1px gray solid;
+    font-family: verdana;
+    padding: 5px;
+    margin: 2px;
+}
+
+p.websiteDescription {
+    font-style: italic;
+    font-size: 11px;
+}
+.version {
+    font-size: small;
+    color: gray;
+    text-align: center;
+}
+.details {
+    font-size: small;
+    color: gray;
+}
+div.helptext {
+    background: #f0f0f0;
+    border: 1px #c0c0c0 solid;
+    padding: 2px;
+    margin: 30px 10px 10px 0px;
+    width: 75%;
+}
+.padleft {
+    padding-left: 8px;
+}
+#logo {
+    padding: 15px 0px 10px 15px;
+}
+/* Transparent PNG fix for IE, thanks to Kenneth M. Kolano */
+#logoshadow {
+    top: 15px;
+    left: 15px;
+    width: 165px;
+    height: 50px;
+    _background: transparent !important;
+    background-image: url(../images/logo-shadow.png);
+}
+#logobackground {
+    width: 159px;
+    height: 44px;
+}
+#logoimage {
+    width: 159px;
+    height: 44px;
+    display: block;
+    cursor: pointer; /* Make IE show correct cursor for link */
+    background-image: url(../images/transparent-logo.png);
+}
+
+/* main menu page */
+
+span.mm_weblog_name {
+    font-size: large;
+    font-weight: bold;
+}
+table.mm_table {
+    margin-top: 8px;
+}
+td.mm_table_actions {
+    padding-left: 4px;
+}
+td.mm_subtable_label {
+    width: 100px;
+    vertical-align: top;
+    font-weight: bold;
+}
+
+
+/* media file pages */
+
+.mediaFileSearchResult {
+    float: left;
+    margin: 10px 10px 10px 10px;
+}
+
+div.mediaFileThumbnail {
+   float:right;
+   width:120px;
+   height:120px;
+   border:1px solid grey;
+   margin: 10px
+}
+
+
+/* weblog entry form page */
+
+span.entryEditSidebarLink {
+    font-size: smaller;
+}
+.entryEditTable td {
+    padding: 0px 0px 8px 0px;
+}
+td.entryEditFormLabel {
+    padding-right: 15px;
+    padding-left: 2px;
+    font-weight: bold;
+}
+
+pre {
+    padding: 5px 5px 5px 7px;
+    background: #f5f5f5;
+    color: #000;
+    border: 1px dotted #ccc;
+    margin-left: 5px;
+    margin-right: 5px;
+    overflow: auto;
+}
+
+.toplabel {
+    font-weight: bold;
+    margin: 10px 0px 0px 0px;
+}
+.miscControl {
+    margin-bottom: 5px;
+}
+
+/* tag autocomplete */
+
+div.autocomplete {
+    position:absolute;
+    width:250px;
+    background-color:white;
+    border:1px solid #888;
+    margin:0px;
+    padding:0px;
+}
+div.autocomplete ul {
+    list-style-type:none;
+    margin:0px;
+    padding:0px;
+}
+div.autocomplete ul li.selected { background-color: #ffb;}
+
+div.autocomplete ul li {
+    list-style-type:none;
+    display:block;
+    margin:0;
+    padding:2px;
+    cursor:pointer;
+}
+
+
+.chooser {
+    margin: 10px;
+    padding: 10px 20px 20px 20px;
+}
+
+.chooser h2 {
+    letter-spacing: 0.0em;
+}
+
+.optioner {
+    margin: 0px 30px 30px 30px;
+}
+
+#themeImport {
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Media File styles */
+
+/*** for overlay ***/
+.yui-overlay span, #close {
+    float: left;
+}
+
+#close { float: right; }
+
+#overlay {
+    position: fixed;
+    z-index:100;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+    display: none;
+    background-color:#000;
+    filter:alpha(opacity=25);
+    -moz-opacity: 0.25;
+    opacity: 0.25;
+}
+
+.container-close {
+    position:absolute;
+    top:2px;
+    right:4px;
+    z-index:6;
+    height:12px;
+    width:12px;
+    margin:0px;
+    padding:0px;
+    background:url('http://yui.yahooapis.com/2.6.0/build/container/assets/close12_1.gif') no-repeat;
+    cursor:pointer
+}
+
+.align-images {
+    display:inline;
+    float:left;
+    margin:5px;
+    list-style-type:none;
+    width:140px;
+    height:140px;
+    border: 1px solid #ccc;
+}
+
+.dir-image {
+    cursor:pointer;
+    width:25px;
+    height:25px;
+    padding:40px 45px;
+}
+
+/*** For context menu ***/
+
+#menu h1 {
+    line-height:120%;
+    margin:15px 0px;
+    padding-left: 0.5em;
+}
+#ewecontextmenu {
+    background-color:#CECECE;
+    border:1px solid #808080;
+    line-height:1.5;
+}
+
+#ewecontextmenu li a {
+    text-decoration:none;
+    color: #000000;
+}
+
+#ewecontextmenu .yuimenuitem-selected{background-color:#36404C;}
+#ewecontextmenu .yuimenuitem-selected a {color:#ffffff;}

@@ -1,0 +1,105 @@
+#**
+ * Bookmarks and bookmark folders.
+ * @author Lance Lavandowska (conversion to Velocimacros)
+ *#
+
+#**
+ * Shows a single bookmark with image if bookmark has one, with RSS feed link if 
+ * bookmark has one, and with HREF title if bookmark has a description.
+ * @param bookmark BookmarkData object to be displayed.
+ *#
+#macro( showOneBookmark $bookmark)
+    <li class="rFolderItem">
+    #if( $utils.isNotEmpty( $bookmark.Image ))
+      #if( $bookmark.Image.startsWith("http://") )
+      <a href="$bookmark.url"><img alt="$bookmark.description"
+         src="$bookmark.image" class="rBookmark" /></a>
+      #else
+      <a href="$bookmark.url"><img alt="$bookmark.description"
+         src="$url.resource($bookmark.image)" class="rBookmark" /></a>
+      #end
+    #else
+        #if( $utils.isNotEmpty( $bookmark.FeedUrl ) )
+        <a href="$bookmark.feedUrl"><img class="smrssbadge"
+           src="$url.site/images/smrssbadge.gif"
+           alt="$text.get( "macro.bookmark.urlFeed" )"/></a>
+        #end
+        <a href="$bookmark.url"
+           title="$bookmark.description"
+           class="rBookmark$bookmark.weight">$bookmark.name</a>
+    #end
+    </li>
+#end
+
+#**
+ * Displays the Bookmarks in a Folder instance.
+ * @param folder          FolderData object to be displayed
+ * @param showFolderName  True to show folder's name
+ * @param expandingFolder True to show expandable folder
+ *#
+#macro( showFolder $folder $showFolderName $expandingFolder )
+    #set( $bookmarks = $folder.bookmarks )
+    #set( $divId = $utils.replace( $folder.Name, " ", "_" ) )
+    #if ( $showFolderName && $expandingFolder )
+    <div class="rFolder">
+       <a href="javascript:toggleFolder('$divId')">
+          <span id="i$divId">+</span> $folder.Name</a>
+       <ul id="$divId" style="display:none">
+    #elseif ( $showFolderName )
+       <ul class="rFolder">$folder.Name
+    #else
+       <ul class="rFolder">
+    #end
+    #foreach( $bookmark in $bookmarks )
+        #showOneBookmark( $bookmark )
+    #end
+    ## show sub-folders
+    #foreach( $sFolder in $folder.folders )
+        #showFolder($sFolder $showFolderName $expandingFolder)
+    #end
+       </ul>
+    #if( $showFolderName && $expandingFolder )
+    </div>
+    <script type="text/javascript">
+    <!-- 
+    folderPreference("$divId");
+    // -->
+    </script>
+    #end
+#end
+
+#**
+ * Displays a bookmark folder as named.
+ * @param folderName      Name of the folder to be displayed.
+ * @param showFolderName  True to show folder's name
+ * @param expandingFolder True to show expandable folder
+ *#
+#macro( showBookmarks $folderName $showFolderName $expandingFolder )
+    #set( $myFolder = $model.weblog.getBookmarkFolder($folderName) )
+    #if ( $myFolder )
+        #showFolder($myFolder $showFolderName $expandingFolder)
+    #elseif ($showFolderName)
+        <span class="error">$text.get( "macro.bookmark.error", [$folderName])</span>
+        <!--p class="rFolder">$folderName</p-->
+    #end
+#end
+
+#**
+ * Display all Bookmarks (from all Folders) for user.
+ * @param expandingFolder True to show expandable folder
+**#
+#macro( showAllBookmarks $expandingFolder )
+    #set( $root = $model.weblog.getBookmarkFolder("/") )
+    #showFolder($root true $expandingFolder)
+#end
+
+#**
+ * Show link to OPML file for specified folder.
+ * @param folderName Name of folder to be displayed (or / separated path)
+ *#
+#macro( showOpmlLink $folderName )
+    ## no longer supported since Roller 3.0
+#end
+
+#macro( showBlogroll )#showBookmarks("/" false false)#end
+

@@ -1,0 +1,65 @@
+#**
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+*#<?xml version="1.0" encoding="utf-8"?>
+#if($feedStyle)<?xml-stylesheet type="text/xsl" href="$absoluteSite/roller-ui/styles/rss.xsl" media="screen"?>#end
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  #if($group)
+  <title>$utils.escapeXML($group.title)</title>
+  <description>Aggregated feed for group [$utils.escapeXML($group.title)]</description>
+  #else
+  <title>$utils.escapeXML($siteName)</title>
+  <description>$utils.escapeXML($siteDescription)</description>
+  #end
+  <link>$utils.escapeXML($absoluteSite)</link>
+  <lastBuildDate>$utils.formatRfc822Date($lastModified)</lastBuildDate>
+  <generator>Roller</generator>
+  #if($group)
+     #set($entries = $planet.getEntries($group, 0, $entryCount))
+  #else
+     #set($all = $planet.getGroup($planet.getPlanet("default"), "all"))
+     #set($entries = $planet.getEntries($all, 0, $entryCount))
+  #end
+  #foreach( $entry in $entries )
+  <item>
+    #if($entry.title)<title>$utils.escapeXML($entry.title)</title> #end
+    #if($entry.text)
+       <description>
+       $utils.escapeXML($utils.truncate($entry.text,300,320,"...")) [&lt;a href="$utils.escapeXML($entry.permalink)"&gt;Read More&lt;/a&gt;]
+       </description> 
+    #end
+    #if($entry.categories)
+        #foreach($cat in $entry.categories)
+     	   <category>$utils.escapeXML($cat.name)</category>
+     	#end
+    #end
+    #if($entry.permalink)
+        <link>$utils.escapeXML($entry.permalink)</link>
+    #end
+    #if($entry.guid)
+        <guid>$utils.escapeXML($entry.guid)</guid>
+    #elseif ($entry.permalink)
+        <guid isPermaLink="true">$utils.escapeXML($entry.permalink)</guid>
+    #end
+    <pubDate>$utils.formatRfc822Date($entry.pubTime)</pubDate>
+    #if(!$utils.isEmpty($entry.author))
+       <dc:creator>$utils.escapeXML($entry.author)</dc:creator>
+    #end
+  </item>
+  #end
+</channel>
+</rss>

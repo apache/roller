@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>$model.weblog.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
+</head>
+
+<body>
+<div id="block">&nbsp;
+
+   <div id="container">
+
+      <div id="sidebar-a">
+         #includeTemplate($model.weblog "sidebar")
+      </div>
+
+      <div id="content">
+
+        ## show next/previous paging controls
+        #set($pager = $model.getWeblogEntriesPager()) 
+        <div class="next-previous">
+            #if ($model.results)
+                #showWeblogSearchAgainForm($model.weblog)
+                #showNextPrevSearchControl($pager)
+            #else
+                #showNextPrevEntriesControl($pager)
+            #end
+        </div>
+
+        ## show entries
+        #showWeblogEntriesPager($pager)
+
+        #if ($model.permalink)
+           #showWeblogEntryComments($model.weblogEntry)
+           #showWeblogEntryCommentForm($model.weblogEntry)
+        #end
+
+         <div id="footer">
+             Theme Design by <a href="http://www.bryanbell.com">Bryan Bell</a>
+         </div> <!-- footer -->
+      </div> <!-- content -->
+
+   </div> <!-- container -->
+
+</div> <!-- block -->
+
+</body>
+</html>

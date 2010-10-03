@@ -1,0 +1,101 @@
+#**
+ * Referers and linkbacks.
+ * @author  Lance Lavandowska (conversion to Velocimacros)
+ *#
+
+#**
+ * Internal macro to build and display a link to a referer, use showReferers instead.
+ *#
+#macro( refererDisplayUrl $ref $maxWidth $includeHits )
+    #set( $qq = '"' )
+    #set( $myUrl = $utils.escapeHTML( $ref.RefererUrl ) )
+    #set( $displayUrl = $myUrl )
+    #set( $restOfUrl = "" )
+    #set( $displayLink = "" )
+    #if ( $displayUrl.startsWith("http://") )
+        #set( $displayUrl = $displayUrl.substring( 7 ) )
+    #end
+    #if ( $displayUrl.length() > $maxWidth )
+        #set( $restOfUrl = "...$displayUrl.substring($maxWidth, $displayUrl.length())" )
+        #set( $displayUrl = $displayUrl.substring(0, $maxWidth) )
+    #end
+    #if ( $myUrl.startsWith("http://") )
+        #set( $displayLink = "<a rel=${qq}nofollow${qq} href=${qq}$myUrl${qq}" )
+        #if ( $restOfUrl )
+            #set( $displayLink = "$displayLink title=${qq}$restOfUrl${qq}" )
+        #end
+        #set( $displayLink = "$displayLink >" )
+    #end
+    #set( $displayLink = "$displayLink$displayUrl" )
+    #if ( $includeHits )
+        #set( $displayLink = "$displayLink ($ref.DayHits)" )
+    #end
+    #if ( $myUrl.startsWith("http://") )
+        #set( $displayLink = "$displayLink</a>" )
+    #end
+    $displayLink
+#end
+
+#**
+ * Show top referers for today.
+ * @param max Number of referers to display.
+ * @param maxWidth Maximum width of referer text to be displayed.
+ *#
+#macro( showReferers $max $maxWidth )
+    <p>$text.get( "macro.referer.todaysHits" ) $pageModel.getDayHits()</p>
+    #set( $refs = $pageModel.getTodaysReferers() )
+    <ul class="rReferersList">
+    #foreach( $ref in $refs )
+        #if ($velocityCount <= $max)
+        <li class="rReferersListItem">#refererDisplayUrl( $ref $maxWidth true)</li>
+        #end
+    #end
+    </ul>
+#end
+
+
+#**
+ * Display the Linkbacks that have been extracted for a specified day.
+ * @param day Date object that specifies day (type java.util.Date).
+ *#
+#macro( showLinkbacks $day )
+    #set( $date = "#formatDate($plainFormat $day )" )
+    #set( $refs = $pageModel.getReferers($date) )
+    #if ( $refs.size() > 0 )
+       <p>
+       <b>$text.get( "macro.referer.furtherReading" )</b></p>
+       <ul>
+       #foreach( $ref in $refs )
+          #set( $linkbackurl = $utils.escapeHTML( $ref.getUrl() ) )
+          <li> $pageHelper.getToggleLinkbackDisplayHTML($ref)
+             <a class="linkback" href="$linkbackurl">$ref.getTitle()</a>
+          #if( $ref.getVisible() )
+             : $utils.removeHTML( $ref.getExcerpt() )
+          #end
+          </li>
+       #end
+       </ul>
+    #end
+#end
+
+#**
+ * Display entry linkbacks with divs appropriate for use on webloog entry page
+ *#
+#macro( showEntryLinkbacks $entry )
+    #if ($linkbacksEnabled)
+        <div class="linkbacks" id="linkbacks">
+            <div class="linkbacks-head">$text.get("macro.weblog.linkbacks"):</div>
+        #set( $refs = $pageModel.getEntryReferers($entry))
+        #if ( $refs.size() > 0)
+           <ul class="linkbacks">
+           #foreach( $ref in $refs )
+              #set( $linkbackurl = $utilities.escapeHTML( $ref.getUrl() ) )
+              <li class="linkbacks"> $pageHelper.getToggleLinkbackDisplayHTML($ref)
+                 <a class="linkback" href="$linkbackurl">$ref.getTitle()</a> : $utilities.removeHTML( $ref.getExcerpt() )
+              </li>
+           #end
+           </ul>
+        #end
+        </div>
+    #end
+#end

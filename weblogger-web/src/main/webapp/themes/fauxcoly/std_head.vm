@@ -1,4 +1,0 @@
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="$url.site/roller-ui/yui/reset-fonts-grids/reset-fonts-grids.css" />
-    <link rel="stylesheet" type="text/css" href="$url.site/roller-ui/yui/base/base-min.css" />
-    <link rel="stylesheet" type="text/css" href="$url.page('style.css')" />

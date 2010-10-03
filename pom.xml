@@ -37,6 +37,7 @@
         <module>planet-business</module>
         <module>weblogger-business</module>
         <module>weblogger-web</module>
+        <module>weblogger-webapp</module>
     </modules>
 
     <build>

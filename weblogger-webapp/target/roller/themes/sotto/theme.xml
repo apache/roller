@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogtheme>
+    
+    <id>sotto</id>
+    <name>Sotto</name>
+    <author>Matt Raible</author>
+    
+    <!-- theme preview image -->
+    <preview-image path="sotto-preview.png" />
+    
+    <!-- stylesheet -->
+    <stylesheet>
+        <name>sotto-custom.css</name>
+        <description>Stylesheet for Sotto theme</description>
+	<link>sotto-custom.css</link>
+        <templateLanguage>velocity</templateLanguage>
+        <contentsFile>sotto-custom.css</contentsFile>
+    </stylesheet>
+    
+    <!-- templates -->
+    <template action="weblog">
+        <name>weblog</name>
+        <description>weblog</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>weblog.vm</contentsFile>
+    </template>
+    
+    <template action="permalink">
+        <name>permalink</name>
+        <description>permalink</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>permalink.vm</contentsFile>
+    </template>
+    
+    <template action="search">
+        <name>searchresults</name>
+        <description>searchresults</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>searchresults.vm</contentsFile>
+    </template>
+    
+    <template action="custom">
+        <name>_day</name>
+        <description>_day</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>_day.vm</contentsFile>
+    </template>
+    
+    <template action="custom">
+        <name>sidebar</name>
+        <description>sidebar</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>sidebar.vm</contentsFile>
+    </template>
+    
+    <template action="custom">
+        <name>header</name>
+        <description>header</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>header.vm</contentsFile>
+    </template>
+    
+    <!-- resources -->
+    <resource path="images/bannerBackground.gif" />
+    <resource path="images/buttonBackground.gif" />
+    <resource path="images/clouds.jpg" />
+    <resource path="images/daisy.jpg" />
+    <resource path="images/prairie.jpg" />
+    <resource path="images/roller-logo.gif" />
+    <resource path="images/valid-rss.png" />
+    
+</weblogtheme>

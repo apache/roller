@@ -9,7 +9,8 @@ Roller is made up of the following Maven projects:
   planet-business:    Planet POJOs and business logic
   planet-web:         Planet webapp (under construction as before)
   weblogger-business: Weblogger POJOs and business logic
-  weblogger-web:      The Roller Weblogger webapp, rendering system, Struts2 UI
+  weblogger-web:      The Roller Weblogger Web Classes, Servlets, Filters, etc.
+  weblogger-webapp:   The Roller Weblogger webapp, JSP pages, Velocity templates
   weblogger-assembly: Assembly that builds Roller distro
   test-utils:         Test utils (e.g. start/stop Derby task)
 

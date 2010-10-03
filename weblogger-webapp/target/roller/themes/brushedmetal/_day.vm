@@ -1,0 +1,34 @@
+<div class="dayBox">
+
+    <div class="dayTitle">
+       $utils.formatDate($day, "EEEE MMM dd, yyyy")
+    </div>
+
+    #foreach( $entry in $entries )
+    <div class="entryBox">
+        <a name="$utils.encode($entry.anchor)" id="$utils.encode($entry.anchor)"></a>
+        <p class="entryTitle">$entry.title</p>
+        <p class="entryContent"> 
+            #if($model.permalink)
+                $entry.displayContent
+            #else
+                $entry.displayContent($url.entry($entry.anchor))
+            #end
+        </p>
+
+        <p class="entryInfo">
+            Posted at <a href="$url.entry($entry.anchor)">$utils.formatDate($entry.pubTime, "hh:mma MMM dd, yyyy")</a>
+            by $entry.creator.screenName in <span class="category">$entry.category.name</span> &nbsp;|&nbsp;
+            #if ($utils.isUserAuthorizedToAuthor($entry.website))
+                <a href="$url.editEntry($entry.anchor)">$text.get("macro.weblog.entrypermalink.edit")</a> &nbsp;|&nbsp;
+            #end
+            #set($commentCount = $entry.commentCount)
+            #if($entry.commentsStillAllowed || $commentCount > 0) 
+                <a href="$url.comments($entry.anchor)" class="commentsLink">$text.get("macro.weblog.comments")[$commentCount]</a>
+            #end
+        </p>
+        #showTrackbackAutodiscovery($entry)
+    </div>
+    #end
+
+</div>

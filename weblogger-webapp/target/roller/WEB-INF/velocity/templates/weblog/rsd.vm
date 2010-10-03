@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rsd version="1.0">
+  <service>
+    <engineName>Roller Weblogger</engineName>
+    <engineLink>http://roller.apache.org/</engineLink>
+    <homePageLink>${absBaseURL}/${website.handle}</homePageLink>
+    <apis>
+      <api name="blogger" preferred="false"
+         apiLink="${absBaseURL}/roller-services/xmlrpc"
+         blogID="${website.handle}"/> 
+      <api name="metaWeblog" preferred="true"
+         apiLink="${absBaseURL}/roller-services/xmlrpc"
+         blogID="${website.handle}"/>
+    </apis>
+  </service>
+</rsd>

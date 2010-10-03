@@ -1,0 +1,473 @@
+/* ----------------------------------------------------------------------
+General styles
+---------------------------------------------------------------------- */
+
+body {
+margin: 0px;
+padding: 0px;
+background-color: white;
+color: black;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 12px;
+}
+p.subtitle {
+    font-size: 1em;
+    font-weight: bold;
+    font-size: 120%;
+}
+p.pagetip {
+    margin: 0px 0px 15px 0px;
+}
+h1 {
+    background: transparent;
+    font-size: 20px;
+    font-weight: bold;
+}
+h2 {
+    background: transparent;
+    font-size: large;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+}
+h3 {
+	letter-spacing: normal;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-decoration: none;
+	margin: 0px;
+}
+img {
+    border: 0px;
+    overflow: auto;
+}
+img.w3c {
+    border: 0px;
+    height: 31px;
+    width: 88px;
+    margin-right: 5px;
+}
+a {
+    text-decoration: none;
+}
+a:link {
+    text-decoration: none;
+}
+a:visited {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+a:active {
+    text-decoration: underline;
+}
+
+/* -------------------------------------------------------- 
+Page components
+-------------------------------------------------------- */
+
+.bannerStatusBox a, .bannerStatusBox a {
+    font-weight: bold;
+}
+.bannerLeft {
+    padding: 4px 15px 4px 10px;
+}
+.bannerRight {
+    padding: 4px 10px 4px 15px;
+    text-align: right;
+}
+.bannerBox {
+    width: 100%;
+    background: #f00;
+}
+
+div.entries {
+    padding: 15px;
+}
+
+div.entry {
+    margin:0px;
+    border-bottom:1px solid #555;
+    padding:5px;
+    background: #f1ebdf;
+}
+
+#tabContent {
+    background: #f1ebdf;
+    padding:0px;
+    border: 1px solid #f1ebdf;
+}
+#directory {
+    padding: 15px;
+}
+#recentEntries{
+    padding: 5px;
+}
+
+
+html>body div.entry{
+    border-bottom:none;
+    padding-bottom:0px;
+}
+
+div.entry+div.entry{
+    border-top:1px solid #c6ab74;
+    padding:4px;
+}
+
+div.entry h2 {
+    margin:0px;
+    font-size:12px;
+}
+
+div.entries div.pagingcontrols {
+    margin-top:20px;
+    text-align:right;
+}
+
+div.entriesBoxInner {
+   padding: 5px;
+}
+div.entriesBox {
+   font-family: Arial, Helvetica, sans-serif;
+   border-bottom-width: thin;
+   border-bottom-style: solid;
+   padding: 4px;
+}
+div.entryBoxPinned {
+}
+.entryTitle {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    font-size:130%;
+    margin:0px;
+    padding:0px;
+}
+.entryDetails {
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    color: #777;
+    font-size:80%;
+    margin:0px;
+    padding:0px;
+}
+.entryDescription {
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+}
+
+span.hotBlogs, a.hotBlogs, a:active.hotBlogs, a:visited.hotBlogs, ul.hotBlogs {
+   font-size: small;
+   padding-left: 0px;
+   list-style-type: none
+}
+input.searchButton {
+    cursor: hand;
+    font-family: lucida,arial,sans-serif;
+    height: 1.4em;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 0px 0px 2px 0px;
+    margin: 5px;
+    border: 0px none #000;
+}
+
+.sidebarBodyHead h3, .searchSidebarBody h3 {
+   padding: 5px;
+}
+.sidebarInner {
+   padding: 5px;
+}
+.sidebarBody ul {
+   margin: 0px;
+   padding-left: 5px; 
+}
+.sidebarBody li {
+   list-style-position: inside;
+   list-style-image: url($url.absoluteSite/roller-ui/images/dash.gif);
+   margin-left: 0em;
+   padding-left: 0.5em;  
+   padding-top: 3px;
+}
+
+/* --------------------------------------------------------
+layout
+-------------------------------------------------------- */
+
+#banner {
+    margin: 0px;
+    padding: 0px 0px 0px 0px;
+}
+.bannerBox {
+    width: 100%;
+}
+.bannerStatusBox {
+    width: 100%;
+    border: grey 1px solid;
+}
+.sidebarBodyHead {
+    height: 25px;
+}
+.searchSidebarHead {
+   height: 5px;
+}
+.searchSidebarBody {
+   margin: 0px 0px 0px 0px;
+}
+.searchSidebarBody input {
+   margin: 5px;
+}
+#menu {
+    padding: 0px 10px 0px 10px;
+}
+#content {
+}
+#centercontent_wrap {
+    width: 70%;
+    float: left;
+    display: inline;
+}
+#centercontent {
+    margin: 10px;
+}
+#rightcontent_wrap {
+    float: right;
+    display: inline;
+    width: 29%;
+}
+#rightcontent {
+    margin: 10px;
+}
+#footer {
+    clear: both;
+    padding: 15px 0px 15px 0px;
+    font-size: smaller;
+    text-align: center;
+}
+
+/* -------------------------------------------------------- 
+Colors
+-------------------------------------------------------- */
+
+#logobackground {
+    background: #ad3431 !important; 
+}
+.bannerBox {
+    background: url("$url.resource("tan-banner.gif")") repeat-x top;
+}
+.bannerStatusBox {
+    background: #ad3431;
+    color: white;
+}
+.bannerStatusBox a {
+    color: white;
+}
+.bannerStatusBox a:link {
+    color: white;
+}
+.bannerStatusBox a:visited {
+    color: white;
+}
+h1 {
+    color: #ad3537;
+}
+h2 {
+    color: #ad3537;
+}
+h3 {
+    background: transparent;
+    color: #ad3537;
+    font-weight: bold;
+}
+a:link {
+    color: #ad3537;
+}
+a:visited {
+    color: #ad3537;
+}
+
+div.yourWeblogBox {
+   border-top: 1px #c6ab74 solid;
+}
+input.searchButton {
+    color: white;
+    background: #ad3431;
+}
+.sidebarBodyHead {
+    background: #ad3431;
+    color: white;
+}
+.searchSidebarBodyHead h3 {
+    color: black;
+}
+.sidebarBodyHead h3 {
+    color: white;
+}
+.sidebarFade, div.sidebarBody {
+    background: #f1ebdf;
+    color: #666666;
+}
+.searchSidebarHead {
+    background: #f1ebdf;
+}
+.searchSidebarBody {
+    background: #f1ebdf;
+}
+
+td.menuTabSelected {
+    background: url("$url.absoluteSite/roller-ui/theme/tan/menutab-sel.gif") repeat-x;
+}
+td.menuTabUnselected {
+    background: url("$url.absoluteSite/roller-ui/theme/tan/menutab-unsel.gif") repeat-x;
+}
+.menuItemTable {
+    background-color: #c6ab74;
+    color: black;
+}
+td.menuTabSelected a:link, td.menuTabSelected a:visited, td.menuTabSelected a:hover, td.menuTabSelected a:active {
+    color: black;
+}
+td.menuTabUnselected a:link, td.menuTabUnselected a:visited, td.menuTabUnselected a:hover, td.menuTabUnselected a:active {
+    color: black;
+}
+a.menuItemSelected:link, a.menuItemSelected:visited, a.menuItemSelected:hover, a.menuItemSelected:active {
+    color: black;
+}
+a.menuItemUnselected:link, a.menuItemUnselected:visited, a.menuItemUnselected:hover, a.menuItemUnselected:active {
+    color: black;
+}
+
+/* ----------------------------------------------------------------------
+Blog directory
+---------------------------------------------------------------------- */
+
+div.letterMap strong.current a {
+color:black;
+}
+
+table.data {
+border-collapse:collapse;
+border-spacing:0px;
+margin-bottom:10px;
+}
+
+table.data th,
+table.data td {
+padding:2px 20px 2px 0px;
+text-align:left;
+}
+
+table.blogdirectory {
+width:100%;
+}
+
+table.blogdirectory thead th{
+padding-bottom:17px;
+}
+
+table.blogdirectory .name {
+width:20em;
+}
+
+table.blogdirectory tfoot td {
+padding-top:17px;
+}
+
+table.blogdirectory tr.pagingcontrols td.paginglinks {
+text-align:right;
+padding-right:0px;
+}
+
+/* ----------------------------------------------------------------------
+Menu
+---------------------------------------------------------------------- */
+
+#menu h1 {
+    line-height: 120%;
+}
+
+div.menu-tl {
+    margin: 0px; 
+    padding: 0px; 
+    height: 100%;
+    width: 100%;
+    background: url("$url.absoluteSite/roller-ui/images/menutab-tl.gif") no-repeat top left;   
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    display: table;
+}
+div.menu-tr {
+    margin: 0px; 
+    padding: 0px; 
+    height: 100%;
+    width: 100%;
+    background: url("$url.absoluteSite/roller-ui/images/menutab-tr.gif") no-repeat top right;    
+    background-repeat: no-repeat;
+}
+
+td div.menu-tr div.menu-tl a {
+   display: table-cell;
+   vertical-align: middle;
+   padding: 3px 5px 0px 5px;
+}
+
+.menuTabTable {
+    height: 25px;
+    _height: 21px; /* for IE */
+    margin: 0px; 
+    padding: 0px; 
+}
+td.menuTabSeparator {
+    width: 4px;
+}  
+td.menuTabSelected {
+    margin: 0px; 
+    padding: 0px; 
+    font-weight: bold;
+    vertical-align: top;
+}
+td.menuTabUnselected {
+    margin: 0px; 
+    padding: 0px; 
+    vertical-align: top;
+}
+
+.menuItemTable {
+    padding-right: 0px;
+    padding-bottom: 0px;
+    width: 100%;
+    height: 2px;
+    padding: 0px 0px 0px 10px;
+}
+
+.menuItemSelected {
+    padding-right: 1px;
+    padding-left: 1px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    font-weight: bold;
+}
+.menuItemUnselected {
+    padding: 0px 1px 0px 1px; /* TRBL */
+}
+
+#tagbin {
+    padding: 4px;
+}
+
+#tagbin a {
+    	line-height: 100% ! important; 
+}
+
+#tagbin a:hover { 
+    color: #e62c00 ! important; 
+}
+
+a.s5, a.s5:visited { font-size: 135%; color: #ad3537 ! important; }
+a.s4, a.s4:visited { font-size: 125%; color: #b95250 ! important; }
+a.s3, a.s3:visited { font-size: 120%; color: #cb7e7c ! important; }
+a.s2, a.s2:visited { font-size: 115%; color: #deafad ! important; }
+a.s1, a.s1:visited { font-size: 110%; color: #f1dbdb ! important; }
+
+/* end css */

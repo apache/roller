@@ -1,0 +1,155 @@
+#**
+ * Roller menus and navigation bars.
+ * @author Lance Lavandowska (conversion to Velocimacros)
+ *#
+
+#**
+ * Show menu using specified model file and Velocity template.
+ * @param $model Name of XML file in WEB-INF that contains XML for menu.
+ * @param $template Name of Velocity template to display menu.
+ *#
+#macro( showMenu $model $template )
+
+    ## NOTE: technically this method allowed users access to use things that
+    ## weren't part of Roller, but in 4.0 we are removing this very old menu
+    ## building code and so there is no way to guarantee backwards comapatability
+    ## in the cases where someone made their own menus
+
+    #if( $model == 'editor-menu.xml' )
+        #if( $template == 'templates/navbar/navbar-horizontal.vm' )
+            #showAuthorMenu( false )
+        #else
+            #showAuthorMenu( true )
+        #end
+    #elseif( $model == 'admin-menu.xml' )
+        #if( $template == 'templates/navbar/navbar-horizontal.vm' )
+            #showAdminMenu( false )
+        #else
+            #showAdminMenu( true )
+        #end
+    #end
+
+#end
+
+#**
+ * Show Roller Editor Navigation Bar.
+ * @param vertical True if bar is to be displayed vertically.
+ *#
+#macro( showEditorNavBar $vertical )
+    ## just call new 3.0 version of this macro
+    #showAuthorMenu( $vertical )
+#end
+
+#**
+ * Show Editor navbar using CSS friendly template.
+ *#
+#macro( showEditorMenu )
+    ## just call new 3.0 version of this macro
+    #showAuthorMenu( true )
+#end
+
+#**
+ * Print a link for a menu item.  Take into consideration:<br />
+ * 1. Should this be particularly CSS friendly.<br />
+ * 2. Or is this specifically a vertical menu.<br />
+ * 3. Otherwise use the specified delimiter.<br />
+ *
+ * @param linkUrl   The URL to be used in the href attribute.
+ * @param linkValue The value used to look up the link's label.
+ * @param useCSS    Use CSS based formatting.
+ * @param vertical  Use "hard-formatting" to create vertical menu.
+ * @param delimiter Seperate horizontal items with this value.
+ *#
+#macro( printNavLink $linkUrl $linkValue $useCSS $vertical $delimiter )
+    #if( $useCSS )<li class="rNavItem">
+    #elseif( $vertical ) <br />
+    #else $delimiter
+    #end<a href="$linkUrl">$linkValue</a>#if ($useCSS)</li>#end
+#end
+
+#**
+ * Show Roller Page Navigation Bar, includes links to all pages
+ * except those that are hidden (because the start with "_").
+ * @param vertical  True if bar is to be displayed vertically.
+ * @param delimiter Delimiter between entries in bar.
+ * @param useCSS    Use CSS based formatting.
+ *#
+#macro( showNavBar2 $vertical $delimiter $useCSS)
+    #set( $container = "div" )
+    #if ( $useCSS ) #set( $container = "ul" ) #end
+    #set( $rawUrl = "$website.URL" )
+    <$container class="rNavigationBar">
+    #printNavLink( "$url.site/" $siteShortName $useCSS $vertical "" )
+    #if(!$vertical) $delimiter #end
+    #printNavLink( "$url.home" "Weblog" $useCSS $vertical "" )
+    #if( $website )
+        #foreach( $iPage in $pages )
+            #set( $invisible = $iPage.Name.startsWith("_") )
+            ## Again, there is no "break" in Velocity
+            #if( !$invisible && $iPage.link != "Weblog")
+                #set( $isSelected = false )
+                #if( $page && $iPage.Id == $page.Id && !$editorui) #set($isSelected = true) #end
+
+                #if( !$isSelected )
+                    #printNavLink( $url.page("$iPage.link") $iPage.Name $useCSS $vertical $delimiter )
+                #else
+                    #if( $useCSS )<li class="rNavItem">
+                    #elseif( $vertical ) <br />
+                    #else $delimiter
+                    #end
+                    $iPage.Name
+                #end
+
+            #end
+        #end
+    #end
+
+    ## strutsUrlHelper( useIds, isAction, path, val1, val2)
+    #if( $pageModel.isUserAuthorizedToEdit() )
+        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "weblogCreate", $website.handle, "") )
+        #printNavLink( $editUrl $text.get("navigationBar.newEntry") $useCSS $vertical $delimiter )
+
+        #if( $pageModel.isUserAuthorizedToAdmin() )
+           #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "editWebsite", $website.handle, "") )
+           #printNavLink( $editUrl $text.get("navigationBar.settings") $useCSS $vertical $delimiter )
+        #end
+
+        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "logout-redirect", "", "") )
+        #printNavLink( $editUrl $text.get("navigationBar.logout") $useCSS $vertical $delimiter )
+    #else
+        #if( $pageModel.isUserAuthenticated() )
+           #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "logout-redirect", "", "") )
+           #printNavLink( $editUrl $text.get("navigationBar.logout") $useCSS $vertical $delimiter )
+        #else
+           #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "login-redirect", "", "") )
+           #printNavLink( $editUrl $text.get("navigationBar.login") $useCSS $vertical $delimiter )
+        #end
+    #end
+    </$container >
+#end
+
+#**
+ * Show Roller Page Navigation Bar, includes links to all pages
+ * except those that are hidden (because the start with "_").
+ * @param vertical  True if bar is to be displayed vertically.
+ * @param delimiter Delimiter between entries in bar.
+ *#
+#macro( showNavBar $vertical $delimiter )
+    #showNavBar2( $vertical $delimiter false)
+#end
+
+#**
+ * Show Roller Page Navigation Bar with "|" delimiter, includes links to all pages
+ * except those that are hidden (because the start with "_").
+ * @param vertical True if bar is to be displayed vertically.
+ *#
+#macro( showBasicNavBar $vertical )
+    #showNavBar2( $vertical '|' false )
+#end
+
+#**
+ * Create CSS friendly Navigation Bar, using Unordered List and List Item tags.
+**#
+#macro( showCssNavBar )
+    #showNavBar2( false '' true)
+#end
