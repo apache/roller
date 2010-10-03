@@ -30,7 +30,7 @@
         <outputDirectory>
             ${artifact.artifactId}-${artifact.version}/webapp/roller
         </outputDirectory>
-        <directory>../weblogger-web/target/roller</directory>   
+        <directory>../weblogger-webapp/target/roller</directory>
      </fileSet>
   </fileSets>
 
