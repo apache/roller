@@ -229,25 +229,25 @@
                         <groupId>org.apache.roller</groupId>
                         <artifactId>test-utils</artifactId>
                         <version>${roller.version}</version>
-                        <scope>test</scope>
+                        <scope>runtime</scope>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>
                         <version>${derby.version}</version>
-                        <scope>test</scope>
+                        <scope>runtime</scope>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbynet</artifactId>
                         <version>${derby.version}</version>
-                        <scope>test</scope>
+                        <scope>runtime</scope>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbyclient</artifactId>
                         <version>${derby.version}</version>
-                        <scope>test</scope>
+                        <scope>runtime</scope>
                     </dependency>
                 </dependencies>
 
@@ -356,7 +356,7 @@
         <resources>
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
+                <filtering>false</filtering>
                 <includes>
                     <include>**/**</include>
                 </includes>
