@@ -652,8 +652,8 @@ public class WeblogEntry implements Serializable {
      * @throws WebloggerException
      */
     public void addTag(String name) throws WebloggerException {
-        Locale locale = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
-        name = Utilities.normalizeTag(name, locale);
+        Locale localeObject = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
+        name = Utilities.normalizeTag(name, localeObject);
         if(name.length() == 0)
             return;
         
@@ -686,17 +686,18 @@ public class WeblogEntry implements Serializable {
         return removedTags;
     }
 
-    public void updateTags(List tags) throws WebloggerException {
+    public void updateTags(List<String> updatedTags) throws WebloggerException {
         
-        if(tags == null)
+        if(updatedTags == null) {
             return;
+        }
         
-        HashSet newTags = new HashSet(tags.size());
-        Locale locale = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
+        HashSet newTags = new HashSet(updatedTags.size());
+        Locale localeObject = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
         
-        for(Iterator it = tags.iterator(); it.hasNext();) {
-            String name = (String) it.next();
-            newTags.add(Utilities.normalizeTag(name, locale));
+        for(Iterator<String> it = updatedTags.iterator(); it.hasNext();) {
+            String name = it.next();
+            newTags.add(Utilities.normalizeTag(name, localeObject));
         }
         
         HashSet removeTags = new HashSet();

@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
- * Representa a media file
+ * Represents a media file
  *
  */
 public class MediaFile {
@@ -36,7 +36,7 @@ public class MediaFile {
     private static Log log =
             LogFactory.getFactory().getInstance(MediaFile.class);
 
-    final String id;
+    private String id;
 
     private String      name;
     private String      description;
@@ -242,7 +242,7 @@ public class MediaFile {
      */
     public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileURL(
-                this.weblog, this.id, true);
+                this.weblog, this.getId(), true);
     }
 
     /**
@@ -251,7 +251,7 @@ public class MediaFile {
      */
     public String getThumbnailURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileThumbnailURL(
-                this.weblog, this.id, true);
+                this.weblog, this.getId(), true);
     }
 
     public String getCreatorUserName() {
@@ -383,5 +383,12 @@ public class MediaFile {
         }
         thumbnailHeight = newHeight;
         thumbnailWidth = newWidth;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 }

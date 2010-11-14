@@ -84,6 +84,8 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException {
+        Weblog weblog = bookmark.getWebsite();
+        
         //Remove the bookmark from its parent folder
         bookmark.getFolder().getBookmarks().remove(bookmark);
         
@@ -91,7 +93,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.remove(bookmark);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(bookmark.getWebsite());
+        roller.getWeblogManager().saveWeblog(weblog);
     }
 
     public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {

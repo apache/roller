@@ -46,7 +46,10 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
         ALL_ACTIONS.add(ADMIN);
     }
 
-    
+    public WeblogPermission() {
+        // required by JPA
+    }
+
     public WeblogPermission(Weblog weblog, User user, String actions) {
         super("WeblogPermission user: " + user.getUserName());
         setActions(actions);

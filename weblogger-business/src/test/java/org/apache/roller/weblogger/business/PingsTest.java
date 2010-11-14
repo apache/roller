@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
@@ -85,8 +84,8 @@ public class PingsTest extends TestCase {
         testCommonPing.setPingUrl("http://localhost/testCommonPing");
         
         testCustomPing = new PingTarget();
-        testCustomPing.setName("testCommonPing");
-        testCustomPing.setPingUrl("http://localhost/testCommonPing");
+        testCustomPing.setName("testCustomPing");
+        testCustomPing.setPingUrl("http://localhost/testCustomPing");
     }
     
     public void tearDown() throws Exception {
@@ -244,6 +243,7 @@ public class PingsTest extends TestCase {
     public void testAutoPingCRUD() throws Exception {
         
         AutoPingManager mgr = WebloggerFactory.getWeblogger().getAutopingManager();
+        PingTargetManager pingMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         AutoPing autoPing = null;
         
         // create ping target to use for tests
@@ -264,7 +264,7 @@ public class PingsTest extends TestCase {
         assertEquals(pingTarget, autoPing.getPingTarget());
         
         // update autoPing
-        autoPing.setPingTarget(pingTarget2);
+        autoPing.setPingTarget(pingMgr.getPingTarget(pingTarget2.getId()));
         mgr.saveAutoPing(autoPing);
         TestUtils.endSession(true);
         

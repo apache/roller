@@ -115,7 +115,8 @@ public class MediaFileBase extends UIAction {
                     manager.removeMediaFileDirectory(mediaFileDir);
                 }
             }
-
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(this.getActionWeblog());
+            
             // flush changes
             WebloggerFactory.getWeblogger().flush();
             addMessage("mediaFile.delete.success");

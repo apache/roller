@@ -45,7 +45,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.I18nUtils;
 
 
@@ -164,12 +163,12 @@ public class Weblog implements Serializable {
      * @hibernate.collection-one-to-many
      *    class="org.apache.roller.weblogger.pojos.WeblogPermission"
      */
-    public List getPermissions() {
+    /*public List getPermissions() {
         return permissions;
     }
     public void setPermissions(List perms) {
         permissions = perms;
-    }
+    }*/
     
     
     /**

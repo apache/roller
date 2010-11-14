@@ -66,6 +66,7 @@
                     <cascade-all />
                 </cascade>
             </one-to-many>
+            <transient name="inputStream"/>
             <transient name="thumbnailHeight"/>
             <transient name="thumbnailWidth"/>
         </attributes>

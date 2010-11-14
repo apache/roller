@@ -29,9 +29,9 @@
         <named-query name="User.getByEnabled&amp;EndDate&amp;StartDateOrderByStartDateDesc">
             <query>SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3 ORDER BY u.dateCreated DESC</query>
         </named-query>
-        <named-query name="User.getByEnabled&amp;Permissions.website">
-            <query>SELECT u FROM User u JOIN u.permissions p WHERE u.enabled = ?1 AND p.website = ?2</query>
-        </named-query>
+        <!-- <named-query name="User.getByEnabled&amp;Permissions.website">
+            <query>SELECT u FROM User u JOIN u.permissions p WHERE u.enabled = ?1 AND p.weblog = ?2</query>
+        </named-query> -->
         <named-query name="User.getByEnabled&amp;UserNameOrEmailAddressStartsWith">
             <query>SELECT u FROM User u WHERE u.enabled = ?1 AND (u.userName LIKE ?2 OR u.emailAddress LIKE ?3)</query>
         </named-query>
@@ -50,15 +50,15 @@
         <named-query name="User.getByUserNameOrderByUserName">
             <query>SELECT u FROM User u WHERE u.userName= ?1 ORDER BY u.userName</query>
         </named-query>
-        <named-query name="User.getByPermissions.website">
-            <query>SELECT u FROM User u JOIN u.permissions p WHERE p.website = ?1</query>
+        <!-- <named-query name="User.getByPermissions.website">
+            <query>SELECT u FROM User u JOIN u.permissions p WHERE p.weblog = ?1</query>
         </named-query>
         <named-query name="User.getByPermissions.website&amp;Enabled&amp;EndDate&amp;StartDate">
-            <query>SELECT u FROM User u JOIN u.permissions p WHERE p.website = ?1 AND u.enabled = ?2 AND u.dateCreated &lt; ?3 AND u.dateCreated &gt; ?4</query>
+            <query>SELECT u FROM User u JOIN u.permissions p WHERE p.weblog = ?1 AND u.enabled = ?2 AND u.dateCreated &lt; ?3 AND u.dateCreated &gt; ?4</query>
         </named-query>
         <named-query name="User.getByPermissions.website&amp;EndDate&amp;StartDate">
-            <query>SELECT u FROM User u JOIN u.permissions p WHERE p.website = ?1 AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3</query>
-        </named-query>
+            <query>SELECT u FROM User u JOIN u.permissions p WHERE p.weblog = ?1 AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3</query>
+        </named-query> -->
         <named-query name="User.getByEndDate&amp;StartDateOrderByStartDateDesc">
             <query>SELECT u FROM User u WHERE u.dateCreated &lt; ?1 AND u.dateCreated &gt; ?2 ORDER BY u.dateCreated DESC</query>
         </named-query>

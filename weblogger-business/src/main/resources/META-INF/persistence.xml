@@ -1,8 +1,8 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
     
     <persistence-unit name ="RollerPU" transaction-type = "RESOURCE_LOCAL">
-        <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
         <!--
+        <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
         <jta-data-source>java:comp/env/jdbc/rollerdb</jta-data-source>
         <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
         -->

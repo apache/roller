@@ -100,17 +100,10 @@ public class JPAPersistenceStrategy {
                 emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
 
             } else {
-                // So set JDBD properties for OpenJPA
-                emfProps.setProperty("openjpa.ConnectionDriverName", dbProvider.getJdbcDriverClass());
-                emfProps.setProperty("openjpa.ConnectionURL", dbProvider.getJdbcConnectionURL());
-                emfProps.setProperty("openjpa.ConnectionUserName", dbProvider.getJdbcUsername());
-                emfProps.setProperty("openjpa.ConnectionPassword", dbProvider.getJdbcPassword());
-
-                // And Toplink JPA
-                emfProps.setProperty("toplink.jdbc.driver", dbProvider.getJdbcDriverClass());
-                emfProps.setProperty("toplink.jdbc.url", dbProvider.getJdbcConnectionURL());
-                emfProps.setProperty("toplink.jdbc.user", dbProvider.getJdbcUsername());
-                emfProps.setProperty("toplink.jdbc.password", dbProvider.getJdbcPassword());
+                emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
+                emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
+                emfProps.setProperty("javax.persistence.jdbc.user", dbProvider.getJdbcUsername());
+                emfProps.setProperty("javax.persistence.jdbc.password", dbProvider.getJdbcPassword());
 
                 // And Hibernate JPA
                 emfProps.setProperty("hibernate.connection.driver_class", dbProvider.getJdbcDriverClass());

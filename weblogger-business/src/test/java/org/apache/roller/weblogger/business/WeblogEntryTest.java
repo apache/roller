@@ -68,10 +68,13 @@ public class WeblogEntryTest extends TestCase {
      * All tests in this suite require a user and a weblog.
      */
     public void setUp() throws Exception {
-        
+
         // setup weblogger
         TestUtils.setupWeblogger();
         
+        assertEquals(0L,
+           WebloggerFactory.getWeblogger().getWeblogManager().getWeblogCount());
+
         try {
             testUser = TestUtils.setupUser("entryTestUser");
             testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);

@@ -671,11 +671,16 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     public void removeWeblogEntryAttribute(String name, WeblogEntry entry)
     throws WebloggerException {
+
+        // seems silly, why is this not done in WeblogEntry?
+
         for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext();) {
             WeblogEntryAttribute entryAttribute = (WeblogEntryAttribute) it.next();
             if (entryAttribute.getName().equals(name)) {
+
                 //Remove it from database
                 this.strategy.remove(entryAttribute);
+
                 //Remove it from the collection
                 it.remove();
             }
@@ -684,13 +689,19 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     public void removeWeblogEntryTag(String name, WeblogEntry entry)
     throws WebloggerException {
+
+        // seems silly, why is this not done in WeblogEntry?
+
         for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
             WeblogEntryTag tag = (WeblogEntryTag) it.next();
             if (tag.getName().equals(name)) {
+
                 //Call back the entity to adjust its internal state
                 entry.onRemoveTag(name);
+
                 //Remove it from database
                 this.strategy.remove(tag);
+                
                 //Remove it from the collection
                 it.remove();
             }

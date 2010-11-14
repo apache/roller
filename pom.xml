@@ -78,7 +78,7 @@
 
             </plugins>
 
-        </pluginManagement> 
+        </pluginManagement>
     </build>
 
     <repositories>
@@ -107,6 +107,16 @@
             <id>oss.sonatype.org</id>
             <url>http://oss.sonatype.org/content/groups/public</url>
         </repository>
+
+        <!--
+        <repository>
+            <id>EclipseLink Repo</id>
+            <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
+             <snapshots>
+                <enabled>true</enabled>
+             </snapshots>
+        </repository>
+        -->
 
         <!-- for jstl-1.2 for now.. -->
         <repository>

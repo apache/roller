@@ -144,11 +144,13 @@
             <one-to-many name="entryAttributes" mapped-by="entry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntryAttribute" fetch="LAZY">
                 <cascade>
                     <cascade-persist/>
+                    <cascade-remove />
                 </cascade>
             </one-to-many>
             <one-to-many name="tags" mapped-by="weblogEntry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntryTag" fetch="LAZY">
                 <cascade>
                     <cascade-persist /> <!-- Added so entry added by addTag() gets persisted -->
+                    <cascade-remove />
                 </cascade>
             </one-to-many>
             <transient name="categories"/>

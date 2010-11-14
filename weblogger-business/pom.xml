@@ -2,7 +2,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion> 
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.roller</groupId>
@@ -28,7 +28,7 @@
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
     </properties>
 
-    <dependencies> 
+    <dependencies>
 
         <dependency>
             <groupId>org.apache.roller</groupId>
@@ -41,6 +41,29 @@
             <artifactId>roller-planet-business</artifactId>
             <version>5.0.0-RC2</version>
         </dependency>
+
+<!--
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.0.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jta_1.1_spec</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_2.0_spec</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+-->
 
         <dependency>
             <groupId>org.apache.openjpa</groupId>
@@ -55,11 +78,11 @@
                     <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>geronimo-jms_1.1_spec</artifactId>
-                	<groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+                    <groupId>org.apache.geronimo.specs</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency> 
 
         <dependency>
             <groupId>javax.mail</groupId>
@@ -196,6 +219,11 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+
+                    <!-- Just in case OpenJPA bytecode enhancement is turned off -->
+                    <forkMode>once</forkMode>
+                    <argLine>-javaagent:${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.0/openjpa-2.0.0.jar</argLine>
+
                     <systemProperties>
                         <property>
                             <name>catalina.base</name>
@@ -289,7 +317,8 @@
                                 <startdb databaseDir="${project.build.directory}/derby-system"
                                          port="3219"
                                          databaseScriptsDir="${project.build.directory}/dbscripts"
-                                         skip="${maven.test.skip}" ></startdb>
+                                         skip="${maven.test.skip}" >
+                                </startdb>
                             </tasks>
                         </configuration>
                     </execution>
@@ -308,7 +337,8 @@
                                 <stopdb databaseDir="${project.build.directory}/derby-system"
                                         port="3219"
                                         databaseScriptsDir="${project.build.directory}/dbscripts"
-                                        skip="${maven.test.skip}" ></stopdb>
+                                        skip="${maven.test.skip}" >
+                                </stopdb>
                                 <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
                             </tasks>
                         </configuration>
@@ -408,6 +438,6 @@
             </build>
         </profile>
 
-    </profiles>
+    </profiles> 
 
 </project>

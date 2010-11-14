@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
@@ -103,6 +104,7 @@ public class BookmarkTest extends TestCase {
                 new Integer(1),
                 new Integer(12),
                 "test.jpg");
+        bookmark1.setFolder(folder);
         folder.addBookmark(bookmark1);
         
         // Add another bookmark
@@ -115,10 +117,10 @@ public class BookmarkTest extends TestCase {
                 new Integer(1),
                 new Integer(12),
                 "test.jpf");
+        bookmark2.setFolder(folder);
         folder.addBookmark(bookmark2);
         
         TestUtils.endSession(true);
-        
         
         WeblogBookmarkFolder testFolder = null;
         WeblogBookmark bookmarkb = null, bookmarka = null;
@@ -126,8 +128,9 @@ public class BookmarkTest extends TestCase {
         // See that two bookmarks were stored
         testFolder = bmgr.getFolder(folder.getId());
         assertEquals(2, testFolder.getBookmarks().size());
-        bookmarka = (WeblogBookmark)testFolder.getBookmarks().iterator().next();
-        bookmarkb = (WeblogBookmark)testFolder.getBookmarks().iterator().next();
+        Iterator<WeblogBookmark> iter = testFolder.getBookmarks().iterator();
+        bookmarka = iter.next();
+        bookmarkb = iter.next();
         
         // Remove one bookmark
         bmgr.removeBookmark(bookmarka);        
@@ -137,8 +140,9 @@ public class BookmarkTest extends TestCase {
                 
         // Folder should now contain one bookmark
         assertNull(bmgr.getBookmark(bookmarka.getId()));
+        assertNull(bmgr.getBookmark(bookmarkb.getId()));
         testFolder = bmgr.getFolder(folder.getId());
-        assertEquals(1, testFolder.getBookmarks().size());
+        assertEquals(0, testFolder.getBookmarks().size());
         
         // Remove folder
         bmgr.removeFolder(testFolder);

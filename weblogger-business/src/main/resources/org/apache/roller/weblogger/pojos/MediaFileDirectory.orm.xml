@@ -50,7 +50,8 @@
             <one-to-many name="mediaFiles" mapped-by="directory" target-entity="org.apache.roller.weblogger.pojos.MediaFile" fetch="LAZY">
                 <order-by>name</order-by>
                 <cascade>
-                    <cascade-all/>
+                    <cascade-persist/>
+                    <cascade-remove/>
                 </cascade>
             </one-to-many>
         </attributes>

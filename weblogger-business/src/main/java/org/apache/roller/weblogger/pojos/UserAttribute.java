@@ -54,6 +54,10 @@ public class UserAttribute implements Serializable {
         }
     }
 
+    public UserAttribute() {
+        // required for JPA
+    }
+
     public UserAttribute(String userName, String attrName, String attrValue) {
         this.userName = userName;
         this.attrName = attrName;

@@ -28,7 +28,7 @@ import org.apache.roller.util.UUIDGenerator;
  */
 public class MediaFileDirectory {
 
-    String id;
+    private String id;
     String name;
     String description;
     Weblog weblog;
@@ -249,5 +249,12 @@ public class MediaFileDirectory {
                 .append(getName(), o.getName())
                 .append(getDescription(), o.getDescription())
                 .append(getPath(), o.getPath()).isEquals();
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 }

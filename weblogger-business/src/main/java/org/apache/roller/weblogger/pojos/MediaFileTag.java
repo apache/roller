@@ -26,7 +26,7 @@ import org.apache.roller.util.UUIDGenerator;
  */
 public class MediaFileTag {
 	
-	String id = UUIDGenerator.generateUUID();
+	private String id = UUIDGenerator.generateUUID();
 	String name;
 	MediaFile mediaFile;
 	

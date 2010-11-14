@@ -138,6 +138,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         for(Iterator iter = results.iterator(); iter.hasNext();) {
             WeblogEntryTag tagData = (WeblogEntryTag) iter.next();
+            if (tagData.getWeblogEntry() != null) {
+                tagData.getWeblogEntry().getTags().remove(tagData);
+            }
             this.strategy.remove(tagData);
         }
         
@@ -212,10 +215,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.flush();
 
         // remove mediafile metadata
-        List<MediaFileDirectory> dirs = mmgr.getMediaFileDirectories(website);
-        for (MediaFileDirectory dir : dirs) {
-            this.strategy.remove(dir);
-        }
+        // remove uploaded files
+        MediaFileManager mfmgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        mfmgr.removeAllFiles(website);
+        //List<MediaFileDirectory> dirs = mmgr.getMediaFileDirectories(website);
+        //for (MediaFileDirectory dir : dirs) {
+            //this.strategy.remove(dir);
+        //}
         this.strategy.flush();
 
         // remove entries
@@ -242,11 +248,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // flush the changes before returning. This is required as there is a
         // circular dependency between WeblogCategory and Weblog
-        this.strategy.flush();
-        
-        // remove uploaded files
-        MediaFileManager mfmgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-        mfmgr.removeAllFiles(website);
+        this.strategy.flush();        
     }
     
     protected void updateTagAggregates(List tags) throws WebloggerException {
@@ -316,6 +318,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                         splitcats[i],    // description
                         null );          // image
                 if (i == 0) firstCat = c;
+                rootCat.getWeblogCategories().add(c);
                 this.strategy.store(c);
             }
         }
@@ -350,6 +353,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                             zero,                // priority
                             null);               // image
                     this.strategy.store(b);
+                    root.getBookmarks().add(b);
                 }
             }
         }
