@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
     <description>Persistence Metadata for Roller</description>
     <persistence-unit-metadata>
         <persistence-unit-defaults>
@@ -69,8 +69,9 @@
             <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <transient name="required"/>
             
+            <transient name="custom"/>
+            <transient name="required"/>
             <transient name="decorator"/>
         </attributes>
     </entity>

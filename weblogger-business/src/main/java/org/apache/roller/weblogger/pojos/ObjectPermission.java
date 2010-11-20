@@ -72,13 +72,13 @@ public abstract class ObjectPermission extends RollerPermission {
         this.userName = username;
     }
 
-    public String getObjectType() {
+    /*public String getObjectType() {
         return objectType;
     }
 
     public void setObjectType(String objectType) {
         this.objectType = objectType;
-    }
+    }*/
 
     public String getObjectId() {
         return objectId;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
 	<description>Persistence Metadata for Roller</description>
 	<persistence-unit-metadata>
 		<persistence-unit-defaults>
@@ -204,6 +204,9 @@
 				<join-column name="defaultcatid" insertable="true" updatable="true"/>
 			</many-to-one>
 
+			<transient name="theme"/>
+			<transient name="creator"/>
+			<transient name="defaultPage"/>
 			<transient name="absoluteURL"/>
 			<transient name="adminUserCount"/>
 			<transient name="commentCount"/>
@@ -211,6 +214,7 @@
 			<transient name="todaysHits"/>
 			<transient name="todaysReferrers"/>
 			<transient name="uRL"/>
+			<transient name="URL"/>
 			<transient name="userCount"/>
 			<transient name="entryCount"/>
             <transient name="initializedPlugins"/>

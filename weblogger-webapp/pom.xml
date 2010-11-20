@@ -461,10 +461,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
 
-                    <!-- Just in case OpenJPA bytecode enhancement is turned off -->
+                    <!-- Just in case OpenJPA bytecode enhancement is turned off 
                     <forkMode>once</forkMode>
                     <argLine>-javaagent:${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.0/openjpa-2.0.0.jar</argLine>
-
+                    -->
+                    
                     <systemProperties>
                         <property>
                             <name>catalina.base</name>

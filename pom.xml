@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -108,15 +109,20 @@
             <url>http://oss.sonatype.org/content/groups/public</url>
         </repository>
 
-        <!--
+        <!-- EclipseLink repo
         <repository>
             <id>EclipseLink Repo</id>
             <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
              <snapshots>
                 <enabled>true</enabled>
              </snapshots>
-        </repository>
-        -->
+        </repository> -->
+        
+        <!-- JBoss Hibernate JPA repo
+        <repository>
+            <id>JBoss Repo</id>
+            <url>http://repository.jboss.com/maven2</url>
+        </repository>  -->
 
         <!-- for jstl-1.2 for now.. -->
         <repository>

@@ -51,7 +51,7 @@ public class CommentValidatorTest extends TestCase {
         //TestUtils.endSession(true);
 
         weblog = TestUtils.setupWeblog("doeblog", user);
-        //TestUtils.endSession(true);
+        //TestUtils.endSession(true)
         
         entry = TestUtils.setupWeblogEntry("anchor1", weblog.getDefaultCategory(), weblog, user);
 
@@ -60,13 +60,13 @@ public class CommentValidatorTest extends TestCase {
     
     protected void tearDown() throws Exception {
         TestUtils.teardownWeblogEntry(entry.getId());
-        TestUtils.teardownWeblogCategory(weblog.getDefaultCategory().getId());
+        //TestUtils.teardownWeblogCategory(weblog.getDefaultCategory().getId());
         TestUtils.teardownWeblog(weblog.getId());
         TestUtils.teardownUser(user.getUserName());
     }
     
     public void testExcessSizeCommentValidator() {
-        /* RollerMessages msgs = new RollerMessages();
+        RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
 
         // string that exceeds default excess size threshold of 1000
@@ -79,10 +79,10 @@ public class CommentValidatorTest extends TestCase {
         assertEquals(100, mgr.validateComment(comment, msgs));
 
         comment.setContent(sb.toString()); 
-        assertTrue(mgr.validateComment(comment, msgs) != 100); */
+        assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
     
-    /* public void testExcessLinksCommentValidator() {
+    public void testExcessLinksCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
         
@@ -109,7 +109,7 @@ public class CommentValidatorTest extends TestCase {
 
         comment.setContent("blah blah 01-suonerie.com blah"); 
         assertTrue(mgr.validateComment(comment, msgs) != 100);
-    }*/
+    }
     
 // To run this test add the Akismet validator to comment.validator.classnames
 // and put your Akismet key in comment.validator.akismet.apikey

@@ -1,4 +1,4 @@
-<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
     
     <persistence-unit name ="RollerPU" transaction-type = "RESOURCE_LOCAL">
         <!--

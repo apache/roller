@@ -42,29 +42,7 @@
             <version>5.0.0-RC2</version>
         </dependency>
 
-<!--
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.0.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.1_spec</artifactId>
-            <version>1.1.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.0_spec</artifactId>
-            <version>1.1</version>
-            <scope>provided</scope>
-        </dependency>
--->
-
+        <!-- OpenJPA deps -->
         <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
@@ -77,13 +55,43 @@
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                </exclusion>
             </exclusions>
-        </dependency> 
+        </dependency>
 
+<!-- EclipseLink deps (for sometimes testing purposes)
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jta_1.1_spec</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_2.0_spec</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency
+-->
+
+<!-- Hibernate deps (for sometimes testing purposes)
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.5.1-Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.5.6</version>
+            <scope>runtime</scope>
+        </dependency> -->
+        
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
@@ -220,10 +228,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
 
-                    <!-- Just in case OpenJPA bytecode enhancement is turned off -->
+                    <!-- Just in case OpenJPA bytecode enhancement is turned off
                     <forkMode>once</forkMode>
                     <argLine>-javaagent:${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.0/openjpa-2.0.0.jar</argLine>
-
+                     -->
                     <systemProperties>
                         <property>
                             <name>catalina.base</name>
