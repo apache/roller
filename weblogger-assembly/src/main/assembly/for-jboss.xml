@@ -18,11 +18,11 @@
 -->
 
 <!--
-   WARNING: to produce a Java EE compatible build you MUST first build Roller 
-   Weblogger using the -Djavaee=true option, e.g. mvn -Djavaee=true install
+  WARNING: to produce a JBoss compatible build you MUST first build Roller 
+  Weblogger using the -Djavaee=true option, e.g. mvn -Djavaee=true install
 -->
 <assembly>
-    <id>for-javaee</id>
+    <id>for-jboss</id>
     <formats>
         <format>dir</format>
         <!--        
@@ -41,8 +41,12 @@
             <excludes>
                 <!-- don't include all those Jave EE jars that Tomcat needs -->
                 <exclude>**/openjpa**</exclude>
-                <exclude>**/xercesImpl**</exclude>
+                <exclude>**/xml-apis**</exclude>
                 <exclude>**/geronimo**</exclude>
+                
+                <!-- oddly enough, JBoss already has these in webapp classpath -->
+                <exclude>**/javassist**</exclude>
+                <exclude>**/xercesImpl**</exclude>
             </excludes>
         </fileSet>
     </fileSets>
@@ -50,27 +54,27 @@
     <files> 
         <file> 
             <source>../README.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss</outputDirectory>
         </file> 
         <file> 
             <source>../NOTICE.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss</outputDirectory>
         </file> 
         <file> 
             <source>../LICENSE.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/installguide/generated/roller-install-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss/docs</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/userguide/generated/roller-user-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss/docs</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/templateguide/generated/roller-template-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss/docs</outputDirectory>
         </file> 
     </files>
 
