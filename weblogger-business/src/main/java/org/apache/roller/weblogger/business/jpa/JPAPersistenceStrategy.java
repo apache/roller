@@ -79,12 +79,14 @@ public class JPAPersistenceStrategy {
             }
         } else {
 
-            // Add all OpenJPA and Toplinks properties found in WebloggerConfig
+            // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
             Properties emfProps = new Properties();
             Enumeration keys = WebloggerConfig.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
-                if (key.startsWith("openjpa.")) {
+                if (       key.startsWith("javax.persistence.") 
+                        || key.startsWith("openjpa.") 
+                        || key.startsWith("hibernate.")) {
                     String value = WebloggerConfig.getProperty(key);
                     logger.info(key + ": " + value);
                     emfProps.setProperty(key, value);

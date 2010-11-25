@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-
+<web-app version="2.5" 
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    
     <display-name>Roller Weblogger</display-name>
 
     <context-param>
@@ -577,19 +580,20 @@
     </error-page>
 
 
-    <!-- jndi resources 
+    <!-- jndi resources -->
     <resource-ref>
         <res-ref-name>jdbc/rollerdb</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
+        <res-auth>Container</res-auth>      
+        <mapped-name>jdbc/roller</mapped-name>
     </resource-ref>
 
     <resource-ref>
         <res-ref-name>mail/Session</res-ref-name>
         <res-type>javax.mail.Session</res-type>
         <res-auth>Container</res-auth>
+        <mapped-name>Session</mapped-name>
     </resource-ref>
-    -->
 
 </web-app>
 <!-- BEGIN: example config. for using Container Managed Authentication

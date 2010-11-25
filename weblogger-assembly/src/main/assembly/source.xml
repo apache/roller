@@ -17,52 +17,52 @@
  * under the License.
 -->
 <assembly>
-  <id>source</id>
-  <formats>
-    <format>zip</format>
-    <format>tar.gz</format>
-    <format>tar.bz2</format>
-  </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
-  <fileSets>
-    <fileSet>
-      <outputDirectory>roller-webglogger-${pom.version}-source</outputDirectory>
-      <directory>${project.basedir}/../</directory>
-      <includes>
-        <include>**</include>
-      </includes>
-      <excludes>
+    <id>source</id>
+    <formats>
+        <format>zip</format>
+        <format>tar.gz</format>
+        <format>tar.bz2</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>roller-webglogger-${pom.version}-source</outputDirectory>
+            <directory>${project.basedir}/../</directory>
+            <includes>
+                <include>**</include>
+            </includes>
+            <excludes>
         <!-- scm -->
-        <exclude>**/.git/**</exclude>
-        <exclude>**/.svn/**</exclude>
+                <exclude>**/.git/**</exclude>
+                <exclude>**/.svn/**</exclude>
         <!-- IDE -->
-        <exclude>**/*.iws</exclude>
-        <exclude>**/*.ipr</exclude>
-        <exclude>**/*.iml</exclude>
-        <exclude>**/.project</exclude>
-        <exclude>**/.classpath</exclude>
-        <exclude>**/.settings/**</exclude>
-        <exclude>**/.deployables/**</exclude>
-        <exclude>**/.wtpmodules/**</exclude>
-        <exclude>**/.externalToolBuilders/**</exclude>
-        <exclude>**/maven-eclipse.xml</exclude>
+                <exclude>**/*.iws</exclude>
+                <exclude>**/*.ipr</exclude>
+                <exclude>**/*.iml</exclude>
+                <exclude>**/.project</exclude>
+                <exclude>**/.classpath</exclude>
+                <exclude>**/.settings/**</exclude>
+                <exclude>**/.deployables/**</exclude>
+                <exclude>**/.wtpmodules/**</exclude>
+                <exclude>**/.externalToolBuilders/**</exclude>
+                <exclude>**/maven-eclipse.xml</exclude>
         <!-- maven -->
-        <exclude>**/target/**</exclude>
-        <exclude>**/pom.xml.releaseBackup</exclude>
-        <exclude>**/release.properties</exclude>
+                <exclude>**/target/**</exclude>
+                <exclude>**/pom.xml.releaseBackup</exclude>
+                <exclude>**/release.properties</exclude>
 
         <!-- misc -->
-        <exclude>**/*.patch</exclude>
-        <exclude>**/*.diff</exclude>
-        <exclude>**/*.log</exclude>
-        <exclude>**/*.bak</exclude>
-        <exclude>**/*~</exclude>
-        <exclude>**/#*#</exclude>
-        <exclude>**/%*%</exclude>
-        <exclude>**/samples/create.sql</exclude>
-        <exclude>**/samples/drop.sql</exclude>
-        <exclude>**/derby.log</exclude>
-      </excludes>
-    </fileSet>
-  </fileSets>
+                <exclude>**/*.patch</exclude>
+                <exclude>**/*.diff</exclude>
+                <exclude>**/*.log</exclude>
+                <exclude>**/*.bak</exclude>
+                <exclude>**/*~</exclude>
+                <exclude>**/#*#</exclude>
+                <exclude>**/%*%</exclude>
+                <exclude>**/samples/create.sql</exclude>
+                <exclude>**/samples/drop.sql</exclude>
+                <exclude>**/derby.log</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets>
 </assembly>

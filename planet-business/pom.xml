@@ -195,10 +195,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
 
-                    <!-- Just in case OpenJPA bytecode enhancement is turned off
+                    <!-- Ensure tests will run even if 'openjpa' profile not active -->
                     <forkMode>once</forkMode>
                     <argLine>-javaagent:${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.0/openjpa-2.0.0.jar</argLine>
-                    -->
+                    
                     <systemProperties>
                         <property>
                             <name>catalina.base</name>
@@ -353,9 +353,10 @@
     <profiles>
         <profile>
             <id>openjpa</id>
+            <!-- to turn off OpenJPA bytecode enhancement define property '-Djavaee=true' -->
             <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+                <property><name>!javaee</name></property>
+            </activation> 
             <dependencies>
                 <dependency>
                     <groupId>org.apache.openjpa</groupId>

@@ -82,12 +82,14 @@ public class JPAPersistenceStrategy {
         } else {
             DatabaseProvider dbProvider = PlanetStartup.getDatabaseProvider();
 
-            // Add all OpenJPA and Toplinks properties found in RollerConfig
+            // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
             Properties emfProps = new Properties();
             Enumeration keys = PlanetConfig.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
-                if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
+                if (       key.startsWith("javax.persistence.") 
+                        || key.startsWith("openjpa.") 
+                        || key.startsWith("hibernate.")) {
                     String value = PlanetConfig.getProperty(key);
                     logger.info(key + ": " + value);
                     emfProps.setProperty(key, value);

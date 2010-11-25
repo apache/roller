@@ -227,13 +227,6 @@
 
             <!-- web deps -->
 
-
-            <dependency>
-                <groupId>taglibs</groupId>
-                <artifactId>string</artifactId>
-                <version>1.1.0</version>
-            </dependency>
-
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
@@ -245,21 +238,21 @@
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-core</artifactId>
-                <version>2.1.8.1</version>
+                <version>2.2.1</version>
                 <scope>compile</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-tiles-plugin</artifactId>
-                <version>2.1.8.1</version>
+                <version>2.2.1</version>
                 <scope>compile</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-spring-plugin</artifactId>
-                <version>2.1.8.1</version>
+                <version>2.2.1</version>
             </dependency>
 
             <!-- <dependency>

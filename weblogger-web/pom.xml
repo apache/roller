@@ -107,6 +107,13 @@
             <artifactId>struts2-core</artifactId>
         </dependency>
 
+        <!-- needed by Struts, except on JBoss -->
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-spring-plugin</artifactId>
@@ -135,11 +142,6 @@
                     <groupId>commons-logging</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>string</artifactId>
         </dependency>
 
         <dependency>
@@ -431,10 +433,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
 
-                    <!-- Just in case OpenJPA bytecode enhancement is turned off
+                    <!-- Ensure tests will run even if 'openjpa' profile not active -->
                     <forkMode>once</forkMode>
                     <argLine>-javaagent:${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.0/openjpa-2.0.0.jar</argLine>
-                    -->
+                    
                     <systemProperties>
                         <property>
                             <name>catalina.base</name>

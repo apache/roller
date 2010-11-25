@@ -19,24 +19,50 @@ To pull the latest trunk sources you do this.
   svn co https://svn.apache.org/repos/asf/roller/trunk
   cd trunk
 
-Building this version of Roller requires Apache Maven 2 to build.  Version 2.0.10 or
-higher is suggested.
+Building this version of Roller requires Apache Maven 3 to build.
+
+
+---------------------------
+BUILDING FOR TOMCAT
+
+The normal Roller build creates a product suitable for use on Tomcat 6 or later,
+which includes OpenJPA buildcode enhancement, OpenJPA and other Java EE jars.
 
 After pulling the source tree and changing directory to its top level, as
 indicated above, the following command will build and run all unit tests:
 
   mvn install
 
-After doing this, you should find the newly built Roller webapp in
-weblogger-web/target/roller.
+After doing that, you should find the newly built Roller webapp, suitable
+for use with Tomcat in weblogger-web/target/roller. 
 
-To build a Roller distribution, you do this:
+To build Roller release files, you do this:
 
   cd weblogger-assembly
-  mvn assembly:single
+  mvn install
 
-and you will find Roller distribution files in weblogger-assembly/target
+After that, you'll find Roller distribution files in weblogger-assembly/target. 
+The Tomcat specific release files will have 'for-tomcat' in their names.
 
+
+---------------------------
+BUILDING FOR JAVA EE 6
+
+The Tomcat build includes extra things that are not needed on a full Java EE
+application server. In fact, the Tomcat won't work on some Java EE servers.
+If you leave those extra things out, Roller can run on most Java EE servers.
+
+If you add a 'javaee' flag to the Roller build invocation, you can create 
+Roller release files that will work on a Java EE 6 app server.
+
+   mvn -Djavaee=true install
+   cd weblogger-assembly
+   mvn install
+
+When that finishes, you will find Roller distribution files in 
+weblogger-assembly/target. The Java EE specific release files will have 
+'for-javaee' in their names.
+      
 
 NOTE: If you wish to pull a branch other than the trunk, replace the word
 "trunk" in both lines above with the appropriate branch name.  Note that
