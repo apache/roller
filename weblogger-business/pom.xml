@@ -396,7 +396,19 @@
                 <directory>${project.basedir}/src/main/resources</directory>
                 <filtering>false</filtering>
                 <includes>
-                    <include>**/**</include>
+                    <include>org/**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/sql/**</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <!-- ensure version and persistence files get substitions -->
+                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>roller-version.properties</include>
+                    <include>META-INF/**</include>
                 </includes>
             </resource>
         </resources>
@@ -404,6 +416,29 @@
     </build>
 
     <profiles>
+        
+        <profile>
+            <id>jboss</id>
+            <!-- building for JBoss, turn on 'java:/' prefix on datasource JNDI name -->
+            <activation>
+                <property><name>jboss</name></property>
+            </activation> 
+            <properties>
+                <datasourceName>java:/jdbc/rollerdb</datasourceName>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>notjboss</id>
+            <!-- not building for JBoss, don't use 'java:/' prefix on datasource JNDI name -->
+            <activation>
+                <property><name>!jboss</name></property>
+            </activation> 
+            <properties>
+                <datasourceName>jdbc/rollerdb</datasourceName>
+            </properties>
+        </profile>
+
         <profile>
             <id>openjpa</id>
             <!-- to turn off OpenJPA bytecode enhancement define property '-Djavaee=true' -->

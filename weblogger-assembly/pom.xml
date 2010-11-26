@@ -98,6 +98,29 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/for-javaee.xml</descriptor>
+                                <descriptor>src/main/assembly/source.xml</descriptor>
+                            </descriptors>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>jboss-assembly</id>
+            <activation>
+                <property>
+                    <name>jboss</name>
+                </property>
+            </activation> 
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <descriptors>
                                 <descriptor>src/main/assembly/for-jboss.xml</descriptor>
                                 <descriptor>src/main/assembly/source.xml</descriptor>
                             </descriptors>

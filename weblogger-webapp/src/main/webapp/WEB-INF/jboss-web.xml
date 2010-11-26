@@ -4,6 +4,6 @@
 <jboss-web>
    <resource-ref>
         <res-ref-name>jdbc/rollerdb</res-ref-name>
-        <jndi-name>java:/RollerDS</jndi-name>
+        <jndi-name>java:/jdbc/rollerdb</jndi-name>
    </resource-ref>
 </jboss-web>

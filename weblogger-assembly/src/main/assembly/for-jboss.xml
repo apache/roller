@@ -35,7 +35,7 @@
     <fileSets>
         <fileSet>
             <outputDirectory>
-            ${artifact.artifactId}-${artifact.version}/webapp/roller
+            ${artifact.artifactId}-${artifact.version}-jboss/webapp/roller
             </outputDirectory>
             <directory>../weblogger-webapp/target/roller</directory>
             <excludes>

@@ -35,13 +35,12 @@
     <fileSets>
         <fileSet>
             <outputDirectory>
-            ${artifact.artifactId}-${artifact.version}/webapp/roller
+            ${artifact.artifactId}-${artifact.version}-javaee/webapp/roller
             </outputDirectory>
             <directory>../weblogger-webapp/target/roller</directory>
             <excludes>
                 <!-- don't include all those Jave EE jars that Tomcat needs -->
                 <exclude>**/openjpa**</exclude>
-                <exclude>**/xercesImpl**</exclude>
                 <exclude>**/geronimo**</exclude>
             </excludes>
         </fileSet>
@@ -50,27 +49,27 @@
     <files> 
         <file> 
             <source>../README.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee</outputDirectory>
         </file> 
         <file> 
             <source>../NOTICE.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee</outputDirectory>
         </file> 
         <file> 
             <source>../LICENSE.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/installguide/generated/roller-install-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee/docs</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/userguide/generated/roller-user-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee/docs</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/templateguide/generated/roller-template-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee/docs</outputDirectory>
         </file> 
     </files>
 
