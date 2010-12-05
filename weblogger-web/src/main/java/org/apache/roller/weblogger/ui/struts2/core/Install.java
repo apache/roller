@@ -95,7 +95,10 @@ public class Install extends UIAction {
             setPageTitle("installer.database.upgrade.pageTitle");
             return UPGRADE_DATABASE;
         }
+        
         setPageTitle("installer.error.unknown.pageTitle");        
+        rootCauseException = new Exception("UNKNOWN ERROR");
+        rootCauseException.fillInStackTrace();
         return BOOTSTRAP;
     }
     
@@ -141,8 +144,10 @@ public class Install extends UIAction {
     
     
     public String bootstrap() {
+        log.info("ENTERING");
         
-        if(WebloggerFactory.isBootstrapped()) {
+        if (WebloggerFactory.isBootstrapped()) {
+            log.info("EXITING - already bootstrapped, forwarding to Roller");
             return SUCCESS;
         }
         
@@ -177,15 +182,21 @@ public class Install extends UIAction {
                     log.fatal("Roller Planet bootstrapping failed", t);
                 }
             }
-
+            log.info("EXITING - Bootstrap sucessful, forwarding to Roller");
             return SUCCESS;
             
         } catch (BootstrapException ex) {
+            log.error("BootstrapException", ex);
             rootCauseException = ex;
         } catch (WebloggerException ex) {
+            log.error("WebloggerException", ex);
             rootCauseException = ex;
+        } catch (Throwable t) {
+            log.error("Throwable", t);
+            rootCauseException = t;
         }
         
+        log.info("EXITING - Bootstrap failed, forwarding to error page");
         setPageTitle("installer.error.unknown.pageTitle");                
         return BOOTSTRAP;
     }
@@ -198,7 +209,7 @@ public class Install extends UIAction {
         try {
             con = WebloggerStartup.getDatabaseProvider().getConnection();
             name = con.getMetaData().getDatabaseProductName();
-        } catch (Exception intentionallyIgnored) {
+    } catch (Exception intentionallyIgnored) {
             // ignored
         } finally {
             if(con != null) try {

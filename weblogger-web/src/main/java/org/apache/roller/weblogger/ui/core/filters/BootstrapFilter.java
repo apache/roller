@@ -52,9 +52,11 @@ public class BootstrapFilter implements Filter {
         
         log.debug("Entered "+request.getRequestURI());
         
-        if (!WebloggerFactory.isBootstrapped() &&
-                "auto".equals(WebloggerConfig.getProperty("installation.type")) &&
-                !isInstallUrl(request.getServletPath())) {
+        if ("auto".equals(WebloggerConfig.getProperty("installation.type"))
+                && !WebloggerFactory.isBootstrapped() 
+                && !isInstallUrl(request.getRequestURI())) {
+                    
+            log.debug("Forwarding to install page");
             
             // we doing an install, so forward to installer
             RequestDispatcher rd = context.getRequestDispatcher(
@@ -70,8 +72,11 @@ public class BootstrapFilter implements Filter {
     
     
     private boolean isInstallUrl(String uri) {
-        return (uri != null && (uri.startsWith("/roller-ui/install") ||
-                uri.endsWith(".js") || uri.endsWith(".css")));
+        return (uri != null && (
+                   uri.endsWith("create.rol") 
+                || uri.endsWith("bootstrap.rol") 
+                || uri.endsWith(".js") 
+                || uri.endsWith(".css")));
     }
     
     

@@ -176,14 +176,14 @@
     <!-- Struts2 -->
     <filter-mapping>
         <filter-name>struts2-cleanup</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>*.rol</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
     <filter-mapping>
         <filter-name>struts2</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>*.rol</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
