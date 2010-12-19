@@ -96,7 +96,7 @@ public class JPAPersistenceStrategy {
             if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
                 // We're doing JNDI, so set OpenJPA JNDI name property
                 String jndiName = "java:comp/env/" + dbProvider.getJndiName();
-                emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
+                emfProps.setProperty("javax.persistence.nonJtaDataSource", jndiName);
 
             } else {
                 emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());

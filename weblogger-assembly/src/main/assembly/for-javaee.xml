@@ -42,6 +42,10 @@
                 <!-- don't include all those Jave EE jars that Tomcat needs -->
                 <exclude>**/openjpa**</exclude>
                 <exclude>**/geronimo**</exclude>
+
+                <!-- don't include Jetty config, needed for build time only -->
+                <exclude>**/jetty-env**</exclude>
+                
             </excludes>
         </fileSet>
     </fileSets>

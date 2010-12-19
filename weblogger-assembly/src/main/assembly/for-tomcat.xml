@@ -38,6 +38,10 @@
             ${artifact.artifactId}-${artifact.version}-tomcat/webapp/roller
             </outputDirectory>
             <directory>../weblogger-webapp/target/roller</directory>
+            <excludes>
+                <!-- don't include Jetty config, needed for build time only -->
+                <exclude>**/jetty-env**</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
 

@@ -47,6 +47,10 @@
                 <!-- oddly enough, JBoss already has these in webapp classpath -->
                 <exclude>**/javassist**</exclude>
                 <exclude>**/xercesImpl**</exclude>
+
+                <!-- don't include Jetty config, needed for build time only -->
+                <exclude>**/jetty-env**</exclude>
+
             </excludes>
         </fileSet>
     </fileSets>
