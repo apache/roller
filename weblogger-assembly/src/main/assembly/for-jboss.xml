@@ -24,38 +24,16 @@
 <assembly>
     <id>for-jboss</id>
     <formats>
-        <format>dir</format>
-        <!--        
         <format>zip</format>
         <format>tar.gz</format>
-        -->
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 
-    <fileSets>
-        <fileSet>
-            <outputDirectory>
-            ${artifact.artifactId}-${artifact.version}-jboss/webapp/roller
-            </outputDirectory>
-            <directory>../weblogger-webapp/target/roller</directory>
-            <excludes>
-                <!-- don't include all those Jave EE jars that Tomcat needs -->
-                <exclude>**/openjpa**</exclude>
-                <exclude>**/xml-apis**</exclude>
-                <exclude>**/geronimo**</exclude>
-                
-                <!-- oddly enough, JBoss already has these in webapp classpath -->
-                <exclude>**/javassist**</exclude>
-                <exclude>**/xercesImpl**</exclude>
-
-                <!-- don't include Jetty config, needed for build time only -->
-                <exclude>**/jetty-env**</exclude>
-
-            </excludes>
-        </fileSet>
-    </fileSets>
-
     <files> 
+        <file> 
+            <source>../weblogger-war-assembly/target/roller-${artifact.version}-jboss.war</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss/webapp</outputDirectory>
+        </file> 
         <file> 
             <source>../README.txt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss</outputDirectory>

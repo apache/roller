@@ -24,33 +24,16 @@
 <assembly>
     <id>for-javaee</id>
     <formats>
-        <format>dir</format>
-        <!--        
         <format>zip</format>
         <format>tar.gz</format>
-        -->
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 
-    <fileSets>
-        <fileSet>
-            <outputDirectory>
-            ${artifact.artifactId}-${artifact.version}-javaee/webapp/roller
-            </outputDirectory>
-            <directory>../weblogger-webapp/target/roller</directory>
-            <excludes>
-                <!-- don't include all those Jave EE jars that Tomcat needs -->
-                <exclude>**/openjpa**</exclude>
-                <exclude>**/geronimo**</exclude>
-
-                <!-- don't include Jetty config, needed for build time only -->
-                <exclude>**/jetty-env**</exclude>
-                
-            </excludes>
-        </fileSet>
-    </fileSets>
-
     <files> 
+        <file> 
+            <source>../weblogger-war-assembly/target/roller-${artifact.version}-javaee.war</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee/webapp</outputDirectory>
+        </file> 
         <file> 
             <source>../README.txt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee</outputDirectory>

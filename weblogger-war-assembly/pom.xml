@@ -26,11 +26,11 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>roller-weblogger</artifactId>
+    <artifactId>roller</artifactId>
     <packaging>pom</packaging>
 
-    <name>Apache Roller Distribution assembly</name>
-    <description>Assembles Roller into a distribution package</description>
+    <name>Apache Roller Weblogger WAR assembly</name>
+    <description>Assembles Roller Weblogger into a WAR</description>
 
     <build>
 
@@ -74,9 +74,7 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/for-tomcat.xml</descriptor>
-                                <descriptor>src/main/assembly/source.xml</descriptor>
                             </descriptors>
-                            <tarLongFileMode>gnu</tarLongFileMode>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -98,9 +96,7 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/for-javaee.xml</descriptor>
-                                <descriptor>src/main/assembly/source.xml</descriptor>
                             </descriptors>
-                            <tarLongFileMode>gnu</tarLongFileMode>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -122,42 +118,13 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/for-jboss.xml</descriptor>
-                                <descriptor>src/main/assembly/source.xml</descriptor>
                             </descriptors>
-                            <tarLongFileMode>gnu</tarLongFileMode>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
         </profile>
         
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.0-alpha-4</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
 </project>
