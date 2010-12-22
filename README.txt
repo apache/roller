@@ -31,16 +31,17 @@ which includes OpenJPA buildcode enhancement, OpenJPA and other Java EE jars.
 After pulling the source tree and changing directory to its top level, as
 indicated above, the following command will build and run all unit tests:
 
-  mvn install
+   mvn clean
+   mvn install
 
 After doing that, you should find the newly built Roller webapp, suitable
 for use with Tomcat in weblogger-web/target/roller. 
 
 To build Roller release files, you do this:
 
-  cd weblogger-assembly
-  mvn install
-
+   cd weblogger-assembly
+   mvn install
+   
 After that, you'll find Roller distribution files in weblogger-assembly/target. 
 The Tomcat specific release files will have 'for-tomcat' in their names.
 
@@ -55,13 +56,41 @@ If you leave those extra things out, Roller can run on most Java EE servers.
 If you add a 'javaee' flag to the Roller build invocation, you can create 
 Roller release files that will work on a Java EE 6 app server.
 
-   mvn -Djavaee=true install
-   cd weblogger-assembly
-   mvn install
+    mvn clean
+    mvn -Djavaee=true install
+
+    cd weblogger-war-assembly
+    mvn -Djavaee=true install
+
+    cd ../weblogger-assembly
+    mvn -Djavaee=true install
 
 When that finishes, you will find Roller distribution files in 
 weblogger-assembly/target. The Java EE specific release files will have 
 'for-javaee' in their names.
+      
+
+---------------------------
+BUILDING FOR JBOSS 6
+
+JBoss 6 is a Java EE server, but due to differences in JNDI naming, it needs
+a separate build.
+
+If you add a 'jboss' flag to the Roller build invocation, you can create 
+Roller release files that will work on a JBoss 6 app server.
+
+    mvn clean
+    mvn -Djboss=true install
+
+    cd weblogger-war-assembly
+    mvn -Djboss=true install
+
+    cd ../weblogger-assembly
+    mvn -Djboss=true install
+
+When that finishes, you will find Roller distribution files in 
+weblogger-assembly/target. The Java EE specific release files will have 
+'for-jboss' in their names.
       
 
 NOTE: If you wish to pull a branch other than the trunk, replace the word
