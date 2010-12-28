@@ -3,9 +3,9 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.1  (Unix)">
+	<META NAME="GENERATOR" CONTENT="LibreOffice 3.3  (Unix)">
 	<META NAME="CREATED" CONTENT="20070706;11182000">
-	<META NAME="CHANGED" CONTENT="20091023;23021800">
+	<META NAME="CHANGED" CONTENT="20101227;23410700">
 	<META NAME="KEYWORDS" CONTENT="OpenDS Directory Server Administration Framework">
 	<META NAME="Info 1" CONTENT="">
 	<META NAME="Info 2" CONTENT="">
@@ -45,7 +45,7 @@
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
 <P CLASS="western" ALIGN=RIGHT STYLE="margin-bottom: 0in; background: transparent">
-<IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_490f4977.png" NAME="graphics1" WIDTH=252 HEIGHT=102 BORDER=0></P>
+<IMG SRC="roller-install-guide_html_490f4977.png" NAME="graphics1" WIDTH=208 HEIGHT=84 BORDER=0></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
@@ -134,13 +134,14 @@
 </P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <FONT FACE="Helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Apache
-Roller Weblogger</B></FONT></FONT></P>
+Roller Weblogger </B></FONT></FONT>
+</P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <FONT FACE="Helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Version
 5.0</B></FONT></FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;MMMM YYYY">October 2009</SDFIELD>
-</P>
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>December
+2010</B></FONT></FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
@@ -158,132 +159,180 @@ Roller Weblogger</B></FONT></FONT></P>
 	Acknowledgments	3</P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">1.4  
 	Modifications and Updates	3</P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>2   The 5-minute
-	install	4</B></FONT></P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>3   Ready to roll?	5</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">3.1   Tomcat:
-	JavaMail and Activation	5</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">3.2   Tomcat: URI
-	encoding needed for I118N	5</P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>4   Download and
-	un-package Roller	6</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">4.1   Installation
-	directory layout	6</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">4.2   The Roller
-	Weblogger WAR 	6</P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>5   Prepare your
-	database for Roller	7</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">5.1   Create a
-	database for Roller 	7</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">5.2   Check your
-	JDBC driver setup	7</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">5.3   MySQL and
-	Oracle considerations	7</P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>6   Configure Roller	8</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">6.1   MySQL
-	example	8</P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>7   Deploy Roller	9</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">7.1   Put
-	roller-custom.properties in classpath	9</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">7.2   Deploy
-	Roller via administration console	9</P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>8   Getting started
-	with Roller	12</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">8.1   Navigate to
-	Roller and finish the install 	12</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">8.2   Register a
-	user and create a weblog	13</P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>9   Configuration tips
-	and tricks	14</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.1   Setting up
-	Roller's Planet feed aggregator	14</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.2   Using
-	Server-provided database and mail resources	16</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.3   Manual table
-	creation and upgrade	17</P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>10   Upgrading
-	Roller	18</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">10.1   Backup your
-	old Roller 	18</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">10.2   Install and
-	startup the new Roller 	19</P>
-	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>11  
-	roller.properties	20</B></FONT></P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>2   Ready to roll?	4</B></FONT></P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>3   Download and
+	un-package Roller	5</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">3.1   Installation
+	directory layout	5</P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>4   Prepare your
+	database for Roller	6</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">4.1   Create a
+	database for Roller 	6</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">4.2   MySQL and
+	Oracle considerations	6</P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>5   Create Roller
+	configuration file 	7</B></FONT></P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>6   Deploy Roller to
+	Tomcat	8</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">6.1   Tomcat: Add
+	to Roller Configuration	8</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">6.2   Tomcat: Add
+	JDBC Driver and JavaMail API Files	8</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">6.3   Tomcat: Set
+	URI Encoding 	9</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">6.4   Tomcat:
+	Deploy Roller 	9</P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>7   Deploying Roller
+	to Glassfish	10</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">7.1   Glassfish:
+	Add Roller Configuration	10</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">7.2   Glassfish:
+	Add JDBC Driver File(s)	10</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">7.3   Glassfish:
+	Create Datasource	10</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">7.4   Glassfish:
+	Create Mail Connection	13</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">7.5   Glassfish:
+	Deploy Roller	14</P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>8   Deploying Roller
+	to JBoss	16</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">8.1   JBoss:
+	Create Roller configuration	16</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">8.2   JBoss: Add
+	JDBC driver file(s)	16</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">8.3   JBoss:
+	Create Datasource	16</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">8.4   JBoss:
+	Deploy Roller	19</P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>9   Deploying Roller
+	to WebSphere	21</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.1   WebSphere:
+	Add Roller Configuration	21</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.2   WebSphere:
+	Add JDBC Provider	22</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.3   WebSphere:
+	Add JDBC Datasource	25</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.4   WebSphere:
+	Create Mail Connection	28</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.5   WebSphere:
+	Deploy Roller	30</P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>10   Getting started
+	with Roller	33</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">10.1   Navigate to
+	Roller and finish the install 	33</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">10.2   Register a
+	user and create a weblog	34</P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>11   Configuration
+	tips and tricks	36</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">11.1   Setting up
+	Roller's Planet feed aggregator	36</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">11.2   Using
+	Server-provided database and mail resources	38</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">11.3   Manual
+	table creation and upgrade	39</P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>12   Upgrading
+	Roller	40</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">12.1   Backup your
+	old Roller 	40</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">12.2   Install and
+	startup the new Roller 	41</P>
+	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>13  
+	roller.properties	42</B></FONT></P>
 </DIV>
 <P CLASS="western"><BR><BR>
 </P>
 <H1 CLASS="western" STYLE="page-break-before: always">1Overview</H1>
 <P CLASS="western" ALIGN=LEFT STYLE="background: transparent; font-weight: normal">
-This document describes how to install the Apache Roller Weblogger
-software. It explains what you need to install first, how to download
-Roller, how to configure Roller and how to install it to your
-existing Java application server and relational database. If also
-offers a 5-minute install option   for more advanced folks.</P>
+<FONT SIZE=3 STYLE="font-size: 13pt">This document describes how to
+install the Apache Roller Weblogger software. It explains what you
+need to install first, how to download Roller, how to configure
+Roller and how to install it to your existing Java application server
+and relational database. If also offers a 5-minute install option  
+for more advanced folks.</FONT></P>
 <H2 CLASS="western">1.1Copyright and trademark information</H2>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-The contents of this document are subject to the terms of the Apache
-Software License.</P>
+<FONT SIZE=3 STYLE="font-size: 13pt">The contents of this document
+are subject to the terms of the Apache Software License.</FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-All trademarks within this document belong to legitimate owners.</P>
+<FONT SIZE=3 STYLE="font-size: 13pt">All trademarks within this
+document belong to legitimate owners.</FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
 <H2 CLASS="western">1.2Feedback</H2>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-Please direct any comments or suggestions about this document to:
-user@roller.apache.org</P>
+<FONT SIZE=3 STYLE="font-size: 13pt">Please direct any comments or
+suggestions about this document to the Roller User Mailing list. For
+more information on the Roller mailing lists please refer to the
+following page:</FONT></P>
+<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
+<BR>
+</P>
+<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
+     <FONT FACE="Times New Roman, serif"><FONT SIZE=3 STYLE="font-size: 13pt">Roller
+Mailing Lists - </FONT></FONT><A HREF="https://cwiki.apache.org/confluence/x/ZYk"><FONT FACE="Courier New, monospace">https://cwiki.apache.org/confluence/x/ZYk</FONT></A></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
 <H2 CLASS="western">1.3Acknowledgments</H2>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-The original version of this document was written by Dave Johnson.
-The document is currently written and updated by the Apache Roller
-project of the Apache Software Foundation.</P>
+<FONT SIZE=3 STYLE="font-size: 13pt">The original version of this
+document was written by Dave Johnson. The document is currently
+written and updated by the Apache Roller project of the Apache
+Software Foundation.</FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-The general format of this document was based on the documentation
-template used by the OpenDS project which in turn was based on the
-templates used by the <A HREF="http://www.OpenOffice.org/">OpenOffice.org</A>
-project.</P>
+<FONT SIZE=3 STYLE="font-size: 13pt">The general format of this
+document was based on the documentation template used by the OpenDS
+project which in turn was based on the templates used by the
+<A HREF="http://www.OpenOffice.org/">OpenOffice.org</A> project.</FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
 <H2 CLASS="western">1.4Modifications and Updates</H2>
-<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 RULES=COLS STYLE="page-break-inside: avoid">
+<TABLE WIDTH=100% CELLPADDING=4 CELLSPACING=0 RULES=COLS STYLE="page-break-inside: avoid">
 	<COL WIDTH=59*>
 	<COL WIDTH=197*>
 	<THEAD>
 		<TR VALIGN=TOP>
-			<TH WIDTH=23%>
+			<TH WIDTH=23% STYLE="; border-top: 1px solid #000000; border-bottom: none; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0in; padding-left: 0.04in; padding-right: 0in">
 				<P CLASS="western" ALIGN=LEFT>Date</P>
 			</TH>
-			<TH WIDTH=77%>
+			<TH WIDTH=77% STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0.04in; padding-bottom: 0in; padding-left: 0.04in; padding-right: 0.04in">
 				<P CLASS="western" ALIGN=LEFT>Description of Change</P>
 			</TH>
 		</TR>
 	</THEAD>
 	<TBODY>
 		<TR VALIGN=TOP>
-			<TD WIDTH=23%>
+			<TD WIDTH=23% STYLE="border-top: none; border-bottom: none; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.04in; padding-right: 0in">
+				<P CLASS="western" ALIGN=LEFT>December 2010</P>
+			</TD>
+			<TD WIDTH=77% STYLE="border-top: none; border-bottom: none; border-left: 1px solid #000000; border-right: 1px solid #000000; padding: 0in 0.04in">
+				<P CLASS="western" ALIGN=LEFT>Update for Java EE 6 application
+				servers JBoss AS 6.0, Glassfish 3.2, WebSphere and Tomcat+JPA</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=23% STYLE="border-top: none; border-bottom: none; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.04in; padding-right: 0in">
 				<P CLASS="western" ALIGN=LEFT>October 2009</P>
 			</TD>
-			<TD WIDTH=77%>
+			<TD WIDTH=77% STYLE="border-top: none; border-bottom: none; border-left: 1px solid #000000; border-right: 1px solid #000000; padding: 0in 0.04in">
 				<P CLASS="western" ALIGN=LEFT>Updated for Roller 5.0, note about
 				upgrading file uploads to new media blogging system in Section
 				10.</P>
 			</TD>
 		</TR>
 		<TR VALIGN=TOP>
-			<TD WIDTH=23%>
+			<TD WIDTH=23% STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
 				<P CLASS="western" ALIGN=LEFT>July 2007</P>
 			</TD>
-			<TD WIDTH=77%>
+			<TD WIDTH=77% STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
 				<P CLASS="western" ALIGN=LEFT>Rewritten for simplified Roller 4.0
 				installation process</P>
 			</TD>
@@ -293,252 +342,174 @@ project.</P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
-<H1 CLASS="western" STYLE="page-break-before: always">2The 5-minute
-install</H1>
-<P CLASS="western">If you really know what you're doing, you just
-want to get Roller up-and-running for a quick evaluation and you are
-using a well-supported platform (e.g. Tomcat and MySQL), you can
-probably get up and running in about 5-minutes by following the
-simple instructions on this page. If you're not so confident, then
-skip this page and go on to <B>Section 3</B>. Here's what you do for
-the 5-minute install:</P>
-<P CLASS="western"><BR><BR>
-</P>
-<P CLASS="western"><B>STEP 1: Download Roller</B> and un-package into
-a directory on your disk via Zip or GNU Tar.</P>
-<P CLASS="western"><B>STEP 2: Create a database for the Roller
-tables</B>. <BR>For exmaple, on MySQL you might do something like
-this:</P>
-<PRE>   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">% mysql -u root -p</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">password: *****</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">mysql&gt; create database rollerdb;</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">mysql&gt; grant all on rollerdb.* to scott@'%' identified by 'tiger';</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">mysql&gt; grant all on rollerdb.* to scott@localhost identified by 'tiger';</FONT></FONT></PRE><P CLASS="western">
-<BR><BR>
-</P>
-<P CLASS="western"><B>STEP 3: Create a roller-custom.properties</B>
-file in your Servlet container's classpath, e.g. on Tomcat you'd put
-it in <FONT FACE="Courier New, monospace">common/classes</FONT>. Put
-the settings below into the file and substitute your database and
-mail connection parameters for those in bold.</P>
-<PRE>        <FONT SIZE=2 STYLE="font-size: 11pt">installation.type=auto</FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">database.configurationType=jdbc</FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.driverClass=<I><B>com.mysql.jdbc.Driver</B></I></FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.connectionURL=<I><B>jdbc:mysql://localhost:3306/rollerdb</B></I></FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.username=<I><B>scott</B></I></FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.password=<I><B>tiger</B></I></FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">mail.configurationType=properties</FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">mail.hostName=</FONT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>smtp-server.example.com</B></I></FONT></FONT></TT>
-<TT>        <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.username=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>scott</B></I></FONT></FONT></TT>
-<TT>        <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.password=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>tiger</B></I></FONT></FONT></TT>
-</PRE><P CLASS="western">
-<B>STEP 4: Check your Servlet container's JDBC and JavaMail setup.
-</B><SPAN STYLE="font-weight: normal">Make sure you've got the JDBC
-driver for your database in your Servlet container's classpath, e.g.
-on Tomcat place the driver JAR in </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: normal">common/lib</SPAN></FONT><SPAN STYLE="font-weight: normal">.
-And on Tomcat, if you want to be able to send mail you'll need to add
-the JavaMail and Activation jars (</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: normal">mail.jar</SPAN></FONT><SPAN STYLE="font-weight: normal">
-and </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: normal">activation.jar</SPAN></FONT><SPAN STYLE="font-weight: normal">)
-there too.</SPAN></P>
-<P CLASS="western"><B>STEP 5: Deploy Roller to your Servlet container</B>
-using your container's Admin Console deploy Roller as a directory.
-The Roller WAR directory is in the installation directory under
-<FONT FACE="Courier New, monospace">webapp/roller</FONT>.</P>
-<P CLASS="western"><B>STEP 6: Browse to Roller and get Rollin'</B>
-(probably at <A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A>).
-If Roller is up and running, then proceed to Section 8 Getting
-started with Roller. If Roller isn't up and running and you can 't
-figure out why, then try the normal installation procedure starting
-with <B>Section 3</B> below. 
-</P>
-<P CLASS="western"><BR><BR>
-</P>
-<H1 CLASS="western">3Ready to roll?</H1>
-<P CLASS="western">First, let's make sure you have everything you
-need to install and run Roller.</P>
-<P CLASS="western" ALIGN=LEFT>Roller is a database-driven Java web
-application. To run it you need Java, a Java Servlet container such
-as Tomcat and a database such as MySQL. More specifically, here's
-what you need to install and run Roller:</P>
+<H1 CLASS="western" STYLE="page-break-before: always">2Ready to roll?</H1>
+<P CLASS="western"><FONT SIZE=4>First, let's make sure you have
+everything you need to install and run Roller.</FONT></P>
+<P CLASS="western" ALIGN=LEFT><FONT SIZE=4>Roller is a
+database-driven Java web application. To run it you need Java, a Java
+Servlet container such as Tomcat, a connection to a database such as
+MySQL and optionally a connect to a mail server. More specifically,
+here's what you need to install and run Roller:</FONT></P>
 <UL>
-	<LI><P CLASS="western"><B>The Java development kit</B>, specifically
-	the Sun Java 2 SE 1.5 JDK. The computer on which you install Roller
-	should be configured to run with the Java SE 5. Roller 3.x was the
-	last major Roller release to support Java 1.4.2.</P>
-	<LI><P CLASS="western"><B>A Java application server</B>, or more
-	specifically a Servlet container that supports the Servlet 2.4 API.
-	Hereinafter, we'll just call this your <I>server</I>. The Roller
-	community tends to use and is best able to answer questions about
-	Tomcat 5.5, Tomcat 6.0, Sun Web Server 7.0 and Glassfish 2.0. 
+	<LI><P CLASS="western"><FONT SIZE=4><B>The Java development kit</B>,
+	specifically the Sun Java 2 SE 1.5 JDK. The computer on which you
+	install Roller should be configured to run with the Java SE 5. </FONT>
 	</P>
-	<LI><P CLASS="western"><B>A relational database</B> such as MySQL or
-	Apache Derby. The Roller community tends to use and is best able to
-	answer questions about MySQL and Apache Derby, but it is possible to
-	use other databases with Roller. Roller includes database creation
-	scripts for DB2, Derby, HSQL-DB, Microsoft SQL Server, MySQL, Oracle
-	and PostgreSQL.</P>
+	<LI><P CLASS="western"><FONT SIZE=4><B>A Java application server</B>,
+	or more specifically a Servlet container that supports the Servlet
+	2.4 API. Hereinafter, we'll just call this your <I>server</I>.
+	Roller has traditionally worked best on Tomcat, but Roller 5.0 has
+	also been tested on popular Java EE 6. Installation instructions
+	cover Tomcat, Glassfish 3, Jboss 6 and WebSphere 8.</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=4><B>A relational database</B>
+	such as MySQL or Apache Derby. Roller stores blog entries, comments,
+	bookmarks and almost all other data in a relational database
+	accessed via the Java Persistence API 2,0. MySQL and Derby are best
+	supported but Roller also includes database creation scripts for
+	DB2, HSQL-DB, Microsoft SQL Server, Oracle and PostgreSQL.</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=4><B>(Optional) An SMTP mail
+	server</B>. Roller can send email notifications for comments and
+	other events via the JavaMail and Activation APIs. </FONT>
+	</P>
+	<LI><P CLASS="western"><FONT SIZE=4><B>The Roller installation file</B>.
+	The Roller installation file contains the Roller WAR file, ready to
+	reploy to your server, plus Roller license files, README and
+	documentation.</FONT></P>
+	<UL>
+		<LI><P CLASS="western"><FONT SIZE=4>For Tomcat 6 or 7 (and possibly
+		old Java EE 4 and 5 app servers?)</FONT></P>
+	</UL>
+	<LI><P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-5.0.0-for-tomcat.zip</FONT></FONT></P>
+	<LI><P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-5.0.0-for-tomcat.tar.gz</FONT></FONT></P>
+	<LI><P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=4>For
+	Glassfish 3, WebSphere 8 or other Java EE 6 server</FONT></FONT></P>
+	<LI><P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-5.0.0-for-javaee.zip</FONT></FONT></P>
+	<LI><P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-5.0.0-for-javaee.tar.gz</FONT></FONT></P>
+	<LI><P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=4>For
+	Jboss AS 6:</FONT></FONT></P>
+	<LI><P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-5.0.0-for-jboss.zip</FONT></FONT></P>
+	<LI><P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-5.0.0-for-jboss.tar.gz</FONT></FONT></P>
 </UL>
-<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><I>If
-you're using Tomcat, check the Tomcat Considerations section below,
-otherwise you are ready to move on to Section 4: Download and
-un-package Roller.</I></FONT></FONT></P>
-<H2 CLASS="western">3.1Tomcat: JavaMail and Activation</H2>
-<P CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Tomcat
-does not include the Java Mail and Activation jars that Roller needs
-for email notification, So, if you like to use Roller's e-mail
-notification features, you'll need to download those jars and place
-them in Tomcat's classpath. Download them from Sun
-(</FONT></FONT><A HREF="http://java.sun.com/products/javamail"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>http://java.sun.com/products/javamail</FONT></FONT></A><FONT FACE="Times New Roman, serif"><FONT SIZE=3>)
-and place them in Tomcat's </FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3>common/lib</FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3>
-directory.</FONT></FONT></P>
-<H2 CLASS="western">3.2Tomcat: URI encoding needed for I118N</H2>
-<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Roller
-supports internationalization (I18N), but on Tomcat some additional
-configuration is necessary. You must ensure that Tomcat's URI
-encoding is set to UTF-8. You can do this by editing the Tomcat
-configuration file </SPAN></FONT></FONT><FONT FACE="Courier New"><FONT SIZE=3><SPAN STYLE="font-style: normal">conf/server.xml</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
-and adding </SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3><SPAN STYLE="font-style: normal">URIEncoding=”UTF-8”</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
-to each connector element, as shown below:</SPAN></FONT></FONT></P>
-<PRE>   &lt;Connector port=&quot;8080&quot;
-      maxThreads=&quot;150&quot; minSpareThreads=&quot;25&quot; maxSpareThreads=&quot;75&quot;
-      enableLookups=&quot;false&quot; redirectPort=&quot;8443&quot; debug=&quot;0&quot; 
-      acceptCount=&quot;100&quot; connectionTimeout=&quot;20000&quot;
-      disableUploadTimeout=&quot;true&quot; 
-      <B>URIEncoding=&quot;UTF-8&quot; </B>/&gt;</PRE><P CLASS="western" STYLE="margin-bottom: 0in">
-<BR>
-</P>
-<P CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>And
-make sure you do this for <I>every</I> connector through which you
-use Roller. For example, if you use the AJP connector or HTTPS
-connector you need to add the <TT>URIEncoding=&quot;UTF-8&quot;</TT>
-attribute to those connectors as well.</FONT></FONT></P>
-<H1 CLASS="western">4Download and un-package Roller</H1>
-<P CLASS="western">Download the Apache Roller release file from
-<A HREF="http://roller.apache.org/">http://roller.apache.org</A>. If
-you're a Windows user download the .zip file and use your favorite
+<P CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman, serif"><FONT SIZE=4>We'll
+start by unpacking the Roller installation file.</FONT></FONT></P>
+<H1 CLASS="western">3Download and un-package Roller</H1>
+<P CLASS="western"><FONT SIZE=4>Download the Apache Roller release
+file from <A HREF="http://roller.apache.org/">http://roller.apache.org</A>.
+If you're a Windows user download the .zip file and use your favorite
 ZIP program to unzip the release into a directory on your computer's
 disk. Unix users can download the .tar.gz file and use GNU tar to
-un-package. 
+un-package. </FONT>
 </P>
-<H2 CLASS="western">4.1Installation directory layout</H2>
-<P CLASS="western">Once you've unpackaged the files you'll find a
-directory structure like this:</P>
+<H2 CLASS="western">3.1Installation directory layout</H2>
+<P CLASS="western"><FONT SIZE=4>Once you've unpackaged the files
+you'll find a directory structure like this:</FONT></P>
 <P CLASS="western"><BR><BR>
 </P>
-<P CLASS="western">The <FONT FACE="Courier New, monospace">LICENCE.txt</FONT>
+<P CLASS="western">     <FONT FACE="Courier New, monospace"><FONT SIZE=4>README.txt</FONT></FONT></P>
+<P CLASS="western">     <FONT FACE="Courier New, monospace"><FONT SIZE=4>LICENSE.txt</FONT></FONT></P>
+<P CLASS="western">     <FONT FACE="Courier New, monospace"><FONT SIZE=4>NOTICE.txt</FONT></FONT></P>
+<P CLASS="western">     <FONT FACE="Courier New, monospace"><FONT SIZE=4>docs/</FONT></FONT></P>
+<P CLASS="western">          <FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-install-guide.pdf</FONT></FONT></P>
+<P CLASS="western">          <FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-user-guide.pdf</FONT></FONT></P>
+<P CLASS="western">          <FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-template-guide.pdf</FONT></FONT></P>
+<P CLASS="western">     <FONT FACE="Courier New, monospace"><FONT SIZE=4>webapp/</FONT></FONT></P>
+<P CLASS="western">          <FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-5.0.0-XXX.jar</FONT></FONT></P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><FONT SIZE=4>The string XXX could be 'javaee' or
+'tomcat' or 'jboss' depending on which Roller 5 release you
+downloaded.</FONT></P>
+<P CLASS="western"><FONT SIZE=4>The <FONT FACE="Courier New, monospace">LICENCE.txt</FONT>
 and <FONT FACE="Courier New, monospace">NOTICE.txt</FONT> files
 contain the Apache Software License and other legal notices related
 to the release. The <FONT FACE="Courier New, monospace">README.txt</FONT>
 file just points to the documentation in the <FONT FACE="Courier New, monospace">docs</FONT>
-directory.</P>
-<H2 CLASS="western">4.2The Roller Weblogger WAR 
+directory.</FONT></P>
+<H1 CLASS="western">4Prepare your database for Roller</H1>
+<P CLASS="western"><FONT SIZE=4>Before you can install Roller you'll
+probably need to some work to prepare your database for Roller.
+You'll need a place to put the Roller tables; some call this a
+table-space and we refer to it as a <I>database</I><SPAN STYLE="font-style: normal">
+in this installation guide</SPAN>. You'll need to create a database
+for Roller, or get your database administrator to do it for you. You
+also need to have a JDBC driver for your database of choice, but
+we'll cover that later.</FONT></P>
+<H2 CLASS="western">4.1Create a database for Roller 
 </H2>
-<P CLASS="western">The Roller Weblogger application itself is in the
-directory <FONT FACE="Courier New, monospace">webapp/roller</FONT>
-and is organized using the standard Java EE WAR directory structure.
-Generally speaking, you won't need to modify any files in side the
-director. You can deploy it as is, in directory form, or you can
-package it up as a .war if you prefer to deploy as a file.</P>
-<P CLASS="western">For example, here's how you'd package it up as a
-WAR:</P>
-<PRE>   % cd apache-roller-X.0/webapp/roller
-   % jar cvf ../roller.war *</PRE><P CLASS="western" STYLE="font-style: normal">
-<BR><BR>
-</P>
-<H1 CLASS="western">5Prepare your database for Roller</H1>
-<P CLASS="western">Before you can install Roller you'll probably need
-to some work to prepare your database for Roller. 
-</P>
-<P CLASS="western">You need some place to put the Roller tables. Some
-folks call this a table-space, but we refer to it as a <I>database</I>.
-You need to create a database for Roller, or get your database
-administrator to do it for you. And second, you need to have a JDBC
-driver installed for you database of choice.</P>
-<P CLASS="western"><I>If you're installing on Glasfish and using it's
-built-in JavaDB/Derby database, you can skip this section; there's no
-need to create a database in Derby and Glassfish already includes the
-Derby JDBC driver.</I></P>
-<H2 CLASS="western">5.1Create a database for Roller 
-</H2>
-<P CLASS="western">If you're luck enough to have your own database
-administrator, ask them to setup a database for Roller. When they are
-done, ask them to provide you with this information, you'll need it
-later:</P>
+<P CLASS="western"><FONT SIZE=4>If you're luck enough to have your
+own database administrator, ask them to setup a database for Roller.
+When they are done, ask them to provide you with this information,
+you'll need it later:</FONT></P>
 <UL>
-	<LI><P CLASS="western">Username and password for connecting to
-	database</P>
-	<LI><P CLASS="western">JDBC connection URL for database</P>
-	<LI><P CLASS="western">JDBC driver class name</P>
+	<LI><P CLASS="western"><FONT SIZE=4>Username and password for
+	connecting to database</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=4>JDBC connection URL for database</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=4>JDBC driver class name</FONT></P>
 </UL>
-<P CLASS="western">If you don't have a database administrator then
-you'll have to refer to the documentation for your database and do it
-yourself. You need to create a database for Roller, protected by
-username and password. For example, if you're using MySQL you might
-do something like this:</P>
-<PRE>   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">% mysql -u root -p</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">password: *****</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">mysql&gt; create database rollerdb;</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">mysql&gt; grant all on rollerdb.* to scott@'%' identified by 'tiger';</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">mysql&gt; grant all on rollerdb.* to scott@localhost identified by 'tiger';</FONT></FONT></PRE><H2 CLASS="western">
-5.2Check your JDBC driver setup</H2>
-<P CLASS="western">Make sure that you have the correct JDBC driver
-installed in your server. Usually, this is as simple as downloading
-the JDBC driver jar(s) and placing it (or them) into your server's
-classpath. For example, on Tomcat 5.5 you place them in <FONT FACE="Courier New, monospace">common/lib</FONT>,
-on Tomcat 6.0 in <FONT FACE="Courier New, monospace">lib</FONT> and
-on Glassfish in your domain's <FONT FACE="Courier New, monospace">lib</FONT>
-directory. 
-</P>
-<H2 CLASS="western">5.3MySQL and Oracle considerations</H2>
-<P CLASS="western">Based on our experience supporting MySQL, we have
-the following recommendations:</P>
+<P CLASS="western"><FONT SIZE=4>If you don't have a database
+administrator then you'll have to refer to the documentation for your
+database and do it yourself. You need to create a database for
+Roller, protected by username and password. For example, if you're
+using MySQL you might do something like this:</FONT></P>
+<PRE>  <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT SIZE=3>% mysql -u root -p</FONT></FONT></FONT>
+  <FONT FACE="Courier New"><FONT SIZE=3>password: *****</FONT></FONT>
+  <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; create database rollerdb;</FONT></FONT>
+  <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; grant all on rollerdb.* to scott@'%' identified by 'tiger';</FONT></FONT>
+  <FONT SIZE=3><FONT FACE="Courier New">mysql&gt; grant all on rollerdb.* to scott@localhost identified by 'tiger';</FONT></FONT></PRE><H2 CLASS="western">
+4.2MySQL and Oracle considerations</H2>
+<P CLASS="western"><FONT SIZE=4>Based on our experience supporting
+MySQL, we have the following recommendations:</FONT></P>
 <UL>
-	<LI><P CLASS="western">For MySQL, make sure that TCP/IP networking
-	is enabled. 
+	<LI><P CLASS="western"><FONT SIZE=4>For MySQL, make sure that TCP/IP
+	networking is enabled. </FONT>
 	</P>
-	<LI><P CLASS="western">For MySQL 4.1.x use the J/Connector 3.0.X
-	JDBC drivers instead of the newer 3.1.X series.</P>
-	<LI><P CLASS="western">For MySQL 5.X use the J/Connector 3.1.X JDBC
-	drivers instead of the newer 3.1.X series.</P>
-	<LI><P CLASS="western">Make sure you enable MySQL's UTF-8 support.
-	See this page for
+	<LI><P CLASS="western"><FONT SIZE=4>For MySQL 4.1.x use the
+	J/Connector 3.0.X JDBC drivers instead of the newer 3.1.X series. </FONT>
+	</P>
+	<LI><P CLASS="western"><FONT SIZE=4>For MySQL 5.X use the
+	J/Connector 3.1.X JDBC drivers instead of the newer 3.1.X series.</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=4>Make sure you enable MySQL's
+	UTF-8 support. See this page for
 	details:<BR><A HREF="http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL">http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL</A>
-		</P>
-	<LI><P CLASS="western">For Oracle users, use the 10g (10.1.0.2
-	higher) drivers which should be packaged as ojdbc14.jar, even if
-	operating on Oracle 9 server.</P>
+	</FONT>
+	</P>
+	<LI><P CLASS="western"><FONT SIZE=4>For Oracle users, use the 10g
+	(10.1.0.2 higher) drivers which should be packaged as ojdbc14.jar,
+	even if operating on Oracle 9 server.</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=4>See the server specific sections
+	to information on where to place the JDBC driver jars.</FONT></P>
+	<P CLASS="western"></P>
 </UL>
-<H1 CLASS="western">6Configure Roller</H1>
-<P CLASS="western">It is possible for you to configure Roller by
-creating and editing only one file:</P>
-<P CLASS="western">   <FONT FACE="Courier New, monospace">roller-custom.properties</FONT></P>
-<P CLASS="western">That file is a simple Java properties file, a text
-file that overrides settings defined in Roller's internal
-<FONT FACE="Courier New, monospace">roller.properties </FONT>file. To
-configure Roller you look at Roller's internal properties file,
+<H1 CLASS="western">5Create Roller configuration file 
+</H1>
+<P CLASS="western"><FONT SIZE=4>For most settings, Roller can be
+configured from its own web console. But for some startup-properties
+and advanced configuration options you must set properties in an
+override file called:</FONT></P>
+<P CLASS="western">   <FONT FACE="Courier New, monospace"><FONT SIZE=4>roller-custom.properties</FONT></FONT></P>
+<P CLASS="western"><FONT SIZE=4>That is a simple Java properties
+file, a text file that overrides settings defined in Roller's
+internal <FONT FACE="Courier New, monospace">roller.properties </FONT>file.
+To configure Roller you look at Roller's internal properties file,
 decide which properties you need to override and then set those in
 your <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
-file.</P>
-<P CLASS="western">You can find the full text of Roller's internal
-<FONT FACE="Courier New, monospace">roller.properties</FONT> file in
-<B>Section 11</B> and we encourage you to read it over, but we'll get
-you started right here and now with a simple example that shows you
-the bare minimum database configuration settings that you need to run
-Roller.</P>
-<P CLASS="western">Create a text file named <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
-with the content below, but replacing the bold/italic text the
-settings appropriate for your database and mail server.</P>
-<PRE>   installation.type=auto
-   database.configurationType=jdbc
-   database.jdbc.driverClass=<I><B>JDBC driver class name</B></I>]
-   database.jdbc.connectionURL=<I><B>JDBC connection URL</B></I>
-   database.jdbc.username=<I><B>database username</B></I>
-   database.jdbc.password=<I><B>database password</B></I>
-   mail.configurationType=properties
-   mail.hostname=<I><B>mail server hostname</B></I></PRE><P CLASS="western">
-<BR><BR>
-</P>
-<P CLASS="western">The <FONT FACE="Courier New, monospace">installation.type=auto</FONT>
+file.</FONT></P>
+<P CLASS="western"><FONT SIZE=4>You can find the full text of
+Roller's internal <FONT FACE="Courier New, monospace">roller.properties</FONT>
+file in <B>Section 11</B> and we encourage you to read it over, but
+we'll get you started right here and now with a simple example that
+shows you the bare minimum database configuration settings that you
+need to run Roller.</FONT></P>
+<P CLASS="western"><FONT SIZE=4>Create a text file named
+<FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+with the content below, but replacing the bold text the settings
+appropriate for your database and mail server.</FONT></P>
+<PRE>   <FONT SIZE=4>installation.type=auto</FONT>
+   <FONT SIZE=4>mediafiles.storage.dir=<B>/usr/local/rollerdata/mediafiles</B></FONT>
+   <FONT SIZE=4>search.index.dir=<B>/usr/local/rollerdata/searchindex</B></FONT>
+   <FONT SIZE=4>log4j.appender.roller.File=<B>/usr/local/rollerdata/roller.log</B></FONT>
+</PRE><P CLASS="western">
+<FONT SIZE=4>The <FONT FACE="Courier New, monospace">installation.type=auto</FONT>
 property tells Roller to operate in automatic installation mode. In
 this mode Roller will provide very detailed error output to help you
 debug database connection problems. If Roller finds that the database
@@ -547,204 +518,715 @@ creation scripts. If find finds that the tables are there, but they
 are not up-to-date Roller will offer to upgrade them for you. Once
 your Roller installation is complete and you are ready to go “live”
 then you should set<FONT FACE="Courier New, monospace">
-installation.type=manual</FONT>.</P>
-<H2 CLASS="western">6.1MySQL example</H2>
-<P CLASS="western">Here is an example roller-custom.properties file
+installation.type=manual</FONT>.</FONT></P>
+<H1 CLASS="western" STYLE="page-break-before: always">6Deploy Roller
+to Tomcat</H1>
+<P CLASS="western">Deploying Roller to Tomcat involves creating a
+Roller configuration file, adding some jars to Tomcat and then
+deploying the Roller WAR file. 
+</P>
+<P CLASS="western">You are expected to install and configure Apache
+Tomcat before you attempt to install Roller. Refer to the Tomcat
+documentation linked from this page for more information:
+<A HREF="http://tomcat.apache.org/"><FONT FACE="Courier New, monospace">http://tomcat.apache.org</FONT></A></P>
+<H2 CLASS="western">6.1Tomcat: Add to Roller Configuration</H2>
+<P CLASS="western">There are a variety of ways to configure Roller
+and Tomcat and here we'll explain the easiest route: providing
+database and mail connection information directly to Roller via the
+Roller configuration file. 
+</P>
+<P CLASS="western"><B>Create the Configuration File</B> 
+</P>
+<P CLASS="western">Start by creating a Roller configuration file as
+described in <B>Section 5</B>. Next, choose database configuration
+type 'jdbc' and provide all require database connection properties.
+Also, choose mail configuration type 'properties' and define all
+require mail server properties.</P>
+<P CLASS="western">For example, here is an example
+<FONT FACE="Courier New, monospace">roller-custom.properties </FONT>file
 that shows how to setup a MySQL connection. It shows the MySQL JDBC
 driver class name, an example MySQL connection URL and
-username/password settings for the mail connection.</P>
-<PRE>   installation.type=auto
-   database.configurationType=jdbc
-   database.jdbc.driverClass=<I><B>com.mysql.jdbc.Driver</B></I>
-   database.jdbc.connectionURL=<I><B>jdbc:mysql://localhost:3306/rollerdb</B></I>
-   database.jdbc.username=<I><B>scott</B></I>
-   database.jdbc.password=<I><B>tiger</B></I>
-   mail.configurationType=properties
-   mail.hostname=<TT><FONT FACE="Courier New"><I><B>smtp-server.example.com</B></I></FONT></TT>
-<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.username=</SPAN></SPAN></FONT></TT><TT><FONT FACE="Courier New"><I><B>scott</B></I></FONT></TT>
-<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.password=</SPAN></SPAN></FONT></TT><TT><FONT FACE="Courier New"><I><B>tiger</B></I></FONT></TT>
+username/password settings for the mail connection:</P>
+<P CLASS="western"><B>Example: <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+file</B></P>
+<PRE>   <FONT FACE="Courier New, monospace"><FONT SIZE=3>installation.type=auto</FONT></FONT>
+   <FONT FACE="Courier New, monospace"><FONT SIZE=3>database.configurationType=jdbc</FONT></FONT>
+   <FONT FACE="Courier New, monospace"><FONT SIZE=3>database.jdbc.driverClass=<I><B>com.mysql.jdbc.Driver</B></I></FONT></FONT>
+   <FONT FACE="Courier New, monospace"><FONT SIZE=3>database.jdbc.connectionURL=<I><B>jdbc:mysql://localhost:3306/rollerdb</B></I></FONT></FONT>
+   <FONT FACE="Courier New, monospace"><FONT SIZE=3>database.jdbc.username=<I><B>scott</B></I></FONT></FONT>
+   <FONT FACE="Courier New, monospace"><FONT SIZE=3>database.jdbc.password=<I><B>tiger</B></I></FONT></FONT>
+   <FONT FACE="Courier New, monospace"><FONT SIZE=3>mail.configurationType=properties</FONT></FONT>
+   <FONT FACE="Courier New, monospace"><FONT SIZE=3>mail.hostname=</FONT></FONT><TT><FONT FACE="Courier New, monospace"><FONT SIZE=3><I><B>smtp-server.example.com</B></I></FONT></FONT></TT>
+<TT>   <FONT FACE="Courier New, monospace"><FONT SIZE=3><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.username=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New, monospace"><FONT SIZE=3><I><B>scott</B></I></FONT></FONT></TT>
+<TT>   <FONT FACE="Courier New, monospace"><FONT SIZE=3><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.password=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New, monospace"><FONT SIZE=3><I><B>tiger</B></I></FONT></FONT></TT>
 </PRE><P CLASS="western">
-Next, we'll deploy Roller.</P>
-<H1 CLASS="western" STYLE="page-break-before: always">7Deploy Roller</H1>
-<P CLASS="western">Now that you've got the Roller WAR and you've
-created your <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
-file, you're ready to deploy Roller to your server. First, deploy
-your properties file.</P>
-<H2 CLASS="western">7.1Put <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
-in classpath</H2>
-<P CLASS="western">Roller can look for your properties file in a
-number of ways and you can see <B>Section 11</B> for details. The
-simplest thing for you to do is to place the file in your application
-server's classpath, by dropping it into a <FONT FACE="Courier New, monospace">classes</FONT>
-directory. On startup, Roller will find it there. Here's how to do it
-on some popular servers:</P>
+<B>Add Configuration file to Tomcat </B>
+</P>
+<P CLASS="western">Place the configuration file into the Tomcat lib
+directory so that it is on the Tomcat classpath and therefore, made
+available to Roller. Next, we'll add the JARs Roller needs to Tomcat.</P>
+<H2 CLASS="western">6.2Tomcat: Add JDBC Driver and JavaMail API Files</H2>
+<P CLASS="western">You will also need to place some additional jars
+in the Tomcat <FONT FACE="Courier New, monospace">lib</FONT>
+directory:</P>
 <UL>
-	<LI><P CLASS="western">On Tomcat 5.5, copy the file into Tomcat's
-	<FONT FACE="Courier New, monospace">common/classes</FONT> directory.</P>
-	<LI><P CLASS="western">On Tomcat 6.0, copy it into Tomcat's <FONT FACE="Courier New, monospace">lib</FONT>
-	directory.</P>
-	<LI><P CLASS="western">On Glassfish, copy can copy it to your
-	domain's <FONT FACE="Courier New, monospace">lib/classes</FONT>
-	directory.</P>
+	<LI><P CLASS="western"><B>JDBC Driver Jars. </B><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Add
+	the appropriate JDBC driver jars to the Tomcat classpath. Once they
+	are in your classpath, Roller's database subsystem will be able to
+	find and use them. Download them from your database vendor/provider
+	and place them in Tomcat's </SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3><SPAN STYLE="font-style: normal">lib</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+	directory.</SPAN></FONT></FONT></P>
+	<LI><P CLASS="western"><B>Java Mail and Activation. </B><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal"><B>Tomcat
+	does not include the Java Mail and Activation jars. Even if you do
+	not plan to use email features, you </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">must
+	</SPAN></SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">download
+	those jars and place them in Tomcat's classpath. Download them from
+	Sun (<A HREF="http://java.sun.com/products/javamail">http://java.sun.com/products/javamail</A>)
+	and place them in Tomcat's </SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3><SPAN STYLE="font-style: normal">lib</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+	directory.</B></SPAN></FONT></FONT></P>
 </UL>
-<P CLASS="western">Now you're ready to deploy Roller itself.</P>
-<H2 CLASS="western">7.2Deploy Roller via administration console</H2>
-<P CLASS="western">Use your server's administration console to deploy
-the Roller web application. 
-</P>
-<P CLASS="western">You can deploy as a directory, in which case
-you'll have to enter the path to your Roller installation's
-<FONT FACE="Courier New, monospace">webapp/roller</FONT> directory.
-Or you can deploy as a WAR file, in which case you will have to have
-created a WAR file as we described in <B>Section 4.2</B>. 
-</P>
-<P CLASS="western">Let's discuss how to do that for Tomcat 6.0 and
-Glassfish v2.0.</P>
-<P CLASS="western"><BR><BR>
-</P>
-<H4 CLASS="western" STYLE="page-break-before: always">Deploying to
-Apache Tomcat 6.0</H4>
-<P CLASS="western">You can deploy to Tomcat as either a directory or
-a WAR file. The screens-hot below shows directory-based deployment
-options.</P>
-<P CLASS="western"><BR><BR>
-</P>
-<P CLASS="western"><SPAN STYLE="background: transparent">Once Roller
-is deployed, you'll see that it's listed among the other
-applications. There's a <B>/roller</B> link to Roller itself and
-there are options to start, stop, reload and undeploy.</SPAN></P>
-<P CLASS="western"><SPAN STYLE="background: transparent">If Roller
-doesn't start-up, look for the problem in the logs. You can find them
-in Tomcat's </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">logs</SPAN></FONT><SPAN STYLE="background: transparent">
-directory. The Tomcat log file is </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">catalina.out</SPAN></FONT><SPAN STYLE="background: transparent">
-and the Roller log  is </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">roller.log</SPAN></FONT><SPAN STYLE="background: transparent">.</SPAN></P>
-<H4 CLASS="western" STYLE="page-break-before: always">Deploying to
-Glassfish v2.0</H4>
-<P CLASS="western">You can also deploy to Glassfish as either a
-directory or a WAR file. The screenshot below shows directory-based
-deployment options.</P>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_148117bd.png" NAME="graphics5" ALIGN=LEFT WIDTH=712 HEIGHT=656 BORDER=0><BR CLEAR=LEFT><BR><BR>
-</P>
-<P CLASS="western"><SPAN STYLE="background: transparent">Once Roller
-is deployed, you'll see that it's listed among the other
-applications. There's a <B>Launch</B> link to Roller itself and there
-are buttons to enable, display and redeploy.</SPAN></P>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_m11d68315.png" NAME="graphics6" ALIGN=LEFT WIDTH=708 HEIGHT=127 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
-Roller doesn't start-up, look for the problem in the logs. You can
-find them in your Glassfish domain's  <FONT FACE="Courier New, monospace">logs</FONT>
-directory. The Glassfish log file is <FONT FACE="Courier New, monospace">server.log</FONT>
-and the Roller log  is <FONT FACE="Courier New, monospace">roller.log</FONT>.</SPAN></P>
-<H1 CLASS="western">8Getting started with Roller</H1>
-<P CLASS="western">You're not quite done with the installation
-process Now you're ready to start using Roller, so we'll walk you
-through getting started, registering a user and setting up a blog.
-We'll also discuss briefly what happens when there is an error. 
-</P>
-<H2 CLASS="western">8.1Navigate to Roller and finish the install 
+<H2 CLASS="western">6.3Tomcat: Set URI Encoding 
 </H2>
-<P CLASS="western">Navigate to Roller, if you are using a default
-Tomcat or Glassfish installation then then URL of Roller is probably
-<A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A>.
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Roller
+supports internationalization (I18N), but on Tomcat some additional
+configuration is necessary. You must ensure that Tomcat's URI
+encoding is set to UTF-8. You can do this by editing the Tomcat
+configuration file </SPAN></FONT></FONT><FONT FACE="Courier New"><FONT SIZE=3><SPAN STYLE="font-style: normal">conf/server.xml</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+and adding </SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3><SPAN STYLE="font-style: normal">URIEncoding=”UTF-8”</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+to each connector element, as shown below:</SPAN></FONT></FONT></P>
+<PRE>   &lt;Connector port=&quot;8080&quot; maxThreads=&quot;150&quot; minSpareThreads=&quot;25&quot; maxSpareThreads=&quot;75&quot;
+      enableLookups=&quot;false&quot; redirectPort=&quot;8443&quot; debug=&quot;0&quot; acceptCount=&quot;100&quot;
+      connectionTimeout=&quot;20000&quot; disableUploadTimeout=&quot;true&quot; <B>URIEncoding=&quot;UTF-8&quot; </B>/&gt;</PRE><P CLASS="western" STYLE="margin-bottom: 0in">
+<BR>
+</P>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">And
+make sure you do this for </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><I>every</I></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+connector through which you use Roller. For example, if you use the
+AJP connector or HTTPS connector you need to add the
+</SPAN></FONT></FONT><TT><FONT SIZE=3><SPAN STYLE="font-style: normal">URIEncoding=&quot;UTF-8&quot;</SPAN></FONT></TT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+attribute to those connectors as well.</SPAN></FONT></FONT></P>
+<H2 CLASS="western"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=5><I><B>6.4Tomcat:
+Deploy Roller </B></I></FONT></FONT>
+</H2>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Refer
+to the Tomcat documentation for information on the various ways to
+deploy a WAR. One way to do this is to use the Tomcat Manager
+application, which you can reach at the following URL
+<A HREF="http://localhost:8080/manager">http://localhost:8080/manager</A>.
+Once you are there, you'll see something like this:</SPAN></FONT></FONT></P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_e944608.png" NAME="graphics4" ALIGN=LEFT WIDTH=456 HEIGHT=303 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">On
+the manager screen above, scroll down until you see the </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal"><B>Deploy</B></SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+section, see below:</SPAN></FONT></FONT></P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_41008a03.png" NAME="graphics5" ALIGN=LEFT WIDTH=390 HEIGHT=116 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Enter
+the context path at which you would like to see Roller, above we use
+</SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3><SPAN STYLE="font-style: normal">/roller</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">.
+ Enter the full path to the Roller WAR file, in the webapps directory
+of the Roller installation and click </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal"><B>Deploy</B></SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+to deploy Roller.</SPAN></FONT></FONT></P>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Finally,
+navigate to <A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A>
+to complete the installation.</SPAN></FONT></FONT></P>
+<H1 CLASS="western">7Deploying Roller to Glassfish</H1>
+<P CLASS="western">Deploying Roller to Glassfish involves creating a
+Roller configuration file, adding some jars to Glassfish and then
+deploying the Roller WAR file. You are expected to install and
+configure Glassfish before you attempt to install Roller. Refer to
+the Glassfish documentation linked from this page for more
+information: http://...</P>
+<H2 CLASS="western">7.1Glassfish: Add Roller Configuration</H2>
+<P CLASS="western">Create a <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+Roller configuration file as described in <B>Section 5</B>. No
+additional settings are needed for Glassfish. Place the configuration
+file into the lib directory of your Glassfish Domain directory, e.g.
+in <FONT FACE="Courier New, monospace">domains/domain1/lib</FONT>.</P>
+<H2 CLASS="western">7.2Glassfish: Add JDBC Driver File(s)</H2>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Add
+the appropriate JDBC driver jars to your Glassfish domain's
+classpath. Once they are in your classpath, Roller's database
+subsystem will be able to find and use them. </SPAN></FONT></FONT>
+</P>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Download
+them from your database vendor/provider and place them</SPAN></FONT></FONT>
+into the lib directory of your Glassfish Domain directory, e.g. in
+<FONT FACE="Courier New, monospace">domains/domain1/lib</FONT>.</P>
+<H2 CLASS="western">7.3Glassfish: Create Datasource</H2>
+<P CLASS="western">Next, you should start or restart Glassfish then
+use the Glassfish console at <A HREF="http://localhost:4848/">http://localhost:4848/</A></P>
+<P CLASS="western">First, use the tree on the left to navigate to the
+<B>JDBC Connection Pools</B> page.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_20db9c3c.png" NAME="graphics6" ALIGN=LEFT WIDTH=200 HEIGHT=147 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">You can use the Derby Pool, if you want to use
+Glassfish's built-in Derby database. Or you can click the New button
+to create a new database connection pool to handle connections to
+your database.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m6249aad7.png" NAME="graphics27" ALIGN=LEFT WIDTH=512 HEIGHT=171 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">If you create a new Connection Pool, here's what
+you'll see. To create a new pool you will need to provide at least
+the following  information:</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m23b7889.png" NAME="graphics17" ALIGN=LEFT WIDTH=424 HEIGHT=317 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Refer to the Glassfish and your database vendor
+for information on how to configure your database via the <B>Edit
+JDBC Connection Pool</B> page shown above. At a minimum you will need
+to set these properties:</P>
+<P CLASS="western">     <FONT SIZE=2 STYLE="font-size: 11pt"><B>Driver
+Class</B>: this is specific to your database's JDBC driver. Examples:</FONT></P>
+<P CLASS="western">          <FONT SIZE=2 STYLE="font-size: 11pt">Derby's
+driver class is <FONT FACE="Courier New, monospace">org.apache.derby.jdbc.ClientDriver</FONT></FONT></P>
+<P CLASS="western">          <FONT SIZE=2 STYLE="font-size: 11pt">MySQL's
+driver class is <FONT FACE="Courier New, monospace">com.mysql.jdbc.Driver</FONT></FONT></P>
+<P CLASS="western">    <FONT SIZE=2 STYLE="font-size: 11pt"><B>Connection
+URL</B>: this is specific to your database installation. Examples:</FONT></P>
+<P CLASS="western">          <FONT SIZE=2 STYLE="font-size: 11pt">Derby
+example: <FONT FACE="Courier New, monospace">jdbc:derby://localhost:1527/rollerdb</FONT></FONT></P>
+<P CLASS="western">          <FONT SIZE=2 STYLE="font-size: 11pt">MySQL
+example: <FONT FACE="Courier New, monospace">jdbc:mysql://localhost:3306/rollerdb</FONT></FONT></P>
+<P CLASS="western">Use the<B> Additional Properties</B> tab to enter
+the Connection URL and other properties.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m345e13a6.png" NAME="graphics28" ALIGN=LEFT WIDTH=467 HEIGHT=202 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Once you have configured your Datasource, click
+the <B>Save</B> button to complete the configuration.</P>
+<P CLASS="western">You should then try the <B>Ping</B> button to test
+your new connection pool. 
+</P>
+<P CLASS="western">If the Ping test works, then you are ready to
+create a JNDI Resource to make the database connection pool available
+to Roller. Navigate to the <B>JDBC Resources</B> page. 
+</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m692eea30.png" NAME="graphics18" ALIGN=LEFT WIDTH=215 HEIGHT=150 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">On the <B>JDBC Resources</B> page, shown below,
+click the <B>New..</B>. button to add a new resource.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m2c31c7e2.png" NAME="graphics29" ALIGN=LEFT WIDTH=437 HEIGHT=152 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">On the <B>New JDBC Resource</B> page, shown below,
+name your new resource <FONT FACE="Courier New, monospace">jdbc/rollerdb</FONT>
+and select the database pool name that you wish to use, e.g. the one
+you created above. 
+</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_1b46346b.png" NAME="graphics19" ALIGN=LEFT WIDTH=542 HEIGHT=278 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Once that's done, it's time to configure mail.</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<H2 CLASS="western">7.4Glassfish: Create Mail Connection</H2>
+<P CLASS="western">Via the Glassfish Console, use the tree menu to
+navigate to the <B>JavaMail Sessions</B> page.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_4a11d5eb.png" NAME="graphics24" ALIGN=LEFT WIDTH=204 HEIGHT=167 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">On the <B>JavaMail Sessions</B> page, shown below,
+use the <B>New...</B> button to create a new JavaMail session.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_4ab2e870.png" NAME="graphics23" ALIGN=LEFT WIDTH=497 HEIGHT=172 BORDER=0><BR CLEAR=LEFT>On
+the JavaMail Session page, name your connection <FONT FACE="Courier New, monospace">mail/Session</FONT><FONT FACE="Times New Roman, serif">.
+Refer to the Glassfish and your mail server documentation for
+information on how to set the remaining properties. </FONT>
+</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_23d8def1.png" NAME="graphics25" ALIGN=LEFT WIDTH=505 HEIGHT=297 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">Click <B>OK</B> to save and finally, we are ready
+to deploy.</P>
+<H2 CLASS="western">7.5Glassfish: Deploy Roller</H2>
+<P CLASS="western">To deploy Roller, use the Glassfish console and
+navigate to the <B>Applications</B> page.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_393f65c3.png" NAME="graphics20" ALIGN=LEFT WIDTH=237 HEIGHT=126 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">On the <B>Applications</B> page, shown below,
+click the <B>Deploy..</B>. button.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_3934bc1e.png" NAME="graphics21" ALIGN=LEFT WIDTH=484 HEIGHT=148 BORDER=0><BR CLEAR=LEFT>On
+the <B>Deploy Applications or Modules</B> page, use the <B>Browse</B>
+button to browse for and select the Roller for Java EE WAR file,
+which is in the <FONT FACE="Courier New, monospace">webapps</FONT>
+directory of the Roller installation.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_6971e1a1.png" NAME="graphics22" ALIGN=LEFT WIDTH=552 HEIGHT=393 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western" STYLE="font-weight: normal">Click the <B>Browse</B>
+button to browse for the Roller WAR file for JBoss, which you'll find
+in the Roller installation's webapp directory.</P>
+<P CLASS="western" STYLE="font-weight: normal"><IMG SRC="roller-install-guide_html_654b2b4c.png" NAME="graphics26" ALIGN=LEFT WIDTH=471 HEIGHT=288 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Set the context root to <FONT FACE="Courier New, monospace">/roller</FONT>
+or whatever you prefer and click <B>OK</B> to save and deploy Roller.</P>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Finally,
+navigate to <A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A>
+to complete the installation.</SPAN></FONT></FONT></P>
+<H1 CLASS="western">8Deploying Roller to JBoss</H1>
+<P CLASS="western"><FONT SIZE=3>Deploying Roller to JBoss involves
+creating a Roller configuration file, adding some jars to JBoss and
+then deploying the Roller WAR file. You are expected to install and
+configure JBoss before you attempt to install Roller. Refer to the
+JBoss documentation linked from this page for more information:
+</FONT><A HREF="http://www.jboss.org/jbossas/docs/6-x.html"><FONT FACE="Courier New, monospace"><FONT SIZE=3>http://www.jboss.org/jbossas/docs/6-x.html</FONT></FONT></A></P>
+<H2 CLASS="western">8.1JBoss: Create Roller configuration</H2>
+<P CLASS="western">Before you deploy Roller, you should create a
+Roller configuration file, as described in <B>Section 5</B>. For
+JBoss you must add  the following setting, exactly as shown:</P>
+<P CLASS="western">     <FONT FACE="Courier New, monospace">database.jndi.name=java:/RollerDS</FONT></P>
+<P CLASS="western">Next, put the Roller properties file into the
+JBoss Server Config directory that you are using. For example, if you
+are using the 'default' configuration then you should put the
+properties file in this directory of the JBoss install:</P>
+<P CLASS="western">     <FONT FACE="Courier New, monospace">server/default/conf</FONT></P>
+<P CLASS="western">Next, well make sure Roller can find a JDBC
+driver.</P>
+<H2 CLASS="western">8.2JBoss: Add JDBC driver file(s)</H2>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Add
+the appropriate JDBC driver jars to the JBoss classpath. Once they
+are in your classpath, Roller's database subsystem will be able to
+find and use them. Download them from your database vendor/provider
+and place them in your JBoss server's </SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3><SPAN STYLE="font-style: normal">lib</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+directory. For example, if you are using the default Server
+Configuration, this would be in the following JBoss lib directory:</SPAN></FONT></FONT></P>
+<P CLASS="western">     <FONT FACE="Courier New, monospace">server/default/lib</FONT></P>
+<P CLASS="western">Next, we'll add a datasource so that Roller can
+connect to its database.</P>
+<H2 CLASS="western">8.3JBoss: Create Datasource</H2>
+<P CLASS="western">Once you've added the Roller configuration and
+JDBC driver, then you should start, or restart JBoss. After JBoss
+restarts, go to the JBoss web console at:</P>
+<P CLASS="western">     <A HREF="http://localhost:8080/admin-console">http://localhost:8080/admin-console</A></P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_1eb2652e.png" NAME="graphics2" ALIGN=LEFT WIDTH=222 HEIGHT=162 BORDER=0><BR CLEAR=LEFT>Use
+the tree on the left side of the console to navigate to the <B>No Tx
+Datasources</B> page:</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">On the <B>No Tx Datasources</B> page, you'll see
+an <B>Add a new resource </B><SPAN STYLE="font-weight: normal">button,
+as shown below.</SPAN> Click that button.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m3040f985.png" NAME="graphics3" ALIGN=LEFT WIDTH=368 HEIGHT=134 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Next you'll see the <B>Add New</B> page below. 
+Unless the JBoss or database vendor documentation tells you
+otherwise, then you should pick the 'default' template, as shown
+below and the click the <B>Continue</B> button.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_11a85032.png" NAME="graphics10" ALIGN=LEFT WIDTH=367 HEIGHT=172 BORDER=0><BR CLEAR=LEFT>Next,
+you will see second <B>Add New</B> page, shown below. 
+</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_md0655a4.png" NAME="graphics16" ALIGN=LEFT WIDTH=527 HEIGHT=395 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western" STYLE="page-break-before: always"><I><B>(JBoss:
+create Datasource continued)</B></I></P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">Refer to the JBoss and your database vendor for
+information on how to configure your database via the <B>Add New</B>
+page shown above. 
+</P>
+<P CLASS="western">At a minimum you will need to set these
+properties:</P>
+<P CLASS="western">     <B>JNDI Name</B>: this <B>MUST</B> be set to
+'RollerDS' as shown below.</P>
+<P CLASS="western">     <B>JDBC Driver Class</B>: this is specific to
+your database's JDBC driver. Examples:</P>
+<P CLASS="western">          Derby's driver class is
+<FONT FACE="Courier New, monospace">org.apache.derby.jdbc.ClientDriver</FONT></P>
+<P CLASS="western">          MySQL's driver class is
+<FONT FACE="Courier New, monospace">com.mysql.jdbc.Driver</FONT></P>
+<P CLASS="western">     <B>Connection URL</B>: this is specific to
+your database installation. Examples:</P>
+<P CLASS="western">          Derby example:
+<FONT FACE="Courier New, monospace">jdbc:derby://localhost:1527/rollerdb</FONT></P>
+<P CLASS="western">          MySQL example:
+<FONT FACE="Courier New, monospace">jdbc:mysql://localhost:3306/rollerdb</FONT></P>
+<P CLASS="western">Once you have configured your Datasource, click
+the <B>Save</B> button to complete the configuration.</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><B>Test your Database Connection </B>
+</P>
+<P CLASS="western">Before you proceed you should use the Control tab
+of the RollerDS page to test the connection that you have created.
+Click the Test Connection Butotn</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_42faaf5d.png" NAME="graphics11" ALIGN=LEFT WIDTH=446 HEIGHT=272 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">If that works, then you're ready to deploy Roller.</P>
+<H2 CLASS="western" STYLE="widows: 2; orphans: 2"><BR><BR>
+</H2>
+<H2 CLASS="western" STYLE="page-break-before: always">8.4JBoss:
+Deploy Roller</H2>
+<P CLASS="western">To deploy Roller, use the JBoss console to
+navigate to the <B>Web Application (WAR)s</B> page, as shown below:</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_52c9a606.png" NAME="graphics12" ALIGN=LEFT WIDTH=235 HEIGHT=144 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Once you are there, you will see an <B>Add a new
+resource</B> button, as shown below. Click that button.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_2449aa35.png" NAME="graphics13" ALIGN=LEFT WIDTH=407 HEIGHT=165 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_1f0283f5.png" NAME="graphics14" ALIGN=LEFT WIDTH=524 HEIGHT=362 BORDER=0><BR CLEAR=LEFT>Next,
+you will see the <B>Add a New Web Application (WAR)</B> page. 
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western" STYLE="page-break-before: always"><B>(JBoss:
+deploy Roller continued)</B></P>
+<P CLASS="western" STYLE="font-weight: normal">Click the <B>Browse</B>
+button to browse for the Roller WAR file for JBoss, which you'll find
+in the Roller installation's webapp directory.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m718d022f.png" NAME="graphics15" ALIGN=LEFT WIDTH=462 HEIGHT=295 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Click <B>Open</B> to select the WAR file and then
+the <B>Continue</B> button to continue with the deployment.</P>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Finally,
+navigate to <A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A>
+to complete the installation.</SPAN></FONT></FONT></P>
+<H1 CLASS="western">9Deploying Roller to WebSphere</H1>
+<P CLASS="western">Deploying Roller to WebSphere involves creating a
+Roller configuration file, setting some WebSphere configuration
+properties, creating a datasource, creating a mail connection and
+then deploying the Roller WAR file. You are expected to install and
+configure WebSphere before you attempt to install Roller. Refer to
+the WebSphere documentation linked from this page for more
+information: http://...</P>
+<H2 CLASS="western">9.1WebSphere: Add Roller Configuration</H2>
+<P CLASS="western">Create a <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+Roller configuration file as described in <B>Section 5</B>. No
+additional settings are needed for Websphere. To make the
+configuration file available to Roller, use the WebSphere console,
+available at <A HREF="https://localhost:9043/ibm/console/">https://localhost:9043/ibm/console</A>.</P>
+<P CLASS="western">We will make the properties file available by
+setting a Java VM system property. First, use the tree menu on the
+left to navigate to the <B>WebSphere application servers</B> page.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m4f9a6d72.png" NAME="graphics30" ALIGN=LEFT WIDTH=258 HEIGHT=169 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Once you're there, click on the link to <B>server1</B>
+or your preferred server.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_6fca17be.png" NAME="graphics31" ALIGN=LEFT WIDTH=498 HEIGHT=183 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Once you're on t<SPAN STYLE="font-weight: normal">he
+server1 pa</SPAN>ge, look on the right-side<SPAN STYLE="font-weight: normal">
+for the Server infrastructure s</SPAN>ection, expand the Java and
+Process Management node and click on the <B>Process Definition</B>
+link.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m3c27d119.png" NAME="graphics32" ALIGN=LEFT WIDTH=197 HEIGHT=104 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">From the<SPAN STYLE="font-weight: normal"> Process
+Definition page,</SPAN> find on the right side the <B>Java Virtual
+Machine</B> link and click it.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m2bce0884.png" NAME="graphics33" ALIGN=LEFT WIDTH=134 HEIGHT=144 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">On the Java Virtual Machine page, click the <B>Custom
+properties</B> link on the right-side.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m36e0a4f0.png" NAME="graphics34" ALIGN=LEFT WIDTH=153 HEIGHT=87 BORDER=0><BR CLEAR=LEFT>Finally,
+you are ready to set the <FONT FACE="Courier New, monospace">roller-custom.config</FONT>
+property to the full-path to your <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+file.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m1f925a7c.png" NAME="graphics35" ALIGN=LEFT WIDTH=503 HEIGHT=251 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Next, we'll setup Roller database connection.</P>
+<H2 CLASS="western">9.2WebSphere: Add JDBC Provider User 
+</H2>
+<P CLASS="western">The first step to setup Roller's database
+connection is to setup a database user account. Use the WebSphere
+console's menu to navigate to the <B>Global security</B> page.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_23e1fe0a.png" NAME="graphics36" ALIGN=LEFT WIDTH=248 HEIGHT=139 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">From the Global security page, find the link to
+<B>J2C authentication page</B> and click it.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m46d9271a.png" NAME="graphics37" ALIGN=LEFT WIDTH=240 HEIGHT=127 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Once you are on the JAAS-J2C authentcation data
+page, click the <B>New...</B> button to create a new account.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m3972b402.png" NAME="graphics38" ALIGN=LEFT WIDTH=530 HEIGHT=221 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Create a new account using the username and
+password for your database, for example as shown below. We'll use
+this later when we setup the database connection.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_a7f8184.png" NAME="graphics39" ALIGN=LEFT WIDTH=537 HEIGHT=274 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<H2 CLASS="western">9.3WebSphere: Add JDBC Provider</H2>
+<P CLASS="western">Next, we'll setup a JDBC provider. Start by using
+the WebSphere console menu to navigate to the <B>JDBC Providers</B>
+page.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_mc01c96b.png" NAME="graphics40" ALIGN=LEFT WIDTH=279 HEIGHT=189 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Once you're on the page, you can use the built-in
+Derby database or you can setup your own database provider. Use the
+N<B>ew...</B> button to setup a new provider.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m5ece824b.png" NAME="graphics41" ALIGN=LEFT WIDTH=515 HEIGHT=371 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">To setup a new provider you need to provide at
+least the path to the JDBC driver JAR file for the provider and the
+Implementation class name. The example below shows how this would be
+done for Derby.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_mab1b680.png" NAME="graphics42" ALIGN=LEFT WIDTH=531 HEIGHT=508 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Now we're ready to add a JNDI name for our new
+JDBC Provider.</P>
+<H2 CLASS="western">9.4WebSphere: Add JDBC Datasource</H2>
+<P CLASS="western">Next, we must make the JDBC Provider available to
+Roller by giving it a JNDI name. Start by navigating to the D<B>ata
+sources</B> page.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_mc01c96b.png" NAME="graphics44" ALIGN=LEFT WIDTH=242 HEIGHT=164 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">From the Data sources page use the <B>New...
+</B>button to create a new Data source.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_mc7181a0.png" NAME="graphics43" ALIGN=LEFT WIDTH=537 HEIGHT=328 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Follow the steps. Use the JNDI name <FONT FACE="Courier New, monospace">jdbc/rollerdb</FONT>
+for the new Data source.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_64ea6998.png" NAME="graphics45" ALIGN=LEFT WIDTH=524 HEIGHT=302 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">Select the JDBC Provider that you created above.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m1204a8e0.png" NAME="graphics46" ALIGN=LEFT WIDTH=511 HEIGHT=263 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Use the correct database name for your database.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_2d80bcdd.png" NAME="graphics47" ALIGN=LEFT WIDTH=518 HEIGHT=266 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">When you are done, click Finish to complete the
+setup.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_2e29d3f7.png" NAME="graphics48" ALIGN=LEFT WIDTH=558 HEIGHT=459 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Before we can deploy Roller, we have one more
+step.</P>
+<H2 CLASS="western">9.5WebSphere: Create Mail Connection</H2>
+<P CLASS="western">To create Roller's Mail connection navigate to the
+<B>Mail sessions</B> page.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m54826513.png" NAME="graphics54" ALIGN=LEFT WIDTH=243 HEIGHT=233 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">On the Mail sessions page, click the New... button
+to create a new Mail session.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_3802e611.png" NAME="graphics55" ALIGN=LEFT WIDTH=498 HEIGHT=248 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Give the Mail session the name <FONT FACE="Courier New, monospace">mail/Session</FONT>
+and set it up according to the WebSphere and your mail server
+documentation.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_f4c95c8.png" NAME="graphics56" ALIGN=LEFT WIDTH=505 HEIGHT=494 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<H2 CLASS="western">9.6WebSphere: Deploy Roller</H2>
+<P CLASS="western">Finally, we're ready to deploy the Roller WAR file
+to WebSphere. We do this from the <B>New application</B> page.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_mffbe88b.png" NAME="graphics49" ALIGN=LEFT WIDTH=282 HEIGHT=122 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">On the New Application page, choose <B>New
+Enterprise Application</B>.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_3865ba93.png" NAME="graphics50" ALIGN=LEFT WIDTH=612 HEIGHT=229 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">From there, use the <B>Choose File</B> button to
+select the Roller WAR file in the webapps directory of the Roller
+installation.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m57e66622.png" NAME="graphics51" ALIGN=LEFT WIDTH=550 HEIGHT=235 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">You can use the <B>Fast Path</B> configuration
+path.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_34c451cb.png" NAME="graphics52" ALIGN=LEFT WIDTH=502 HEIGHT=185 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">Refer to the WebSphere documentation for more
+information. At a minimum you'll need to give Roller an application
+name, e.g. below we use 'roller'.</P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_657b957.png" NAME="graphics53" ALIGN=LEFT WIDTH=540 HEIGHT=526 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P CLASS="western">When you're done, click <B>Finish</B> and then
+<B>Save</B><SPAN STYLE="font-weight: normal"> to complete the
+deployment.</SPAN></P>
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Finally,
+navigate to <A HREF="http://localhost:8080/roller">http://localhost:9080/roller</A>
+to complete the installation.</SPAN></FONT></FONT></P>
+<P CLASS="western"><BR><BR>
+</P>
+<H1 CLASS="western">10Getting started with Roller</H1>
+<P CLASS="western"><FONT SIZE=4>You're not quite done with the
+installation process Now you're ready to start using Roller, so we'll
+walk you through getting started, registering a user and setting up a
+blog. We'll also discuss briefly what happens when there is an error.
+</FONT>
+</P>
+<H2 CLASS="western">10.1Navigate to Roller and finish the install 
+</H2>
+<P CLASS="western"><FONT SIZE=4>Navigate to Roller, if you are using
+a default Tomcat or Glassfish installation then then URL of Roller is
+probably <A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A>.
 You will see either a web page of error messages, a web page offering
 to create database tables for you or web page asking you to complete
 the installation by registering an admin user and creating a
 front-page blog. First, let's talk about what happens when things go
-wrong.</P>
-<P CLASS="western">If there's a problem with your database
-configuration, Roller will display a page or error messages to help
-you diagnose the problem. It's possible that you entered the wrong
-JDBC driver class name, connection URL, username or password. Or
-perhaps your database is not running. Use the information provided to
-determine what is wrong, fix it and then redeploy Roller.</P>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_79ee0277.png" NAME="graphics7" ALIGN=LEFT WIDTH=581 HEIGHT=331 BORDER=0><BR CLEAR=LEFT><BR><BR>
+wrong.</FONT></P>
+<P CLASS="western"><FONT SIZE=4>If there's a problem with your
+database configuration, Roller will display a page or error messages
+to help you diagnose the problem. It's possible that you entered the
+wrong JDBC driver class name, connection URL, username or password.
+Or perhaps your database is not running. Use the information provided
+to determine what is wrong, fix it and then redeploy Roller.</FONT></P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_79ee0277.png" NAME="graphics7" ALIGN=LEFT WIDTH=645 HEIGHT=406 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <H4 CLASS="western">Automatic tables creation</H4>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_2bf00c9b.png" NAME="graphics8" ALIGN=LEFT WIDTH=558 HEIGHT=127 BORDER=0><BR CLEAR=LEFT>If
+<P CLASS="western"><IMG SRC="roller-install-guide_html_2bf00c9b.png" NAME="graphics8" ALIGN=LEFT WIDTH=603 HEIGHT=137 BORDER=0><BR CLEAR=LEFT><FONT SIZE=4>If
 your database configuration is good but Roller cannot find its
 database tables, then Roller will offer to create those pages
 automatically for you. If you give the go-ahead, Roller will run the
 appropriate database creation script for your database and then show
 you the results. You can then proceed to the next step to setup your
-first user account and weblog.</P>
-<H2 CLASS="western">8.2Register a user and create a weblog</H2>
-<P CLASS="western">If Roller starts up fine but doesn't find a
-front-page weblog then it will display the Completing Your
+first user account and weblog.</FONT></P>
+<H2 CLASS="western">10.2Register a user and create a weblog</H2>
+<P CLASS="western"><FONT SIZE=4>If Roller starts up fine but doesn't
+find a front-page weblog then it will display the Completing Your
 Installation below that explains how to register your first user,
-create your first weblog and setup your site's front page.</P>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_m8d76424.png" NAME="graphics9" ALIGN=LEFT WIDTH=527 HEIGHT=390 BORDER=0><BR CLEAR=LEFT><BR><BR>
+create your first weblog and setup your site's front page.</FONT></P>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m8d76424.png" NAME="graphics9" ALIGN=LEFT WIDTH=601 HEIGHT=445 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
-<P CLASS="western">You have to decide what you want as the front-page
-of your Roller site. If you are using Roller to run your personal
-weblog, then you probably want your weblog to be the front-page of
-the site. In this case, create a weblog for yourself, <I>don't</I>
-choose the front-page theme but <I>do</I> set your weblog as the
-front-page weblog for the site. 
+<P CLASS="western"><FONT SIZE=4>You have to decide what you want as
+the front-page of your Roller site. If you are using Roller to run
+your personal weblog, then you probably want your weblog to be the
+front-page of the site. In this case, create a weblog for yourself,
+<I>don't</I> choose the front-page theme but <I>do</I> set your
+weblog as the front-page weblog for the site. </FONT>
 </P>
-<P CLASS="western">If you are using Roller to run a community of
-multiple weblogs, then you'll probably want to display an aggregated
-front-page combining all weblogs on the site. In that case, create a
-weblog to serve as the front-page, set it as the front-page weblog
-and make sure you set the “aggregated front-page” setting on the
-Server Admin page.   
+<P CLASS="western"><FONT SIZE=4>If you are using Roller to run a
+community of multiple weblogs, then you'll probably want to display
+an aggregated front-page combining all weblogs on the site. In that
+case, create a weblog to serve as the front-page, set it as the
+front-page weblog and make sure you set the “aggregated front-page”
+setting on the Server Admin page.   </FONT>
 </P>
-<H4 CLASS="western">Don't forget: Reset the <FONT FACE="Courier New, monospace">installation.type</FONT>
-flag</H4>
-<P CLASS="western">Now that you're done with the installation you
-should turn off Roller's auto-installation system. Edit your
-<FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+<H4 CLASS="western"><FONT SIZE=4>Don't forget: </FONT>Reset the
+<FONT FACE="Courier New, monospace">installation.type</FONT> flag</H4>
+<P CLASS="western"><FONT SIZE=4>Now that you're done with the
+installation you should turn off Roller's auto-installation system.
+Edit your <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
 file and set <FONT FACE="Courier New, monospace">installation.type=manual</FONT>.
 Then restart your server or Roller so that it accepts the new
-setting.</P>
+setting.</FONT></P>
 <H4 CLASS="western">What's next?</H4>
-<P CLASS="western">Once you've gotten Roller up and running refer to
-the Roller User Guide for more information on running your Roller
-system and your weblog. For information on customizing your weblog,
-refer to the Roller Template Guide. If you can't find what you want
-in the documentation then subscribe to the Roller user mailing list
-and ask your questions there:
-<A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists</A><BR>
+<P CLASS="western"><FONT SIZE=4>Once you've gotten Roller up and
+running refer to the Roller User Guide for more information on
+running your Roller system and your weblog. For information on
+customizing your weblog, refer to the Roller Template Guide. If you
+can't find what you want in the documentation then subscribe to the
+Roller user mailing list and ask your questions there:
+<A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists</A></FONT><BR>
   
 </P>
-<H1 CLASS="western">9Configuration tips and tricks</H1>
-<P CLASS="western">This section covers some tips and tricks that can
-help you get the most out of Roller. It covers Roller's Planet feed
-aggregator, Acegi setup and how to setup Roller to use
-server-provided resources.</P>
-<H2 CLASS="western">9.1Setting up Roller's Planet feed aggregator</H2>
-<P CLASS="western">Roller includes a RSS/Atom feed aggregator that
-makes it possible to run a site like <A HREF="http://blogs.sun.com/">http://blogs.sun.com</A>
-which provides weblogs for thousands of writers and an aggregated
+<H1 CLASS="western">11Configuration tips and tricks</H1>
+<P CLASS="western"><FONT SIZE=4>This section covers some tips and
+tricks that can help you get the most out of Roller. It covers
+Roller's Planet feed aggregator, Acegi setup and how to setup Roller
+to use server-provided resources.</FONT></P>
+<H2 CLASS="western">11.1Setting up Roller's Planet feed aggregator</H2>
+<P CLASS="western"><FONT SIZE=4>Roller includes a RSS/Atom feed
+aggregator that makes it possible to run a site like
+<A HREF="http://blogs.sun.com/">http://blogs.sun.com</A> which
+provides weblogs for thousands of writers and an aggregated
 front-page that displays the most recent posts form those plus dozens
 of Sun bloggers from other sites such as blogger.com, typepad.com and
-other services. Here's what you need to do.</P>
+other services. Here's what you need to do.</FONT></P>
 <H4 CLASS="western">STEP 1: Create a Planet cache directory</H4>
-<P CLASS="western">Roller Planet needs a cache directory in which to
-store the feeds it fetches. By default, Roller Planet will put it's
-cache in your home directory under <FONT FACE="Courier New, monospace">roller_data/planetcache</FONT>.
+<P CLASS="western"><FONT SIZE=4>Roller Planet needs a cache directory
+in which to store the feeds it fetches. By default, Roller Planet
+will put it's cache in your home directory under
+<FONT FACE="Courier New, monospace">roller_data/planetcache</FONT>.
 If you want to place the cache somewhere else, you must override the
 planet.aggregator.cache.dir property in your <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
-file. For example:</P>
+file. For example:</FONT></P>
 <PRE>    <FONT FACE="Courier New, monospace"><FONT SIZE=3>planet.aggregator.cache.dir=c:\\roller_data\planetcache</FONT></FONT>
 </PRE><P CLASS="western">
-Whether you override that property or not, <B>you must create the
-cache directory</B>. Planet will not work unless the cache directory
-exists and is writable by Roller.</P>
+<FONT SIZE=4>Whether you override that property or not, <B>you must
+create the cache directory</B>. Planet will not work unless the cache
+directory exists and is writable by Roller.</FONT></P>
 <H4 CLASS="western">STEP 2: Enable Planet via Roller custom
 properties</H4>
-<P CLASS="western">Enable Planet by adding the following to your
-<FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
-file:</P>
-<PRE>   <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New, monospace">planet.aggregator.enabled=</FONT><FONT FACE="Courier New, monospace"><B>true</B></FONT></FONT>
+<P CLASS="western"><FONT SIZE=4>Enable Planet by adding the following
+to your <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+file:</FONT></P>
+<PRE>  <FONT SIZE=4><FONT FACE="Courier New, monospace"><FONT SIZE=2>planet.aggregator.enabled=</FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=2><B>true</B></FONT></FONT></FONT>
 
-   <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New, monospace"># Tasks which are enabled.  Only tasks listed here will be run.<BR>   tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,\<BR>   TurnoverReferersTask,PingQueueTask,</FONT><FONT FACE="Courier New, monospace"><B>RefreshRollerPlanetTask,SyncWebsitesTask</B></FONT></FONT>
+   <FONT SIZE=2><FONT FACE="Courier New, monospace"># Tasks which are enabled.  Only tasks listed here will be run.<BR>   tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,\<BR>   TurnoverReferersTask,PingQueueTask,</FONT><FONT FACE="Courier New, monospace"><B>RefreshRollerPlanetTask,SyncWebsitesTask</B></FONT></FONT>
    
-   <FONT SIZE=2 STYLE="font-size: 11pt"># Set of page models specifically for site-wide rendering</FONT>
-   <FONT SIZE=2 STYLE="font-size: 11pt">rendering.siteModels=\</FONT>
-   <FONT SIZE=2 STYLE="font-size: 11pt">org.apache.roller.weblogger.ui.rendering.model.SiteModel,\</FONT>
-   <FONT SIZE=2 STYLE="font-size: 11pt"><B>org.apache.roller.weblogger.ui.rendering.model.PlanetModel</B></FONT></PRE><P CLASS="western">
+   <FONT SIZE=2># Set of page models specifically for site-wide rendering</FONT>
+   <FONT SIZE=2>rendering.siteModels=\</FONT>
+   <FONT SIZE=2>org.apache.roller.weblogger.ui.rendering.model.SiteModel,\</FONT>
+   <FONT SIZE=2><B>org.apache.roller.weblogger.ui.rendering.model.PlanetModel</B></FONT></PRE><P CLASS="western">
 <BR><BR>
 </P>
-<P CLASS="western"><FONT SIZE=3>Those property settings enable Planet
+<P CLASS="western"><FONT SIZE=4>Those property settings enable Planet
 and enable the Planet tasks, both the <I>RefreshRollerPlanetTask</I>,
 which runs every hour and fetches all RSS/Atom feed subsciptions, and
 the <I>SyncWebsitesTask</I>, which runs every midnight and ensures
@@ -755,228 +1237,232 @@ PlanetModel in the front-page weblog, we also override the
 property.</FONT></P>
 <P CLASS="western"><BR><BR>
 </P>
-<H4 CLASS="western"><BR><BR>
-</H4>
 <H4 CLASS="western" STYLE="page-break-before: always">STEP 3:
 Configure Planet via Planet custom properties</H4>
-<P CLASS="western"><FONT SIZE=3>Create a new file called
+<P CLASS="western"><FONT SIZE=4>Create a new file called
 <FONT FACE="Courier New, monospace">planet-custom.properties</FONT>
 and place it in the same directory as your existing
 <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
 file. Here's what you need to put in this configuration file:</FONT></P>
 <OL>
-	<LI><P CLASS="western"><FONT SIZE=3>The exact same database
+	<LI><P CLASS="western"><FONT SIZE=4>The exact same database
 	properties that you put in your Roller custom properties file.</FONT></P>
-	<LI><P CLASS="western"><FONT SIZE=3>Add a property called <FONT FACE="Courier New, monospace">cache.dir
+	<LI><P CLASS="western"><FONT SIZE=4>Add a property called <FONT FACE="Courier New, monospace">cache.dir
 	</FONT>that points to the directory that you'd like Planet to use
 	for caching it's RSS and Atom newsfeeds. The default setting is:<BR>
 	    <FONT FACE="Courier New, monospace">cache.dir=${user.home}/roller_data/planetcache</FONT></FONT></P>
 </OL>
-<P CLASS="western"><FONT SIZE=3>Once you've made those property
+<P CLASS="western"><FONT SIZE=4>Once you've made those property
 settings restart Roller and proceed to the next step.</FONT></P>
 <H4 CLASS="western">STEP 4: Display your Planet aggregations</H4>
-<P CLASS="western">You can use Roller's UI to add external RSS/Atom
-feeds to the Planet setup. To display these feeds you'll need to do a
-little template customization. The easier way to get started is to
-Roller's existing Front-Page theme. Here's how.</P>
-<P CLASS="western"><SPAN STYLE="background: transparent">Create a
-weblog to server as the front-page of your Roller site. Start with
+<P CLASS="western"><FONT SIZE=4>You can use Roller's UI to add
+external RSS/Atom feeds to the Planet setup. To display these feeds
+you'll need to do a little template customization. The easier way to
+get started is to Roller's existing Front-Page theme. Here's how.</FONT></P>
+<P CLASS="western"><FONT SIZE=4><SPAN STYLE="background: transparent">Create
+a weblog to server as the front-page of your Roller site. Start with
 the Front-Page theme and customize it. Edit the weblog template and
 look for the part that mentions PLANET-entries. Comment-out the
 SITE-WIDE part and un-comment the PLANET-entries part. The double
 hash “##” marks indicate a commented-out line. The code should
-look like this:<BR></SPAN><BR><BR>
+look like this:<BR></SPAN></FONT><BR><BR>
 </P>
-<PRE><SPAN STYLE="background: transparent">   <FONT FACE="Courier New, monospace"><FONT SIZE=3>## 1) SITE-WIDE entries (the default)</SPAN></FONT></FONT>
+<PRE><SPAN STYLE="background: transparent">   <FONT FACE="Courier New, monospace"><FONT SIZE=4><FONT SIZE=3>## 1) SITE-WIDE entries (the default)</FONT></SPAN></FONT></FONT>
 <SPAN STYLE="background: transparent">   <FONT FACE="Courier New, monospace"><FONT SIZE=3><B>##</B>set($pager = $site.getWeblogEntriesPager($since, $maxResults))</SPAN></FONT></FONT>
 
 <SPAN STYLE="background: transparent">   <FONT FACE="Courier New, monospace"><FONT SIZE=3>## 2) PLANET-entries</SPAN></FONT></FONT>
 <SPAN STYLE="background: transparent">   <FONT FACE="Courier New, monospace"><FONT SIZE=3><B>#</B>set($pager = $planet.getAggregationPager($since, $maxResults))</SPAN></FONT></FONT>
 </PRE><P CLASS="western">
-<SPAN STYLE="background: #ffffff">With that in place, your front-page
-will be display your Planet entries. You can find your Planet feeds
-at the following URLs:</SPAN></P>
+<FONT SIZE=4><SPAN STYLE="background: #ffffff">With that in place,
+your front-page will be display your Planet entries. You can find
+your Planet feeds at the following URLs:</SPAN></FONT></P>
 <UL>
-	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">Main
-	Planet feed<BR></SPAN></FONT></A><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss</SPAN></FONT></FONT></A></SPAN></P>
-	<LI><P CLASS="western"><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">Per
-	group feed<BR></SPAN></FONT></A><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss?group=&lt;group-name&gt;</SPAN></FONT></FONT></A></P>
+	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><FONT SIZE=4><SPAN STYLE="background: #ffffff">Main
+	Planet feed<BR></SPAN></FONT></FONT></A><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=4><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss</SPAN></FONT></FONT></FONT></A></SPAN></P>
+	<LI><P CLASS="western"><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><FONT SIZE=4><SPAN STYLE="background: #ffffff">Per
+	group feed<BR></SPAN></FONT></FONT></A><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><FONT SIZE=4><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss?group=&lt;group-name&gt;</SPAN></FONT></FONT></FONT></A></P>
 </UL>
 <H2 CLASS="western"></H2>
-<H2 CLASS="western" STYLE="page-break-before: always">9.2Using
+<H2 CLASS="western" STYLE="page-break-before: always">11.2Using
 Server-provided database and mail resources</H2>
-<P CLASS="western">It's easiest to setup the database connection
-using the 'jdbc' approach and the mail connection using 'properties'
-but in some cases you might want to use the datasource and mail
-session resources provided by your application server instead. You
-might do this for a couple of reasons, for example you might want to
-take advantage of the database connection pool management that is
-built into your server. Or, your boss might want everything to be
-managed via your server's Admin Console. No matter the reason, it's
-easy to do in Roller.</P>
-<P CLASS="western">Instead of setting up your database and mail
-connections in <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
-like this:</P>
-<PRE>   installation.type=auto
+<P CLASS="western"><FONT SIZE=4>It's easiest to setup your Roller for
+Tomcat database connection using the 'jdbc' approach and the mail
+connection using 'properties' but in some cases you might want to use
+the datasource and mail session resources provided by your
+application server instead. You might do this for a couple of
+reasons, for example you might want to take advantage of the database
+connection pool management that is built into your server. Or, your
+boss might want everything to be managed via your server's Admin
+Console. No matter the reason, it's easy to do in Roller.</FONT></P>
+<P CLASS="western"><FONT SIZE=4>Instead of setting up your database
+and mail connections in <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+like this:</FONT></P>
+<PRE>   <FONT SIZE=4>installation.type=auto</FONT>
 
-   database.configurationType=jdbc
-   database.jdbc.driverClass=<I><B>JDBC driver class name</B></I>]
-   database.jdbc.connectionURL=<I><B>JDBC connection URL</B></I>
-   database.jdbc.username=<I><B>database username</B></I>
-   database.jdbc.password=<I><B>database password</B></I>
+   <FONT SIZE=4>database.configurationType=jdbc</FONT>
+   <FONT SIZE=4>database.jdbc.driverClass=<I><B>JDBC driver class name</B></I>]</FONT>
+   <FONT SIZE=4>database.jdbc.connectionURL=<I><B>JDBC connection URL</B></I></FONT>
+   <FONT SIZE=4>database.jdbc.username=<I><B>database username</B></I></FONT>
+   <FONT SIZE=4>database.jdbc.password=<I><B>database password</B></I></FONT>
 
-   mail.configurationType=properties
-   mail.hostName=<I><B>mail server hostname</B></I>
+   <FONT SIZE=4>mail.configurationType=properties</FONT>
+   <FONT SIZE=4>mail.hostName=<I><B>mail server hostname</B></I></FONT>
 </PRE><P CLASS="western">
-You do it like this:</P>
-<PRE>    installation.type=auto
+<FONT SIZE=4>You do it like this:</FONT></P>
+<PRE>    <FONT SIZE=4>installation.type=auto</FONT>
 
-    database.configurationType=jndi
-    database.jndi.name=jdbc/rollerdb
+    <FONT SIZE=4>database.configurationType=jndi</FONT>
+    <FONT SIZE=4>database.jndi.name=jdbc/rollerdb</FONT>
 
-    mail.configurationType=jndi
-    mail.jndi.name=mail/Session
+    <FONT SIZE=4>mail.configurationType=jndi</FONT>
+    <FONT SIZE=4>mail.jndi.name=mail/Session</FONT>
 </PRE><P CLASS="western">
-The <FONT FACE="Courier New, monospace">database.configurationType=jndi</FONT>
+<FONT SIZE=4>The <FONT FACE="Courier New, monospace">database.configurationType=jndi</FONT>
 setting tells Roller to look up it's datasource via Java Naming and
 Directory Interface (JNDI). Roller will look for a datasource with
 the JNDI name <FONT FACE="Courier New, monospace">jdbc/rollerdb</FONT>.
-You must set that datasource up in your server.</P>
-<P CLASS="western">The <FONT FACE="Courier New, monospace">mail.configurationType=jndi</FONT>
+You must set that datasource up in your server.</FONT></P>
+<P CLASS="western"><FONT SIZE=4>The <FONT FACE="Courier New, monospace">mail.configurationType=jndi</FONT>
 setting tells Roller to look up it's mail sessions via JNDI. Roller
 will look for a mail session provider with the JNDI name
 <FONT FACE="Courier New, monospace">mail/Session</FONT>. You must set
 that provider up in your server. Let's discuss how to do that on
-Tomcat.</P>
+Tomcat.</FONT></P>
 <H4 CLASS="western"><BR><BR>
 </H4>
 <H4 CLASS="western" STYLE="page-break-before: always">Setting up
 database and mail resources on Tomcat 
 </H4>
-<P CLASS="western">There are a couple of different ways to setup
-database and mail resources on Tomcat. One way is to provide a
-Context Configuration file. Here's how to do that on Tomcat 5.5 and
-6.0. 
+<P CLASS="western"><FONT SIZE=4>There are a couple of different ways
+to setup database and mail resources on Tomcat. One way is to provide
+a Context Configuration file. Here's how to do that on Tomcat 5.5 and
+6.0. </FONT>
 </P>
-<P CLASS="western">Before you deploy Roller to Tomcat, create a new
-Context Configuration file in the installation directory 
-<FONT FACE="Courier New, monospace">webapp/roller/META-INF</FONT>.
+<P CLASS="western"><FONT SIZE=4>Before you deploy Roller to Tomcat,
+create a new Context Configuration file in the installation directory
+ <FONT FACE="Courier New, monospace">webapp/roller/META-INF</FONT>.
 You'll find an example configuration file there, shown below. Rename
 it from <FONT FACE="Courier New, monospace">context.xml-example</FONT>
 to <FONT FACE="Courier New, monospace">context.xml</FONT> and
 substitute the correct values for your system where you see the <B>bold</B>
-text. 
+text. </FONT>
 </P>
-<P CLASS="western">    <FONT FACE="Courier New, monospace"><FONT SIZE=2>&lt;Context
-path=&quot;/roller&quot; </FONT></FONT>
-</P>
-<PRE>        <FONT FACE="Courier New, monospace"><FONT SIZE=2>docBase=&quot;<B>/usr/local/apache-roller-5.0/webapp/roller</B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
+<P CLASS="western">    <FONT FACE="Courier New, monospace"><FONT SIZE=4><FONT SIZE=2 STYLE="font-size: 11pt">&lt;Context
+path=&quot;/roller&quot;
+docBase=&quot;</FONT><FONT SIZE=2 STYLE="font-size: 11pt"><B>/usr/local/rollerweblogger-5.0.0-for-tomcat/webapp/roller-5.0.0-tomcat.war</B></FONT><FONT SIZE=2 STYLE="font-size: 11pt">&quot;
+debug=&quot;0&quot;&gt;</FONT></FONT></FONT></P>
+<PRE>
+        <FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;Resource name=&quot;jdbc/rollerdb&quot; auth=&quot;Container&quot; type=&quot;javax.sql.DataSource&quot;</FONT></FONT>
+            <FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">driverClassName=&quot;<B>com.mysql.jdbc.Driver</B>&quot;</FONT></FONT>
+            <FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">url=&quot;<B>jdbc:mysql://localhost:3306/rollerdb?autoReconnect=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8&amp;amp;mysqlEncoding=utf8</B>&quot;</FONT></FONT>
+            <FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">username=&quot;<B>scott</B>&quot;</FONT></FONT>
+            <FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">password=&quot;<B>tiger</B>&quot;</FONT></FONT>
+            <FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">maxActive=&quot;20&quot; maxIdle=&quot;3&quot; removeAbandoned=&quot;true&quot; maxWait=&quot;3000&quot; /&gt;</FONT></FONT>
 
-        <FONT FACE="Courier New, monospace"><FONT SIZE=2>&lt;Resource name=&quot;jdbc/rollerdb&quot; auth=&quot;Container&quot; type=&quot;javax.sql.DataSource&quot;</FONT></FONT>
-            <FONT FACE="Courier New, monospace"><FONT SIZE=2>driverClassName=&quot;<B>com.mysql.jdbc.Driver</B>&quot;</FONT></FONT>
-            <FONT FACE="Courier New, monospace"><FONT SIZE=2>url=&quot;<B>jdbc:mysql://localhost:3306/rollerdb?autoReconnect=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8&amp;amp;mysqlEncoding=utf8</B>&quot;</FONT></FONT>
-            <FONT FACE="Courier New, monospace"><FONT SIZE=2>username=&quot;<B>scott</B>&quot;</FONT></FONT>
-            <FONT FACE="Courier New, monospace"><FONT SIZE=2>password=&quot;<B>tiger</B>&quot;</FONT></FONT>
-            <FONT FACE="Courier New, monospace"><FONT SIZE=2>maxActive=&quot;20&quot; maxIdle=&quot;3&quot; removeAbandoned=&quot;true&quot; maxWait=&quot;3000&quot; /&gt;</FONT></FONT>
-
-        <FONT FACE="Courier New, monospace"><FONT SIZE=2>&lt;Resource name=&quot;mail/Session&quot; auth=&quot;Container&quot; type=&quot;javax.mail.Session&quot; </FONT></FONT>
-            <FONT FACE="Courier New, monospace"><FONT SIZE=2>mail.smtp.host=&quot;<B>mailhost.example.com</B>&quot; /&gt;</FONT></FONT>
-    <FONT FACE="Courier New, monospace"><FONT SIZE=2>&lt;/Context&gt;</FONT></FONT></PRE><P CLASS="western">
+        <FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;Resource name=&quot;mail/Session&quot; auth=&quot;Container&quot; type=&quot;javax.mail.Session&quot; </FONT></FONT>
+            <FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">mail.smtp.host=&quot;<B>mailhost.example.com</B>&quot; /&gt;</FONT></FONT>
+    <FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;/Context&gt;</FONT></FONT></PRE><P CLASS="western">
 <BR><BR>
 </P>
-<P CLASS="western">Once your context.xml file is in place, deploy
-Roller to Tomcat as described in <B>Section 7</B>.</P>
-<H2 CLASS="western">9.3Manual table creation and upgrade</H2>
-<P CLASS="western">If you would rather create your database tables
-yourself instead of letting Roller do it automatically, you can.
-Instead of enabling automatic installation you should disable it by
-putting this in your <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
-file:</P>
-<PRE>    installation.type=manual
+<P CLASS="western"><FONT SIZE=4>Once your context.xml file is in
+place, deploy Roller to Tomcat as described in <B>Section 7</B>.</FONT></P>
+<H2 CLASS="western">11.3Manual table creation and upgrade</H2>
+<P CLASS="western"><FONT SIZE=4>If you would rather create your
+database tables yourself instead of letting Roller do it
+automatically, you can. Instead of enabling automatic installation
+you should disable it by putting this in your
+<FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+file:</FONT></P>
+<PRE>    <FONT SIZE=4>installation.type=manual</FONT>
 </PRE><P CLASS="western">
-Now you've got to run the database creation script. You can find the
-database creation scripts in the
+<FONT SIZE=4>Now you've got to run the database creation script. You
+can find the database creation scripts in the
 <FONT FACE="Courier New, monospace">webapp/roller/WEB-INF/classes/dbscripts</FONT>
 directory. You'll find a <FONT FACE="Courier New, monospace">createdb.sql</FONT>
-script for each of the databases we hope to support.</P>
-<P CLASS="western">And if you are upgrading Roller, you'll have to
-run the migration scripts. You'll find those under the <FONT FACE="Courier New, monospace">dbscripts</FONT>
-directory too.</P>
-<H1 CLASS="western">10Upgrading Roller</H1>
-<P CLASS="western">This section describes how to upgrade an existing
-Roller installation to the latest release of Roller by shutting down,
-backing up and then following the installation instructions with a
-couple of key exceptions. But first, there is some required reading
-for those upgrading from ancient versions of Roller.</P>
-<H2 CLASS="western"><A NAME="ref-UpgradeGuide_2.1-1"></A>10.1Backup
+script for each of the databases we hope to support.</FONT></P>
+<P CLASS="western"><FONT SIZE=4>And if you are upgrading Roller,
+you'll have to run the migration scripts. You'll find those under the
+<FONT FACE="Courier New, monospace">dbscripts</FONT> directory too.</FONT></P>
+<H1 CLASS="western">12Upgrading Roller</H1>
+<P CLASS="western"><FONT SIZE=4>This section describes how to upgrade
+an existing Roller installation to the latest release of Roller by
+shutting down, backing up and then following the installation
+instructions with a couple of key exceptions. But first, there is
+some required reading for those upgrading from ancient versions of
+Roller.</FONT></P>
+<H2 CLASS="western"><A NAME="ref-UpgradeGuide_2.1-1"></A>12.1Backup
 your old Roller 
 </H2>
-<P CLASS="western">Before you get started with your upgrade, shutdown
-your existing Roller install and make a backup of your Roller data. 
+<P CLASS="western"><FONT SIZE=4>Before you get started with your
+upgrade, shutdown your existing Roller install and make a backup of
+your Roller data. </FONT>
 </P>
-<P CLASS="western">Backup your database to somewhere safe on your
-system or to a remote file-system. Here are a couple of examples: of
-how to do that on various databases:</P>
+<P CLASS="western"><FONT SIZE=4>Backup your database to somewhere
+safe on your system or to a remote file-system. Here are a couple of
+examples: of how to do that on various databases:</FONT></P>
 <UL>
-	<LI><P CLASS="western">On MySQL you create a dump file<BR><FONT FACE="Courier New">mysqldump
-	-u scott -p rollerdb &gt; /somewhere/safe/roller.dmp</FONT></P>
-	<LI><P CLASS="western">With PostgreSQL you can do the same
-	thing<BR><FONT FACE="Courier New">pg_dump -h 127.0.0.1 -W -U scott
-	rollerdb &gt; /somewhere/safe/roller.db</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=3>On MySQL you create a dump
+	file<BR><FONT FACE="Courier New">mysqldump -u scott -p rollerdb &gt;
+	/somewhere/safe/roller.dmp</FONT></FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=3>With PostgreSQL you can do the
+	same thing<BR><FONT FACE="Courier New">pg_dump -h 127.0.0.1 -W -U
+	scott rollerdb &gt; /somewhere/safe/roller.db</FONT></FONT></P>
 </UL>
-<P CLASS="western">And backup any other data. Make a copy of your
-Roller data directory, i.e. the one with your Roller resources and
-search-index files. If you added or modified any files within your
-old Roller web application directory, then you'll want to backup that
-whole directory. 
+<P CLASS="western"><FONT SIZE=4>And backup any other data. Make a
+copy of your Roller data directory, i.e. the one with your Roller
+resources and search-index files. If you added or modified any files
+within your old Roller web application directory, then you'll want to
+backup that whole directory. </FONT>
 </P>
 <H4 CLASS="western">Migrating your old file uploads to the new Media
 Blogging system</H4>
-<P CLASS="western">When you first start Roller 5.0 it will migrate
-your old file uploads to the new Media Blogging system. If this is to
-work properly you MUST ensure that the two properties below are set
-correctly before you start Roller 5.0 for the first time.</P>
+<P CLASS="western"><FONT SIZE=4>When you first start Roller 5.0 it
+will migrate your old file uploads to the new Media Blogging system.
+If this is to work properly you MUST ensure that the two properties
+below are set correctly before you start Roller 5.0 for the first
+time.</FONT></P>
 <P CLASS="western"><BR><BR>
 </P>
-<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">	#
+<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>	#
 The directory in which Roller will upload files</FONT></FONT></P>
-<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">	mediafiles.storage.dir=${user.home}/roller_data/mediafiles</FONT></FONT></P>
+<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>	mediafiles.storage.dir=${user.home}/roller_data/mediafiles</FONT></FONT></P>
 <P CLASS="western"><BR><BR>
 </P>
-<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">	#
+<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>	#
 The directory in which Roller will upload files</FONT></FONT></P>
-<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">	uploads.dir=${user.home}/roller_data/uploads</FONT></FONT></P>
+<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=4>	uploads.dir=${user.home}/roller_data/uploads</FONT></FONT></P>
 <P CLASS="western"><BR><BR>
 </P>
-<P CLASS="western">The mediafiles.storage.dir property should be set
-to the location where you would like to store uploaded files.</P>
-<P CLASS="western">The uploads.dir property should be set to the
-location where you stored uploaded files in Roller 4.0.</P>
+<P CLASS="western"><FONT SIZE=4>The mediafiles.storage.dir property
+should be set to the location where you would like to store uploaded
+files. The uploads.dir property should be set to the location where
+you stored uploaded files in Roller 4.0.</FONT></P>
 <H2 CLASS="western" STYLE="page-break-before: always"><A NAME="ref-UpgradeGuide_2.1-2"></A>
-10.2Install and startup the new Roller 
+12.2Install and startup the new Roller 
 </H2>
-<P CLASS="western">Follow the normal installation instructions for
-the new version of Roller, but...</P>
+<P CLASS="western"><FONT SIZE=4>Follow the normal installation
+instructions for the new version of Roller, but...</FONT></P>
 <UL>
-	<LI><P CLASS="western">When creating your <FONT FACE="Courier New, monospace">roller-custom.properites</FONT>,
+	<LI><P CLASS="western"><FONT SIZE=4>When creating your
+	<FONT FACE="Courier New, monospace">roller-custom.properites</FONT>,
 	copy of your old one. Carefully review each property and compare it
 	to the property settings in the Roller property file in <B>Section
-	11</B>. 
+	11</B>. </FONT>
 	</P>
-	<LI><P CLASS="western">Don't create a new database for Roller.
-	Instead point Roller to your existing Roller database. <B>This is
-	completely safe because you created a backup of your database
-	(right?)</B>.</P>
+	<LI><P CLASS="western"><FONT SIZE=4>Don't create a new database for
+	Roller. Instead point Roller to your existing Roller database. <B>This
+	is completely safe because you created a backup of your database,
+	right?</B></FONT></P>
 </UL>
-<P CLASS="western">When you deploy and startup, Roller will detect
-that your database needs to be upgraded and it will offer to run each
-of the migrations scripts necessary to upgrade you from your old
-version to the new version of Roller.</P>
-<P CLASS="western"><B>NOTE</B>: if you would rather run the database
-migration scripts yourself, you can. See <B>Section 9.4</B>.</P>
-<P CLASS="western"><B>NOTE</B>: On Tomcat, before startup you should
-delete the contents of the Tomcat work directory</P>
-<H1 CLASS="western">11roller.properties</H1>
+<P CLASS="western"><FONT SIZE=4>When you deploy and startup, Roller
+will detect that your database needs to be upgraded and it will offer
+to run each of the migrations scripts necessary to upgrade you from
+your old version to the new version of Roller.</FONT></P>
+<P CLASS="western"><FONT SIZE=4><B>NOTE</B>: You can run the database
+scripts manually too, see <B>Section 9.4</B>.</FONT></P>
+<P CLASS="western"><FONT SIZE=4><B>NOTE</B>: On Tomcat, before
+startup you should delete the contents of the Tomcat work directory</FONT></P>
+<H1 CLASS="western">13roller.properties</H1>
 <PRE><FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Licensed to the Apache Software Foundation (ASF) under one or more</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#  contributor license agreements.  The ASF licenses this file to You</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</FONT></FONT>
