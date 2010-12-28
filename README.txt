@@ -39,8 +39,12 @@ for use with Tomcat in weblogger-web/target/roller.
 
 To build Roller release files, you do this:
 
+   cd weblogger-war-assembly
+   mvn -Dtomcat=true install
+   cd ..
+
    cd weblogger-assembly
-   mvn install
+   mvn -Dtomcat=true install
    cd ..
 
 After that, you'll find Roller distribution files in weblogger-assembly/target. 

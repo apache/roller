@@ -63,7 +63,7 @@
             <id>tomcat-assembly</id>
             <activation>
                 <property>
-                    <name>!javaee</name>
+                    <name>tomcat</name>
                 </property>
             </activation> 
             <build>
