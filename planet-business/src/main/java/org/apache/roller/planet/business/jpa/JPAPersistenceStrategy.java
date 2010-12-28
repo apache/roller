@@ -73,6 +73,7 @@ public class JPAPersistenceStrategy {
 
         String jpaConfigurationType = PlanetConfig.getProperty("jpa.configurationType");
         if ("jndi".equals(jpaConfigurationType)) {
+            // Lookup EMF via JNDI: added for Geronimo
             String emfJndiName = "java:comp/env/" + PlanetConfig.getProperty("jpa.emf.jndi.name");
             try {
                 emf = (EntityManagerFactory) new InitialContext().lookup(emfJndiName);
@@ -97,21 +98,13 @@ public class JPAPersistenceStrategy {
             }
 
             if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-                // We're doing JNDI, so set OpenJPA JNDI name property
-                String jndiName = "java:comp/env/" + dbProvider.getJndiName();
-                emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
+                emfProps.setProperty("javax.persistence.nonJtaDataSource", dbProvider.getJndiName());
 
             } else {
                 emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
                 emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
                 emfProps.setProperty("javax.persistence.jdbc.user", dbProvider.getJdbcUsername());
                 emfProps.setProperty("javax.persistence.jdbc.password", dbProvider.getJdbcPassword());
-
-                // And Hibernate JPA
-                emfProps.setProperty("hibernate.connection.driver_class", dbProvider.getJdbcDriverClass());
-                emfProps.setProperty("hibernate.connection.url", dbProvider.getJdbcConnectionURL());
-                emfProps.setProperty("hibernate.connection.username", dbProvider.getJdbcUsername());
-                emfProps.setProperty("hibernate.connection.password", dbProvider.getJdbcPassword());
             }
 
             try {

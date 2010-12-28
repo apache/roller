@@ -27,9 +27,11 @@
         <format>war</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-
+    
     <fileSets>  
         <fileSet>
+            <outputDirectory>.</outputDirectory>
+            <directory>../weblogger-webapp/target/roller</directory>
             <excludes>
                 <!-- don't include all those Jave EE jars that Tomcat needs -->
                 <exclude>**/openjpa**</exclude>
@@ -40,5 +42,5 @@
             </excludes>
         </fileSet>
     </fileSets>
-
+    
 </assembly>

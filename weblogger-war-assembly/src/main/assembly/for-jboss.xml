@@ -18,8 +18,8 @@
 -->
 
 <!--
-  WARNING: to produce a JBoss compatible build you MUST first build Roller 
-  Weblogger using the -Djavaee=true option, e.g. mvn -Djavaee=true install
+   WARNING: to produce a JBoss compatible build you MUST first build Roller 
+   Weblogger using the -Djavaee=true option, e.g. mvn -Djavaee=true install
 -->
 <assembly>
     <id>jboss</id>
@@ -27,7 +27,7 @@
         <format>war</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-
+    
     <fileSets>
         <fileSet>
             <outputDirectory>.</outputDirectory>
@@ -48,5 +48,5 @@
             </excludes>
         </fileSet>
     </fileSets>
-
+    
 </assembly>

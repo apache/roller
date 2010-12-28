@@ -29,7 +29,6 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
@@ -202,6 +201,13 @@ public class DatabaseProvider  {
 
     public String getJdbcUsername() {
         return jdbcUsername;
+    }
+    
+    public String getFullJndiName() {
+        if (null != jndiName && jndiName.startsWith("java:")) {
+            return jndiName;
+        }
+        return "java:comp/env/" + jndiName;
     }
 
 }

@@ -27,7 +27,7 @@
         <format>war</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-
+    
     <fileSets>
         <fileSet>
             <outputDirectory>.</outputDirectory>
@@ -38,5 +38,5 @@
             </excludes>
         </fileSet>
     </fileSets>
-
+    
 </assembly>

@@ -424,7 +424,7 @@
                 <property><name>jboss</name></property>
             </activation> 
             <properties>
-                <datasourceName>java:/jdbc/rollerdb</datasourceName>
+                <datasourceName>java:/RollerDS</datasourceName>
             </properties>
         </profile>
 

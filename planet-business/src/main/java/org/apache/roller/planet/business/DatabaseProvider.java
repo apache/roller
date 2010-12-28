@@ -203,4 +203,10 @@ public class DatabaseProvider  {
         return jdbcUsername;
     }
 
+    public String getFullJndiName() {
+        if (null != jndiName && jndiName.startsWith("java:")) {
+            return jndiName;
+        }
+        return "java:comp/env/" + jndiName;
+    }
 }
