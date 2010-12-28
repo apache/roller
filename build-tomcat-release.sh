@@ -4,11 +4,11 @@ mvn -Dtomcat=true install
 
 pushd weblogger-war-assembly
 mvn clean
-mvn install
+mvn -Dtomcat=true install
 popd
 
 pushd weblogger-assembly
 mvn clean
-mvn install
+mvn -Dtomcat=true install
 popd
 
