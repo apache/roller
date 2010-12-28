@@ -441,9 +441,12 @@
 
         <profile>
             <id>openjpa</id>
-            <!-- to turn off OpenJPA bytecode enhancement define property '-Djavaee=true' -->
+            <!-- building for Tomcat, so add OpenJPA bytecode enhancement -->
             <activation>
-                <property><name>!javaee</name></property>
+                <property>
+                    <name>tomcat</name>
+                    <value>true</value>
+                </property>
             </activation> 
             <dependencies>
                 <dependency>

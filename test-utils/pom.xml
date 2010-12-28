@@ -14,14 +14,14 @@
     <name>Apache Roller Test Utilities</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>test-utils</artifactId>
-    <version>${roller.version}</version>
+    <version>5.0.0-RC3</version>
 
     <dependencies>
 
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-core</artifactId>
-            <version>${roller.version}</version>
+            <version>5.0.0-RC3</version>
         </dependency>
 
         <dependency>

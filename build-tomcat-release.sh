@@ -1,6 +1,6 @@
 # How to build a Tomcat release of Roller
 mvn clean
-mvn install
+mvn -Dtomcat=true install
 
 pushd weblogger-war-assembly
 mvn clean

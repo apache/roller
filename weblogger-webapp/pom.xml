@@ -14,7 +14,7 @@
     <name>Apache Roller Weblogger Web Application</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-webapp</artifactId>
-    <version>${roller.version}</version>
+    <version>5.0.0-RC3</version>
     <packaging>war</packaging>
 
     <dependencies>
@@ -347,6 +347,7 @@
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.9</version>
                 <configuration>
                     <contextPath>roller</contextPath>
                     <jettyConfig>${project.build.directory}/test-classes/jetty.xml</jettyConfig>

@@ -15,7 +15,7 @@
     <name>Apache Roller Weblogger Web Module</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-web</artifactId>
-    <version>${roller.version}</version>
+    <version>5.0.0-RC3</version>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -387,6 +387,8 @@
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                
                 <executions>
 
                     <execution>
@@ -423,7 +425,28 @@
                         </configuration>
                     </execution>
 
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/roller/WEB-INF/classes/dbscripts</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../weblogger-business/target/dbscripts</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*.sql</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    
                 </executions>
+                
                 <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
                 </configuration>
@@ -527,32 +550,6 @@
                         </configuration>
                     </execution>
 
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/roller/WEB-INF/classes/dbscripts</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>../weblogger-business/target/dbscripts</directory>
-                                    <filtering>false</filtering>
-                                    <includes>
-                                        <include>**/*.sql</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
 

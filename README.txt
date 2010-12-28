@@ -32,7 +32,7 @@ After pulling the source tree and changing directory to its top level, as
 indicated above, the following command will build and run all unit tests:
 
    mvn clean
-   mvn install
+   mvn -Dtomcat=true install
 
 After doing that, you should find the newly built Roller webapp, suitable
 for use with Tomcat in weblogger-web/target/roller. 
@@ -41,7 +41,8 @@ To build Roller release files, you do this:
 
    cd weblogger-assembly
    mvn install
-   
+   cd ..
+
 After that, you'll find Roller distribution files in weblogger-assembly/target. 
 The Tomcat specific release files will have 'for-tomcat' in their names.
 
@@ -61,9 +62,11 @@ Roller release files that will work on a Java EE 6 app server.
 
     cd weblogger-war-assembly
     mvn -Djavaee=true install
+    cd ..
 
-    cd ../weblogger-assembly
+    cd weblogger-assembly
     mvn -Djavaee=true install
+    cd ..
 
 When that finishes, you will find Roller distribution files in 
 weblogger-assembly/target. The Java EE specific release files will have 
@@ -84,16 +87,30 @@ Roller release files that will work on a JBoss 6 app server.
 
     cd weblogger-war-assembly
     mvn -Djboss=true install
+    cd ..
 
-    cd ../weblogger-assembly
+    cd weblogger-assembly
     mvn -Djboss=true install
+    cd ..
 
 When that finishes, you will find Roller distribution files in 
 weblogger-assembly/target. The Java EE specific release files will have 
 'for-jboss' in their names.
       
 
-NOTE: If you wish to pull a branch other than the trunk, replace the word
+---------------------------
+NOTES
+
+1) Set MAVEN_OPTS to include your preferred server
+
+If you always build for one server, then you might wish to define 
+MAVEN_OPTS to include your preferred server flag, for example:
+
+   export MAVEN_OPTS=${MAVEN_OPTS} -Dtomcat=true
+
+2) Building other versions of Roller
+
+If you wish to pull a branch other than the trunk, replace the word
 "trunk" in both lines above with the appropriate branch name.  Note that
 versions of Roller before 5.0 have an ant-based build.  In general, you should
 be able to follow instructions accompanying the sources that you pull in order
