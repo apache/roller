@@ -43,6 +43,7 @@ public class MediaFileBean {
     private int     width;
     private int     height;
     private long    length;
+    private String  originalPath;
 
     public String getName() {
         return name;
@@ -116,6 +117,7 @@ public class MediaFileBean {
         }
         dataHolder.setTags(tagsSet);
         dataHolder.setSharedForGallery(this.isSharedForGallery);
+        dataHolder.setOriginalPath(this.originalPath);
     }
 
     /**
@@ -148,6 +150,7 @@ public class MediaFileBean {
         this.setHeight(dataHolder.getHeight());
         this.setLength(dataHolder.getLength());
         this.setContentType(dataHolder.getContentType());
+        this.setOriginalPath(dataHolder.getOriginalPath());
     }
 
     /**
@@ -246,5 +249,19 @@ public class MediaFileBean {
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    /**
+     * @return the originalPath
+     */
+    public String getOriginalPath() {
+        return originalPath;
+    }
+
+    /**
+     * @param originalPath the originalPath to set
+     */
+    public void setOriginalPath(String originalPath) {
+        this.originalPath = originalPath;
     }
 }

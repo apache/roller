@@ -16,8 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.4.2.min.js" />'></script>
+<%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
 
+<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.4.2.min.js" />'></script>
 <script type="text/javascript" src='<s:url value="/custom-ui/ZeroClipboard.js" />'></script>
 
 <%-- 
@@ -189,6 +190,21 @@ $("#d_clip_button").ready(function() {
                 </div>
             </td>
         </tr>
+
+        <!-- orginal path from base URL of ctx/resources/ -->
+        <% if (WebloggerConfig.getBooleanProperty("mediafile.originalPathEdit.enabled")) { %>
+        <tr>
+            <td class="originalPathLabel">
+                <label for="originalPath"><s:text name="mediaFileEdit.originalPath" /></label>
+            </td>
+            <td>
+                <div id="fileControldiv" class="miscControl">
+                    <s:textfield name="bean.originalPath" size="30" maxlength="100" tabindex="3" />
+                    <br />
+                </div>
+            </td>
+        </tr>
+        <% } %>
 
     </table>
 

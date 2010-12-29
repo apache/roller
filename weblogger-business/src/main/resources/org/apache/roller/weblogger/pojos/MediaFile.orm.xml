@@ -29,7 +29,7 @@
                 <column name="height" insertable="true" updatable="true" unique="false" nullable="true"/>
             </basic>
             <basic name="originalPath">
-                <column name="origpath" insertable="true" updatable="false" unique="false" nullable="true"/>
+                <column name="origpath" insertable="true" updatable="true" unique="false" nullable="true"/>
             </basic>
             <basic name="description">
                 <column name="description" insertable="true" updatable="true" unique="false" nullable="true"/>

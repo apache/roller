@@ -428,6 +428,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
             throws WebloggerException {
+                
+        if (null == origpath) return null;
 
         if (!origpath.startsWith("/")) {
             origpath = "/" + origpath;
@@ -508,7 +510,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         List<Object> params = new ArrayList<Object>();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
 
         queryString.append("SELECT m FROM MediaFile m WHERE m.sharedForGallery = true");
         queryString.append(" order by m.dateUploaded");
@@ -526,14 +528,14 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         List<Object> params = new ArrayList<Object>();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
-        StringBuffer whereClause = new StringBuffer();
-        StringBuffer orderBy = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
+        StringBuilder whereClause = new StringBuilder();
+        StringBuilder orderBy = new StringBuilder();
 
         queryString.append("SELECT m FROM MediaFile m WHERE ");
 
         params.add(size++, weblog);
-        whereClause.append("m.directory.weblog = ?" + size);
+        whereClause.append("m.directory.weblog = ?").append(size);
 
         if (!StringUtils.isEmpty(filter.getName())) {
             String nameFilter = filter.getName();
@@ -542,7 +544,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 nameFilter = nameFilter + "%";
             }
             params.add(size++, nameFilter);
-            whereClause.append(" AND m.name like ?" + size);
+            whereClause.append(" AND m.name like ?").append(size);
         }
 
         if (filter.getSize() > 0) {
@@ -568,7 +570,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                     whereClause.append("=");
                     break;
             }
-            whereClause.append(" ?" + size);
+            whereClause.append(" ?").append(size);
         }
 
         if (filter.getTags() != null && filter.getTags().size() > 1) {
@@ -589,12 +591,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 for (MediaFileType type : MediaFileType.values()) {
                     if (type != MediaFileType.OTHERS) {
                         params.add(size++, type.getContentTypePrefix() + "%");
-                        whereClause.append(" AND m.contentType not like ?" + size);
+                        whereClause.append(" AND m.contentType not like ?").append(size);
                     }
                 }
             } else {
                 params.add(size++, filter.getType().getContentTypePrefix() + "%");
-                whereClause.append(" AND m.contentType like ?" + size);
+                whereClause.append(" AND m.contentType like ?").append(size);
             }
         }
 

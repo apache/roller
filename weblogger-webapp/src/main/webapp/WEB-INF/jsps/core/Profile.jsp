@@ -15,12 +15,8 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<%!
-boolean openidEnabled = WebloggerConfig.getBooleanProperty("authentication.openid.enabled");
-%>
 <p class="subtitle"><s:text name="yourProfile.description" /></p>
 
 <s:form action="profile!save">
