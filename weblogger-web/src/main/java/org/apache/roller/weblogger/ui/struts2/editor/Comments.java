@@ -97,7 +97,7 @@ public class Comments extends UIAction {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             // lookup weblog entry if necessary
-            if(!StringUtils.isEmpty(getBean().getEntryId())) {
+            if (!StringUtils.isEmpty(getBean().getEntryId())) {
                 setQueryEntry(wmgr.getWeblogEntry(getBean().getEntryId()));
             }
             
@@ -385,6 +385,7 @@ public class Comments extends UIAction {
             
             // reset form and load fresh comments list
             CommentsBean freshBean = new CommentsBean();
+            
             // but if we're editing an entry's comments stick with that entry
             if (bean.getEntryId() != null) {
                 freshBean.setEntryId(bean.getEntryId());
