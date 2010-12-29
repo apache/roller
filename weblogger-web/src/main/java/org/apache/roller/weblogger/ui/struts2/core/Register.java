@@ -82,7 +82,15 @@ public class Register extends UIAction implements ServletRequestAware {
     @SkipValidation
     public String execute() {
         
-        if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
+        // if registation is disabled, then don't allow registration
+        try {
+            if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
+                // unless there are 0 users (need to allow creation of first user)
+                && WebloggerFactory.getWeblogger().getUserManager().getUserCount() != 0) {
+                return "disabled";
+            }
+        } catch (Exception e) {
+            log.error("Error checking user count", e);
             return "disabled";
         }
                 

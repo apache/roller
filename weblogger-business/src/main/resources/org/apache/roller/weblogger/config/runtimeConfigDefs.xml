@@ -92,7 +92,7 @@
    
       <property-def  name="users.registration.enabled"  key="configForm.allowNewUsers">
          <type>boolean</type>
-         <default-value>true</default-value>
+         <default-value>false</default-value>
       </property-def>
       <property-def  name="user.account.activation.enabled"  key="configForm.accountActivation">
          <type>boolean</type>
