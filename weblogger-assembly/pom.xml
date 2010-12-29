@@ -98,7 +98,6 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/for-javaee.xml</descriptor>
-                                <descriptor>src/main/assembly/source.xml</descriptor>
                             </descriptors>
                             <tarLongFileMode>gnu</tarLongFileMode>
                         </configuration>
@@ -122,7 +121,6 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/for-jboss.xml</descriptor>
-                                <descriptor>src/main/assembly/source.xml</descriptor>
                             </descriptors>
                             <tarLongFileMode>gnu</tarLongFileMode>
                         </configuration>
