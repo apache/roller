@@ -1,0 +1,8 @@
+export rcstring="-RC3"
+export vstring="5.0.0"
+
+gpg --armor --detach-sig weblogger-assembly/target/roller-weblogger-${vstring}${rcstring}-for-javaee.tar.gz
+gpg --armor --detach-sig weblogger-assembly/target/roller-weblogger-${vstring}${rcstring}-for-javaee.zip
+gpg --armor --detach-sig weblogger-assembly/target/roller-weblogger-${vstring}${rcstring}-source.tar.gz 
+gpg --armor --detach-sig weblogger-assembly/target/roller-weblogger-${vstring}${rcstring}-source.zip
+
