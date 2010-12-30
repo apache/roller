@@ -4,20 +4,21 @@ This file exists at the top-level of the Roller source tree.
 
 Roller is made up of the following Maven projects:
 
-  roller-project:     Top level project
-  roller-core:        Core Roller component
-  planet-business:    Planet POJOs and business logic
-  planet-web:         Planet webapp (under construction as before)
-  weblogger-business: Weblogger POJOs and business logic
-  weblogger-web:      The Roller Weblogger Web Classes, Servlets, Filters, etc.
-  weblogger-webapp:   The Roller Weblogger webapp, JSP pages, Velocity templates
-  weblogger-assembly: Assembly that builds Roller distro
-  test-utils:         Test utils (e.g. start/stop Derby task)
+  roller-project:         Top level project
+  roller-core:            Core Roller component
+  planet-business:        Planet POJOs and business logic
+  planet-web:             Planet webapp (under construction as before)
+  weblogger-business:     Weblogger POJOs and business logic
+  weblogger-web:          Roller Weblogger Web Classes, Servlets, Filters, etc.
+  weblogger-webapp:       Roller Weblogger webapp, JSP pages, Velocity templates
+  weblogger-war-assembly: Assembly that builds the Roller WAR
+  weblogger-assembly:     Assembly that builds Roller distro
+  test-utils:             Test utils (e.g. start/stop Derby task)
 
 To pull the latest trunk sources you do this.
 
-  svn co https://svn.apache.org/repos/asf/roller/trunk
-  cd trunk
+  svn co https://svn.apache.org/repos/asf/roller/trunk roller_trunk
+  cd roller_trunk
 
 Building this version of Roller requires Apache Maven 3 to build.
 
@@ -26,7 +27,7 @@ Building this version of Roller requires Apache Maven 3 to build.
 BUILDING FOR TOMCAT
 
 The normal Roller build creates a product suitable for use on Tomcat 6 or later,
-which includes OpenJPA buildcode enhancement, OpenJPA and other Java EE jars.
+which includes OpenJPA bytecode enhancement, OpenJPA and other Java EE jars.
 
 After pulling the source tree and changing directory to its top level, as
 indicated above, the following command will build and run all unit tests:
@@ -55,8 +56,9 @@ The Tomcat specific release files will have 'for-tomcat' in their names.
 BUILDING FOR JAVA EE 6
 
 The Tomcat build includes extra things that are not needed on a full Java EE
-application server. In fact, the Tomcat won't work on some Java EE servers.
-If you leave those extra things out, Roller can run on most Java EE servers.
+application server. In fact, the Tomcat release won't work on some Java EE 
+servers. If we leave those extra things out, Roller can run on most Java EE 
+servers.
 
 If you add a 'javaee' flag to the Roller build invocation, you can create 
 Roller release files that will work on a Java EE 6 app server.
@@ -81,10 +83,8 @@ weblogger-assembly/target. The Java EE specific release files will have
 BUILDING FOR JBOSS 6
 
 JBoss 6 is a Java EE server, but due to differences in JNDI naming, it needs
-a separate build.
-
-If you add a 'jboss' flag to the Roller build invocation, you can create 
-Roller release files that will work on a JBoss 6 app server.
+a separate build. If you add a 'jboss' flag to the Roller build invocation, 
+you can create Roller release files that will work on a JBoss 6 app server.
 
     mvn clean
     mvn -Djboss=true install
