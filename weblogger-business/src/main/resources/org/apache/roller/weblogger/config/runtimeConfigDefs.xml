@@ -175,7 +175,7 @@
       </property-def>
       <property-def  name="users.comments.htmlenabled"  key="configForm.commentHtmlAllowed">
          <type>boolean</type>
-         <default-value>true</default-value>
+         <default-value>false</default-value>
       </property-def>
       <property-def  name="users.comments.plugins"  key="configForm.commentPlugins">
          <type>string</type>
