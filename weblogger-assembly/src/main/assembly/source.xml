@@ -31,6 +31,8 @@
                 <include>**</include>
             </includes>
             <excludes>
+            <exclude>tomcat/**</exclude>
+            <exclude>dist/**</exclude>
         <!-- scm -->
                 <exclude>**/.git/**</exclude>
                 <exclude>**/.svn/**</exclude>
