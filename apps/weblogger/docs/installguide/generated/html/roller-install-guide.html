@@ -3,9 +3,9 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Unix)">
+	<META NAME="GENERATOR" CONTENT="LibreOffice 3.3  (Unix)">
 	<META NAME="CREATED" CONTENT="20070706;11182000">
-	<META NAME="CHANGED" CONTENT="20090102;10092100">
+	<META NAME="CHANGED" CONTENT="20110122;7475900">
 	<META NAME="KEYWORDS" CONTENT="OpenDS Directory Server Administration Framework">
 	<META NAME="Info 1" CONTENT="">
 	<META NAME="Info 2" CONTENT="">
@@ -51,7 +51,7 @@
 <BR>
 </P>
 <P CLASS="western" ALIGN=RIGHT STYLE="margin-bottom: 0in; background: transparent">
-<IMG SRC="file:///Users/dave/Source/roller_4.0/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_490f4977.png" NAME="graphics1" WIDTH=252 HEIGHT=102 BORDER=0></P>
+<IMG SRC="roller-install-guide_html_490f4977.png" NAME="graphics1" WIDTH=208 HEIGHT=84 BORDER=0></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
@@ -136,7 +136,7 @@ Roller Weblogger</B></FONT></FONT></P>
 <FONT FACE="Helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Version
 4.0.1</B></FONT></FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;MMMM YYYY">January 2009</SDFIELD>
+<SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;MMMM YYYY">January 2011</SDFIELD>
 </P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
  
@@ -256,25 +256,25 @@ project.</P>
 <BR>
 </P>
 <H2 CLASS="western">1.4Modifications and Updates</H2>
-<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 RULES=COLS STYLE="page-break-inside: avoid">
+<TABLE WIDTH=100% CELLPADDING=4 CELLSPACING=0 RULES=COLS STYLE="page-break-inside: avoid">
 	<COL WIDTH=59*>
 	<COL WIDTH=197*>
 	<THEAD>
 		<TR VALIGN=TOP>
-			<TH WIDTH=23%>
+			<TH WIDTH=23% STYLE="; border-top: 1px solid #000000; border-bottom: none; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0in; padding-left: 0.04in; padding-right: 0in">
 				<P CLASS="western" ALIGN=LEFT>Date</P>
 			</TH>
-			<TH WIDTH=77%>
+			<TH WIDTH=77% STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0.04in; padding-bottom: 0in; padding-left: 0.04in; padding-right: 0.04in">
 				<P CLASS="western" ALIGN=LEFT>Description of Change</P>
 			</TH>
 		</TR>
 	</THEAD>
 	<TBODY>
 		<TR VALIGN=TOP>
-			<TD WIDTH=23%>
+			<TD WIDTH=23% STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
 				<P CLASS="western" ALIGN=LEFT>July 2007</P>
 			</TD>
-			<TD WIDTH=77%>
+			<TD WIDTH=77% STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
 				<P CLASS="western" ALIGN=LEFT>Rewritten for simplified Roller 4.0
 				installation process</P>
 			</TD>
@@ -344,7 +344,46 @@ with <B>Section 3</B> below.
 </P>
 <P CLASS="western"><BR><BR>
 </P>
-<H1 CLASS="western">3Ready to roll?</H1>
+<H1 CLASS="western" STYLE="page-break-before: always">3Securing
+Roller</H1>
+<P CLASS="western"><FONT SIZE=4>Security should be top-of-mind when
+setting up any web site, even one that is on a private network and
+internal to your organization. Here are some recommendations for
+keeping your Roller installation secure:</FONT></P>
+<UL>
+	<LI><P CLASS="western"><FONT SIZE=4><B>Perform Roller installation
+	on a secure network</B>. When you are installing Roller it is
+	possible for other users to interfere with your installation. If
+	other users have access to the server, one of them could create the
+	admin account before you do. So, when you install Roller, do so on a
+	server that cannot be accessed by others.</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=4><B>Do not allow open
+	registration of new users</B>. Roller can offer a registration link
+	so that new users can register themselves, but this feature is
+	turned off because it is not safe to allow just anybody to register
+	for an account on your blog server. If you want to turn it on, login
+	as an administrative user, go to Roller's Server Administration page
+	and enable the <B>Allow New Users</B> option.</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=4><B>Do not allow HTML in
+	comments</B>. Roller can allow users to write comments in a
+	safe-subset of HTML, but HTML use in comments is not allowed at all
+	because of security concerns with even a so called safe-subset of
+	HTML. If you want to turn it on, login as an administrative user, go
+	to Roller's Server Administration page, enable <FONT FACE="Times New Roman, serif">the
+	</FONT><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-style: normal"><B>Allow
+	html in comments</B></SPAN></FONT></FONT><FONT FACE="Times New Roman, serif">
+	o</FONT>ption and make sure the <B>HTML Subset Restriction</B> box
+	is checked.</FONT></P>
+	<LI><P CLASS="western"><FONT SIZE=4><B>Run Roller over SSL
+	connection</B></FONT><FONT SIZE=4>. If you run Roller over a plain
+	old HTTP connection, it is possible for others to snoop your
+	password when you login, for example over an open WIFI network.
+	Instead, you should consult your Java Application Server's
+	documentation and configure your Roller installation to run via
+	HTTPS only. </FONT>
+	</P>
+</UL>
+<H1 CLASS="western">4Ready to roll?</H1>
 <P CLASS="western">First, let's make sure you have everything you
 need to install and run Roller.</P>
 <P CLASS="western" ALIGN=LEFT>Roller is a database-driven Java web
@@ -373,7 +412,7 @@ what you need to install and run Roller:</P>
 you're using Tomcat, check the Tomcat Considerations section below,
 otherwise you are ready to move on to Section 4: Download and
 un-package Roller.</I></FONT></FONT></P>
-<H2 CLASS="western">3.1Tomcat: JavaMail and Activation</H2>
+<H2 CLASS="western">4.1Tomcat: JavaMail and Activation</H2>
 <P CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Tomcat
 does not include the Java Mail and Activation jars that Roller needs
 for email notification, So, if you like to use Roller's e-mail
@@ -382,7 +421,7 @@ them in Tomcat's classpath. Download them from Sun
 (</FONT></FONT><A HREF="http://java.sun.com/products/javamail"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>http://java.sun.com/products/javamail</FONT></FONT></A><FONT FACE="Times New Roman, serif"><FONT SIZE=3>)
 and place them in Tomcat's </FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3>common/lib</FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3>
 directory.</FONT></FONT></P>
-<H2 CLASS="western">3.2Tomcat: URI encoding needed for I118N</H2>
+<H2 CLASS="western">4.2Tomcat: URI encoding needed for I118N</H2>
 <P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Roller
 supports internationalization (I18N), but on Tomcat some additional
 configuration is necessary. You must ensure that Tomcat's URI
@@ -403,7 +442,7 @@ make sure you do this for <I>every</I> connector through which you
 use Roller. For example, if you use the AJP connector or HTTPS
 connector you need to add the <TT>URIEncoding=&quot;UTF-8&quot;</TT>
 attribute to those connectors as well.</FONT></FONT></P>
-<H1 CLASS="western">4Download and un-package Roller</H1>
+<H1 CLASS="western">5Download and un-package Roller</H1>
 <P CLASS="western">Download the Apache Roller release file from
 <A HREF="http://roller.apache.org/">http://roller.apache.org</A>. If
 you're a Windows user download the .zip file and use your favorite
@@ -411,7 +450,7 @@ ZIP program to unzip the release into a directory on your computer's
 disk. Unix users can download the .tar.gz file and use GNU tar to
 un-package. 
 </P>
-<H2 CLASS="western">4.1Installation directory layout</H2>
+<H2 CLASS="western">5.1Installation directory layout</H2>
 <P CLASS="western">Once you've unpackaged the files you'll find a
 directory structure like this:</P>
 <P CLASS="western"><BR><BR>
@@ -422,7 +461,7 @@ contain the Apache Software License and other legal notices related
 to the release. The <FONT FACE="Courier New, monospace">README.txt</FONT>
 file just points to the documentation in the <FONT FACE="Courier New, monospace">docs</FONT>
 directory.</P>
-<H2 CLASS="western">4.2The Roller Weblogger WAR 
+<H2 CLASS="western">5.2The Roller Weblogger WAR 
 </H2>
 <P CLASS="western">The Roller Weblogger application itself is in the
 directory <FONT FACE="Courier New, monospace">webapp/roller</FONT>
@@ -436,7 +475,7 @@ WAR:</P>
    % jar cvf ../roller.war *</PRE><P CLASS="western" STYLE="font-style: normal">
 <BR><BR>
 </P>
-<H1 CLASS="western">5Prepare your database for Roller</H1>
+<H1 CLASS="western">6Prepare your database for Roller</H1>
 <P CLASS="western">Before you can install Roller you'll probably need
 to some work to prepare your database for Roller. 
 </P>
@@ -449,7 +488,7 @@ driver installed for you database of choice.</P>
 built-in JavaDB/Derby database, you can skip this section; there's no
 need to create a database in Derby and Glassfish already includes the
 Derby JDBC driver.</I></P>
-<H2 CLASS="western">5.1Create a database for Roller 
+<H2 CLASS="western">6.1Create a database for Roller 
 </H2>
 <P CLASS="western">If you're luck enough to have your own database
 administrator, ask them to setup a database for Roller. When they are
@@ -471,7 +510,7 @@ do something like this:</P>
    <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">mysql&gt; create database rollerdb;</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">mysql&gt; grant all on rollerdb.* to scott@'%' identified by 'tiger';</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">mysql&gt; grant all on rollerdb.* to scott@localhost identified by 'tiger';</FONT></FONT></PRE><H2 CLASS="western">
-5.2Check your JDBC driver setup</H2>
+6.2Check your JDBC driver setup</H2>
 <P CLASS="western">Make sure that you have the correct JDBC driver
 installed in your server. Usually, this is as simple as downloading
 the JDBC driver jar(s) and placing it (or them) into your server's
@@ -480,7 +519,7 @@ on Tomcat 6.0 in <FONT FACE="Courier New, monospace">lib</FONT> and
 on Glassfish in your domain's <FONT FACE="Courier New, monospace">lib</FONT>
 directory. 
 </P>
-<H2 CLASS="western">5.3MySQL and Oracle considerations</H2>
+<H2 CLASS="western">6.3MySQL and Oracle considerations</H2>
 <P CLASS="western">Based on our experience supporting MySQL, we have
 the following recommendations:</P>
 <UL>
@@ -499,7 +538,7 @@ the following recommendations:</P>
 	higher) drivers which should be packaged as ojdbc14.jar, even if
 	operating on Oracle 9 server.</P>
 </UL>
-<H1 CLASS="western">6Configure Roller</H1>
+<H1 CLASS="western">7Configure Roller</H1>
 <P CLASS="western">It is possible for you to configure Roller by
 creating and editing only one file:</P>
 <P CLASS="western">   <FONT FACE="Courier New, monospace">roller-custom.properties</FONT></P>
@@ -539,7 +578,7 @@ are not up-to-date Roller will offer to upgrade them for you. Once
 your Roller installation is complete and you are ready to go “live”
 then you should set<FONT FACE="Courier New, monospace">
 installation.type=manual</FONT>.</P>
-<H2 CLASS="western">6.1MySQL example</H2>
+<H2 CLASS="western">7.1MySQL example</H2>
 <P CLASS="western">Here is an example roller-custom.properties file
 that shows how to setup a MySQL connection. It shows the MySQL JDBC
 driver class name, an example MySQL connection URL and
@@ -556,12 +595,12 @@ username/password settings for the mail connection.</P>
 <TT>   <FONT FACE="Courier New"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.password=</SPAN></SPAN></FONT></TT><TT><FONT FACE="Courier New"><I><B>tiger</B></I></FONT></TT>
 </PRE><P CLASS="western">
 Next, we'll deploy Roller.</P>
-<H1 CLASS="western" STYLE="page-break-before: always">7Deploy Roller</H1>
+<H1 CLASS="western" STYLE="page-break-before: always">8Deploy Roller</H1>
 <P CLASS="western">Now that you've got the Roller WAR and you've
 created your <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
 file, you're ready to deploy Roller to your server. First, deploy
 your properties file.</P>
-<H2 CLASS="western">7.1Put <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+<H2 CLASS="western">8.1Put <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
 in classpath</H2>
 <P CLASS="western">Roller can look for your properties file in a
 number of ways and you can see <B>Section 11</B> for details. The
@@ -579,7 +618,7 @@ on some popular servers:</P>
 	directory.</P>
 </UL>
 <P CLASS="western">Now you're ready to deploy Roller itself.</P>
-<H2 CLASS="western">7.2Deploy Roller via administration console</H2>
+<H2 CLASS="western">8.2Deploy Roller via administration console</H2>
 <P CLASS="western">Use your server's administration console to deploy
 the Roller web application. 
 </P>
@@ -614,24 +653,24 @@ Glassfish v2.0</H4>
 <P CLASS="western">You can also deploy to Glassfish as either a
 directory or a WAR file. The screenshot below shows directory-based
 deployment options.</P>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_4.0/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_148117bd.png" NAME="graphics5" ALIGN=LEFT WIDTH=712 HEIGHT=656 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_148117bd.png" NAME="graphics5" ALIGN=LEFT WIDTH=588 HEIGHT=542 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P CLASS="western"><SPAN STYLE="background: transparent">Once Roller
 is deployed, you'll see that it's listed among the other
 applications. There's a <B>Launch</B> link to Roller itself and there
 are buttons to enable, display and redeploy.</SPAN></P>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_4.0/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_m11d68315.png" NAME="graphics6" ALIGN=LEFT WIDTH=708 HEIGHT=127 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m11d68315.png" NAME="graphics6" ALIGN=LEFT WIDTH=585 HEIGHT=105 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
 Roller doesn't start-up, look for the problem in the logs. You can
 find them in your Glassfish domain's  <FONT FACE="Courier New, monospace">logs</FONT>
 directory. The Glassfish log file is <FONT FACE="Courier New, monospace">server.log</FONT>
 and the Roller log  is <FONT FACE="Courier New, monospace">roller.log</FONT>.</SPAN></P>
-<H1 CLASS="western">8Getting started with Roller</H1>
+<H1 CLASS="western">9Getting started with Roller</H1>
 <P CLASS="western">You're not quite done with the installation
 process Now you're ready to start using Roller, so we'll walk you
 through getting started, registering a user and setting up a blog.
 We'll also discuss briefly what happens when there is an error. 
 </P>
-<H2 CLASS="western">8.1Navigate to Roller and finish the install 
+<H2 CLASS="western">9.1Navigate to Roller and finish the install 
 </H2>
 <P CLASS="western">Navigate to Roller, if you are using a default
 Tomcat or Glassfish installation then then URL of Roller is probably
@@ -647,22 +686,22 @@ you diagnose the problem. It's possible that you entered the wrong
 JDBC driver class name, connection URL, username or password. Or
 perhaps your database is not running. Use the information provided to
 determine what is wrong, fix it and then redeploy Roller.</P>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_4.0/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_79ee0277.png" NAME="graphics7" ALIGN=LEFT WIDTH=581 HEIGHT=331 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_79ee0277.png" NAME="graphics7" ALIGN=LEFT WIDTH=480 HEIGHT=273 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <H4 CLASS="western">Automatic tables creation</H4>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_4.0/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_2bf00c9b.png" NAME="graphics8" ALIGN=LEFT WIDTH=558 HEIGHT=127 BORDER=0><BR CLEAR=LEFT>If
+<P CLASS="western"><IMG SRC="roller-install-guide_html_2bf00c9b.png" NAME="graphics8" ALIGN=LEFT WIDTH=461 HEIGHT=105 BORDER=0><BR CLEAR=LEFT>If
 your database configuration is good but Roller cannot find its
 database tables, then Roller will offer to create those pages
 automatically for you. If you give the go-ahead, Roller will run the
 appropriate database creation script for your database and then show
 you the results. You can then proceed to the next step to setup your
 first user account and weblog.</P>
-<H2 CLASS="western">8.2Register a user and create a weblog</H2>
+<H2 CLASS="western">9.2Register a user and create a weblog</H2>
 <P CLASS="western">If Roller starts up fine but doesn't find a
 front-page weblog then it will display the Completing Your
 Installation below that explains how to register your first user,
 create your first weblog and setup your site's front page.</P>
-<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_4.0/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_m8d76424.png" NAME="graphics9" ALIGN=LEFT WIDTH=527 HEIGHT=390 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m8d76424.png" NAME="graphics9" ALIGN=LEFT WIDTH=435 HEIGHT=322 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P CLASS="western">You have to decide what you want as the front-page
 of your Roller site. If you are using Roller to run your personal
@@ -696,12 +735,12 @@ and ask your questions there:
 <A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists</A><BR>
   
 </P>
-<H1 CLASS="western">9Configuration tips and tricks</H1>
+<H1 CLASS="western">10Configuration tips and tricks</H1>
 <P CLASS="western">This section covers some tips and tricks that can
 help you get the most out of Roller. It covers Roller's Planet feed
 aggregator, Acegi setup and how to setup Roller to use
 server-provided resources.</P>
-<H2 CLASS="western">9.1Setting up Roller's Planet feed aggregator</H2>
+<H2 CLASS="western">10.1Setting up Roller's Planet feed aggregator</H2>
 <P CLASS="western">Roller includes a RSS/Atom feed aggregator that
 makes it possible to run a site like <A HREF="http://blogs.sun.com/">http://blogs.sun.com</A>
 which provides weblogs for thousands of writers and an aggregated
@@ -793,7 +832,7 @@ at the following URLs:</SPAN></P>
 	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">Per
 	group feed<BR></SPAN></FONT></A><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss?group=&lt;group-name&gt;</SPAN></FONT></FONT></A></SPAN></P>
 </UL>
-<H2 CLASS="western">9.2Changing keys in security.xml</SPAN></H2>
+<H2 CLASS="western">10.2Changing keys in security.xml</SPAN></H2>
 <P CLASS="western">Starting with version 2.1, Roller uses the Acegi
 security infrastructure. Several of the security features rely on
 keys that are intended to be site-specific. These keys are used to
@@ -831,7 +870,7 @@ keys.
 	</P>
 </OL>
 <H2 CLASS="western"></H2>
-<H2 CLASS="western" STYLE="page-break-before: always">9.3Using
+<H2 CLASS="western" STYLE="page-break-before: always">10.3Using
 Server-provided database and mail resources</H2>
 <P CLASS="western">It's easiest to setup the database connection
 using the 'jdbc' approach and the mail connection using 'properties'
@@ -914,7 +953,7 @@ path=&quot;/roller&quot; </FONT></FONT>
 </P>
 <P CLASS="western">Once your context.xml file is in place, deploy
 Roller to Tomcat as described in <B>Section 7</B>.</P>
-<H2 CLASS="western">9.4Manual table creation and upgrade</H2>
+<H2 CLASS="western">10.4Manual table creation and upgrade</H2>
 <P CLASS="western">If you would rather create your database tables
 yourself instead of letting Roller do it automatically, you can.
 Instead of enabling automatic installation you should disable it by
@@ -930,13 +969,13 @@ script for each of the databases we hope to support.</P>
 <P CLASS="western">And if you are upgrading Roller, you'll have to
 run the migration scripts. You'll find those under the <FONT FACE="Courier New, monospace">dbscripts</FONT>
 directory too.</P>
-<H1 CLASS="western">10Upgrading Roller</H1>
+<H1 CLASS="western">11Upgrading Roller</H1>
 <P CLASS="western">This section describes how to upgrade an existing
 Roller installation to the latest release of Roller by shutting down,
 backing up and then following the installation instructions with a
 couple of key exceptions. But first, there is some required reading
 for those upgrading from ancient versions of Roller.</P>
-<H2 CLASS="western">10.1For those upgrading from Roller 2.x to Roller
+<H2 CLASS="western">11.1For those upgrading from Roller 2.x to Roller
 4.0.1</H2>
 <P CLASS="western"><SPAN STYLE="background: transparent">Roller 3.0
 and Roller 4.0 were <I>major</I> releases and made some big changes
@@ -1021,7 +1060,7 @@ also been moved to the Roller Support project at Java.net
 to become part of a community maintained repository. If you or your
 users use any other themes, then you'll need to download and install
 them according to the instructions on that site.</SPAN></P>
-<H2 CLASS="western"><A NAME="ref-UpgradeGuide_2.1-1"></A>10.2Backup
+<H2 CLASS="western"><A NAME="ref-UpgradeGuide_2.1-1"></A>11.2Backup
 your old Roller 
 </H2>
 <P CLASS="western">Before you get started with your upgrade, shutdown
@@ -1056,7 +1095,7 @@ home directory under <FONT FACE="Courier New, monospace">roller_data/uploads</FO
 so you'll have to copy your uploads there. If you want to change the
 location of the uploads directory, overload the property <FONT FACE="Courier New, monospace">upoads.dir</FONT>.</P>
 <H2 CLASS="western" STYLE="page-break-before: always"><A NAME="ref-UpgradeGuide_2.1-2"></A>
-10.3Install and startup the new Roller 
+11.3Install and startup the new Roller 
 </H2>
 <P CLASS="western">Follow the normal installation instructions for
 the new version of Roller, but...</P>
@@ -1079,7 +1118,7 @@ version to the new version of Roller.</P>
 migration scripts yourself, you can. See <B>Section 9.4</B>.</P>
 <P CLASS="western"><B>NOTE</B>: On Tomcat, before startup you should
 delete the contents of the Tomcat work directory</P>
-<H1 CLASS="western">11roller.properties</H1>
+<H1 CLASS="western">12roller.properties</H1>
 <PRE><FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># roller.properties</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># This file is for meant for Roller deployment properties</FONT></FONT>
