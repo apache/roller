@@ -23,6 +23,8 @@ import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.ui.struts2.editor.EntryAdd;
+import org.apache.roller.weblogger.ui.struts2.editor.EntryEdit;
 
 
 /**
@@ -31,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 public class UIActionPrepareInterceptor extends AbstractInterceptor {
     
     private static Log log = LogFactory.getLog(UIActionPrepareInterceptor.class);
-    
+
     
     public String intercept(ActionInvocation invocation) throws Exception {
         
@@ -44,6 +46,18 @@ public class UIActionPrepareInterceptor extends AbstractInterceptor {
         if (action instanceof UIActionPreparable) {
             
             log.debug("action is UIActionPreparable, calling myPrepare() method");
+            
+            // The EntryAdd->EntryEdit chain is the one place where we need 
+            // to pass a parameter along the chain, thus this somewhat ugly hack
+            if (invocation.getStack().getRoot().size() > 1) {
+                Object action0= invocation.getStack().getRoot().get(0);
+                Object action1 = invocation.getStack().getRoot().get(1);
+                if (action0 instanceof EntryEdit && action1 instanceof EntryAdd) {
+                    EntryEdit editAction = (EntryEdit)action0;
+                    EntryAdd addAction = (EntryAdd)action1;
+                    editAction.getBean().setId(addAction.getBean().getId());
+                }
+            }            
             
             UIActionPreparable theAction = (UIActionPreparable) action;
             theAction.myPrepare();
