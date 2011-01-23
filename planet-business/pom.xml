@@ -379,8 +379,7 @@
             <!-- building for Tomcat, so add OpenJPA bytecode enhancement -->
             <activation>
                 <property>
-                    <name>tomcat</name>
-                    <value>true</value>
+                    <name>!javaee</name>
                 </property>
             </activation> 
             <dependencies>
