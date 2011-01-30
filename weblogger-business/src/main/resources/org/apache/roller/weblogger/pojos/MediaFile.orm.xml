@@ -44,7 +44,7 @@
                 <column name="size_in_bytes" insertable="true" updatable="true" unique="false" nullable="true"/>
             </basic>
             <basic name="dateUploaded">
-                <column name="date_uploaded" insertable="true" updatable="false" unique="false"/>
+                <column name="date_uploaded" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="lastUpdated">
                 <column name="last_updated" insertable="true" updatable="true" unique="false"/>
