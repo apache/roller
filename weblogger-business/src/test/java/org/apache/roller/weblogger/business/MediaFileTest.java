@@ -650,8 +650,8 @@ public class MediaFileTest extends TestCase {
 	        //mfMgr.createMediaFileDirectory(rootDirectory);
 	        //TestUtils.endSession(true);
 	
-	        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());	
 	        for (int i = 0; i < 15; i++) {
+		        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());	
 		        testWeblog = TestUtils.getManagedWebsite(testWeblog);
 	            MediaFile mediaFile = new MediaFile();
 	            mediaFile.setName("test_file<index>.jpg".replace("<index>", i + ""));
@@ -659,12 +659,12 @@ public class MediaFileTest extends TestCase {
 	            mediaFile.setCopyrightText("test copyright text");
 	            mediaFile.setSharedForGallery(true);
 	            mediaFile.setLength(2000);
-	            mediaFile.setDirectory(rootDirectory);
 	            mediaFile.setWeblog(testWeblog);
 	            mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
 	            mediaFile.setContentType("image/jpeg");
 	            mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
 	            rootDirectory.getMediaFiles().add(mediaFile);
+	            mediaFile.setDirectory(rootDirectory);
 	            assertNotNull(mediaFile.getId());
 	            assertNotNull(mediaFile.getId().length() > 0);
 		        TestUtils.endSession(true);
