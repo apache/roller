@@ -15,13 +15,12 @@ Roller is made up of the following Maven projects:
   weblogger-assembly:     Assembly that builds Roller distro
   test-utils:             Test utils (e.g. start/stop Derby task)
 
-To pull the latest trunk sources you do this.
-
+To pull the latest trunk sources you need a Subversion client:
   svn co https://svn.apache.org/repos/asf/roller/trunk roller_trunk
-  cd roller_trunk
 
-Building this version of Roller requires Apache Maven 3 to build.
-
+Building this version of Roller requires Apache Maven 3.
+  - How to build Roller: https://cwiki.apache.org/confluence/x/EM4
+  - To build and run Roller on Eclipse: https://cwiki.apache.org/confluence/x/EM4
 
 ---------------------------
 BUILDING FOR TOMCAT
@@ -33,7 +32,7 @@ After pulling the source tree and changing directory to its top level, as
 indicated above, the following command will build and run all unit tests:
 
    mvn clean
-   mvn -Dtomcat=true install
+   mvn install
 
 After doing that, you should find the newly built Roller webapp, suitable
 for use with Tomcat in weblogger-web/target/roller. 
@@ -50,6 +49,9 @@ To build Roller release files, you do this:
 
 After that, you'll find Roller distribution files in weblogger-assembly/target. 
 The Tomcat specific release files will have 'for-tomcat' in their names.
+
+See the script build-tomcat-release.sh to see the sequence of commands used
+to create Roller releases for Tomcat.
 
 
 ---------------------------
@@ -78,6 +80,9 @@ When that finishes, you will find Roller distribution files in
 weblogger-assembly/target. The Java EE specific release files will have 
 'for-javaee' in their names.
       
+See the script build-javaee-release.sh to see the sequence of commands used
+to create Roller releases for Java EE.
+
 
 ---------------------------
 BUILDING FOR JBOSS 6
@@ -101,6 +106,9 @@ When that finishes, you will find Roller distribution files in
 weblogger-assembly/target. The Java EE specific release files will have 
 'for-jboss' in their names.
       
+See the script build-jbossee-release.sh to see the sequence of commands used
+to create Roller releases for JBoss.
+
 
 ---------------------------
 NOTES
@@ -116,6 +124,6 @@ MAVEN_OPTS to include your preferred server flag, for example:
 
 If you wish to pull a branch other than the trunk, replace the word
 "trunk" in both lines above with the appropriate branch name.  Note that
-versions of Roller before 5.0 have an ant-based build.  In general, you should
+versions of Roller before 5.0 have an Ant-based build.  In general, you should
 be able to follow instructions accompanying the sources that you pull in order
 to build that version.
