@@ -49,8 +49,8 @@ public class MediaFile {
     private int         thumbnailWidth = -1;
     private String      contentType;
     private String      originalPath;
-    private Timestamp   dateUploaded;
-    private Timestamp   lastUpdated;
+    private Timestamp   dateUploaded = new Timestamp(System.currentTimeMillis());
+    private Timestamp   lastUpdated = new Timestamp(System.currentTimeMillis());
     private String      creatorUserName;
     private Weblog      weblog;
 

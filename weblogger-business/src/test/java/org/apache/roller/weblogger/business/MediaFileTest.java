@@ -648,8 +648,7 @@ public class MediaFileTest extends TestCase {
 	
 	        //MediaFileDirectory rootDirectory = new MediaFileDirectory(null, "root", "root d", testWeblog);
 	        //mfMgr.createMediaFileDirectory(rootDirectory);
-	
-	        TestUtils.endSession(true);
+	        //TestUtils.endSession(true);
 	
 	        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());	
 	        for (int i = 0; i < 15; i++) {

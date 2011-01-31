@@ -265,9 +265,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         if (!cmgr.canSave(weblog, mediaFile.getName(), mediaFile.getContentType(), mediaFile.getLength(), errors)) {
             return;
         }
-
-        mediaFile.setDateUploaded(new Timestamp(System.currentTimeMillis()));
-        mediaFile.setLastUpdated(mediaFile.getDateUploaded());
         strategy.store(mediaFile);
 
         // update weblog last modified date.  date updated by saveWeblog()
