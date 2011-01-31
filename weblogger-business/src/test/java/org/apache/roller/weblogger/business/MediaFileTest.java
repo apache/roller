@@ -651,10 +651,9 @@ public class MediaFileTest extends TestCase {
 	
 	        TestUtils.endSession(true);
 	
-	        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-	        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
-	
+	        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());	
 	        for (int i = 0; i < 15; i++) {
+		        testWeblog = TestUtils.getManagedWebsite(testWeblog);
 	            MediaFile mediaFile = new MediaFile();
 	            mediaFile.setName("test_file<index>.jpg".replace("<index>", i + ""));
 	            mediaFile.setDescription("This is a test image");
@@ -669,10 +668,10 @@ public class MediaFileTest extends TestCase {
 	            rootDirectory.getMediaFiles().add(mediaFile);
 	            assertNotNull(mediaFile.getId());
 	            assertNotNull(mediaFile.getId().length() > 0);
+		        TestUtils.endSession(true);
 	        }
-	        TestUtils.endSession(true);
+	        
 	        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-	
 	        MediaFileFilter filter1 = new MediaFileFilter();
 	        filter1.setSize(1000);
 	        filter1.setSizeFilterType(SizeFilterType.GT);
