@@ -1,11 +1,32 @@
+
 ROLLER CHANGE LOG
 -----------------
+
+
+Roller 4.0.2: Minor bug-fix release
+
+No major code changes and no schema or dependency changes. Primary reason for release is ROL-1900.
+
+Bugs fixed:
+
+   * https://issues.apache.org/jira/browse/ROL-1900 
+     Security fix: Roller now defaults to closed registration, admin must create users.
+     Also added Install Guide section on Securing Roller.
+
+   * https://issues.apache.org/jira/browse/ROL-1694 
+     Fix to mail utils for servers with user and password authentication.
+
+   * https://issues.apache.org/roller/browse/ROL-1788 
+     Fix in Server Admin page.
+
+
+-------------------------------------------------------------------------------
 
 Roller 4.0.1: Minor bug-fix release.
 
 No major code changes and no schema or dependency changes.
 
-Bug
+Bugs
     * [ROL-1642] - Comments do not show in feeds with some readers.
     * [ROL-1627] - Roller 4.0 doesn't work with Postgres
     * [ROL-1644] - Planet Group feeds do not work properly
