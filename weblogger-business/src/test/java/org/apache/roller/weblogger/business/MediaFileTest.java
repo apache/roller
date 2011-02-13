@@ -427,104 +427,101 @@ public class MediaFileTest extends TestCase {
         testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog7", testUser);
 
         MediaFileManager mfMgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         MediaFileDirectory rootDirectory = mfMgr.getMediaFileRootDirectory(testWeblog);
 
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
-
-        String id1 = null;
-        {
-            MediaFile mf = new MediaFile();
-            mf.setName("test_work.jpg");
-            mf.setDescription("This is a test image");
-            mf.setCopyrightText("test copyright text");
-            mf.setSharedForGallery(true);
-            mf.setLength(2000);
-            mf.setDirectory(rootDirectory);
-            mf.setWeblog(testWeblog);
-            mf.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
-            mf.setContentType("image/jpeg");
-            rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
-            rootDirectory.getMediaFiles().add(mf);
-
-            MediaFileTag tag = new MediaFileTag("work", mf);
-            tag.setMediaFile(mf);
-            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
-            tags.add(tag);
-            mf.setTags(tags);
-
-            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
-            TestUtils.endSession(true);
-            id1 = mf.getId();
-            assertNotNull(mf.getId());
-            assertNotNull(mf.getId().length() > 0);
-        }
-
-        String id2 = null;
-        {
-            testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            MediaFile mf = new MediaFile();
-            mf = new MediaFile();
-            mf.setName("test_home.jpg");
-            mf.setDescription("This is a test image");
-            mf.setCopyrightText("test copyright text");
-            mf.setSharedForGallery(true);
-            mf.setLength(3000);
-            mf.setDirectory(rootDirectory);
-            mf.setWeblog(testWeblog);
-            mf.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
-            mf.setContentType("image/jpeg");
-            rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
-            rootDirectory.getMediaFiles().add(mf);
-
-            MediaFileTag tag = new MediaFileTag("home", mf);
-            tag.setMediaFile(mf);
-            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
-            tags.add(tag);
-            mf.setTags(tags);
-
-            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
-            TestUtils.endSession(true);
-            id2 = mf.getId();
-            assertNotNull(mf.getId());
-            assertNotNull(mf.getId().length() > 0);
-        }
-
-        String id3 = null;
-        {
-            testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            MediaFile mf = new MediaFile();
-            mf = new MediaFile();
-            mf.setName("test_pers.jpg");
-            mf.setDescription("This is a personal test image");
-            mf.setCopyrightText("test pers copyright text");
-            mf.setSharedForGallery(true);
-            mf.setLength(4000);
-            mf.setWeblog(testWeblog);
-            mf.setDirectory(rootDirectory);
-            mf.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
-            mf.setContentType("image/jpeg");
-            rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
-            rootDirectory.getMediaFiles().add(mf);
-
-            MediaFileTag tag = new MediaFileTag("home", mf);
-            tag.setMediaFile(mf);
-            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
-            tags.add(tag);
-            mf.setTags(tags);
-
-            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
-            TestUtils.endSession(true);
-            id3 = mf.getId();
-            assertNotNull(mf.getId());
-            assertNotNull(mf.getId().length() > 0);
-        }
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-
-        List<MediaFile> searchResults;
-
         try {
+        	
+	        String id1 = null;
+	        {
+	            MediaFile mf = new MediaFile();
+	            mf.setName("test_work.jpg");
+	            mf.setDescription("This is a test image");
+	            mf.setCopyrightText("test copyright text");
+	            mf.setSharedForGallery(true);
+	            mf.setLength(2000);
+	            mf.setDirectory(rootDirectory);
+	            mf.setWeblog(testWeblog);
+	            mf.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
+	            mf.setContentType("image/jpeg");
+	            rootDirectory.getMediaFiles().add(mf);
+	
+	            MediaFileTag tag = new MediaFileTag("work", mf);
+	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
+	            tags.add(tag);
+	            mf.setTags(tags);
+	
+	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
+	            TestUtils.endSession(true);
+	            id1 = mf.getId();
+	            assertNotNull(mf.getId());
+	            assertNotNull(mf.getId().length() > 0);
+	        }
+	
+	        String id2 = null;
+	        {
+	            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+	            rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+	            
+	            MediaFile mf = new MediaFile();
+	            mf = new MediaFile();
+	            mf.setName("test_home.jpg");
+	            mf.setDescription("This is a test image");
+	            mf.setCopyrightText("test copyright text");
+	            mf.setSharedForGallery(true);
+	            mf.setLength(3000);
+	            mf.setDirectory(rootDirectory);
+	            mf.setWeblog(testWeblog);
+	            mf.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
+	            mf.setContentType("image/jpeg");
+	            rootDirectory.getMediaFiles().add(mf);
+	
+	            MediaFileTag tag = new MediaFileTag("home", mf);
+	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
+	            tags.add(tag);
+	            mf.setTags(tags);
+	
+	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
+	            TestUtils.endSession(true);
+	            id2 = mf.getId();
+	            assertNotNull(mf.getId());
+	            assertNotNull(mf.getId().length() > 0);
+	        }
+	
+	        String id3 = null;
+	        {
+	            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+	            rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+	
+	            MediaFile mf = new MediaFile();
+	            mf = new MediaFile();
+	            mf.setName("test_pers.jpg");
+	            mf.setDescription("This is a personal test image");
+	            mf.setCopyrightText("test pers copyright text");
+	            mf.setSharedForGallery(true);
+	            mf.setLength(4000);
+	            mf.setWeblog(testWeblog);
+	            mf.setDirectory(rootDirectory);
+	            mf.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
+	            mf.setContentType("image/jpeg");
+	            rootDirectory.getMediaFiles().add(mf);
+	
+	            MediaFileTag tag = new MediaFileTag("home", mf);
+	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
+	            tags.add(tag);
+	            mf.setTags(tags);
+	
+	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
+	            TestUtils.endSession(true);
+	            id3 = mf.getId();
+	            assertNotNull(mf.getId());
+	            assertNotNull(mf.getId().length() > 0);
+	        }
+	
+	        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+	
+	        List<MediaFile> searchResults;
 
             // search by name
 
