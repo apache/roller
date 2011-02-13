@@ -1,5 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
+   * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
@@ -448,6 +448,7 @@ public class MediaFileTest extends TestCase {
             rootDirectory.getMediaFiles().add(mf);
 
             MediaFileTag tag = new MediaFileTag("work", mf);
+            tag.setMediaFile(mf);
             Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
             tags.add(tag);
             mf.setTags(tags);
