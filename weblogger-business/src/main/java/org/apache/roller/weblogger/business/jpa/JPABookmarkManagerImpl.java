@@ -248,6 +248,13 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         desc =    null!=desc ? desc : title;
         xmlUrl =  null!=xmlUrl ? xmlUrl : url;
         url =     null!=htmlUrl ? htmlUrl : url;
+        
+        // better to truncate imported OPML fields than to fail import or drop whole bookmark
+        // TODO: add way to notify user that fields were truncated
+        if (title != null   && title.length() > 254) title  = title.substring(0,  254);
+        if (desc != null   && desc.length()   > 254)   desc   = desc.substring(0, 254);
+        if (url != null    && url.length()    > 254)    url    = url.substring(0, 254);
+        if (xmlUrl != null && xmlUrl.length() > 254) xmlUrl = xmlUrl.substring(0, 254);
 
         if (elem.getChildren().size()==0) {
             // Leaf element.  Store a bookmark

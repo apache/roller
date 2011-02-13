@@ -44,7 +44,7 @@
                 <column name="feedurl" insertable="true" updatable="true" unique="false"/>
             </basic>
             <many-to-one name="folder" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder">
-                <join-column name="folderid" insertable="true" updatable="true" nullable="false"/>
+                <join-column name="folderid" insertable="true" updatable="true" />
                 <cascade>
                     <cascade-persist />
                     <cascade-merge />
