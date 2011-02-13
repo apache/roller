@@ -177,6 +177,10 @@
             		<artifactId>ws-commons-util</artifactId>
             		<groupId>ws-commons-util</groupId>
             	</exclusion>
+            	<exclusion>
+            		<artifactId>activation</artifactId>
+            		<groupId>javax.activation</groupId>
+            	</exclusion>
             </exclusions>
         </dependency>
 
@@ -318,6 +322,12 @@
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>activation</artifactId>
+            		<groupId>javax.activation</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
