@@ -63,7 +63,8 @@
             </many-to-one>
             <one-to-many name="tags" mapped-by="mediaFile" target-entity="org.apache.roller.weblogger.pojos.MediaFileTag">
                 <cascade>
-                    <cascade-all />
+                    <cascade-persist /> <!-- Added so entry added by addTag() gets persisted -->
+                    <cascade-remove />
                 </cascade>
             </one-to-many>
             <transient name="thumbnailURL"/>

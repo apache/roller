@@ -448,7 +448,7 @@ public class MediaFileTest extends TestCase {
 	            rootDirectory.getMediaFiles().add(mf);
 	
 	            MediaFileTag tag = new MediaFileTag("work", mf);
-	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
+	            Set<MediaFileTag> tags = mf.getTags();
 	            tags.add(tag);
 	            mf.setTags(tags);
 	
@@ -478,7 +478,7 @@ public class MediaFileTest extends TestCase {
 	            rootDirectory.getMediaFiles().add(mf);
 	
 	            MediaFileTag tag = new MediaFileTag("home", mf);
-	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
+	            Set<MediaFileTag> tags = mf.getTags();
 	            tags.add(tag);
 	            mf.setTags(tags);
 	
@@ -508,7 +508,7 @@ public class MediaFileTest extends TestCase {
 	            rootDirectory.getMediaFiles().add(mf);
 	
 	            MediaFileTag tag = new MediaFileTag("home", mf);
-	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
+	            Set<MediaFileTag> tags = mf.getTags();
 	            tags.add(tag);
 	            mf.setTags(tags);
 	
