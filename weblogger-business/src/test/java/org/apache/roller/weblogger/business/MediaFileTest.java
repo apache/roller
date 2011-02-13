@@ -447,11 +447,14 @@ public class MediaFileTest extends TestCase {
 	            mf.setContentType("image/jpeg");
 	            rootDirectory.getMediaFiles().add(mf);
 	
+	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
+
 	            MediaFileTag tag = new MediaFileTag("work", mf);
-	            Set<MediaFileTag> tags = mf.getTags();
+	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
 	            tags.add(tag);
 	            mf.setTags(tags);
-	
+	            mfMgr.updateMediaFile(testWeblog, mf);
+	            
 	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
 	            TestUtils.endSession(true);
 	            id1 = mf.getId();
@@ -477,12 +480,14 @@ public class MediaFileTest extends TestCase {
 	            mf.setContentType("image/jpeg");
 	            rootDirectory.getMediaFiles().add(mf);
 	
+	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
+
 	            MediaFileTag tag = new MediaFileTag("home", mf);
-	            Set<MediaFileTag> tags = mf.getTags();
+	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
 	            tags.add(tag);
 	            mf.setTags(tags);
+	            mfMgr.updateMediaFile(testWeblog, mf);
 	
-	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
 	            TestUtils.endSession(true);
 	            id2 = mf.getId();
 	            assertNotNull(mf.getId());
@@ -507,12 +512,14 @@ public class MediaFileTest extends TestCase {
 	            mf.setContentType("image/jpeg");
 	            rootDirectory.getMediaFiles().add(mf);
 	
+	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
+
 	            MediaFileTag tag = new MediaFileTag("home", mf);
-	            Set<MediaFileTag> tags = mf.getTags();
+	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
 	            tags.add(tag);
 	            mf.setTags(tags);
+	            mfMgr.updateMediaFile(testWeblog, mf);
 	
-	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
 	            TestUtils.endSession(true);
 	            id3 = mf.getId();
 	            assertNotNull(mf.getId());
