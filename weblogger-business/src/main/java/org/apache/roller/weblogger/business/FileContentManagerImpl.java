@@ -136,9 +136,8 @@ public class FileContentManagerImpl implements FileContentManager {
         // get path to delete file, checks that path exists and is readable
         File delFile = this.getRealFile(weblog, fileId);
         
-        if(!delFile.delete()) {
-            throw new FileIOException("Delete failed for ["+fileId+"], "+
-                    "possibly a non-empty directory?");
+        if (!delFile.delete()) {
+            log.warn("Delete appears to have failed for ["+fileId+"]");
         }
     }
     
