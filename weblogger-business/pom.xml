@@ -370,6 +370,7 @@
                 </executions>
                 <configuration>
                     <doUpdate>false</doUpdate>
+                    <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
                 </configuration>
             </plugin>
 
