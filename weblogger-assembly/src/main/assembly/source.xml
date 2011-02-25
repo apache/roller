@@ -26,34 +26,6 @@
 			<excludes>
 				<exclude>tomcat/**</exclude>
 				<exclude>dist/**</exclude>
-				
-				<!-- scm -->
-				<exclude>**/.git/**</exclude>
-				<exclude>**/.svn/**</exclude>
-				
-				<!-- IDE -->
-				<exclude>**/*.iws</exclude>
-				<exclude>**/*.ipr</exclude>
-				<exclude>**/*.iml</exclude>
-				<exclude>**/.settings/**</exclude>
-				<exclude>**/.deployables/**</exclude>
-				<exclude>**/.wtpmodules/**</exclude>
-				<exclude>**/.externalToolBuilders/**</exclude>
-				<exclude>**/maven-eclipse.xml</exclude>
-				
-				<!-- maven -->
-				<exclude>**/target/**</exclude>
-				<exclude>**/pom.xml.releaseBackup</exclude>
-				<exclude>**/release.properties</exclude>
-
-				<!-- misc -->
-				<exclude>**/*.patch</exclude>
-				<exclude>**/*.diff</exclude>
-				<exclude>**/*.log</exclude>
-				<exclude>**/*.bak</exclude>
-				<exclude>**/*~</exclude>
-				<exclude>**/#*#</exclude>
-				<exclude>**/%*%</exclude>
 				<exclude>**/samples/create.sql</exclude>
 				<exclude>**/samples/drop.sql</exclude>
 				<exclude>**/derby.log</exclude>
