@@ -14,7 +14,6 @@
 	<formats>
 		<format>tar.gz</format>
 	</formats>
-	<tarLongFileMode>gnu</tarLongFileMode>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
