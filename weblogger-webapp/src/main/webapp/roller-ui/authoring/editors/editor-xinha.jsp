@@ -138,8 +138,7 @@
 <%-- ********************************************************************* --%>
 <%-- Text editors --%>
 
-<p class="toplabel">
-    <span style="float:left;"><s:text name="weblogEdit.content" /></span>
+<p class="toplabel"
     <span style="font-weight:normal;float:right;">
         <a href="#" onClick="onClickAddImage();">Add Image</a>&nbsp;
     </span>
