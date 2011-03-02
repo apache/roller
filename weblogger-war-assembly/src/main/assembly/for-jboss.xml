@@ -30,7 +30,7 @@
     
     <fileSets>
         <fileSet>
-            <outputDirectory>.</outputDirectory>
+            <outputDirectory></outputDirectory>
             <directory>../weblogger-webapp/target/roller</directory>
             <excludes>
                 <!-- don't include all those Jave EE jars that Tomcat needs -->
