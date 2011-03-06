@@ -216,6 +216,9 @@ label.choice{
     width: 80%;
 }
 
+div.comments-form form ul {
+   width:40em;
+}
 
 /*-------------------------------------------------------------
 Basic theme styles

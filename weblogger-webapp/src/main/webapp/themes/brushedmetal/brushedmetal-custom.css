@@ -210,6 +210,10 @@ label.choice{
     padding: 4px 0 5px 0;
     width: 80%;
 }
+div.comments-form form ul {
+   width:40em;
+}
+
 
 
 /*-------------------------------------------------------------

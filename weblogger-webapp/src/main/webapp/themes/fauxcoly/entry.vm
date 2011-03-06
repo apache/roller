@@ -137,6 +137,9 @@
         color: #444;
         width: 80%;
     }
+	div.comments-form form ul {
+	   width:40em;
+	}
     </style>
     <link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
 </head>
