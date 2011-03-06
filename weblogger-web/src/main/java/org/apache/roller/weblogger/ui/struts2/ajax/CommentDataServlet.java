@@ -105,6 +105,8 @@ public class CommentDataServlet extends HttpServlet {
                 if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
                     String content = Utilities.streamToString(request.getInputStream());
                     c.setContent(content);
+                    // don't update the posttime when updating the comment
+                    c.setPostTime(c.getPostTime());
                     wmgr.saveComment(c);
                     roller.flush();
 
