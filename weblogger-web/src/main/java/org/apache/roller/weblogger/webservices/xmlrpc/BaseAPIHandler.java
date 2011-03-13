@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -126,7 +127,8 @@ public class BaseAPIHandler implements Serializable {
             if (website != null) {
                 weblogFound = true;
                 weblogEnabled = website.getEnabled().booleanValue();
-                apiEnabled = website.getEnableBloggerApi().booleanValue();
+                apiEnabled = website.getEnableBloggerApi().booleanValue() 
+                	&& WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc");
             }
             
             if (user != null) {
@@ -172,6 +174,7 @@ public class BaseAPIHandler implements Serializable {
     throws Exception {
         boolean authenticated = false;
         boolean enabled = false;
+        boolean apiEnabled = false;
         User user = null;
         try {
             
@@ -190,9 +193,8 @@ public class BaseAPIHandler implements Serializable {
                 }
                 //System.out.println("is now [" + password + "]");
                 authenticated = user.getPassword().equals(password);
-                if (authenticated) {
-                    //WebloggerFactory.getWeblogger().setUser(user);
-                }
+                
+                apiEnabled = WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc");
             }
         } catch (Exception e) {
             mLogger.error("ERROR internal error validating user", e);
@@ -205,6 +207,11 @@ public class BaseAPIHandler implements Serializable {
         if ( !authenticated ) {
             throw new XmlRpcNotAuthorizedException(AUTHORIZATION_EXCEPTION_MSG);
         }
+        
+        if ( !apiEnabled ) {
+            throw new XmlRpcNotAuthorizedException(BLOGGERAPI_DISABLED_MSG);
+        }        
+        
         return authenticated;
     }
     

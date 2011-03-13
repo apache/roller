@@ -18,23 +18,17 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import com.sun.syndication.feed.atom.Category;
-import com.sun.syndication.propono.atom.common.AtomService;
-import com.sun.syndication.propono.atom.common.Categories;
-import com.sun.syndication.propono.atom.common.Collection;
-import com.sun.syndication.propono.atom.common.Workspace;
-import com.sun.syndication.propono.atom.server.AtomException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
@@ -43,16 +37,23 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.Utilities;
 
+import com.sun.syndication.feed.atom.Category;
+import com.sun.syndication.propono.atom.common.AtomService;
+import com.sun.syndication.propono.atom.common.Categories;
+import com.sun.syndication.propono.atom.common.Collection;
+import com.sun.syndication.propono.atom.common.Workspace;
+import com.sun.syndication.propono.atom.server.AtomException;
+
 
 /**
  * Roller's Atom service.
  */
 public class RollerAtomService extends AtomService {
 
-    private Map workspaceMap = new TreeMap();
-    private Map collectionMap = new TreeMap();
-    private static Properties cacheProps = new Properties();
-    private boolean firstTime = true;
+    //private Map workspaceMap = new TreeMap();
+    //private Map collectionMap = new TreeMap();
+    //private static Properties cacheProps = new Properties();
+    //private boolean firstTime = true;
 
     /**
      * Creates a new instance of FileBasedAtomService.
@@ -60,6 +61,11 @@ public class RollerAtomService extends AtomService {
     public RollerAtomService(User user, String atomURL) throws WebloggerException, AtomException {
         Weblogger roller = WebloggerFactory.getWeblogger();
         List perms = null;
+        
+        if (!WebloggerRuntimeConfig.getBooleanProperty("webservices.enableAtomPub")) {
+        	throw new AtomException("AtomPub not enabled for this Roller installation");
+        }
+        
         try {
             perms = roller.getUserManager().getWeblogPermissions(user);
         } catch (WebloggerException re) {
