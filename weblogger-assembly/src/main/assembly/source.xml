@@ -34,7 +34,8 @@
 				<exclude>**/derby.log</exclude>
 				<exclude>**/.idea/**</exclude>
 				<exclude>**/._*</exclude>
-				<exclude>**/.repository</exclude>
+				<exclude>**/._*/**</exclude>
+				<exclude>**/.repository/**</exclude>
 			</excludes>
 		</fileSet>
 	</fileSets>
