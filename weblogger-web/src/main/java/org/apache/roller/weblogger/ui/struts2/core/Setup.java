@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
 /**
- * Page used to display Roller isntall instructions.
+ * Page used to display Roller install instructions.
  */
 public class Setup extends UIAction {
     
