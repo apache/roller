@@ -41,82 +41,82 @@ import org.apache.roller.weblogger.pojos.Weblog;
  *   some indication that users want to override this implementation.
  */
 public class HitCountQueue {
-    
+
     private static Log log = LogFactory.getLog(HitCountQueue.class);
-    
+
     private static HitCountQueue instance = null;
-    
+
     private int numWorkers = 1;
     private int sleepTime = 180000;
     private WorkerThread worker = null;
     private List queue = null;
-    
-    
+
+
     static {
         instance = new HitCountQueue();
     }
-    
-    
+
+
     // non-instantiable because we are a singleton
     private HitCountQueue() {
-        
+
         String sleep = WebloggerConfig.getProperty("hitcount.queue.sleepTime", "180");
-        
+
         try {
             // multiply by 1000 because we expect input in seconds
             this.sleepTime = Integer.parseInt(sleep) * 1000;
         } catch(NumberFormatException nfe) {
             log.warn("Invalid sleep time ["+sleep+"], using default");
         }
-        
+
         // create the hits queue
         this.queue = Collections.synchronizedList(new ArrayList());
-        
+
         // start up a worker to process the hits at intervals
         HitCountProcessingJob job = new HitCountProcessingJob();
         worker = new ContinuousWorkerThread("HitCountQueueProcessor", job, this.sleepTime);
         worker.start();
     }
-    
-    
+
+
     public static HitCountQueue getInstance() {
         return instance;
     }
-    
-    
+
+
     public void processHit(Weblog weblog, String url, String referrer) {
-        
+
         // if the weblog isn't null then just drop it's handle in the queue
         // each entry in the queue is a weblog handle and indicates a single hit
         if(weblog != null) {
             this.queue.add(weblog.getHandle());
         }
     }
-    
-    
+
+
     public List getHits() {
         return new ArrayList(this.queue);
     }
-    
-    
+
+
     /**
      * Reset the queued hits.
      */
     public synchronized void resetHits() {
         this.queue = Collections.synchronizedList(new ArrayList());
     }
-    
-    
+
+
     /**
      * clean up.
      */
     public void shutdown() {
-        
+
         if(this.worker != null) {
             log.info("stopping worker "+this.worker.getName());
             worker.interrupt();
         }
-        
+
     }
-    
+
 }

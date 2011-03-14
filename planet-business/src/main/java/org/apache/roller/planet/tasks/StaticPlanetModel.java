@@ -36,24 +36,24 @@ import org.apache.roller.planet.pojos.Subscription;
 public class StaticPlanetModel {
     private static Log logger = LogFactory.getFactory().getInstance(StaticPlanetModel.class);
     PlanetManager planetManager = null;
-    
-    
+
+
     public StaticPlanetModel() throws PlanetException {
         Planet planet = PlanetFactory.getPlanet();
         planetManager = planet.getPlanetManager();
     }
-        
+
     // TODO: replace this with something equivalent
 //    public PlanetConfigData getConfiguration() throws PlanetException {
 //        return planetManager.getConfiguration();
 //    }
-       
-       
+
+
     public Subscription getSubscription(String feedUrl) throws Exception {
-        return planetManager.getSubscription(feedUrl); 
+        return planetManager.getSubscription(feedUrl);
     }
-    
-    
+
+
     public List getFeedEntries(String feedUrl, int maxEntries) throws Exception {
         try {
             Subscription sub = planetManager.getSubscription(feedUrl);
@@ -67,31 +67,31 @@ public class StaticPlanetModel {
             throw e;
         }
     }
-       
+
     // removed now that groups must be part of a planet, this method no longer makes sense
 //    public List getGroups() throws PlanetException {
 //        return planetManager.getGroups();
 //    }
-    
+
     // removed now that groups must be part of a planet, this method no longer makes sense
 //    public PlanetGroup getGroup(String handle) throws PlanetException {
 //        return planetManager.getGroup(handle);
 //    }
-    
-    
+
+
     public List getAggregation(
             PlanetGroup group, int maxEntries) throws PlanetException {
         return planetManager.getEntries(group, 0, maxEntries);
     }
-    
-    
+
+
     public Iterator getAllSubscriptions() throws PlanetException {
         return planetManager.getSubscriptions().iterator();
     }
-    
-    
+
+
     public int getSubscriptionCount() throws PlanetException {
         return planetManager.getSubscriptionCount();
-    } 
+    }
 }
 

@@ -25,13 +25,13 @@ import org.apache.roller.planet.PlanetException;
  * Exception generated from Weblogger initialization process.
  */
 public class InitializationException extends PlanetException {
-    
+
     public InitializationException(String msg) {
         super(msg);
     }
-    
+
     public InitializationException(String msg, Throwable t) {
         super(msg, t);
     }
-    
+
 }

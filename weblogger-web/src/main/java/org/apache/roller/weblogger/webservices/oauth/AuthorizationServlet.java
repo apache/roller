@@ -44,42 +44,42 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 public class AuthorizationServlet extends HttpServlet {
     protected static Log log =
             LogFactory.getFactory().getInstance(AuthorizationServlet.class);
-    
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         // nothing at this point
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        
+
         try{
             OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
-            
+
             OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
             OAuthAccessor accessor = omgr.getAccessor(requestMessage);
-           
+
             if (Boolean.TRUE.equals(accessor.getProperty("authorized"))) {
                 // already authorized send the user back
                 returnToConsumer(request, response, accessor);
             } else {
                 sendToAuthorizePage(request, response, accessor);
             }
-        
+
         } catch (Exception e){
             handleException(e, request, response, true);
         }
     }
-    
-    @Override 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) 
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        
+
         try{
             OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
-            
+
             OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
             OAuthAccessor accessor = omgr.getAccessor(requestMessage);
 
@@ -87,12 +87,12 @@ public class AuthorizationServlet extends HttpServlet {
             if (userId == null) {
                 userId = request.getParameter("xoauth_requestor_id");
             }
-            
+
             if (userId == null) {
                 // no user associted with the key, must be site-wide key,
                 // so get user to login and do the authorization process
                 sendToAuthorizePage(request, response, accessor);
-            
+
             } else {
 
                 // if consumer key is for specific user, check username match
@@ -105,15 +105,15 @@ public class AuthorizationServlet extends HttpServlet {
                 omgr.markAsAuthorized(accessor, userId);
                 WebloggerFactory.getWeblogger().flush();
             }
-            
+
             returnToConsumer(request, response, accessor);
-            
+
         } catch (Exception e){
             handleException(e, request, response, true);
         }
     }
-    
-    private void sendToAuthorizePage(HttpServletRequest request, 
+
+    private void sendToAuthorizePage(HttpServletRequest request,
             HttpServletResponse response, OAuthAccessor accessor)
     throws IOException, ServletException{
         String callback = request.getParameter("oauth_callback");
@@ -126,20 +126,20 @@ public class AuthorizationServlet extends HttpServlet {
         request.setAttribute("TOKEN", accessor.requestToken);
         request.getRequestDispatcher("/roller-ui/oauthAuthorize.rol").forward(request, response);
     }
-    
-    private void returnToConsumer(HttpServletRequest request, 
+
+    private void returnToConsumer(HttpServletRequest request,
             HttpServletResponse response, OAuthAccessor accessor)
         throws IOException, ServletException {
 
         // send the user back to site's callBackUrl
         String callback = request.getParameter("oauth_callback");
         if ("none".equals(callback)
-            && accessor.consumer.callbackURL != null 
+            && accessor.consumer.callbackURL != null
                 && accessor.consumer.callbackURL.length() > 0){
             // first check if we have something in our properties file
             callback = accessor.consumer.callbackURL;
         }
-        
+
         if ( "none".equals(callback) ) {
             // no call back it must be a client
             response.setContentType("text/plain");

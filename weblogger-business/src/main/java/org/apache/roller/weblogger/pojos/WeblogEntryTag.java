@@ -33,26 +33,26 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * @author Elias Torres
  */
 public class WeblogEntryTag implements Serializable {
-    private static Log log = LogFactory.getLog(WeblogEntryTag.class);    
-    
+    private static Log log = LogFactory.getLog(WeblogEntryTag.class);
+
     private static final long serialVersionUID = -2602052289337573384L;
-    
+
     private String id = UUIDGenerator.generateUUID();
     private Weblog website = null;
     private WeblogEntry weblogEntry = null;
     private String userName = null;
     private String name = null;
     private Timestamp time = null;
-    
-    
+
+
     public WeblogEntryTag() {
     }
-    
+
     public WeblogEntryTag(
             String id,
             Weblog website,
             WeblogEntry weblogEntry,
-            User user, 
+            User user,
             String name,
             Timestamp time) {
         //this.id = id;
@@ -62,42 +62,42 @@ public class WeblogEntryTag implements Serializable {
         this.name = name;
         this.time = time;
     }
-    
+
     //------------------------------------------------------- Simple properties
-    
+
     /**
      * Unique ID and primary key.
      */
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+
     /**
      * ID of website that this tag refers to.
      */
     public Weblog getWeblog() {
         return this.website;
     }
-    
+
     public void setWeblog(Weblog website) {
         this.website = website;
     }
-    
-    
+
+
     public WeblogEntry getWeblogEntry() {
         return weblogEntry;
     }
-    
+
     public void setWeblogEntry(WeblogEntry data) {
         weblogEntry = data;
     }
-    
-    
+
+
     public User getUser() {
         try {
             return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
@@ -106,7 +106,7 @@ public class WeblogEntryTag implements Serializable {
         }
         return null;
     }
-    
+
     public String getCreatorUserName() {
         return userName;
     }
@@ -114,29 +114,29 @@ public class WeblogEntryTag implements Serializable {
     public void setCreatorUserName(String userName) {
         this.userName = userName;
     }
-    
+
     /**
      * Tag value.
      */
     public String getName() {
         return this.name;
     }
-    
+
     public void setName( String name ) {
         this.name = name;
     }
-    
-    
+
+
     public java.sql.Timestamp getTime() {
         return this.time;
     }
-    
+
     public void setTime(java.sql.Timestamp tagTime) {
         this.time = tagTime;
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
@@ -146,7 +146,7 @@ public class WeblogEntryTag implements Serializable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof WeblogEntryTag != true) return false;
@@ -156,7 +156,7 @@ public class WeblogEntryTag implements Serializable {
         .append(getWeblogEntry(), o.getWeblogEntry())
         .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())

@@ -26,107 +26,107 @@ import org.apache.roller.weblogger.pojos.WeblogReferrer;
  * Pojo safety wrapper for WeblogReferrer object.
  */
 public class WeblogReferrerWrapper {
-    
+
     // keep a reference to the wrapped pojo
     private final WeblogReferrer pojo;
-    
+
     // url strategy to use for any url building
     private final URLStrategy urlStrategy;
-    
-    
+
+
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogReferrerWrapper(WeblogReferrer toWrap, URLStrategy strat) {
         this.pojo = toWrap;
         this.urlStrategy = strat;
     }
-    
-    
+
+
     // wrap the given pojo if it is not null
     public static WeblogReferrerWrapper wrap(WeblogReferrer toWrap, URLStrategy strat) {
         if(toWrap != null)
             return new WeblogReferrerWrapper(toWrap, strat);
-        
+
         return null;
     }
-    
-    
+
+
     public String getId() {
         return this.pojo.getId();
     }
-    
-    
+
+
     public WeblogWrapper getWebsite() {
         return WeblogWrapper.wrap(this.pojo.getWebsite(), urlStrategy);
     }
-    
-    
+
+
     public WeblogEntryWrapper getWeblogEntry() {
         return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry(), urlStrategy);
     }
-    
-    
+
+
     public String getDateString() {
         return this.pojo.getDateString();
     }
-    
-    
+
+
     public String getRefererUrl() {
         return this.pojo.getRefererUrl();
     }
-    
-    
+
+
     public String getRefererPermalink() {
         return this.pojo.getRefererPermalink();
     }
-    
-    
+
+
     public String getRequestUrl() {
         return this.pojo.getRequestUrl();
     }
-    
-    
+
+
     public String getTitle() {
         return this.pojo.getTitle();
     }
-    
-    
+
+
     public String getExcerpt() {
         return this.pojo.getExcerpt();
     }
-    
-    
+
+
     public Boolean getVisible() {
         return this.pojo.getVisible();
     }
-    
-    
+
+
     public Boolean getDuplicate() {
         return this.pojo.getDuplicate();
     }
-    
-    
+
+
     public Integer getDayHits() {
         return this.pojo.getDayHits();
     }
-    
-    
+
+
     public Integer getTotalHits() {
         return this.pojo.getTotalHits();
     }
-    
-    
+
+
     public String getDisplayUrl(int maxWidth,boolean includeHits) {
         return this.pojo.getDisplayUrl(maxWidth,includeHits);
     }
-    
-    
+
+
     public String getUrl() {
         return this.pojo.getUrl();
     }
-    
-    
+
+
     public String getDisplayUrl() {
         return this.pojo.getDisplayUrl();
     }
-    
+
 }

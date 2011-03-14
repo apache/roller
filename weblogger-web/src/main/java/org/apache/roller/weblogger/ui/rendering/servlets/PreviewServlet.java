@@ -55,35 +55,35 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
  * outside of the authoring interface.
  */
 public class PreviewServlet extends HttpServlet {
-    
+
     private static Log log = LogFactory.getLog(PreviewServlet.class);
-    
-    
+
+
     /**
      * Init method for this servlet
      */
     public void init(ServletConfig servletConfig) throws ServletException {
-        
+
         super.init(servletConfig);
-        
+
         log.info("Initializing PreviewServlet");
     }
-    
-    
+
+
     /**
      * Handle GET requests for weblog pages.
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         log.debug("Entering");
-        
+
         Weblog weblog = null;
-        
+
         WeblogPreviewRequest previewRequest = null;
         try {
             previewRequest = new WeblogPreviewRequest(request);
-            
+
             // lookup weblog specified by preview request
             weblog = previewRequest.getWeblog();
             if(weblog == null) {
@@ -96,9 +96,9 @@ public class PreviewServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         Weblog tmpWebsite = weblog;
-        
+
         if (previewRequest.getThemeName() != null) {
             // only create temporary weblog object if theme name was specified
             // in request, which indicates we're doing a theme preview
@@ -121,16 +121,16 @@ public class PreviewServlet extends HttpServlet {
             // the object that gets referenced during rendering operations
             previewRequest.setWeblog(tmpWebsite);
         }
-        
+
         // do we need to force a specific locale for the request?
         if(previewRequest.getLocale() == null && !weblog.isShowAllLangs()) {
             previewRequest.setLocale(weblog.getLocale());
         }
-        
+
         Template page = null;
         if("page".equals(previewRequest.getContext())) {
             page = previewRequest.getWeblogPage();
-            
+
         // If request specified tags section index, then look for custom template
         } else if("tags".equals(previewRequest.getContext()) &&
                 previewRequest.getTags() == null) {
@@ -139,7 +139,7 @@ public class PreviewServlet extends HttpServlet {
             } catch(Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
-            
+
             // if we don't have a custom tags page then 404, we don't let
             // this one fall through to the default template
             if(page == null) {
@@ -147,7 +147,7 @@ public class PreviewServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            
+
         // If this is a permalink then look for a permalink template
         } else if(previewRequest.getWeblogAnchor() != null) {
             try {
@@ -156,7 +156,7 @@ public class PreviewServlet extends HttpServlet {
                 log.error("Error getting weblog page for action 'permalink'", e);
             }
         }
-        
+
         if(page == null) {
             try {
                 page = tmpWebsite.getTheme().getDefaultTemplate();
@@ -164,20 +164,20 @@ public class PreviewServlet extends HttpServlet {
                 log.error("Error getting default page for preview", re);
             }
         }
-        
+
         // Still no page?  Then that is a 404
         if (page == null) {
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
+
         log.debug("preview page found, dealing with it");
-        
+
         // set the content type
         String pageLink = previewRequest.getWeblogPageName();
-        String mimeType = pageLink !=  null ? RollerContext.getServletContext().getMimeType(pageLink) : null;        
+        String mimeType = pageLink !=  null ? RollerContext.getServletContext().getMimeType(pageLink) : null;
         String contentType = "text/html; charset=utf-8";
         if(mimeType != null) {
             // we found a match ... set the content type
@@ -186,28 +186,28 @@ public class PreviewServlet extends HttpServlet {
             // TODO: store content-type for each page so this hack is unnecessary
             contentType = "text/css; charset=utf-8";
         }
-        
+
         // looks like we need to render content
         Map model = new HashMap();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", false, 8192, true);
-            
+
             // special hack for menu tag
             request.setAttribute("pageRequest", previewRequest);
-            
+
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("parsedRequest", previewRequest);
             initData.put("pageContext", pageContext);
-            
+
             // define url strategy
             initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy().getPreviewURLStrategy(previewRequest.getThemeName()));
-            
+
             // Load models for page previewing
             String pageModels = WebloggerConfig.getProperty("rendering.previewModels");
             ModelLoader.loadModels(pageModels, model, initData, true);
-            
+
             // Load special models for site-wide blog
             if(WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
@@ -216,19 +216,19 @@ public class PreviewServlet extends HttpServlet {
 
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
-            
+
             // ick, gotta load pre-3.0 model stuff as well :(
             ModelLoader.loadOldModels(model, request, response, pageContext, previewRequest, WebloggerFactory.getWeblogger().getUrlStrategy().getPreviewURLStrategy(previewRequest.getThemeName()));
-            
+
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
-            
+
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
-        
-        
+
+
         // lookup Renderer we are going to use
         Renderer renderer = null;
         try {
@@ -237,40 +237,40 @@ public class PreviewServlet extends HttpServlet {
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+page.getId(), e);
-            
+
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // render content.  use default size of about 24K for a standard page
         CachedContent rendererOutput = new CachedContent(24567);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());
-            
+
             // flush rendered output and close
             rendererOutput.flush();
             rendererOutput.close();
         } catch(Exception e) {
             // bummer, error during rendering
             log.error("Error during rendering for page "+page.getId(), e);
-            
+
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
+
         // post rendering process
-        
+
         // flush rendered content to response
         log.debug("Flushing response output");
         response.setContentType(contentType);
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
-        
+
         log.debug("Exiting");
     }
-    
+
 }

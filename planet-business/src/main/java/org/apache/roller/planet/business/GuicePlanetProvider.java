@@ -28,71 +28,71 @@ import org.apache.roller.planet.config.PlanetConfig;
  * A Guice specific implementation of a PlanetProvider.
  */
 public class GuicePlanetProvider implements PlanetProvider {
-    
+
     // Guice injector
     private final Injector injector;
-    
+
     // maintain our own singleton instance of Planet
     private Planet planetInstance = null;
-    
-    
+
+
     /**
-     * Instantiate a new GuicePlanetProvider using default guice module 
+     * Instantiate a new GuicePlanetProvider using default guice module
      * configured in PlanetConfig via 'guice.backend.module' property.
      */
     public GuicePlanetProvider() {
-        
+
         String moduleClassname = PlanetConfig.getProperty("guice.backend.module");
         if(moduleClassname == null) {
             throw new NullPointerException("unable to lookup default guice module via property 'guice.backend.module'");
         }
-        
+
         try {
             Class moduleClass = Class.forName(moduleClassname);
             Module module = (Module)moduleClass.newInstance();
             injector = Guice.createInjector(module);
-        } catch (Throwable e) {                
+        } catch (Throwable e) {
             // Fatal misconfiguration, cannot recover
             throw new RuntimeException("Error instantiating backend module " + moduleClassname, e);
         }
     }
-    
-    
+
+
     /**
      * Instantiate a new GuicePlanetProvider using the given Guice module.
      *
      * @param moduleClassname The full classname of the Guice module to use.
      */
     public GuicePlanetProvider(String moduleClassname) {
-        
+
         if(moduleClassname == null) {
             throw new NullPointerException("moduleClassname cannot be null");
         }
-        
+
         try {
             Class moduleClass = Class.forName(moduleClassname);
             Module module = (Module)moduleClass.newInstance();
             injector = Guice.createInjector(module);
-        } catch (Throwable e) {                
+        } catch (Throwable e) {
             // Fatal misconfiguration, cannot recover
             throw new RuntimeException("Error instantiating backend module " + moduleClassname, e);
         }
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public void bootstrap() {
         planetInstance =  injector.getInstance(Planet.class);
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public Planet getPlanet() {
         return planetInstance;
     }
-    
+
 }

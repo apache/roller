@@ -31,23 +31,23 @@ import org.apache.roller.planet.ui.core.struts2.PlanetActionSupport;
 
 /**
  * Planet Sub Form Action.
- * 
+ *
  * Handles adding/modifying subscriptions for a group.
  *
  * TODO: validation and security.
  */
 public class PlanetSubscriptionForm extends PlanetActionSupport implements Preparable {
-    
+
     private static Log log = LogFactory.getLog(PlanetSubscriptionForm.class);
-    
+
     // the Subscription to work on
     private Subscription subscription = null;
-    
+
     // form fields
     private String groupid = null;
     private String subid = null;
-    
-    
+
+
     /**
      * Load relevant Subscription if possible.
      */
@@ -56,23 +56,23 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
         if(getSubid() != null && !"".equals(getSubid())) {
             // load a planet subscription
             log.debug("Loading Planet Subscription ...");
-            
+
             subscription = pMgr.getSubscriptionById(getSubid());
         } else {
             subscription = new Subscription();
         }
     }
-    
+
     public String execute() {
         return INPUT;
     }
-    
-    
+
+
     // TODO: Validation - make sure that html is not allowed in title
     public String save() {
         // save a subscription
         log.debug("Saving Planet Subscription ...");
-        
+
         PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
         try {
             if(this.subscription.getId() == null) {
@@ -82,28 +82,28 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
                     setError("PlanetSubscriptionForm.error.groupNull");
                     return INPUT;
                 }
-                
+
                 // check if this subscription already exists before adding it
                 Subscription sub = pMgr.getSubscription(this.subscription.getFeedURL());
                 if(sub != null) {
                     this.subscription = sub;
                 } else {
                     pMgr.saveSubscription(this.subscription);
-                    
+
                     // set subid now that we have one
                     setSubid(this.subscription.getId());
                 }
-                
+
                 // add the sub to the group
                 group.getSubscriptions().add(this.subscription);
                 this.subscription.getGroups().add(group);
                 pMgr.saveGroup(group);
-                
+
             } else {
                 // updating and existing subscription, so just save it
                 pMgr.saveSubscription(this.subscription);
             }
-            
+
             // flush changes
             PlanetFactory.getPlanet().flush();
         } catch (PlanetException ex) {
@@ -111,7 +111,7 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
             setError("PlanetSubscriptionForm.error.saveFailed");
             return INPUT;
         }
-        
+
         setSuccess("PlanetSubscriptionForm.message.saveSucceeded");
         return INPUT;
     }
@@ -139,5 +139,5 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
     }
-    
+
 }

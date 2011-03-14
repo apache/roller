@@ -30,18 +30,18 @@ import org.apache.roller.planet.pojos.Subscription;
  * Test feed updater.
  */
 public class SingleThreadedFeedUpdaterTest extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(SingleThreadedFeedUpdaterTest.class);
-    
+
     private Subscription testSub = null;
-    
+
     private String feed_url = "http://rollerweblogger.org/roller/feed/entries/atom";
-    
-    
+
+
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupPlanet();
-        
+
         // add test subscription
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         testSub = new Subscription();
@@ -50,23 +50,23 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
         mgr.saveSubscription(testSub);
         PlanetFactory.getPlanet().flush();
     }
-    
-    
+
+
     protected void tearDown() throws Exception {
         TestUtils.teardownSubscription(testSub.getId());
     }
-    
-    
+
+
     public void testUpdateSubscription() throws Exception {
-        
+
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
-        
+
         // update the subscription
         FeedUpdater updater = new SingleThreadedFeedUpdater();
         updater.updateSubscription(sub);
         TestUtils.endSession(true);
-        
+
         // verify the results
         sub = mgr.getSubscription(feed_url);
         assertNotNull(sub);
@@ -76,5 +76,5 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
         assertNotNull(sub.getLastUpdated());
         assertTrue(sub.getEntries().size() > 0);
     }
-    
+
 }

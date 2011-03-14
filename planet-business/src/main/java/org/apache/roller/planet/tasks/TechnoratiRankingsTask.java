@@ -36,15 +36,15 @@ import org.apache.roller.planet.util.Technorati;
  * Rank each subscription by populating Technorati inbound blog and link counts.
  */
 public class TechnoratiRankingsTask extends PlanetTask {
-    
+
     private static Log log = LogFactory.getLog(TechnoratiRankingsTask.class);
-    
-    
+
+
     /**
      * Loop through all subscriptions get get Technorati rankings for each
      */
     public void run() {
-        
+
         int count = 0;
         int errorCount = 0;
         try {
@@ -67,22 +67,22 @@ public class TechnoratiRankingsTask extends PlanetTask {
                         +"For example, in the /WEB-INF/classes directory.");
                 return;
             }
-            
+
             try {
                 int limit = PlanetConfig.getIntProperty(
                         "planet.aggregator.technorati.limit", 500);
                 int userCount = planet.getSubscriptionCount();
                 int mod = (userCount / limit) + 1;
-                
+
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
                 int day = cal.get(Calendar.DAY_OF_YEAR);
-                
+
                 int start = (day % mod) * limit;
                 int end = start + limit;
                 end = end > userCount ? userCount : end;
                 log.info("Updating subscriptions ["+start+":"+end+"]");
-                
+
                 Iterator subs = planet.getSubscriptions().iterator();
                 while (subs.hasNext()) {
                     Subscription sub =
@@ -120,24 +120,24 @@ public class TechnoratiRankingsTask extends PlanetTask {
                     }
                     count++;
                 }
-                
+
                 // all done, flush results to db
                 PlanetFactory.getPlanet().flush();
-                
+
             } finally {
                 PlanetFactory.getPlanet().release();
             }
-            
+
         } catch (Exception e) {
             log.error("ERROR ranking subscriptions", e);
         }
     }
-    
-    
+
+
     public static void main(String[] args) throws Exception{
         TechnoratiRankingsTask task = new TechnoratiRankingsTask();
         task.initialize();
         task.run();
     }
-    
+
 }

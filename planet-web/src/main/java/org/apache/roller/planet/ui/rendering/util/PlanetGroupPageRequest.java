@@ -25,44 +25,44 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a request for a Roller planet group page.
- * 
+ *
  * /planet-ui/rendering/pages/*
  *
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
 public class PlanetGroupPageRequest extends PlanetGroupRequest {
-    
+
     private static Log log = LogFactory.getLog(PlanetGroupPageRequest.class);
-    
+
     // lightweight attributes
     private int pageNum = 0;
-    
-    
+
+
     public PlanetGroupPageRequest() {}
-    
-    
+
+
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
      */
-    public PlanetGroupPageRequest(HttpServletRequest request) 
+    public PlanetGroupPageRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines planet handle
         super(request);
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // parse the request object and figure out what we've got
         log.debug("parsing path "+pathInfo);
-        
+
         if(pathInfo != null) {
             throw new InvalidRequestException("not a valid planet group page, "+
                     request.getRequestURL());
         }
-        
+
         // parse request parameters, right now we only allow for a "page" param
         if(request.getParameter("page") != null) {
             String pageInt = request.getParameter("page");
@@ -81,5 +81,5 @@ public class PlanetGroupPageRequest extends PlanetGroupRequest {
     public void setPageNum(int pageNum) {
         this.pageNum = pageNum;
     }
-    
+
 }

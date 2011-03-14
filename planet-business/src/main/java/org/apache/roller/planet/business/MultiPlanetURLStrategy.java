@@ -31,117 +31,117 @@ import org.apache.roller.planet.config.PlanetRuntimeConfig;
  *
  */
 public class MultiPlanetURLStrategy implements URLStrategy {
-    
-    
+
+
     /**
      * Get root url for a given weblog.  Optionally for a certain locale.
      */
     public String getPlanetURL(String planet) {
-        
+
         if(planet == null) {
             return null;
         }
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        
+
         url.append(PlanetRuntimeConfig.getProperty("site.absoluteurl"));
         url.append("/").append(planet).append("/");
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Get url for a single weblog entry on a given weblog.
      */
     public String getPlanetGroupURL(String planet, String group, int pageNum) {
-        
+
         if(planet == null || group == null) {
             return null;
         }
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         url.append(getPlanetURL(planet));
         url.append("group/").append(group).append("/");
-        
+
         if(pageNum > 0) {
             url.append("?page=");
             url.append(pageNum);
         }
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Get url for a feed on a given weblog.
      */
     public String getPlanetGroupFeedURL(String planet, String group, String format) {
-        
+
         if(planet == null || group == null) {
             return null;
         }
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         url.append(getPlanetGroupURL(planet, group, -1));
         url.append("feed/").append(format);
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Get url for opml file on a given planet group.
      */
     public String getPlanetGroupOpmlURL(String planet, String group) {
-        
+
         if(planet == null || group == null) {
             return null;
         }
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         url.append(getPlanetGroupURL(planet, group, -1));
         url.append("opml");
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Compose a map of key=value params into a query string.
      */
     public String getQueryString(Map params) {
-        
+
         if(params == null) {
             return null;
         }
-        
+
         StringBuffer queryString = new StringBuffer();
-        
+
         for(Iterator keys = params.keySet().iterator(); keys.hasNext();) {
             String key = (String) keys.next();
             String value = (String) params.get(key);
-            
+
             if (queryString.length() == 0) {
                 queryString.append("?");
             } else {
                 queryString.append("&");
             }
-            
+
             queryString.append(key);
             queryString.append("=");
             queryString.append(value);
         }
-        
+
         return queryString.toString();
     }
-    
-    
+
+
     /**
      * URL encode a string using UTF-8.
      */
@@ -154,8 +154,8 @@ public class MultiPlanetURLStrategy implements URLStrategy {
         }
         return encodedStr;
     }
-    
-    
+
+
     /**
      * URL decode a string using UTF-8.
      */
@@ -168,5 +168,5 @@ public class MultiPlanetURLStrategy implements URLStrategy {
         }
         return decodedStr;
     }
-    
+
 }

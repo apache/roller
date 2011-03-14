@@ -30,7 +30,7 @@ import java.util.Date;
  * an object.
  */
 public class StaticThemeTemplate implements ThemeTemplate, Serializable {
-    
+
     private String id = null;
     private String name = null;
     private String description = null;
@@ -44,8 +44,8 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     private String outputContentType = null;
     private String decoratorName = null;
     private ThemeTemplate decorator = null;
-    
-    
+
+
     public StaticThemeTemplate(String id, String lang) {
         this.id = id;
         this.name = id;
@@ -53,8 +53,8 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.link = id;
         this.templateLanguage = lang;
     }
-    
-    
+
+
     public String getId() {
         return id;
     }
@@ -94,7 +94,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     public void setTemplateLanguage(String templateLanguage) {
         this.templateLanguage = templateLanguage;
     }
-    
+
     public String getOutputContentType() {
         return outputContentType;
     }
@@ -158,5 +158,5 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     public void setDecoratorName(String decoratorName) {
         this.decoratorName = decoratorName;
     }
-    
+
 }

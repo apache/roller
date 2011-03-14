@@ -29,7 +29,7 @@ import org.apache.roller.util.UUIDGenerator;
  * Planet Subscription.
  */
 public class Subscription implements Serializable, Comparable {
-    
+
     // attributes
     private String id = UUIDGenerator.generateUUID();
     private String title;
@@ -39,17 +39,17 @@ public class Subscription implements Serializable, Comparable {
     private Date lastUpdated;
     private int inboundlinks = 0;
     private int inboundblogs = 0;
-    
+
     // associations
     private Set groups = new HashSet();
     private Set entries = new HashSet();
-    
-    
+
+
     public Subscription() {}
-    
+
     /**
      * Compares subscriptions based on concatenation of title and feed URL.
-     * This ensures that feeds are sorted by title, but that identical titles 
+     * This ensures that feeds are sorted by title, but that identical titles
      * don't make feeds equal.
      */
     public int compareTo(Object o) {
@@ -58,24 +58,24 @@ public class Subscription implements Serializable, Comparable {
         String thisString = getTitle() + getFeedURL();
         return thisString.compareTo(otherString);
     }
-    
+
     /**
      * Determines if subscriotions are equal by comparing feed URLs.
      */
-    public boolean equals(Object other) {        
+    public boolean equals(Object other) {
         if(this == other) return true;
-        if(!(other instanceof Subscription)) return false;        
+        if(!(other instanceof Subscription)) return false;
         final Subscription that = (Subscription) other;
         return this.feedUrl.equals(that.getFeedURL());
     }
-    
+
     public int hashCode() {
         return this.feedUrl.hashCode();
     }
-    
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        
+
         buf.append("{");
         buf.append(feedUrl).append(", ");
         buf.append(siteUrl).append(", ");
@@ -83,104 +83,104 @@ public class Subscription implements Serializable, Comparable {
         buf.append(author).append(", ");
         buf.append(lastUpdated);
         buf.append("}");
-        
+
         return buf.toString();
-        
+
     }
-    
-    
+
+
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+
     public String getTitle() {
         return title;
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
-    
-    
+
+
     public String getAuthor() {
         return author;
     }
-    
+
     public void setAuthor(String author) {
         this.author = author;
     }
-    
-    
+
+
     public String getFeedURL() {
         return feedUrl;
     }
-    
+
     public void setFeedURL(String feedUrl) {
         this.feedUrl = feedUrl;
     }
-    
-    
+
+
     public String getSiteURL() {
         return siteUrl;
     }
-    
+
     public void setSiteURL(String siteUrl) {
         this.siteUrl = siteUrl;
     }
-    
-    
+
+
     public Date getLastUpdated() {
         return lastUpdated;
     }
-    
+
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
-    
-    
+
+
     public int getInboundlinks() {
         return inboundlinks;
     }
-    
+
     public void setInboundlinks(int inboundlinks) {
         this.inboundlinks = inboundlinks;
     }
-    
-    
+
+
     public int getInboundblogs() {
         return inboundblogs;
     }
-    
+
     public void setInboundblogs(int inboundblogs) {
         this.inboundblogs = inboundblogs;
     }
-    
-    
+
+
     public Set getGroups() {
         return groups;
     }
-    
+
     // private because there is no need for people to do this
     private void setGroups(Set groups) {
         this.groups = groups;
     }
-    
-    
+
+
     public Set getEntries() {
         return entries;
     }
-    
+
     // private because there is no need for people to do this
     private void setEntries(Set entries) {
         this.entries = entries;
     }
-    
-    
+
+
     /**
      * Add a SubscriptionEntry to this Subscription.
      */
@@ -189,7 +189,7 @@ public class Subscription implements Serializable, Comparable {
         entry.setSubscription(this);
         this.getEntries().add(entry);
     }
-    
+
     /**
      * Add a collection of SubscriptionEntry to this Subscription.
      */
@@ -201,16 +201,16 @@ public class Subscription implements Serializable, Comparable {
         }
         this.getEntries().addAll(newEntries);
     }
-    
-    
+
+
     // for backwards compatability?
     public String getName() {
         return title;
     }
-    
+
     // for backwards compatability?
     public String getURL() {
         return siteUrl;
     }
-    
+
 }

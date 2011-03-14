@@ -28,13 +28,13 @@ import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererFactory;
 
 /**
- * RendererFactory that handles Groovy Server Page (GSP) style templates 
+ * RendererFactory that handles Groovy Server Page (GSP) style templates
  * w/language name "gsp"
  */
 public class GSPRendererFactory implements RendererFactory {
     private static Log log = LogFactory.getLog(GroovletRendererFactory.class);
     private TemplateEngine templateEngine = new SimpleTemplateEngine();
-    
+
     public Renderer getRenderer(Template template) {
         Renderer renderer = null;
         if(template.getTemplateLanguage() == null || template.getId() == null) {
@@ -42,12 +42,12 @@ public class GSPRendererFactory implements RendererFactory {
         }
         if("gsp".equals(template.getTemplateLanguage()) && template instanceof WeblogTemplate) {
             try {
-                renderer = new GSPRenderer(templateEngine, (WeblogTemplate)template); 
+                renderer = new GSPRenderer(templateEngine, (WeblogTemplate)template);
             } catch(Exception ex) {
                 return null;
             }
         }
         return renderer;
     }
-    
+
 }

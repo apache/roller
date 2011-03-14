@@ -38,30 +38,30 @@ import org.apache.roller.planet.pojos.SubscriptionEntry;
  * A single threaded implementation of a FeedUpdater.
  */
 public class SingleThreadedFeedUpdater implements FeedUpdater {
-    
+
     private static Log log = LogFactory.getLog(SingleThreadedFeedUpdater.class);
-    
-    
+
+
     public SingleThreadedFeedUpdater() {
         // no-op
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public void updateSubscription(Subscription sub) throws UpdaterException {
-        
+
         if (sub == null) {
             throw new IllegalArgumentException("cannot update null subscription");
         }
-        
+
         updateProxySettings();
-        
+
         log.debug("updating feed: "+sub.getFeedURL());
-        
+
         long subStartTime = System.currentTimeMillis();
-        
+
         Subscription updatedSub;
         try {
             // fetch the latest version of the subscription
@@ -69,73 +69,73 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
             FeedFetcher fetcher = PlanetFactory.getPlanet().getFeedFetcher();
             log.debug("Using fetcher class: " + fetcher.getClass().getName());
             updatedSub = fetcher.fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
-            
+
         } catch (FetcherException ex) {
             throw new UpdaterException("Error fetching updated subscription", ex);
         }
-        
+
         log.debug("Got updatedSub = " + updatedSub);
 
         // if sub was unchanged then we are done
         if (updatedSub == null) {
             return;
         }
-        
+
         // if this subscription hasn't changed since last update then we're done
         if (sub.getLastUpdated() != null && updatedSub.getLastUpdated() != null &&
                 !updatedSub.getLastUpdated().after(sub.getLastUpdated())) {
             log.debug("Skipping update, feed hasn't changed - "+sub.getFeedURL());
         }
-        
+
         // update subscription attributes
         sub.setSiteURL(updatedSub.getSiteURL());
         sub.setTitle(updatedSub.getTitle());
         sub.setAuthor(updatedSub.getAuthor());
         sub.setLastUpdated(updatedSub.getLastUpdated());
-        
+
         // update subscription entries
         int entries = 0;
         Set<SubscriptionEntry> newEntries = updatedSub.getEntries();
         log.debug("newEntries.size() = " + newEntries.size());
         if (newEntries.size() > 0) try {
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-            
+
             // clear out old entries
             pmgr.deleteEntries(sub);
-            
+
             // add fresh entries
             sub.getEntries().clear();
             sub.addEntries(newEntries);
-            
+
             // save and flush
             pmgr.saveSubscription(sub);
             PlanetFactory.getPlanet().flush();
 
             log.debug("Added entries");
-            entries += newEntries.size();            
+            entries += newEntries.size();
 
         } catch(PlanetException ex) {
             throw new UpdaterException("Error persisting updated subscription", ex);
         }
-        
+
         long subEndTime = System.currentTimeMillis();
         log.debug("updated feed -- "+sub.getFeedURL()+" -- in "+
                 ((subEndTime-subStartTime)/1000.0)+" seconds.  "+entries+
                 " entries updated.");
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public void updateSubscriptions() throws UpdaterException {
-        
+
         updateProxySettings();
-        
+
         log.debug("--- BEGIN --- Updating all subscriptions");
-        
+
         long startTime = System.currentTimeMillis();
-        
+
         try {
             // update all subscriptions in the system
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
@@ -143,52 +143,52 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         } catch (PlanetException ex) {
             throw new UpdaterException("Error getting subscriptions list", ex);
         }
-        
+
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
                 + ((endTime-startTime)/1000.0) + " seconds");
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public void updateSubscriptions(PlanetGroup group) throws UpdaterException {
-        
+
         if(group == null) {
             throw new IllegalArgumentException("cannot update null group");
         }
-        
+
         updateProxySettings();
-        
+
         log.debug("--- BEGIN --- Updating subscriptions in group = "+group.getHandle());
-        
+
         long startTime = System.currentTimeMillis();
-        
+
         updateSubscriptions(group.getSubscriptions());
-        
+
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
                 + ((endTime-startTime)/1000.0) + " seconds");
     }
-    
-    
+
+
     // convenience method which handles updating any arbitrary collection of subs
     private void updateSubscriptions(Collection<Subscription> subscriptions) {
-        
+
         PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-        
+
         Iterator subs = subscriptions.iterator();
         while (subs.hasNext()) {
             Subscription sub = (Subscription)subs.next();
-            
+
             try {
                 // reattach sub.  sub gets detached as we iterate
                 sub = pmgr.getSubscriptionById(sub.getId());
             } catch (PlanetException ex) {
                 log.warn("Subscription went missing while doing update: "+ex.getMessage());
             }
-            
+
             // this updates and saves
             try {
                 updateSubscription(sub);
@@ -201,14 +201,14 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
                 if(cause.getCause() != null) {
                     cause = cause.getCause();
                 }
-                
+
                 if (log.isDebugEnabled()) {
                     log.debug("Error updating subscription - "+sub.getFeedURL(), cause);
                 } else {
                     log.warn("Error updating subscription - "+sub.getFeedURL()
                         + " turn on debug logging for more info");
                 }
-                
+
             } catch(Exception ex) {
                 if (log.isDebugEnabled()) {
                     log.warn("Error updating subscription - "+sub.getFeedURL(), ex);
@@ -219,8 +219,8 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
             }
         }
     }
-    
-    
+
+
     // upate proxy settings for jvm based on planet configuration
     private void updateProxySettings() {
         String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyhost");
@@ -234,5 +234,5 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         System.setProperty("sun.net.client.defaultConnectTimeout", "15000");
         System.setProperty("sun.net.client.defaultReadTimeout", "15000");
     }
-    
+
 }

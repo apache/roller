@@ -27,54 +27,54 @@ import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
 
 /**
  * Represents a request for a Roller planet group feed.
- * 
+ *
  * /planet-ui/rendering/feeds/*
  *
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
 public class PlanetGroupFeedRequest extends PlanetGroupRequest {
-    
+
     private static Log log = LogFactory.getLog(PlanetGroupFeedRequest.class);
-    
+
     // lightweight attributes
     private String format = null;
-    
-    
+
+
     public PlanetGroupFeedRequest() {}
-    
-    
+
+
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
      */
-    public PlanetGroupFeedRequest(HttpServletRequest request) 
+    public PlanetGroupFeedRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // parse the request object and figure out what we've got
         log.debug("parsing path "+pathInfo);
-        
-        
-        /* 
+
+
+        /*
          * parse the path info.  must look like this ...
          *
          * <format>
          */
         if(pathInfo != null && pathInfo.trim().length() > 1) {
-            
+
             this.format = pathInfo;
-            
+
         } else {
             throw new InvalidRequestException("not a valid planet group feed, "+
                     request.getRequestURL());
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("format = "+this.format);
         }
@@ -87,5 +87,5 @@ public class PlanetGroupFeedRequest extends PlanetGroupRequest {
     public void setFormat(String format) {
         this.format = format;
     }
-    
+
 }

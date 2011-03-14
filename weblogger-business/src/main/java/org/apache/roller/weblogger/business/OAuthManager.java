@@ -88,23 +88,23 @@ public interface OAuthManager {
             throws IOException, OAuthProblemException;
 
     /**
-     * Set the access token 
+     * Set the access token
      */
     public void markAsAuthorized(OAuthAccessor accessor, String userId)
-            throws OAuthException;    
+            throws OAuthException;
 
     /**
      * Generate a fresh request token and secret for a consumer.
-     * 
+     *
      * @throws OAuthException
      */
     public void generateRequestToken(
             OAuthAccessor accessor)
             throws OAuthException;
-    
+
     /**
      * Generate a fresh request token and secret for a consumer.
-     * 
+     *
      * @throws OAuthException
      */
     public void generateAccessToken(OAuthAccessor accessor)

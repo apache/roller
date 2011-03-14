@@ -29,14 +29,14 @@ import org.apache.commons.codec.binary.Hex;
  * Regular expressions utility class.
  */
 public final class RegexUtil {
-    
-    public static final Pattern mailtoPattern = 
+
+    public static final Pattern mailtoPattern =
             Pattern.compile("mailto:([a-zA-Z0-9\\.]+@[a-zA-Z0-9\\.]+\\.[a-zA-Z0-9]+)");
-    
-    public static final Pattern emailPattern = 
+
+    public static final Pattern emailPattern =
             Pattern.compile("\\b[a-zA-Z0-9\\.]+(@)([a-zA-Z0-9\\.]+)(\\.)([a-zA-Z0-9]+)\\b");
-    
-    
+
+
     public static String encodeEmail(String str) {
         // obfuscate mailto's: turns them into hex encoded,
         // so that browsers can still understand the mailto link
@@ -47,11 +47,11 @@ public final class RegexUtil {
             String hexed = encode(email);
             str = str.replaceFirst("mailto:"+email, "mailto:"+hexed);
         }
-        
+
         return obfuscateEmail(str);
     }
-    
-    
+
+
     /**
      * obfuscate plaintext emails: makes them
      * "human-readable" - still too easy for
@@ -63,7 +63,7 @@ public final class RegexUtil {
             String at = emailMatch.group(1);
             //System.out.println("at=" + at);
             str = str.replaceFirst(at, "-AT-");
-            
+
             String dot = emailMatch.group(2) + emailMatch.group(3) + emailMatch.group(4);
             String newDot = emailMatch.group(2) + "-DOT-" + emailMatch.group(4);
             //System.out.println("dot=" + dot);
@@ -71,8 +71,8 @@ public final class RegexUtil {
         }
         return str;
     }
-    
-    
+
+
     /**
      * Return the specified match "groups" from the pattern.
      * For each group matched a String will be entered in the ArrayList.
@@ -90,8 +90,8 @@ public final class RegexUtil {
         }
         return matches;
     }
-    
-    
+
+
     /**
      * Thanks to the folks at Blojsom (http://sf.net/projects/blojsom)
      * for showing me what I was doing wrong with the Hex class.
@@ -112,8 +112,8 @@ public final class RegexUtil {
         } catch (UnsupportedEncodingException e) {
             return email;
         }
-        
+
         return result.toString();
     }
-    
+
 }

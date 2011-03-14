@@ -41,45 +41,45 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Action for controlling theme selection.
  */
 public class ThemeEdit extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(Templates.class);
-    
+
     // list of available themes
     private List themes = Collections.EMPTY_LIST;
-    
+
     // type of theme desired, either 'shared' or 'custom'
     private String themeType = null;
-    
+
     // the chosen shared theme id
     private String themeId = null;
-    
+
     // import the selected theme to the action weblog
     private boolean importTheme = false;
-    
+
     // the chosen import theme id
     private String importThemeId = null;
-    
-    
+
+
     public ThemeEdit() {
         this.actionName = "themeEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "themeEditor.title";
     }
-    
-    
+
+
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     public void myPrepare() {
         ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
         setThemes(themeMgr.getEnabledThemesList());
     }
-    
-    
+
+
     public String execute() {
-        
+
         // set theme to current value
         if(WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
             setThemeId(null);
@@ -87,28 +87,28 @@ public class ThemeEdit extends UIAction {
             setThemeId(getActionWeblog().getTheme().getId());
             setImportThemeId(getActionWeblog().getTheme().getId());
         }
-        
+
         if(!WebloggerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
             return "input-sharedonly";
         } else {
             return INPUT;
         }
     }
-    
+
 
     /**
      * Save new theme configuration.
      */
     public String save() {
-        
+
         Weblog weblog = getActionWeblog();
-        
+
         // we are dealing with a custom theme scenario
         if(WeblogTheme.CUSTOM.equals(getThemeType())) {
-            
+
             // only continue if custom themes are allowed
             if(WebloggerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
-                
+
                 // do theme import if necessary
                 SharedTheme t = null;
                 if(isImportTheme() && !StringUtils.isEmpty(getImportThemeId())) try {
@@ -120,28 +120,28 @@ public class ThemeEdit extends UIAction {
                     // TODO: i18n
                     addError("Error importing theme");
                 }
-                
+
                 if(!hasActionErrors()) try {
                     weblog.setEditorTheme(WeblogTheme.CUSTOM);
                     log.debug("Saving custom theme for weblog "+weblog.getHandle());
-                    
+
                     // save updated weblog and flush
                     WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
                     WebloggerFactory.getWeblogger().flush();
-                    
+
                     // make sure to flush the page cache so ppl can see the change
                     CacheManager.invalidate(weblog);
-                    
+
                     // TODO: i18n
                     addMessage("Successfully set theme to - "+WeblogTheme.CUSTOM);
                     if (t != null) {
                         addMessage("Successfully copied templates from theme - " + t.getName());
                     }
-                    
+
                     // reset import theme options
                     setImportTheme(false);
                     setImportThemeId(null);
-                    
+
                 } catch(WebloggerException re) {
                     log.error("Error saving weblog - "+getActionWeblog().getHandle(), re);
                     addError("Error setting theme");
@@ -150,67 +150,67 @@ public class ThemeEdit extends UIAction {
                 // TODO: i18n
                 addError("Sorry, custom themes are not allowed");
             }
-            
+
         // we are dealing with a shared theme scenario
         } else if("shared".equals(getThemeType())) {
-            
+
             // make sure theme is valid and enabled
             Theme newTheme = null;
             if(getThemeId() == null) {
                 // TODO: i18n
                 addError("No theme specified");
-                
+
             } else {
                 try {
                     ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
                     newTheme = themeMgr.getTheme(getThemeId());
-                    
+
                     if(!newTheme.isEnabled()) {
                         // TODO: i18n
                         addError("Theme not enabled");
                     }
-                    
+
                 } catch(Exception ex) {
                     log.warn(ex);
                     // TODO: i18n
                     addError("Theme not found");
                 }
             }
-            
+
             if(!hasActionErrors()) try {
                 weblog.setEditorTheme(getThemeId());
                 log.debug("Saving theme "+getThemeId()+" for weblog "+weblog.getHandle());
-                
+
                 // save updated weblog and flush
                 WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
                 WebloggerFactory.getWeblogger().flush();
-                
+
                 // make sure to flush the page cache so ppl can see the change
                 CacheManager.invalidate(weblog);
-                
+
                 // TODO: i18n
                 addMessage("Successfully set theme to - "+newTheme.getName());
-                
+
             } catch(WebloggerException re) {
                 log.error("Error saving weblog - "+getActionWeblog().getHandle(), re);
                 addError("Error setting theme");
             }
-            
+
         // unknown theme scenario, error
         } else {
             // invalid theme type
             // TODO: i18n
             addError("no valid theme type submitted");
         }
-        
+
         return execute();
     }
-    
-    
+
+
     public boolean isCustomTheme() {
         return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
     }
-    
+
     // has this weblog had a custom theme before?
     public boolean isFirstCustomization() {
         try {
@@ -220,8 +220,8 @@ public class ThemeEdit extends UIAction {
         }
         return false;
     }
-    
-    
+
+
     public List getThemes() {
         return themes;
     }
@@ -237,7 +237,7 @@ public class ThemeEdit extends UIAction {
     public void setThemeType(String themeType) {
         this.themeType = themeType;
     }
-    
+
     public String getThemeId() {
         return themeId;
     }
@@ -261,5 +261,5 @@ public class ThemeEdit extends UIAction {
     public void setImportThemeId(String importThemeId) {
         this.importThemeId = importThemeId;
     }
-    
+
 }

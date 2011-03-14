@@ -25,22 +25,22 @@ import org.apache.roller.weblogger.WebloggerException;
  * Thrown when there is a problem initalizing a theme object.
  */
 public class ThemeInitializationException extends WebloggerException {
-    
-    
+
+
     public ThemeInitializationException(String s,Throwable t) {
         super(s, t);
     }
-    
+
     public ThemeInitializationException(Throwable t) {
         super(t);
     }
-    
+
     public ThemeInitializationException(String s) {
         super(s);
     }
-    
+
     public ThemeInitializationException() {
         super();
     }
-    
+
 }

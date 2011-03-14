@@ -31,9 +31,9 @@ import org.apache.roller.util.UUIDGenerator;
  * @author David M Johnson
  */
 public class WeblogReferrer implements Serializable {
-    
+
     public static final long serialVersionUID = -1817992900602131316L;
-    
+
     private String id = UUIDGenerator.generateUUID();
     private Weblog website = null;
     private WeblogEntry weblogEntry = null;
@@ -47,11 +47,11 @@ public class WeblogReferrer implements Serializable {
     private Boolean duplicate = null;
     private Integer dayHits = null;
     private Integer totalHits = null;
-    
-    
+
+
     public WeblogReferrer() {
     }
-    
+
     public WeblogReferrer(String id,
             org.apache.roller.weblogger.pojos.Weblog website,org.apache.roller.weblogger.pojos.WeblogEntry weblogEntry,
             String dateString, String refererUrl,
@@ -60,7 +60,7 @@ public class WeblogReferrer implements Serializable {
             String excerpt, Boolean visible,
             Boolean duplicate, Integer dayHits,
             Integer totalHits) {
-        
+
         //this.id = id;
         this.website = website;
         this.weblogEntry = weblogEntry;
@@ -79,21 +79,21 @@ public class WeblogReferrer implements Serializable {
             this.refererUrl = this.refererUrl.substring(0, 254);
         }
     }
-    
+
     //------------------------------------------------------- Simple properties
-    
+
     /**
      * Unique ID and primary key of this Referer.
      */
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+
     /**
      * ID of website that this referer refers to.
      *
@@ -103,11 +103,11 @@ public class WeblogReferrer implements Serializable {
     public org.apache.roller.weblogger.pojos.Weblog getWebsite() {
         return this.website;
     }
-    
+
     public void setWebsite(org.apache.roller.weblogger.pojos.Weblog website) {
         this.website = website;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="pojo"
      * @hibernate.many-to-one column="entryid" cascade="none"
@@ -115,14 +115,14 @@ public class WeblogReferrer implements Serializable {
     public org.apache.roller.weblogger.pojos.WeblogEntry getWeblogEntry() {
         return weblogEntry;
     }
-    
+
     /**
      * @param data
      */
     public void setWeblogEntry(org.apache.roller.weblogger.pojos.WeblogEntry data) {
         weblogEntry = data;
     }
-    
+
     /**
      * Date string in YYYYMMDD format.
      *
@@ -132,11 +132,11 @@ public class WeblogReferrer implements Serializable {
     public String getDateString() {
         return this.dateString;
     }
-    
+
     public void setDateString(String dateString) {
         this.dateString = dateString;
     }
-    
+
     /**
      * URL of the refering page.
      *
@@ -146,14 +146,14 @@ public class WeblogReferrer implements Serializable {
     public String getRefererUrl() {
         return this.refererUrl;
     }
-    
+
     public void setRefererUrl(String refererUrl) {
         this.refererUrl = refererUrl;
         if (this.refererUrl != null && this.refererUrl.length() > 255) {
             this.refererUrl = this.refererUrl.substring(0, 255);
         }
     }
-    
+
     /**
      * Requested URL, the URL linked to by the refering page.
      *
@@ -163,11 +163,11 @@ public class WeblogReferrer implements Serializable {
     public String getRefererPermalink() {
         return this.refererPermalink;
     }
-    
+
     public void setRefererPermalink(String refererPermalink) {
         this.refererPermalink = refererPermalink;
     }
-    
+
     /**
      * Requested URL, the URL linked to by the refering page.
      *
@@ -177,11 +177,11 @@ public class WeblogReferrer implements Serializable {
     public String getRequestUrl() {
         return this.requestUrl;
     }
-    
+
     public void setRequestUrl(String requestUrl) {
         this.requestUrl = requestUrl;
     }
-    
+
     /**
      * The text on the refering page that surrounds the refering link.
      *
@@ -191,11 +191,11 @@ public class WeblogReferrer implements Serializable {
     public String getTitle() {
         return this.title;
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     /**
      * The text on the refering page that surrounds the refering link.
      *
@@ -205,11 +205,11 @@ public class WeblogReferrer implements Serializable {
     public String getExcerpt() {
         return this.excerpt;
     }
-    
+
     public void setExcerpt(String excerpt) {
         this.excerpt = excerpt;
     }
-    
+
     /**
      * Should this referer be displayed?
      *
@@ -219,11 +219,11 @@ public class WeblogReferrer implements Serializable {
     public Boolean getVisible() {
         return this.visible;
     }
-    
+
     public void setVisible(Boolean visible) {
         this.visible = visible;
     }
-    
+
     /**
      * Is this referer a duplicate?
      *
@@ -233,11 +233,11 @@ public class WeblogReferrer implements Serializable {
     public Boolean getDuplicate() {
         return this.duplicate;
     }
-    
+
     public void setDuplicate(Boolean duplicate) {
         this.duplicate = duplicate;
     }
-    
+
     /**
      * Hits received today from this referer.
      *
@@ -247,11 +247,11 @@ public class WeblogReferrer implements Serializable {
     public Integer getDayHits() {
         return this.dayHits;
     }
-    
+
     public void setDayHits(Integer dayHits) {
         this.dayHits = dayHits;
     }
-    
+
     /**
      * Total hits received from this referer.
      *
@@ -261,65 +261,65 @@ public class WeblogReferrer implements Serializable {
     public Integer getTotalHits() {
         return this.totalHits;
     }
-    
+
     public void setTotalHits(Integer totalHits) {
         this.totalHits = totalHits;
     }
-    
+
     //-------------------------------------------------------------------------
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      */
     public String getDisplayUrl(int maxWidth, boolean includeHits) {
         StringBuffer sb = new StringBuffer();
-        
+
         String url = StringEscapeUtils.escapeHtml(getUrl());
         String displayUrl = url.trim();
         String restOfUrl = null;
-        
+
         if (displayUrl.startsWith("http://")) {
             displayUrl = displayUrl.substring(7);
         }
-        
+
         if (displayUrl.length() > maxWidth) {
             restOfUrl = "..." +
                     displayUrl.substring(maxWidth, displayUrl.length());
             displayUrl = displayUrl.substring(0, maxWidth) + "...";
         }
-        
+
         if (url.startsWith("http://")) {
             sb.append("<a href=\"");
             sb.append(url);
         }
-        
+
         // add a title with the rest of the url if it exists
         if (restOfUrl != null) {
             sb.append("\" title=\"");
             sb.append(restOfUrl);
         }
-        
+
         if (sb.length() > 0) {
             sb.append("\">");
         }
-        
+
         sb.append(displayUrl);
-        
+
         if (includeHits) {
             sb.append(" (");
             sb.append(getDayHits());
             sb.append(")");
         }
-        
+
         if (url.startsWith("http://")) {
             sb.append("</a>");
         }
-        
+
         return sb.toString();
     }
-    
+
     //-------------------------------------------------------------------------
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      */
@@ -330,18 +330,18 @@ public class WeblogReferrer implements Serializable {
             return getRefererUrl();
         }
     }
-    
+
     //-------------------------------------------------------------------------
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      */
     public String getDisplayUrl() {
         return getDisplayUrl(50, false);
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
@@ -353,7 +353,7 @@ public class WeblogReferrer implements Serializable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof WeblogReferrer != true) return false;
@@ -364,7 +364,7 @@ public class WeblogReferrer implements Serializable {
         .append(getWebsite(),o.getWebsite())
         .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getRefererUrl())
@@ -372,5 +372,5 @@ public class WeblogReferrer implements Serializable {
         .append(getWebsite())
         .toHashCode();
     }
-    
+
 }

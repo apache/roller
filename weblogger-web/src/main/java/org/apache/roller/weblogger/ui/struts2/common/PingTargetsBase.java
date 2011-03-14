@@ -34,30 +34,30 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * handle deletion of a single ping target (with confirmation).
  */
 public abstract class PingTargetsBase extends UIAction {
-    
+
     // list of available ping targets
     private List pingTargets = Collections.EMPTY_LIST;
-    
+
     // ping target we are working on, if any
     private PingTarget pingTarget = null;
-    
+
     // id of the ping target to work on
     private String pingTargetId = null;
-    
-    
+
+
     // get logger
     protected abstract Log getLogger();
-    
+
     // load up list of ping targets
     protected abstract void loadPingTargets();
-    
-    
+
+
     // prepare method needs to set ping targets list
     public void myPrepare() {
-        
+
         // load list of ping targets
         loadPingTargets();
-        
+
         // load specified ping target if possible
         if(!StringUtils.isEmpty(getPingTargetId())) {
             try {
@@ -68,8 +68,8 @@ public abstract class PingTargetsBase extends UIAction {
             }
         }
     }
-    
-    
+
+
     /**
      * Display the ping targets.
      */
@@ -77,43 +77,43 @@ public abstract class PingTargetsBase extends UIAction {
         return LIST;
     }
 
-    
+
     /**
      * Delete a ping target (load delete confirmation view).
      */
     public String deleteConfirm() {
-        
+
         if(getPingTarget() != null) {
             setPageTitle("pingTarget.confirmRemoveTitle");
-            
+
             return "confirm";
         } else {
             // TODO: i18n
             addError("Cannot delete ping target: " + getPingTargetId());
         }
-        
+
         return LIST;
     }
-    
-    
+
+
     /**
      * Delete a ping target.
      */
     public String delete() {
-        
+
         if(getPingTarget() != null) {
-            
+
             try {
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.removePingTarget(getPingTarget());
                 WebloggerFactory.getWeblogger().flush();
-                
+
                 // remove deleted target from list
                 getPingTargets().remove(getPingTarget());
-                
+
                 // TODO: i18n
                 addMessage("Successfully deleted ping target: "+getPingTarget().getName());
-                
+
             } catch (WebloggerException ex) {
                 getLogger().error("Error deleting ping target - "+getPingTargetId(), ex);
                 // TODO: i18n
@@ -123,11 +123,11 @@ public abstract class PingTargetsBase extends UIAction {
             // TODO: i18n
             addError("Cannot delete ping target: " + getPingTargetId());
         }
-        
+
         return LIST;
     }
-    
-    
+
+
     public List getPingTargets() {
         return pingTargets;
     }
@@ -143,7 +143,7 @@ public abstract class PingTargetsBase extends UIAction {
     public void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
     }
-    
+
     public String getPingTargetId() {
         return pingTargetId;
     }
@@ -151,5 +151,5 @@ public abstract class PingTargetsBase extends UIAction {
     public void setPingTargetId(String pingTargetId) {
         this.pingTargetId = pingTargetId;
     }
-    
+
 }

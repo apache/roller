@@ -39,45 +39,45 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Manage weblog categories.
  */
 public class Categories extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(Categories.class);
-    
+
     // the id of the category we are viewing
     private String categoryId = null;
-    
+
     // the category we are viewing
     private WeblogCategory category = null;
-    
+
     // list of category ids to move
     private String[] selectedCategories = null;
-    
+
     // category id of the category to move to
     private String targetCategoryId = null;
-    
+
     // all categories from the action weblog
     private Set allCategories = Collections.EMPTY_SET;
-    
+
     // path of categories representing selected categories hierarchy
     private List categoryPath = Collections.EMPTY_LIST;
-    
-    
+
+
     public Categories() {
         this.actionName = "categories";
         this.desiredMenu = "editor";
         this.pageTitle = "categoriesForm.rootTitle";
     }
-    
-    
+
+
     // author perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }
-    
-    
+
+
     public void myPrepare() {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            if(!StringUtils.isEmpty(getCategoryId()) && 
+            if(!StringUtils.isEmpty(getCategoryId()) &&
                     !"/".equals(getCategoryId())) {
                 setCategory(wmgr.getWeblogCategory(getCategoryId()));
             } else {
@@ -87,13 +87,13 @@ public class Categories extends UIAction {
             log.error("Error looking up category", ex);
         }
     }
-    
-    
+
+
     public String execute() {
-        
+
         // build list of categories for display
         TreeSet allCategories = new TreeSet(new WeblogCategoryPathComparator());
-        
+
         try {
             // Build list of all categories, except for current one, sorted by path.
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -103,7 +103,7 @@ public class Categories extends UIAction {
                     allCategories.add(cat);
                 }
             }
-            
+
             // build category path
             WeblogCategory parent = getCategory().getParent();
             if(parent != null) {
@@ -120,22 +120,22 @@ public class Categories extends UIAction {
             // TODO: i18n
             addError("Error building categories list");
         }
-        
+
         if (allCategories.size() > 0) {
             setAllCategories(allCategories);
         }
-        
+
         return LIST;
     }
-    
-    
+
+
     public String move() {
-        
+
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            
+
             log.debug("Moving categories to category - "+getTargetCategoryId());
-            
+
             // Move subCategories to new category.
             String[] cats = getSelectedCategories();
             WeblogCategory parent = wmgr.getWeblogCategory(getTargetCategoryId());
@@ -143,28 +143,28 @@ public class Categories extends UIAction {
                 for (int i = 0; i < cats.length; i++) {
                     WeblogCategory cd =
                             wmgr.getWeblogCategory(cats[i]);
-                    
+
                     // Don't move category into itself.
-                    if (!cd.getId().equals(parent.getId()) && 
+                    if (!cd.getId().equals(parent.getId()) &&
                             !parent.descendentOf(cd)) {
                         wmgr.moveWeblogCategory(cd, parent);
                     } else {
                         addMessage("categoriesForm.warn.notMoving", cd.getName());
                     }
                 }
-                
+
                 // flush changes
                 WebloggerFactory.getWeblogger().flush();
             }
-            
+
         } catch (WebloggerException ex) {
             log.error("Error moving categories", ex);
             addError("categoriesForm.error.move");
         }
-        
+
         return execute();
     }
-    
+
 
     public String getCategoryId() {
         return categoryId;
@@ -213,5 +213,5 @@ public class Categories extends UIAction {
     public void setCategoryPath(List categoryPath) {
         this.categoryPath = categoryPath;
     }
-    
+
 }

@@ -36,15 +36,15 @@ abstract class Authenticator {
     private HttpServletRequest request;
     private Weblogger             roller;
     private String             userName;
-    
+
     /** Creates a new instance of HttpBasicAuthenticator */
     public Authenticator(HttpServletRequest req) {
         setRequest(req);
         setRoller(WebloggerFactory.getWeblogger());
     }
-    
+
     public abstract void authenticate() throws HandlerException;
-    
+
     /**
      * This method should be called by extensions of this class within their
      * implementation of authenticate().
@@ -53,12 +53,12 @@ abstract class Authenticator {
         try {
             User ud = getUserData(userName);
             String realpassword = ud.getPassword();
-        
+
         boolean encrypted = Boolean.valueOf(WebloggerConfig.getProperty("passwds.encryption.enabled"));
         if (encrypted) {
             password = Utilities.encodePassword(password, WebloggerConfig.getProperty("passwds.encryption.algorithm"));
         }
-        
+
             if (!userName.trim().equals(ud.getUserName())) {
                 throw new UnauthorizedException("ERROR: User is not authorized: " + userName);
             }
@@ -78,31 +78,31 @@ abstract class Authenticator {
             throw new UnauthorizedException("ERROR: User must have the admin role to use the RAP endpoint: " + userName);
         }
     }
-    
+
     public HttpServletRequest getRequest() {
         return request;
     }
-    
+
     protected void setRequest(HttpServletRequest request) {
         this.request = request;
     }
-    
+
     public String getUserName() {
         return userName;
     }
-    
+
     protected void setUserName(String userId) {
         this.userName = userId;
     }
-    
+
     protected Weblogger getRoller() {
         return roller;
     }
-    
+
     protected void setRoller(Weblogger roller) {
         this.roller = roller;
     }
-    
+
     protected User getUserData(String name) throws NotFoundException, InternalException {
         try {
             UserManager mgr = getRoller().getUserManager();
@@ -113,11 +113,11 @@ abstract class Authenticator {
             if (ud == null) {
                 throw new NotFoundException("ERROR: Unknown user: " + name);
             }
-            
+
             return ud;
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get user: " + name, re);
         }
     }
-    
+
 }

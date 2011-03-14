@@ -37,47 +37,47 @@ import org.apache.roller.weblogger.util.LRUCache2;
  * TODO: use PlanetRoller to implement NewsfeedCache instead.
  */
 public class NewsfeedCache {
-    
+
     private static Log log = LogFactory.getLog(NewsfeedCache.class);
-    
+
     /** Static singleton * */
     private static NewsfeedCache instance = null;
-    
+
     /** Instance vars * */
     private boolean aggregator_enabled = true;
     private boolean aggregator_cache_enabled = true;
     private int     aggregator_cache_timeout = 14400;
-    
+
     /** LRU cache */
     LRUCache2 mCache = null;
-    
-    
+
+
     /** Constructor */
     private NewsfeedCache() {
         // lookup the props we need
         String enabled = WebloggerConfig.getProperty("aggregator.enabled");
         String usecache = WebloggerConfig.getProperty("aggregator.cache.enabled");
         String cachetime = WebloggerConfig.getProperty("aggregator.cache.timeout");
-        
+
         if("true".equalsIgnoreCase(enabled))
             this.aggregator_enabled = true;
-        
+
         if("true".equalsIgnoreCase(usecache))
             this.aggregator_cache_enabled = true;
-        
+
         try {
             if (cachetime != null) {
                 this.aggregator_cache_timeout = Integer.parseInt(cachetime);
             }
-        } catch(NumberFormatException e) { 
+        } catch(NumberFormatException e) {
             log.error("ERROR 'aggregator.cache.timeout'not a valid integer: " + cachetime);
         }
-        
+
         // finally ... create the cache
         this.mCache = new LRUCache2(100, 1000 * this.aggregator_cache_timeout);
     }
-    
-    
+
+
     /** static singleton retriever */
     public static NewsfeedCache getInstance() {
         synchronized (NewsfeedCache.class) {
@@ -90,8 +90,8 @@ public class NewsfeedCache {
         }
         return instance;
     }
-    
-    
+
+
     /**
      * Returns a Channel object for the supplied RSS newsfeed URL.
      *
@@ -99,25 +99,25 @@ public class NewsfeedCache {
      * @return FlockFeedI for specified RSS newsfeed URL.
      */
     public SyndFeed getChannel(String feedUrl) {
-        
+
         SyndFeed feed = null;
         try {
             // If aggregator has been disable return null
             if (!aggregator_enabled) {
                 return null;
             }
-            
+
             if (aggregator_cache_enabled) {
                 if (log.isDebugEnabled()) {
                     log.debug("Newsfeed: use Cache for " + feedUrl);
                 }
-                
+
                 // Get pre-parsed feed from the cache
                 feed = (SyndFeed) mCache.get(feedUrl);
                 if (log.isDebugEnabled()) {
                     log.debug("Newsfeed: got from Cache");
                 }
-                
+
                 if (feed == null) {
                     try {
                         // Parse the feed
@@ -131,7 +131,7 @@ public class NewsfeedCache {
                 // Store parsed feed in the cache
                 mCache.put(feedUrl, feed);
                 log.debug("Newsfeed: not in Cache");
-                
+
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("Newsfeed: not using Cache for " + feedUrl);
@@ -167,14 +167,14 @@ public class NewsfeedCache {
                     log.info("Error parsing RSS: " + feedUrl);
                 }
             }
-            
+
         } catch (Exception ioe) {
             if (log.isDebugEnabled()) {
                 log.debug("Newsfeed: Unexpected exception", ioe);
             }
         }
-        
+
         return feed;
     }
-    
+
 }

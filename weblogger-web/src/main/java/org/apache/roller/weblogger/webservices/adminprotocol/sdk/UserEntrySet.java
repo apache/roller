@@ -35,32 +35,32 @@ import org.jdom.input.SAXBuilder;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types;
 
 /**
- * This class describes a set of user entries. 
+ * This class describes a set of user entries.
  * @author jtb
  */
 public class UserEntrySet extends EntrySet {
     /** XML tags that describe a set of user entries. */
     private static interface Tags {
         public static final String USERS = "users";
-    }       
-        
+    }
+
     /** Construct based on an array of Roller UserData objects. */
     public UserEntrySet(String urlPrefix) {
         setHref(urlPrefix + "/" + Types.USERS);
     }
-    
+
     /** Construct based on a JDOM Document object. */
     public UserEntrySet(Document d, String urlPrefix) throws UnexpectedRootElementException {
         populate(d, urlPrefix);
     }
-    
-    public UserEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {               
+
+    public UserEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
 
-        populate(d, urlPrefix);        
-    }        
-    
+        populate(d, urlPrefix);
+    }
+
     private void populate(Document d, String urlPrefix) throws UnexpectedRootElementException {
         Element root = d.getRootElement();
         String rootName = root.getName();
@@ -78,9 +78,9 @@ public class UserEntrySet extends EntrySet {
             setEntries((Entry[])entries.toArray(new Entry[0]));
         }
         setHref(urlPrefix + "/" + Types.USERS);
-    }    
-        
+    }
+
     public String getType() {
         return Types.USERS;
-    }    
+    }
 }

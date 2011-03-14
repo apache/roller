@@ -45,13 +45,13 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 public class AccessTokenServlet extends HttpServlet {
     protected static Log log =
             LogFactory.getFactory().getInstance(AccessTokenServlet.class);
-    
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         // nothing at this point
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -62,16 +62,16 @@ public class AccessTokenServlet extends HttpServlet {
             throws IOException, ServletException {
         processRequest(request, response);
     }
-        
+
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         try{
             OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
-            
+
             OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
             OAuthAccessor accessor = omgr.getAccessor(requestMessage);
             omgr.getValidator().validateMessage(requestMessage, accessor);
-            
+
             // make sure token is authorized
             if (!Boolean.TRUE.equals(accessor.getProperty("authorized"))) {
                  OAuthProblemException problem = new OAuthProblemException("permission_denied");
@@ -89,7 +89,7 @@ public class AccessTokenServlet extends HttpServlet {
                 "oauth_token", accessor.accessToken,
                 "oauth_token_secret", accessor.tokenSecret), out);
             out.close();
-            
+
         } catch (Exception e){
             handleException(e, request, response, true);
         }

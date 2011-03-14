@@ -31,19 +31,19 @@ public interface IndexManager
 {
     /** Does index need to be rebuild */
     public abstract boolean isInconsistentAtStartup();
-    
+
     /** Remove user from index, returns immediately and operates in background */
     public void removeWebsiteIndex(Weblog website) throws WebloggerException;
-    
+
     /** Remove entry from index, returns immediately and operates in background */
     public void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
-    
+
     /** Add entry to index, returns immediately and operates in background */
     public void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
-    
+
     /** R-index entry, returns immediately and operates in background */
     public void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException;
-    
+
     /** Execute operation immediately */
     public abstract void executeIndexOperationNow(final IndexOperation op);
 
@@ -51,16 +51,16 @@ public interface IndexManager
      * Release all resources associated with Roller session.
      */
     public abstract void release();
-    
-    
+
+
     /**
      * Initialize the search system.
      *
      * @throws InitializationException If there is a problem during initialization.
      */
     public void initialize() throws InitializationException;
-    
-    
+
+
     /** Shutdown to be called on application shutdown */
     public abstract void shutdown();
 

@@ -26,13 +26,13 @@ import org.apache.roller.weblogger.WebloggerException;
  * its subclasses when the request being parsed is invalid in any way.
  */
 public class InvalidRequestException extends WebloggerException {
-    
+
     public InvalidRequestException(String msg) {
         super(msg);
     }
-    
+
     public InvalidRequestException(String msg, Exception e) {
         super(msg, e);
     }
-    
+
 }

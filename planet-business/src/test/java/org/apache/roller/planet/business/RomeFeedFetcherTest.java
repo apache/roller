@@ -28,24 +28,24 @@ import org.apache.roller.planet.pojos.Subscription;
  * Test database implementation of PlanetManager.
  */
 public class RomeFeedFetcherTest extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(RomeFeedFetcherTest.class);
-    
+
     String feed_url = "http://rollerweblogger.org/roller/feed/entries/atom";
-    
-    
+
+
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupPlanet();
     }
-    
-    
+
+
     protected void tearDown() throws Exception {
     }
-    
-    
+
+
     public void testFetchFeed() throws Exception {
-        
+
         FeedFetcher feedFetcher = PlanetFactory.getPlanet().getFeedFetcher();
 
         // fetch feed
@@ -57,10 +57,10 @@ public class RomeFeedFetcherTest extends TestCase {
         assertNotNull(sub.getLastUpdated());
         assertTrue(sub.getEntries().size() > 0);
     }
-    
-    
+
+
     public void testFetchFeedConditionally() throws Exception {
-        
+
         FeedFetcher feedFetcher = PlanetFactory.getPlanet().getFeedFetcher();
 
         // fetch feed
@@ -71,10 +71,10 @@ public class RomeFeedFetcherTest extends TestCase {
         assertEquals("Blogging Roller", sub.getTitle());
         assertNotNull(sub.getLastUpdated());
         assertTrue(sub.getEntries().size() > 0);
-        
+
         // now do a conditional fetch and we should get back null
         Subscription updatedSub = feedFetcher.fetchSubscription(feed_url, sub.getLastUpdated());
         assertNull(updatedSub);
     }
-    
+
 }

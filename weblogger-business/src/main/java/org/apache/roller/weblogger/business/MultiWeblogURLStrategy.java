@@ -32,18 +32,18 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * A Weblogger URLStrategy which builds urls for a multi-weblog environment.
  */
 public class MultiWeblogURLStrategy extends AbstractURLStrategy {
-    
+
     public MultiWeblogURLStrategy() {}
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public URLStrategy getPreviewURLStrategy(String previewTheme) {
         return new PreviewURLStrategy(previewTheme);
     }
-    
-    
+
+
     /**
      * Get root url for a given weblog.  Optionally for a certain locale.
      */
@@ -72,8 +72,8 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
 
         return url.toString();
     }
-    
-    
+
+
     /**
      * Get url for a single weblog entry on a given weblog.
      */
@@ -81,20 +81,20 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                  String locale,
                                                  String entryAnchor,
                                                  boolean absolute) {
-        
+
         if(weblog == null || entryAnchor == null) {
             return null;
         }
-        
+
         StringBuilder url = new StringBuilder();
-        
+
         url.append(getWeblogURL(weblog, locale, absolute));
         url.append("entry/").append(URLUtilities.encode(entryAnchor));
-        
+
     return url.toString();
 }
-    
-    
+
+
     /**
      * Get url for a single weblog media file on a given weblog.
      */
@@ -102,17 +102,17 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             Weblog weblog,
             String fileAnchor,
             boolean absolute) {
-        
+
         if(fileAnchor == null) {
             return null;
         }
-        
+
         StringBuilder url = new StringBuilder();
         url.append(getWeblogURL(weblog, null, absolute));
         url.append("mediaresource");
         url.append("/");
         url.append(URLUtilities.encode(fileAnchor));
-        
+
         return url.toString();
     }
 
@@ -123,11 +123,11 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     public String getMediaFileThumbnailURL(Weblog weblog,
             String fileAnchor,
             boolean absolute) {
-            
+
         return getMediaFileURL(weblog, fileAnchor, absolute) + "?t=true";
     }
 
-    
+
     /**
      * Get url for a single weblog entry comments on a given weblog.
      */
@@ -135,11 +135,11 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                     String locale,
                                                     String entryAnchor,
                                                     boolean absolute) {
-        
+
         return getWeblogEntryURL(weblog, locale, entryAnchor, absolute)+"#comments";
     }
-    
-    
+
+
     /**
      * Get url for a single weblog entry comment on a given weblog.
      */
@@ -148,11 +148,11 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                    String entryAnchor,
                                                    String timeStamp,
                                                    boolean absolute) {
-        
+
         return getWeblogEntryURL(weblog, locale, entryAnchor, absolute)+"#comment-"+timeStamp;
     }
-    
-    
+
+
     /**
      * Get url for a collection of entries on a given weblog.
      */
@@ -163,29 +163,29 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                       List tags,
                                                       int pageNum,
                                                       boolean absolute) {
-        
+
         if(weblog == null) {
             return null;
         }
-        
+
         StringBuilder pathinfo = new StringBuilder();
         Map params = new HashMap();
-        
+
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
-        
+
         String cat = null;
         if(category != null && "/".equals(category)) {
             cat = null;
         } else if(category != null && category.startsWith("/")) {
             cat = category.substring(1);
         }
-        
+
         if(cat != null && dateString == null) {
             pathinfo.append("category/").append(URLUtilities.encodePath(cat));
-            
+
         } else if(dateString != null && cat == null) {
-            pathinfo.append("date/").append(dateString);  
-        
+            pathinfo.append("date/").append(dateString);
+
         } else if(tags != null && tags.size() > 0) {
             pathinfo.append("tags/").append(URLUtilities.getEncodedTagsString(tags));
         } else {
@@ -196,11 +196,11 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         if(pageNum > 0) {
             params.put("page", Integer.toString(pageNum));
         }
-        
+
         return pathinfo.toString() + URLUtilities.getQueryString(params);
     }
-    
-    
+
+
     /**
      * Get url for a custom page on a given weblog.
      */
@@ -213,19 +213,19 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                 List tags,
                                                 int pageNum,
                                                 boolean absolute) {
-        
+
         if(weblog == null) {
             return null;
         }
-        
+
         StringBuilder pathinfo = new StringBuilder();
         Map params = new HashMap();
-        
+
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
-        
+
         if(pageLink != null) {
             pathinfo.append("page/").append(pageLink);
-            
+
             // for custom pages we only allow query params
             if(dateString != null) {
                 params.put("date", dateString);
@@ -243,11 +243,11 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             // if there is no page link then this is just a typical collection url
             return getWeblogCollectionURL(weblog, locale, category, dateString, tags, pageNum, absolute);
         }
-        
+
         return pathinfo.toString() + URLUtilities.getQueryString(params);
     }
-    
-    
+
+
     /**
      * Get url for a feed on a given weblog.
      */
@@ -260,16 +260,16 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                 List tags,
                                                 boolean excerpts,
                                                 boolean absolute) {
-        
+
         if(weblog == null) {
             return null;
         }
-        
+
         StringBuilder url = new StringBuilder();
-        
+
         url.append(getWeblogURL(weblog, locale, absolute));
         url.append("feed/").append(type).append("/").append(format);
-        
+
         Map params = new HashMap();
         if(category != null && category.trim().length() > 0) {
             params.put("cat", URLUtilities.encode(category));
@@ -283,11 +283,11 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         if(excerpts) {
             params.put("excerpts", "true");
         }
-        
+
         return url.toString() + URLUtilities.getQueryString(params);
     }
-    
-    
+
+
     /**
      * Get url to search endpoint on a given weblog.
      */
@@ -297,20 +297,20 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                   String category,
                                                   int pageNum,
                                                   boolean absolute) {
-        
+
         if(weblog == null) {
             return null;
         }
-        
+
         StringBuilder url = new StringBuilder();
-        
+
         url.append(getWeblogURL(weblog, locale, absolute));
         url.append("search");
-        
+
         Map params = new HashMap();
         if(query != null) {
             params.put("q", URLUtilities.encode(query));
-            
+
             // other stuff only makes sense if there is a query
             if(category != null) {
                 params.put("cat", URLUtilities.encode(category));
@@ -319,116 +319,116 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                 params.put("page", Integer.toString(pageNum));
             }
         }
-        
+
         return url.toString() + URLUtilities.getQueryString(params);
     }
-    
-    
+
+
     /**
      * Get url to a resource on a given weblog.
      */
     public String getWeblogResourceURL(Weblog weblog,
                                                     String filePath,
                                                     boolean absolute) {
-        
+
         if(weblog == null || StringUtils.isEmpty(filePath)) {
             return null;
         }
-        
+
         StringBuilder url = new StringBuilder();
-        
+
         url.append(getWeblogURL(weblog, null, absolute));
         url.append("resource/");
-        
+
         if(filePath.startsWith("/")) {
             url.append(URLUtilities.encodePath(filePath.substring(1)));
         } else {
             url.append(URLUtilities.encodePath(filePath));
         }
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Get url to rsd file on a given weblog.
      */
     public String getWeblogRsdURL(Weblog weblog,
                                                boolean absolute) {
-        
+
         if(weblog == null) {
             return null;
         }
-        
+
         return getWeblogURL(weblog, null, absolute)+"rsd";
     }
-    
-    
+
+
     /**
      * Get url to JSON tags service url, optionally for a given weblog.
      */
     public String getWeblogTagsJsonURL(Weblog weblog,
                                                     boolean absolute,
                                                     int pageNum) {
-        
+
         StringBuilder url = new StringBuilder();
-        
+
         if (absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         // json tags service base
         url.append("/roller-services/tagdata/");
-        
+
         // is this for a specific weblog or site-wide?
         if (weblog != null) {
             url.append("/weblog/");
             url.append(weblog.getHandle());
             url.append("/");
         }
-        
+
         if (pageNum > 0) {
             url.append("?page=").append(pageNum);
         }
-        
+
         return url.toString();
     }
 
-    
+
     public String getWeblogSearchFeedURLTemplate(Weblog weblog) {
         if(weblog == null) {
             return null;
         }
-        
+
         StringBuilder url = new StringBuilder();
-        
+
         url.append(getWeblogURL(weblog, null, true));
         url.append("feed/entries/atom");
-        
+
         Map params = new HashMap();
         params.put("q", "{searchTerms}");
         params.put("page", "{startPage}");
-        
+
         return url.toString() + URLUtilities.getQueryString(params);
     }
 
-    
+
     public String getWeblogSearchPageURLTemplate(Weblog weblog) {
         if(weblog == null) {
             return null;
         }
-        
+
         StringBuilder url = new StringBuilder();
-        
+
         url.append(getWeblogURL(weblog, null, true));
         url.append("search");
-        
+
         Map params = new HashMap();
         params.put("q", "{searchTerms}");
         params.put("page", "{startPage}");
-        
+
         return url.toString() + URLUtilities.getQueryString(params);
     }
 
@@ -453,7 +453,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     public String getOAuthAccessTokenURL() {
         return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/accessToken";
     }
-    
+
 }
 
 

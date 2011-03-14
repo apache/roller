@@ -24,17 +24,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Extends {@link com.sun.syndication.propono.atom.server.AtomHandlerFactory} to create and return 
+ * Extends {@link com.sun.syndication.propono.atom.server.AtomHandlerFactory} to create and return
  * {@link com.sun.syndication.propono.atom.server.impl.FileBasedAtomHandler}.
  */
 public class RollerAtomHandlerFactory extends AtomHandlerFactory {
-    
+
     /**
      * Create new AtomHandler.
      */
     public AtomHandler newAtomHandler(
             HttpServletRequest req, HttpServletResponse res) {
         return new RollerAtomHandler(req, res);
-    }    
+    }
 }
-      
+

@@ -71,71 +71,71 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
  */
 @com.google.inject.Singleton
 public class JPAWeblogManagerImpl implements WeblogManager {
-    
+
     /** The logger instance for this class. */
     private static Log log = LogFactory.getLog(JPAWeblogManagerImpl.class);
-    
+
     private static final Comparator statCountCountReverseComparator =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
-    
+
     private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
-    
+
     // cached mapping of weblogHandles -> weblogIds
     private Map weblogHandleToIdMap = new Hashtable();
-    
+
     // cached mapping of userNames -> userIds
     private Map userNameToIdMap = new Hashtable();
-    
-    
+
+
     @com.google.inject.Inject
     protected JPAWeblogManagerImpl(Weblogger roller, JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA Weblog Manager");
         this.roller = roller;
         this.strategy = strat;
     }
-    
-    
+
+
     public void release() {}
-    
-    
+
+
     /**
      * Update existing website.
      */
     public void saveWeblog(Weblog website) throws WebloggerException {
-        
+
         website.setLastModified(new java.util.Date());
         strategy.store(website);
     }
-    
+
     public void removeWeblog(Weblog weblog) throws WebloggerException {
-        
+
         // remove contents first, then remove website
         this.removeWebsiteContents(weblog);
         this.strategy.remove(weblog);
-        
+
         // remove entry from cache mapping
         this.weblogHandleToIdMap.remove(weblog.getHandle());
     }
-    
+
     /**
      * convenience method for removing contents of a weblog.
      * TODO BACKEND: use manager methods instead of queries here
      */
     private void removeWebsiteContents(Weblog website)
     throws  WebloggerException {
-        
+
         UserManager        umgr = roller.getUserManager();
         WeblogManager      wmgr = roller.getWeblogManager();
         WeblogEntryManager emgr = roller.getWeblogEntryManager();
         BookmarkManager    bmgr = roller.getBookmarkManager();
         MediaFileManager   mmgr = roller.getMediaFileManager();
-        
+
         // remove tags
         Query tagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblog");
         tagQuery.setParameter(1, website);
         List results = tagQuery.getResultList();
-        
+
         for(Iterator iter = results.iterator(); iter.hasNext();) {
             WeblogEntryTag tagData = (WeblogEntryTag) iter.next();
             if (tagData.getWeblogEntry() != null) {
@@ -143,24 +143,24 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
             this.strategy.remove(tagData);
         }
-        
+
         // remove site tag aggregates
         List tags = emgr.getTags(website, null, null, 0, -1);
         updateTagAggregates(tags);
-        
+
         // delete all weblog tag aggregates
         Query removeAggs= strategy.getNamedUpdate(
                 "WeblogEntryTagAggregate.removeByWeblog");
         removeAggs.setParameter(1, website);
         removeAggs.executeUpdate();
-        
+
         // delete all bad counts
         Query removeCounts = strategy.getNamedUpdate(
                 "WeblogEntryTagAggregate.removeByTotalLessEqual");
         removeCounts.setParameter(1, new Integer(0));
         removeCounts.executeUpdate();
-        
-        
+
+
         // Remove the website's ping queue entries
         Query q = strategy.getNamedQuery("PingQueueEntry.getByWebsite");
         q.setParameter(1, website);
@@ -169,7 +169,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         while(it.hasNext()) {
             this.strategy.remove((PingQueueEntry) it.next());
         }
-        
+
         // Remove the website's auto ping configurations
         AutoPingManager autoPingMgr = roller
         .getAutopingManager();
@@ -178,7 +178,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         while(it.hasNext()) {
             this.strategy.remove((AutoPing) it.next());
         }
-        
+
         // Remove the website's custom ping targets
         PingTargetManager pingTargetMgr = roller.getPingTargetManager();
         List pingtargets = pingTargetMgr.getCustomPingTargets(website);
@@ -186,7 +186,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         while(it.hasNext()) {
             this.strategy.remove((PingTarget) it.next());
         }
-        
+
         // remove associated referers
         Query refQuery2 = strategy.getNamedQuery("WeblogReferrer.getByWebsite");
         refQuery2.setParameter(1, website);
@@ -196,8 +196,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             this.strategy.remove(referer.getClass(), referer.getId());
         }
         // TODO: can we eliminate this unnecessary flush with OpenJPA 1.0
-        this.strategy.flush(); 
-       
+        this.strategy.flush();
+
         // remove associated pages
         Query pageQuery = strategy.getNamedQuery("WeblogTemplate.getByWebsite");
         pageQuery.setParameter(1, website);
@@ -206,7 +206,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             WeblogTemplate page = (WeblogTemplate) iter.next();
             this.strategy.remove(page);
         }
-        
+
         // remove folders (including bookmarks)
         WeblogBookmarkFolder rootFolder = bmgr.getRootFolder(website);
         if (null != rootFolder) {
@@ -233,27 +233,27 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             emgr.removeWeblogEntry(entry);
         }
         this.strategy.flush();
-        
+
         // remove categories
         WeblogCategory rootCat = emgr.getRootWeblogCategory(website);
         if (null != rootCat) {
             this.strategy.remove(rootCat);
         }
-        
+
         // remove permissions
         for (Iterator iterator = umgr.getWeblogPermissions(website).iterator(); iterator.hasNext();) {
             WeblogPermission perm = (WeblogPermission) iterator.next();
-            umgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS); 
+            umgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS);
         }
-        
+
         // flush the changes before returning. This is required as there is a
         // circular dependency between WeblogCategory and Weblog
-        this.strategy.flush();        
+        this.strategy.flush();
     }
-    
+
     protected void updateTagAggregates(List tags) throws WebloggerException {
         for(Iterator iter = tags.iterator(); iter.hasNext();) {
-            TagStat stat = (TagStat) iter.next();            
+            TagStat stat = (TagStat) iter.next();
             Query query = strategy.getNamedUpdate(
                 "WeblogEntryTagAggregate.getByName&WebsiteNullOrderByLastUsedDesc");
             query.setParameter(1, stat.getName());
@@ -263,40 +263,40 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             } catch (NoResultException ignored) {} // no agg to be updated
         }
     }
-    
+
     /**
      * @see org.apache.roller.weblogger.model.UserManager#storePage(org.apache.roller.weblogger.pojos.WeblogTemplate)
      */
     public void savePage(WeblogTemplate page) throws WebloggerException {
         this.strategy.store(page);
-        
+
         // update weblog last modified date.  date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(page.getWebsite());
     }
-    
+
     public void removePage(WeblogTemplate page) throws WebloggerException {
         this.strategy.remove(page);
-        
+
         // update weblog last modified date.  date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(page.getWebsite());
     }
-    
+
     public void addWeblog(Weblog newWeblog) throws WebloggerException {
-        
+
         this.strategy.store(newWeblog);
         this.strategy.flush();
         this.addWeblogContents(newWeblog);
     }
-    
+
     private void addWeblogContents(Weblog newWeblog)
     throws WebloggerException {
-        
+
         // grant weblog creator ADMIN permission
         List<String> actions = new ArrayList<String>();
         actions.add(WeblogPermission.ADMIN);
         roller.getUserManager().grantWeblogPermission(
                 newWeblog, newWeblog.getCreator(), actions);
-        
+
         // add default category
         WeblogCategory rootCat = new WeblogCategory(
                 newWeblog, // newWeblog
@@ -305,7 +305,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 "root",    // description
                 null );    // image
         this.strategy.store(rootCat);
-        
+
         String cats = WebloggerConfig.getProperty("newuser.categories");
         WeblogCategory firstCat = rootCat;
         if (cats != null && cats.trim().length() > 0) {
@@ -322,20 +322,20 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 this.strategy.store(c);
             }
         }
-        
+
         // Use first category as default for Blogger API
         newWeblog.setBloggerCategory(firstCat);
-        
+
         // But default category for weblog itself should be  root
         newWeblog.setDefaultCategory(rootCat);
-        
+
         this.strategy.store(newWeblog);
-        
+
         // add default bookmarks
         WeblogBookmarkFolder root = new WeblogBookmarkFolder(
                 null, "root", "root", newWeblog);
         this.strategy.store(root);
-        
+
         Integer zero = new Integer(0);
         String blogroll = WebloggerConfig.getProperty("newuser.blogroll");
         if (blogroll != null) {
@@ -357,16 +357,16 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 }
             }
         }
-        
+
         // add any auto enabled ping targets
         PingTargetManager pingTargetMgr = roller.getPingTargetManager();
         AutoPingManager autoPingMgr = roller.getAutopingManager();
-        
+
         Iterator pingTargets = pingTargetMgr.getCommonPingTargets().iterator();
         PingTarget pingTarget = null;
         while(pingTargets.hasNext()) {
             pingTarget = (PingTarget) pingTargets.next();
-            
+
             if(pingTarget.isAutoEnabled()) {
                 AutoPing autoPing = new AutoPing(
                         null, pingTarget, newWeblog);
@@ -377,28 +377,28 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         roller.getMediaFileManager().createRootMediaFileDirectory(newWeblog);
 
     }
-    
+
     public Weblog getWeblog(String id) throws WebloggerException {
         return (Weblog) this.strategy.load(Weblog.class, id);
     }
-    
+
     public Weblog getWeblogByHandle(String handle) throws WebloggerException {
         return getWeblogByHandle(handle, Boolean.TRUE);
     }
-    
+
     /**
      * Return website specified by handle.
      */
     public Weblog getWeblogByHandle(String handle, Boolean enabled)
     throws WebloggerException {
-        
+
         if (handle==null )
             throw new WebloggerException("Handle cannot be null");
-        
+
         // check cache first
         // NOTE: if we ever allow changing handles then this needs updating
         if(this.weblogHandleToIdMap.containsKey(handle)) {
-            
+
             Weblog weblog = this.getWeblog(
                     (String) this.weblogHandleToIdMap.get(handle));
             if(weblog != null) {
@@ -412,7 +412,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 this.weblogHandleToIdMap.remove(handle);
             }
         }
-        
+
         Query query = strategy.getNamedQuery("Weblog.getByHandle");
         query.setParameter(1, handle);
         Weblog website = null;
@@ -421,13 +421,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         } catch (NoResultException e) {
             website = null;
         }
-        
+
         // add mapping to cache
         if(website != null) {
             log.debug("weblogHandleToId CACHE MISS - "+handle);
             this.weblogHandleToIdMap.put(website.getHandle(), website.getId());
         }
-        
+
         if(website != null &&
                 (enabled == null || enabled.equals(website.getEnabled()))) {
             return website;
@@ -435,21 +435,21 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             return null;
         }
     }
-    
+
     /**
      * Get websites of a user
      */
     public List getWeblogs(
             Boolean enabled, Boolean active,
             Date startDate, Date endDate, int offset, int length) throws WebloggerException {
-        
+
         //if (endDate == null) endDate = new Date();
-                      
+
         List params = new ArrayList();
         int size = 0;
         StringBuffer queryString = new StringBuffer();
         StringBuffer whereClause = new StringBuffer();
-        
+
         queryString.append("SELECT w FROM Weblog w WHERE ");
 
         if (startDate != null) {
@@ -473,10 +473,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             if (whereClause.length() > 0) whereClause.append(" AND ");
             params.add(size++, active);
             whereClause.append(" w.active = ?" + size);
-        }      
-                
+        }
+
         whereClause.append(" ORDER BY w.dateCreated DESC");
-        
+
         Query query = strategy.getDynamicQuery(queryString.toString() + whereClause.toString());
         if (offset != 0) {
             query.setFirstResult(offset);
@@ -487,10 +487,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         for (int i=0; i<params.size(); i++) {
            query.setParameter(i+1, params.get(i));
         }
-        
+
         return query.getResultList();
     }
-        
+
     public List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException {
         List weblogs = new ArrayList();
         List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(user);
@@ -504,7 +504,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         return weblogs;
     }
-    
+
     public List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
         List users = new ArrayList();
         List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(weblog);
@@ -524,22 +524,22 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public WeblogTemplate getPage(String id) throws WebloggerException {
         // Don't hit database for templates stored on disk
         if (id != null && id.endsWith(".vm")) return null;
-        
+
         return (WeblogTemplate)this.strategy.load(WeblogTemplate.class,id);
     }
-    
+
     /**
      * Use JPA directly because Weblogger's Query API does too much allocation.
      */
     public WeblogTemplate getPageByLink(Weblog website, String pagelink)
     throws WebloggerException {
-        
+
         if (website == null)
             throw new WebloggerException("userName is null");
-        
+
         if (pagelink == null)
             throw new WebloggerException("Pagelink is null");
-        
+
         Query query = strategy.getNamedQuery("WeblogTemplate.getByWebsite&Link");
         query.setParameter(1, website);
         query.setParameter(2, pagelink);
@@ -549,42 +549,42 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             return null;
         }
     }
-    
+
     /**
      * @see org.apache.roller.weblogger.model.UserManager#getPageByAction(Weblog, java.lang.String)
      */
     public WeblogTemplate getPageByAction(Weblog website, String action)
             throws WebloggerException {
-        
+
         if (website == null)
             throw new WebloggerException("website is null");
-        
+
         if (action == null)
             throw new WebloggerException("Action name is null");
-        
-        
-        Query query = strategy.getNamedQuery("WeblogTemplate.getByAction"); 
+
+
+        Query query = strategy.getNamedQuery("WeblogTemplate.getByAction");
         query.setParameter(1, website);
         query.setParameter(2, action);
         try {
             return (WeblogTemplate)query.getSingleResult();
         } catch (NoResultException e) {
             return null;
-        }        
+        }
     }
-    
+
     /**
      * @see org.apache.roller.weblogger.model.UserManager#getPageByName(Weblog, java.lang.String)
      */
     public WeblogTemplate getPageByName(Weblog website, String pagename)
     throws WebloggerException {
-        
+
         if (website == null)
             throw new WebloggerException("website is null");
-        
+
         if (pagename == null)
             throw new WebloggerException("Page name is null");
-        
+
         Query query = strategy.getNamedQuery("WeblogTemplate.getByWebsite&Name");
         query.setParameter(1, website);
         query.setParameter(2, pagename);
@@ -594,7 +594,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             return null;
         }
     }
-    
+
     /**
      * @see org.apache.roller.weblogger.model.UserManager#getPages(Weblog)
      */
@@ -607,7 +607,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return q.getResultList();
     }
 
-    
+
     public Map getWeblogHandleLetterMap() throws WebloggerException {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Map results = new TreeMap();
@@ -622,7 +622,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         return results;
     }
-    
+
     public List getWeblogsByLetter(char letter, int offset, int length)
     throws WebloggerException {
         Query query = strategy.getNamedQuery(
@@ -636,15 +636,15 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         return query.getResultList();
     }
-    
+
     public List getMostCommentedWeblogs(Date startDate, Date endDate,
             int offset, int length)
             throws WebloggerException {
-        
+
         Query query = null;
-        
+
         if (endDate == null) endDate = new Date();
-        
+
         if (startDate != null) {
             Timestamp start = new Timestamp(startDate.getTime());
             Timestamp end = new Timestamp(endDate.getTime());
@@ -680,10 +680,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // Original query ordered by desc # comments.
         // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
         Collections.sort(results, statCountCountReverseComparator);
-        
+
         return results;
     }
-    
+
     /**
      * Get count of weblogs, active and inactive
      */
@@ -691,9 +691,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         long ret = 0;
         List results = strategy.getNamedQuery(
                 "Weblog.getCountAllDistinct").getResultList();
-        
+
         ret = ((Long)results.get(0)).longValue();
-        
+
         return ret;
     }
 

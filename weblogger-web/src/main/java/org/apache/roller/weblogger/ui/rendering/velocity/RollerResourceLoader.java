@@ -34,34 +34,34 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 /**
  * This is a simple template file loader that loads templates
  * from the Roller instance instead of plain files.
- * 
+ *
  * RollerResourceLoader makes use of WebloggerFactory.
- * 
+ *
  * @author <a href="mailto:lance@brainopolis.com">Lance Lavandowska</a>
  * @version $Id: RollerResourceLoader.java,v 1.9 2005/01/15 03:32:49 snoopdave Exp $
  */
 public class RollerResourceLoader extends ResourceLoader {
-    
+
     private static Log mLogger = LogFactory.getLog(RollerResourceLoader.class);
-    
-    
+
+
     public void init(ExtendedProperties configuration) {
         if (mLogger.isDebugEnabled()) {
             mLogger.debug(configuration);
         }
     }
-    
-    
+
+
     public boolean isSourceModified(Resource resource) {
         return (resource.getLastModified() !=
                 readLastModified(resource, "checking timestamp"));
     }
-    
-    
+
+
     public long getLastModified(Resource resource) {
         return readLastModified(resource, "getting timestamp");
     }
-    
+
     /**
      * Get an InputStream so that the Runtime can build a
      * template with it.
@@ -71,15 +71,15 @@ public class RollerResourceLoader extends ResourceLoader {
      */
     public InputStream getResourceStream(String name)
             throws ResourceNotFoundException {
-        
+
         if (name == null || name.length() == 0) {
             throw new ResourceNotFoundException("Need to specify a template name!");
         }
-        
+
         try {
-            WeblogTemplate page = 
+            WeblogTemplate page =
                     WebloggerFactory.getWeblogger().getWeblogManager().getPage(name);
-            
+
             if (page == null) {
                 throw new ResourceNotFoundException(
                         "RollerResourceLoader: page \"" +
@@ -98,8 +98,8 @@ public class RollerResourceLoader extends ResourceLoader {
             throw new ResourceNotFoundException(msg);
         }
     }
-    
-    
+
+
     /**
      * Fetches the last modification time of the resource
      *
@@ -109,15 +109,15 @@ public class RollerResourceLoader extends ResourceLoader {
      * @return timestamp as long
      */
     private long readLastModified(Resource resource, String i_operation) {
-        
+
         /*
          *  get the template name from the resource
          */
         String name = resource.getName();
         try {
-            WeblogTemplate page = 
+            WeblogTemplate page =
                     WebloggerFactory.getWeblogger().getWeblogManager().getPage(name);
-            
+
             if (mLogger.isDebugEnabled()) {
                 mLogger.debug(name + ": resource=" + resource.getLastModified() +
                         " vs. page=" + page.getLastModified().getTime());
@@ -128,5 +128,5 @@ public class RollerResourceLoader extends ResourceLoader {
         }
         return 0;
     }
-    
+
 }

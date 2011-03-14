@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * The purpose of the CacheManager is to provide a level of abstraction between
  * classes that use a cache and the implementations of a cache.  This allows
  * us to create easily pluggable cache implementations.
- * 
+ *
  * The other purpose is to provide a single interface for interacting with all
  * Roller caches at the same time.  This is beneficial because as data
  * changes in the system we often need to notify all caches that some part of
@@ -51,26 +51,26 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * process easier.
  */
 public class CacheManager {
-    
+
     private static Log log = LogFactory.getLog(CacheManager.class);
-    
-    private static final String DEFAULT_FACTORY = 
+
+    private static final String DEFAULT_FACTORY =
             "org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl";
-    
+
     // a reference to the cache factory in use
     private static CacheFactory cacheFactory = null;
-    
+
     // a set of all registered cache handlers
     private static Set cacheHandlers = new HashSet();
-    
+
     // a map of all registered caches
     private static Map caches = new HashMap();
-    
-    
+
+
     static {
         // lookup what cache factory we want to use
         String classname = WebloggerConfig.getProperty("cache.defaultFactory");
-        
+
         // use reflection to instantiate our factory class
         try {
             Class factoryClass = Class.forName(classname);
@@ -82,7 +82,7 @@ public class CacheManager {
             log.error("Unable to instantiate cache factory ["+classname+"]"+
                     " falling back on default", e);
         }
-        
+
         if(cacheFactory == null) try {
             // hmm ... failed to load the specified cache factory
             // lets try our default
@@ -92,23 +92,23 @@ public class CacheManager {
             log.fatal("Failed to instantiate a cache factory", e);
             throw new RuntimeException(e);
         }
-        
+
         log.info("Cache Manager Initialized.");
         log.info("Cache Factory = "+cacheFactory.getClass().getName());
-        
-        
+
+
         // add custom handlers
         String customHandlers = WebloggerConfig.getProperty("cache.customHandlers");
         if(customHandlers != null && customHandlers.trim().length() > 0) {
-            
+
             String[] cHandlers = customHandlers.split(",");
             for(int i=0; i < cHandlers.length; i++) {
                 // use reflection to instantiate the handler class
                 try {
                     Class handlerClass = Class.forName(cHandlers[i]);
-                    CacheHandler customHandler = 
+                    CacheHandler customHandler =
                             (CacheHandler) handlerClass.newInstance();
-                    
+
                     cacheHandlers.add(customHandler);
                 } catch(ClassCastException cce) {
                     log.error("It appears that your handler does not implement "+
@@ -119,12 +119,12 @@ public class CacheManager {
             }
         }
     }
-    
-    
+
+
     // a non-instantiable class
     private CacheManager() {}
-    
-    
+
+
     /**
      * Ask the CacheManager to construct a cache.
      *
@@ -144,20 +144,20 @@ public class CacheManager {
      * and have them used only by specific caches.
      */
     public static Cache constructCache(CacheHandler handler, Map properties) {
-        
+
         log.debug("Constructing new cache with props "+properties);
-        
+
         Cache cache = null;
-        
+
         if(properties != null && properties.containsKey("factory")) {
             // someone wants a custom cache instance
             String classname = (String) properties.get("factory");
-            
+
             try {
                 // use reflection to instantiate the factory class
                 Class factoryClass = Class.forName(classname);
                 CacheFactory factory = (CacheFactory) factoryClass.newInstance();
-                
+
                 // now ask for a new cache
                 cache = factory.constructCache(properties);
             } catch(ClassCastException cce) {
@@ -168,15 +168,15 @@ public class CacheManager {
                         "] falling back on default", e);
             }
         }
-        
+
         if(cache == null) {
             // ask our default cache factory for a new cache instance
             cache = cacheFactory.constructCache(properties);
         }
-        
+
         if(cache != null) {
             caches.put(cache.getId(), cache);
-            
+
             // register the handler for this new cache
             if(handler != null) {
                 cacheHandlers.add(handler);
@@ -185,160 +185,160 @@ public class CacheManager {
 
         return cache;
     }
-    
-    
+
+
     /**
      * Register a CacheHandler to listen for object invalidations.
      *
      * This is here so that it's possible to to add classes which would respond
      * to object invalidations without necessarily having to create a cache.
      *
-     * An example would be a handler designed to notify other machines in a 
+     * An example would be a handler designed to notify other machines in a
      * cluster when an object has been invalidated, or possibly the search
      * index management classes are interested in knowing when objects are
      * invalidated.
      */
     public static void registerHandler(CacheHandler handler) {
-        
+
         log.debug("Registering handler "+handler);
-        
+
         if(handler != null) {
             cacheHandlers.add(handler);
         }
     }
-    
-    
+
+
     public static void invalidate(WeblogEntry entry) {
-        
+
         log.debug("invalidating entry = "+entry.getAnchor());
-        
+
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(entry);
         }
     }
-    
-    
+
+
     public static void invalidate(Weblog website) {
-        
+
         log.debug("invalidating website = "+website.getHandle());
-        
+
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(website);
         }
     }
-    
-    
+
+
     public static void invalidate(WeblogBookmark bookmark) {
-        
+
         log.debug("invalidating bookmark = "+bookmark.getId());
-        
+
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(bookmark);
         }
     }
-    
-    
+
+
     public static void invalidate(WeblogBookmarkFolder folder) {
-        
+
         log.debug("invalidating folder = "+folder.getId());
-        
+
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(folder);
         }
     }
-    
-    
+
+
     public static void invalidate(WeblogEntryComment comment) {
-        
+
         log.debug("invalidating comment = "+comment.getId());
-        
+
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(comment);
         }
     }
-    
-    
+
+
     public static void invalidate(WeblogReferrer referer) {
-        
+
         log.debug("invalidating referer = "+referer.getId());
-        
+
         // NOTE: Invalidating an entire website for each referer is not
         //       good for our caching.  This may need reevaluation later.
         //lastExpiredCache.put(referer.getWebsite().getHandle(), new Date());
-        
+
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(referer);
         }
     }
-    
-    
+
+
     public static void invalidate(User user) {
-        
+
         log.debug("invalidating user = "+user.getUserName());
-        
+
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(user);
         }
     }
-    
-    
+
+
     public static void invalidate(WeblogCategory category) {
-        
+
         log.debug("invalidating category = "+category.getId());
-        
+
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(category);
         }
     }
-    
-    
+
+
     public static void invalidate(WeblogTemplate template) {
-        
+
         log.debug("invalidating template = "+template.getId());
-        
+
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(template);
         }
     }
 
-    
+
     /**
      * Flush the entire cache system.
      */
     public static void clear() {
-        
+
         // loop through all caches and trigger a clear
         Cache cache = null;
         Iterator cachesIT = caches.values().iterator();
         while(cachesIT.hasNext()) {
             cache = (Cache) cachesIT.next();
-            
+
             cache.clear();
         }
     }
-    
-    
+
+
     /**
      * Flush a single cache.
      */
     public static void clear(String cacheId) {
-        
+
         Cache cache = (Cache) caches.get(cacheId);
         if(cache != null) {
             cache.clear();
         }
     }
-    
-    
+
+
     /**
      * Compile stats from all registered caches.
      *
@@ -348,26 +348,26 @@ public class CacheManager {
      * something a bit more elaborate, like JMX.
      */
     public static Map getStats() {
-        
+
         Map allStats = new HashMap();
-        
+
         Cache cache = null;
         Iterator cachesIT = caches.values().iterator();
         while(cachesIT.hasNext()) {
             cache = (Cache) cachesIT.next();
-            
+
             allStats.put(cache.getId(), cache.getStats());
         }
-        
+
         return allStats;
     }
-    
-    
+
+
     /**
      * Place to do any cleanup tasks for cache system.
      */
     public static void shutdown() {
         // no-op
     }
-    
+
 }

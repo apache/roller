@@ -33,82 +33,82 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
  * Represents a request to post a weblog entry trackback.
  */
 public class WeblogTrackbackRequest extends WeblogRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogTrackbackRequest.class);
-    
+
     private static final String TRACKBACK_SERVLET = "/roller-ui/rendering/trackback";
-    
+
     // lightweight attributes
     private String blogName = null;
     private String url = null;
     private String excerpt = null;
     private String title = null;
     private String weblogAnchor = null;
-    
+
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
-    
-    
+
+
     public WeblogTrackbackRequest() {}
-    
-    
-    public WeblogTrackbackRequest(HttpServletRequest request) 
+
+
+    public WeblogTrackbackRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         String servlet = request.getServletPath();
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // was this request bound for the comment servlet?
         if(servlet == null || !TRACKBACK_SERVLET.equals(servlet)) {
             throw new InvalidRequestException("not a weblog trackback request, "+
                     request.getRequestURL());
         }
-        
-        
+
+
         /*
          * parse path info.  we expect ...
          *
          * /entry/<anchor> - permalink
          */
         if(pathInfo != null && pathInfo.trim().length() > 0) {
-            
+
             // we should only ever get 2 path elements
             String[] pathElements = pathInfo.split("/");
             if(pathElements.length == 2) {
-                
+
                 String context = pathElements[0];
                 if("entry".equals(context)) {
                     try {
-                        this.weblogAnchor = 
+                        this.weblogAnchor =
                                 URLDecoder.decode(pathElements[1], "UTF-8");
                     } catch (UnsupportedEncodingException ex) {
                         // should never happen
                         log.error(ex);
                     }
-                    
+
                 } else {
                     throw new InvalidRequestException("bad path info, "+
                             request.getRequestURL());
                 }
-                
+
             } else {
                 throw new InvalidRequestException("bad path info, "+
                         request.getRequestURL());
             }
-            
+
         } else {
             // bad request
             throw new InvalidRequestException("bad path info, "+
                     request.getRequestURL());
         }
-        
-        
+
+
         /*
          * parse request parameters
          *
@@ -121,27 +121,27 @@ public class WeblogTrackbackRequest extends WeblogRequest {
         if(request.getParameter("blog_name") != null) {
             this.blogName = request.getParameter("blog_name");
         }
-        
+
         if(request.getParameter("url") != null) {
             this.url = request.getParameter("url");
         }
-        
+
         if(request.getParameter("excerpt") != null) {
             this.excerpt = request.getParameter("excerpt");
         }
-        
+
         if(request.getParameter("title") != null) {
             this.title = request.getParameter("title");
         }
-        
+
         // a little bit of validation, trackbacks enforce that all params
         // must have a value, so any nulls equals a bad request
-        if(this.blogName == null || this.url == null || 
+        if(this.blogName == null || this.url == null ||
                 this.excerpt == null || this.title == null) {
             throw new InvalidRequestException("bad request data.  did not "+
                     "receive values for all trackback params (blog_name, url, excerpt, title)");
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("name = "+this.blogName);
             log.debug("url = "+this.url);
@@ -192,7 +192,7 @@ public class WeblogTrackbackRequest extends WeblogRequest {
     }
 
     public WeblogEntry getWeblogEntry() {
-        
+
         if(weblogEntry == null && weblogAnchor != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -201,12 +201,12 @@ public class WeblogTrackbackRequest extends WeblogRequest {
                 log.error("Error getting weblog entry "+weblogAnchor, ex);
             }
         }
-        
+
         return weblogEntry;
     }
 
     public void setWeblogEntry(WeblogEntry weblogEntry) {
         this.weblogEntry = weblogEntry;
     }
-    
+
 }

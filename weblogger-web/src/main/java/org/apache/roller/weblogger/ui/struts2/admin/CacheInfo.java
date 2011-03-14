@@ -32,43 +32,43 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Action for displaying rendering cache info.
  */
 public class CacheInfo extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(CacheInfo.class);
-    
+
     // map of stats to display
     private Map stats = Collections.EMPTY_MAP;
-    
+
     // cache which we would clear when clear() is called
     private String cache = null;
-    
-    
+
+
     public CacheInfo() {
         this.actionName = "cacheInfo";
         this.desiredMenu = "admin";
         this.pageTitle = "cacheInfo.title";
     }
-    
-    
+
+
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
-    
+
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     public void myPrepare() {
         Map cacheStats = CacheManager.getStats();
         setStats(cacheStats);
     }
-    
-    
+
+
     public String execute() {
         return SUCCESS;
     }
 
-    
+
     /**
      * clear action.
      *
@@ -76,7 +76,7 @@ public class CacheInfo extends UIAction {
      * one or all of the caches.
      */
     public String clear() {
-        
+
         // see if a specific cache was specified
         String handlerClass = getCache();
         if(handlerClass != null && handlerClass.length() > 0) {
@@ -84,14 +84,14 @@ public class CacheInfo extends UIAction {
         } else {
             CacheManager.clear();
         }
-        
+
         // update stats after clear
         myPrepare();
-        
+
         return SUCCESS;
     }
 
-    
+
     public Map getStats() {
         return stats;
     }

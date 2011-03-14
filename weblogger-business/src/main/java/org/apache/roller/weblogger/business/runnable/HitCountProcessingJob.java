@@ -38,13 +38,13 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * stores them in the database.
  */
 public class HitCountProcessingJob implements Job {
-    
+
     private static Log log = LogFactory.getLog(HitCountProcessingJob.class);
-    
-    
+
+
     public HitCountProcessingJob() {}
-    
-    
+
+
     /**
      * Execute the job.
      *
@@ -52,25 +52,25 @@ public class HitCountProcessingJob implements Job {
      * then propogate them to the db for persistent storage.
      */
     public void execute() {
-        
+
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
+
         HitCountQueue hitCounter = HitCountQueue.getInstance();
-        
+
         // first get the current set of hits
         List currentHits = hitCounter.getHits();
-        
+
         // now reset the queued hits
         hitCounter.resetHits();
-        
+
         // tally the counts, grouped by weblog handle
         Map hitsTally = new HashMap();
         String weblogHandle = null;
         for(int i=0; i < currentHits.size(); i++) {
             weblogHandle = (String) currentHits.get(i);
-            
+
             Long count = (Long) hitsTally.get(weblogHandle);
             if(count == null) {
                 count = new Long(1);
@@ -79,17 +79,17 @@ public class HitCountProcessingJob implements Job {
             }
             hitsTally.put(weblogHandle, count);
         }
-        
+
         // iterate over the tallied hits and store them in the db
         try {
             long startTime = System.currentTimeMillis();
-            
+
             Weblog weblog = null;
             String key = null;
             Iterator it = hitsTally.keySet().iterator();
             while(it.hasNext()) {
                 key = (String) it.next();
-                
+
                 try {
                     weblog = wmgr.getWeblogByHandle(key);
                     emgr.incrementHitCount(weblog, ((Long)hitsTally.get(key)).intValue());
@@ -97,14 +97,14 @@ public class HitCountProcessingJob implements Job {
                     log.error(ex);
                 }
             }
-            
+
             // flush the results to the db
             WebloggerFactory.getWeblogger().flush();
-            
+
             long endTime = System.currentTimeMillis();
-            
+
             log.debug("Completed: "+ (endTime-startTime)/1000 + " secs");
-            
+
         } catch (WebloggerException ex) {
             log.error("Error persisting updated hit counts", ex);
         } finally {
@@ -112,14 +112,14 @@ public class HitCountProcessingJob implements Job {
             WebloggerFactory.getWeblogger().release();
         }
     }
-    
-    
+
+
     public void input(Map input) {
         // no-op
     }
-    
+
     public Map output() {
         return null;
     }
-    
+
 }

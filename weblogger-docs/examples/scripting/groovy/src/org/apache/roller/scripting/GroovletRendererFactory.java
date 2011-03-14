@@ -30,20 +30,20 @@ import org.apache.roller.weblogger.ui.rendering.RendererFactory;
  */
 public class GroovletRendererFactory implements RendererFactory {
     private static Log log = LogFactory.getLog(GroovletRendererFactory.class);
-    
-    public Renderer getRenderer(Template template) {        
+
+    public Renderer getRenderer(Template template) {
         Renderer renderer = null;
         if(template.getTemplateLanguage() == null || template.getId() == null) {
             return null;
-        }        
-        if("groovlet".equals(template.getTemplateLanguage()) && template instanceof WeblogTemplate) {             
+        }
+        if("groovlet".equals(template.getTemplateLanguage()) && template instanceof WeblogTemplate) {
             try {
                renderer = new GroovletRenderer((WeblogTemplate)template);
             } catch(Exception ex) {
                 return null;
-            }                        
-        }        
+            }
+        }
         return renderer;
     }
-    
+
 }

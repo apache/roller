@@ -49,10 +49,10 @@ public class CommentDataServlet extends HttpServlet {
      * content "hi there" will be represented as:
      *    {id : "3454545346", content : "hi there"}
      */
-    public void doGet(HttpServletRequest request, 
+    public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();

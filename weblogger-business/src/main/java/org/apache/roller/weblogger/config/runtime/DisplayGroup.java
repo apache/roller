@@ -33,34 +33,34 @@ import java.util.List;
  * @author Allen Gilliland
  */
 public class DisplayGroup {
-    
+
     private List propertyDefs = null;
     private String name = null;
     private String key = null;
-    
-    
+
+
     public DisplayGroup() {
         this.propertyDefs = new ArrayList();
     }
-    
+
     public DisplayGroup(List propdefs) {
         this.propertyDefs = propdefs;
     }
-    
-    
+
+
     public boolean addPropertyDef(PropertyDef prop) {
         return this.propertyDefs.add(prop);
     }
-    
+
     public boolean removePropertyDef(PropertyDef prop) {
         return this.propertyDefs.remove(prop);
     }
-    
+
 
     public String toString() {
         return name+","+key;
     }
-    
+
     public List getPropertyDefs() {
         return propertyDefs;
     }
@@ -84,6 +84,6 @@ public class DisplayGroup {
     public void setKey(String key) {
         this.key = key;
     }
-    
-    
+
+
 }

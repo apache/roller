@@ -40,31 +40,31 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Add a new bookmark to a folder.
  */
 public class BookmarkAdd extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(BookmarkAdd.class);
-    
+
     // the id of the folder we are adding the bookmark into
     private String folderId = null;
-    
+
     // the folder we are adding the bookmark into
     private WeblogBookmarkFolder folder = null;
-    
+
     // bean for managing form data
     private BookmarkBean bean = new BookmarkBean();
-    
-    
+
+
     public BookmarkAdd() {
         this.actionName = "bookmarkAdd";
         this.desiredMenu = "editor";
         this.pageTitle = "bookmarkForm.add.title";
     }
-    
-    
+
+
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }
-    
-    
+
+
     public void myPrepare() {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
@@ -75,67 +75,67 @@ public class BookmarkAdd extends UIAction {
             log.error("Error looking up folder", ex);
         }
     }
-    
-    
+
+
     @SkipValidation
     public String execute() {
-        
+
         if(getFolder() == null) {
             // TODO: i18n
             addError("Cannot add bookmark to null folder");
             return ERROR;
         }
-        
+
         return INPUT;
     }
 
-    
+
     public String save() {
-        
+
         if(getFolder() == null) {
             // TODO: i18n
             addError("Cannot add bookmark to null folder");
             return ERROR;
         }
-        
+
         // validation
         myValidate();
-        
+
         if(!hasActionErrors()) try {
-            
+
             WeblogBookmark newBookmark = new WeblogBookmark();
             newBookmark.setFolder(getFolder());
             getBean().copyTo(newBookmark);
-            
+
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             bmgr.saveBookmark(newBookmark);
             WebloggerFactory.getWeblogger().flush();
-            
+
             CacheManager.invalidate(newBookmark);
-            
+
             // TODO: i18n
             addMessage("bookmark added");
-            
+
             return SUCCESS;
-            
+
         } catch(Exception ex) {
             log.error("Error saving new bookmark", ex);
             // TODO: i18n
             addError("Error saving new bookmark");
         }
 
-        
+
         return INPUT;
     }
 
-    
+
     // TODO: validation
     public void myValidate() {
-        
+
         // name is required, max length, no html
-        
+
         // url is required, valid url
-        
+
         if (StringUtils.isNotEmpty(getBean().getUrl()) && !validURL(getBean().getUrl())) {
             addError("bookmarkForm.error.invalidURL", getBean().getUrl());
         }
@@ -146,7 +146,7 @@ public class BookmarkAdd extends UIAction {
             addError("bookmarkForm.error.invalidURL", getBean().getImage());
         }
     }
-    
+
     public boolean validURL(String url) {
         boolean valid = false;
         try {
@@ -155,8 +155,8 @@ public class BookmarkAdd extends UIAction {
         } catch (MalformedURLException intentionallyIgnored) {}
         return valid;
     }
-    
-    
+
+
     public String getFolderId() {
         return folderId;
     }
@@ -180,5 +180,5 @@ public class BookmarkAdd extends UIAction {
     public void setBean(BookmarkBean bean) {
         this.bean = bean;
     }
-    
+
 }

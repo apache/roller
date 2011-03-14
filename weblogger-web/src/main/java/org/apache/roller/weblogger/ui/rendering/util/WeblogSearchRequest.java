@@ -32,47 +32,47 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * Represents a request for a weblog preview.
  */
 public class WeblogSearchRequest extends WeblogRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogSearchRequest.class);
-    
+
     private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
-    
+
     // lightweight attributes
     private String query = null;
     private int pageNum = 0;
     private String weblogCategoryName = null;
-    
+
     // heavyweight attributes
     private WeblogCategory weblogCategory = null;
-    
-    
+
+
     public WeblogSearchRequest() {}
-    
-    
-    public WeblogSearchRequest(HttpServletRequest request) 
+
+
+    public WeblogSearchRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         String servlet = request.getServletPath();
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // was this request bound for the search servlet?
         if(servlet == null || !SEARCH_SERVLET.equals(servlet)) {
             throw new InvalidRequestException("not a weblog search request, "+
                     request.getRequestURL());
         }
-        
+
         if(pathInfo != null) {
             throw new InvalidRequestException("invalid path info, "+
                     request.getRequestURL());
         }
-        
-        
+
+
         /*
          * parse request parameters
          *
@@ -85,7 +85,7 @@ public class WeblogSearchRequest extends WeblogRequest {
                 request.getParameter("q").trim().length() > 0) {
             this.query = request.getParameter("q");
         }
-        
+
         if(request.getParameter("page") != null) {
             String pageInt = request.getParameter("page");
             try {
@@ -94,12 +94,12 @@ public class WeblogSearchRequest extends WeblogRequest {
                 // ignored, bad input
             }
         }
-        
+
         if(request.getParameter("cat") != null &&
                 request.getParameter("cat").trim().length() > 0) {
-            this.weblogCategoryName = 
+            this.weblogCategoryName =
                     URLUtilities.decode(request.getParameter("cat"));
-            
+
             // all categories must start with a /
             if(!this.weblogCategoryName.startsWith("/")) {
                 this.weblogCategoryName = "/"+this.weblogCategoryName;
@@ -132,7 +132,7 @@ public class WeblogSearchRequest extends WeblogRequest {
     }
 
     public WeblogCategory getWeblogCategory() {
-        
+
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -141,12 +141,12 @@ public class WeblogSearchRequest extends WeblogRequest {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);
             }
         }
-        
+
         return weblogCategory;
     }
 
     public void setWeblogCategory(WeblogCategory weblogCategory) {
         this.weblogCategory = weblogCategory;
     }
-    
+
 }

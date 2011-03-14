@@ -39,48 +39,48 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Action which handles editing for a weblog stylesheet override template.
  */
 public class StylesheetEdit extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(StylesheetEdit.class);
-    
+
     // the template we are working on
     private WeblogTemplate template = null;
-    
+
     // the contents of the stylesheet override
     private String contents = null;
-    
-    
+
+
     public StylesheetEdit() {
         this.actionName = "stylesheetEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "stylesheetEdit.title";
     }
-    
-    
+
+
     @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     @Override
     public void myPrepare() {
-        
+
         ThemeTemplate stylesheet = null;
         try {
             stylesheet = getActionWeblog().getTheme().getStylesheet();
         } catch (WebloggerException ex) {
             log.error("Error looking up stylesheet on weblog - "+getActionWeblog().getHandle(), ex);
         }
-        
+
         if(stylesheet != null) {
             log.debug("custom stylesheet path is - "+stylesheet.getLink());
             try {
                 setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
                         .getPageByLink(getActionWeblog(), stylesheet.getLink()));
-                
+
                 if(getTemplate() == null) {
                     log.debug("custom stylesheet not found, creating it");
-                    
+
                     // template doesn't exist yet, so create it
                     WeblogTemplate stylesheetTmpl = new WeblogTemplate();
                     stylesheetTmpl.setWebsite(getActionWeblog());
@@ -93,10 +93,10 @@ public class StylesheetEdit extends UIAction {
                     stylesheetTmpl.setNavbar(false);
                     stylesheetTmpl.setLastModified(new Date());
                     stylesheetTmpl.setTemplateLanguage(stylesheet.getTemplateLanguage());
-                    
+
                     WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheetTmpl);
                     WebloggerFactory.getWeblogger().flush();
-                    
+
                     setTemplate(stylesheetTmpl);
                 }
             } catch (WebloggerException ex) {
@@ -104,115 +104,115 @@ public class StylesheetEdit extends UIAction {
             }
         }
     }
-    
-    
+
+
     /**
      * Show stylesheet edit page.
      */
     public String execute() {
-        
+
         if(getTemplate() == null) {
             return ERROR;
         }
-        
+
         setContents(getTemplate().getContents());
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Save an existing stylesheet.
      */
     public String save() {
-        
+
         if(getTemplate() == null) {
             // TODO: i18n
             addError("Unable to locate stylesheet template");
             return ERROR;
         }
-        
+
         if(!hasActionErrors()) try {
-            
+
             WeblogTemplate stylesheet = getTemplate();
-            
+
             stylesheet.setLastModified(new Date());
             stylesheet.setContents(getContents());
-            
+
             // save template and flush
             WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheet);
             WebloggerFactory.getWeblogger().flush();
-            
+
             // notify caches
             CacheManager.invalidate(stylesheet);
-            
+
             // success message
             addMessage("stylesheetEdit.save.success", stylesheet.getName());
-            
+
         } catch (WebloggerException ex) {
             log.error("Error updating stylesheet template for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error saving template");
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Revert the stylesheet to its original state.
      */
     public String revert() {
-        
+
         if(getTemplate() == null) {
             // TODO: i18n
             addError("Unable to locate stylesheet template");
             return ERROR;
         }
-        
+
         // make sure we are still using a shared theme so that reverting is possible
         if(WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
             // TODO: i18n
             addError("stylesheetEdit.error.customTheme");
         }
-        
+
         if(!hasActionErrors()) try {
-            
+
             WeblogTemplate stylesheet = getTemplate();
-            
+
             // lookup the theme used by this weblog
             ThemeManager tmgr = WebloggerFactory.getWeblogger().getThemeManager();
             Theme theme = tmgr.getTheme(getActionWeblog().getEditorTheme());
-            
-            // lookup 
+
+            // lookup
             stylesheet.setLastModified(new Date());
             stylesheet.setContents(theme.getStylesheet().getContents());
-            
+
             // save template and flush
             WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheet);
             WebloggerFactory.getWeblogger().flush();
-            
+
             // notify caches
             CacheManager.invalidate(stylesheet);
-            
+
             // success message
             addMessage("stylesheetEdit.revert.success", stylesheet.getName());
-            
+
         } catch (WebloggerException ex) {
             log.error("Error updating stylesheet template for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error saving template");
         }
-        
+
         return execute();
     }
-    
-    
+
+
     public boolean isCustomTheme() {
         return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
     }
-    
-    
+
+
     public WeblogTemplate getTemplate() {
         return template;
     }
@@ -228,5 +228,5 @@ public class StylesheetEdit extends UIAction {
     public void setContents(String contents) {
         this.contents = contents;
     }
-    
+
 }

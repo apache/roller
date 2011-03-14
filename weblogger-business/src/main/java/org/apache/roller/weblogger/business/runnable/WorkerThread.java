@@ -28,13 +28,13 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * A generic worker thread that knows how execute a Job.
  */
 public class WorkerThread extends Thread {
-    
+
     private static Log log = LogFactory.getLog(WorkerThread.class);
-    
+
     String id = null;
     Job job = null;
-    
-    
+
+
     /**
      * A simple worker.
      */
@@ -42,8 +42,8 @@ public class WorkerThread extends Thread {
         super(id);
         this.id = id;
     }
-    
-    
+
+
     /**
      * Start off with a job to do.
      */
@@ -52,15 +52,15 @@ public class WorkerThread extends Thread {
         this.id = id;
         this.job = job;
     }
-    
-    
+
+
     /**
      * Thread execution.
      *
      * We just execute the job we were given if it's non-null.
      */
     public void run() {
-        
+
         // we only run once
         if (this.job != null) {
             // process job
@@ -72,23 +72,23 @@ public class WorkerThread extends Thread {
                         "Worker = "+this.id+", "+
                         "Job = "+this.job.getClass().getName(), t);
             }
-            
+
             // since this is a thread we have to make sure that we tidy up ourselves
             Weblogger roller = WebloggerFactory.getWeblogger();
             roller.release();
         }
-        
+
     }
-    
-    
+
+
     /**
      * Set the job for this worker.
      */
     public void setJob(Job newJob) {
         log.debug("NEW JOB: "+newJob.getClass().getName());
-        
+
         // set the job
         this.job = newJob;
     }
-    
+
 }

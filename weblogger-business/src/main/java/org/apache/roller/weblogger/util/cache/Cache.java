@@ -26,40 +26,40 @@ import java.util.Set;
  * Base interface representing a cache in Roller.
  */
 public interface Cache {
-    
+
     /**
      * a unique identifier for the cache.
      */
     public String getId();
-    
-    
+
+
     /**
      * put an item in the cache.
      */
     public void put(String key, Object value);
-    
-    
+
+
     /**
      * get an item from the cache.
      */
     public Object get(String key);
-    
-    
+
+
     /**
      * remove an item from the cache.
      */
     public void remove(String key);
-    
-    
+
+
     /**
      * clear the entire cache.
      */
     public void clear();
-    
-    
+
+
     /**
      * get cache stats.
      */
     public Map getStats();
-    
+
 }

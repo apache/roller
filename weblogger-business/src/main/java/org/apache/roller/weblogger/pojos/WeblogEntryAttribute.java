@@ -27,55 +27,55 @@ import org.apache.roller.util.UUIDGenerator;
  * Weblog entry attribute.
  */
 public class WeblogEntryAttribute implements Comparable {
-    
+
     private String id = UUIDGenerator.generateUUID();
     private WeblogEntry entry;
     private String name;
     private String value;
-    
-    
+
+
     public WeblogEntryAttribute() {
     }
-    
-    
+
+
     public String getId() {
         return this.id;
     }
-    
-    public void setId(String id) {    
+
+    public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+
     public WeblogEntry getEntry() {
         return entry;
     }
-    
+
     public void setEntry(WeblogEntry entry) {
         this.entry = entry;
     }
-    
-    
+
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
-    
+
+
     public String getValue() {
         return value;
     }
-    
+
     public void setValue(String value) {
         this.value = value;
     }
-    
-    
+
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
@@ -85,7 +85,7 @@ public class WeblogEntryAttribute implements Comparable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof WeblogEntryAttribute != true) return false;
@@ -95,17 +95,17 @@ public class WeblogEntryAttribute implements Comparable {
         .append(getEntry(), o.getEntry())
         .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())
         .append(getEntry())
         .toHashCode();
     }
-    
+
     public int compareTo(Object o) {
         WeblogEntryAttribute att = (WeblogEntryAttribute)o;
         return getName().compareTo(att.getName());
     }
-    
+
 }

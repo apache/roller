@@ -36,22 +36,22 @@ import org.apache.roller.ui.rendering.RenderingException;
  */
 public class BSFRenderer implements Renderer {
     private static Log log = LogFactory.getLog(BSFRenderer.class);
-    private Template template = null;    
+    private Template template = null;
     static {
         // Javascript, other BSF langs are registered by default
-        // and Groovy self-registers, so we need only to register JRuby 
-        BSFManager.registerScriptingEngine("jruby", 
-            "org.jruby.javasupport.bsf.JRubyEngine", new String[] {"rb"});        
+        // and Groovy self-registers, so we need only to register JRuby
+        BSFManager.registerScriptingEngine("jruby",
+            "org.jruby.javasupport.bsf.JRubyEngine", new String[] {"rb"});
     }
-    
+
     public BSFRenderer(Template template) {
         this.template = template;
-    }    
+    }
     public void render(Map model, Writer writer) throws RenderingException {
         try {
             long startTime = System.currentTimeMillis();
-            
-            BSFManager manager = new BSFManager();            
+
+            BSFManager manager = new BSFManager();
             for (Iterator it = model.keySet().iterator(); it.hasNext();) {
                 String key = (String)it.next();
                 manager.declareBean(key, model.get(key), model.get(key).getClass());
@@ -59,21 +59,21 @@ public class BSFRenderer implements Renderer {
             }
             manager.declareBean("out", writer, Writer.class);
             manager.registerBean("out", writer);
-            manager.exec(template.getTemplateLanguage(), 
+            manager.exec(template.getTemplateLanguage(),
                     "(java)", 1, 1, template.getContents());
 
             long endTime = System.currentTimeMillis();
             long renderTime = (endTime - startTime)/1000;
             log.debug("Rendered ["+template.getId()+"] with language ["
-                    +template.getTemplateLanguage()+"] in "+renderTime+" secs"); 
-            
+                    +template.getTemplateLanguage()+"] in "+renderTime+" secs");
+
         } catch (BSFException ex) {
             log.debug("Executing BSF script", ex);
             renderThrowable(ex, writer);
         }
         finally {}
     }
-    
+
     private void renderThrowable(BSFException ex, Writer writer) {
         PrintWriter pw = new PrintWriter(writer);
         if (ex.getTargetException() != null) {

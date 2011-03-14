@@ -30,7 +30,7 @@ import java.util.Date;
  * an object.
  */
 public class StaticTemplate implements Template, Serializable {
-    
+
     private String id = null;
     private String name = null;
     private String description = null;
@@ -40,10 +40,10 @@ public class StaticTemplate implements Template, Serializable {
     private String templateLanguage = null;
     private boolean hidden = false;
     private boolean navbar = false;
-    
-    
+
+
     public StaticTemplate() {}
-    
+
     public StaticTemplate(String id, String contents, String lang) {
         this.id = id;
         this.name = id;
@@ -53,11 +53,11 @@ public class StaticTemplate implements Template, Serializable {
         this.templateLanguage = lang;
     }
 
-    
+
     public Template getDecorator() {
         return null;
     }
-    
+
     public String getId() {
         return id;
     }
@@ -125,10 +125,10 @@ public class StaticTemplate implements Template, Serializable {
     public void setNavbar(boolean navbar) {
         this.navbar = navbar;
     }
-    
+
     public boolean isNavbar() {
-        return navbar; 
+        return navbar;
     }
-    
-    
+
+
 }

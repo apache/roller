@@ -27,47 +27,47 @@ import java.util.List;
  * Each ConfigDef may contain 0 or more DisplayGroups.
  */
 public class ConfigDef {
-    
+
     private List displayGroups = null;
     private String name = null;
-    
-    
+
+
     public ConfigDef() {
         this.displayGroups = new ArrayList();
     }
-    
+
     public ConfigDef(List displaygroups) {
         this.displayGroups = displaygroups;
     }
-    
-    
+
+
     public boolean addDisplayGroup(DisplayGroup group) {
         return this.displayGroups.add(group);
     }
-    
+
     public boolean removeDisplayGroup(DisplayGroup group) {
         return this.displayGroups.remove(group);
     }
-    
-    
+
+
     public String toString() {
         return name;
     }
-    
+
     public List getDisplayGroups() {
         return displayGroups;
     }
-    
+
     public void setDisplayGroups(List displayGroups) {
         this.displayGroups = displayGroups;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
 }

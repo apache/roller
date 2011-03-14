@@ -42,10 +42,10 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
  * like entries in DRAFT mode.
  */
 public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
-    
+
     private static Log log = LogFactory.getLog(WeblogEntriesPreviewPager.class);
-    
-    
+
+
     public WeblogEntriesPreviewPager(
             URLStrategy        strat,
             Weblog             weblog,
@@ -56,27 +56,27 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
             String             catPath,
             List               tags,
             int                page) {
-        
+
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
     }
-    
-    
+
+
     public Map getEntries() {
         if (entries == null) try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             if (currEntry != null) {
-                
+
                 // clone the entry since we don't want to work with the real pojo
                 WeblogEntry tmpEntry = new WeblogEntry();
                 tmpEntry.setData(currEntry);
-                
+
                 // set the pubtime to the current time if it is unset
                 if(tmpEntry.getPubTime() == null) {
                     tmpEntry.setPubTime(new Timestamp(System.currentTimeMillis()));
                 }
-                
+
                 // store the entry in the collection
                 entries = new TreeMap();
                 entries.put(tmpEntry.getPubTime(),Collections.singletonList(WeblogEntryWrapper.wrap(tmpEntry, urlStrategy)));
@@ -86,8 +86,8 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
         }
 
 
-        
+
         return entries;
     }
-    
+
 }

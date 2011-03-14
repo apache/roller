@@ -45,16 +45,16 @@ import org.jdom.input.SAXBuilder;
  */
 abstract class Handler {
     protected static final String ENDPOINT = "/rap";
-    
+
     static class URI {
         private static Pattern PATHINFO_PATTERN = Pattern.compile("^/(users|weblogs|members)(?:/(.*))?$");
-        
+
         private String type;
         private String entryId;
-        
+
         public URI(HttpServletRequest request) throws BadRequestException {
             String pi = request.getPathInfo();
-            
+
             if (pi == null || pi.length() == 0) {
                 type = null;
                 entryId = null;
@@ -63,51 +63,51 @@ abstract class Handler {
                 if (!m.matches()) {
                     throw new BadRequestException("ERROR: Invalid path info: " + pi);
                 }
-                
+
                 type = m.group(1);
                 entryId = m.group(2);
             }
         }
-        
+
         public String getType() {
             return type;
         }
-        
+
         public String getEntryId() {
             return entryId;
         }
-        
+
         public boolean isIntrospection() {
             return getEntryId() == null && type == null;
         }
-        
+
         public boolean isCollection() {
             return getEntryId() == null && type != null;
         }
-        
+
         public boolean isEntry() {
             return getEntryId() != null && type != null;
         }
     }
-    
+
     protected static final Log logger = LogFactory.getFactory().getInstance(Handler.class);
-    
+
     private HttpServletRequest request;
     private Weblogger roller;
     private String userName;
     private URI uri;
     private String urlPrefix;
-    
+
     /** Get a Handler object implementation based on the given request. */
     public static Handler getHandler(HttpServletRequest req) throws HandlerException {
         boolean enabled = WebloggerConfig.getBooleanProperty("webservices.adminprotocol.enabled");
         if (!enabled) {
             throw new NotAllowedException("ERROR: Admin protocol not enabled");
         }
-        
+
         URI uri = new URI(req);
         Handler handler;
-        
+
         if (uri.isIntrospection()) {
             handler = new IntrospectionHandler(req);
         } else if (uri.isCollection() || uri.isEntry()) {
@@ -124,24 +124,24 @@ abstract class Handler {
         } else {
             throw new BadRequestException("ERROR: Unknown URI type");
         }
-        
+
         return handler;
     }
-    
+
     public Handler(HttpServletRequest request) throws HandlerException {
         this.request = request;
         this.uri = new URI(request);
         this.roller = WebloggerFactory.getWeblogger();
         //TODO: is this the right thing to do? hardcode roller-services?
         this.urlPrefix = WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services" + ENDPOINT;
-        
+
         // TODO: decide what to do about authentication, is WSSE going to fly?
         //Authenticator auth = new WSSEAuthenticator(request);
         Authenticator auth = new BasicAuthenticator(request);
         auth.authenticate();
         setUserName(auth.getUserName());
     }
-    
+
     /**
      * Get the authenticated user name.
      * If this method returns null, then authentication has failed.
@@ -149,11 +149,11 @@ abstract class Handler {
     public String getUserName() {
         return userName;
     }
-    
+
     private void setUserName(String userName) {
         this.userName = userName;
     }
-    
+
     /** Process an HTTP GET request. */
     public abstract EntrySet processGet() throws HandlerException;
     /** Process an HTTP POST request. */
@@ -162,41 +162,41 @@ abstract class Handler {
     public abstract EntrySet processPut(Reader r) throws HandlerException;
     /** Process an HTTP DELETE request. */
     public abstract EntrySet processDelete() throws HandlerException;
-    
+
     protected URI getUri() {
         return uri;
     }
-    
+
     protected HttpServletRequest getRequest() {
         return request;
     }
-    
+
     protected Weblogger getRoller() {
         return roller;
     }
-    
+
     protected String getUrlPrefix() {
         return urlPrefix;
     }
-    
+
     protected abstract EntrySet getEntrySet(Document d) throws UnexpectedRootElementException;
-    
+
     protected EntrySet getEntrySet(Reader r) throws HandlerException {
         try {
             SAXBuilder builder = new SAXBuilder();
             Document d = builder.build(r);
             EntrySet c = getEntrySet(d);
-            
+
             return c;
         } catch (UnexpectedRootElementException ure) {
-            throw new BadRequestException("ERROR: Failed to parse content", ure);            
+            throw new BadRequestException("ERROR: Failed to parse content", ure);
         } catch (JDOMException jde) {
             throw new BadRequestException("ERROR: Failed to parse content", jde);
         } catch (IOException ioe) {
             throw new InternalException("ERROR: Failed to parse content", ioe);
         }
     }
-    
+
     protected Weblog getWebsiteData(String handle) throws NotFoundException, InternalException {
         try {
             Weblog wd = getRoller().getWeblogManager().getWeblogByHandle(handle, Boolean.TRUE);
@@ -206,7 +206,7 @@ abstract class Handler {
             if (wd == null) {
                 throw new NotFoundException("ERROR: Unknown weblog handle: " + handle);
             }
-            
+
             return wd;
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get weblog: " + handle, re);
@@ -223,12 +223,12 @@ abstract class Handler {
             if (ud == null) {
                 throw new NotFoundException("ERROR: Unknown user: " + name);
             }
-            
+
             return ud;
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get user: " + name, re);
         }
     }
-    
+
 }
 

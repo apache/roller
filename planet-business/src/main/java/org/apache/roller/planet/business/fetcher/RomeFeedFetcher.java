@@ -50,37 +50,37 @@ import org.apache.roller.planet.pojos.Subscription;
  * A FeedFetcher based on the ROME RSS/Atom feed parser (http://rome.dev.java.net).
  */
 public class RomeFeedFetcher implements org.apache.roller.planet.business.fetcher.FeedFetcher {
-    
+
     private static Log log = LogFactory.getLog(RomeFeedFetcher.class);
-    
-    
+
+
     public RomeFeedFetcher() {
         // no-op
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
-    public Subscription fetchSubscription(String feedURL) 
+    public Subscription fetchSubscription(String feedURL)
             throws FetcherException {
         return fetchSubscription(feedURL, null);
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
-    public Subscription fetchSubscription(String feedURL, Date lastModified) 
+    public Subscription fetchSubscription(String feedURL, Date lastModified)
             throws FetcherException {
-        
+
         if(feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
         }
-        
+
         // setup Rome feed fetcher
         FeedFetcher feedFetcher = getRomeFetcher();
-        
+
         // fetch the feed
         log.debug("Fetching feed: "+feedURL);
         SyndFeed feed;
@@ -89,9 +89,9 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         } catch (Exception ex) {
             throw new FetcherException("Error fetching subscription - "+feedURL, ex);
         }
-        
+
         log.debug("Feed pulled, extracting data into Subscription");
-        
+
         // build planet subscription from fetched feed
         Subscription newSub = new Subscription();
         newSub.setFeedURL(feedURL);
@@ -99,8 +99,8 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         newSub.setTitle(feed.getTitle());
         newSub.setAuthor(feed.getAuthor());
         newSub.setLastUpdated(feed.getPublishedDate());
-        
-        
+
+
         // normalize any data that couldn't be properly extracted
         if(newSub.getSiteURL() == null) {
             // set the site url to the feed url then
@@ -125,18 +125,18 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
                 // should never happen since we check this above
             }
         }
-        
+
         // check if feed is unchanged and bail now if so
         if(lastModified != null && newSub.getLastUpdated() != null &&
                 !newSub.getLastUpdated().after(lastModified)) {
             return null;
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("Subscription is: "+newSub.toString());
         }
-        
-        
+
+
         // some kludge to deal with feeds w/ no entry dates
         // we assign arbitrary dates chronologically by entry starting either
         // from the current time or the last update time of the subscription
@@ -147,43 +147,43 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
             cal.setTime(new Date());
             cal.add(Calendar.DATE, -1);
         }
-        
+
         // add entries
         List<SyndEntry> feedEntries = feed.getEntries();
         for( SyndEntry feedEntry : feedEntries ) {
             SubscriptionEntry newEntry = buildEntry(feedEntry);
-            
+
             // some kludge to handle feeds with no entry dates
             if (newEntry.getPubTime() == null) {
                 log.debug("No published date, assigning fake date for "+feedURL);
                 newEntry.setPubTime(new Timestamp(cal.getTimeInMillis()));
                 cal.add(Calendar.DATE, -1);
             }
-            
+
             if(newEntry != null) {
                 newSub.addEntry(newEntry);
             }
         }
-        
+
         log.debug(feedEntries.size()+" entries included");
-        
+
         return newSub;
     }
-    
-    
+
+
     // build a SubscriptionEntry from Rome SyndEntry and SyndFeed
     private SubscriptionEntry buildEntry(SyndEntry romeEntry) {
-        
+
         // if we don't have a permalink then we can't continue
         if(romeEntry.getLink() == null) {
             return null;
         }
-        
+
         SubscriptionEntry newEntry = new SubscriptionEntry();
-        
+
         newEntry.setTitle(romeEntry.getTitle());
         newEntry.setPermalink(romeEntry.getLink());
-        
+
         // Play some games to get the author
         DCModule entrydc = (DCModule)romeEntry.getModule(DCModule.URI);
         if (romeEntry.getAuthor() != null) {
@@ -191,13 +191,13 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         } else {
             newEntry.setAuthor(entrydc.getCreator()); // use <dc:creator>
         }
-        
+
         // Play some games to get the updated date
         if (romeEntry.getUpdatedDate() != null) {
             newEntry.setUpdateTime(new Timestamp(romeEntry.getUpdatedDate().getTime()));
         }
         // TODO: should we set a default update time here?
-        
+
         // And more games getting publish date
         if (romeEntry.getPublishedDate() != null) {
             newEntry.setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime())); // use <pubDate>
@@ -206,7 +206,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         } else {
             newEntry.setPubTime(newEntry.getUpdateTime());
         }
-        
+
         // get content and unescape if it is 'text/plain'
         if (romeEntry.getContents().size() > 0) {
             SyndContent content= (SyndContent)romeEntry.getContents().get(0);
@@ -216,14 +216,14 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
                 newEntry.setText(content.getValue());
             }
         }
-        
+
         // no content, try summary
         if (newEntry.getText() == null || newEntry.getText().trim().length() == 0) {
             if (romeEntry.getDescription() != null) {
                 newEntry.setText(romeEntry.getDescription().getValue());
             }
         }
-        
+
         // copy categories
         if (romeEntry.getCategories().size() > 0) {
             List list = new ArrayList();
@@ -234,32 +234,32 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
             }
             newEntry.setCategoriesString(list);
         }
-        
+
         return newEntry;
     }
-    
-    
+
+
     // get a feed fetcher cache, if possible
     private FeedFetcherCache getRomeFetcherCache() {
-        
+
         String cacheDirPath = PlanetConfig.getProperty("cache.dir");
-        
+
         // can't continue without cache dir
         if (cacheDirPath == null) {
             log.warn("Planet cache directory not set, feeds cannot be cached.");
             return null;
         }
-        
+
         // allow ${user.home} in cache dir property
         String cacheDirName = cacheDirPath.replaceFirst(
                 "\\$\\{user.home}",System.getProperty("user.home"));
-        
+
         // allow ${catalina.home} in cache dir property
         if (System.getProperty("catalina.home") != null) {
             cacheDirName = cacheDirName.replaceFirst(
                     "\\$\\{catalina.home}",System.getProperty("catalina.home"));
         }
-        
+
         // create cache  dir if it does not exist
         File cacheDir = null;
         try {
@@ -269,34 +269,34 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
             log.error("Unable to create planet cache directory: " + cacheDir.getPath(), e);
             return null;
         }
-        
+
         // abort if cache dir is not writable
         if (!cacheDir.canWrite()) {
             log.error("Planet cache directory is not writable: " + cacheDir.getPath());
             return null;
         }
-        
+
         return new DiskFeedInfoCache(cacheDirName);
     }
 
 
     // get a feed fetcher
     private FeedFetcher getRomeFetcher() {
-        
+
         FeedFetcherCache feedCache = getRomeFetcherCache();
-        
+
         FeedFetcher feedFetcher = null;
         if(feedCache != null) {
             feedFetcher = new HttpURLFeedFetcher(feedCache);
         } else {
             feedFetcher = new HttpURLFeedFetcher();
         }
-        
+
         // set options
         feedFetcher.setUsingDeltaEncoding(false);
         feedFetcher.setUserAgent("RollerPlanetAggregator");
-        
+
         return feedFetcher;
     }
-    
+
 }

@@ -27,16 +27,16 @@ import org.apache.roller.planet.PlanetException;
  * Exception generated from FeedFetcher.
  */
 public class FetcherException extends PlanetException {
-    
+
     public FetcherException(String msg) {
         super(msg);
     }
-    
+
     public FetcherException(String msg, Throwable t) {
         super(msg, t);
     }
-    
-    
+
+
     /**
      * Print stack trace for exception and for root cause exception if htere is one.
      * @see java.lang.Throwable#printStackTrace()
@@ -51,8 +51,8 @@ public class FetcherException extends PlanetException {
             getRootCause().printStackTrace();
         }
     }
-    
-    
+
+
     /**
      * Print stack trace for exception and for root cause exception if htere is one.
      * @param s Stream to print to.
@@ -67,8 +67,8 @@ public class FetcherException extends PlanetException {
             getRootCause().printStackTrace(s);
         }
     }
-    
-    
+
+
     /**
      * Print stack trace for exception and for root cause exception if htere is one.
      * @param s Writer to write to.
@@ -83,5 +83,5 @@ public class FetcherException extends PlanetException {
             getRootCause().printStackTrace(s);
         }
     }
-    
+
 }

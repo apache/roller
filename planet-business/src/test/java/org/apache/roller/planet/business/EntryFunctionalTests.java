@@ -31,9 +31,9 @@ import org.apache.roller.planet.pojos.Subscription;
  * Test planet Entry functionality.
  */
 public class EntryFunctionalTests extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(EntryFunctionalTests.class);
-    
+
     private Planet testPlanet = null;
     private PlanetGroup testGroup1 = null;
     private Subscription testSub1 = null;
@@ -41,14 +41,14 @@ public class EntryFunctionalTests extends TestCase {
     private SubscriptionEntry testEntry1 = null;
     private SubscriptionEntry testEntry2 = null;
     private SubscriptionEntry testEntry3 = null;
-    
-    
+
+
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupPlanet();
 
         log.info("ENTERED");
-        
+
         testPlanet = TestUtils.setupPlanet("entryFuncTestPlanet");
         testGroup1 = TestUtils.setupGroup(testPlanet, "entryFuncTestGroup");
         testSub1 = TestUtils.setupSubscription("entryFuncTestSub1");
@@ -56,73 +56,73 @@ public class EntryFunctionalTests extends TestCase {
         testEntry1 = TestUtils.setupEntry(testSub1, "entryFuncTestEntry1");
         testEntry2 = TestUtils.setupEntry(testSub2, "entryFuncTestEntry2");
         testEntry3 = TestUtils.setupEntry(testSub2, "entryFuncTestEntry3");
-        
+
         // now associate both subscriptions with the test group
         testGroup1.getSubscriptions().add(testSub1);
         testSub1.getGroups().add(testGroup1);
-        
+
         testGroup1.getSubscriptions().add(testSub2);
         testSub2.getGroups().add(testGroup1);
-        
+
         PlanetFactory.getPlanet().getPlanetManager().saveGroup(testGroup1);
         PlanetFactory.getPlanet().flush();
-        
+
         log.info("EXITED");
     }
-    
-    
+
+
     protected void tearDown() throws Exception {
         log.info("ENTERED");
-        
+
         TestUtils.teardownSubscription(testSub1.getId());
         TestUtils.teardownSubscription(testSub2.getId());
         TestUtils.teardownGroup(testGroup1.getId());
         TestUtils.teardownPlanet(testPlanet.getId());
-        
+
         log.info("EXITED");
     }
-    
-    
+
+
     public void testEntryLookups() throws Exception {
-        
+
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        
+
         // by id
         SubscriptionEntry entry = mgr.getEntryById(testEntry1.getId());
         assertNotNull(entry);
         assertEquals("entryFuncTestEntry1", entry.getPermalink());
-        
+
         // by subscription
         Subscription sub = mgr.getSubscriptionById(testSub2.getId());
         assertEquals(2, sub.getEntries().size());
-        
+
         // by subscription through manager
         assertEquals(2, mgr.getEntries(sub, 0, 10).size());
-        
+
         // by group
         PlanetGroup group = mgr.getGroupById(testGroup1.getId());
         assertEquals(3, mgr.getEntries(group, 0, 10).size());
-        
+
         // by group with timeframe constraint
         assertEquals(0, mgr.getEntries(group, new Date(), null, 0, 10).size());
     }
-    
-    
+
+
     public void testDeleteEntries() throws Exception {
-        
+
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(testSub2.getId());
-        
+
         // make sure entries are there
         assertEquals(2, sub.getEntries().size());
-        
+
         // purge entries
         mgr.deleteEntries(sub);
         TestUtils.endSession(true);
-        
+
         // verify
         sub = mgr.getSubscriptionById(testSub2.getId());
         assertEquals(0, sub.getEntries().size());
     }
-    
+
 }

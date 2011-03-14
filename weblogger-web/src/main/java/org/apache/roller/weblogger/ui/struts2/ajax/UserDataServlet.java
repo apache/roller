@@ -46,13 +46,13 @@ import org.apache.roller.weblogger.pojos.User;
  *     usernameN, emailaddressN <br/>
  */
 public class UserDataServlet extends HttpServlet {
-    
+
     private final int MAX_LENGTH = 50;
-    
-    public void doGet(HttpServletRequest request, 
+
+    public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String startsWith = request.getParameter("startsWith");
         Boolean enabledOnly = null;
         int offset = 0;
@@ -63,7 +63,7 @@ public class UserDataServlet extends HttpServlet {
         } catch (Throwable ignored) {}
         try { length = Integer.parseInt(request.getParameter("length"));
         } catch (Throwable ignored) {}
-        
+
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             UserManager umgr = roller.getUserManager();
@@ -81,5 +81,5 @@ public class UserDataServlet extends HttpServlet {
             throw new ServletException(e.getMessage());
         }
     }
-    
+
 }

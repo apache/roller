@@ -126,7 +126,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
 
     /**
      * Initialize the plugin instance.   This sets up the configurable properties and default topic site.
-     * 
+     *
      * @param rreq Plugins may need to access RollerRequest.
      * @param ctx  Plugins may place objects into the Velocity Context.
      * @see PagWeblogEntryPluginit(org.apache.roller.weblogger.presentation.RollerRequest, org.apache.velocity.context.Context)
@@ -239,7 +239,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
 
         return result.toString();
     }
-    
+
 
     /**
      * Returns the human-friendly name of this Plugin. This is what users will see.
@@ -454,5 +454,5 @@ public class TopicTagPlugin implements WeblogEntryPlugin
     {
         this.userBookmarks = userBookmarks;
     }
-    
+
 }

@@ -26,21 +26,21 @@ import java.util.List;
  * A parsed "tab" from an xml defined menu config.
  */
 public class ParsedTab {
-    
+
     private String name = null;
     private List<String> weblogPermissionActions = null;
     private List<String> globalPermissionActions = null;
     private String enabledProperty = null;
     private String disabledProperty = null;
-    
+
     private List tabItems = new ArrayList();
-    
-    
+
+
     public void addItem(ParsedTabItem item) {
         this.tabItems.add(item);
     }
-    
-    
+
+
     public String getName() {
         return name;
     }
@@ -88,5 +88,5 @@ public class ParsedTab {
     public void setDisabledProperty(String disabledProperty) {
         this.disabledProperty = disabledProperty;
     }
-    
+
 }

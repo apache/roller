@@ -34,15 +34,15 @@ import javax.servlet.http.HttpServletRequest;
  * needed.
  */
 public abstract class ParsedRequest {
-    
+
     HttpServletRequest request = null;
-    
+
     private String authenticUser = null;
-    
-    
+
+
     ParsedRequest() {}
-    
-    
+
+
     /**
      * Parse the given http request and extract any information we can.
      *
@@ -50,31 +50,31 @@ public abstract class ParsedRequest {
      * relevant to all requests to Roller.
      */
     public ParsedRequest(HttpServletRequest request) throws InvalidRequestException {
-        
+
         // keep a reference to the original request
         this.request = request;
-        
+
         // login status
         java.security.Principal prince = request.getUserPrincipal();
         if(prince != null) {
             this.authenticUser = prince.getName();
         }
-        
+
     }
-    
-    
+
+
     public String getAuthenticUser() {
         return this.authenticUser;
     }
-    
-    
+
+
     public void setAuthenticUser(String authenticUser) {
         this.authenticUser = authenticUser;
     }
-    
-    
+
+
     public boolean isLoggedIn() {
         return (this.authenticUser != null);
     }
-    
+
 }

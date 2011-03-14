@@ -60,16 +60,16 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 public class SearchResultsFeedModel implements Model {
 
     private static Log log = LogFactory.getLog(SearchResultsFeedModel.class);
-    
+
     private WeblogFeedRequest feedRequest = null;
     private URLStrategy urlStrategy = null;
     private Weblog weblog = null;
-        
+
     // the pager used by the 3.0+ rendering system
     private SearchResultsFeedPager pager = null;
-    
+
     private List results = new LinkedList();
-    
+
     private Set categories = new TreeSet();
 
     private boolean websiteSpecificSearch = true;
@@ -77,7 +77,7 @@ public class SearchResultsFeedModel implements Model {
     private int hits = 0;
     private int offset = 0;
     private int limit = 0;
-    
+
     private int entryCount = 0;
 
 
@@ -85,127 +85,127 @@ public class SearchResultsFeedModel implements Model {
         return "model";
     }
 
-    
+
     public void init(Map initData) throws WebloggerException {
-        
+
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }
-        
+
         if(weblogRequest instanceof WeblogFeedRequest) {
             this.feedRequest = (WeblogFeedRequest) weblogRequest;
         } else {
             throw new WebloggerException("weblogRequest is not a WeblogFeedRequest."+
                     "  FeedModel only supports feed requests.");
         }
-        
+
         // look for url strategy
         urlStrategy = (URLStrategy) initData.get("urlStrategy");
         if(urlStrategy == null) {
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
-        
+
         // extract weblog object
         weblog = feedRequest.getWeblog();
-        
-        String  pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
+
+        String  pagerUrl = urlStrategy.getWeblogFeedURL(weblog,
                 feedRequest.getLocale(), feedRequest.getType(),
                 feedRequest.getFormat(), null, null, /* cat and term are null but added to the url in the pager */
                 null, false, true);
-        
+
         // if there is no query, then we are done
         if(feedRequest.getTerm() == null) {
             pager = new SearchResultsFeedPager(urlStrategy, pagerUrl, feedRequest.getPage(),
                     feedRequest, results, false);
             return;
         }
-        
+
         this.entryCount = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
-        
+
         // setup the search
         IndexManager indexMgr = WebloggerFactory.getWeblogger().getIndexManager();
-        
+
         SearchOperation search = new SearchOperation(indexMgr);
         search.setTerm(feedRequest.getTerm());
-        
+
         if(WebloggerRuntimeConfig.isSiteWideWeblog(feedRequest.getWeblogHandle())) {
             this.websiteSpecificSearch  = false;
         } else {
             search.setWebsiteHandle(feedRequest.getWeblogHandle());
         }
-        
+
         if(StringUtils.isNotEmpty(feedRequest.getWeblogCategoryName())) {
             search.setCategory(feedRequest.getWeblogCategoryName());
         }
-        
+
         // execute search
         indexMgr.executeIndexOperationNow(search);
-        
+
         if (search.getResultsCount() > -1) {
             Hits hits = search.getResults();
             this.hits = search.getResultsCount();
-            
+
             // Convert the Hits into WeblogEntryData instances.
             convertHitsToEntries(hits);
         }
-        
+
         // search completed, setup pager based on results
         pager = new SearchResultsFeedPager(urlStrategy, pagerUrl, feedRequest.getPage(),
                 feedRequest, results, (hits > (offset+limit)));
     }
-    
+
     public Pager getSearchResultsPager() {
         return pager;
     }
-    
+
     private void convertHitsToEntries(Hits hits) throws WebloggerException {
-        
+
         // determine offset
         this.offset = feedRequest.getPage() * this.entryCount;
         if(this.offset >= hits.length()) {
             this.offset = 0;
         }
-        
+
         // determine limit
         this.limit = this.entryCount;
         if(this.offset + this.limit > hits.length()) {
             this.limit = hits.length() - this.offset;
         }
-        
+
         try {
             TreeSet categories = new TreeSet();
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-            
+
             WeblogEntry entry = null;
             Document doc = null;
             String handle = null;
             Timestamp now = new Timestamp(new Date().getTime());
             for(int i = offset; i < offset+limit; i++) {
-                
+
                 entry = null; // reset for each iteration
-                
+
                 doc = hits.doc(i);
                 handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
-                
+
                 if(websiteSpecificSearch &&
                         handle.equals(feedRequest.getWeblogHandle())) {
-                    
+
                     entry = weblogMgr.getWeblogEntry(
                             doc.getField(FieldConstants.ID).stringValue());
                 } else {
-                    
+
                     entry = weblogMgr.getWeblogEntry(
                             doc.getField(FieldConstants.ID).stringValue());
-                    
+
                     if (doc.getField(FieldConstants.CATEGORY) != null) {
                         categories.add(
                                 doc.getField(FieldConstants.CATEGORY).stringValue());
                     }
                 }
-                
+
                 // maybe null if search result returned inactive user
                 // or entry's user is not the requested user.
                 // but don't return future posts
@@ -213,7 +213,7 @@ public class SearchResultsFeedModel implements Model {
                     results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
                 }
             }
-            
+
             if(categories.size() > 0) {
                 this.categories = categories;
             }
@@ -221,14 +221,14 @@ public class SearchResultsFeedModel implements Model {
             throw new WebloggerException(e);
         }
     }
-    
+
     /**
      * Get weblog being displayed.
      */
     public WeblogWrapper getWeblog() {
         return WeblogWrapper.wrap(weblog, urlStrategy);
     }
-    
+
     public String getTerm() {
         return (feedRequest.getTerm() == null) ? "" : feedRequest.getTerm();
     }
@@ -240,7 +240,7 @@ public class SearchResultsFeedModel implements Model {
     public int getOffset() {
         return offset;
     }
-    
+
     public int getPage() {
         return feedRequest.getPage();
     }
@@ -259,16 +259,16 @@ public class SearchResultsFeedModel implements Model {
 
     public boolean isWebsiteSpecificSearch() {
         return websiteSpecificSearch;
-    }   
-    
+    }
+
     public String getCategoryPath() {
         return feedRequest.getWeblogCategoryName();
     }
-    
+
     public WeblogCategoryWrapper getWeblogCategory() {
         if(feedRequest.getWeblogCategory() != null) {
             return WeblogCategoryWrapper.wrap(feedRequest.getWeblogCategory(), urlStrategy);
         }
         return null;
-    }    
+    }
 }

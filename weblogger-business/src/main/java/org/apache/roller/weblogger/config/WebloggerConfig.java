@@ -33,7 +33,7 @@ import org.apache.roller.util.PropertyExpander;
  * This is the single entry point for accessing configuration properties in Roller.
  */
 public class WebloggerConfig {
-    
+
     private static String default_config = "/org/apache/roller/weblogger/config/roller.properties";
     private static String custom_config = "/roller-custom.properties";
     private static String custom_jvm_param = "roller.custom.config";
@@ -42,7 +42,7 @@ public class WebloggerConfig {
     private static Properties config;
 
     private static Log log = LogFactory.getLog(WebloggerConfig.class);
-    
+
 
     /*
      * Static block run once at class loading
@@ -85,7 +85,7 @@ public class WebloggerConfig {
                             custom_config_file.getAbsolutePath());
                 }
 
-            } 
+            }
 
             // Now expand system properties for properties in the config.expandedProperties list,
             // replacing them by their expanded values.
@@ -101,11 +101,11 @@ public class WebloggerConfig {
                     }
                 }
             }
-            
+
             // initialize logging subsystem via WebloggerConfig
             Properties log4jprops = new Properties();
             PropertyConfigurator.configure(WebloggerConfig.getPropertiesStartingWith("log4j."));
-            
+
             // finally we can start logging...
 
             // some debugging for those that want it
@@ -141,11 +141,11 @@ public class WebloggerConfig {
         String value = config.getProperty(key);
         return value == null ? value : value.trim();
     }
-    
+
     /**
      * Retrieve a property value
      * @param     key Name of the property
-     * @param     defaultValue Default value of property if not found     
+     * @param     defaultValue Default value of property if not found
      * @return    String Value of property requested or defaultValue
      */
     public static String getProperty(String key, String defaultValue) {
@@ -153,7 +153,7 @@ public class WebloggerConfig {
         String value = config.getProperty(key);
         if(value == null)
           return defaultValue;
-        
+
         return value.trim();
     }
 
@@ -204,8 +204,8 @@ public class WebloggerConfig {
     public static Enumeration keys() {
         return config.keys();
     }
-    
-    
+
+
     /**
      * Get properties starting with a specified string.
      */
@@ -217,13 +217,13 @@ public class WebloggerConfig {
         }
         return props;
     }
-    
+
 
     /**
      * Set the "uploads.dir" property at runtime.
      * <p />
-     * Properties are meant to be read-only, but we make this exception because  
-     * we know that some people are still writing their uploads to the webapp  
+     * Properties are meant to be read-only, but we make this exception because
+     * we know that some people are still writing their uploads to the webapp
      * context and we can only get that path at runtime (and for unit testing).
      * <p />
      * This property is *not* persisted in any way.
@@ -233,12 +233,12 @@ public class WebloggerConfig {
         if("${webapp.context}".equals(config.getProperty("uploads.dir")))
             config.setProperty("uploads.dir", path);
     }
-    
+
     /**
      * Set the "themes.dir" property at runtime.
      * <p />
-     * Properties are meant to be read-only, but we make this exception because  
-     * we know that some people are still using their themes in the webapp  
+     * Properties are meant to be read-only, but we make this exception because
+     * we know that some people are still using their themes in the webapp
      * context and we can only get that path at runtime (and for unit testing).
      * <p />
      * This property is *not* persisted in any way.
@@ -248,5 +248,5 @@ public class WebloggerConfig {
         if("${webapp.context}".equals(config.getProperty("themes.dir")))
             config.setProperty("themes.dir", path);
     }
-    
+
 }

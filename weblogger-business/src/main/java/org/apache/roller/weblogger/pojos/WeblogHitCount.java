@@ -27,15 +27,15 @@ import org.apache.roller.util.UUIDGenerator;
  * Represents hit count data for a weblog.
  */
 public class WeblogHitCount implements Serializable {
-    
+
     private String id = UUIDGenerator.generateUUID();
     private Weblog weblog = null;
     private int dailyHits = 0;
-    
-    
+
+
     public WeblogHitCount() {}
-    
-    
+
+
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
@@ -46,24 +46,24 @@ public class WeblogHitCount implements Serializable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
-        
+
         if(this == other) return true;
         if( !(other instanceof WeblogHitCount) ) return false;
-        
+
         // our natural key, or business key, is our weblog
         final WeblogHitCount that = (WeblogHitCount) other;
         return this.getWeblog().equals(that.getWeblog());
     }
-       
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
             .append(getWeblog())
             .toHashCode();
     }
-    
-    
+
+
     public String getId() {
         return id;
     }
@@ -71,8 +71,8 @@ public class WeblogHitCount implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+
     public Weblog getWeblog() {
         return weblog;
     }
@@ -80,8 +80,8 @@ public class WeblogHitCount implements Serializable {
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
-    
-    
+
+
     public int getDailyHits() {
         return dailyHits;
     }
@@ -89,5 +89,5 @@ public class WeblogHitCount implements Serializable {
     public void setDailyHits(int dailyHits) {
         this.dailyHits = dailyHits;
     }
-    
+
 }

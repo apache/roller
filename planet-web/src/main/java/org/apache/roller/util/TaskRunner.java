@@ -16,20 +16,20 @@
 * directory of this distribution.
 */
 package org.apache.roller.util;
-        
+
 import java.io.File;
 import org.apache.roller.planet.tasks.PlanetTask;
 
 /**
- * Sets up classpath for Roller and runs a task. 
+ * Sets up classpath for Roller and runs a task.
  * Expects these JVM parameters:
  * webapp.dir must specify Roller webapp directory
  * jars.dir must specify additional jars directory (e.g. Tomcat commons/lib)
  */
-public class TaskRunner {   
-    
-    public TaskRunner() {} 
-    
+public class TaskRunner {
+
+    public TaskRunner() {}
+
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
             System.err.println("USAGE: java -cp roller-planet.jar TaskRunner WEBAPPDIR JARSDIR CLASSNAME");
@@ -43,19 +43,19 @@ public class TaskRunner {
         String webappDir     = args[0];
         String jarsDir       = args[1];
         String taskClassName = args[2];
-        System.out.println("WEBAPPDIR = " + webappDir); 
+        System.out.println("WEBAPPDIR = " + webappDir);
         System.out.println("JARSDIR   = " + jarsDir);
         System.out.println("CLASSNAME = " + taskClassName);
-        
+
         File webappDirFile = new File(webappDir);
         File jarsDirFile = new File(jarsDir);
         if (!webappDirFile.isDirectory() || !jarsDirFile.isDirectory()) {
             System.err.println("ERROR: webapp.dir and jars.dir must specify existing directories");
             System.exit(-1);
-        }        
-        
+        }
+
         ClassLoader cl = new StandaloneWebappClassLoader(webappDir, jarsDir, null);
-       
+
         // We're using the new classloader from here on out
         Thread.currentThread().setContextClassLoader(cl);
 
@@ -69,7 +69,7 @@ public class TaskRunner {
 
 
 /* for example:
- 
+
 java \
     -Dplanet.custom.config=planet-custom.properties \
     -Dcatalina.base=. \
@@ -78,5 +78,5 @@ java \
     ~/roller_trunk/sandbox/planetroller/build/webapp \
     /Applications/Java/jakarta-tomcat-5.5.9/common/lib \
     org.apache.roller.planet.tasks.GeneratePlanetTask
- 
+
  */

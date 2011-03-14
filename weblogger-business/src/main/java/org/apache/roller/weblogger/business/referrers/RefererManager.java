@@ -26,47 +26,47 @@ import org.apache.roller.weblogger.pojos.Weblog;
 /**
  * Interface to Referer management.
  */
-public interface RefererManager {    
-    
+public interface RefererManager {
+
     /**
      * Store the referer.
      */
-    public void saveReferer(WeblogReferrer referer) throws WebloggerException;    
-    
+    public void saveReferer(WeblogReferrer referer) throws WebloggerException;
+
     /**
      * Remove a single referer.
      */
-    public void removeReferer(WeblogReferrer referer) throws WebloggerException;    
-    
+    public void removeReferer(WeblogReferrer referer) throws WebloggerException;
+
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      */
-    public void clearReferrers() throws WebloggerException;    
-    
+    public void clearReferrers() throws WebloggerException;
+
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      */
-    public void clearReferrers(Weblog website) throws WebloggerException;    
-    
+    public void clearReferrers(Weblog website) throws WebloggerException;
+
     /**
      * Retrieve referer by id.
      */
-    public WeblogReferrer getReferer(String id) throws WebloggerException;    
-    
+    public WeblogReferrer getReferer(String id) throws WebloggerException;
+
     /**
      * Get all referers for specified weblog.
      * @param weblog
      * @return List of type RefererData
      */
-    public List getReferers(Weblog weblog) throws WebloggerException;    
-    
+    public List getReferers(Weblog weblog) throws WebloggerException;
+
     /**
      * Get all referers for specified user that were made today.
      * @param userName Name of user.
      * @return List of type RefererData
      */
-    public List getTodaysReferers(Weblog website) throws WebloggerException;    
-    
+    public List getTodaysReferers(Weblog website) throws WebloggerException;
+
     /**
      * Get referers for a specified date.
      * @param userName Name of user.
@@ -74,9 +74,9 @@ public interface RefererManager {
      * @return List of type RefererData.
      * @throws WebloggerException
      */
-    public List getReferersToDate(Weblog website, String date) 
-        throws WebloggerException;    
-        
+    public List getReferersToDate(Weblog website, String date)
+        throws WebloggerException;
+
     /**
      * Returns hot weblogs as StatCount objects, in descending order by today's hits.
      * @param sinceDays Restrict to last X days (or -1 for all)
@@ -84,8 +84,8 @@ public interface RefererManager {
      * @param len       Maximum number of results to return (for paging)
      * @return List of StatCount objects.
      */
-    public List getHotWeblogs(int sinceDays, int offset, int length) 
-        throws WebloggerException; 
+    public List getHotWeblogs(int sinceDays, int offset, int length)
+        throws WebloggerException;
 
     /**
      * Get referers that refer to a specific weblog entry.
@@ -93,28 +93,28 @@ public interface RefererManager {
      * @return List of RefererData objects.
      * @throws WebloggerException
      */
-    public List getReferersToEntry(String entryid) throws WebloggerException;   
-    
-    /** 
-     * Get user's day hits 
+    public List getReferersToEntry(String entryid) throws WebloggerException;
+
+    /**
+     * Get user's day hits
      */
-    public int getDayHits(Weblog website) throws WebloggerException;    
-    
-    /** 
-     * Get user's all-time total hits 
+    public int getDayHits(Weblog website) throws WebloggerException;
+
+    /**
+     * Get user's all-time total hits
      */
-    public int getTotalHits(Weblog website) throws WebloggerException;    
-    
+    public int getTotalHits(Weblog website) throws WebloggerException;
+
     /**
      * Apply ignoreWord/spam filters to all referers in system.
      */
-    public void applyRefererFilters() throws WebloggerException;    
-    
+    public void applyRefererFilters() throws WebloggerException;
+
     /**
      * Apply ignoreWord/spam filters to all referers in website.
      */
-    public void applyRefererFilters(Weblog website) throws WebloggerException;    
-    
+    public void applyRefererFilters(Weblog website) throws WebloggerException;
+
     /**
      * Process an incoming referer.
      */
@@ -123,11 +123,11 @@ public interface RefererManager {
             String referrerUrl,
             String weblogHandle,
             String weblogAnchor,
-            String weblogDateString);    
-    
+            String weblogDateString);
+
     /**
      * Release all resources held by manager.
      */
-    public void release();  
+    public void release();
 }
 

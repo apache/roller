@@ -33,23 +33,23 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Remove a weblog entry.
  */
 public class EntryRemove extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(EntryRemove.class);
-    
+
     // id of entry to remove
     private String removeId = null;
-    
+
     // entry object to remove
     private WeblogEntry removeEntry = null;
-    
-    
+
+
     public EntryRemove() {
         this.actionName = "entryRemove";
         this.desiredMenu = "editor";
         this.pageTitle = "weblogEdit.title.newEntry";
     }
-    
-    
+
+
     public void myPrepare() {
         if(getRemoveId() != null) {
             try {
@@ -60,19 +60,19 @@ public class EntryRemove extends UIAction {
             }
         }
     }
-    
-    
+
+
     public String execute() {
         return INPUT;
     }
-    
-    
+
+
     public String remove() {
-        
+
         if(getRemoveEntry() != null) try {
-            
+
             WeblogEntry entry = getRemoveEntry();
-            
+
             try {
                 // remove the entry from the search index
                 // TODO: can we do this in a better way?
@@ -84,23 +84,23 @@ public class EntryRemove extends UIAction {
             } catch (WebloggerException ex) {
                 log.warn("Trouble triggering entry indexing", ex);
             }
-            
+
             // remove from search index
             removeEntryIndex(entry);
-            
+
             // flush caches
             CacheManager.invalidate(entry);
-            
+
             // remove entry itself
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             wmgr.removeWeblogEntry(entry);
             WebloggerFactory.getWeblogger().flush();
-            
+
             // note to user
             addMessage("weblogEdit.entryRemoved");
-            
+
             return SUCCESS;
-            
+
         } catch(Exception e) {
             log.error("Error removing entry "+getRemoveId(), e);
             // TODO: i18n
@@ -109,17 +109,17 @@ public class EntryRemove extends UIAction {
             addError("weblogEntry.notFound");
             return ERROR;
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Trigger reindexing of modified entry.
      */
     protected void removeEntryIndex(WeblogEntry entry) {
         IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
-        
+
         // if published, index the entry
         if (entry.isPublished()) {
             try {
@@ -129,8 +129,8 @@ public class EntryRemove extends UIAction {
             }
         }
     }
-    
-    
+
+
     public String getRemoveId() {
         return removeId;
     }
@@ -146,5 +146,5 @@ public class EntryRemove extends UIAction {
     public void setRemoveEntry(WeblogEntry removeEntry) {
         this.removeEntry = removeEntry;
     }
-    
+
 }

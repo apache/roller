@@ -32,25 +32,25 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 
 
 /**
- * 
+ *
  * The main entry point interface of the Weblogger business tier.
  */
 public interface Weblogger {
 
     /**
-     * 
+     *
      * Get UserManager associated with this Weblogger instance.
      */
     public UserManager getUserManager();
-    
-    
+
+
     /**
-     * 
+     *
      * Get BookmarkManager associated with this Weblogger instance.
      */
     public BookmarkManager getBookmarkManager();
-    
-    
+
+
     /**
      *
      * Get OAuthManager associated with this Weblogger instance.
@@ -59,84 +59,84 @@ public interface Weblogger {
 
 
     /**
-     * 
+     *
      * Get WeblogManager associated with this Weblogger instance.
      */
     public WeblogManager getWeblogManager();
-    
+
     /**
-     * 
+     *
      * Get WeblogManager associated with this Weblogger instance.
      */
     public WeblogEntryManager getWeblogEntryManager();
-    
-    
+
+
     /**
-     * 
+     *
      * Get RefererManager associated with this Weblogger instance.
      */
     public RefererManager getRefererManager();
-    
-    
+
+
     /**
      * Get ReferrerQueueManager.
      */
     public ReferrerQueueManager getReferrerQueueManager();
-    
-    
+
+
     /**
      * Get the AutoPingManager associated with this Weblogger instance.
      */
     public AutoPingManager getAutopingManager();
-    
-    
+
+
     /**
      * Get the PingTargetManager associated with this Weblogger instance.
      */
     public PingTargetManager getPingTargetManager();
-    
-    
+
+
     /**
      * Get the PingQueueManager associated with this Weblogger instance.
      */
     public PingQueueManager getPingQueueManager();
-    
-    
+
+
     /**
-     * 
+     *
      * Get PropertiesManager associated with this Weblogger instance.
      */
-    public PropertiesManager getPropertiesManager();   
-    
-    
+    public PropertiesManager getPropertiesManager();
+
+
     /**
      * Get ThreadManager associated with this Weblogger instance.
      */
     public ThreadManager getThreadManager();
-    
-    
+
+
     /**
      * Get IndexManager associated with this Weblogger instance.
      */
     public IndexManager getIndexManager();
-    
-    
+
+
     /**
      * Get ThemeManager associated with this Weblogger instance.
      */
     public ThemeManager getThemeManager();
-    
-    
+
+
     /**
      * Get PluginManager associated with this Weblogger instance.
      */
     public PluginManager getPluginManager();
-    
+
     /**
      * Get MediaFileManager associated with this Weblogger instance.
      */
     public MediaFileManager getMediaFileManager();
-    
+
     /**
      * Get FileContentManager associated with this Weblogger instance.
      */
@@ -146,49 +146,49 @@ public interface Weblogger {
      * Get the URLStrategy used to build all urls in the system.
      */
     public URLStrategy getUrlStrategy();
-    
+
     /**
      * Flush object states.
      */
     public void flush() throws WebloggerException;
-    
-    
+
+
     /**
      * Release all resources associated with Weblogger session.
      */
     public void release();
-    
-    
+
+
     /**
      * Initialize any resources necessary for this instance of Weblogger.
      */
     public void initialize() throws InitializationException;
-    
-    
+
+
     /**
      * Release all resources necessary for this instance of Weblogger.
      */
     public void shutdown();
-    
-    
+
+
     /**
      * Weblogger version
      */
-    public String getVersion();    
-    
+    public String getVersion();
+
     /**
      * Weblogger source code management revision
      */
     public String getRevision();
-    
+
     /**
      * Weblogger build time
      */
     public String getBuildTime();
-        
+
     /**
      * Get username that built Weblogger
      */
     public String getBuildUser();
-    
+
 }

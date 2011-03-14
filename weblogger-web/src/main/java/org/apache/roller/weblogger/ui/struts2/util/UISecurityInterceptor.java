@@ -34,37 +34,37 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
  * A struts2 interceptor for configuring specifics of the weblogger ui.
  */
 public class UISecurityInterceptor extends AbstractInterceptor {
-    
+
     private static Log log = LogFactory.getLog(UISecurityInterceptor.class);
-    
-    
+
+
     public String intercept(ActionInvocation invocation) throws Exception {
-        
+
         log.debug("Entering UISecurityInterceptor");
-        
+
         final Object action = invocation.getAction();
-        
+
         // is this one of our own UIAction classes?
         if (action instanceof UISecurityEnforced &&
                 action instanceof UIAction) {
-            
+
             log.debug("action is UISecurityEnforced ... enforcing security rules");
-            
+
             final UISecurityEnforced theAction = (UISecurityEnforced) action;
-            
+
             // are we requiring an authenticated user?
             if (theAction.isUserRequired()) {
-                
+
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                
+
                 User authenticatedUser = ((UIAction)theAction).getAuthenticatedUser();
                 if(authenticatedUser == null) {
                     log.debug("DENIED: required user not found");
                     return "access-denied";
                 }
-                
+
                 // are we also enforcing global permissions?
-                if (theAction.requiredGlobalPermissionActions() != null 
+                if (theAction.requiredGlobalPermissionActions() != null
                         && !theAction.requiredGlobalPermissionActions().isEmpty()) {
                     GlobalPermission perm = new GlobalPermission(theAction.requiredGlobalPermissionActions());
                     if (!umgr.checkPermission(perm, authenticatedUser)) {
@@ -72,35 +72,35 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                         return "access-denied";
                     }
                 }
-                
+
                 // are we requiring a valid action weblog?
                 if (theAction.isWeblogRequired()) {
-                    
+
                     Weblog actionWeblog = ((UIAction)theAction).getActionWeblog();
                     if(actionWeblog == null) {
                         log.debug("DENIED: required action weblog not found");
                         return "access-denied";
                     }
-                    
+
                     // are we also enforcing a specific weblog permission?
-                    if (theAction.requiredWeblogPermissionActions() != null 
-                            && !theAction.requiredWeblogPermissionActions().isEmpty()) {                        
+                    if (theAction.requiredWeblogPermissionActions() != null
+                            && !theAction.requiredWeblogPermissionActions().isEmpty()) {
                         WeblogPermission required = new WeblogPermission(
-                                actionWeblog,  
+                                actionWeblog,
                                 theAction.requiredWeblogPermissionActions());
-                        
+
                         if (!umgr.checkPermission(required, authenticatedUser)) {
                             log.debug("DENIED: user does not have required weblog permissions = "+required);
                             return "access-denied";
                         }
                     }
                 }
-                
+
             }
-            
+
         }
-        
+
         return invocation.invoke();
     }
-    
+
 }

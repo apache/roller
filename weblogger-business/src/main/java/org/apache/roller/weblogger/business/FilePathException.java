@@ -26,17 +26,17 @@ import org.apache.roller.weblogger.WebloggerException;
  * reason, like it represents a directory instead of a file.
  */
 public class FilePathException extends WebloggerException {
-    
+
     public FilePathException(String s) {
         super(s);
     }
-    
+
     public FilePathException(String s, Throwable t) {
         super(s, t);
     }
-    
+
     public FilePathException(Throwable t) {
         super(t);
     }
-    
+
 }

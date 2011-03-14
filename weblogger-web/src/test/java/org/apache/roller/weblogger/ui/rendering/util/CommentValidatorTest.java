@@ -36,35 +36,35 @@ public class CommentValidatorTest extends TestCase {
     Weblog        weblog = null;
     User           user = null;
     WeblogEntry    entry = null;
-    
+
     /** Creates a new instance of CommentValidatorTest */
     public CommentValidatorTest() {
-    } 
+    }
 
     protected void setUp() throws Exception {
         // setup weblogger
         TestUtils.setupWeblogger();
-        
+
         mgr = new CommentValidationManager();
-        
+
         user = TestUtils.setupUser("johndoe");
         //TestUtils.endSession(true);
 
         weblog = TestUtils.setupWeblog("doeblog", user);
         //TestUtils.endSession(true)
-        
+
         entry = TestUtils.setupWeblogEntry("anchor1", weblog.getDefaultCategory(), weblog, user);
 
         TestUtils.endSession(true);
     }
-    
+
     protected void tearDown() throws Exception {
         TestUtils.teardownWeblogEntry(entry.getId());
         //TestUtils.teardownWeblogCategory(weblog.getDefaultCategory().getId());
         TestUtils.teardownWeblog(weblog.getId());
         TestUtils.teardownUser(user.getUserName());
     }
-    
+
     public void testExcessSizeCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
@@ -74,19 +74,19 @@ public class CommentValidatorTest extends TestCase {
         for (int i=0; i<101; i++) {
             sb.append("0123456789");
         }
-        
-        comment.setContent("short stuff"); 
+
+        comment.setContent("short stuff");
         assertEquals(100, mgr.validateComment(comment, msgs));
 
-        comment.setContent(sb.toString()); 
+        comment.setContent(sb.toString());
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
-    
+
     public void testExcessLinksCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
-        
-        comment.setContent("<a href=\"http://example.com\">link1</a>"); 
+
+        comment.setContent("<a href=\"http://example.com\">link1</a>");
         assertEquals(100, mgr.validateComment(comment, msgs));
 
         // String that exceeds default excess links threshold of 3
@@ -96,35 +96,35 @@ public class CommentValidatorTest extends TestCase {
             "<a href=\"http://example.com\">link3</a>" +
             "<a href=\"http://example.com\">link4</a>" +
             "<a href=\"http://example.com\">link5</a>"
-        ); 
-        assertTrue(mgr.validateComment(comment, msgs) != 100);        
+        );
+        assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
-    
+
     public void testBlacklistCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
-       
-        comment.setContent("nice friendly stuff"); 
+
+        comment.setContent("nice friendly stuff");
         assertEquals(100, mgr.validateComment(comment, msgs));
 
-        comment.setContent("blah blah 01-suonerie.com blah"); 
+        comment.setContent("blah blah 01-suonerie.com blah");
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
-    
+
 // To run this test add the Akismet validator to comment.validator.classnames
 // and put your Akismet key in comment.validator.akismet.apikey
 //
 //     public void testAkismetCommentValidator() {
 //        RollerMessages msgs = new RollerMessages();
-//        WeblogEntryComment comment = createEmptyComment();       
-//        comment.setContent("nice friendly stuff"); 
-//        
+//        WeblogEntryComment comment = createEmptyComment();
+//        comment.setContent("nice friendly stuff");
+//
 //        assertEquals(100, mgr.validateComment(comment, msgs));
 //
 //        comment.setName("viagra-test-123");
 //        assertTrue(mgr.validateComment(comment, msgs) != 100);
 //    }
-    
+
     private WeblogEntryComment createEmptyComment() {
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setUrl("http://example.com");

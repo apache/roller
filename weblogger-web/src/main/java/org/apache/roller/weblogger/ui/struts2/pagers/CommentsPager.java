@@ -31,30 +31,30 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * Paging through a collection of comments.
  */
 public class CommentsPager {
-    
+
     private static final Log log = LogFactory.getLog(CommentsPager.class);
-    
+
     // the collection for the pager
     private final List<WeblogEntryComment> items;
-    
+
     // base url for the pager
     private final String baseUrl;
-    
+
     // what page we are on
     private final int pageNum;
-    
+
     // are there more items?
     private final boolean moreItems;
-    
-    
+
+
     public CommentsPager(String url, int page, List<WeblogEntryComment> comments, boolean hasMore) {
         this.baseUrl = url;
         this.pageNum = page;
         this.items = comments;
         this.moreItems = hasMore;
     }
-    
-    
+
+
     public String getNextLink() {
         if(isMoreItems()) {
             int nextPage = pageNum + 1;
@@ -64,8 +64,8 @@ public class CommentsPager {
         }
         return null;
     }
-    
-    
+
+
     public String getPrevLink() {
         if (pageNum > 0) {
             int prevPage = pageNum - 1;
@@ -75,11 +75,11 @@ public class CommentsPager {
         }
         return null;
     }
-    
-    
+
+
     private String createURL(String base, Map<String, String> params) {
         String qString = URLUtilities.getQueryString(params);
-        
+
         if(base.indexOf("?") != -1) {
             // if base url already has params them just append our query string
             return base + "&" + qString.substring(1);
@@ -87,8 +87,8 @@ public class CommentsPager {
             return base + qString;
         }
     }
-    
-    
+
+
     public List<WeblogEntryComment> getItems() {
         return items;
     }
@@ -96,5 +96,5 @@ public class CommentsPager {
     public boolean isMoreItems() {
         return moreItems;
     }
-    
+
 }

@@ -36,36 +36,36 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Allows user to view and pick from list of his/her websites.
  */
 public class MainMenu extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(MainMenu.class);
-    
+
     private String websiteId = null;
     private String inviteId = null;
-    
-    
+
+
     public MainMenu() {
         this.pageTitle = "yourWebsites.title";
     }
-    
-    
+
+
     // override default security, we do not require an action weblog
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     public String execute() {
-        
+
         return SUCCESS;
     }
-    
-    
+
+
     public String accept() {
-        
+
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            Weblog weblog = wmgr.getWeblog(getInviteId());      
+            Weblog weblog = wmgr.getWeblog(getInviteId());
             // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
             // TODO EXCEPTIONS: better exception handling
             umgr.confirmWeblogPermission(weblog, getAuthenticatedUser());
@@ -75,18 +75,18 @@ public class MainMenu extends UIAction {
             log.error("Error handling invitation accept weblog id - "+getInviteId(), ex);
             addError("yourWebsites.permNotFound");
         }
-        
+
         return SUCCESS;
     }
-    
-    
+
+
     public String decline() {
-        
+
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             Weblog weblog = wmgr.getWeblog(getInviteId());
-            String handle = weblog.getHandle();                       
+            String handle = weblog.getHandle();
             // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
             // TODO EXCEPTIONS: better exception handling here
             umgr.declineWeblogPermission(weblog, getAuthenticatedUser());
@@ -97,15 +97,15 @@ public class MainMenu extends UIAction {
             log.error("Error handling invitation decline weblog id - "+getInviteId(), ex);
             addError("yourWebsites.permNotFound");
         }
-        
+
         return SUCCESS;
     }
-    
-    
+
+
     public String resign() {
-        
+
         User user = getAuthenticatedUser();
-        
+
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
@@ -114,19 +114,19 @@ public class MainMenu extends UIAction {
             // TODO ROLLER_2.0: notify website members that user has resigned
             // TODO EXCEPTIONS: better exception handling
             umgr.revokeWeblogPermission(weblog, getAuthenticatedUser(), WeblogPermission.ALL_ACTIONS);
-            WebloggerFactory.getWeblogger().flush();            
+            WebloggerFactory.getWeblogger().flush();
             addMessage("yourWebsites.resigned", handle);
-            
+
         } catch (WebloggerException ex) {
             log.error("Error doing weblog resign - "+getWebsiteId(), ex);
             // TODO: i18n
             addError("resignation failed.");
         }
-        
+
         return SUCCESS;
     }
-    
-    
+
+
     public List getExistingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -135,7 +135,7 @@ public class MainMenu extends UIAction {
             return Collections.EMPTY_LIST;
         }
     }
-    
+
     public List getPendingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -144,7 +144,7 @@ public class MainMenu extends UIAction {
             return Collections.EMPTY_LIST;
         }
     }
-    
+
 
     public String getWebsiteId() {
         return websiteId;
@@ -161,5 +161,5 @@ public class MainMenu extends UIAction {
     public void setInviteId(String inviteId) {
         this.inviteId = inviteId;
     }
-    
+
 }

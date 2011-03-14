@@ -27,14 +27,14 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public abstract class WriteToIndexOperation extends IndexOperation {
-    
+
     public WriteToIndexOperation(IndexManagerImpl mgr) {
         super(mgr);
     }
-    
+
     private static Log mLogger =
             LogFactory.getFactory().getInstance(WriteToIndexOperation.class);
-    
+
     public void run() {
         try {
             manager.getReadWriteLock().writeLock().lock();
@@ -44,7 +44,7 @@ public abstract class WriteToIndexOperation extends IndexOperation {
 
         } catch (Exception e) {
             mLogger.error("Error acquiring write lock on index", e);
-            
+
         } finally {
             manager.getReadWriteLock().writeLock().unlock();
         }

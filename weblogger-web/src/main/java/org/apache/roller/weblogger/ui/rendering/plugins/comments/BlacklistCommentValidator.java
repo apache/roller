@@ -27,7 +27,7 @@ import org.apache.roller.weblogger.util.BlacklistChecker;
  * Validates comment if comment does not contain blacklisted words.
  */
 public class BlacklistCommentValidator implements CommentValidator {
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");       
+    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     private BlacklistChecker checker = new BlacklistChecker();
 
     public String getName() {
@@ -39,7 +39,7 @@ public class BlacklistCommentValidator implements CommentValidator {
             messages.addError("comment.validator.blacklistMessage");
             return 0;
         }
-        return 100; 
+        return 100;
     }
-    
+
 }

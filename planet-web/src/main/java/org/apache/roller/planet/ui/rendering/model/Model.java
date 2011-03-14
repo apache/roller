@@ -26,16 +26,16 @@ import org.apache.roller.planet.PlanetException;
  * Represents a set of functionality to be used at rendering.
  */
 public interface Model {
-    
+
     /**
      * Name to be used when referring to this model.
      */
     public String getModelName();
-    
-    
+
+
     /**
      * Initialize.
      */
     public void init(Map params) throws PlanetException;
-    
+
 }

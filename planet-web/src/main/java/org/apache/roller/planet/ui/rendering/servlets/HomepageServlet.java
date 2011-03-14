@@ -69,14 +69,14 @@ public class HomepageServlet extends HttpServlet {
 
         // set content type
         response.setContentType("text/html; charset=utf-8");
-        
-        
+
+
         // initialize model
         HashMap model = new HashMap();
         try {
             // populate the rendering model
             Map initData = new HashMap();
-            
+
             // Load models for pages
             String models = PlanetConfig.getProperty("rendering.homepageModels");
             ModelLoader.loadModels(models, model, initData, true);
@@ -94,13 +94,13 @@ public class HomepageServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            
+
             // what template are we going to render?
             Template template = new StaticTemplate("home.vm", null, "velocity");
-            
+
             // get the Renderer
             renderer = RendererManager.getRenderer(template);
-            
+
         } catch(Exception e) {
             // nobody wants to render my content :(
 
@@ -108,8 +108,8 @@ public class HomepageServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
+
         // render content
         try {
             log.debug("Doing rendering");

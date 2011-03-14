@@ -30,8 +30,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public interface PingTargetManager {
-    
-    
+
+
     /**
      * Store a ping target.
      *
@@ -39,8 +39,8 @@ public interface PingTargetManager {
      * @throws WebloggerException
      */
     public void savePingTarget(PingTarget pingTarget) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove a ping target.
      *
@@ -48,14 +48,14 @@ public interface PingTargetManager {
      * @throws WebloggerException
      */
     public void removePingTarget(PingTarget pingTarget) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove all custom targets (regardless of website).
      */
     public void removeAllCustomPingTargets() throws WebloggerException;
-    
-    
+
+
     /**
      * Retrieve a specific ping target by id.
      *
@@ -64,27 +64,27 @@ public interface PingTargetManager {
      * @throws WebloggerException
      */
     public PingTarget getPingTarget(String id) throws WebloggerException;
-    
-    
+
+
     /**
      * Get a list of the common (shared) ping targets.
-     * 
+     *
      * @return the list of common ping targets as a <code>List</code> of {@link PPingTarget objects
      * @throws WebloggerException
      */
     public List getCommonPingTargets() throws WebloggerException;
-    
-    
+
+
     /**
      * Get a list of the custom ping targets for the given website.
-     * 
+     *
      * @param website the website whose custom targets should be returned.
      * @return the list of custom ping targets for the given website as a <code>List</code> of {@link PiPingTarget         objects
      * @throws WebloggerException
      */
     public List getCustomPingTargets(Weblog website) throws WebloggerException;
-    
-    
+
+
     /**
      * Check if the ping target has a name that is unique in the appropriate set.  If the ping target has no website id
      * (is common), then this checks if the name is unique amongst common targets, and if custom then unique amongst
@@ -96,8 +96,8 @@ public interface PingTargetManager {
      * @throws WebloggerException
      */
     public boolean isNameUnique(PingTarget pingTarget) throws WebloggerException;
-    
-    
+
+
     /**
      * Check if the url of the ping target is well-formed.  For this test, it must parse as a <code>java.net.URL</code>,
      * with protocol <code>http</code> and a non-empty <code>host</code> portion.
@@ -107,8 +107,8 @@ public interface PingTargetManager {
      * @throws WebloggerException
      */
     public boolean isUrlWellFormed(PingTarget pingTarget) throws WebloggerException;
-    
-    
+
+
     /**
      * Check if the host portion of the url of the ping target is known, meaning it is either a well-formed IP address
      * or a hostname that resolves from the server.  The ping target url must parse as a <code>java.net.URL</code> in
@@ -120,11 +120,11 @@ public interface PingTargetManager {
      * @throws WebloggerException
      */
     public boolean isHostnameKnown(PingTarget pingTarget) throws WebloggerException;
-    
-    
+
+
     /**
      * Release all resources associated with Roller session.
      */
     public void release();
-    
+
 }

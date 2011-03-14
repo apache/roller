@@ -29,34 +29,34 @@ import org.apache.commons.logging.LogFactory;
  * currently ... /planet.do and /planetrss
  */
 public class PlanetRequest extends ParsedRequest {
-    
+
     private static Log log = LogFactory.getLog(PlanetRequest.class);
-    
+
     private String context = null;
     private String type = null;
     private String flavor = null;
     private boolean excerpts = false;
     private String language = null;
     private String group = null;
-    
-    
+
+
     /**
      * Construct the PlanetRequest by parsing the incoming url
      */
     public PlanetRequest(HttpServletRequest request) throws InvalidRequestException {
-        
+
         super(request);
-        
+
         // parse the request object and figure out what we've got
         log.debug("parsing url "+request.getRequestURL());
-        
+
         String servlet = request.getServletPath();
-        
+
         // what servlet is our destination?
         if(servlet != null) {
             // strip off the leading slash
             servlet = servlet.substring(1);
-            
+
             if(servlet.equals("planet.do")) {
                 this.context = "planet";
                 this.type = "page";
@@ -68,12 +68,12 @@ public class PlanetRequest extends ParsedRequest {
                 // not a request to a feed servlet
                 throw new InvalidRequestException("not a planet request, "+request.getRequestURL());
             }
-            
+
         } else {
             throw new InvalidRequestException("not a planet request, "+request.getRequestURL());
         }
-        
-        
+
+
         /*
          * parse request parameters
          *
@@ -84,29 +84,29 @@ public class PlanetRequest extends ParsedRequest {
         if (request.getParameter("excerpts") != null) {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
         }
-        
+
         if (request.getParameter("group") != null) {
             this.group = request.getParameter("group");
         }
-        
-        
+
+
         // language is always from the browser
         language = request.getLocale().getLanguage();
     }
-    
-    
+
+
     public String getContext() {
         return context;
     }
-    
+
     public String getType() {
         return type;
     }
-    
+
     public String getFlavor() {
         return flavor;
     }
-    
+
     public boolean isExcerpts() {
         return excerpts;
     }
@@ -118,8 +118,8 @@ public class PlanetRequest extends ParsedRequest {
     public void setLanguage(String language) {
         this.language = language;
     }
-    
+
     public String getGroup() {
         return group;
-    }    
+    }
 }

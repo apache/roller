@@ -32,13 +32,13 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * Handles redirects for old struts1 urls.
  */
 public class StrutsRedirectServlet extends HttpServlet {
-    
+
     // only handle GET requests
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        
+
         String redirectUrl = null;
-        
+
         String servlet = request.getServletPath();
         if(servlet != null && "/roller-ui/authoring/commentManagement.do".equals(servlet)) {
             // redirect to new comment management action
@@ -46,12 +46,12 @@ public class StrutsRedirectServlet extends HttpServlet {
             params.put("weblog", request.getParameter("weblog"));
             params.put("bean.entryId", request.getParameter("entryId"));
             redirectUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("comments", "/roller-ui/authoring", null, params, true);
-            
+
         } else if(servlet != null && "/roller-ui/yourWebsites.do".equals(servlet)) {
             // redirect to new main menu action
             redirectUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("menu", "/roller-ui", null, null, true);
         }
-        
+
         if(redirectUrl != null) {
             response.setStatus(response.SC_MOVED_PERMANENTLY);
             response.setHeader("Location", redirectUrl);
@@ -59,5 +59,5 @@ public class StrutsRedirectServlet extends HttpServlet {
             response.sendError(response.SC_NOT_FOUND);
         }
     }
-    
+
 }

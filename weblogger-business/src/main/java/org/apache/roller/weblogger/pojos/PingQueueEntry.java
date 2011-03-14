@@ -29,11 +29,11 @@ import org.apache.roller.util.UUIDGenerator;
  * Ping queue entry.  Each instance of this class represents an entry on the ping queue. The entry indicates when it was
  * added to the queue, which configuration to apply for the ping, and the number of ping attempts that have been made
  * for this entry so far.
- * 
+ *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class PingQueueEntry implements Serializable {
-    
+
     private String id = UUIDGenerator.generateUUID();
     private Timestamp entryTime = null;
     private PingTarget pingTarget = null;
@@ -42,7 +42,7 @@ public class PingQueueEntry implements Serializable {
 
     public static final long serialVersionUID = -1468021030819538243L;
 
-    
+
     /**
      * Default constructor.  Leaves all fields at Java-specified default values.
      */
@@ -176,22 +176,22 @@ public class PingQueueEntry implements Serializable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof PingQueueEntry != true) return false;
         PingQueueEntry o = (PingQueueEntry)other;
         return new EqualsBuilder()
-            .append(getEntryTime(), o.getEntryTime()) 
-            .append(getWebsite(), o.getWebsite()) 
+            .append(getEntryTime(), o.getEntryTime())
+            .append(getWebsite(), o.getWebsite())
             .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
             .append(getEntryTime())
             .append(getWebsite())
             .toHashCode();
     }
-    
+
 }

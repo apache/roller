@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.pojos; 
+package org.apache.roller.weblogger.pojos;
 
 import java.security.Permission;
 import java.util.ArrayList;
@@ -35,25 +35,25 @@ public class GlobalPermission extends RollerPermission {
 
     /** Allowed to login and edit profile */
     public static final String LOGIN  = "login";
-    
+
     /** Allowed to login and do weblogging */
     public static final String WEBLOG = "weblog";
 
     /** Allowed to login and do everything, including site-wide admin */
     public static final String ADMIN  = "admin";
-    
+
     /**
-     * Create global permission for one specific user initialized with the 
+     * Create global permission for one specific user initialized with the
      * actions that are implied by the user's roles.
      * @param user User of permission.
      * @throws org.apache.roller.weblogger.WebloggerException
      */
     public GlobalPermission(User user) throws WebloggerException {
         super("GlobalPermission user: " + user.getUserName());
-        
+
         // loop through user's roles, adding actions implied by each
         List<String> roles = WebloggerFactory.getWeblogger().getUserManager().getRoles(user);
-        List<String> actionsList = new ArrayList<String>();        
+        List<String> actionsList = new ArrayList<String>();
         for (String role : roles) {
             String impliedActions = WebloggerConfig.getProperty("role.action." + role);
             if (impliedActions != null) {
@@ -67,8 +67,8 @@ public class GlobalPermission extends RollerPermission {
         }
         setActionsAsList(actionsList);
     }
-        
-    /** 
+
+    /**
      * Create global permission with the actions specified by array.
      * @param user User of permission.
      * @throws org.apache.roller.weblogger.WebloggerException
@@ -77,9 +77,9 @@ public class GlobalPermission extends RollerPermission {
         super("GlobalPermission user: N/A");
         setActionsAsList(actions);
     }
-        
-    /** 
-     * Create global permission for one specific user initialized with the 
+
+    /**
+     * Create global permission for one specific user initialized with the
      * actions specified by array.
      * @param user User of permission.
      * @throws org.apache.roller.weblogger.WebloggerException
@@ -88,25 +88,25 @@ public class GlobalPermission extends RollerPermission {
         super("GlobalPermission user: " + user.getUserName());
         setActionsAsList(actions);
     }
-        
+
     public boolean implies(Permission perm) {
         if (perm instanceof WeblogPermission) {
             if (hasAction(ADMIN)) {
                 // admin implies all other permissions
-                return true;                
-            } 
+                return true;
+            }
         } else if (perm instanceof RollerPermission) {
-            RollerPermission rperm = (RollerPermission)perm;            
+            RollerPermission rperm = (RollerPermission)perm;
             if (hasAction(ADMIN)) {
                 // admin implies all other permissions
                 return true;
-                
+
             } else if (hasAction(WEBLOG)) {
                 // Best we've got is WEBLOG, so make sure perm doesn't specify ADMIN
                 for (String action : rperm.getActionsAsList()) {
                     if (action.equals(ADMIN)) return false;
                 }
-                
+
             } else if (hasAction(LOGIN)) {
                 // Best we've got is LOGIN, so make sure perm doesn't specify anything else
                 for (String action : rperm.getActionsAsList()) {
@@ -118,13 +118,13 @@ public class GlobalPermission extends RollerPermission {
         }
         return false;
     }
-    
+
     private boolean actionImplies(String action1, String action2) {
         if (action1.equals(ADMIN)) return true;
         if (action1.equals(WEBLOG) && action2.equals(LOGIN)) return true;
         return false;
     }
-    
+
     public boolean equals(Object arg0) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -132,11 +132,11 @@ public class GlobalPermission extends RollerPermission {
     public int hashCode() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("GlobalPermission: ");
-        for (String action : getActionsAsList()) { 
+        for (String action : getActionsAsList()) {
             sb.append(" ").append(action).append(" ");
         }
         return sb.toString();

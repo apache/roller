@@ -44,11 +44,11 @@ class RollerUserHandler extends Handler {
     public RollerUserHandler(HttpServletRequest request) throws HandlerException {
         super(request);
     }
-    
+
     protected EntrySet getEntrySet(Document d) throws UnexpectedRootElementException {
         return new UserEntrySet(d, getUrlPrefix());
     }
-    
+
     public EntrySet processGet() throws HandlerException {
         if (getUri().isCollection()) {
             return getCollection();
@@ -58,7 +58,7 @@ class RollerUserHandler extends Handler {
             throw new BadRequestException("ERROR: Unknown GET URI type");
         }
     }
-    
+
     public EntrySet processPost(Reader r) throws HandlerException {
         if (getUri().isCollection()) {
             return postCollection(r);
@@ -66,7 +66,7 @@ class RollerUserHandler extends Handler {
             throw new BadRequestException("ERROR: Unknown POST URI type");
         }
     }
-    
+
     public EntrySet processPut(Reader r) throws HandlerException {
         if (getUri().isCollection()) {
             return putCollection(r);
@@ -76,7 +76,7 @@ class RollerUserHandler extends Handler {
             throw new BadRequestException("ERROR: Unknown PUT URI type");
         }
     }
-    
+
     public EntrySet processDelete() throws HandlerException {
         if (getUri().isEntry()) {
             return deleteEntry();
@@ -84,7 +84,7 @@ class RollerUserHandler extends Handler {
             throw new BadRequestException("ERROR: Unknown DELETE URI type");
         }
     }
-    
+
     private EntrySet getCollection() throws HandlerException {
         try {
             List users = getRoller().getUserManager().getUsers(null, null, null, 0, -1);
@@ -92,41 +92,41 @@ class RollerUserHandler extends Handler {
                 users = java.util.Collections.EMPTY_LIST;
             }
             EntrySet es = toUserEntrySet((User[])users.toArray(new User[0]));
-            
+
             return es;
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get user collection", re);
         }
     }
-    
+
     private EntrySet getEntry() throws HandlerException {
         User ud = getUserData(getUri().getEntryId());
         User[] uds = new User[] { ud };
-        
+
         EntrySet c = toUserEntrySet(uds);
         return c;
     }
-    
+
     private EntrySet postCollection(Reader r) throws HandlerException {
         EntrySet c = getEntrySet(r);
         if (c.isEmpty()) {
             throw new BadRequestException("ERROR: No entries");
         }
         c = createUsers((UserEntrySet)c);
-        
+
         return c;
     }
-    
+
     private EntrySet putCollection(Reader r) throws HandlerException {
         EntrySet c = getEntrySet(r);
         if (c.isEmpty()) {
             throw new BadRequestException("ERROR: No entries");
         }
         c = updateUsers((UserEntrySet)c);
-        
+
         return c;
     }
-    
+
     private EntrySet putEntry(Reader r) throws HandlerException {
         EntrySet c = getEntrySet(r);
         if (c.isEmpty()) {
@@ -135,21 +135,21 @@ class RollerUserHandler extends Handler {
         if (c.getEntries().length > 1) {
             throw new BadRequestException("ERROR: Cannot put >1 entries per request");
         }
-        
+
         UserEntry entry = (UserEntry)c.getEntries()[0];
         if (entry.getName() != null && !entry.getName().equals(getUri().getEntryId())) {
             throw new BadRequestException("ERROR: Content name does not match URI name");
         }
         entry.setName(getUri().getEntryId());
         c = updateUsers((UserEntrySet)c);
-        
+
         return c;
     }
-    
+
     private UserEntrySet createUsers(UserEntrySet c) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
-            
+
             List userDatas = new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 UserEntry entry = (UserEntry)c.getEntries()[i];
@@ -168,7 +168,7 @@ class RollerUserHandler extends Handler {
             throw new InternalException("ERROR: Could not create users: " + c, re);
         }
     }
-        
+
     private UserEntrySet updateUsers(UserEntrySet c) throws HandlerException {
         List userDatas = new ArrayList();
         for (int i = 0; i < c.getEntries().length; i++) {
@@ -179,7 +179,7 @@ class RollerUserHandler extends Handler {
         }
         return toUserEntrySet((User[])userDatas.toArray(new User[0]));
     }
-    
+
     private void updateUserData(User ud, UserEntry entry) throws HandlerException {
         // user name cannot be updated
 
@@ -204,7 +204,7 @@ class RollerUserHandler extends Handler {
         if (entry.getEnabled() != null) {
             ud.setEnabled(entry.getEnabled());
         }
-        
+
         try {
             UserManager mgr = getRoller().getUserManager();
             mgr.saveUser(ud);
@@ -214,39 +214,39 @@ class RollerUserHandler extends Handler {
             throw new InternalException("ERROR: could not update user data", re);
         }
     }
-    
+
     private EntrySet deleteEntry() throws HandlerException {
         User ud = getUserData(getUri().getEntryId());
-        
+
         // don't allow deletion of the currently authenticated user
         if (ud.getUserName().equals(getUserName())) {
             throw new NotAllowedException("ERROR: Can't delete authenticated user: " + getUserName());
-        }  
-        
+        }
+
         try {
             CacheManager.invalidate(ud);
 
             getRoller().getUserManager().removeUser(ud);
             getRoller().flush();
-            
+
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: could not delete user data", re);
         }
-        
+
         // return empty set, entry was deleted
         User[] uds = new User[0];
         EntrySet es = toUserEntrySet(uds);
         return es;
     }
-    
+
     private UserEntry toUserEntry(User ud) {
         if (ud == null) {
             throw new NullPointerException("ERROR: Null user data not allowed");
         }
-        
+
         // password field is not set
         // we never return password field
-        
+
         UserEntry ue = new UserEntry(ud.getUserName(), getUrlPrefix());
         ue.setScreenName(ud.getScreenName());
         ue.setFullName(ud.getFullName());
@@ -255,16 +255,16 @@ class RollerUserHandler extends Handler {
         ue.setEmailAddress(ud.getEmailAddress());
         ue.setDateCreated(ud.getDateCreated());
         ue.setEnabled(ud.getEnabled());
-        
+
         return ue;
     }
-    
+
     private UserEntrySet toUserEntrySet(User[] uds) {
         if (uds == null) {
             throw new NullPointerException("ERROR: Null user data not allowed");
         }
         UserEntrySet ues = new UserEntrySet(getUrlPrefix());
-        
+
         List entries = new ArrayList();
         for (int i = 0; i < uds.length; i++) {
             User ud = uds[i];
@@ -272,10 +272,10 @@ class RollerUserHandler extends Handler {
             entries.add(entry);
         }
         ues.setEntries((Entry[])entries.toArray(new Entry[0]));
-        
+
         return ues;
     }
-    
+
     /**
      * This object, as a Roller User object.
      */
@@ -283,7 +283,7 @@ class RollerUserHandler extends Handler {
         if (ue == null) {
             throw new NullPointerException("ERROR: Null user entry not allowed");
         }
-        
+
         //
         // if any of the entry fields are null, the set below amounts
         // to a no-op.

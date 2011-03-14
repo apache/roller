@@ -31,39 +31,39 @@ import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
  * Test Plugin Management business layer operations.
  */
 public class UIPluginManagerTest extends TestCase {
-    
+
     private static Log log = LogFactory.getLog(UIPluginManagerTest.class);
-    
-    
+
+
     public UIPluginManagerTest(String name) {
         super(name);
     }
-    
-    
+
+
     public static Test suite() {
         return new TestSuite(UIPluginManagerTest.class);
     }
-    
-    
+
+
     public void setUp() throws Exception { }
     public void tearDown() throws Exception { }
-    
-    
+
+
     public void testEntryEditors() throws Exception {
     	log.debug("Start");
-        
+
         UIPluginManager pmgr = RollerContext.getUIPluginManager();
-        
+
         // test getEditors() list
         assertEquals(2, pmgr.getWeblogEntryEditors().size());
-        
+
         // test getting a single editor
         assertEquals("editor-text.jsp", pmgr.getWeblogEntryEditor("TextEditor").getId());
-        
+
         // make sure we return default editor if editor id is not found
         assertEquals("editor-text.jsp", pmgr.getWeblogEntryEditor(null).getId());
-        
+
     	log.debug("End");
     }
-    
+
 }

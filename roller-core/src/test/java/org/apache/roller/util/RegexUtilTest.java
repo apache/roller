@@ -27,35 +27,35 @@ import junit.framework.TestSuite;
  * Test regex utils.
  */
 public class RegexUtilTest extends TestCase {
-    
+
     /**
      *
      */
     public RegexUtilTest() {
         super();
     }
-    
+
     /**
      * @param arg0
      */
     public RegexUtilTest(String arg0) {
         super(arg0);
     }
-    
+
     /**
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     /**
      * @see TestCase#tearDown()
      */
     protected void tearDown() throws Exception {
         super.tearDown();
     }
-    
+
     public void testEncodingEmail() {
         // test mailto: escaping
         String test = "test <a href='mailto:this@email.com'>email</a> string";
@@ -64,7 +64,7 @@ public class RegexUtilTest extends TestCase {
         //System.out.println(result);
         assertEquals(expect, result);
     }
-    
+
     public void testObfuscateEmail() {
         // test "plaintext" escaping
         String test = "this@email.com";
@@ -72,7 +72,7 @@ public class RegexUtilTest extends TestCase {
         String result = RegexUtil.encodeEmail(test);
         assertEquals(expect, result);
     }
-    
+
     public void testHexEmail() {
         // test hex & obfuscate together
         String test = "test <a href='mailto:this@email.com'>this@email.com</a> string, and this@email.com";
@@ -81,7 +81,7 @@ public class RegexUtilTest extends TestCase {
         //System.out.println(result);
         assertEquals(expect, result);
     }
-    
+
     public static Test suite() {
         return new TestSuite(RegexUtilTest.class);
     }

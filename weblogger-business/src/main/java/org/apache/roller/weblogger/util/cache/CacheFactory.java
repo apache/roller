@@ -29,7 +29,7 @@ import java.util.Map;
  * cache factory before starting up the application.
  */
 public interface CacheFactory {
-    
+
     public Cache constructCache(Map properties);
-    
+
 }

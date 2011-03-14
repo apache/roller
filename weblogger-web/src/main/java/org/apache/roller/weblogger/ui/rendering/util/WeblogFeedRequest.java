@@ -38,18 +38,18 @@ import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Represents a request for a Roller weblog feed.
- * 
+ *
  * /roller-ui/rendering/feeds/*
  *
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
 public class WeblogFeedRequest extends WeblogRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogFeedRequest.class);
-    
+
     private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
-    
+
     // lightweight attributes
     private String type = null;
     private String format = null;
@@ -58,48 +58,48 @@ public class WeblogFeedRequest extends WeblogRequest {
     private int    page = 0;
     private boolean excerpts = false;
     private String term = null;
-    
+
     // heavyweight attributes
     private WeblogCategory weblogCategory = null;
-    
-    
+
+
     public WeblogFeedRequest() {}
-    
-    
+
+
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
      */
-    public WeblogFeedRequest(HttpServletRequest request) 
+    public WeblogFeedRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         String servlet = request.getServletPath();
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // parse the request object and figure out what we've got
         log.debug("parsing path "+pathInfo);
-        
+
         // was this request bound for the feed servlet?
         if(servlet == null || !FEED_SERVLET.equals(servlet)) {
             throw new InvalidRequestException("not a weblog feed request, "+
                     request.getRequestURL());
         }
-        
-        
-        /* 
+
+
+        /*
          * parse the path info.
-         * 
+         *
          * must look like this ...
          *
          * /<type>/<format>
          */
         if(pathInfo != null && pathInfo.trim().length() > 1) {
-            
+
             String[] pathElements = pathInfo.split("/");
             if(pathElements.length == 2) {
                 this.type = pathElements[0];
@@ -108,14 +108,14 @@ public class WeblogFeedRequest extends WeblogRequest {
                 throw new InvalidRequestException("invalid feed path info, "+
                         request.getRequestURL());
             }
-            
+
         } else {
             throw new InvalidRequestException("invalid feed path info, "+
                     request.getRequestURL());
         }
-        
-        
-        /* 
+
+
+        /*
          * parse request parameters
          *
          * the only params we currently care about are:
@@ -126,42 +126,42 @@ public class WeblogFeedRequest extends WeblogRequest {
         if(request.getParameter("cat") != null) {
             this.weblogCategoryName =
                     URLUtilities.decode(request.getParameter("cat"));
-            
+
             // all categories must start with a /
             if(!this.weblogCategoryName.startsWith("/")) {
                 this.weblogCategoryName = "/"+this.weblogCategoryName;
             }
         }
-        
+
         if(request.getParameter("tags") != null) {
-            this.tags = Utilities.splitStringAsTags(request.getParameter("tags"));                  
+            this.tags = Utilities.splitStringAsTags(request.getParameter("tags"));
             int maxSize = WebloggerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);
             if (this.tags.size() > maxSize)
                 throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", "
                                 + request.getRequestURL());
-        }        
-        
+        }
+
         if(request.getParameter("excerpts") != null) {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
         }
-        
+
         if(request.getParameter("page") != null) {
             try {
                 this.page = Integer.parseInt(request.getParameter("page"));
             } catch(NumberFormatException e) {
-                // 
+                //
             }
-        }     
-        
+        }
+
         if(request.getParameter("q") != null &&
                 request.getParameter("q").trim().length() > 0) {
             this.term = URLUtilities.decode(request.getParameter("q"));
-        }        
-        
-        if((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
-            throw new InvalidRequestException("please specify either category or tags but not both, " + request.getRequestURL());            
         }
-        
+
+        if((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
+            throw new InvalidRequestException("please specify either category or tags but not both, " + request.getRequestURL());
+        }
+
         if(log.isDebugEnabled()) {
             log.debug("type = "+this.type);
             log.debug("format = "+this.format);
@@ -194,7 +194,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     public void setWeblogCategoryName(String weblogCategory) {
         this.weblogCategoryName = weblogCategory;
     }
-    
+
     public List getTags() {
       return tags;
     }
@@ -212,7 +212,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     }
 
     public WeblogCategory getWeblogCategory() {
-        
+
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -221,7 +221,7 @@ public class WeblogFeedRequest extends WeblogRequest {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);
             }
         }
-        
+
         return weblogCategory;
     }
 

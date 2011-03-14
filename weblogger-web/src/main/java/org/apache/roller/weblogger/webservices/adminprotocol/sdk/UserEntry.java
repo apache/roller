@@ -48,7 +48,7 @@ public class UserEntry extends Entry {
         public static final String DATE_CREATED = "date-created";
         public static final String ENABLED = "enabled";
     }
-    
+
     private String name;
     private String screenName;
     private String fullName;
@@ -58,102 +58,102 @@ public class UserEntry extends Entry {
     private Date dateCreated;
     private String emailAddress;
     private Boolean enabled;
-    
+
     /** Construct an empty user entry */
     public UserEntry(String name, String urlPrefix) {
         setName(name);
         String href = urlPrefix + "/" + EntrySet.Types.USERS + "/" + name;
         setHref(href);
     }
-    
+
     /** Construct a user entry from a JDOM element. */
     public UserEntry(Element e, String urlPrefix) {
         populate(e, urlPrefix);
     }
-    
+
     public UserEntry(InputStream stream, String urlPrefix) throws JDOMException, IOException {
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
         Element e = d.detachRootElement();
-        
+
         populate(e, urlPrefix);
     }
-    
+
     private void populate(Element e, String urlPrefix) {
         // name (required)
         Element nameElement = e.getChild(Tags.NAME, NAMESPACE);
         if (nameElement != null) {
             setName(nameElement.getText());
         }
-        
+
         // href
         String href = urlPrefix + "/" + EntrySet.Types.USERS + "/" + getName();
         setHref(href);
-        
+
         // full name
         Element fullNameElement = e.getChild(Tags.FULL_NAME, NAMESPACE);
         if (fullNameElement != null) {
             setFullName(fullNameElement.getText());
         }
-        
+
         // screenname
         Element screenNameElement = e.getChild(Tags.SCREEN_NAME, NAMESPACE);
         if (screenNameElement != null) {
             setScreenName(screenNameElement.getText());
         }
-        
+
         // password
         Element passwordElement = e.getChild(Tags.PASSWORD, NAMESPACE);
         if (passwordElement != null) {
             setPassword(passwordElement.getText());
         }
-        
+
         // locale
         Element localeElement = e.getChild(Tags.LOCALE, Service.NAMESPACE);
         if (localeElement != null) {
             setLocale(localeElement.getText());
         }
-        
+
         // timezone
         Element tzElement = e.getChild(Tags.TIMEZONE, Service.NAMESPACE);
         if (tzElement != null) {
             setTimezone(tzElement.getText());
         }
-        
+
         // email address
         Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
         if (emailElement != null) {
             setEmailAddress(emailElement.getText());
         }
-        
+
         // created (optional)
         Element createdElement = e.getChild(Tags.DATE_CREATED, Service.NAMESPACE);
         if (createdElement != null) {
             setDateCreated(new Date(Long.valueOf(createdElement.getText()).longValue()));
         }
-        
+
         // enabled
         Element enabledElement = e.getChild(Tags.ENABLED, Service.NAMESPACE);
         if (enabledElement != null) {
             setEnabled(Boolean.valueOf(enabledElement.getText()));
         }
     }
-    
-    
+
+
     public String getType() {
         return Types.USER;
     }
-    
+
     public Document toDocument() {
         Element userElement = new Element(Tags.USER, NAMESPACE);
         Document doc = new Document(userElement);
-        
+
         // href
         String href = getHref();
         if (href != null) {
             userElement.setAttribute(Attributes.HREF, href);
         }
-        
+
         // name
         String name = getName();
         if (name != null) {
@@ -180,7 +180,7 @@ public class UserEntry extends Entry {
             fullNameElement.addContent(fullNameText);
             userElement.addContent(fullNameElement);
         }
-        
+
         // password
         String password = getPassword();
         if (password != null) {
@@ -189,7 +189,7 @@ public class UserEntry extends Entry {
             passwordElement.addContent(passwordText);
             userElement.addContent(passwordElement);
         }
-        
+
         // locale
         Locale locale = getLocale();
         if (locale != null) {
@@ -198,7 +198,7 @@ public class UserEntry extends Entry {
             localeElement.addContent(localeText);
             userElement.addContent(localeElement);
         }
-        
+
         // timezone
         TimeZone timezone = getTimezone();
         if (timezone != null) {
@@ -207,7 +207,7 @@ public class UserEntry extends Entry {
             timezoneElement.addContent(timezoneText);
             userElement.addContent(timezoneElement);
         }
-        
+
         // email address
         String emailAddress = getEmailAddress();
         if (emailAddress != null) {
@@ -216,7 +216,7 @@ public class UserEntry extends Entry {
             emailAddressElement.addContent(emailAddressText);
             userElement.addContent(emailAddressElement);
         }
-        
+
         // creation date
         Date datedCreated = getDateCreated();
         if (dateCreated != null) {
@@ -225,7 +225,7 @@ public class UserEntry extends Entry {
             dateCreatedElement.addContent(dateCreatedText);
             userElement.addContent(dateCreatedElement);
         }
-        
+
         // enabled
         Boolean enabled = getEnabled();
         if (enabled != null) {
@@ -234,15 +234,15 @@ public class UserEntry extends Entry {
             enabledElement.addContent(enabledText);
             userElement.addContent(enabledElement);
         }
-        
+
         return doc;
     }
-    
+
     /** Get the user name of this user entry. */
     public String getName() {
         return name;
     }
-    
+
     /** Set of the user name of this user entry. */
     public void setName(String name) {
         this.name = name;
@@ -262,80 +262,80 @@ public class UserEntry extends Entry {
     public String getFullName() {
         return fullName;
     }
-    
+
     /** Set the full name of this user entry. */
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-    
+
     /** Get the password of this user entry. */
     public String getPassword() {
         return password;
     }
-    
+
     /** Set the password of this user entry. */
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     /** Get the locale string of this user entry. */
     public Locale getLocale() {
         return locale;
     }
-    
+
     /** Set the locale of this user entry. */
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-    
+
     /** Set the locale string of this user entry. */
     public void setLocale(String localeString) {
         this.locale = new LocaleString(localeString).getLocale();
     }
-    
+
     /** Get the timezone string of this user entry. */
     public TimeZone getTimezone() {
         return timezone;
     }
-    
+
     /** Set the timezone of this user entry. */
     public void setTimezone(TimeZone timezone) {
         this.timezone = timezone;
     }
-    
+
     /** Set the timezone string of this user entry. */
     public void setTimezone(String timezoneString) {
         this.timezone = TimeZone.getTimeZone(timezoneString);
     }
-    
+
     /** Get the date created of this user entry. */
     public Date getDateCreated() {
         return dateCreated;
     }
-    
+
     /** Set the date created of this user entry. */
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
-    
+
     /** Get the email address of this user entry. */
     public String getEmailAddress() {
         return emailAddress;
     }
-    
+
     /** Set the email address of this user entry. */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
-    
+
     /** Test if a user entry is equal to this user entry. */
     public boolean equals(Object o) {
         if ( o == null || o.getClass() != this.getClass()) {
             return false;
         }
-        
+
         UserEntry other = (UserEntry)o;
-        
+
         if (!areEqual(getEmailAddress(), other.getEmailAddress())) {
             return false;
         }
@@ -354,16 +354,16 @@ public class UserEntry extends Entry {
         if (!areEqual(getEnabled(), other.getEnabled())) {
             return false;
         }
-        
+
         return super.equals(o);
     }
-    
+
     public Boolean getEnabled() {
         return enabled;
     }
-    
+
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
 }

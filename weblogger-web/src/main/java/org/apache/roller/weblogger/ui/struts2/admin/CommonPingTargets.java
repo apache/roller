@@ -33,32 +33,32 @@ import org.apache.roller.weblogger.ui.struts2.common.PingTargetsBase;
  * Admin action for managing global ping targets.
  */
 public class CommonPingTargets extends PingTargetsBase {
-    
+
     private static Log log = LogFactory.getLog(CommonPingTargets.class);
-    
-    
+
+
     public CommonPingTargets() {
         this.actionName = "commonPingTargets";
         this.desiredMenu = "admin";
         this.pageTitle = "commonPingTargets.commonPingTargets";
     }
-    
-    
+
+
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
-    
+
     // no weblog required
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     protected Log getLogger() {
         return log;
     }
-    
-    
+
+
     public void loadPingTargets() {
         try {
             PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
@@ -69,17 +69,17 @@ public class CommonPingTargets extends PingTargetsBase {
             addError("Error loading common ping targets");
         }
     }
-    
-    
+
+
     /**
      * Set a ping target auto enabled to true.
      */
     public String enable() {
-        
+
         if(getPingTarget() != null) {
             try {
                 getPingTarget().setAutoEnabled(true);
-                
+
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.savePingTarget(getPingTarget());
                 WebloggerFactory.getWeblogger().flush();
@@ -92,20 +92,20 @@ public class CommonPingTargets extends PingTargetsBase {
             // TODO: i18n
             addError("Cannot enable ping target - "+getPingTargetId());
         }
-        
+
         return LIST;
     }
-    
-    
+
+
     /**
      * Set a ping target auto-enable to false.
      */
     public String disable() {
-        
+
         if(getPingTarget() != null) {
             try {
                 getPingTarget().setAutoEnabled(false);
-                
+
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.savePingTarget(getPingTarget());
                 WebloggerFactory.getWeblogger().flush();
@@ -118,8 +118,8 @@ public class CommonPingTargets extends PingTargetsBase {
             // TODO: i18n
             addError("Cannot disable ping target - "+getPingTargetId());
         }
-        
+
         return LIST;
     }
-    
+
 }

@@ -74,13 +74,13 @@ public class FeedServlet extends HttpServlet {
         try {
             // parse the incoming request and extract the relevant data
             feedRequest = new PlanetGroupFeedRequest(request);
-            
+
             planet = feedRequest.getPlanet();
             if(planet == null) {
                 throw new PlanetException("unable to lookup planet: "+
                         feedRequest.getPlanetHandle());
             }
-            
+
             group = feedRequest.getGroup();
             if(group == null) {
                 throw new PlanetException("unable to lookup group: "+
@@ -99,8 +99,8 @@ public class FeedServlet extends HttpServlet {
         String userAgent = request.getHeader("User-Agent");
         if (accepts != null && accepts.indexOf("*/*") != -1 &&
             userAgent != null && userAgent.startsWith("Mozilla")) {
-            // client is a browser and feed style is enabled so we want 
-            // browsers to load the page rather than popping up the download 
+            // client is a browser and feed style is enabled so we want
+            // browsers to load the page rather than popping up the download
             // dialog, so we provide a content-type that browsers will display
             response.setContentType("text/xml");
         } else if("rss".equals(feedRequest.getFormat())) {
@@ -108,15 +108,15 @@ public class FeedServlet extends HttpServlet {
         } else if("atom".equals(feedRequest.getFormat())) {
             response.setContentType("application/atom+xml; charset=utf-8");
         }
-        
-        
+
+
         // looks like we need to render content
         HashMap model = new HashMap();
         try {
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("planetRequest", feedRequest);
-            
+
             // Load models for feeds
             String feedModels = PlanetConfig.getProperty("rendering.feedModels");
             ModelLoader.loadModels(feedModels, model, initData, true);
@@ -134,14 +134,14 @@ public class FeedServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            
+
             String templateFile = null;
             if("rss".equals(feedRequest.getFormat())) {
                 templateFile = "group-rss.vm";
             } else if("atom".equals(feedRequest.getFormat())) {
                 templateFile = "group-atom.vm";
             }
-            
+
             Template template = new StaticTemplate(templateFile, null, "velocity");
             renderer = RendererManager.getRenderer(template);
         } catch(Exception e) {

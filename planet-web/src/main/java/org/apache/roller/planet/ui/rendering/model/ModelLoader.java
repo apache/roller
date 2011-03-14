@@ -29,20 +29,20 @@ import org.apache.roller.planet.util.Utilities;
  * Helps with model loading process.
  */
 public class ModelLoader {
-    
+
     private static Log log = LogFactory.getLog(ModelLoader.class);
-    
-    
+
+
     /**
      * Convenience method to load a comma-separated list of page models.
      *
      * Optionally fails if any exceptions are thrown when initializing
      * the Model instances.
      */
-    public static void loadModels(String modelsString, Map model, 
-                                   Map initData, boolean fail) 
+    public static void loadModels(String modelsString, Map model,
+                                   Map initData, boolean fail)
             throws PlanetException {
-        
+
         String[] models = Utilities.stringToStringArray(modelsString, ",");
         for(int i=0; i < models.length; i++) {
             try {
@@ -77,5 +77,5 @@ public class ModelLoader {
             }
         }
     }
-    
+
 }

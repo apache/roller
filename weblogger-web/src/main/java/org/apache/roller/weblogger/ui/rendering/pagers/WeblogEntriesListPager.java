@@ -41,28 +41,28 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
  * Simple pager for list of weblog entries.
  */
 public class WeblogEntriesListPager extends AbstractPager {
-    
+
     private static Log log = LogFactory.getLog(WeblogEntriesListPager.class);
-    
+
     private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
-    
+
     private Weblog queryWeblog = null;
     private User queryUser = null;
     private String queryCat = null;
     private List queryTags = null;
-    
+
     // entries for the pager
     private List entries;
-    
+
     // are there more entries?
     private boolean more = false;
-    
+
     // most recent update time of current set of entries
-    private Date lastUpdated = null;    
-    
-    
+    private Date lastUpdated = null;
+
+
     public WeblogEntriesListPager(
             URLStrategy    strat,
             String         baseUrl,
@@ -74,9 +74,9 @@ public class WeblogEntriesListPager extends AbstractPager {
             int            sinceDays,
             int            pageNum,
             int            length) {
-        
+
         super(strat, baseUrl, pageNum);
-        
+
         // store the data
         this.queryWeblog = queryWeblog;
         this.queryUser = queryUser;
@@ -85,20 +85,20 @@ public class WeblogEntriesListPager extends AbstractPager {
         this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the pager collection
         getItems();
     }
-    
-    
+
+
     public List getItems() {
-        
+
         if (entries == null) {
             // calculate offset
             int offset = getPage() * length;
-            
+
             List results = new ArrayList();
-            
+
             Date startDate = null;
             if(sinceDays > 0) {
                 Calendar cal = Calendar.getInstance();
@@ -106,13 +106,13 @@ public class WeblogEntriesListPager extends AbstractPager {
                 cal.add(Calendar.DATE, -1 * sinceDays);
                 startDate = cal.getTime();
             }
-            
+
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
                 UserManager umgr = roller.getUserManager();
                 List rawEntries = wmgr.getWeblogEntries(
-                        
+
                         queryWeblog,
                         queryUser,
                         startDate,
@@ -125,7 +125,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                         locale,
                         offset,
                         length + 1);
-                                
+
                 // wrap the results
                 int count = 0;
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
@@ -135,18 +135,18 @@ public class WeblogEntriesListPager extends AbstractPager {
                     }
                 }
                 if (rawEntries.size() > length) more = true;
-                
+
             } catch (Exception e) {
                 log.error("ERROR: fetching weblog entries list", e);
             }
-            
+
             entries = results;
         }
-        
+
         return entries;
     }
-    
-    
+
+
     public boolean hasMoreItems() {
         return more;
     }

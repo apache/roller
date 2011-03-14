@@ -29,26 +29,26 @@ import org.apache.roller.util.UUIDGenerator;
  * @author Tatyana Tokareva
  */
 public class UserAttribute implements Serializable {
-    
-    public static final long serialVersionUID = -6354583200913127874L;    
-    
+
+    public static final long serialVersionUID = -6354583200913127874L;
+
     private String id = UUIDGenerator.generateUUID();
     private String userName;
     private String attrName;
     private String attrValue;
-    
-    
+
+
     public static enum Attributes {
         OPENID_URL("openid.url");
-        
+
         private Attributes(String name) {
             this.name = name;
-        }        
+        }
         private final String name;
         @Override
         public String toString() {
             return name;
-        }     
+        }
         public String get() {
             return name.toString();
         }
@@ -62,8 +62,8 @@ public class UserAttribute implements Serializable {
         this.userName = userName;
         this.attrName = attrName;
         this.attrValue = attrValue;
-    }        
-    
+    }
+
     public String getId() {
         return id;
     }
@@ -79,7 +79,7 @@ public class UserAttribute implements Serializable {
     public void setUserName(String userId) {
         this.userName = userId;
     }
-    
+
     public String getName() {
         return attrName;
     }
@@ -106,7 +106,7 @@ public class UserAttribute implements Serializable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof UserRole != true) return false;
@@ -114,10 +114,10 @@ public class UserAttribute implements Serializable {
         return new EqualsBuilder()
             .append(getUserName(), o.getUserName())
             .append(getName(), o.getName())
-            .append(getValue(), o.getValue())        
+            .append(getValue(), o.getValue())
             .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder().append(getUserName()).append(getName()).append(getValue()).toHashCode();
     }

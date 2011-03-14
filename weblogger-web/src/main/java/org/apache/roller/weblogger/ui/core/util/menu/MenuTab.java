@@ -26,18 +26,18 @@ import java.util.List;
  * Tab in a Menu.
  */
 public class MenuTab {
-    
+
     private String key = null;
     private String action = null;
     private boolean selected = false;
     private List items = new ArrayList();
-    
-    
+
+
     public void addItem(MenuTabItem item) {
         this.items.add(item);
     }
-    
-    
+
+
     public String getKey() {
         return key;
     }
@@ -61,7 +61,7 @@ public class MenuTab {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
-    
+
     public List getItems() {
         return items;
     }
@@ -69,5 +69,5 @@ public class MenuTab {
     public void setItems(List items) {
         this.items = items;
     }
-    
+
 }

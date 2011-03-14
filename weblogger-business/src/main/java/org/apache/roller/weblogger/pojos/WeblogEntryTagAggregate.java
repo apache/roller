@@ -29,19 +29,19 @@ import org.apache.roller.util.UUIDGenerator;
  * Tag aggregate data.
  */
 public class WeblogEntryTagAggregate implements Serializable {
-    
+
     public static final long serialVersionUID = -4343500268898106982L;
-    
+
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private Weblog website = null;
     private Timestamp lastUsed = null;
     private int total = 0;
-    
-    
+
+
     public WeblogEntryTagAggregate() {
     }
-    
+
     public WeblogEntryTagAggregate(String id,
             Weblog website,
             String name, int total) {
@@ -50,61 +50,61 @@ public class WeblogEntryTagAggregate implements Serializable {
         this.name = name;
         this.total = total;
     }
-    
+
     //------------------------------------------------------- Simple properties
-    
+
     /**
      * Unique ID and primary key.
      */
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+
     public Weblog getWeblog() {
         return this.website;
     }
-    
+
     public void setWeblog(Weblog website) {
         this.website = website;
     }
-    
-    
+
+
     /**
      * Tag value.
      */
     public String getName() {
         return this.name;
     }
-    
+
     public void setName( String name ) {
         this.name = name;
     }
-    
-    
+
+
     public int getTotal() {
         return this.total;
     }
-    
+
     public void setTotal(int total) {
         this.total = total;
     }
-    
-    
+
+
     public Timestamp getLastUsed() {
         return this.lastUsed;
     }
-    
+
     public void setLastUsed(Timestamp lastUsed) {
         this.lastUsed = lastUsed;
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
@@ -115,7 +115,7 @@ public class WeblogEntryTagAggregate implements Serializable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof WeblogEntryTagAggregate != true) return false;
@@ -125,12 +125,12 @@ public class WeblogEntryTagAggregate implements Serializable {
         .append(this.getWeblog(), o.getWeblog())
         .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())
         .append(getWeblog())
         .toHashCode();
     }
-    
+
 }

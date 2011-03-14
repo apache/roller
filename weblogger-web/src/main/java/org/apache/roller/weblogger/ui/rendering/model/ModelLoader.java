@@ -37,10 +37,10 @@ import org.apache.roller.weblogger.util.Utilities;
  * Helps with model loading process.
  */
 public class ModelLoader {
-    
+
     private static Log log = LogFactory.getLog(ModelLoader.class);
-    
-    
+
+
     /**
      * Load old page models, but only if they are enabled.
      */
@@ -51,21 +51,21 @@ public class ModelLoader {
             PageContext pageContext,
             WeblogPageRequest pageRequest,
             URLStrategy urlStrategy) throws WebloggerException {
-        
-        // Only load old models if it's enabled     
-        if (WebloggerConfig.getBooleanProperty("rendering.legacyModels.enabled")) { 
-            ContextLoader.setupContext(model, request, response, pageContext, pageRequest, urlStrategy);            
+
+        // Only load old models if it's enabled
+        if (WebloggerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
+            ContextLoader.setupContext(model, request, response, pageContext, pageRequest, urlStrategy);
         }
     }
-    
-    
+
+
     /**
      * Load set of custom models set for the given weblog.
      *
      * Does not fail if there is a problem with one of the models.
      */
     public static void loadCustomModels(Weblog weblog, Map model, Map initData) {
-        
+
         if (weblog.getPageModels() != null) {
             try {
                 loadModels(weblog.getPageModels(), model, initData, false);
@@ -73,20 +73,20 @@ public class ModelLoader {
                 // shouldn't happen, but log it just in case
                 log.error("Error loading weblog custom models", ex);
             }
-        }     
+        }
     }
-    
-    
+
+
     /**
      * Convenience method to load a comma-separated list of page models.
      *
      * Optionally fails if any exceptions are thrown when initializing
      * the Model instances.
      */
-    public static void loadModels(String modelsString, Map model, 
-                                   Map initData, boolean fail) 
+    public static void loadModels(String modelsString, Map model,
+                                   Map initData, boolean fail)
             throws WebloggerException {
-        
+
         String[] models = Utilities.stringToStringArray(modelsString, ",");
         for(int i=0; i < models.length; i++) {
             try {
@@ -121,5 +121,5 @@ public class ModelLoader {
             }
         }
     }
-    
+
 }

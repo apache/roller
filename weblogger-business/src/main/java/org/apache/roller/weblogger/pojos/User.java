@@ -41,9 +41,9 @@ import org.apache.roller.weblogger.util.Utilities;
  * @hibernate.class lazy="true" table="rolleruser"
  */
 public class User implements Serializable {
-    
+
     public static final long serialVersionUID = -6354583200913127874L;
-    
+
     private String  id = UUIDGenerator.generateUUID();
     private String  userName;
     private String  password;
@@ -55,14 +55,14 @@ public class User implements Serializable {
     private String  timeZone;
     private Boolean enabled = Boolean.TRUE;
     private String  activationCode;
-    
+
     private Set roles = new HashSet();
     private List permissions = new ArrayList();
-                 
-    
+
+
     public User() {
     }
-    
+
     public User( String id, String userName,
             String password, String fullName,
             String emailAddress,
@@ -79,8 +79,8 @@ public class User implements Serializable {
         this.timeZone = timeZone;
         this.enabled = isEnabled;
     }
-    
-    
+
+
     /**
      * Id of the User.
      *
@@ -89,12 +89,12 @@ public class User implements Serializable {
     public String getId() {
         return this.id;
     }
-    
+
     public void setId( String id ) {
         this.id = id;
     }
-    
-    
+
+
     /**
      * User name of the user.
      * @hibernate.property column="username" non-null="true" unique="true"
@@ -102,11 +102,11 @@ public class User implements Serializable {
     public String getUserName() {
         return this.userName;
     }
-    
+
     public void setUserName( String userName ) {
         this.userName = userName;
     }
-    
+
     /**
      * Get password.
      * If password encryption is enabled, will return encrypted password.
@@ -116,7 +116,7 @@ public class User implements Serializable {
     public String getPassword() {
         return this.password;
     }
-    
+
     /**
      * Set password.
      * If password encryption is turned on, then pass in an encrypted password.
@@ -124,14 +124,14 @@ public class User implements Serializable {
     public void setPassword( String password ) {
         this.password = password;
     }
-    
+
     /**
      * Reset this user's password, handles encryption if configured.
      *
      * @param newPassword The new password to be set.
      */
     public void resetPassword(String newPassword) throws WebloggerException {
-        
+
         String encrypt = WebloggerConfig.getProperty("passwds.encryption.enabled");
         String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
         if (new Boolean(encrypt).booleanValue()) {
@@ -140,8 +140,8 @@ public class User implements Serializable {
             setPassword(newPassword);
         }
     }
-    
-    
+
+
     /**
      * Screen name of the user.
      *
@@ -150,12 +150,12 @@ public class User implements Serializable {
     public String getScreenName() {
         return this.screenName;
     }
-    
+
     public void setScreenName( String screenName ) {
         this.screenName = screenName;
     }
-    
-    
+
+
     /**
      * Full name of the user.
      *
@@ -164,12 +164,12 @@ public class User implements Serializable {
     public String getFullName() {
         return this.fullName;
     }
-    
+
     public void setFullName( String fullName ) {
         this.fullName = fullName;
     }
-    
-    
+
+
     /**
      * E-mail address of the user.
      *
@@ -178,12 +178,12 @@ public class User implements Serializable {
     public String getEmailAddress() {
         return this.emailAddress;
     }
-    
+
     public void setEmailAddress( String emailAddress ) {
         this.emailAddress = emailAddress;
     }
-    
-    
+
+
     /**
      * The date the user was created.
      *
@@ -196,7 +196,7 @@ public class User implements Serializable {
             return (Date)dateCreated.clone();
         }
     }
-    
+
     public void setDateCreated(final Date date) {
         if (date != null) {
             dateCreated = (Date)date.clone();
@@ -204,8 +204,8 @@ public class User implements Serializable {
             dateCreated = null;
         }
     }
-    
-    
+
+
     /**
      * Locale of the user.
      *
@@ -214,12 +214,12 @@ public class User implements Serializable {
     public String getLocale() {
         return this.locale;
     }
-    
+
     public void setLocale(String locale) {
         this.locale = locale;
     }
-    
-    
+
+
     /**
      * Timezone of the user.
      *
@@ -228,12 +228,12 @@ public class User implements Serializable {
     public String getTimeZone() {
         return this.timeZone;
     }
-    
+
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
-    
-    
+
+
     /**
      * Is this user account enabled?  Disabled accounts cannot login.
      *
@@ -242,13 +242,13 @@ public class User implements Serializable {
     public Boolean getEnabled() {
         return this.enabled;
     }
-    
+
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
-    
-    /** 
+
+
+    /**
      * Activation code.
      *
      * @hibernate.property column="activationcode" non-null="false"
@@ -256,16 +256,16 @@ public class User implements Serializable {
     public String getActivationCode() {
         return activationCode;
     }
-    
+
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }
-    
-     
+
+
     public boolean hasGlobalPermission(String action) {
         return hasGlobalPermissions(Collections.singletonList(action));
     }
-    
+
     public boolean hasGlobalPermissions(List<String> actions) {
         try {
             GlobalPermission perm = new GlobalPermission(actions);
@@ -274,9 +274,9 @@ public class User implements Serializable {
             return false;
         }
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
@@ -289,16 +289,16 @@ public class User implements Serializable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof User != true) return false;
         User o = (User)other;
         return new EqualsBuilder().append(getUserName(), o.getUserName()).isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder().append(getUserName()).toHashCode();
     }
-    
+
 }

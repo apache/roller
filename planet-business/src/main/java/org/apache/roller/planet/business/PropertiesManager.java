@@ -27,28 +27,28 @@ import org.apache.roller.planet.pojos.RuntimeConfigProperty;
  * Manages global runtime properties.
  */
 public interface PropertiesManager extends Manager {
-    
-    /** 
-     * Save a single property 
+
+    /**
+     * Save a single property
      */
     public void saveProperty(RuntimeConfigProperty property) throws PlanetException;
-    
-    
-    /** 
-     * Save a list of properties 
+
+
+    /**
+     * Save a list of properties
      */
     public void saveProperties(Map properties) throws PlanetException;
-    
-    
-    /** 
-     * Retrieve a single property by name 
+
+
+    /**
+     * Retrieve a single property by name
      */
     public RuntimeConfigProperty getProperty(String name) throws PlanetException;
-    
-    
-    /** 
-     * Retrieve a list of all properties 
+
+
+    /**
+     * Retrieve a list of all properties
      */
     public Map getProperties() throws PlanetException;
-    
+
 }

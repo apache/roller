@@ -26,13 +26,13 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
  * Sorts WeblogEntryData objects in reverse chronological order
  * (most recently published entries first).  If they happen to
  * have the same pubTime, then sort alphabetically by title.
- * 
+ *
  * @author lance.lavandowska
  */
 public class WeblogEntryWrapperComparator implements Comparator, Serializable
 {
     static final long serialVersionUID = -9067148992322255150L;
-    
+
     public int compare(Object val1, Object val2)
     throws ClassCastException
     {

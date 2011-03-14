@@ -23,16 +23,16 @@ package org.apache.roller.planet.business;
  * Provides access to a Planet instance.
  */
 public interface PlanetProvider {
-    
+
     /**
      * Trigger bootstrapping.
      */
     public void bootstrap() throws BootstrapException;
-    
-    
+
+
     /**
      * Get a Planet instance.
      */
     public Planet getPlanet();
-    
+
 }

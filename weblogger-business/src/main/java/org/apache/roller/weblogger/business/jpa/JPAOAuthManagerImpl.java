@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.business.jpa;
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
@@ -65,7 +65,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         this.strategy = strategy;
         this.validator = validator;
     }
-    
+
     public OAuthServiceProvider getServiceProvider() {
         return new OAuthServiceProvider(
             roller.getUrlStrategy().getOAuthRequestTokenURL(),
@@ -94,9 +94,9 @@ public class JPAOAuthManagerImpl implements OAuthManager {
 
         return consumer;
     }
-    
+
     /**
-     * Get the access token and token secret for the given oauth_token. 
+     * Get the access token and token secret for the given oauth_token.
      */
     public OAuthAccessor getAccessor(OAuthMessage requestMessage)
             throws IOException, OAuthProblemException {
@@ -121,7 +121,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     }
 
     /**
-     * Set the access token 
+     * Set the access token
      */
     public void markAsAuthorized(OAuthAccessor accessor, String userId)
             throws OAuthException {
@@ -131,7 +131,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             record.setUserName(userId);
             record.setAuthorized(Boolean.TRUE);
             strategy.store(record);
-            
+
         } catch (WebloggerException ex) {
             throw new OAuthException("ERROR: setting authorization flag", ex);
         }
@@ -163,7 +163,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         // add to the local cache
         addAccessor(accessor);
     }
-    
+
     /**
      * Generate a fresh request token and secret for a consumer.
      * @throws OAuthException
@@ -178,7 +178,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
 
             OAuthAccessorRecord record = (OAuthAccessorRecord) strategy.load(
                 OAuthAccessorRecord.class, accessor.consumer.consumerKey);
-            
+
             // for now use md5 of name + current time as token
             String token_data = consumer_key + System.nanoTime();
             String token = DigestUtils.md5Hex(token_data);
@@ -204,7 +204,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         } catch (WebloggerException ex) {
             throw new OAuthException("ERROR storing accessor", ex);
         }
-        
+
         OAuthConsumer consumer = new OAuthConsumer(
             null,
             record.getConsumerKey(),
@@ -214,7 +214,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         return consumer;
     }
 
-    public OAuthConsumer addConsumer(String consumerKey) 
+    public OAuthConsumer addConsumer(String consumerKey)
             throws OAuthException, WebloggerException {
         if (getConsumer() == null) {
             return addConsumer(null, consumerKey);
@@ -265,7 +265,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         return null;
     }
 
-    
+
     //--------------------------------------------- package protected internals
 
     OAuthConsumer consumerFromRecord(OAuthConsumerRecord record) {
@@ -330,7 +330,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         } else {
             record.setCreated(new Timestamp(new Date().getTime()));
         }
-        
+
         if (record.getUpdated() != null) {
             record.setUpdated(record.getUpdated());
         } else {

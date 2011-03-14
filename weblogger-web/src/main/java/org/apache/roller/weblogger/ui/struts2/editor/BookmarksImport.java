@@ -39,83 +39,83 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Import opml file into bookmarks folder.
  */
 public final class BookmarksImport extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(BookmarksImport.class);
-    
+
     // uploaded opml file
     private File opmlFile = null;
-    
+
     // content type of uploaded file
     private String opmlFileContentType = null;
-    
+
     // file name of uploaded file
     private String opmlFileFileName = null;
-    
-    
+
+
     public BookmarksImport() {
         this.actionName = "bookmarksImport";
         this.desiredMenu = "editor";
         this.pageTitle = "bookmarksImport.title";
     }
-    
-    
+
+
     // author perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }
-    
-    
+
+
     /**
      * Request to import bookmarks
      */
     public String execute() {
         return INPUT;
     }
-    
-    
+
+
     /**
      * Save imported bookmarks.
      */
     public String save() {
-        
+
         BookmarkManager bm = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
+
         InputStream stream = null;
         if(getOpmlFile() != null && getOpmlFile().exists()) try {
-            
+
             //only write files out that are less than 4MB
             if (getOpmlFile().length() < (4*1024000)) {
-                
+
                 stream = new FileInputStream(getOpmlFile());
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                
+
                 byte[] buffer = new byte[8192];
                 int bytesRead = 0;
                 while ((bytesRead=stream.read(buffer,0,8192)) != -1) {
                     baos.write(buffer, 0, bytesRead);
                 }
                 String data = new String(baos.toByteArray());
-                
+
                 SimpleDateFormat formatter =
                         new SimpleDateFormat("yyyyMMddHHmmss");
                 Date now = new Date();
                 String folderName = "imported-" + formatter.format(now);
-                
+
                 // Use Roller BookmarkManager to import bookmarks
                 bm.importBookmarks(getActionWeblog(), folderName, data);
                 WebloggerFactory.getWeblogger().flush();
-                
+
                 // notify caches
                 CacheManager.invalidate(getActionWeblog());
-                
+
                 // message to user
                 addMessage("bookmarksImport.imported", folderName);
-                
+
                 // destroy the temporary file created
                 getOpmlFile().delete();
-                
+
                 return SUCCESS;
-                
+
             } else {
                 String data = "The file is greater than 4MB, "
                         +" and has not been written to stream."
@@ -124,7 +124,7 @@ public final class BookmarksImport extends UIAction {
                         +" web application";
                 addError("bookmarksImport.error", data);
             }
-            
+
         } catch (Exception ex) {
             log.error("ERROR: importing bookmarks", ex);
             // TODO: i18n
@@ -138,33 +138,33 @@ public final class BookmarksImport extends UIAction {
                 }
             }
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     public File getOpmlFile() {
         return opmlFile;
     }
-    
+
     public void setOpmlFile(File opmlFile) {
         this.opmlFile = opmlFile;
     }
-    
+
     public String getOpmlFileContentType() {
         return opmlFileContentType;
     }
-    
+
     public void setOpmlFileContentType(String opmlFileContentType) {
         this.opmlFileContentType = opmlFileContentType;
     }
-    
+
     public String getOpmlFileFileName() {
         return opmlFileFileName;
     }
-    
+
     public void setOpmlFileFileName(String opmlFileFileName) {
         this.opmlFileFileName = opmlFileFileName;
     }
-    
+
 }

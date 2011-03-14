@@ -33,58 +33,58 @@ import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
  * Pojo safety wrapper for WeblogBookmarkFolder object.
  */
 public class WeblogBookmarkFolderWrapper {
-    
+
     // keep a reference to the wrapped pojo
     private final WeblogBookmarkFolder pojo;
-    
+
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogBookmarkFolderWrapper(WeblogBookmarkFolder toWrap) {
         this.pojo = toWrap;
     }
-    
-    
+
+
     // wrap the given pojo if it is not null
     public static WeblogBookmarkFolderWrapper wrap(WeblogBookmarkFolder toWrap) {
         if(toWrap != null)
             return new WeblogBookmarkFolderWrapper(toWrap);
-        
+
         return null;
     }
-    
-    
+
+
     public String getId() {
         return this.pojo.getId();
     }
-    
-    
+
+
     public String getName() {
         return this.pojo.getName();
     }
-    
-    
+
+
     public String getDescription() {
         return this.pojo.getDescription();
     }
-    
-    
+
+
     public String getPath() {
         return this.pojo.getPath();
     }
-    
+
     // NOTE: removing this for 4.0 since there is really no need for this in templates
 //    public WeblogWrapper getWebsite() {
 //        return WeblogWrapper.wrap(this.pojo.getWebsite());
 //    }
-    
-    
+
+
     public WeblogBookmarkFolderWrapper getParent() {
         return WeblogBookmarkFolderWrapper.wrap(this.pojo.getParent());
     }
-    
-    
+
+
     public List getFolders() {
         Set initialCollection = this.pojo.getFolders();
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -95,15 +95,15 @@ public class WeblogBookmarkFolderWrapper {
             wrappedCollection.add(i,WeblogBookmarkFolderWrapper.wrap((WeblogBookmarkFolder) it.next()));
             i++;
         }
-        
+
         return wrappedCollection;
     }
-    
-        
+
+
     public List getBookmarks() {
         TreeSet initialCollection = new TreeSet(new BookmarkComparator());
         initialCollection.addAll(this.pojo.getBookmarks());
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -114,34 +114,34 @@ public class WeblogBookmarkFolderWrapper {
             wrappedCollection.add(i,WeblogBookmarkWrapper.wrap((WeblogBookmark) it.next()));
             i++;
         }
-        
-        return wrappedCollection;
-    }    
-        
-    
-    public List retrieveBookmarks(boolean subfolders)
-            throws WebloggerException {
-        
-        List initialCollection = this.pojo.retrieveBookmarks(subfolders);
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogBookmarkWrapper.wrap((WeblogBookmark) it.next()));
-            i++;
-        }
-        
+
         return wrappedCollection;
     }
-    
-    
+
+
+    public List retrieveBookmarks(boolean subfolders)
+            throws WebloggerException {
+
+        List initialCollection = this.pojo.retrieveBookmarks(subfolders);
+
+        // iterate through and wrap
+        // we force the use of an ArrayList because it should be good enough to cover
+        // for any Collection type we encounter.
+        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
+        int i = 0;
+        while(it.hasNext()) {
+            wrappedCollection.add(i,WeblogBookmarkWrapper.wrap((WeblogBookmark) it.next()));
+            i++;
+        }
+
+        return wrappedCollection;
+    }
+
+
     // TODO: this method won't actually work and we probably don't need it here anyways?
     public boolean descendentOf(WeblogBookmarkFolder ancestor) {
         return this.pojo.descendentOf(ancestor);
     }
-    
+
 }

@@ -45,7 +45,7 @@ import com.sun.syndication.io.SyndFeedInput;
 
 /**
  * Parses HTML file for referring linkback title and excerpt.
- * 
+ *
  * @author David M Johnson
  */
 public class LinkbackExtractor
@@ -67,7 +67,7 @@ public class LinkbackExtractor
     //------------------------------------------------------------------------
     /**
      * Extract referring page title, excerpt, and permalink.
-     * 
+     *
      * @param refererUrl
      * @param requestUrl
      */
@@ -162,7 +162,7 @@ public class LinkbackExtractor
     private void extractByParsingRss(String rssLink, String requestURL)
             throws IllegalArgumentException, MalformedURLException, FeedException, IOException
     {
-        SyndFeedInput feedInput = new SyndFeedInput();       
+        SyndFeedInput feedInput = new SyndFeedInput();
         SyndFeed feed = feedInput.build(
             new InputStreamReader(new URL(rssLink).openStream()));
         Iterator itemIter = feed.getEntries().iterator();
@@ -211,7 +211,7 @@ public class LinkbackExtractor
     //------------------------------------------------------------------------
     /**
      * Returns the excerpt.
-     * 
+     *
      * @return String
      */
     public String getExcerpt()
@@ -222,7 +222,7 @@ public class LinkbackExtractor
     //------------------------------------------------------------------------
     /**
      * Returns the title.
-     * 
+     *
      * @return String
      */
     public String getTitle()
@@ -233,7 +233,7 @@ public class LinkbackExtractor
     //------------------------------------------------------------------------
     /**
      * Returns the permalink.
-     * 
+     *
      * @return String
      */
     public String getPermalink()
@@ -244,7 +244,7 @@ public class LinkbackExtractor
     //------------------------------------------------------------------------
     /**
      * Sets the permalink.
-     * 
+     *
      * @param permalink
      *            The permalink to set
      */
@@ -277,7 +277,7 @@ public class LinkbackExtractor
 
         /**
          * Look for divider tags and for the permalink.
-         * 
+         *
          * @param tag
          *            HTML tag
          * @param atts
@@ -384,7 +384,7 @@ public class LinkbackExtractor
 
         /**
          * Stop at the very first divider tag after the permalink.
-         * 
+         *
          * @param tag
          *            End tag
          * @param pos

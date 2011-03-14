@@ -29,14 +29,14 @@ package org.apache.roller.weblogger.business.referrers;
  * @author Allen Gilliland
  */
 public class IncomingReferrer {
-    
+
     private String referrerUrl = null;
     private String requestUrl = null;
     private String weblogHandle = null;
     private String weblogAnchor = null;
     private String weblogDateString = null;
-    
-    
+
+
     public IncomingReferrer() {}
 
     public String getReferrerUrl() {
@@ -78,5 +78,5 @@ public class IncomingReferrer {
     public void setWeblogDateString(String weblogDateString) {
         this.weblogDateString = weblogDateString;
     }
-    
+
 }

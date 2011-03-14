@@ -24,19 +24,19 @@ package org.apache.roller.planet.business;
  * implemenations can just override them if needed.
  */
 public abstract class AbstractManagerImpl implements Manager {
-    
+
     public void initialize() throws InitializationException {
         // no-op
     }
-    
-    
+
+
     public void release() {
         // no-op
     }
-    
-    
+
+
     public void shutdown() {
         // no-op
     }
-    
+
 }

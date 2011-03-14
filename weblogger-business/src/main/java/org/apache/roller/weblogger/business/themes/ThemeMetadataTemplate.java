@@ -23,7 +23,7 @@ package org.apache.roller.weblogger.business.themes;
  * A parsed 'template' element of a theme metadata descriptor.
  */
 public class ThemeMetadataTemplate {
-    
+
     private String action = null;
     private String name = null;
     private String description = null;
@@ -105,5 +105,5 @@ public class ThemeMetadataTemplate {
     public void setContentsFile(String contentsFile) {
         this.contentsFile = contentsFile;
     }
-    
+
 }

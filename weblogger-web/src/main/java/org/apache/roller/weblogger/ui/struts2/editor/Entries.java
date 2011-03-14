@@ -41,49 +41,49 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * A list view of entries in a weblog.
  */
 public class Entries extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(Entries.class);
-    
+
     // number of comments to show per page
     private static final int COUNT = 30;
-    
+
     // bean for managing submitted data
     private EntriesBean bean = new EntriesBean();
-    
+
     // pager for the entries we are viewing
     private EntriesPager pager = null;
-    
+
     // first entry in the list
     private WeblogEntry firstEntry = null;
-    
+
     // last entry in the list
     private WeblogEntry lastEntry = null;
-    
-    
+
+
     public Entries() {
         this.actionName = "entries";
         this.desiredMenu = "editor";
         this.pageTitle = "weblogEntryQuery.title";
     }
-    
-    
+
+
     @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }
-    
-    
+
+
     public String execute() {
-        
+
         if (log.isDebugEnabled()) {
             log.debug("entries bean is ...\n"+getBean().toString());
         }
-        
+
         List<WeblogEntry> entries = null;
         boolean hasMore = false;
         try {
             String status = getBean().getStatus();
-            
+
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List<WeblogEntry> rawEntries = wmgr.getWeblogEntries(
                     getActionWeblog(),
@@ -103,12 +103,12 @@ public class Entries extends UIAction {
             entries.addAll(rawEntries);
             if (entries != null && entries.size() > 0) {
                 log.debug("query found "+rawEntries.size()+" results");
-                
+
                 if(rawEntries.size() > COUNT) {
                     entries.remove(entries.size()-1);
                     hasMore = true;
                 }
-                
+
                 setFirstEntry((WeblogEntry)entries.get(0));
                 setLastEntry((WeblogEntry)entries.get(entries.size()-1));
             }
@@ -117,20 +117,20 @@ public class Entries extends UIAction {
             // TODO: i18n
             addError("Error looking up entries");
         }
-        
+
         // build entries pager
         String baseUrl = buildBaseUrl();
         setPager(new EntriesPager(baseUrl, getBean().getPage(), entries, hasMore));
-                
+
         return LIST;
     }
-    
-    
+
+
     // use the action data to build a url representing this action, including query data
     private String buildBaseUrl() {
-        
+
         Map<String, String> params = new HashMap();
-        
+
         if(!StringUtils.isEmpty(getBean().getCategoryPath())) {
             params.put("bean.categoryPath", getBean().getCategoryPath());
         }
@@ -152,12 +152,12 @@ public class Entries extends UIAction {
         if(!StringUtils.isEmpty(getBean().getSortBy())) {
             params.put("bean.sortBy", getBean().getSortBy());
         }
-        
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("entries", "/roller-ui/authoring", 
+
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("entries", "/roller-ui/authoring",
                 getActionWeblog().getHandle(), params, false);
     }
-    
-    
+
+
     /**
      * Get the list of all categories for the action weblog, not including root.
      */
@@ -165,12 +165,12 @@ public class Entries extends UIAction {
         // make list of categories with first option being being a transient
         // category just meant to represent the default option of any category
         List<WeblogCategory> cats = new ArrayList();
-        
+
         WeblogCategory tmpCat = new WeblogCategory();
         tmpCat.setName("Any");
         tmpCat.setPath("");
         cats.add(tmpCat);
-        
+
         List<WeblogCategory> weblogCats = Collections.EMPTY_LIST;
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -178,35 +178,35 @@ public class Entries extends UIAction {
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - "+getWeblog(), ex);
         }
-        
+
         cats.addAll(weblogCats);
-        
+
         return cats;
     }
-    
-    
+
+
     public List<KeyValueObject> getSortByOptions() {
         List<KeyValueObject> opts = new ArrayList();
-        
+
         opts.add(new KeyValueObject("pubTime", getText("weblogEntryQuery.label.pubTime")));
         opts.add(new KeyValueObject("updateTime", getText("weblogEntryQuery.label.updateTime")));
-        
+
         return opts;
     }
-    
+
     public List<KeyValueObject> getStatusOptions() {
         List<KeyValueObject> opts = new ArrayList();
-        
+
         opts.add(new KeyValueObject("ALL", getText("weblogEntryQuery.label.allEntries")));
         opts.add(new KeyValueObject("DRAFT", getText("weblogEntryQuery.label.draftOnly")));
         opts.add(new KeyValueObject("PUBLISHED", getText("weblogEntryQuery.label.publishedOnly")));
         opts.add(new KeyValueObject("PENDING", getText("weblogEntryQuery.label.pendingOnly")));
         opts.add(new KeyValueObject("SCHEDULED", getText("weblogEntryQuery.label.scheduledOnly")));
-        
+
         return opts;
     }
-    
-    
+
+
     public EntriesBean getBean() {
         return bean;
     }
@@ -238,5 +238,5 @@ public class Entries extends UIAction {
     public void setPager(EntriesPager pager) {
         this.pager = pager;
     }
-    
+
 }

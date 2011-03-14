@@ -25,13 +25,13 @@ import org.apache.roller.weblogger.WebloggerException;
  * Exception generated from Weblogger bootstrapping process.
  */
 public class BootstrapException extends WebloggerException {
-    
+
     public BootstrapException(String msg) {
         super(msg);
     }
-    
+
     public BootstrapException(String msg, Throwable t) {
         super(msg, t);
     }
-    
+
 }

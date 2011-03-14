@@ -30,65 +30,65 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Base implementation for action that can add a new ping target.
  */
 public abstract class PingTargetAddBase extends UIAction {
-    
+
     // a bean for managing submitted data
     private PingTargetFormBean bean = new PingTargetFormBean();
-    
-    
+
+
     // get logger
     protected abstract Log getLogger();
-    
+
     // create a new ping target
     protected abstract PingTarget createPingTarget();
-    
-    
+
+
     public String execute() {
         return INPUT;
     }
-    
-    
+
+
     /**
      * Save a new ping target.
      */
     public String save() {
-        
+
         PingTarget pingTarget = createPingTarget();
-        
+
         // Call private helper to validate ping target
         // If there are errors, go back to the target edit page.
         myValidate(pingTarget);
-        
+
         if(!hasActionErrors()) try {
             // Appears to be ok.  Save it and flush.
             PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             pingTargetMgr.savePingTarget(pingTarget);
             WebloggerFactory.getWeblogger().flush();
-            
+
             addMessage("pingTarget.saved");
-            
+
             return SUCCESS;
-            
+
         } catch (WebloggerException ex) {
             getLogger().error("Error adding ping target", ex);
             // TODO: i18n
             addError("Error adding ping target.");
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Private helper to validate a ping target.
      */
     protected void myValidate(PingTarget pingTarget) {
-        
+
         try {
             PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             if (!pingTargetMgr.isNameUnique(pingTarget)) {
                 addError("pingTarget.nameNotUnique");
             }
-            
+
             if (!pingTargetMgr.isUrlWellFormed(pingTarget)) {
                 addError("pingTarget.malformedUrl");
             } else if (!pingTargetMgr.isHostnameKnown(pingTarget)) {
@@ -100,8 +100,8 @@ public abstract class PingTargetAddBase extends UIAction {
             addError("Error doing ping target validation");
         }
     }
-    
-    
+
+
     public PingTargetFormBean getBean() {
         return bean;
     }
@@ -109,5 +109,5 @@ public abstract class PingTargetAddBase extends UIAction {
     public void setBean(PingTargetFormBean bean) {
         this.bean = bean;
     }
-    
+
 }

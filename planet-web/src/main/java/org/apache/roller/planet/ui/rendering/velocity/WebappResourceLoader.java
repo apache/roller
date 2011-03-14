@@ -37,62 +37,62 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
  * /WEB-INF/velocity/, which is where we keep velocity files.
  */
 public class WebappResourceLoader extends ResourceLoader {
-    
+
     private static Log log = LogFactory.getLog(WebappResourceLoader.class);
-    
+
     private ServletContext mContext = null;
-    
-    
+
+
     /**
      * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#init(org.apache.commons.collections.ExtendedProperties)
      */
     public void init(ExtendedProperties config) {
-        
+
         log.debug("WebappResourceLoader : initialization starting.");
-        
+
         if (mContext == null) {
             mContext = PlanetContext.getServletContext();
             log.debug("Servlet Context = "+mContext.getRealPath("/WEB-INF/velocity/"));
         }
-        
+
         log.debug(config);
-        
+
         log.debug("WebappResourceLoader : initialization complete.");
     }
-    
-    
+
+
     /**
      * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#getResourceStream(java.lang.String)
      */
-    public InputStream getResourceStream(String name) 
+    public InputStream getResourceStream(String name)
             throws ResourceNotFoundException {
-        
+
         log.debug("Looking up resource named ... "+name);
-        
+
         if (name == null || name.length() == 0) {
             throw new ResourceNotFoundException("No template name provided");
         }
-        
+
         InputStream result = null;
-        
+
         try {
             if(!name.startsWith("/"))
                 name = "/WEB-INF/velocity/" + name;
-            
+
             result = this.mContext.getResourceAsStream(name);
-            
+
         } catch(Exception e) {
             throw new ResourceNotFoundException(e.getMessage());
         }
-        
+
         if(result == null) {
             throw new ResourceNotFoundException("Couldn't find "+name);
         }
-        
+
         return result;
     }
-    
-    
+
+
     /**
      * Files loaded by this resource loader are considered static, so they are
      * never reloaded by velocity.
@@ -102,8 +102,8 @@ public class WebappResourceLoader extends ResourceLoader {
     public boolean isSourceModified(Resource arg0) {
         return false;
     }
-    
-    
+
+
     /**
      * Defaults to return 0.
      *
@@ -112,5 +112,5 @@ public class WebappResourceLoader extends ResourceLoader {
     public long getLastModified(Resource arg0) {
         return 0;
     }
-    
+
 }

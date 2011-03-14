@@ -25,49 +25,49 @@ import org.apache.roller.weblogger.pojos.PingTarget;
  * Form bean used by ping target actions.
  */
 public class PingTargetFormBean {
-    
+
     private String id = null;
     private String name = null;
     private String pingUrl = null;
-    
-    
+
+
     public String getId() {
         return this.id;
     }
-    
+
     public void setId( String id ) {
         this.id = id;
     }
-    
+
     public String getName() {
         return this.name;
     }
-    
+
     public void setName( String name ) {
         this.name = name;
     }
-    
+
     public String getPingUrl() {
         return this.pingUrl;
     }
-    
+
     public void setPingUrl( String pingUrl ) {
         this.pingUrl = pingUrl;
     }
-    
-    
+
+
     public void copyTo(PingTarget dataHolder) {
-        
+
         dataHolder.setName(this.name);
         dataHolder.setPingUrl(this.pingUrl);
     }
-    
-    
+
+
     public void copyFrom(PingTarget dataHolder) {
-        
+
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
         this.pingUrl = dataHolder.getPingUrl();
     }
-    
+
 }

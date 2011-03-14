@@ -25,10 +25,10 @@ import java.io.InputStream;
  * Reads dbscripts from the classpath.
  */
 public class ClasspathDatabaseScriptProvider implements DatabaseScriptProvider {
-    
+
     public InputStream getDatabaseScript(String path) {
         String resourcePath = "/dbscripts/" + path;
         return this.getClass().getResourceAsStream(resourcePath);
     }
-    
+
 }

@@ -38,11 +38,11 @@ class IntrospectionHandler extends Handler {
     public IntrospectionHandler(HttpServletRequest request) throws HandlerException {
         super(request);
     }
-    
+
     protected EntrySet getEntrySet(Document d) throws UnexpectedRootElementException {
         throw new UnsupportedOperationException();
     }
-    
+
     public EntrySet processGet() throws HandlerException {
         if (getUri().isIntrospection()) {
             return getIntrospection(getRequest());
@@ -50,50 +50,50 @@ class IntrospectionHandler extends Handler {
             throw new BadRequestException("ERROR: Unknown GET URI type");
         }
     }
-    
+
     public EntrySet processPost(Reader r) {
         throw new UnsupportedOperationException("ERROR: POST not supported in this handler");
     }
-    
+
     public EntrySet processPut(Reader r) {
         throw new UnsupportedOperationException("ERROR: PUT not supported in this handler");
     }
-    
+
     public EntrySet processDelete() {
         throw new UnsupportedOperationException("ERROR: DELETE not supported in this handler");
     }
-    
+
     private Service getIntrospection(HttpServletRequest req) {
         String href = getUrlPrefix();
         Service service = new Service(href);
-        
+
         Service.Workspace workspace = new Service.Workspace();
         workspace.setTitle("Workspace: Collections for administration");
         workspace.setHref(service.getHref());
         service.setEntries(new Entry[] { workspace });
-        
+
         List workspaceCollections = new ArrayList();
-        
+
         Service.Workspace.Collection weblogCol = new Service.Workspace.Collection();
         weblogCol.setTitle("Collection: Weblog administration entries");
         weblogCol.setMemberType(org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry.Types.WEBLOG);
         weblogCol.setHref(service.getHref() + "/" + org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types.WEBLOGS);
         workspaceCollections.add(weblogCol);
-        
+
         Service.Workspace.Collection userCol = new Service.Workspace.Collection();
         userCol.setTitle("Collection: User administration entries");
         userCol.setMemberType("user");
         userCol.setHref(service.getHref() + "/" + org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types.USERS);
         workspaceCollections.add(userCol);
-        
+
         Service.Workspace.Collection memberCol = new Service.Workspace.Collection();
         memberCol.setTitle("Collection: Member administration entries");
         memberCol.setMemberType("member");
         memberCol.setHref(service.getHref() + "/" + org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types.MEMBERS);
         workspaceCollections.add(memberCol);
-        
+
         workspace.setEntries((Entry[])workspaceCollections.toArray(new Entry[0]));
-        
+
         return service;
     }
 }

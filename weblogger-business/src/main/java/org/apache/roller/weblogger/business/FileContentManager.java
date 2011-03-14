@@ -30,10 +30,10 @@ public interface FileContentManager {
 
     /**
      * Get a reference to the content of a specific file in a weblog's uploads area.
-     * 
+     *
      * This method always returns a valid file content object or will throw an exception
      * if the specificed path doesn't exist, or can't be read.
-     * 
+     *
      * @param weblog The weblog we are working on.
      * @param fileId file identifier from database.
      *
@@ -45,7 +45,7 @@ public interface FileContentManager {
 
     /**
      * Save a file's content to weblog's uploads area.
-     * 
+     *
      * @param weblog The weblog we are working on.
      * @param fileId file identifier from database.
      * @param is InputStream to read the file from.
@@ -61,7 +61,7 @@ public interface FileContentManager {
 
     /**
      * Delete file content from weblog's uploads area.
-     * 
+     *
      * @param weblog The weblog we are working on.
      * @param fileId file identifier from database.
      *
@@ -83,7 +83,7 @@ public interface FileContentManager {
     public void deleteAllFiles(Weblog weblog)
             throws FileIOException;
 
-    /** 
+    /**
      * Is the given weblog over the file-upload quota limit?
      *
      * @param weblog The weblog we are working on.
@@ -93,13 +93,13 @@ public interface FileContentManager {
 
     /**
      * Determine if file can be saved given current WebloggerConfig settings.
-     * 
+     *
      * @param weblog The weblog we are working on.
      * @param fileName name of the file to be saved
      * @param contentType content type of the file
      * @param size size of the file in bytes.
      * @param messages output parameter for adding messages.
-     * @return true if the file can be saved, false otherwise. 
+     * @return true if the file can be saved, false otherwise.
      */
     public boolean canSave(Weblog weblog,
             String fileName,

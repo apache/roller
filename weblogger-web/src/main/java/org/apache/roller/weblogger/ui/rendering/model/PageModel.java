@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.rendering.model; 
+package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,43 +46,43 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  * Model which provides information needed to render a weblog page.
  */
 public class PageModel implements Model {
-    
+
     private static Log log = LogFactory.getLog(PageModel.class);
-    
+
     private WeblogPageRequest pageRequest = null;
     private URLStrategy urlStrategy = null;
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
     private Weblog weblog = null;
-    
-    
+
+
     /**
-     * 
+     *
      * Creates an un-initialized new instance, Weblogger calls init() to complete
      * construction.
      */
     public PageModel() {}
-    
-    
-    /** 
+
+
+    /**
      * Template context name to be used for model.
      */
     public String getModelName() {
         return "model";
     }
-    
-    
-    /** 
-     * Init page model based on request. 
+
+
+    /**
+     * Init page model based on request.
      */
     public void init(Map initData) throws WebloggerException {
-        
+
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }
-        
+
         // PageModel only works on page requests, so cast weblogRequest
         // into a WeblogPageRequest and if it fails then throw exception
         if(weblogRequest instanceof WeblogPageRequest) {
@@ -91,48 +91,48 @@ public class PageModel implements Model {
             throw new WebloggerException("weblogRequest is not a WeblogPageRequest."+
                     "  PageModel only supports page requests.");
         }
-        
+
         // see if there is a comment form
         this.commentForm = (WeblogEntryCommentForm) initData.get("commentForm");
-        
+
         // custom request parameters
         this.requestParameters = (Map)initData.get("requestParameters");
-        
+
         // look for url strategy
         urlStrategy = (URLStrategy) initData.get("urlStrategy");
         if(urlStrategy == null) {
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
-        
+
         // extract weblog object
         weblog = pageRequest.getWeblog();
-    }    
-    
-    
+    }
+
+
     /**
      * Get the weblog locale used to render this page, null if no locale.
      */
     public String getLocale() {
         return pageRequest.getLocale();
     }
-    
-    
+
+
     /**
      * Get weblog being displayed.
      */
     public WeblogWrapper getWeblog() {
         return WeblogWrapper.wrap(weblog, urlStrategy);
     }
-    
-    
+
+
     /**
      * Is this page considered a permalink?
      */
     public boolean isPermalink() {
         return (pageRequest.getWeblogAnchor() != null);
     }
-    
-    
+
+
     /**
      * Is this page showing search results?
      */
@@ -140,8 +140,8 @@ public class PageModel implements Model {
         // the search results model will extend this class and override this
         return false;
     }
-    
-    
+
+
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */
@@ -151,8 +151,8 @@ public class PageModel implements Model {
         }
         return null;
     }
-    
-    
+
+
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */
@@ -168,8 +168,8 @@ public class PageModel implements Model {
         }
         return null;
     }
-    
-    
+
+
     /**
      * Get weblog category specified by request, or null if the category path
      * found in the request does not exist in the current weblog.
@@ -180,64 +180,64 @@ public class PageModel implements Model {
         }
         return null;
     }
-    
-    
+
+
     /**
      * Returns the list of tags specified in the request /tags/foo+bar
      */
     public List getTags() {
         return pageRequest.getTags();
     }
-    
-    
+
+
     /**
-     * A map of entries representing this page. The collection is grouped by 
-     * days of entries.  Each value is a list of entry objects keyed by the 
+     * A map of entries representing this page. The collection is grouped by
+     * days of entries.  Each value is a list of entry objects keyed by the
      * date they were published.
      */
     public WeblogEntriesPager getWeblogEntriesPager() {
         return getWeblogEntriesPager(null);
     }
-    
-    
+
+
     /**
      * A map of entries representing this page - with entries restricted by category.
-     * The collection is grouped by days of entries.  
+     * The collection is grouped by days of entries.
      * Each value is a list of entry objects keyed by the date they were published.
      * @param catArgument Category restriction (null or "nil" for no restriction)
      */
     public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {
         return getWeblogEntriesPager(catArgument, null);
     }
-    
-    
+
+
     /**
      * A map of entries representing this page - with entries restricted by tag.
-     * The collection is grouped by days of entries.  
+     * The collection is grouped by days of entries.
      * Each value is a list of entry objects keyed by the date they were published.
      * @param tagArgument tag restriction (null or "nil" for no restriction)
      */
     public WeblogEntriesPager getWeblogEntriesPagerByTag(String tagArgument) {
         return getWeblogEntriesPager(null, tagArgument);
     }
-    
-    
+
+
     private WeblogEntriesPager getWeblogEntriesPager(String catArgument, String tagArgument) {
-        
+
         // category specified by argument wins over request parameter
         String cat = pageRequest.getWeblogCategoryName();
         if (catArgument != null && !StringUtils.isEmpty(catArgument) && !"nil".equals(catArgument)) {
             cat = catArgument;
         }
-        
+
         List tags = pageRequest.getTags();
         if (tagArgument != null && !StringUtils.isEmpty(tagArgument) && !"nil".equals(tagArgument)) {
             tags = new ArrayList();
             tags.add(tagArgument);
         }
-        
+
         String dateString = pageRequest.getWeblogDate();
-        
+
         // determine which mode to use
         if (pageRequest.getWeblogAnchor() != null) {
             return new WeblogEntriesPermalinkPager(
@@ -272,7 +272,7 @@ public class PageModel implements Model {
                     cat,
                     tags,
                     pageRequest.getPageNum());
-          
+
         } else {
             return new WeblogEntriesLatestPager(
                     urlStrategy,
@@ -286,21 +286,21 @@ public class PageModel implements Model {
                     pageRequest.getPageNum());
         }
     }
-        
-    
+
+
     /**
      * Get comment form to be displayed, may contain preview data.
      *
      * @return Comment form object
      */
     public WeblogEntryCommentForm getCommentForm() {
-        
+
         if(commentForm == null) {
             commentForm = new WeblogEntryCommentForm();
         }
         return commentForm;
     }
-    
+
     /**
      * Get request parameter by name.
      */
@@ -313,5 +313,5 @@ public class PageModel implements Model {
         }
         return null;
     }
-    
+
 }

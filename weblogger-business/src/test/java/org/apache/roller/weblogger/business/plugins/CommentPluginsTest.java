@@ -31,31 +31,31 @@ public class CommentPluginsTest extends TestCase {
 
     private String convertLinesStart = "paragraph1\n\nparagraph2\nline2\nline3\n\nparagraph3";
     private String convertLinesFormatted = "\n<p>paragraph1</p>\n\n\n<p>paragraph2<br/>\nline2<br/>\nline3</p>\n\n\n<p>paragraph3</p>\n\n";
-    
-    
+
+
     protected void setUp() throws Exception {
         TestUtils.setupWeblogger();
     }
-    
+
     protected void tearDown() throws Exception {
         // no-op
     }
-    
-    
+
+
     public void testAutoFormatPlugin() {
-        
+
         PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
-        
+
         // setup test comment
         WeblogEntryComment comment = new WeblogEntryComment();
-        comment.setContent(convertLinesStart); 
+        comment.setContent(convertLinesStart);
         comment.setPlugins("AutoFormat Plugin");
-        
+
         // reformat
         String output = pmgr.applyCommentPlugins(comment, comment.getContent());
-        
+
         // make sure it turned out how we planned
-        assertEquals(convertLinesFormatted, output);        
+        assertEquals(convertLinesFormatted, output);
     }
-    
+
 }

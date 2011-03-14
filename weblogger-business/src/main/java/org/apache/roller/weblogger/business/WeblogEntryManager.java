@@ -38,28 +38,28 @@ public interface WeblogEntryManager {
 
     public static final String DESCENDING = "DESCENDING";
     public static final String ASCENDING = "ASCENDING";
-       
+
     /**
      * Save weblog entry.
      */
     public void saveWeblogEntry(WeblogEntry entry) throws WebloggerException;
-       
+
     /**
      * Remove weblog entry.
      */
-    public void removeWeblogEntry(WeblogEntry entry) throws WebloggerException;    
-    
+    public void removeWeblogEntry(WeblogEntry entry) throws WebloggerException;
+
     /**
      * Get weblog entry by id.
      */
     public WeblogEntry getWeblogEntry(String id) throws WebloggerException;
-    
-    /** 
-     * Get weblog entry by anchor. 
+
+    /**
+     * Get weblog entry by anchor.
      */
-    public WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor) 
+    public WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor)
             throws WebloggerException;
-        
+
     /**
      * Get WeblogEntries by offset/length as list in reverse chronological order.
      * The range offset and list arguments enable paging through query results.
@@ -86,13 +86,13 @@ public interface WeblogEntryManager {
             List        tags,
             String      status,
             String      text,
-            String      sortBy, 
+            String      sortBy,
             String      sortOrder,
-            String      locale,             
+            String      locale,
             int         offset,
             int         range)
             throws WebloggerException;
-       
+
     /**
      * Get Weblog Entries grouped by day. This method returns a Map that
      * contains Lists, each List contains WeblogEntryData objects, and the
@@ -112,13 +112,13 @@ public interface WeblogEntryManager {
             Date        startDate,
             Date        endDate,
             String      catName,
-            List        tags,            
+            List        tags,
             String      status,
             String      locale,
             int         offset,
             int         range)
             throws WebloggerException;
-        
+
     /**
      * Get Weblog Entry date strings grouped by day. This method returns a Map
      * that contains Lists, each List contains YYYYMMDD date strings objects,
@@ -138,13 +138,13 @@ public interface WeblogEntryManager {
             Date        startDate,
             Date        endDate,
             String      catName,
-            List        tags,            
+            List        tags,
             String      status,
             String      locale,
             int         offset,
             int         range)
-            throws WebloggerException;    
-    
+            throws WebloggerException;
+
     /**
      * Get weblog entries with given category or, optionally, any sub-category
      * of that category.
@@ -152,10 +152,10 @@ public interface WeblogEntryManager {
      * @param subcats True if sub-categories are to be fetched
      * @return        List of weblog entries in category
      */
-    public List getWeblogEntries(WeblogCategory cat, boolean subcats) 
-            throws WebloggerException; 
-    
-    /** 
+    public List getWeblogEntries(WeblogCategory cat, boolean subcats)
+            throws WebloggerException;
+
+    /**
      * Get weblog enties ordered by descending number of comments.
      * @param website    Weblog or null to get for all weblogs.
      * @param startDate  Start date or null for no start date.
@@ -165,32 +165,32 @@ public interface WeblogEntryManager {
      * @return List of WeblogEntryData objects.
      */
     public List getMostCommentedWeblogEntries(
-            Weblog website,             
+            Weblog website,
             Date        startDate,
             Date        endDate,
-            int         offset, 
+            int         offset,
             int         length)
             throws WebloggerException;
-    
+
     /**
      * Get the WeblogEntry following, chronologically, the current entry.
      * Restrict by the Category, if named.
      * @param current The "current" WeblogEntryData
      * @param catName The value of the requested Category Name
      */
-    public WeblogEntry getNextEntry(WeblogEntry current, 
-            String catName, String locale) throws WebloggerException;    
-    
+    public WeblogEntry getNextEntry(WeblogEntry current,
+            String catName, String locale) throws WebloggerException;
+
     /**
      * Get the WeblogEntry prior to, chronologically, the current entry.
      * Restrict by the Category, if named.
      * @param current The "current" WeblogEntryData.
      * @param catName The value of the requested Category Name.
      */
-    public WeblogEntry getPreviousEntry(WeblogEntry current, 
+    public WeblogEntry getPreviousEntry(WeblogEntry current,
             String catName, String locale) throws WebloggerException;
-      
-    
+
+
     /**
      * Get specified number of most recent pinned and published Weblog Entries.
      * @param max Maximum number to return.
@@ -216,18 +216,18 @@ public interface WeblogEntryManager {
      * Save weblog category.
      */
     public void saveWeblogCategory(WeblogCategory cat) throws WebloggerException;
-    
+
     /**
      * Remove weblog category.
      */
     public void removeWeblogCategory(WeblogCategory cat) throws WebloggerException;
-        
+
     /**
      * Get category by id.
      */
     public WeblogCategory getWeblogCategory(String id) throws WebloggerException;
-    
-    
+
+
     /**
      * Move a category under another category.
      *
@@ -235,52 +235,52 @@ public interface WeblogEntryManager {
      */
     public void moveWeblogCategory(WeblogCategory src, WeblogCategory dest)
             throws WebloggerException;
-    
-    
+
+
     /**
      * Recategorize all entries with one category to another.
      */
-    public void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat) 
+    public void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat)
             throws WebloggerException;
-    
+
     /**
      * Get top level categories for a website.
      * @param website Website.
      */
     public WeblogCategory getRootWeblogCategory(Weblog website) throws WebloggerException;
-    
-    
+
+
     /**
      * Get category specified by website and categoryPath.
      * @param website      Website of WeblogCategory.
      * @param categoryPath Path of WeblogCategory, relative to category root.
      */
-    public WeblogCategory getWeblogCategoryByPath(Weblog website, 
+    public WeblogCategory getWeblogCategoryByPath(Weblog website,
             String categoryPath) throws WebloggerException;
-    
-    
-    /** 
-     * Get WebLogCategory objects for a website. 
+
+
+    /**
+     * Get WebLogCategory objects for a website.
      */
     public List getWeblogCategories(Weblog website, boolean includeRoot)
             throws WebloggerException;
-    
-               
+
+
     /**
      * Save comment.
      */
     public void saveComment(WeblogEntryComment comment) throws WebloggerException;
-    
+
     /**
      * Remove comment.
      */
     public void removeComment(WeblogEntryComment comment) throws WebloggerException;
-   
+
     /**
      * Get comment by id.
      */
     public WeblogEntryComment getComment(String id) throws WebloggerException;
-       
+
     /**
      * Generic comments query method.
      * @param website    Website or null for all comments on site
@@ -293,7 +293,7 @@ public interface WeblogEntryManager {
      * @param length     Max comments to return (or -1 for no limit)
      */
     public List getComments(
-            
+
             Weblog          website,
             WeblogEntry     entry,
             String          searchString,
@@ -303,7 +303,7 @@ public interface WeblogEntryManager {
             boolean         reverseChrono,
             int             offset,
             int             length
-            
+
             ) throws WebloggerException;
 
     /**
@@ -316,45 +316,45 @@ public interface WeblogEntryManager {
      * @return Number of comments deleted
      */
     public int removeMatchingComments(
-            
+
             Weblog          website,
             WeblogEntry     entry,
             String          searchString,
             Date            startDate,
             Date            endDate,
             String          status
-            
+
             ) throws WebloggerException;
-        
+
     /**
      * Create unique anchor for weblog entry.
      */
-    public String createAnchor(WeblogEntry data) throws WebloggerException;    
-    
+    public String createAnchor(WeblogEntry data) throws WebloggerException;
+
     /**
      * Check for duplicate category name.
      */
     public boolean isDuplicateWeblogCategoryName(WeblogCategory data)
-            throws WebloggerException;  
-    
+            throws WebloggerException;
+
     /**
      * Check if weblog category is in use.
      */
     public boolean isWeblogCategoryInUse(WeblogCategory data)
-            throws WebloggerException;    
-    
-    
+            throws WebloggerException;
+
+
     /**
      * Apply comment default settings from website to all of website's entries.
      */
-    public void applyCommentDefaultsToEntries(Weblog website) 
+    public void applyCommentDefaultsToEntries(Weblog website)
         throws WebloggerException;
-    
+
     /**
      * Release all resources held by manager.
      */
-    public void release();    
-    
+    public void release();
+
     /**
      * Get list of TagStat. There's no offset/length params just a limit.
      * @param website       Weblog or null to get for all weblogs.
@@ -365,19 +365,19 @@ public interface WeblogEntryManager {
      */
     public List getPopularTags(Weblog website, Date startDate, int offset, int limit)
             throws WebloggerException;
-    
+
     /**
      * Get list of TagStat. There's no offset/length params just a limit.
      * @param website       Weblog or null to get for all weblogs.
-     * @param sortBy        Sort by either 'name' or 'count' (null for name) 
+     * @param sortBy        Sort by either 'name' or 'count' (null for name)
      * @param startsWith    Prefix for tags to be returned (null or a string of length > 0)
      * @param limit         Max TagStats to return (or -1 for no limit)
      * @return
      * @throws WebloggerException
      */
     public List getTags(Weblog website, String sortBy, String startsWith, int offset, int limit)
-            throws WebloggerException;    
-    
+            throws WebloggerException;
+
     /**
      * Does the specified tag combination exist?  Optionally confined to a specific weblog.
      *
@@ -391,15 +391,15 @@ public interface WeblogEntryManager {
      * @return True if tags exist, false otherwise.
      * @throws WebloggerException If there is any problem doing the operation.
      */
-    public boolean getTagComboExists(List tags, Weblog weblog) 
+    public boolean getTagComboExists(List tags, Weblog weblog)
         throws WebloggerException;
-    
+
     /**
      * This method maintains the tag aggregate table up-to-date with total counts. More
      * specifically every time this method is called it will act upon exactly two rows
      * in the database (tag,website,count), one with website matching the argument passed
      * and one where website is null. If the count ever reaches zero, the row must be deleted.
-     * 
+     *
      * @param name      The tag name
      * @param website   The website to used when updating the stats.
      * @param amount    The amount to increment the tag count (it can be positive or negative).
@@ -407,8 +407,8 @@ public interface WeblogEntryManager {
      */
     public void updateTagCount(String name, Weblog website, int amount)
         throws WebloggerException;
-    
-    
+
+
     /**
      * Get a HitCountData by id.
      *
@@ -417,8 +417,8 @@ public interface WeblogEntryManager {
      * @throws WebloggerException If there was a problem with the backend.
      */
     public WeblogHitCount getHitCount(String id) throws WebloggerException;
-    
-    
+
+
     /**
      * Get a HitCountData by weblog.
      *
@@ -428,8 +428,8 @@ public interface WeblogEntryManager {
      */
     public WeblogHitCount getHitCountByWeblog(Weblog weblog)
         throws WebloggerException;
-    
-    
+
+
     /**
      * Get HitCountData objects for the hotest weblogs.
      *
@@ -447,8 +447,8 @@ public interface WeblogEntryManager {
      */
     public List getHotWeblogs(int sinceDays, int offset, int length)
         throws WebloggerException;
-    
-    
+
+
     /**
      * Save a HitCountData object.
      *
@@ -456,8 +456,8 @@ public interface WeblogEntryManager {
      * @throws WebloggerException If there was a problem with the backend.
      */
     public void saveHitCount(WeblogHitCount hitCount) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove a HitCountData object.
      *
@@ -465,8 +465,8 @@ public interface WeblogEntryManager {
      * @throws WebloggerException If there was a problem with the backend.
      */
     public void removeHitCount(WeblogHitCount hitCount) throws WebloggerException;
-    
-    
+
+
     /**
      * Increment the hit count for a weblog by a certain amount.
      *
@@ -479,16 +479,16 @@ public interface WeblogEntryManager {
      */
     public void incrementHitCount(Weblog weblog, int amount)
         throws WebloggerException;
-    
-    
+
+
     /**
      * Reset the hit counts for all weblogs.  This sets the counts back to 0.
      *
      * @throws WebloggerException If there was a problem with the backend.
      */
     public void resetAllHitCounts() throws WebloggerException;
-    
-    
+
+
     /**
      * Reset the hit counts for a single weblog.  This sets the count to 0.
      *
@@ -497,29 +497,29 @@ public interface WeblogEntryManager {
      */
     public void resetHitCount(Weblog weblog) throws WebloggerException;
 
-    
+
     /**
-     * Get site-wide comment count 
+     * Get site-wide comment count
      */
     public long getCommentCount() throws WebloggerException;
 
-    
+
     /**
-     * Get weblog comment count 
-     */    
+     * Get weblog comment count
+     */
     public long getCommentCount(Weblog websiteData) throws WebloggerException;
 
-    
+
     /**
-     * Get site-wide entry count 
-     */    
+     * Get site-wide entry count
+     */
     public long getEntryCount() throws WebloggerException;
 
-    
+
     /**
-     * Get weblog entry count 
-     */    
+     * Get weblog entry count
+     */
     public long getEntryCount(Weblog websiteData) throws WebloggerException;
-    
+
 }
 

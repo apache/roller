@@ -67,14 +67,14 @@ import org.apache.roller.weblogger.util.Utilities;
 public class WeblogEntry implements Serializable {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(WeblogEntry.class);
-    
+
     public static final long serialVersionUID = 2341505386843044125L;
-    
+
     public static final String DRAFT     = "DRAFT";
     public static final String PUBLISHED = "PUBLISHED";
     public static final String PENDING   = "PENDING";
     public static final String SCHEDULED = "SCHEDULED";
-    
+
     // Simple properies
     private String    id            = UUIDGenerator.generateUUID();
     private String    title         = null;
@@ -93,24 +93,24 @@ public class WeblogEntry implements Serializable {
     private Boolean   pinnedToMain  = Boolean.FALSE;
     private String    status        = DRAFT;
     private String    locale        = null;
-    private String    creatorUserName = null;      
+    private String    creatorUserName = null;
 
     // Associated objects
     private Weblog        website  = null;
     private WeblogCategory category = null;
-    
+
     // Collection of name/value entry attributes
     private Set attSet = new TreeSet();
-    
+
     private Set tagSet = new HashSet();
     private Set removedTags = new HashSet();
     private Set addedTags = new HashSet();
-    
+
     //----------------------------------------------------------- Construction
-    
+
     public WeblogEntry() {
     }
-    
+
     public WeblogEntry(
             String id,
             WeblogCategory category,
@@ -135,18 +135,18 @@ public class WeblogEntry implements Serializable {
         this.updateTime = updateTime;
         this.status = status;
     }
-    
+
     public WeblogEntry(WeblogEntry otherData) {
         this.setData(otherData);
     }
-    
+
     //---------------------------------------------------------- Initializaion
-    
+
     /**
      * Set bean properties based on other bean.
      */
     public void setData(WeblogEntry other) {
-        
+
         this.setId(other.getId());
         this.setCategory(other.getCategory());
         this.setWebsite(other.getWebsite());
@@ -165,7 +165,7 @@ public class WeblogEntry implements Serializable {
         this.setPinnedToMain(other.getPinnedToMain());
         this.setLocale(other.getLocale());
     }
-    
+
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
@@ -184,36 +184,36 @@ public class WeblogEntry implements Serializable {
         if (other instanceof WeblogEntry != true) return false;
         WeblogEntry o = (WeblogEntry)other;
         return new EqualsBuilder()
-            .append(getAnchor(), o.getAnchor()) 
-            .append(getWebsite(), o.getWebsite()) 
+            .append(getAnchor(), o.getAnchor())
+            .append(getWebsite(), o.getWebsite())
             .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
             .append(getAnchor())
             .append(getWebsite())
             .toHashCode();
     }
-    
+
    //------------------------------------------------------ Simple properties
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="assigned"  
+     * @hibernate.id column="id" generator-class="assigned"
      */
     public String getId() {
         return this.id;
     }
-    
+
     /** @ejb:persistent-field */
     public void setId(String id) {
         // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+        if (id != null && id.trim().length() == 0) return;
         this.id = id;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
@@ -222,16 +222,16 @@ public class WeblogEntry implements Serializable {
     public WeblogCategory getCategory() {
         return this.category;
     }
-    
+
     /** @ejb:persistent-field */
     public void setCategory(WeblogCategory category) {
         this.category = category;
     }
-       
+
     /**
      * Return collection of WeblogCategory objects of this entry.
      * Added for symetry with PlanetEntryData object.
-     * 
+     *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogCategory"
      */
     public List getCategories() {
@@ -239,12 +239,12 @@ public class WeblogEntry implements Serializable {
         cats.add(getCategory());
         return cats;
     }
-    
+
     /** No-op method to please XDoclet */
     public void setCategories(List cats) {
         // no-op
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
@@ -253,12 +253,12 @@ public class WeblogEntry implements Serializable {
     public Weblog getWebsite() {
         return this.website;
     }
-    
+
     /** @ejb:persistent-field */
     public void setWebsite(Weblog website) {
         this.website = website;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      */
@@ -269,16 +269,16 @@ public class WeblogEntry implements Serializable {
             mLogger.error("ERROR fetching user object for username: " + getCreatorUserName(), e);
         }
         return null;
-    }   
-    
+    }
+
     public String getCreatorUserName() {
         return creatorUserName;
     }
 
     public void setCreatorUserName(String creatorUserName) {
         this.creatorUserName = creatorUserName;
-    }   
-    
+    }
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -287,12 +287,12 @@ public class WeblogEntry implements Serializable {
     public String getTitle() {
         return this.title;
     }
-    
+
     /** @ejb:persistent-field */
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     /**
      * Get summary for weblog entry (maps to RSS description and Atom summary).
      * @roller.wrapPojoMethod type="simple"
@@ -302,7 +302,7 @@ public class WeblogEntry implements Serializable {
     public String getSummary() {
         return summary;
     }
-    
+
     /**
      * Set summary for weblog entry (maps to RSS description and Atom summary).
      * @ejb:persistent-field
@@ -310,7 +310,7 @@ public class WeblogEntry implements Serializable {
     public void setSummary(String summary) {
         this.summary = summary;
     }
-    
+
     /**
      * Get content text for weblog entry (maps to RSS content:encoded and Atom content).
      * @roller.wrapPojoMethod type="simple"
@@ -320,7 +320,7 @@ public class WeblogEntry implements Serializable {
     public String getText() {
         return this.text;
     }
-    
+
     /**
      * Set content text for weblog entry (maps to RSS content:encoded and Atom content).
      * @ejb:persistent-field
@@ -328,7 +328,7 @@ public class WeblogEntry implements Serializable {
     public void setText(String text) {
         this.text = text;
     }
-    
+
     /**
      * Get content type (text, html, xhtml or a MIME content type)
      * @roller.wrapPojoMethod type="simple"
@@ -338,7 +338,7 @@ public class WeblogEntry implements Serializable {
     public String getContentType() {
         return contentType;
     }
-    
+
     /**
      * Set content type (text, html, xhtml or a MIME content type)
      * @ejb:persistent-field
@@ -346,7 +346,7 @@ public class WeblogEntry implements Serializable {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
-    
+
     /**
      * Get URL for out-of-line content.
      * @roller.wrapPojoMethod type="simple"
@@ -356,7 +356,7 @@ public class WeblogEntry implements Serializable {
     public String getContentSrc() {
         return contentSrc;
     }
-    
+
     /**
      * Set URL for out-of-line content.
      * @ejb:persistent-field
@@ -364,7 +364,7 @@ public class WeblogEntry implements Serializable {
     public void setContentSrc(String contentSrc) {
         this.contentSrc = contentSrc;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -373,12 +373,12 @@ public class WeblogEntry implements Serializable {
     public String getAnchor() {
         return this.anchor;
     }
-    
+
     /** @ejb:persistent-field */
     public void setAnchor(String anchor) {
         this.anchor = anchor;
     }
-    
+
     //-------------------------------------------------------------------------
     /**
      * Map attributes as set because XDoclet 1.2b4 map support is broken.
@@ -396,8 +396,8 @@ public class WeblogEntry implements Serializable {
     public void setEntryAttributes(Set atts) {
         this.attSet = atts;
     }
-    
-    
+
+
     /**
      * Would be named getEntryAttribute, but that would set off XDoclet
      *
@@ -412,13 +412,13 @@ public class WeblogEntry implements Serializable {
         }
         return null;
     }
-        
+
     public void putEntryAttribute(String name, String value) throws Exception {
         WeblogEntryAttribute att = null;
         for (Iterator it = getEntryAttributes().iterator(); it.hasNext(); ) {
             WeblogEntryAttribute o = (WeblogEntryAttribute) it.next();
             if (name.equals(o.getName())) {
-                att = o; 
+                att = o;
                 break;
             }
         }
@@ -432,9 +432,9 @@ public class WeblogEntry implements Serializable {
             att.setValue(value);
         }
     }
-    
+
     //-------------------------------------------------------------------------
-    
+
     /**
      * <p>Publish time is the time that an entry is to be (or was) made available
      * for viewing by newsfeed readers and visitors to the Roller site.</p>
@@ -453,12 +453,12 @@ public class WeblogEntry implements Serializable {
     public Timestamp getPubTime() {
         return this.pubTime;
     }
-    
+
     /** @ejb:persistent-field */
     public void setPubTime(Timestamp pubTime) {
         this.pubTime = pubTime;
     }
-    
+
     /**
      * <p>Update time is the last time that an weblog entry was saved in the
      * Roller weblog editor or via web services API (XML-RPC or Atom).</p>
@@ -477,12 +477,12 @@ public class WeblogEntry implements Serializable {
     public Timestamp getUpdateTime() {
         return this.updateTime;
     }
-    
+
     /** @ejb:persistent-field */
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -491,12 +491,12 @@ public class WeblogEntry implements Serializable {
     public String getStatus() {
         return this.status;
     }
-    
+
     /** @ejb:persistent-field */
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
     /**
      * Some weblog entries are about one specific link.
      * @return Returns the link.
@@ -508,7 +508,7 @@ public class WeblogEntry implements Serializable {
     public String getLink() {
         return link;
     }
-    
+
     /**
      * @ejb:persistent-field
      * @param link The link to set.
@@ -516,7 +516,7 @@ public class WeblogEntry implements Serializable {
     public void setLink(String link) {
         this.link = link;
     }
-    
+
     /**
      * Comma-delimited list of this entry's Plugins.
      *
@@ -527,13 +527,13 @@ public class WeblogEntry implements Serializable {
     public String getPlugins() {
         return plugins;
     }
-    
+
     /** @ejb:persistent-field */
     public void setPlugins(String string) {
         plugins = string;
     }
-    
-    
+
+
     /**
      * True if comments are allowed on this weblog entry.
      *
@@ -551,7 +551,7 @@ public class WeblogEntry implements Serializable {
     public void setAllowComments(Boolean allowComments) {
         this.allowComments = allowComments;
     }
-    
+
     /**
      * Number of days after pubTime that comments should be allowed, or 0 for no limit.
      *
@@ -569,7 +569,7 @@ public class WeblogEntry implements Serializable {
     public void setCommentDays(Integer commentDays) {
         this.commentDays = commentDays;
     }
-    
+
     /**
      * True if this entry should be rendered right to left.
      *
@@ -587,7 +587,7 @@ public class WeblogEntry implements Serializable {
     public void setRightToLeft(Boolean rightToLeft) {
         this.rightToLeft = rightToLeft;
     }
-    
+
     /**
      * True if story should be pinned to the top of the Roller site main blog.
      * @return Returns the pinned.
@@ -608,8 +608,8 @@ public class WeblogEntry implements Serializable {
     public void setPinnedToMain(Boolean pinnedToMain) {
         this.pinnedToMain = pinnedToMain;
     }
-    
-    
+
+
     /**
      * The locale string that defines the i18n approach for this entry.
      *
@@ -620,15 +620,15 @@ public class WeblogEntry implements Serializable {
     public String getLocale() {
         return locale;
     }
-    
-    
+
+
     public void setLocale(String locale) {
         this.locale = locale;
     }
-    
+
     /**
-     * @ejb:persistent-field 
-     * 
+     * @ejb:persistent-field
+     *
      * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all"
      * @hibernate.collection-key column="entryid"
      * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogEntryTag"
@@ -637,17 +637,17 @@ public class WeblogEntry implements Serializable {
      {
          return tagSet;
      }
-     
+
      private void setTags(Set tagSet) throws WebloggerException
      {
          this.tagSet = tagSet;
          this.removedTags = new HashSet();
          this.addedTags = new HashSet();
-     }    
-     
+     }
+
     /**
      * Roller lowercases all tags based on locale because there's not a 1:1 mapping
-     * between uppercase/lowercase characters across all languages.  
+     * between uppercase/lowercase characters across all languages.
      * @param name
      * @throws WebloggerException
      */
@@ -656,7 +656,7 @@ public class WeblogEntry implements Serializable {
         name = Utilities.normalizeTag(name, localeObject);
         if(name.length() == 0)
             return;
-        
+
         for (Iterator it = getTags().iterator(); it.hasNext();) {
             WeblogEntryTag tag = (WeblogEntryTag) it.next();
             if (tag.getName().equals(name))
@@ -670,7 +670,7 @@ public class WeblogEntry implements Serializable {
         tag.setWeblogEntry(this);
         tag.setTime(getUpdateTime());
         tagSet.add(tag);
-        
+
         addedTags.add(name);
     }
 
@@ -681,25 +681,25 @@ public class WeblogEntry implements Serializable {
     public Set getAddedTags() {
         return addedTags;
     }
-    
+
     public Set getRemovedTags() {
         return removedTags;
     }
 
     public void updateTags(List<String> updatedTags) throws WebloggerException {
-        
+
         if(updatedTags == null) {
             return;
         }
-        
+
         HashSet newTags = new HashSet(updatedTags.size());
         Locale localeObject = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
-        
+
         for(Iterator<String> it = updatedTags.iterator(); it.hasNext();) {
             String name = it.next();
             newTags.add(Utilities.normalizeTag(name, localeObject));
         }
-        
+
         HashSet removeTags = new HashSet();
 
         // remove old ones no longer passed.
@@ -716,12 +716,12 @@ public class WeblogEntry implements Serializable {
         for (Iterator it = removeTags.iterator(); it.hasNext();) {
             weblogManager.removeWeblogEntryTag((String) it.next(), this);
         }
-        
+
         for (Iterator it = newTags.iterator(); it.hasNext();) {
             addTag((String) it.next());
         }
     }
-   
+
     /**
      * @roller.wrapPojoMethod type="simple"
      */
@@ -744,13 +744,13 @@ public class WeblogEntry implements Serializable {
         }
 
         updateTags(Utilities.splitStringAsTags(tags));
-    }  
+    }
 
     // ------------------------------------------------------------------------
-    
+
     /**
      * True if comments are still allowed on this entry considering the
-     * allowComments and commentDays fields as well as the website and 
+     * allowComments and commentDays fields as well as the website and
      * site-wide configs.
      *
      * @roller.wrapPojoMethod type="simple"
@@ -775,7 +775,7 @@ public class WeblogEntry implements Serializable {
             if(pubTime == null) {
                 pubTime = getUpdateTime();
             }
-            
+
             Calendar expireCal = Calendar.getInstance(
                     getWebsite().getLocaleInstance());
             expireCal.setTime(pubTime);
@@ -791,10 +791,10 @@ public class WeblogEntry implements Serializable {
     public void setCommentsStillAllowed(boolean ignored) {
         // no-op
     }
-    
-    
+
+
     //------------------------------------------------------------------------
-    
+
     /**
      * Format the publish time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
@@ -807,17 +807,17 @@ public class WeblogEntry implements Serializable {
         try {
             SimpleDateFormat format = new SimpleDateFormat(pattern,
                     this.getWebsite().getLocaleInstance());
-            
+
             return format.format(getPubTime());
         } catch (RuntimeException e) {
             mLogger.error("Unexpected exception", e);
         }
-        
+
         return "ERROR: formatting date";
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /**
      * Format the update time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
@@ -829,24 +829,24 @@ public class WeblogEntry implements Serializable {
     public String formatUpdateTime(String pattern) {
         try {
             SimpleDateFormat format = new SimpleDateFormat(pattern);
-            
+
             return format.format(getUpdateTime());
         } catch (RuntimeException e) {
             mLogger.error("Unexpected exception", e);
         }
-        
+
         return "ERROR: formatting date";
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryComment"
      */
     public List getComments() {
         return getComments(true, true);
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryComment"
      *
@@ -869,22 +869,22 @@ public class WeblogEntry implements Serializable {
         } catch (WebloggerException alreadyLogged) {}
         return list;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
-     */    
+     */
     public int getCommentCount() {
         List comments = getComments(true, true);
         return comments.size();
     }
-    
+
     /** No-op to please XDoclet */
     public void setCommentCount(int ignored) {
         // no-op
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.RefererData"
      */
@@ -897,32 +897,32 @@ public class WeblogEntry implements Serializable {
         }
         return referers;
     }
-    
+
     //------------------------------------------------------------------------
-        
+
     /**
      * Returns absolute entry permalink.
      */
     public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWebsite(), null, anchor, true);
     }
-    
+
     /**
      * Returns entry permalink, relative to Roller context.
      * @deprecated Use getPermalink() instead.
      * @roller.wrapPojoMethod type="simple"
      */
     public String getPermaLink() {
-        String lAnchor = this.getAnchor();        
+        String lAnchor = this.getAnchor();
         try {
             lAnchor = URLEncoder.encode(anchor, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // go with the "no encoding" version
-        }        
+        }
         Weblog website = this.getWebsite();
         return "/" + getWebsite().getHandle() + "/entry/" + lAnchor;
     }
-    
+
     /**
      * Get relative URL to comments page.
      * @roller.wrapPojoMethod type="simple"
@@ -931,14 +931,14 @@ public class WeblogEntry implements Serializable {
     public String getCommentsLink() {
         return getPermaLink() + "#comments";
     }
-    
-    /** 
-     * to please XDoclet 
+
+    /**
+     * to please XDoclet
      * @deprecated Use commentLink() instead
      */
     public void setCommentsLink(String ignored) {}
-    
-    
+
+
     /**
      * Return the Title of this post, or the first 255 characters of the
      * entry's text.
@@ -952,7 +952,7 @@ public class WeblogEntry implements Serializable {
         }
         return Utilities.removeHTML(getTitle());
     }
-    
+
     /**
      * Return RSS 09x style description (escaped HTML version of entry text)
      *
@@ -961,7 +961,7 @@ public class WeblogEntry implements Serializable {
     public String getRss09xDescription() {
         return getRss09xDescription(-1);
     }
-    
+
     /**
      * Return RSS 09x style description (escaped HTML version of entry text)
      *
@@ -974,27 +974,27 @@ public class WeblogEntry implements Serializable {
         }
         return ret;
     }
-    
+
     /** Create anchor for weblog entry, based on title or text */
     protected String createAnchor() throws WebloggerException {
         return WebloggerFactory.getWeblogger().getWeblogEntryManager().createAnchor(this);
     }
-    
+
     /** Create anchor for weblog entry, based on title or text */
     public String createAnchorBase() {
-        
+
         // Use title (minus non-alphanumeric characters)
         String base = null;
         if (!StringUtils.isEmpty(getTitle())) {
-            base = Utilities.replaceNonAlphanumeric(getTitle(), ' ').trim();    
+            base = Utilities.replaceNonAlphanumeric(getTitle(), ' ').trim();
         }
         // If we still have no base, then try text (minus non-alphanumerics)
         if (StringUtils.isEmpty(base) && !StringUtils.isEmpty(getText())) {
-            base = Utilities.replaceNonAlphanumeric(getText(), ' ').trim();  
+            base = Utilities.replaceNonAlphanumeric(getText(), ' ').trim();
         }
-        
+
         if (!StringUtils.isEmpty(base)) {
-            
+
             // Use only the first 4 words
             StringTokenizer toker = new StringTokenizer(base);
             String tmp = null;
@@ -1012,20 +1012,20 @@ public class WeblogEntry implements Serializable {
         else {
             base = DateUtil.format8chars(getPubTime());
         }
-        
+
         return base;
     }
-    
+
     /**
      * A no-op. TODO: fix formbean generation so this is not needed.
      */
     public void setPermalink(String string) {}
-    
+
     /**
      * A no-op. TODO: fix formbean generation so this is not needed.
      */
     public void setPermaLink(String string) {}
-    
+
     /**
      * A no-op.
      * TODO: fix formbean generation so this is not needed.
@@ -1033,7 +1033,7 @@ public class WeblogEntry implements Serializable {
      */
     public void setDisplayTitle(String string) {
     }
-    
+
     /**
      * A no-op.
      * TODO: fix formbean generation so this is not needed.
@@ -1041,8 +1041,8 @@ public class WeblogEntry implements Serializable {
      */
     public void setRss09xDescription(String string) {
     }
-    
-    
+
+
     /**
      * Convenience method to transform mPlugins to a List
      *
@@ -1054,8 +1054,8 @@ public class WeblogEntry implements Serializable {
             return Arrays.asList( StringUtils.split(plugins, ",") );
         }
         return new ArrayList();
-    }    
-    
+    }
+
     /** Convenience method for checking status */
     public boolean isDraft() {
         return status.equals(DRAFT);
@@ -1063,7 +1063,7 @@ public class WeblogEntry implements Serializable {
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
     public void setDraft(boolean value) {
     }
-    
+
     /** Convenience method for checking status */
     public boolean isPending() {
         return status.equals(PENDING);
@@ -1071,7 +1071,7 @@ public class WeblogEntry implements Serializable {
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
     public void setPending(boolean value) {
     }
-    
+
     /** Convenience method for checking status */
     public boolean isPublished() {
         return status.equals(PUBLISHED);
@@ -1079,7 +1079,7 @@ public class WeblogEntry implements Serializable {
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
     public void setPublished(boolean value) {
     }
-  
+
     /**
      * Get entry text, transformed by plugins enabled for entry.
      * @roller.wrapPojoMethod type="simple"
@@ -1093,7 +1093,7 @@ public class WeblogEntry implements Serializable {
     public void setTransformedText(String t) {
         // no-op
     }
-    
+
     /**
      * Get entry summary, transformed by plugins enabled for entry.
      * @roller.wrapPojoMethod type="simple"
@@ -1106,28 +1106,28 @@ public class WeblogEntry implements Serializable {
      */
     public void setTransformedSummary(String t) {
         // no-op
-    }    
-    
+    }
+
     /**
      * Determine if the specified user has permissions to edit this entry.
      */
     public boolean hasWritePermissions(User user) throws WebloggerException {
-        
+
         // global admins can hack whatever they want
-        GlobalPermission adminPerm = 
+        GlobalPermission adminPerm =
             new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
         boolean hasAdmin = WebloggerFactory.getWeblogger().getUserManager()
-            .checkPermission(adminPerm, user); 
+            .checkPermission(adminPerm, user);
         if (hasAdmin) {
             return true;
         }
-        
+
         WeblogPermission perm = null;
         try {
             // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             perm = umgr.getWeblogPermission(getWebsite(), user);
-            
+
         } catch (WebloggerException ex) {
             // security interceptor should ensure this never happens
             mLogger.error("ERROR retrieving user's permission", ex);
@@ -1135,14 +1135,14 @@ public class WeblogEntry implements Serializable {
 
         boolean author = perm.hasAction(WeblogPermission.POST) || perm.hasAction(WeblogPermission.ADMIN);
         boolean limited = !author && perm.hasAction(WeblogPermission.EDIT_DRAFT);
-        
+
         if (author || (limited && isDraft()) || (limited && isPending())) {
             return true;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Transform string based on plugins enabled for this weblog entry.
      */
@@ -1152,10 +1152,10 @@ public class WeblogEntry implements Serializable {
         Map plugins = this.website.getInitializedPlugins();
         if (str != null && plugins != null) {
             List entryPlugins = getPluginsList();
-            
+
             // if no Entry plugins, don't bother looping.
             if (entryPlugins != null && !entryPlugins.isEmpty()) {
-                
+
                 // now loop over mPagePlugins, matching
                 // against Entry plugins (by name):
                 // where a match is found render Plugin.
@@ -1172,11 +1172,11 @@ public class WeblogEntry implements Serializable {
                     }
                 }
             }
-        }        
+        }
         return ret;
     }
-    
-    
+
+
     /**
      * Get the right transformed display content depending on the situation.
      *
@@ -1188,12 +1188,12 @@ public class WeblogEntry implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String displayContent(String readMoreLink) {
-        
+
         String displayContent = null;
-        
-        if(readMoreLink == null || readMoreLink.trim().length() < 1 || 
+
+        if(readMoreLink == null || readMoreLink.trim().length() < 1 ||
                 "nil".equals(readMoreLink)) {
-            
+
             // no readMore link means permalink, so prefer text over summary
             if(StringUtils.isNotEmpty(this.getText())) {
                 displayContent = this.getTransformedText();
@@ -1209,34 +1209,34 @@ public class WeblogEntry implements Serializable {
                     // add read more
                     List args = new ArrayList();
                     args.add(readMoreLink);
-                    
+
                     // TODO: we need a more appropriate way to get the view locale here
                     String readMore = I18nMessages.getMessages(getWebsite().getLocaleInstance()).getString("macro.weblog.readMoreLink", args);
-                    
+
                     displayContent += readMore;
                 }
             } else {
                 displayContent = this.getTransformedText();
             }
         }
-        
+
         return displayContent;
     }
-    
-    
+
+
     /**
      * Get the right transformed display content.
      *
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getDisplayContent() { 
+    public String getDisplayContent() {
         return displayContent(null);
     }
-    
-    
+
+
     /** No-op method to please XDoclet */
     public void setDisplayContent(String ignored) {}
 
 
-    
+
 }

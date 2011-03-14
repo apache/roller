@@ -52,12 +52,12 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogMediaResourceRequest;
 public class MediaResourceServlet extends HttpServlet {
 
     private static Log log = LogFactory.getLog(MediaResourceServlet.class);
-    
+
     public void init(ServletConfig config) throws ServletException {
 
         super.init(config);
         log.info("Initializing ResourceServlet");
-        
+
     }
 
     /**
@@ -65,7 +65,7 @@ public class MediaResourceServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         MediaFileManager mfMgr = WebloggerFactory.getWeblogger().getMediaFileManager();
 
         Weblog weblog = null;
@@ -90,15 +90,15 @@ public class MediaResourceServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-    
+
         long resourceLastMod = 0;
         InputStream resourceStream = null;
         MediaFile mediaFile = null;
-        
+
         try {
             mediaFile = mfMgr.getMediaFile(resourceRequest.getResourceId(), true);
             resourceLastMod = mediaFile.getLastModified();
-            
+
         } catch (Exception ex) {
             // still not found? then we don't have it, 404.
             log.debug("Unable to get resource", ex);
@@ -113,7 +113,7 @@ public class MediaResourceServlet extends HttpServlet {
             // set last-modified date
             ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod);
         }
-        
+
 
         // set the content type based on whatever is in our web.xml mime defs
         if (resourceRequest.isThumbnail()) {
@@ -143,10 +143,10 @@ public class MediaResourceServlet extends HttpServlet {
             while((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
-            
+
             // close output stream
             out.close();
-            
+
         } catch (Throwable ex) {
             log.error("ERROR",ex);
             if(!response.isCommitted()) {

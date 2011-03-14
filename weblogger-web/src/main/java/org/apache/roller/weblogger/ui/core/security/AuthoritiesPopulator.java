@@ -41,7 +41,7 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
     /** A default role which will be assigned to all authenticated users if set */
     private GrantedAuthority defaultRole = null;
 
-    
+
     /* (non-Javadoc)
      * @see org.springframework.security.ldap.LdapAuthoritiesPopulator#getGrantedAuthorities(org.springframework.ldap.core.DirContextOperations, String)
      */
@@ -73,7 +73,7 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
         for(String role : roles) {
             authorities[i++] = new GrantedAuthorityImpl(role);
         }
-        
+
         if (defaultRole != null) {
             authorities[roleCount-1] = defaultRole;
         }

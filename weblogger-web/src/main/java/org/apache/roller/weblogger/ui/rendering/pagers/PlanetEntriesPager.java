@@ -38,22 +38,22 @@ import org.apache.roller.weblogger.business.URLStrategy;
  * Paging through a collection of planet entries.
  */
 public class PlanetEntriesPager extends AbstractPager {
-    
+
     private static Log log = LogFactory.getLog(PlanetEntriesPager.class);
-    
+
     private String feedURL = null;
     private String groupHandle = null;
     private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
-    
+
     // the collection for the pager
     private List entries = null;
-    
+
     // are there more items?
     private boolean more = false;
-    
-    
+
+
     public PlanetEntriesPager(
             URLStrategy    strat,
             String         feedURL,
@@ -63,26 +63,26 @@ public class PlanetEntriesPager extends AbstractPager {
             int            sinceDays,
             int            page,
             int            length) {
-        
+
         super(strat, baseUrl, page);
-        
+
         this.feedURL = feedURL;
         this.groupHandle = groupHandle;
         this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
+
     public List getItems() {
-        
+
         if (entries == null) {
             // calculate offset
             int offset = getPage() * length;
-            
+
             Date startDate = null;
             if(sinceDays > 0) {
                 Calendar cal = Calendar.getInstance();
@@ -90,12 +90,12 @@ public class PlanetEntriesPager extends AbstractPager {
                 cal.add(Calendar.DATE, -1 * sinceDays);
                 startDate = cal.getTime();
             }
-            
+
             List results = new ArrayList();
             try {
                 PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
                 Planet planet = planetManager.getPlanet("default");
-                
+
                 List entries = null;
                 if (feedURL != null) {
                     Subscription sub = planetManager.getSubscription(feedURL);
@@ -107,30 +107,30 @@ public class PlanetEntriesPager extends AbstractPager {
                     PlanetGroup group = planetManager.getGroup(planet, "all");
                     entries = planetManager.getEntries(group, startDate, null, offset, length+1);
                 }
-                
+
                 // wrap 'em
                 int count = 0;
                 for (Iterator it = entries.iterator(); it.hasNext();) {
                     SubscriptionEntry entry = (SubscriptionEntry) it.next();
                     // TODO needs pojo wrapping from planet
-                    if (count++ < length) { 
+                    if (count++ < length) {
                         results.add(entry);
                     } else {
                         more = true;
                     }
                 }
-                
+
             } catch (Exception e) {
                 log.error("ERROR: get aggregation", e);
             }
-            
+
             entries = results;
         }
-        
+
         return entries;
     }
-    
-    
+
+
     public boolean hasMoreItems() {
         return more;
     }

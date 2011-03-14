@@ -29,23 +29,23 @@ import org.apache.commons.logging.LogFactory;
  * Test blacklist functionality.
  */
 public class BlacklistTest extends TestCase {
-    public static Log log =    
-        LogFactory.getLog(BlacklistTest.class);  
-    
+    public static Log log =
+        LogFactory.getLog(BlacklistTest.class);
+
     private Blacklist blacklist;
-    
-      
+
+
     public BlacklistTest() {
         super();
     }
-    
+
     /**
      * @param arg0
      */
     public BlacklistTest(String arg0) {
         super(arg0);
     }
-    
+
     /**
      * @see TestCase#setUp()
      */
@@ -57,7 +57,7 @@ public class BlacklistTest extends TestCase {
         log.info("Processing Blacklist file: " + blacklistName);
         blacklist.loadBlacklistFromFile(blacklistName);
     }
-    
+
     /**
      * @see TestCase#tearDown()
      */
@@ -65,53 +65,53 @@ public class BlacklistTest extends TestCase {
         super.tearDown();
         //System.out.println(blacklist);
     }
-    
+
     public void testIsBlacklisted0() {
         assertFalse(blacklist.isBlacklisted("four score and seven years ago.com"));
     }
-    
+
     // test non-regex
     public void testIsBlacklisted1() {
         assertTrue(blacklist.isBlacklisted("00000-online-casino.com"));
     }
-    
+
     // test the regex patterns
     public void testIsBlacklisted2() {
         assertTrue(blacklist.isBlacklisted("www.lsotr.com"));
     }
-    
+
     // test the regex patterns
     public void testIsBlacklisted3() {
         assertTrue(blacklist.isBlacklisted("www.lsotr.com"));
     }
-    
+
     // test the regex patterns
     public void testIsBlacklisted4() {
         assertTrue(blacklist.isBlacklisted("blow-job.com"));
     }
-    
+
     // test the regex patterns
     public void testIsBlacklisted5() {
         assertTrue(blacklist.isBlacklisted("buymoreonline.com"));
     }
-    
+
     // test the regex patterns
     public void testIsBlacklisted6() {
         assertTrue(blacklist.isBlacklisted("diet-enlargement.com"));
     }
-    
+
     // test the regex patterns
     public void testIsBlacklisted7() {
         assertTrue(blacklist.isBlacklisted("viagra.com"));
     }
-    
+
     // test the regex patterns
     public void testIsBlacklisted8() {
         assertTrue(blacklist.isBlacklisted("ragazze-something.com"));
     }
-    
+
     public static Test suite() {
         return new TestSuite(BlacklistTest.class);
     }
-    
+
 }

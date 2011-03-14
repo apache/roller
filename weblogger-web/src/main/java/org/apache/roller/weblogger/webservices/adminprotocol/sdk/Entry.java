@@ -32,10 +32,10 @@ import org.jdom.output.XMLOutputter;
  */
 public abstract class Entry {
     protected static final Namespace NAMESPACE = Namespace.getNamespace("http://purl.org/apache/roller/rap#");
-    
+
     /** Entry types. */
     public static interface Types {
-        /** 
+        /**
          * User entry.
          * A user entry is contained within a user entry set.
          */
@@ -57,28 +57,28 @@ public abstract class Entry {
          */
         public static final String COLLECTION = "collection";
     }
-    
+
     /** XML attributes common to all entry types. */
     protected static interface Attributes {
         public static final String HREF = "href";
     }
-    
+
     private String href = null;
-    
+
     /** Get the HREF that identifies this entry. */
     public String getHref() {
         return href;
     }
-    
+
     /** Set the HREF that identifies this entry. */
     public void setHref(String href) {
         this.href = href;
     }
-    
+
     /** This entry, as a JDOM Document object. */
     public abstract Document toDocument();
-    
-    /** 
+
+    /**
      * This entry, as a String (XML).
      */
     public String toString() {
@@ -91,34 +91,34 @@ public abstract class Entry {
         } catch (IOException ioe) {
             throw new IllegalStateException(ioe.getMessage());
         }
-        
+
         return writer.toString();
     }
-    
+
     public abstract String getType();
-    
+
     public boolean equals(Object o) {
-        if ( o == null || o.getClass() != this.getClass()) { 
-            return false;        
+        if ( o == null || o.getClass() != this.getClass()) {
+            return false;
         }
-                
+
         Entry other = (Entry)o;
-        
+
         if (!areEqual(getHref(), other.getHref())) {
             return false;
         }
         if (!areEqual(getType(), other.getType())) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     protected static boolean areEqual(Object o1, Object o2) {
         return o1 == null ? o2 == null : o1.equals(o2);
     }
-    
+
     protected static boolean areEqual(Object[] oa1, Object[] oa2) {
         return oa1 == null ? oa2 == null : Arrays.equals(oa1, oa2);
-    }    
+    }
 }

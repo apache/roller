@@ -28,10 +28,10 @@ public abstract class ReadFromIndexOperation extends IndexOperation {
     public ReadFromIndexOperation(IndexManagerImpl mgr) {
         super(mgr);
     }
-    
+
     private static Log mLogger = LogFactory.getFactory().getInstance(
             ReadFromIndexOperation.class);
-    
+
     public final void run() {
         try {
             manager.getReadWriteLock().readLock().lock();
@@ -43,5 +43,5 @@ public abstract class ReadFromIndexOperation extends IndexOperation {
             manager.getReadWriteLock().readLock().unlock();
         }
     }
-    
+
 }

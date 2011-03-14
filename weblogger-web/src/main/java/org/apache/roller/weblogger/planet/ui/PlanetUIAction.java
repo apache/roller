@@ -28,15 +28,15 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * An extension of the UIAction class specific to the Planet actions.
  */
 public abstract class PlanetUIAction extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(PlanetUIAction.class);
-    
+
     public static final String DEFAULT_PLANET_HANDLE = "default";
-    
+
     // the planet used by all Planet actions
     private Planet planet = null;
-    
-    
+
+
     public Planet getPlanet() {
         if(planet == null) {
             try {
@@ -48,5 +48,5 @@ public abstract class PlanetUIAction extends UIAction {
         }
         return planet;
     }
-    
+
 }

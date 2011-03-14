@@ -16,17 +16,17 @@
 * directory of this distribution.
 */
 package org.apache.roller.weblogger.business.runnable;
-        
+
 import java.io.File;
 import org.apache.roller.weblogger.util.StandaloneWebappClassLoader;
 
 /**
- * Sets up classpath for running a Roller task outside of the Roller webapp. 
+ * Sets up classpath for running a Roller task outside of the Roller webapp.
  */
-public class TaskRunner {   
-    
-    public TaskRunner() {} 
-    
+public class TaskRunner {
+
+    public TaskRunner() {}
+
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
             System.err.println("USAGE: java -cp roller-planet.jar TaskRunner WEBAPPDIR JARSDIR CLASSNAME");
@@ -40,19 +40,19 @@ public class TaskRunner {
         String webappDir     = args[0];
         String jarsDir       = args[1];
         String taskClassName = args[2];
-        System.out.println("WEBAPPDIR = " + webappDir); 
+        System.out.println("WEBAPPDIR = " + webappDir);
         System.out.println("JARSDIR   = " + jarsDir);
         System.out.println("CLASSNAME = " + taskClassName);
-        
+
         File webappDirFile = new File(webappDir);
         File jarsDirFile = new File(jarsDir);
         if (!webappDirFile.isDirectory() || !jarsDirFile.isDirectory()) {
             System.err.println("ERROR: webapp.dir and jars.dir must specify existing directories");
             System.exit(-1);
-        }        
-        
+        }
+
         ClassLoader cl = new StandaloneWebappClassLoader(webappDir, jarsDir, null);
-       
+
         // We're using the new classloader from here on out
         Thread.currentThread().setContextClassLoader(cl);
 
@@ -65,7 +65,7 @@ public class TaskRunner {
 
 
 /* for example:
- 
+
 java \
     -Dplanet.custom.config=planet-custom.properties \
     -Dcatalina.base=. \
@@ -74,5 +74,5 @@ java \
     ~/roller_trunk/sandbox/planetroller/build/webapp \
     /Applications/Java/jakarta-tomcat-5.5.9/common/lib \
     org.apache.roller.weblogger.planet.tasks.GeneratePlanetTask
- 
+
  */

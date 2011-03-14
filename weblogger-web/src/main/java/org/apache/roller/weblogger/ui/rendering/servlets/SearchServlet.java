@@ -53,65 +53,65 @@ import org.apache.roller.weblogger.util.cache.CachedContent;
 /**
  * Handles search queries for weblogs.
  */
-public class SearchServlet extends HttpServlet {    
+public class SearchServlet extends HttpServlet {
     private static Log log = LogFactory.getLog(SearchServlet.class);
-    
+
     // Development theme reloading
 	Boolean themeReload = false;
-    
+
     /**
      * Init method for this servlet
      */
     public void init(ServletConfig servletConfig) throws ServletException {
-        
+
         super.init(servletConfig);
-        
+
         log.info("Initializing SearchServlet");
     }
-    
-    
+
+
     /**
      * Handle GET requests for weblog pages.
      */
-    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         log.debug("Entering");
-        
+
         Weblog weblog = null;
         WeblogSearchRequest searchRequest = null;
-        
+
         // first off lets parse the incoming request and validate it
         try {
             searchRequest = new WeblogSearchRequest(request);
-            
+
             // now make sure the specified weblog really exists
             weblog = WebloggerFactory.getWeblogger().getWeblogManager()
                     .getWeblogByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
-            
+
         } catch(Exception e) {
             // invalid search request format or weblog doesn't exist
             log.debug("error creating weblog search request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // do we need to force a specific locale for the request?
         if(searchRequest.getLocale() == null && !weblog.isShowAllLangs()) {
             searchRequest.setLocale(weblog.getLocale());
         }
-        
+
         // lookup template to use for rendering
         ThemeTemplate page = null;
         try {
             // first try looking for a specific search page
             page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ACTION_SEARCH);
-            
+
             // if not found then fall back on default page
             if(page == null) {
                 page = weblog.getTheme().getDefaultTemplate();
             }
-            
+
             // if still null then that's a problem
             if(page == null) {
                 throw new WebloggerException("Could not lookup default page "+
@@ -121,21 +121,21 @@ public class SearchServlet extends HttpServlet {
             log.error("Error getting default page for weblog "+
                     weblog.getHandle(), e);
         }
-        
+
         // set the content type
         response.setContentType("text/html; charset=utf-8");
-        
+
         // looks like we need to render content
         Map model = new HashMap();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", false, 8192, true);
-            
+
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
             initData.put("pageContext", pageContext);
-            
+
             // this is a little hacky, but nothing we can do about it
             // we need the 'weblogRequest' to be a pageRequest so other models
             // are properly loaded, which means that searchRequest needs its
@@ -146,14 +146,14 @@ public class SearchServlet extends HttpServlet {
             pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
             initData.put("parsedRequest", pageRequest);
             initData.put("searchRequest", searchRequest);
-            
+
             // define url strategy
             initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());
-            
+
             // Load models for pages
             String searchModels = WebloggerConfig.getProperty("rendering.searchModels");
             ModelLoader.loadModels(searchModels, model, initData, true);
-            
+
             // Load special models for site-wide blog
             if(WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
@@ -162,18 +162,18 @@ public class SearchServlet extends HttpServlet {
 
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
-            
+
             // ick, gotta load pre-3.0 model stuff as well :(
             ModelLoader.loadOldModels(model, request, response, pageContext, pageRequest, WebloggerFactory.getWeblogger().getUrlStrategy());
-            
+
             // manually add search model again to support pre-3.0 weblogs
             Model searchModel = new SearchResultsModel();
             searchModel.init(initData);
             model.put("searchResults", searchModel);
-            
+
         } catch (WebloggerException ex) {
             log.error("Error loading model objects for page", ex);
-            
+
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
@@ -190,14 +190,14 @@ public class SearchServlet extends HttpServlet {
 					} else {
 						WeblogPageCache.getInstance().clear();
 					}
-					I18nMessages.reloadBundle(weblog.getLocaleInstance()); 
+					I18nMessages.reloadBundle(weblog.getLocaleInstance());
 				}
 
 			} catch (Exception ex) {
 				log.error("ERROR - reloading theme " + ex);
 			}
 		}
-		
+
         // lookup Renderer we are going to use
         Renderer renderer = null;
         try {
@@ -206,39 +206,39 @@ public class SearchServlet extends HttpServlet {
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);
-            
+
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // render content
         CachedContent rendererOutput = new CachedContent(4096);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());
-            
+
             // flush rendered output and close
             rendererOutput.flush();
             rendererOutput.close();
         } catch(Exception e) {
             // bummer, error during rendering
             log.error("Error during rendering for rsd template", e);
-            
+
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
+
         // post rendering process
-        
+
         // flush rendered content to response
         log.debug("Flushing response output");
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
-        
+
         log.debug("Exiting");
     }
-    
+
 }

@@ -25,13 +25,13 @@ import org.apache.roller.planet.PlanetException;
  * Exception generated from FeedUpdater.
  */
 public class UpdaterException extends PlanetException {
-    
+
     public UpdaterException(String msg) {
         super(msg);
     }
-    
+
     public UpdaterException(String msg, Throwable t) {
         super(msg, t);
     }
-    
+
 }

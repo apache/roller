@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
  * A utility class for dealing with i18n.
  */
 public final class I18nUtils {
-    
+
     public static final Locale toLocale(String locale) {
         if (locale != null) {
             String[] localeStr = StringUtils.split(locale,"_");
@@ -46,5 +46,5 @@ public final class I18nUtils {
         }
         return Locale.getDefault();
     }
-    
+
 }

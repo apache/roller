@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 
 /**
- * Special previewing servlet which serves files uploaded by users as well as 
+ * Special previewing servlet which serves files uploaded by users as well as
  * static resources in shared themes.  This servlet differs from the normal
  * ResourceServlet because it can accept urls parameters which affect how it
  * behaves which are used for previewing.
@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 public class PreviewThemeImageServlet extends HttpServlet {
 
     private static Log log = LogFactory.getLog(PreviewThemeImageServlet.class);
-    
+
     private ServletContext context = null;
 
 
@@ -53,7 +53,7 @@ public class PreviewThemeImageServlet extends HttpServlet {
         super.init(config);
 
         log.info("Initializing PreviewThemeImageServlet");
-        
+
         this.context = config.getServletContext();
     }
 
@@ -63,15 +63,15 @@ public class PreviewThemeImageServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String theme = request.getParameter("theme");
-        
+
         log.debug("Theme requested ["+theme+"]");
-        
+
         long resourceLastMod = 0;
         InputStream resourceStream = null;
         String previewImagePath = null;
-        
+
         // try looking up selected theme
         try {
             ThemeManager tmgr = WebloggerFactory.getWeblogger().getThemeManager();
@@ -87,14 +87,14 @@ public class PreviewThemeImageServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // if we don't have a stream to the file then we can't continue
         if(resourceStream == null) {
             log.debug("Unable to get theme preview for theme - "+theme);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // Respond with 304 Not Modified if it is not modified.
         if (ModDateHeaderUtil.respondIfNotModified(request, response, resourceLastMod)) {
             return;
@@ -102,12 +102,12 @@ public class PreviewThemeImageServlet extends HttpServlet {
             // set last-modified date
             ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod);
         }
-        
+
         log.debug("Everything is cool, sending image");
-        
+
         // set the content type based on whatever is in our web.xml mime defs
         response.setContentType(this.context.getMimeType(previewImagePath));
-        
+
         OutputStream out = null;
         try {
             // ok, lets serve up the file
@@ -117,11 +117,11 @@ public class PreviewThemeImageServlet extends HttpServlet {
             while((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
-            
+
             // cleanup
             out.close();
             resourceStream.close();
-            
+
         } catch (Exception ex) {
             log.error("Error writing resource file", ex);
             if(!response.isCommitted()) {

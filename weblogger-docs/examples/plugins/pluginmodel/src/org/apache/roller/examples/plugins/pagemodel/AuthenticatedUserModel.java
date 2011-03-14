@@ -14,9 +14,9 @@ import org.apache.roller.weblogger.ui.rendering.model.Model;
 
 
 public class AuthenticatedUserModel implements Model {
-    private static Log log = LogFactory.getLog(AuthenticatedUserModel.class); 
+    private static Log log = LogFactory.getLog(AuthenticatedUserModel.class);
     private HttpServletRequest request = null;
-    
+
     public String getModelName() {
         return "authenticated";
     }
@@ -25,7 +25,7 @@ public class AuthenticatedUserModel implements Model {
     	PageContext context = (PageContext)params.get("pageContext");
     	this.request = (HttpServletRequest) context.getRequest();
     }
-    
+
     public UserWrapper getUser() {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);

@@ -30,8 +30,8 @@ import org.apache.roller.weblogger.pojos.PingQueueEntry;
  * layer.
  */
 public interface PingQueueManager {
-    
-    
+
+
     /**
      * Add a new persistent entry to the queue.  If the queue already contains an entry for the ping target and website
      * specified by this auto ping configuration, a new one will not be added.
@@ -39,8 +39,8 @@ public interface PingQueueManager {
      * @param autoPing auto ping configuration for the ping request to be queued.
      */
     public void addQueueEntry(AutoPing autoPing) throws WebloggerException;
-    
-    
+
+
     /**
      * Store the given queue entry.
      *
@@ -48,8 +48,8 @@ public interface PingQueueManager {
      * @throws WebloggerException
      */
     public void saveQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove a queue entry.
      *
@@ -57,8 +57,8 @@ public interface PingQueueManager {
      * @throws WebloggerException
      */
     public void removeQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException;
-    
-    
+
+
     /**
      * Retrieve an entry from the queue.
      *
@@ -67,20 +67,20 @@ public interface PingQueueManager {
      * @throws WebloggerException
      */
     public PingQueueEntry getQueueEntry(String id) throws WebloggerException;
-    
-    
+
+
     /**
      * Get all of the queue entries.
-     * 
+     *
      * @return the queue as a <code>List</code> of {@link PPingQueueEntry objects.
      * @throws WebloggerException
      */
     public List getAllQueueEntries() throws WebloggerException;
-    
-    
+
+
     /**
      * Release all resources associated with Roller session.
      */
     public void release();
-    
+
 }

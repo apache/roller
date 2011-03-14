@@ -17,7 +17,7 @@
 */
 /*
  * Filename: ApplicationResourcesTest.java
- * 
+ *
  * Created on 24-May-04
  */
 package org.apache.roller.weblogger.ui;
@@ -36,22 +36,22 @@ import junit.framework.TestSuite;
  * The purpose of this class is to verify that all messages in
  * the base ApplicationResources.properties file also appear
  * in the localized properties files.
- * 
+ *
  * If messages do not appear, the test fails and the 'evil-doers' are
- * printed to System.out.  
- * 
+ * printed to System.out.
+ *
  * Note: we need to make sure that new property files are added to this
  * test.
  *
  * Note: commented out for Roller 5.0 - all translations need update
- * 
+ *
  * @author <a href="mailto:molen@mail.com">Jaap van der Molen</a>
  * @version $Revision: 1.7 $
  */
 public class ApplicationResourcesTest extends TestCase
 {
 	//private String userDir = null;
-	private Properties baseProps = null; 
+	private Properties baseProps = null;
 
 	/**
 	 * @param arg0
@@ -60,7 +60,7 @@ public class ApplicationResourcesTest extends TestCase
 	{
 		super(name);
 	}
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		//suite.addTest(new ApplicationResourcesTest("testSystemProperties"));
@@ -74,7 +74,7 @@ public class ApplicationResourcesTest extends TestCase
 			new ApplicationResourcesTest("testApplicationResources_vi"));
 		return suite;
 	}
-	
+
 	/**
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -82,16 +82,16 @@ public class ApplicationResourcesTest extends TestCase
 	{
 		super.setUp();
 		//userDir = System.getProperty("user.dir");
-		
+
 		// load base ApplicationResources.properties file
 		baseProps = new Properties();
-		baseProps.load(new FileInputStream( 
+		baseProps.load(new FileInputStream(
                 System.getProperty("project.build.directory") + "/classes/ApplicationResources.properties"));
 	}
 
 	/**
 	 * Test Dutch stuff.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testApplicationResources_nl() throws Exception
@@ -101,7 +101,7 @@ public class ApplicationResourcesTest extends TestCase
 
 	/**
 	 * Test Simple Chinese stuff.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testApplicationResources_zh_cn() throws Exception
@@ -111,7 +111,7 @@ public class ApplicationResourcesTest extends TestCase
 
 	/**
 	 * Test Traditional Chinese stuff.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testApplicationResources_zh_tw() throws Exception
@@ -121,7 +121,7 @@ public class ApplicationResourcesTest extends TestCase
 
 	/**
 	 * Test Vietnamese stuff.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void _testApplicationResources_vi() throws Exception
@@ -142,7 +142,7 @@ public class ApplicationResourcesTest extends TestCase
 
 	/**
 	 * Helper method to do the actual testing.
-	 * 
+	 *
 	 * @param bundle name of bundle to test
 	 * @throws Exception if file not found, or if io ecxeption occurs.
 	 */
@@ -151,7 +151,7 @@ public class ApplicationResourcesTest extends TestCase
 		// verify user-dir; should end with roller
 		//assertNotNull(userDir);
 		//assertTrue(userDir.endsWith("roller"));
-		
+
 		// load Chinese resource file
 		Properties props = new Properties();
 		props.load(

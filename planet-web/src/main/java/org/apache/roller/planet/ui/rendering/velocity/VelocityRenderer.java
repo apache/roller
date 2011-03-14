@@ -37,84 +37,84 @@ import org.apache.velocity.exception.ResourceNotFoundException;
  * Renderer for Velocity templates.
  */
 public class VelocityRenderer implements Renderer {
-    
+
     private static Log log = LogFactory.getLog(VelocityRenderer.class);
-    
+
     // the original template we are supposed to render
     private Template renderTemplate = null;
-    
+
     // the velocity templates
     private org.apache.velocity.Template velocityTemplate = null;
-    
+
     // a possible exception
     private Exception parseException = null;
-    
-    
+
+
     public VelocityRenderer(Template template) throws Exception {
-        
+
         // the Template we are supposed to render
         this.renderTemplate = template;
-        
+
         try {
             // make sure that we can locate the template
             // if we can't then this will throw an exception
             velocityTemplate = PlanetVelocity.getTemplate(template.getId(), "UTF-8");
-            
+
         } catch(ResourceNotFoundException ex) {
             // velocity couldn't find the resource so lets log a warning
             log.warn("Error creating renderer for "+template.getId()+
                     " due to ["+ex.getMessage()+"]");
-            
+
             // then just rethrow so that the caller knows this instantiation failed
             throw ex;
-            
+
         } catch(ParseErrorException ex) {
             // in the case of a parsing error we want to render an
             // error page instead so the user knows what was wrong
             parseException = ex;
-            
+
             // need to lookup error page template
             velocityTemplate = PlanetVelocity.getTemplate("error-page.vm");
-            
+
         } catch(Exception ex) {
             // some kind of generic/unknown exception, dump it to the logs
             log.error("Unknown exception creatting renderer for "+template.getId(), ex);
-            
+
             // throw if back to the caller
             throw ex;
         }
     }
-    
-    
+
+
     public void render(Map model, Writer out) throws RenderingException {
-        
+
         try {
             if(parseException != null) {
-                
+
                 Context ctx = new VelocityContext(model);
                 ctx.put("exception", parseException);
                 ctx.put("exceptionSource", renderTemplate.getId());
-                
+
                 // render output to Writer
                 velocityTemplate.merge(ctx, out);
-                
+
                 // and we're done
                 return;
             }
-            
+
             long startTime = System.currentTimeMillis();
-            
+
             // convert model to Velocity Context
             Context ctx = new VelocityContext(model);
-            
+
             // no decorator, so just merge template to our output writer
             velocityTemplate.merge(ctx, out);
 
             long endTime = System.currentTimeMillis();
             long renderTime = (endTime - startTime)/1000;
-            
+
             log.debug("Rendered ["+renderTemplate.getId()+"] in "+renderTime+" secs");
-            
+
         } catch (Exception ex) {
             // wrap and rethrow so caller can deal with it
             throw new RenderingException("Error during rendering", ex);

@@ -68,16 +68,16 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
  */
 public class OldWeblogPageModel {
     public final static String VELOCITY_NULL = "nil";
-    
+
     protected static Log mLogger =
             LogFactory.getFactory().getInstance(OldWeblogPageModel.class);
-    
+
     private BookmarkManager      mBookmarkMgr = null;
     private WeblogEntryManager   mWeblogEntryMgr = null;
     private WeblogManager        mWeblogMgr = null;
     private UserManager          mUserMgr = null;
     private RefererManager       mRefererMgr = null;
-    
+
     private Map                  mCategories = new HashMap();
     private HashMap              mPageMap = new HashMap();
     private HttpServletRequest   mRequest = null;
@@ -92,18 +92,18 @@ public class OldWeblogPageModel {
     private WeblogEntryWrapper      mPreviousEntry = null;
     private WeblogEntryWrapper      mLastEntry = null;
     private WeblogEntryWrapper      mFirstEntry = null;
-    
+
     private URLStrategy urlStrategy = null;
-    
+
     //------------------------------------------------------------------------
-    
+
     /** init() must be called to complete construction */
     public OldWeblogPageModel() {}
-    
+
     public String getModelName() {
         return "pageModel";
     }
-    
+
     /**
      * Initialize PageModel and allow PageModel to initialized VelocityContext.
      */
@@ -116,10 +116,10 @@ public class OldWeblogPageModel {
             boolean isDay,
             boolean isMonth,
             String locale) {
-        
+
         urlStrategy = strat;
         mRequest = request;
-        
+
         // data we'll need in the methods
         mWebsite = website;
         mEntry = entry;
@@ -128,26 +128,26 @@ public class OldWeblogPageModel {
         mIsDaySpecified = isDay;
         mIsMonthSpecified = isMonth;
         mLocale = locale;
-        
+
         mBookmarkMgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         mRefererMgr  = WebloggerFactory.getWeblogger().getRefererManager();
         mUserMgr     = WebloggerFactory.getWeblogger().getUserManager();
         mWeblogMgr   = WebloggerFactory.getWeblogger().getWeblogManager();
         mWeblogEntryMgr   = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
+
         // Preload what we can for encapsulation.  What we cannot preload we
         // will use the Managers later to fetch.
-        
+
         // Get the pages, put into context & load map
         if (mWebsite != null) {
-            
+
             List pages = Collections.EMPTY_LIST;
             try {
                 pages = mWebsite.getTheme().getTemplates();
             } catch (WebloggerException ex) {
                 mLogger.error("error getting weblog pages", ex);
             }
-            
+
             Iterator pageIter = pages.iterator();
             while (pageIter.hasNext()) {
                 ThemeTemplate page = (ThemeTemplate) pageIter.next();
@@ -155,9 +155,9 @@ public class OldWeblogPageModel {
             }
         }
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates folder.getBookmarks() & sorting */
     public Collection getBookmarks(WeblogBookmarkFolderWrapper folder) {
         Collection bookmarks = null;
@@ -174,16 +174,16 @@ public class OldWeblogPageModel {
         }
         return bookmarks;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Get top level bookmark folders. */
     public Collection getTopLevelFolders() {
         List tops = null;
         try {
             Collection mTops = mBookmarkMgr.getRootFolder(
                     mWeblogMgr.getWeblogByHandle(mWebsite.getHandle())).getFolders();
-            
+
             // wrap pojos
             tops = new ArrayList(mTops.size());
             Iterator it = mTops.iterator();
@@ -197,14 +197,14 @@ public class OldWeblogPageModel {
         }
         return tops;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Get number of approved non-spam comments for entry */
     public int getCommentCount(String entryId) {
         return getCommentCount(entryId, true, true);
     }
-    
+
     /** Get number of approved non-spam comments for entry */
     public int getCommentCount(String entryId, boolean noSpam, boolean approvedOnly) {
         try {
@@ -213,14 +213,14 @@ public class OldWeblogPageModel {
         } catch (WebloggerException alreadyLogged) {}
         return 0;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Get comments for weblog entry specified by request */
     public List getComments(WeblogEntryWrapper entry) {
         return getComments(entry, true, true);
     }
-    
+
     /** Get comments for weblog entry specified by request */
     public List getComments(WeblogEntryWrapper wrapper, boolean noSpam, boolean approvedOnly) {
         WeblogEntry entry = wrapper.getPojo();
@@ -233,24 +233,24 @@ public class OldWeblogPageModel {
         }
         return comments;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates RefererManager */
     public int getDayHits() {
         try {
             WeblogHitCount hitCount = mWeblogEntryMgr.getHitCountByWeblog(mWebsite);
-            
+
             return (hitCount != null) ? hitCount.getDailyHits() : 0;
-            
+
         } catch (WebloggerException e) {
             mLogger.error("PageModel getDayHits()", e);
         }
         return 0;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates BookmarkManager.getFolder() */
     public WeblogBookmarkFolderWrapper getFolder(String folderPath) {
         try {
@@ -262,9 +262,9 @@ public class OldWeblogPageModel {
         }
         return null;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates UserManager.getPageByName() */
     public ThemeTemplateWrapper getUsersPageByName(WeblogWrapper wrapper, String pageName) {
         Weblog website = wrapper.getPojo();
@@ -272,10 +272,10 @@ public class OldWeblogPageModel {
         try {
             if (website == null)
                 throw new NullPointerException("website is null");
-            
+
             if (pageName == null)
                 throw new NullPointerException("pageName is null");
-            
+
             page = ThemeTemplateWrapper.wrap(website.getTheme().getTemplateByName(pageName));
         } catch (NullPointerException npe) {
             mLogger.warn(npe.getMessage());
@@ -284,22 +284,22 @@ public class OldWeblogPageModel {
         }
         return page;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates UserManager.getPageByName() */
     public ThemeTemplateWrapper getPageByName(String pageName) {
         return (ThemeTemplateWrapper) mPageMap.get(pageName);
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates UserManager.getPageByName() */
     public String getPageIdByName(String pageName) {
         mLogger.debug("looking up page ["+pageName+"]");
-        
+
         String template_id = null;
-        
+
         try {
             ThemeTemplate pd = mWebsite.getTheme().getTemplateByName(pageName);
             if(pd != null) {
@@ -308,14 +308,14 @@ public class OldWeblogPageModel {
         } catch(Exception e) {
             mLogger.error(e);
         }
-        
+
         mLogger.debug("returning template id ["+template_id+"]");
-        
+
         return template_id;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /**
      * Get collection of user pages.
      * @return
@@ -323,9 +323,9 @@ public class OldWeblogPageModel {
     public Object getPages() {
         return mPageMap.values();
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /**
      * Returns a map of up to 100 recent weblog entries for the user and day
      * specified in the request, filtered by the category specified by the
@@ -342,17 +342,17 @@ public class OldWeblogPageModel {
      * <li></li>
      * </ul>
      *
-     * @param maxEntries Maximum number of entries to be returned (only applies 
+     * @param maxEntries Maximum number of entries to be returned (only applies
      *                   if specific day not specified).
      * @param catName    Only return entries from this category and it's
      *                   subcategories. If null, returns all categories of entry
-     * @return           Map of Lists of WeblogEntryData, keyed by 8-char date 
+     * @return           Map of Lists of WeblogEntryData, keyed by 8-char date
      *                   strings.
      */
     public Map getRecentWeblogEntries(int maxEntries, String catName) {
         if (VELOCITY_NULL.equals(catName)) catName = null;
         Map ret = new HashMap();
-        try {            
+        try {
             // If request specifies a category, then use that
             String catParam = null;
             if (mCategory != null) {
@@ -367,7 +367,7 @@ public class OldWeblogPageModel {
                     catParam = null;
                 }
             }
-            
+
             Calendar cal = null;
             if (mWebsite != null) {
                 TimeZone tz = mWebsite.getTimeZoneInstance();
@@ -379,31 +379,31 @@ public class OldWeblogPageModel {
             Date startDate = null;
             Date endDate = mDate;
             if (endDate == null) endDate = new Date();
-            if (mIsDaySpecified) { 
+            if (mIsDaySpecified) {
                 // URL specified a specific day
                 // so get entries for that day
                 endDate = DateUtil.getEndOfDay(endDate, cal);
-                startDate = DateUtil.getStartOfDay(endDate, cal); 
+                startDate = DateUtil.getStartOfDay(endDate, cal);
                 // and get them ALL, no limit
-                limit = -1;                  
+                limit = -1;
             } else if (mIsMonthSpecified) {
                 endDate = DateUtil.getEndOfMonth(endDate, cal);
             }
             Map mRet = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(
-                    
+
                     mWebsite,
                     startDate,                    // startDate
                     endDate,                      // endDate
                     catParam,                     // catName
                     null,WeblogEntry.PUBLISHED,    // status
-                    mLocale, 0, limit);  
-            
+                    mLocale, 0, limit);
+
             // need to wrap pojos
             java.util.Date key = null;
             Iterator days = mRet.keySet().iterator();
             while(days.hasNext()) {
                 key = (java.util.Date)days.next();
-                
+
                 // now we need to go through each entry in a day and wrap
                 List wrappedEntries = new ArrayList();
                 List entries = (List) mRet.get(key);
@@ -412,18 +412,18 @@ public class OldWeblogPageModel {
                 }
                 mRet.put(key, wrappedEntries);
             }
-            
+
             ret = mRet;
-            
+
             setFirstAndLastEntries( ret );
         } catch (Exception e) {
             mLogger.error("PageModel getRecentWeblogEntries()", e);
         }
         return ret;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /**
      * Pull the last WeblogEntryData out of the Map.
      * @param ret
@@ -439,7 +439,7 @@ public class OldWeblogPageModel {
             if (valSize > 0) {
                 mFirstEntry = (WeblogEntryWrapper)vals.get(0);
             }
-            
+
             // get last entry in map
             vals = (List)days.get( keys[--numDays] );
             valSize = vals.size();
@@ -448,9 +448,9 @@ public class OldWeblogPageModel {
             }
         }
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /**
      * Returns list of recent weblog entries for the user and day specified in
      * the request, filtered by the category specified by the request, limited
@@ -470,7 +470,7 @@ public class OldWeblogPageModel {
         try {
             Date day = mDate;
             if (day == null) day = new Date();
-            
+
             // If request specifies a category, then use that
             String catParam = null;
             if (mCategory != null) {
@@ -486,12 +486,12 @@ public class OldWeblogPageModel {
                 }
             }
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            
+
             //ret = mgr.getRecentWeblogEntriesArray(
             //name, day, catParam, maxEntries, true );
-            
+
             List mEntries = mgr.getWeblogEntries(
-                    
+
                     mWebsite,
                     null,
                     null,                        // startDate
@@ -501,8 +501,8 @@ public class OldWeblogPageModel {
                     null,                        // text
                     null,                        // sortby (null for pubTime)
                     null,
-                    mLocale, 0, mWebsite.getEntryDisplayCount());    
-            
+                    mLocale, 0, mWebsite.getEntryDisplayCount());
+
             // wrap pojos
             ret = new ArrayList(mEntries.size());
             Iterator it = mEntries.iterator();
@@ -516,9 +516,9 @@ public class OldWeblogPageModel {
         }
         return ret;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates RefererManager **/
     public List getReferers(String date) {
         date = date.trim();
@@ -528,27 +528,27 @@ public class OldWeblogPageModel {
                     mRefererMgr.getReferersToDate(mWebsite, date);
             RollerSession rses =
                     RollerSession.getRollerSession(mRequest);
-            
+
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
                 WeblogReferrer referer = (WeblogReferrer) rdItr.next();
                 String title =referer.getTitle();
                 String excerpt = referer.getExcerpt();
                 if (   StringUtils.isNotEmpty(title)
                 && StringUtils.isNotEmpty(excerpt) ) {
-                    if (referer.getVisible().booleanValue() 
-                     || referer.getWebsite().hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) { 
+                    if (referer.getVisible().booleanValue()
+                     || referer.getWebsite().hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) {
                         referers.add(WeblogReferrerWrapper.wrap(referer, urlStrategy));
                     }
                 }
             }
-            
+
         } catch (Exception e) {
             mLogger.error("PageModel getReferersToDate() fails with URL"
                     + mRequest.getRequestURL(), e);
         }
         return referers;
     }
-    
+
     /** Encapsulates RefererManager **/
     public List getEntryReferers(WeblogEntryWrapper entry) {
         ArrayList referers = new ArrayList();
@@ -556,7 +556,7 @@ public class OldWeblogPageModel {
             List refs = mRefererMgr.getReferersToEntry(entry.getId());
             RollerSession rses =
                RollerSession.getRollerSession(mRequest);
-            
+
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
                 WeblogReferrer referer = (WeblogReferrer) rdItr.next();
                 String title =referer.getTitle();
@@ -569,28 +569,28 @@ public class OldWeblogPageModel {
                     }
                 }
             }
-            
+
         } catch (Exception e) {
             mLogger.error("PageModel getReferersToDate() fails with URL"
                     + mRequest.getRequestURL(), e);
         }
         return referers;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates RefererManager */
     public List getTodaysReferers() {
          return mWebsite.getTodaysReferrers();
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates RefererManager */
     public int getTotalHits() {
         return mWebsite.getTodaysHits();
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * Returns most recent update time of collection of weblog entries.
@@ -613,21 +613,21 @@ public class OldWeblogPageModel {
         }
         return updateTime;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates WeblogManager.getWeblogCategories() */
     public Set getWeblogCategories(String categoryName) {
         Set ret = null;
         if (VELOCITY_NULL.equals(categoryName)) categoryName = null;
-        
+
         // Make sure we have not already fetched this category.
         if (categoryName != null) {
             ret = (Set)mCategories.get(categoryName);
         } else {
             ret = (Set)mCategories.get("zzz_null_zzz");
         }
-        
+
         if (null == ret) {
             try {
                 WeblogCategory category = null;
@@ -637,9 +637,9 @@ public class OldWeblogPageModel {
                 } else {
                     category = mWebsite.getDefaultCategory();
                 }
-                
+
                 Set mRet = category.getWeblogCategories();
-                
+
                 // wrap pojos
                 ret = new HashSet(mRet.size());
                 Iterator it = mRet.iterator();
@@ -659,20 +659,20 @@ public class OldWeblogPageModel {
         }
         return ret;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /** Encapsulates RollerRequest.getWeblogEntry() */
     public WeblogEntryWrapper getWeblogEntry() {
-        
+
         if(mEntry != null && mEntry.getStatus().equals(WeblogEntry.PUBLISHED))
             return WeblogEntryWrapper.wrap(mEntry, urlStrategy);
         else
             return null;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /**
      * Get the next occurring Entry.
      */
@@ -687,10 +687,10 @@ public class OldWeblogPageModel {
             try {
                 WeblogEntry nextEntry =
                         mWeblogEntryMgr.getNextEntry(currentEntry.getPojo(), catName, mLocale);
-                
+
                 if(nextEntry != null)
                     mNextEntry = WeblogEntryWrapper.wrap(nextEntry, urlStrategy);
-                
+
                 // make sure that mNextEntry is not published to future
                 if (mNextEntry != null &&
                         mNextEntry.getPubTime().after( new Date() )) {
@@ -702,9 +702,9 @@ public class OldWeblogPageModel {
         }
         return mNextEntry;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     /**
      * Get the previous occurring Entry.
      */
@@ -719,7 +719,7 @@ public class OldWeblogPageModel {
             try {
                 WeblogEntry prevEntry =
                         mWeblogEntryMgr.getPreviousEntry(currentEntry.getPojo(), catName, mLocale);
-                
+
                 if(prevEntry != null)
                     mPreviousEntry = WeblogEntryWrapper.wrap(prevEntry, urlStrategy);
             } catch (WebloggerException e) {
@@ -728,9 +728,9 @@ public class OldWeblogPageModel {
         }
         return mPreviousEntry;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     public boolean isUserAuthorizedToEdit() {
         try {
             RollerSession rses =
@@ -743,9 +743,9 @@ public class OldWeblogPageModel {
         }
         return false;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     public boolean isUserAuthorizedToAdmin() {
         try {
             RollerSession rses =
@@ -758,38 +758,38 @@ public class OldWeblogPageModel {
         }
         return false;
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     public boolean isUserAuthenticated() {
         return (mRequest.getUserPrincipal() != null);
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     public String getRequestParameter(String key) {
         return mRequest.getParameter(key);
     }
-    
+
     public int getIntRequestParameter(String key) {
         return Integer.parseInt(mRequest.getParameter(key));
     }
-    
+
     //------------------------------------------------------------------------
-    
+
     public WeblogBookmarkFolderWrapper getFolderByPath(String path) {
         try {
             WeblogBookmarkFolder folder = mBookmarkMgr.getFolder(mWebsite, path);
-            
+
             if(folder != null)
                 return WeblogBookmarkFolderWrapper.wrap(folder);
         } catch (WebloggerException e) {
             mLogger.error(e);
         }
-        
+
         return null;
     }
-    
+
     /**
      * Facade for WeblogManager.getRecentComments().
      * Get the most recent (chronologically) posted Comments
@@ -801,7 +801,7 @@ public class OldWeblogPageModel {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List recent = wmgr.getComments(
-                    
+
                     mWebsite,
                     null,  // weblog entry
                     null,  // search String
@@ -810,7 +810,7 @@ public class OldWeblogPageModel {
                     true,          // we want reverse chrono order
                     0,             // offset
                     maxCount);     // no limit
-            
+
             // wrap pojos
             recentComments = new ArrayList(recent.size());
             Iterator it = recent.iterator();
@@ -822,7 +822,7 @@ public class OldWeblogPageModel {
         }
         return recentComments;
     }
-    
+
     public boolean getEmailComments() {
         if (mWebsite != null) {
             boolean emailComments = WebloggerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");

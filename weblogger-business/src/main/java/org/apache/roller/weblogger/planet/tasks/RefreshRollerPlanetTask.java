@@ -41,45 +41,45 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * - Calls Planet business layer to refresh entries
  * </pre>
  */
-public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {    
+public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
     private static Log log = LogFactory.getLog(RefreshRollerPlanetTask.class);
-    
+
     public static String NAME = "RefreshRollerPlanetTask";
-    
+
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
     private String clientId = "unspecifiedClientId";
-    
+
     // a String description of when to start this task
     private String startTimeDesc = "immediate";
-    
+
     // interval at which the task is run, default is 60 minutes
     private int interval = 60;
-    
+
     // lease time given to task, default is 10 minutes
     private int leaseTime = 10;
 
-    
+
     public String getClientId() {
         return clientId;
     }
-    
+
     public Date getStartTime(Date currentTime) {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
-    
+
     public String getStartTimeDesc() {
         return startTimeDesc;
     }
-    
+
     public int getInterval() {
         return this.interval;
     }
-    
+
     public int getLeaseTime() {
         return this.leaseTime;
     }
-    
+
     public void init() throws WebloggerException {
         this.init(RefreshRollerPlanetTask.NAME);
     }
@@ -90,19 +90,19 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
 
         // get relevant props
         Properties props = this.getTaskProperties();
-        
+
         // extract clientId
         String client = props.getProperty("clientId");
         if(client != null) {
             this.clientId = client;
         }
-        
+
         // extract start time
         String startTimeStr = props.getProperty("startTime");
         if(startTimeStr != null) {
             this.startTimeDesc = startTimeStr;
         }
-        
+
         // extract interval
         String intervalStr = props.getProperty("interval");
         if(intervalStr != null) {
@@ -112,7 +112,7 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
                 log.warn("Invalid interval: "+intervalStr);
             }
         }
-        
+
         // extract lease time
         String leaseTimeStr = props.getProperty("leaseTime");
         if(leaseTimeStr != null) {
@@ -123,15 +123,15 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
             }
         }
     }
-    
-    
+
+
     public void runTask() {
         try {
             log.info("Refreshing Planet subscriptions");
-            
+
             FeedUpdater updater = new SingleThreadedFeedUpdater();
             updater.updateSubscriptions();
-            
+
         } catch (Throwable t) {
             log.error("ERROR refreshing planet", t);
         } finally {
@@ -140,21 +140,21 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
             PlanetFactory.getPlanet().release();
         }
     }
-    
-    
+
+
     public static void main(String[] args) throws Exception {
-        
+
         // before we can do anything we need to bootstrap the planet backend
         PlanetStartup.prepare();
-        
+
         // we need to use our own planet provider for integration
         String guiceModule = WebloggerConfig.getProperty("planet.aggregator.guice.module");
         PlanetProvider provider = new GuicePlanetProvider(guiceModule);
         PlanetFactory.bootstrap(provider);
-                        
+
         RefreshRollerPlanetTask task = new RefreshRollerPlanetTask();
         task.init();
         task.run();
     }
-    
+
 }

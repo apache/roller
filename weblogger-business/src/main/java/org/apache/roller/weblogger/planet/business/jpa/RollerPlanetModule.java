@@ -39,16 +39,16 @@ import org.apache.roller.weblogger.planet.business.PlanetURLStrategy;
 public class RollerPlanetModule implements Module {
 
     public void configure(Binder binder) {
-        
+
         binder.bind(Planet.class).to(JPAPlanetImpl.class);
 
         // Use special Planet persistence strategy that works against RollerConfig
-        binder.bind(JPAPersistenceStrategy.class).to(JPARollerPlanetPersistenceStrategy.class); 
-        
-        binder.bind(PlanetManager.class).to(     JPAPlanetManagerImpl.class);   
-        binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);    
+        binder.bind(JPAPersistenceStrategy.class).to(JPARollerPlanetPersistenceStrategy.class);
+
+        binder.bind(PlanetManager.class).to(     JPAPlanetManagerImpl.class);
+        binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);
         binder.bind(URLStrategy.class).to(       PlanetURLStrategy.class);
         binder.bind(FeedFetcher.class).to(       WebloggerRomeFeedFetcher.class);
     }
-    
+
 }

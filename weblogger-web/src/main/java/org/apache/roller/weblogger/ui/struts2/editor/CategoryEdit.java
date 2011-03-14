@@ -37,29 +37,29 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Edit an existing Category.
  */
 public class CategoryEdit extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(CategoryEdit.class);
-    
+
     // the category we are editing
     private WeblogCategory category = null;
-    
+
     // bean for managing form data
     private CategoryBean bean = new CategoryBean();
-    
-    
+
+
     public CategoryEdit() {
         this.actionName = "categoryEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "categoryForm.edit.title";
     }
-    
-    
+
+
     // author perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }
-    
-    
+
+
     public void myPrepare() {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -70,72 +70,72 @@ public class CategoryEdit extends UIAction {
             log.error("Error looking up category", ex);
         }
     }
-    
-    
+
+
     /**
      * Show category form.
      */
     @SkipValidation
     public String execute() {
-        
+
         if(getCategory() == null) {
             // TODO: i18n
             addError("Cannot edit null category");
             return ERROR;
         }
-        
+
         // make sure bean is properly loaded from pojo data
         getBean().copyFrom(getCategory());
-        
+
         return INPUT;
     }
 
-    
+
     /**
      * Save new category.
      */
     public String save() {
-        
+
         if(getCategory() == null) {
             // TODO: i18n
             addError("Cannot edit null category");
             return ERROR;
         }
-        
+
         // validation
         myValidate();
-        
+
         if(!hasActionErrors()) try {
-            
+
             // copy updated attributes
             getBean().copyTo(getCategory());
-            
+
             // save changes
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             wmgr.saveWeblogCategory(getCategory());
             WebloggerFactory.getWeblogger().flush();
-            
+
             // notify caches
             CacheManager.invalidate(getCategory());
-            
+
             // TODO: i18n
             addMessage("category updated");
-            
+
         } catch(Exception ex) {
             log.error("Error saving category", ex);
             // TODO: i18n
             addError("Error saving category");
         }
-        
+
         return INPUT;
     }
 
-    
+
     // TODO: validation
     public void myValidate() {
-        
+
         // name is required, has max length, no html
-        
+
         // make sure new name is not a duplicate of an existing category
         if(!getCategory().getName().equals(getBean().getName())) {
             WeblogCategory parent = getCategory().getParent();
@@ -161,5 +161,5 @@ public class CategoryEdit extends UIAction {
     public void setBean(CategoryBean bean) {
         this.bean = bean;
     }
-    
+
 }

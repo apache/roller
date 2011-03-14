@@ -35,29 +35,29 @@ import org.jdom.input.SAXBuilder;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types;
 
 /**
- * This class describes a set of weblog entries. 
+ * This class describes a set of weblog entries.
  * @author jtb
  */
 public class WeblogEntrySet extends EntrySet {
     static interface Tags {
         public static final String WEBLOGS = "weblogs";
-    }      
-    
+    }
+
     public WeblogEntrySet(String urlPrefix) {
         setHref(urlPrefix + "/" + Types.WEBLOGS);
     }
-    
+
     public WeblogEntrySet(Document d, String urlPrefix) throws UnexpectedRootElementException {
         populate(d, urlPrefix);
     }
-    
-    public WeblogEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {               
+
+    public WeblogEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
 
-        populate(d, urlPrefix);        
-    }    
-    
+        populate(d, urlPrefix);
+    }
+
     private void populate(Document d, String urlPrefix) throws UnexpectedRootElementException {
         Element root = d.getRootElement();
         String rootName = root.getName();
@@ -75,9 +75,9 @@ public class WeblogEntrySet extends EntrySet {
             setEntries((Entry[])entries.toArray(new Entry[0]));
         }
         setHref(urlPrefix + "/" + Types.WEBLOGS);
-    }    
-       
+    }
+
     public String getType() {
         return Types.WEBLOGS;
-    }    
+    }
 }

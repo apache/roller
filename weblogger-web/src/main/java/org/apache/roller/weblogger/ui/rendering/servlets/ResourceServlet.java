@@ -50,7 +50,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogResourceRequest;
 public class ResourceServlet extends HttpServlet {
 
     private static Log log = LogFactory.getLog(ResourceServlet.class);
-    
+
     private ServletContext context = null;
 
 
@@ -59,7 +59,7 @@ public class ResourceServlet extends HttpServlet {
         super.init(config);
 
         log.info("Initializing ResourceServlet");
-        
+
         this.context = config.getServletContext();
     }
 
@@ -69,12 +69,12 @@ public class ResourceServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Weblog weblog = null;
         String ctx = request.getContextPath();
         String servlet = request.getServletPath();
         String reqURI = request.getRequestURI();
-        
+
         WeblogResourceRequest resourceRequest = null;
         try {
             // parse the incoming request and extract the relevant data
@@ -92,12 +92,12 @@ public class ResourceServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         log.debug("Resource requested ["+resourceRequest.getResourcePath()+"]");
-        
+
         long resourceLastMod = 0;
         InputStream resourceStream = null;
-        
+
         // first see if resource comes from weblog's shared theme
         try {
             WeblogTheme weblogTheme = weblog.getTheme();
@@ -113,7 +113,7 @@ public class ResourceServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
-        
+
         // if not from theme then see if resource is in weblog's upload dir
         if(resourceStream == null) {
             try {
@@ -123,7 +123,7 @@ public class ResourceServlet extends HttpServlet {
                     weblog, resourceRequest.getResourcePath());
                 resourceLastMod = mf.getLastModified();
                 resourceStream = mf.getInputStream();
-                
+
             } catch (Exception ex) {
                 // still not found? then we don't have it, 404.
                 log.debug("Unable to get resource", ex);
@@ -131,7 +131,7 @@ public class ResourceServlet extends HttpServlet {
                 return;
             }
         }
-        
+
         // Respond with 304 Not Modified if it is not modified.
         if (ModDateHeaderUtil.respondIfNotModified(request, response, resourceLastMod)) {
             return;
@@ -139,11 +139,11 @@ public class ResourceServlet extends HttpServlet {
             // set last-modified date
             ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod);
         }
-        
+
 
         // set the content type based on whatever is in our web.xml mime defs
         response.setContentType(this.context.getMimeType(resourceRequest.getResourcePath()));
-        
+
         OutputStream out = null;
         try {
             // ok, lets serve up the file
@@ -153,10 +153,10 @@ public class ResourceServlet extends HttpServlet {
             while((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
-            
+
             // close output stream
             out.close();
-            
+
         } catch (Exception ex) {
             if(!response.isCommitted()) {
                 response.reset();

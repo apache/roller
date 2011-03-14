@@ -38,21 +38,21 @@ import org.apache.roller.planet.business.PlanetFactory;
  * persistence session is released at end of the request.
  */
 public class PersistenceSessionFilter implements Filter {
-    
+
     private static Log log = LogFactory.getLog(PersistenceSessionFilter.class);
-    
-    
+
+
     /**
      * Release Roller persistence session at end of request processing.
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        
+
         log.debug("Entered PersistenceSessionFilter");
-        
+
         Planet planet = PlanetFactory.getPlanet();
         try {
             chain.doFilter(request, response);
@@ -62,14 +62,14 @@ public class PersistenceSessionFilter implements Filter {
                 PlanetFactory.getPlanet().release();
             }
         }
-        
+
         log.debug("Exiting PersistenceSessionFilter");
     }
-    
-    
+
+
     public void init(FilterConfig filterConfig) throws ServletException {}
-    
+
     public void destroy() {}
-    
+
 }
 

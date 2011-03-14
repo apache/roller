@@ -26,21 +26,21 @@ import org.apache.roller.weblogger.util.I18nMessages;
  * The default text editor.  Basically just plain html textareas.
  */
 public class TextEditor implements WeblogEntryEditor {
-    
-    
+
+
     public TextEditor() {}
-    
-    
+
+
     public String getId() {
         return "editor-text.jsp";
     }
-    
+
     public String getName() {
         return "editor.text.name";
     }
-    
+
     public String getJspPage() {
         return "/roller-ui/authoring/editors/editor-text.jsp";
     }
-    
+
 }

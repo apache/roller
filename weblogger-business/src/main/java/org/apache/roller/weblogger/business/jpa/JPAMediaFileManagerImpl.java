@@ -112,7 +112,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         List<MediaFile> moved = new ArrayList<MediaFile>();
         moved.addAll(mediaFiles);
-        
+
         for (MediaFile mediaFile : moved) {
             mediaFile.getDirectory().getMediaFiles().remove(mediaFile);
 
@@ -425,7 +425,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
             throws WebloggerException {
-                
+
         if (null == origpath) return null;
 
         if (!origpath.startsWith("/")) {
@@ -810,7 +810,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             }
         }
 
-        try { // flush changes to this directory 
+        try { // flush changes to this directory
             roller.flush();
 
             log.debug("Count of dirs  created: " + dirCount);

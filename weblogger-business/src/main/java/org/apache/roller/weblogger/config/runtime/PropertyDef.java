@@ -37,22 +37,22 @@ package org.apache.roller.weblogger.config.runtime;
  * @author Allen Gilliland
  */
 public class PropertyDef {
-    
+
     private String name = null;
     private String key = null;
     private String type = null;
     private String defaultValue = null;
     private int rows = 5;
     private int cols = 25;
-    
-    
+
+
     /** Creates a new instance of PropertyDef */
     public PropertyDef() {}
 
     public String toString() {
         return "["+name+","+key+","+type+","+defaultValue+","+rows+","+cols+"]";
     }
-    
+
     public String getName() {
         return name;
     }
@@ -109,7 +109,7 @@ public class PropertyDef {
     public void setCols(int cols) {
         this.cols = cols;
     }
-    
+
     public void setCols(String cols) {
         //convert to int
         try {

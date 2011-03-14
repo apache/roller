@@ -28,8 +28,8 @@ import org.apache.roller.planet.pojos.Template;
  * what Renderer object should be used to render a given resource.
  */
 public interface RendererFactory {
-    
-    
+
+
     /**
      * Get a Renderer that will handle the given Template.
      * If a RendererFactory does not have a Renderer which can handle the
@@ -41,5 +41,5 @@ public interface RendererFactory {
      * report any relevant exceptions itself.
      */
     public Renderer getRenderer(Template template);
-    
+
 }

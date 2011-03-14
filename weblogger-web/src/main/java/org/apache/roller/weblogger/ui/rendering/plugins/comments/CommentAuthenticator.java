@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServletRequest;
  * Interface for comment authentication plugin.
  */
 public interface CommentAuthenticator {
-    
-    
+
+
     /**
      * Plugin should write out HTML for the form fields and other UI elements
      * needed to display the comment authentication widget.
@@ -34,15 +34,15 @@ public interface CommentAuthenticator {
      * @param request comment form request object
      */
     public String getHtml(HttpServletRequest request);
-    
-    
+
+
     /**
-     * Plugin should return true only if comment posting passes the 
+     * Plugin should return true only if comment posting passes the
      * authentication test.
      *
      * @param request comment posting request object
      * @return true if authentication passed, false otherwise
      */
     public boolean authenticate(HttpServletRequest request);
-    
+
 }

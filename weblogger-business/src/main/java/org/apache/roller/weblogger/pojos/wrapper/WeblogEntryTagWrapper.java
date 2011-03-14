@@ -26,53 +26,53 @@ import org.apache.roller.weblogger.pojos.WeblogEntryTag;
  * Pojo safety wrapper for WeblogEntryTag objects.
  */
 public class WeblogEntryTagWrapper {
-    
+
     // keep a reference to the wrapped pojo
     private final WeblogEntryTag pojo;
-    
-    
+
+
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogEntryTagWrapper(WeblogEntryTag toWrap) {
         this.pojo = toWrap;
     }
-    
-    
+
+
     // wrap the given pojo if it is not null
     public static WeblogEntryTagWrapper wrap(WeblogEntryTag toWrap) {
         if(toWrap != null)
             return new WeblogEntryTagWrapper(toWrap);
-        
+
         return null;
     }
-    
+
     // NOTE: removing for 4.0 because it is not necessary
 //    public String getId() {
 //        return this.pojo.getId();
 //    }
-    
+
     // NOTE: removing for 4.0 because it is not necessary
 //    public WeblogWrapper getWeblog() {
 //        return WeblogWrapper.wrap(this.pojo.getWeblog());
 //    }
-    
+
     // NOTE: removing for 4.0 because it is not necessary
 //    public WeblogEntryWrapper getWeblogEntry() {
 //        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry());
 //    }
-    
-    
+
+
     public UserWrapper getUser() {
         return UserWrapper.wrap(this.pojo.getUser());
     }
-    
-    
+
+
     public String getName() {
         return this.pojo.getName();
     }
-    
-    
+
+
     public Timestamp getTime() {
         return this.pojo.getTime();
     }
-    
+
 }

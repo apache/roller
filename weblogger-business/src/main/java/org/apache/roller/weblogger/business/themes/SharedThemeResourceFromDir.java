@@ -35,22 +35,22 @@ import org.apache.roller.weblogger.pojos.ThemeResource;
  * not be any external classes which need to construct their own instances
  * of this class.
  */
-public class SharedThemeResourceFromDir 
+public class SharedThemeResourceFromDir
         implements ThemeResource, Serializable, Comparable {
-    
+
     // the physical java.io.File backing this resource
     private File resourceFile = null;
-    
+
     // the relative path of the resource within the theme
     private String relativePath = null;
-    
-    
+
+
     public SharedThemeResourceFromDir(String path, File file) {
         relativePath = path;
         resourceFile = file;
     }
-    
-    
+
+
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
@@ -58,37 +58,37 @@ public class SharedThemeResourceFromDir
         ThemeResource other = (ThemeResource) o;
         return getPath().compareTo(other.getPath());
     }
-    
-    
+
+
     public ThemeResource[] getChildren() {
         return null;
     }
-    
-    
+
+
     public String getName() {
         return resourceFile.getName();
     }
-    
+
     public String getPath() {
         return relativePath;
     }
-    
+
     public long getLastModified() {
         return resourceFile.lastModified();
     }
-    
+
     public long getLength() {
         return resourceFile.length();
     }
-    
+
     public boolean isDirectory() {
         return resourceFile.isDirectory();
     }
-    
+
     public boolean isFile() {
         return resourceFile.isFile();
     }
-    
+
     public InputStream getInputStream() {
         try {
             return new FileInputStream(resourceFile);
@@ -97,5 +97,5 @@ public class SharedThemeResourceFromDir
             throw new RuntimeException("Error constructing input stream", ex);
         }
     }
-    
+
 }

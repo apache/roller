@@ -23,23 +23,23 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 /**
  * Represents a statistical count.
  */
-public class StatCount { 
-    
+public class StatCount {
+
     /** Id of the subject of the statistic */
     private String subjectId;
-    
+
     /** Short name of the subject of the statistic */
     private String subjectNameShort;
-    
+
     /** Long name of the subject of the statistic */
-    private String subjectNameLong; 
-    
+    private String subjectNameLong;
+
     /** I18N key that describes the type of statistic */
     private String typeKey;
-    
-    /** The statistical count */    
+
+    /** The statistical count */
     private long count;
-    
+
     /** Weblog handle of weblog that stat is associated with, or null if none */
     private String weblogHandle = null;
 
@@ -49,44 +49,44 @@ public class StatCount {
         this.setSubjectNameLong(subjectNameLong);
         this.setTypeKey(typeKey);
         this.setCount(count);
-    } 
-    
+    }
+
     public String getTypeKey() {
         return typeKey;
     }
-    
+
     public void setTypeKey(String typeKey) {
         this.typeKey = typeKey;
     }
-    
+
     public long getCount() {
         return count;
     }
-    
+
     public void setCount(long count) {
         this.count = count;
     }
-    
+
     public String getSubjectId() {
         return subjectId;
     }
-    
+
     public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
     }
-    
+
     public String getSubjectNameShort() {
         return subjectNameShort;
     }
-    
+
     public void setSubjectNameShort(String subjectNameShort) {
         this.subjectNameShort = subjectNameShort;
     }
-    
+
     public String getSubjectNameLong() {
         return subjectNameLong;
     }
-    
+
     public void setSubjectNameLong(String subjectNameLong) {
         this.subjectNameLong = subjectNameLong;
     }
@@ -98,7 +98,7 @@ public class StatCount {
     public void setWeblogHandle(String weblogHandle) {
         this.weblogHandle = weblogHandle;
     }
-    
+
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
@@ -115,12 +115,12 @@ public class StatCount {
         if (other instanceof StatCount != true) return false;
         StatCount o = (StatCount)other;
         return new EqualsBuilder()
-            .append(getSubjectId(), o.getSubjectId()) 
-            .append(getTypeKey(), o.getTypeKey()) 
+            .append(getSubjectId(), o.getSubjectId())
+            .append(getTypeKey(), o.getTypeKey())
             .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
             .append(getSubjectId())
             .append(getTypeKey())

@@ -41,22 +41,22 @@ import org.apache.roller.weblogger.business.URLStrategy;
  *
  */
 public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
-    
+
     private static Log log = LogFactory.getLog(WeblogEntriesMonthPager.class);
-    
+
     private SimpleDateFormat monthFormat = new SimpleDateFormat();
-    
+
     private Date month;
     private Date nextMonth;
     private Date prevMonth;
-    
+
     // collection for the pager
     private Map entries = null;
-    
+
     // are there more pages?
     private boolean more = false;
-    
-    
+
+
     public WeblogEntriesMonthPager(
             URLStrategy        strat,
             Weblog             weblog,
@@ -67,25 +67,25 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
             String             catPath,
             List               tags,
             int                page) {
-        
+
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
-        
+
         monthFormat = new SimpleDateFormat(
             messageUtils.getString("weblogEntriesPager.month.dateFormat"));
-        
+
         getEntries();
-        
+
         month = parseDate(dateString);
-        
+
         Calendar cal = Calendar.getInstance();
-        
+
         cal.setTime(month);
         cal.add(Calendar.MONTH, 1);
         nextMonth = cal.getTime();
         if (nextMonth.after(getToday())) {
             nextMonth = null;
         }
-        
+
         cal.setTime(month);
         cal.add(Calendar.MONTH, -1);
         prevMonth = cal.getTime();
@@ -95,8 +95,8 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
             prevMonth = null;
         }
     }
-    
-    
+
+
     public Map getEntries() {
         Date date = parseDate(dateString);
         Calendar cal = Calendar.getInstance(weblog.getTimeZoneInstance());
@@ -105,21 +105,21 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         date = cal.getTime();
         Date startDate = DateUtil.getStartOfMonth(date, cal);
         Date endDate = DateUtil.getEndOfMonth(date, cal);
-        
+
         if (entries == null) {
             entries = new TreeMap(new ReverseComparator());
             try {
                 Map mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(
-                        
+
                         weblog,
                         startDate,
                         endDate,
                         catPath,
-                        tags,WeblogEntry.PUBLISHED, 
+                        tags,WeblogEntry.PUBLISHED,
                         locale,
-                        offset,  
+                        offset,
                         length + 1);
-                              
+
                 // need to wrap pojos
                 int count = 0;
                 java.util.Date key = null;
@@ -137,7 +137,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
                             more = true;
                         }
                     }
-                    
+
                     // done with that day, put it in the map
                     if(wrapped.size() > 0) {
                         entries.put(key, wrapped);
@@ -149,50 +149,50 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         }
         return entries;
     }
-    
-    
+
+
     public String getHomeLink() {
         return createURL(0, 0, weblog, locale, pageLink, null, null, catPath, tags);
     }
-    
-    
+
+
     public String getHomeName() {
         return messageUtils.getString("weblogEntriesPager.month.home");
     }
-    
-    
+
+
     public String getNextLink() {
         if (more) {
             return createURL(page, 1, weblog, locale, pageLink, null, dateString, catPath, tags);
         }
         return null;
     }
-    
-    
+
+
     public String getNextName() {
         if (getNextLink() != null) {
             return messageUtils.getString("weblogEntriesPager.month.next", new Object[] {monthFormat.format(month)});
         }
         return null;
     }
-    
-    
+
+
     public String getPrevLink() {
         if (offset > 0) {
             return createURL(page, -1, weblog, locale, pageLink, null, dateString, catPath, tags);
         }
         return null;
     }
-    
-    
+
+
     public String getPrevName() {
         if (getPrevLink() != null) {
             return messageUtils.getString("weblogEntriesPager.month.prev", new Object[] {monthFormat.format(month)});
         }
         return null;
     }
-    
-    
+
+
     public String getNextCollectionLink() {
         if (nextMonth != null) {
             String next = DateUtil.format6chars(nextMonth);
@@ -200,16 +200,16 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         }
         return null;
     }
-    
-    
+
+
     public String getNextCollectionName() {
         if (nextMonth != null) {
             return messageUtils.getString("weblogEntriesPager.month.nextCollection", new Object[] {monthFormat.format(nextMonth)});
         }
         return null;
     }
-    
-    
+
+
     public String getPrevCollectionLink() {
         if (prevMonth != null) {
             String prev = DateUtil.format6chars(prevMonth);
@@ -217,13 +217,13 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         }
         return null;
     }
-    
-    
+
+
     public String getPrevCollectionName() {
         if (prevMonth != null) {
             return messageUtils.getString("weblogEntriesPager.month.prevCollection", new Object[] {monthFormat.format(prevMonth)});
         }
         return null;
     }
-    
+
 }

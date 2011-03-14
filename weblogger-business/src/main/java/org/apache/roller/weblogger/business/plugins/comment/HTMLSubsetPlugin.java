@@ -29,46 +29,46 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
     private static final Log log = LogFactory.getLog(HTMLSubsetPlugin.class);
-    
-    
+
+
     public HTMLSubsetPlugin() {
         log.debug("Instantiating HTMLSubsetPlugin");
     }
-    
-    
+
+
     /**
-     * Unique identifier.  This should never change. 
+     * Unique identifier.  This should never change.
      */
     public String getId() {
         return "HTMLSubset";
     }
-    
-    
+
+
     public String getName() {
         return "HTML Subset Restriction";
     }
-    
-    
+
+
     public String getDescription() {
         return "Transforms the given comment body into a subset of HTML";
     }
-    
-    
+
+
     public String render(final WeblogEntryComment comment, String text) {
-        
+
         log.debug("starting value:\n"+text);
-        
+
         String output = text;
-        
+
         // escape html
         output = Utilities.escapeHTML(output);
-        
+
         // just use old utilities method
         output = Utilities.transformToHTMLSubset(output);
-        
+
         log.debug("ending value:\n"+output);
-        
+
         return output;
     }
-    
+
 }

@@ -34,9 +34,9 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Page used to display Roller install instructions.
  */
 public class Setup extends UIAction {
-    
+
     private static final Log log = LogFactory.getLog(Setup.class);
-    
+
     private long userCount = 0;
     private long blogCount = 0;
 
@@ -46,27 +46,27 @@ public class Setup extends UIAction {
     // weblogs for frontpage blog chooser
     private Collection<Weblog> weblogs;
 
-    
-    
+
+
     public Setup() {
         // TODO: i18n
         this.pageTitle = "index.heading";
     }
-    
-    
+
+
     @Override
     public boolean isUserRequired() {
         return false;
     }
-    
+
     @Override
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     public String execute() {
-        
+
         try {
             WeblogManager mgr =  WebloggerFactory.getWeblogger().getWeblogManager();
             setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
@@ -81,7 +81,7 @@ public class Setup extends UIAction {
         } catch (WebloggerException ex) {
             log.error("Error getting user/weblog counts", ex);
         }
-        
+
         return SUCCESS;
     }
 
@@ -106,7 +106,7 @@ public class Setup extends UIAction {
         }
         return "home";
     }
-    
+
     public long getUserCount() {
         return userCount;
     }
@@ -130,7 +130,7 @@ public class Setup extends UIAction {
     public void setWeblogs(Collection<Weblog> weblogs) {
         this.weblogs = weblogs;
     }
-    
+
     public String getFrontpageBlog() {
         return frontpageBlog;
     }

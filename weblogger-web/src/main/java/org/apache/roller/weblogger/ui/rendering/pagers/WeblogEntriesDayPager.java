@@ -43,22 +43,22 @@ import org.apache.roller.weblogger.business.URLStrategy;
  *
  */
 public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
-    
+
     private static Log log = LogFactory.getLog(WeblogEntriesDayPager.class);
-    
+
     private SimpleDateFormat dayFormat = new SimpleDateFormat();
-    
+
     private Date day;
     private Date nextDay;
     private Date prevDay;
-    
+
     // collection for the pager
     private Map entries = null;
-    
+
     // are there more pages?
     private boolean more = false;
-    
-    
+
+
     public WeblogEntriesDayPager(
             URLStrategy        strat,
             Weblog             weblog,
@@ -69,18 +69,18 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
             String             catPath,
             List               tags,
             int                page) {
-        
+
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
-        
+
         dayFormat = new SimpleDateFormat(
             messageUtils.getString("weblogEntriesPager.day.dateFormat"));
-        
+
         getEntries();
-        
+
         day = parseDate(dateString);
-        
+
         Calendar cal = Calendar.getInstance();
-        
+
         cal.setTime(day);
         cal.add(Calendar.DAY_OF_MONTH, 1);
         cal.set(Calendar.HOUR, 0);
@@ -90,7 +90,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         if (nextDay.after(getToday())) {
             nextDay = null;
         }
-        
+
         cal.setTime(day);
         cal.add(Calendar.DAY_OF_MONTH, -1);
         cal.set(Calendar.HOUR, 23);
@@ -102,8 +102,8 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
             prevDay = null;
         }
     }
-    
-    
+
+
     public Map getEntries() {
         Date date = parseDate(dateString);
         Calendar cal = Calendar.getInstance(weblog.getTimeZoneInstance());
@@ -111,30 +111,30 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         Date endDate = date;
         startDate = DateUtil.getStartOfDay(endDate, cal);
         endDate = DateUtil.getEndOfDay(endDate, cal);
-        
+
         if (entries == null) {
             entries = new TreeMap(new ReverseComparator());
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
                 Map mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(
-                        
+
                         weblog,
                         startDate,
                         endDate,
                         catPath,
-                        tags,WeblogEntry.PUBLISHED, 
+                        tags,WeblogEntry.PUBLISHED,
                         locale,
-                        offset,  
+                        offset,
                         length + 1);
-                
+
                 // need to wrap pojos
                 int count = 0;
                 Date key = null;
                 Iterator days = mmap.keySet().iterator();
                 while(days.hasNext()) {
                     key = (Date) days.next();
-                    
+
                     // now we need to go through each entry in a day and wrap
                     List wrapped = new ArrayList();
                     List unwrapped = (List) mmap.get(key);
@@ -145,64 +145,64 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                             more = true;
                         }
                     }
-                    
+
                     // done with that day, put it in the map
                     if(wrapped.size() > 0) {
                         entries.put(key, wrapped);
                     }
                 }
-                
-                
+
+
             } catch (Exception e) {
                 log.error("ERROR: getting entry month map", e);
             }
         }
         return entries;
     }
-    
-    
+
+
     public String getHomeLink() {
         return createURL(0, 0, weblog, locale, pageLink, null, null, catPath, tags);
     }
-    
-    
+
+
     public String getHomeName() {
         return messageUtils.getString("weblogEntriesPager.day.home");
     }
-    
-    
+
+
     public String getNextLink() {
         if (more) {
             return createURL(page, 1, weblog, locale, pageLink, null, dateString, catPath, tags);
         }
         return null;
     }
-    
-    
+
+
     public String getNextName() {
         if (getNextLink() != null) {
             return messageUtils.getString("weblogEntriesPager.day.next", new Object[] {dayFormat.format(day)});
         }
         return null;
     }
-    
-    
+
+
     public String getPrevLink() {
         if (page > 0) {
             return createURL(page, -1, weblog, locale, pageLink, null, dateString, catPath, tags);
         }
         return null;
     }
-    
-    
+
+
     public String getPrevName() {
         if (getPrevLink() != null) {
             return messageUtils.getString("weblogEntriesPager.day.prev", new Object[] {dayFormat.format(day)});
         }
         return null;
     }
-    
-    
+
+
     public String getNextCollectionLink() {
         if (nextDay != null) {
             String next = DateUtil.format8chars(nextDay);
@@ -210,16 +210,16 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         }
         return null;
     }
-    
-    
+
+
     public String getNextCollectionName() {
         if (nextDay != null) {
             return messageUtils.getString("weblogEntriesPager.day.nextCollection", new Object[] {dayFormat.format(nextDay)});
         }
         return null;
     }
-    
-    
+
+
     public String getPrevCollectionLink() {
         if (prevDay != null) {
             String prev = DateUtil.format8chars(prevDay);
@@ -227,13 +227,13 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         }
         return null;
     }
-    
-    
+
+
     public String getPrevCollectionName() {
         if (prevDay != null) {
             return messageUtils.getString("weblogEntriesPager.day.prevCollection", new Object[] {dayFormat.format(prevDay)});
         }
         return null;
     }
-    
+
 }

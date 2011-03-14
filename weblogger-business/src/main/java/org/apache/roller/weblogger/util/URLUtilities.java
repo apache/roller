@@ -30,41 +30,41 @@ import java.util.Map;
  * Some utility methods used when dealing with urls.
  */
 public final class URLUtilities {
-    
+
     // non-intantiable
     private URLUtilities() {}
-    
-    
+
+
     /**
      * Compose a map of key=value params into a query string.
      */
     public static final String getQueryString(Map params) {
-        
+
         if(params == null) {
             return null;
         }
-        
+
         StringBuffer queryString = new StringBuffer();
-        
+
         for(Iterator keys = params.keySet().iterator(); keys.hasNext();) {
             String key = (String) keys.next();
             String value = (String) params.get(key);
-            
+
             if (queryString.length() == 0) {
                 queryString.append("?");
             } else {
                 queryString.append("&");
             }
-            
+
             queryString.append(key);
             queryString.append("=");
             queryString.append(value);
         }
-        
+
         return queryString.toString();
     }
-    
-    
+
+
     /**
      * URL encode a string using UTF-8.
      */
@@ -77,8 +77,8 @@ public final class URLUtilities {
         }
         return encodedStr;
     }
-    
-    
+
+
     /**
      * URL decode a string using UTF-8.
      */
@@ -91,18 +91,18 @@ public final class URLUtilities {
         }
         return decodedStr;
     }
-    
-    
+
+
     public static final String getEncodedTagsString(List tags) {
         StringBuffer tagsString = new StringBuffer();
         if(tags != null && tags.size() > 0) {
             String tag = null;
             Iterator tagsIT = tags.iterator();
-            
+
             // do first tag
             tag = (String) tagsIT.next();
             tagsString.append(encode(tag));
-            
+
             // do rest of tags, joining them with a '+'
             while(tagsIT.hasNext()) {
                 tag = (String) tagsIT.next();
@@ -112,8 +112,8 @@ public final class URLUtilities {
         }
         return tagsString.toString();
     }
-    
-        
+
+
     /**
      * URL encode a path string using UTF-8. The path seprator '/' will not be encoded
      */

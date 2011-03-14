@@ -26,37 +26,37 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
  * Bean for managing category data.
  */
 public class CategoryBean {
-    
+
     private String id = null;
     private String name = null;
     private String description = null;
     private String image = null;
-    
-    
+
+
     public String getId() {
         return this.id;
     }
-    
+
     public void setId( String id ) {
         this.id = id;
     }
-    
+
     public String getName() {
         return this.name;
     }
-    
+
     public void setName( String name ) {
         this.name = name;
     }
-    
+
     public String getDescription() {
         return this.description;
     }
-    
+
     public void setDescription( String description ) {
         this.description = description;
     }
-    
+
     public String getImage() {
         return image;
     }
@@ -64,24 +64,24 @@ public class CategoryBean {
     public void setImage(String image) {
         this.image = image;
     }
-    
-    
+
+
     public void copyTo(WeblogCategory dataHolder) throws WebloggerException {
-        
+
         if(!dataHolder.getName().equals(this.name)) {
             dataHolder.updateName(this.name);
         }
-        
+
         dataHolder.setDescription(this.description);
         dataHolder.setImage(this.image);
     }
-    
-    
+
+
     public void copyFrom(WeblogCategory dataHolder) {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();
         this.image = dataHolder.getImage();
     }
-    
+
 }

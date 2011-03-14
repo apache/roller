@@ -29,48 +29,48 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * which are not likely to change for any alternate url strategies.
  */
 public abstract class AbstractURLStrategy implements URLStrategy {
-    
+
     public AbstractURLStrategy() {}
-    
-    
+
+
     /**
      * Url to login page.
      */
     public String getLoginURL(boolean absolute) {
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         url.append("/roller-ui/login-redirect.rol");
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Url to logout page.
      */
     public String getLogoutURL(boolean absolute) {
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         url.append("/roller-ui/logout.rol");
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Get a url to a UI action in a given namespace, optionally specifying
      * a weblogHandle parameter if that is needed by the action.
@@ -80,137 +80,137 @@ public abstract class AbstractURLStrategy implements URLStrategy {
                                             String weblogHandle,
                                             Map<String, String> parameters,
                                             boolean absolute) {
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         url.append(namespace);
         url.append("/").append(action).append(".rol");
-        
+
         // put weblog handle parameter, if necessary
         Map<String, String> params = new HashMap();
         if(weblogHandle != null) {
             params.put("weblog", weblogHandle);
         }
-        
+
         // add custom parameters if they exist
         if(parameters != null) {
             params.putAll(parameters);
         }
-        
+
         if(!params.isEmpty()) {
             return url.toString() + URLUtilities.getQueryString(params);
         } else {
             return url.toString();
         }
     }
-    
-    
+
+
     /**
      * Get a url to add a new weblog entry.
      */
     public String getEntryAddURL(String weblogHandle,
                                               boolean absolute) {
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         url.append("/roller-ui/authoring/entryAdd.rol");
-        
+
         Map params = new HashMap();
         params.put("weblog", weblogHandle);
-        
+
         return url.toString() + URLUtilities.getQueryString(params);
     }
-    
-    
+
+
     /**
      * Get a url to edit a specific weblog entry.
      */
     public String getEntryEditURL(String weblogHandle,
                                                String entryId,
                                                boolean absolute) {
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         url.append("/roller-ui/authoring/entryEdit.rol");
-        
+
         Map params = new HashMap();
         params.put("weblog", weblogHandle);
         params.put("bean.id", entryId);
-        
+
         return url.toString() + URLUtilities.getQueryString(params);
     }
-    
-    
+
+
     /**
      * Get a url to weblog config page.
      */
     public String getWeblogConfigURL(String weblogHandle,
                                                   boolean absolute) {
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         url.append("/roller-ui/authoring/weblogConfig.rol");
-        
+
         Map params = new HashMap();
         params.put("weblog", weblogHandle);
-        
+
         return url.toString() + URLUtilities.getQueryString(params);
     }
-    
-    
+
+
     public String getXmlrpcURL(boolean absolute) {
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         url.append("/roller-services/xmlrpc");
-        
+
         return url.toString();
     }
-    
-    
+
+
     public String getAtomProtocolURL(boolean absolute) {
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         url.append("/roller-services/app");
-        
+
         return url.toString();
     }
-    
+
 }

@@ -37,13 +37,13 @@ import org.apache.roller.util.UUIDGenerator;
  * contains a reference to the website it is part of.
  */
 public class WeblogTemplate implements ThemeTemplate, Serializable {
-    
+
     public static final long serialVersionUID = -613737191638263428L;
     public static final String DEFAULT_PAGE = "Weblog";
-    
+
     private static Log log = LogFactory.getLog(WeblogTemplate.class);
     private static Set requiredTemplates = null;
-    
+
     // attributes
     private String id = UUIDGenerator.generateUUID();
     private String  action = null;
@@ -57,21 +57,21 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private boolean navbar = false;
     private String  decoratorName = null;
     private String  outputContentType = null;
-    
+
     // associations
     private Weblog weblog = null;
-    
-    
+
+
     static {
         requiredTemplates = new HashSet();
         requiredTemplates.add("Weblog");
         requiredTemplates.add("_day");
     }
-    
-    
+
+
     public WeblogTemplate() {}
-    
-    
+
+
     public ThemeTemplate getDecorator() {
         if(decoratorName != null && !id.equals(decoratorName)) {
             try {
@@ -83,26 +83,26 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         }
         return null;
     }
-    
-    
+
+
     public String getId() {
         return this.id;
     }
-    
+
     public void setId( String id ) {
         this.id = id;
     }
-    
-    
+
+
     public Weblog getWebsite() {
         return this.weblog;
     }
-    
+
     public void setWebsite( Weblog website ) {
         this.weblog = website;
     }
-    
-    
+
+
     public String getAction() {
         return action;
     }
@@ -110,53 +110,53 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setAction(String action) {
         this.action = action;
     }
-    
-    
+
+
     public String getName() {
         return this.name;
     }
-    
+
     public void setName( String name ) {
         this.name = name;
     }
-    
-    
+
+
     public String getDescription() {
         return this.description;
     }
-    
+
     public void setDescription( String description ) {
         this.description = description;
     }
-    
-    
+
+
     public String getLink() {
         return this.link;
     }
-    
+
     public void setLink( String link ) {
         this.link = link;
     }
-    
-    
+
+
     public String getContents() {
         return this.contents;
     }
-    
+
     public void setContents( String template ) {
         this.contents = template;
     }
-    
-    
+
+
     public Date getLastModified() {
         return lastModified;
     }
-    
+
     public void setLastModified(final Date newtime ) {
         lastModified = newtime;
     }
-    
-    
+
+
     public String getTemplateLanguage() {
         return templateLanguage;
     }
@@ -164,8 +164,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setTemplateLanguage(String templateLanguage) {
         this.templateLanguage = templateLanguage;
     }
-    
-    
+
+
     public boolean isNavbar() {
         return navbar;
     }
@@ -173,8 +173,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setNavbar(boolean navbar) {
         this.navbar = navbar;
     }
-    
-    
+
+
     public boolean isHidden() {
         return hidden;
     }
@@ -182,8 +182,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setHidden(boolean isHidden) {
         this.hidden = isHidden;
     }
-        
-    
+
+
     public String getDecoratorName() {
         return decoratorName;
     }
@@ -191,20 +191,20 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setDecoratorName(String decorator) {
         this.decoratorName = decorator;
     }
-    
-    
-    /** 
+
+
+    /**
      * Content-type rendered by template or null for auto-detection by link extension.
      */
     public String getOutputContentType() {
         return outputContentType;
     }
-    
+
     public void setOutputContentType(String outputContentType) {
         this.outputContentType = outputContentType;
     }
-    
-    
+
+
     /**
      * Determine if this WeblogTemplate is required or not.
      */
@@ -222,8 +222,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         */
         return (requiredTemplates.contains(this.name) || "Weblog".equals(this.link));
     }
-    
-    
+
+
     /**
      * A convenience method for testing if this template represents a 'custom'
      * template, meaning a template with action = ACTION_CUSTOM.
@@ -231,8 +231,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public boolean isCustom() {
         return ACTION_CUSTOM.equals(getAction()) && !isRequired();
     }
-    
-    
+
+
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
@@ -252,16 +252,16 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         if (other instanceof WeblogTemplate != true) return false;
         WeblogTemplate o = (WeblogTemplate)other;
         return new EqualsBuilder()
-            .append(name, o.getName()) 
-            .append(getWebsite(), o.getWebsite()) 
+            .append(name, o.getName())
+            .append(getWebsite(), o.getWebsite())
             .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
             .append(getName())
             .append(getWebsite())
             .toHashCode();
     }
-    
+
 }

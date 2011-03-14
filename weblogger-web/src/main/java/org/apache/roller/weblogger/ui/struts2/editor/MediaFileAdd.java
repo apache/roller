@@ -63,7 +63,7 @@ public class MediaFileAdd extends MediaFileBase {
     private List<MediaFile> newFiles = new ArrayList<MediaFile>();
 
     private String directoryPath =  null;
-    
+
 
     public MediaFileAdd() {
         this.actionName = "mediaFileAdd";
@@ -98,7 +98,7 @@ public class MediaFileAdd extends MediaFileBase {
 
     /**
      * Show form for adding a new media file.
-     * 
+     *
      * @return String The result of the action.
      */
     @SkipValidation
@@ -108,7 +108,7 @@ public class MediaFileAdd extends MediaFileBase {
 
     /**
      * Save a media file.
-     * 
+     *
      * @return String The result of the action.
      */
     public String save() {
@@ -116,7 +116,7 @@ public class MediaFileAdd extends MediaFileBase {
         myValidate();
 
         if (!hasActionErrors()) {
-            
+
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
 
             RollerMessages errors = new RollerMessages();
@@ -167,7 +167,7 @@ public class MediaFileAdd extends MediaFileBase {
                         mediaFile.setContentType(this.uploadedFilesContentType[i]);
                         if (mediaFile.getContentType() == null
                                 || mediaFile.getContentType().endsWith("/octet-stream")) {
-                            
+
                             String ctype = Utilities.getContentTypeFromFileName(mediaFile.getName());
                             if (null != ctype) {
                                 mediaFile.setContentType(ctype);

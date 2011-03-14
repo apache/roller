@@ -36,43 +36,43 @@ import org.apache.roller.weblogger.pojos.WeblogReferrer;
  * Pojo safety wrapper for WeblogEntry objects.
  */
 public class WeblogEntryWrapper {
-    
+
     // keep a reference to the wrapped pojo
     private final WeblogEntry pojo;
-    
+
     // url strategy to use for any url building
     private final URLStrategy urlStrategy;
-    
-    
+
+
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogEntryWrapper(WeblogEntry toWrap, URLStrategy strat) {
         this.pojo = toWrap;
         this.urlStrategy = strat;
     }
-    
-    
+
+
     // wrap the given pojo if it is not null
     public static WeblogEntryWrapper wrap(WeblogEntry toWrap, URLStrategy strat) {
         if(toWrap != null)
             return new WeblogEntryWrapper(toWrap, strat);
-        
+
         return null;
     }
-    
-    
+
+
     public String getId() {
         return this.pojo.getId();
     }
-    
-    
+
+
     public WeblogCategoryWrapper getCategory() {
         return WeblogCategoryWrapper.wrap(this.pojo.getCategory(), urlStrategy);
     }
-    
-    
+
+
     public List getCategories() {
         List initialCollection = this.pojo.getCategories();
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -83,30 +83,30 @@ public class WeblogEntryWrapper {
             wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next(), urlStrategy));
             i++;
         }
-        
+
         return wrappedCollection;
     }
-    
-    
+
+
     public WeblogWrapper getWebsite() {
         return WeblogWrapper.wrap(this.pojo.getWebsite(), urlStrategy);
     }
-    
-    
+
+
     public UserWrapper getCreator() {
         return UserWrapper.wrap(this.pojo.getCreator());
     }
-    
-    
+
+
     public String getTitle() {
         return this.pojo.getTitle();
     }
-    
-    
+
+
     public String getSummary() {
         return this.pojo.getSummary();
     }
-    
+
     /**
      * pojo method tagged with @roller.wrapPojoMethod type="simple"
      *
@@ -115,26 +115,26 @@ public class WeblogEntryWrapper {
     public String getText() {
         return this.pojo.getText();
     }
-    
-    
+
+
     public String getContentType() {
         return this.pojo.getContentType();
     }
-    
-    
+
+
     public String getContentSrc() {
         return this.pojo.getContentSrc();
     }
-    
-    
+
+
     public String getAnchor() {
         return this.pojo.getAnchor();
     }
-    
-    
+
+
     public List getEntryAttributes() {
         Set initialCollection = this.pojo.getEntryAttributes();
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -145,69 +145,69 @@ public class WeblogEntryWrapper {
             wrappedCollection.add(i,WeblogEntryAttributeWrapper.wrap((WeblogEntryAttribute) it.next()));
             i++;
         }
-        
+
         return wrappedCollection;
     }
-    
-    
+
+
     public String findEntryAttribute(String name) {
         return this.pojo.findEntryAttribute(name);
     }
-    
-    
+
+
     public Timestamp getPubTime() {
         return this.pojo.getPubTime();
     }
-    
-    
+
+
     public Timestamp getUpdateTime() {
         return this.pojo.getUpdateTime();
     }
-    
-    
+
+
     public String getStatus() {
         return this.pojo.getStatus();
     }
-    
-    
+
+
     public String getLink() {
         return this.pojo.getLink();
     }
-    
-    
+
+
     public String getPlugins() {
         return this.pojo.getPlugins();
     }
-    
-    
+
+
     public Boolean getAllowComments() {
         return this.pojo.getAllowComments();
     }
-    
-    
+
+
     public Integer getCommentDays() {
         return this.pojo.getCommentDays();
     }
-    
-    
+
+
     public Boolean getRightToLeft() {
         return this.pojo.getRightToLeft();
     }
-    
-    
+
+
     public Boolean getPinnedToMain() {
         return this.pojo.getPinnedToMain();
     }
-    
-    
+
+
     public String getLocale() {
         return this.pojo.getLocale();
     }
-    
-    
+
+
     public List getTags() {
         Set initialCollection = this.pojo.getTags();
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -218,34 +218,34 @@ public class WeblogEntryWrapper {
             wrappedCollection.add(i,WeblogEntryTagWrapper.wrap((WeblogEntryTag) it.next()));
             i++;
         }
-        
+
         return wrappedCollection;
     }
-    
-    
+
+
     public String getTagsAsString() {
         return this.pojo.getTagsAsString();
     }
-    
-    
+
+
     public boolean getCommentsStillAllowed() {
         return this.pojo.getCommentsStillAllowed();
     }
-    
-    
+
+
     public String formatPubTime(String pattern) {
         return this.pojo.formatPubTime(pattern);
     }
-    
-    
+
+
     public String formatUpdateTime(String pattern) {
         return this.pojo.formatUpdateTime(pattern);
     }
-    
-    
+
+
     public List getComments() {
         List initialCollection = this.pojo.getComments();
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -256,14 +256,14 @@ public class WeblogEntryWrapper {
             wrappedCollection.add(i,WeblogEntryCommentWrapper.wrap((WeblogEntryComment) it.next(), urlStrategy));
             i++;
         }
-        
+
         return wrappedCollection;
     }
-    
-    
+
+
     public List getComments(boolean ignoreSpam,boolean approvedOnly) {
         List initialCollection = this.pojo.getComments(ignoreSpam,approvedOnly);
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -274,19 +274,19 @@ public class WeblogEntryWrapper {
             wrappedCollection.add(i,WeblogEntryCommentWrapper.wrap((WeblogEntryComment) it.next(), urlStrategy));
             i++;
         }
-        
+
         return wrappedCollection;
     }
-    
-    
+
+
     public int getCommentCount() {
         return this.pojo.getCommentCount();
     }
-    
-    
+
+
     public List getReferers() {
         List initialCollection = this.pojo.getReferers();
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -297,67 +297,67 @@ public class WeblogEntryWrapper {
             wrappedCollection.add(i,WeblogReferrerWrapper.wrap((WeblogReferrer) it.next(), urlStrategy));
             i++;
         }
-        
+
         return wrappedCollection;
     }
-    
-    
+
+
     public String getPermalink() {
         return this.pojo.getPermalink();
     }
-    
-    
+
+
     public String getPermaLink() {
         return this.pojo.getPermaLink();
     }
-    
-    
+
+
     public String getCommentsLink() {
         return this.pojo.getCommentsLink();
     }
-    
-    
+
+
     public String getDisplayTitle() {
         return this.pojo.getDisplayTitle();
     }
-    
-    
+
+
     public String getRss09xDescription() {
         return this.pojo.getRss09xDescription();
     }
-    
-    
+
+
     public String getRss09xDescription(int maxLength) {
         return this.pojo.getRss09xDescription(maxLength);
     }
-    
-    
+
+
     // TODO: check this method for safety
     public List getPluginsList() {
         return this.pojo.getPluginsList();
     }
-    
-    
+
+
     public String getTransformedText() {
         return this.pojo.getTransformedText();
     }
-    
-    
+
+
     public String getTransformedSummary() {
         return this.pojo.getTransformedSummary();
     }
-    
-    
+
+
     public String displayContent(String readMoreLink) {
         return this.pojo.displayContent(readMoreLink);
     }
-    
-    
+
+
     public String getDisplayContent() {
         return this.pojo.getDisplayContent();
     }
-    
-    
+
+
     /**
      * this is a special method to access the original pojo.
      * we don't really want to do this, but it's necessary
@@ -367,5 +367,5 @@ public class WeblogEntryWrapper {
     public WeblogEntry getPojo() {
         return this.pojo;
     }
-    
+
 }

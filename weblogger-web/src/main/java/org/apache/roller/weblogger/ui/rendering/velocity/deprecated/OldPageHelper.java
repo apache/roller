@@ -52,20 +52,20 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
  * Provides assistance to VelociMacros, filling in where Velocity falls.
  */
 public class OldPageHelper {
-    
+
     private static Log mLogger = LogFactory.getLog(OldPageHelper.class);
-    
+
     private PageContext mPageContext = null;
     private HttpServletRequest mRequest = null;
     private HttpServletResponse mResponse = null;
-    
+
     private Map mPagePlugins = null;  // Plugins keyed by name
     private Weblog mWebsite = null;
     private Date mDate = null;
     private WeblogBookmarkFolder mFolder = null;
     private String mPageName = null;
     private WeblogPageRequest mPageRequest = null;
-    
+
     /**
      * Initialize VelocityHelper, setting the variables it will be hiding from
      * the Velocimacros.
@@ -78,25 +78,25 @@ public class OldPageHelper {
                       String pageName,
                       PageContext pageContext,
                       WeblogPageRequest pageRequest) throws WebloggerException {
-        
+
         // general request objects
         mRequest = request;
         mResponse = response;
         mPageContext = pageContext;
         mPageRequest = pageRequest;
-        
+
         // data that we'll be reusing
         mWebsite = website;
         mDate = date;
         mFolder = folder;
-        
+
         // init plugins
         Weblogger roller = WebloggerFactory.getWeblogger();
         PluginManager ppmgr = roller.getPluginManager();
         mPagePlugins = ppmgr.getWeblogEntryPlugins(mWebsite);
     }
-    
-    
+
+
     /**
      * Another stupid helper method to make up for the shortcomings of Velocity.
      * @return HashMap
@@ -107,8 +107,8 @@ public class OldPageHelper {
             map.put(key, value);
         return map;
     }
-    
-    
+
+
     /**
      * Evaluates the String as a Velocimacro, returning the results.
      *
@@ -121,21 +121,21 @@ public class OldPageHelper {
         // we no longer allow users to do this because it is dangerous
         return str;
     }
-    
-    
+
+
     /** Build the URL for editing an WeblogEntry **/
     public String getEntryEditUrl(WeblogEntryWrapper entry) {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), false);
     }
-    
-    
+
+
     public String getToggleLinkbackDisplayHTML(WeblogReferrerWrapper referer) {
         // NOTE: this was EOLed as part of Weblogger 4.0 since we no longer
         // have an action for toggling linkback display
         return "";
     }
-    
-    
+
+
     public boolean isUserAuthorizedToEdit() {
         try {
             RollerSession rses =
@@ -150,13 +150,13 @@ public class OldPageHelper {
         }
         return false;
     }
-    
-    
+
+
     public void setContentType( String type ) {
         mResponse.setContentType(type);
     }
-    
-    
+
+
     /**
      * Display big weblog calendar, well suited for an archive page.
      * @return HTML for calendar.
@@ -164,8 +164,8 @@ public class OldPageHelper {
     public String showBigWeblogCalendar() {
         return showWeblogCalendar(true, null);
     }
-    
-    
+
+
     /**
      * Call hybrid EditorNavBarTag to render editor navbar.
      * @param vertical True for vertical navbar.
@@ -176,8 +176,8 @@ public class OldPageHelper {
         // this same functionality can be obtained via the #showAuthorMenu() macro
         return null;
     }
-    
-    
+
+
     /**
      * Call hybrid EditorNavBarTag to render editor navbar.
      * @param model Name of XML file in WEB-INF that contains XML for menu.
@@ -189,9 +189,9 @@ public class OldPageHelper {
         // this same functionality can be obtained via the #showAuthorMenu() macro
         return null;
     }
-    
+
     //------------------------------------------------- WeblogCalendar methods
-    
+
     /**
      * Display weblog calendar.
      * @return HTML for calendar.
@@ -199,8 +199,8 @@ public class OldPageHelper {
     public String showWeblogCalendar() {
         return showWeblogCalendar(false, null);
     }
-    
-    
+
+
     /**
      * Weblog calendar display implementation.
      * @param big Show big archive style calendar.
@@ -217,10 +217,10 @@ public class OldPageHelper {
             } else {
                 model = new WeblogCalendarModel(mPageRequest, cat);
             }
-            
+
             // save model in JSP page context so CalendarTag can find it
             mPageContext.setAttribute("calendarModel", model);
-            
+
             // Create and setup calendar tag
             CalendarTag calTag = new CalendarTag();
             calTag.setPageContext(mPageContext);
@@ -236,8 +236,8 @@ public class OldPageHelper {
         }
         return ret;
     }
-    
-    
+
+
     /**
      * Convenience method, contrived helper for Velocity.
      * @param useIds
@@ -252,8 +252,8 @@ public class OldPageHelper {
         Hashtable params = new Hashtable();
         return strutsUrlHelper1( useIds, isAction, path, val1, val2, params);
     }
-    
-    
+
+
     /**
      * Very contrived helper method for Velocimacros generating Struts links.
      * This is really only of use to the showNavBar macro.
@@ -266,10 +266,10 @@ public class OldPageHelper {
      */
     public String strutsUrlHelper1( boolean useIds, boolean isAction,
             String path, String val1, String val2, Hashtable params) {
-        
+
         // NOTE: this method is now official defunct since Weblogger 4.0
         // when we EOLed struts1 and had no real equivalent for this
-        
+
         if(path == null) {
             return null;
         } else if("weblogCreate".equals(path)) {
@@ -286,8 +286,8 @@ public class OldPageHelper {
             return "<span class=\"error\">ERROR generating link</span>";
         }
     }
-    
-    
+
+
     /**
      * Pass the String through any PagePlugins that have been
      * assigned to the PageHelper, as selected by the Entry.
@@ -299,12 +299,12 @@ public class OldPageHelper {
     public String renderPlugins(WeblogEntryWrapper entry, String str) {
         String ret = str;
         mLogger.debug("Applying page plugins to string");
-        
+
         if (mPagePlugins != null) {
             List entryPlugins = entry.getPluginsList();
             // if no Entry plugins, don't bother looping.
             if (entryPlugins != null && !entryPlugins.isEmpty()) {
-                
+
                 // now loop over mPagePlugins, matching
                 // against Entry plugins (by name):
                 // where a match is found render Plugin.
@@ -322,24 +322,24 @@ public class OldPageHelper {
                 }
             }
         }
-        
+
         return ret;
     }
-    
-    
+
+
     /**
      * This method used to return an array of supported locales based on some
      * of the old i18n work done in Weblogger, however, as of Weblogger 3.0 there is
      * no longer a list of supported languages.  The languages available to a
      * weblog are unbounded and are purely determined by the weblog author.
-     * 
+     *
      * This method always returns null.
      */
     public Locale[] getSupportedLanguages() {
         return null;
     }
-    
-    
+
+
     /**
      * @return relative URL to page, starting with /username
      */
@@ -348,14 +348,14 @@ public class OldPageHelper {
         if(pathInfo == null) {
             pathInfo = "";
         }
-        
+
         return pathInfo;
     }
-    
-    
+
+
     public String getCommentAuthenticatorHtml() {
         // deprecated, does nothing now
         return "";
     }
-    
+
 }

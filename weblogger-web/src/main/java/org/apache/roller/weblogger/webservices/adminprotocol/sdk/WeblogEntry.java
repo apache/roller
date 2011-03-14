@@ -53,7 +53,7 @@ public class WeblogEntry extends Entry {
         public static final String APP_RESOURCES_URL = "app-resources-url";
         public static final String ENABLED = "enabled";
     }
-    
+
     private String handle;
     private String name;
     private String description;
@@ -65,109 +65,109 @@ public class WeblogEntry extends Entry {
     private String appEntriesUrl;
     private String appResourcesUrl;
     private Boolean enabled;
-    
+
     public WeblogEntry(Element e, String urlPrefix) {
         populate(e, urlPrefix);
     }
-    
+
     public WeblogEntry(InputStream stream, String urlPrefix) throws JDOMException, IOException {
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
         Element e = d.detachRootElement();
-        
+
         populate(e, urlPrefix);
     }
-    
+
     private void populate(Element e, String urlPrefix) {
         // handle (required)
         Element handleElement = e.getChild(Tags.HANDLE, Service.NAMESPACE);
         if (handleElement != null) {
             setHandle(handleElement.getText());
         }
-        
+
         // href
         String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + getHandle();
         setHref(href);
-        
+
         // name
         Element nameElement = e.getChild(Tags.NAME, Service.NAMESPACE);
         if (nameElement != null) {
             setName(nameElement.getText());
         }
-        
+
         // description
         Element descElement = e.getChild(Tags.DESCRIPTION, Service.NAMESPACE);
         if (descElement != null) {
             setDescription(descElement.getText());
         }
-        
+
         // locale
         Element localeElement = e.getChild(Tags.LOCALE, Service.NAMESPACE);
         if (localeElement != null) {
             setLocale(localeElement.getText());
         }
-        
+
         // timezone
         Element tzElement = e.getChild(Tags.TIMEZONE, Service.NAMESPACE);
         if (tzElement != null) {
             setTimezone(tzElement.getText());
         }
-        
+
         // creator
         Element creatorElement = e.getChild(Tags.CREATING_USER, Service.NAMESPACE);
         if (creatorElement != null) {
             setCreatingUser(creatorElement.getText());
         }
-        
+
         // email address
         Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
         if (emailElement != null) {
             setEmailAddress(emailElement.getText());
         }
-        
+
         // created
         Element createdElement = e.getChild(Tags.DATE_CREATED, Service.NAMESPACE);
         if (createdElement != null) {
             setDateCreated(new Date(Long.valueOf(createdElement.getText()).longValue()));
         }
-        
+
         // APP entries URL
         Element appEntriesUrlElement = e.getChild(Tags.APP_ENTRIES_URL, Service.NAMESPACE);
         if (appEntriesUrlElement != null) {
             setAppEntriesUrl(appEntriesUrlElement.getText());
         }
-        
+
         // APP resources URL
         Element appResourcesUrlElement = e.getChild(Tags.APP_RESOURCES_URL, Service.NAMESPACE);
         if (appResourcesUrlElement != null) {
             setAppResourcesUrl(appResourcesUrlElement.getText());
         }
-        
+
         // enabled
         Element enabledElement = e.getChild(Tags.ENABLED, Service.NAMESPACE);
         if (enabledElement != null) {
             setEnabled(Boolean.valueOf(enabledElement.getText()));
         }
     }
-    
-    
+
+
     public WeblogEntry(String handle, String urlPrefix) {
         String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + handle;
         setHref(href);
         setHandle(handle);
     }
-    
+
     public String getType() {
         return Types.WEBLOG;
     }
-    
+
     public Document toDocument() {
         Element weblog = new Element(Tags.WEBLOG, Service.NAMESPACE);
         Document doc = new Document(weblog);
-        
+
         // link
         weblog.setAttribute(Attributes.HREF, getHref());
-        
+
         // handle (required)
         String handle = getHandle();
         if (handle != null && handle.length() > 0) {
@@ -176,7 +176,7 @@ public class WeblogEntry extends Entry {
             handleElement.addContent(handleText);
             weblog.addContent(handleElement);
         }
-        
+
         // name
         String name = getName();
         if (name != null) {
@@ -185,7 +185,7 @@ public class WeblogEntry extends Entry {
             nameElement.addContent(nameText);
             weblog.addContent(nameElement);
         }
-        
+
         // description
         String desc = getDescription();
         if (desc != null) {
@@ -194,7 +194,7 @@ public class WeblogEntry extends Entry {
             descElement.addContent(descText);
             weblog.addContent(descElement);
         }
-        
+
         // locale
         Locale locale = getLocale();
         if (locale != null) {
@@ -203,7 +203,7 @@ public class WeblogEntry extends Entry {
             localeElement.addContent(localeText);
             weblog.addContent(localeElement);
         }
-        
+
         // timezone
         TimeZone tz = getTimezone();
         if (tz != null) {
@@ -212,7 +212,7 @@ public class WeblogEntry extends Entry {
             tzElement.addContent(tzText);
             weblog.addContent(tzElement);
         }
-        
+
         // creating user
         String creator = getCreatingUser();
         if (creator != null) {
@@ -221,7 +221,7 @@ public class WeblogEntry extends Entry {
             creatorElement.addContent(creatorText);
             weblog.addContent(creatorElement);
         }
-        
+
         // email address
         String email = getEmailAddress();
         if (email != null) {
@@ -230,7 +230,7 @@ public class WeblogEntry extends Entry {
             emailElement.addContent(emailText);
             weblog.addContent(emailElement);
         }
-        
+
         // creation date
         Element dateCreatedElement = new Element(Tags.DATE_CREATED, Service.NAMESPACE);
         Date datedCreated = getDateCreated();
@@ -239,7 +239,7 @@ public class WeblogEntry extends Entry {
             dateCreatedElement.addContent(createdText);
             weblog.addContent(dateCreatedElement);
         }
-        
+
         // APP entries URL
         Element appEntriesUrlElement = new Element(Tags.APP_ENTRIES_URL, Service.NAMESPACE);
         String appEntriesUrl = getAppEntriesUrl();
@@ -248,7 +248,7 @@ public class WeblogEntry extends Entry {
             appEntriesUrlElement.addContent(appEntriesUrlText);
             weblog.addContent(appEntriesUrlElement);
         }
-        
+
         // APP entries URL
         Element appResourcesUrlElement = new Element(Tags.APP_RESOURCES_URL, Service.NAMESPACE);
         String appResourcesUrl = getAppResourcesUrl();
@@ -257,7 +257,7 @@ public class WeblogEntry extends Entry {
             appResourcesUrlElement.addContent(appResourcesUrlText);
             weblog.addContent(appResourcesUrlElement);
         }
-        
+
         // enabled
         Element enabledElement = new Element(Tags.ENABLED, Service.NAMESPACE);
         Boolean enabled = getEnabled();
@@ -266,18 +266,18 @@ public class WeblogEntry extends Entry {
             enabledElement.addContent(enabledText);
             weblog.addContent(enabledElement);
         }
-        
+
         return doc;
     }
-    
+
     /** Test if a user entry is equal to this user entry. */
     public boolean equals(Object o) {
         if ( o == null || o.getClass() != this.getClass()) {
             return false;
         }
-        
+
         WeblogEntry other = (WeblogEntry)o;
-        
+
         if (!areEqual(getEmailAddress(), other.getEmailAddress())) {
             return false;
         }
@@ -299,103 +299,103 @@ public class WeblogEntry extends Entry {
         if (!areEqual(getEnabled(), other.getEnabled())) {
             return false;
         }
-        
+
         return super.equals(o);
     }
-    
+
     public String getHandle() {
         return handle;
     }
-    
+
     public void setHandle(String handle) {
         this.handle = handle;
     }
-    
+
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public Locale getLocale() {
         return locale;
     }
-    
+
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-    
+
     public void setLocale(String localeString) {
         this.locale = new LocaleString(localeString).getLocale();
     }
-    
-    
+
+
     public TimeZone getTimezone() {
         return timezone;
     }
-    
+
     public void setTimezone(TimeZone timezone) {
         this.timezone = timezone;
     }
-    
+
     public void setTimezone(String timezoneString) {
         this.timezone = TimeZone.getTimeZone(timezoneString);
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public Date getDateCreated() {
         return dateCreated;
     }
-    
+
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
-    
+
     public String getCreatingUser() {
         return creatingUser;
     }
-    
+
     public void setCreatingUser(String creatingUser) {
         this.creatingUser = creatingUser;
     }
-    
+
     public String getEmailAddress() {
         return emailAddress;
     }
-    
+
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
-    
+
     public String getAppEntriesUrl() {
         return appEntriesUrl;
     }
-    
+
     public void setAppEntriesUrl(String appEntriesUrl) {
         this.appEntriesUrl = appEntriesUrl;
     }
-    
+
     public String getAppResourcesUrl() {
         return appResourcesUrl;
     }
-    
+
     public void setAppResourcesUrl(String appResourcesUrl) {
         this.appResourcesUrl = appResourcesUrl;
     }
-    
+
     public Boolean getEnabled() {
         return enabled;
     }
-    
+
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }

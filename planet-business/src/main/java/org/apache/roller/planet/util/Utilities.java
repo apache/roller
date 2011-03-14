@@ -32,9 +32,9 @@ import org.apache.roller.util.RegexUtil;
 public class Utilities {
     /** The <code>Log</code> instance for this class. */
     private static Log mLogger = LogFactory.getLog(Utilities.class);
-    
+
     public final static String TAG_SPLIT_CHARS = " ,\n\r\f\t";
-      
+
     //------------------------------------------------------------------------
     /** Strip jsessionid off of a URL */
     public static String stripJsessionId( String url ) {
@@ -51,7 +51,7 @@ public class Utilities {
         }
         return url;
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * Escape, but do not replace HTML.
@@ -60,7 +60,7 @@ public class Utilities {
     public static String escapeHTML(String s) {
         return escapeHTML(s, true);
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * Escape, but do not replace HTML.
@@ -78,11 +78,11 @@ public class Utilities {
         s = StringUtils.replace(s, ">", "&gt;");
         return s;
     }
-     
+
     public static String unescapeHTML(String str) {
         return StringEscapeUtils.unescapeHtml(str);
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * Remove occurences of html, defined as any text
@@ -92,7 +92,7 @@ public class Utilities {
     public static String removeHTML(String str) {
         return removeHTML(str, true);
     }
-    
+
     /**
      * Remove occurences of html, defined as any text
      * between the characters "&lt;" and "&gt;".
@@ -110,16 +110,16 @@ public class Utilities {
         int endTag = 0;
         if (beginTag == -1)
             return str;
-        
+
         while (beginTag >= start) {
             if (beginTag > 0) {
                 ret.append(str.substring(start, beginTag));
-                
+
                 // replace each tag with a space (looks better)
                 if (addSpace) ret.append(" ");
             }
             endTag = str.indexOf(">", beginTag);
-            
+
             // if endTag found move "cursor" forward
             if (endTag > -1) {
                 start = endTag + 1;
@@ -137,7 +137,7 @@ public class Utilities {
         }
         return ret.toString().trim();
     }
-    
+
     //------------------------------------------------------------------------
     /** Run both removeHTML and escapeHTML on a string.
      * @param s String to be run through removeHTML and escapeHTML.
@@ -147,7 +147,7 @@ public class Utilities {
         if ( s==null ) return "";
         else return Utilities.escapeHTML( Utilities.removeHTML(s) );
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * Autoformat.
@@ -156,7 +156,7 @@ public class Utilities {
         String ret = StringUtils.replace(s, "\n", "<br />");
         return ret;
     }
-        
+
     //------------------------------------------------------------------------
     /**
      * Replaces occurences of non-alphanumeric characters with an underscore.
@@ -164,7 +164,7 @@ public class Utilities {
     public static String replaceNonAlphanumeric(String str) {
         return replaceNonAlphanumeric(str, '_');
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * Replaces occurences of non-alphanumeric characters with a
@@ -182,7 +182,7 @@ public class Utilities {
         }
         return ret.toString();
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * Remove occurences of non-alphanumeric characters.
@@ -199,7 +199,7 @@ public class Utilities {
         }
         return ret.toString();
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * @param stringArray
@@ -216,7 +216,7 @@ public class Utilities {
         }
         return ret;
     }
-    
+
     //--------------------------------------------------------------------------
     /** Convert string to string array. */
     public static String[] stringToStringArray(String instr, String delim)
@@ -224,13 +224,13 @@ public class Utilities {
         StringTokenizer toker = new StringTokenizer(instr, delim);
         String stringArray[] = new String[toker.countTokens()];
         int i = 0;
-        
+
         while (toker.hasMoreTokens()) {
             stringArray[i++] = toker.nextToken();
         }
         return stringArray;
     }
-    
+
     //--------------------------------------------------------------------------
     /** Convert string to integer array. */
     public static int[] stringToIntArray(String instr, String delim)
@@ -238,7 +238,7 @@ public class Utilities {
         StringTokenizer toker = new StringTokenizer(instr, delim);
         int intArray[] = new int[toker.countTokens()];
         int i = 0;
-        
+
         while (toker.hasMoreTokens()) {
             String sInt = toker.nextToken();
             int nInt = Integer.parseInt(sInt);
@@ -246,7 +246,7 @@ public class Utilities {
         }
         return intArray;
     }
-    
+
     //-------------------------------------------------------------------
     /** Convert integer array to a string. */
     public static String intArrayToString(int[] intArray) {
@@ -259,12 +259,12 @@ public class Utilities {
         }
         return ret;
     }
-    
+
     //------------------------------------------------------------------------
     public static void copyFile(File from, File to) throws IOException {
         InputStream in = null;
         OutputStream out = null;
-        
+
         try {
             in = new FileInputStream(from);
         } catch (IOException ex) {
@@ -274,7 +274,7 @@ public class Utilities {
                     + "', "
                     + ex.getMessage());
         }
-        
+
         try {
             out = new FileOutputStream(to);
         } catch (Exception ex) {
@@ -288,10 +288,10 @@ public class Utilities {
                     + "', "
                     + ex.getMessage());
         }
-        
+
         copyInputToOutput(in, out, from.length());
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * Utility method to copy an input stream to an output stream.
@@ -304,16 +304,16 @@ public class Utilities {
             throws IOException {
         int bytes;
         long length;
-        
+
         BufferedInputStream in = new BufferedInputStream(input);
         BufferedOutputStream out = new BufferedOutputStream(output);
-        
+
         byte[] buffer;
         buffer = new byte[8192];
-        
+
         for (length = byteCount; length > 0;) {
             bytes = (int) (length > 8192 ? 8192 : length);
-            
+
             try {
                 bytes = in.read(buffer, 0, bytes);
             } catch (IOException ex) {
@@ -325,12 +325,12 @@ public class Utilities {
                 throw new IOException(
                         "Reading input stream, " + ex.getMessage());
             }
-            
+
             if (bytes < 0)
                 break;
-            
+
             length -= bytes;
-            
+
             try {
                 out.write(buffer, 0, bytes);
             } catch (IOException ex) {
@@ -343,7 +343,7 @@ public class Utilities {
                         "Writing output stream, " + ex.getMessage());
             }
         }
-        
+
         try {
             in.close();
             out.close();
@@ -351,7 +351,7 @@ public class Utilities {
             throw new IOException("Closing file streams, " + ex.getMessage());
         }
     }
-    
+
     //------------------------------------------------------------------------
     public static void copyInputToOutput(
             InputStream input,
@@ -365,7 +365,7 @@ public class Utilities {
             if (count != -1)
                 out.write(buffer, 0, count);
         }
-        
+
         try {
             in.close();
             out.close();
@@ -373,7 +373,7 @@ public class Utilities {
             throw new IOException("Closing file streams, " + ex.getMessage());
         }
     }
-    
+
     /**
      * Encode a string using algorithm specified in web.xml and return the
      * resulting encrypted password. If exception, the plain credentials
@@ -387,9 +387,9 @@ public class Utilities {
      */
     public static String encodePassword(String password, String algorithm) {
         byte[] unencodedPassword = password.getBytes();
-        
+
         MessageDigest md = null;
-        
+
         try {
             // first create an instance, given the provider
             md = MessageDigest.getInstance(algorithm);
@@ -397,29 +397,29 @@ public class Utilities {
             mLogger.error("Exception: " + e);
             return password;
         }
-        
+
         md.reset();
-        
+
         // call the update method one or more times
         // (useful when you don't know the size of your data, eg. stream)
         md.update(unencodedPassword);
-        
+
         // now calculate the hash
         byte[] encodedPassword = md.digest();
-        
+
         StringBuffer buf = new StringBuffer();
-        
+
         for (int i = 0; i < encodedPassword.length; i++) {
             if ((encodedPassword[i] & 0xff) < 0x10) {
                 buf.append("0");
             }
-            
+
             buf.append(Long.toString(encodedPassword[i] & 0xff, 16));
         }
-        
+
         return buf.toString();
     }
-    
+
     /**
      * Encode a string using Base64 encoding. Used when storing passwords
      * as cookies.
@@ -432,10 +432,10 @@ public class Utilities {
      * @throws IOException
      */
     public static String encodeString(String str) throws IOException {
-        String encodedStr = new String(Base64.encodeBase64(str.getBytes()));  
+        String encodedStr = new String(Base64.encodeBase64(str.getBytes()));
         return (encodedStr.trim());
     }
-    
+
     /**
      * Decode a string using Base64 encoding.
      *
@@ -444,10 +444,10 @@ public class Utilities {
      * @throws IOException
      */
     public static String decodeString(String str) throws IOException {
-        String value = new String(Base64.decodeBase64(str.getBytes()));        
-        return (value); 
+        String value = new String(Base64.decodeBase64(str.getBytes()));
+        return (value);
     }
-    
+
     /**
      * Strips HTML and truncates.
      */
@@ -455,21 +455,21 @@ public class Utilities {
             String str, int lower, int upper, String appendToEnd) {
         // strip markup from the string
         String str2 = removeHTML(str, false);
-        
+
         // quickly adjust the upper if it is set lower than 'lower'
         if (upper < lower) {
             upper = lower;
         }
-        
+
         // now determine if the string fits within the upper limit
         // if it does, go straight to return, do not pass 'go' and collect $200
         if(str2.length() > upper) {
             // the magic location int
             int loc;
-            
+
             // first we determine where the next space appears after lower
             loc = str2.lastIndexOf(' ', upper);
-            
+
             // now we'll see if the location is greater than the lower limit
             if(loc >= lower) {
                 // yes it was, so we'll cut it off here
@@ -479,14 +479,14 @@ public class Utilities {
                 str2 = str2.substring(0, upper);
                 loc = upper;
             }
-            
+
             // the string was truncated, so we append the appendToEnd String
             str2 = str2 + appendToEnd;
         }
-        
+
         return str2;
     }
-    
+
     /**
      * This method based on code from the String taglib at Apache Jakarta:
      * http://cvs.apache.org/viewcvs/jakarta-taglibs/string/src/org/apache/taglibs/string/util/StringW.java?rev=1.16&content-type=text/vnd.viewcvs-markup
@@ -503,21 +503,21 @@ public class Utilities {
         // strip markup from the string
         String str2 = removeHTML(str, false);
         boolean diff = (str2.length() < str.length());
-        
+
         // quickly adjust the upper if it is set lower than 'lower'
         if(upper < lower) {
             upper = lower;
         }
-        
+
         // now determine if the string fits within the upper limit
         // if it does, go straight to return, do not pass 'go' and collect $200
         if(str2.length() > upper) {
             // the magic location int
             int loc;
-            
+
             // first we determine where the next space appears after lower
             loc = str2.lastIndexOf(' ', upper);
-            
+
             // now we'll see if the location is greater than the lower limit
             if(loc >= lower) {
                 // yes it was, so we'll cut it off here
@@ -527,29 +527,29 @@ public class Utilities {
                 str2 = str2.substring(0, upper);
                 loc = upper;
             }
-            
+
             // HTML was removed from original str
             if (diff) {
-                
+
                 // location of last space in truncated string
                 loc = str2.lastIndexOf(' ', loc);
-                
+
                 // get last "word" in truncated string (add 1 to loc to eliminate space
                 String str3 = str2.substring(loc+1);
-                
+
                 // find this fragment in original str, from 'loc' position
                 loc = str.indexOf(str3, loc) + str3.length();
-                
+
                 // get truncated string from original str, given new 'loc'
                 str2 = str.substring(0, loc);
-                
+
                 // get all the HTML from original str after loc
                 str3 = extractHTML(str.substring(loc));
-                
+
                 // remove any tags which generate visible HTML
                 // This call is unecessary, all HTML has already been stripped
                 //str3 = removeVisibleHTMLTags(str3);
-                
+
                 // append the appendToEnd String and
                 // add extracted HTML back onto truncated string
                 str = str2 + appendToEnd + str3;
@@ -557,31 +557,31 @@ public class Utilities {
                 // the string was truncated, so we append the appendToEnd String
                 str = str2 + appendToEnd;
             }
-            
+
         }
-        
+
         return str;
     }
-    
+
     public static String truncateText(String str, int lower, int upper, String appendToEnd) {
         // strip markup from the string
         String str2 = removeHTML(str, false);
         boolean diff = (str2.length() < str.length());
-        
+
         // quickly adjust the upper if it is set lower than 'lower'
         if(upper < lower) {
             upper = lower;
         }
-        
+
         // now determine if the string fits within the upper limit
         // if it does, go straight to return, do not pass 'go' and collect $200
         if(str2.length() > upper) {
             // the magic location int
             int loc;
-            
+
             // first we determine where the next space appears after lower
             loc = str2.lastIndexOf(' ', upper);
-            
+
             // now we'll see if the location is greater than the lower limit
             if(loc >= lower) {
                 // yes it was, so we'll cut it off here
@@ -596,7 +596,7 @@ public class Utilities {
         }
         return str;
     }
-    
+
     /**
      * @param str
      * @return
@@ -611,7 +611,7 @@ public class Utilities {
         str = str.replaceAll("<p />","");
         return str;
     }
-    
+
     /**
      * Need need to get rid of any user-visible HTML tags once all text has been
      * removed such as &lt;BR&gt;. This sounds like a better approach than removing
@@ -628,7 +628,7 @@ public class Utilities {
         str = stripLineBreaks(str);
         StringBuffer result = new StringBuffer(str);
         StringBuffer lcresult = new StringBuffer(str.toLowerCase());
-        
+
         // <img should take care of smileys
         String[] visibleTags = {"<img"}; // are there others to add?
         int stringIndex;
@@ -649,7 +649,7 @@ public class Utilities {
                 }
             }
         }
-        
+
         // TODO:  This code is buggy by nature.  It doesn't deal with nesting of tags properly.
         // remove certain elements with open & close tags
         String[] openCloseTags = {"li", "a", "div", "h1", "h2", "h3", "h4"}; // more ?
@@ -673,15 +673,15 @@ public class Utilities {
                         // Looks like it, so remove it.
                         result.delete(stringIndex, endIndex + 1);
                         lcresult.delete(stringIndex, endIndex + 1);
-                        
+
                     }
                 }
             }
         }
-        
+
         return result.toString();
     }
-    
+
     /**
      * Extract (keep) JUST the HTML from the String.
      * @param str
@@ -695,14 +695,14 @@ public class Utilities {
         int endTag = 0;
         if (beginTag == -1)
             return str;
-        
+
         while (beginTag >= start) {
             endTag = str.indexOf(">", beginTag);
-            
+
             // if endTag found, keep tag
             if (endTag > -1) {
                 ret.append( str.substring(beginTag, endTag+1) );
-                
+
                 // move start forward and find another tag
                 start = endTag + 1;
                 beginTag = str.indexOf("<", start);
@@ -714,14 +714,14 @@ public class Utilities {
         }
         return ret.toString();
     }
-    
-    
+
+
     public static String hexEncode(String str) {
         if (StringUtils.isEmpty(str)) return str;
-        
+
         return RegexUtil.encode(str);
     }
-    
+
     public static String encodeEmail(String str) {
         return str!=null ? RegexUtil.encodeEmail(str) : null;
     }
@@ -772,37 +772,37 @@ public class Utilities {
         }
         return 0;
     }
-                    
+
     /**
      * Convert a byte array into a Base64 string (as used in mime formats)
      */
     public static String toBase64(byte[] aValue) {
-        
+
         final String m_strBase64Chars =
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        
+
         int byte1;
         int byte2;
         int byte3;
         int iByteLen = aValue.length;
         StringBuffer tt = new StringBuffer();
-        
+
         for (int i = 0; i < iByteLen; i += 3) {
             boolean bByte2 = (i + 1) < iByteLen;
             boolean bByte3 = (i + 2) < iByteLen;
             byte1 = aValue[i] & 0xFF;
             byte2 = (bByte2) ? (aValue[i + 1] & 0xFF) : 0;
             byte3 = (bByte3) ? (aValue[i + 2] & 0xFF) : 0;
-            
+
             tt.append(m_strBase64Chars.charAt(byte1 / 4));
             tt.append(m_strBase64Chars.charAt((byte2 / 16) + ((byte1 & 0x3) * 16)));
             tt.append(((bByte2) ? m_strBase64Chars.charAt((byte3 / 64) + ((byte2 & 0xF) * 4)) : '='));
             tt.append(((bByte3) ? m_strBase64Chars.charAt(byte3 & 0x3F) : '='));
         }
-        
+
         return tt.toString();
     }
-    
+
     /**
      * @param tag
      * @return
@@ -830,12 +830,12 @@ public class Utilities {
         }
         return sb.toString();
     }
-        
+
     public static String normalizeTag(String tag, Locale locale) {
         tag = Utilities.stripInvalidTagCharacters(tag);
-        return locale == null ? tag.toLowerCase() : tag.toLowerCase(locale);        
+        return locale == null ? tag.toLowerCase() : tag.toLowerCase(locale);
     }
-    
+
     /**
      * @param tags
      * @return

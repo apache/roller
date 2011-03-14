@@ -103,7 +103,7 @@ public class MediaFileBean {
 
     /**
      * Copies the contents of this bean to a media file object
-     * 
+     *
      */
     public void copyTo(MediaFile dataHolder) throws WebloggerException {
 
@@ -121,8 +121,8 @@ public class MediaFileBean {
     }
 
     /**
-     * Populates this bean from a media file object. 
-     * 
+     * Populates this bean from a media file object.
+     *
      */
     public void copyFrom(MediaFile dataHolder) {
         this.setId(dataHolder.getId());

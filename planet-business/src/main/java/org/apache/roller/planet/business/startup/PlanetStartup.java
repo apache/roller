@@ -27,27 +27,27 @@ import org.apache.roller.planet.business.DatabaseProvider;
  * Manages Roller Planet startup process.
  */
 public final class PlanetStartup {
-    
+
     private static final Log log = LogFactory.getLog(PlanetStartup.class);
-    
+
     private static boolean prepared = false;
-    
+
     private static DatabaseProvider dbProvider = null;
     private static StartupException dbProviderException = null;
-    
-    
+
+
     // non-instantiable
     private PlanetStartup() {}
-    
-    
+
+
     /**
      * Is the Roller Weblogger app properly prepared to be bootstrapped?
      */
     public static boolean isPrepared() {
         return prepared;
     }
-    
-    
+
+
     /**
      * Get a reference to the currently configured DatabaseProvider.
      *
@@ -60,10 +60,10 @@ public final class PlanetStartup {
         }
         return dbProvider;
     }
-    
-    
+
+
     /**
-     * Get a reference to the exception thrown while instantiating the 
+     * Get a reference to the exception thrown while instantiating the
      * database provider, if any.
      *
      * @return StartupException Exception from db provider, or null if no exception thrown.
@@ -72,7 +72,7 @@ public final class PlanetStartup {
         return dbProviderException;
     }
 
-    
+
     /**
      * Run the Roller Weblogger preparation sequence.
      *
@@ -80,16 +80,16 @@ public final class PlanetStartup {
      * as setting up the database and mail providers.
      */
     public static void prepare() throws StartupException {
-        
+
         // setup database provider
         try {
             dbProvider = new DatabaseProvider();
-        } catch(StartupException ex) { 
+        } catch(StartupException ex) {
             dbProviderException = ex;
             throw ex;
-        }   
-        
+        }
+
         prepared = true;
     }
-    
+
 }

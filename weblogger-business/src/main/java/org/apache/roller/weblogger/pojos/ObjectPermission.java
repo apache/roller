@@ -25,7 +25,7 @@ import org.apache.roller.util.UUIDGenerator;
 
 
 /**
- * Base permission class for Roller. 
+ * Base permission class for Roller.
  */
 public abstract class ObjectPermission extends RollerPermission {
     private static Log log = LogFactory.getLog(ObjectPermission.class);
@@ -37,12 +37,12 @@ public abstract class ObjectPermission extends RollerPermission {
     protected boolean pending = false;
     protected Date    dateCreated = new Date();
     protected String  actions;
-    
-    
+
+
     public ObjectPermission() {
         super("");
     }
-    
+
     public ObjectPermission(String name) {
         super(name);
     }

@@ -39,110 +39,110 @@ import org.apache.roller.weblogger.util.cache.LazyExpiringCacheEntry;
  * Cache for weblog feed content.
  */
 public class WeblogFeedCache {
-    
+
     private static Log log = LogFactory.getLog(WeblogFeedCache.class);
-    
+
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
     public static final String CACHE_ID = "cache.weblogfeed";
-    
+
     // keep cached content
     private boolean cacheEnabled = true;
     private Cache contentCache = null;
-    
+
     // reference to our singleton instance
     private static WeblogFeedCache singletonInstance = new WeblogFeedCache();
-    
-    
+
+
     private WeblogFeedCache() {
-        
+
         cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
-        
+
         Map cacheProps = new HashMap();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
         String prop = null;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
-            
+
             // we are only interested in props for this cache
             if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
+                cacheProps.put(prop.substring(CACHE_ID.length()+1),
                         WebloggerConfig.getProperty(prop));
             }
         }
-        
+
         log.info(cacheProps);
-        
+
         if(cacheEnabled) {
             contentCache = CacheManager.constructCache(null, cacheProps);
         } else {
             log.warn("Caching has been DISABLED");
         }
     }
-    
-    
+
+
     public static WeblogFeedCache getInstance() {
         return singletonInstance;
     }
-    
-    
+
+
     public Object get(String key, long lastModified) {
-        
+
         if(!cacheEnabled)
             return null;
-        
+
         Object entry = null;
-        
+
         LazyExpiringCacheEntry lazyEntry =
                 (LazyExpiringCacheEntry) this.contentCache.get(key);
         if(lazyEntry != null) {
             entry = lazyEntry.getValue(lastModified);
-            
+
             if(entry != null) {
                 log.debug("HIT "+key);
             } else {
                 log.debug("HIT-EXPIRED "+key);
             }
-            
+
         } else {
             log.debug("MISS "+key);
         }
-        
+
         return entry;
     }
-    
-    
+
+
     public void put(String key, Object value) {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         contentCache.put(key, new LazyExpiringCacheEntry(value));
         log.debug("PUT "+key);
     }
-    
-    
+
+
     public void remove(String key) {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         contentCache.remove(key);
         log.debug("REMOVE "+key);
     }
-    
-    
+
+
     public void clear() {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         contentCache.clear();
         log.debug("CLEAR");
     }
-    
-    
+
+
     /**
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
@@ -157,19 +157,19 @@ public class WeblogFeedCache {
      *
      */
     public String generateKey(WeblogFeedRequest feedRequest) {
-        
+
         StringBuffer key = new StringBuffer();
-        
+
         key.append(this.CACHE_ID).append(":");
         key.append(feedRequest.getWeblogHandle());
-        
+
         key.append("/").append(feedRequest.getType());
         key.append("/").append(feedRequest.getFormat());
-        
+
         if (feedRequest.getTerm() != null) {
             key.append("/search/").append(feedRequest.getTerm());
         }
-        
+
         if(feedRequest.getWeblogCategoryName() != null) {
             String cat = feedRequest.getWeblogCategoryName();
             try {
@@ -177,25 +177,25 @@ public class WeblogFeedCache {
             } catch (UnsupportedEncodingException ex) {
                 // should never happen, utf-8 is always supported
             }
-            
+
             key.append("/").append(cat);
         }
-        
+
         if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
           Set ordered = new TreeSet(feedRequest.getTags());
-          String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);  
+          String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
           key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
-        }        
-        
+        }
+
         if(feedRequest.getLocale() != null) {
             key.append("/").append(feedRequest.getLocale());
         }
-        
+
         if(feedRequest.isExcerpts()) {
             key.append("/excerpts");
         }
-        
+
         return key.toString();
     }
-    
+
 }

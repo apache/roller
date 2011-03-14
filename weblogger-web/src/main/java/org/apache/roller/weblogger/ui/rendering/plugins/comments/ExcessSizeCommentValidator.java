@@ -27,13 +27,13 @@ import org.apache.roller.weblogger.util.RollerMessages;
  * Validates comment only if it has less than comment.validator.excessSize.threshold characters
  */
 public class ExcessSizeCommentValidator implements CommentValidator {
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");  
+    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     private int threshold;
-    
+
     public ExcessSizeCommentValidator() {
         threshold = WebloggerConfig.getIntProperty("comment.validator.excessSize.threshold");
     }
-    
+
     public String getName() {
         return bundle.getString("comment.validator.excessSizeName");
     }
@@ -45,5 +45,5 @@ public class ExcessSizeCommentValidator implements CommentValidator {
         }
         return 100;
     }
-    
+
 }

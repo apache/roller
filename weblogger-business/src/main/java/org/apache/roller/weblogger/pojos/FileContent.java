@@ -28,43 +28,43 @@ import java.io.InputStream;
  *
  */
 public class FileContent {
-    
+
     // the physical java.io.File backing this resource
     private File resourceFile = null;
-    
+
     // the file Id of the resource
     private String fileId = null;
-    
+
     // the weblog the resource is attached to
     private Weblog weblog = null;
-    
-    
+
+
     public FileContent(Weblog weblog, String fileId, File file) {
         this.weblog = weblog;
         this.fileId = fileId;
         this.resourceFile = file;
     }
-    
+
     public Weblog getWeblog() {
         return weblog;
     }
-    
+
     public String getName() {
         return resourceFile.getName();
     }
-    
+
     public String getFileId() {
         return fileId;
     }
-    
+
     public long getLastModified() {
         return resourceFile.lastModified();
     }
-    
+
     public long getLength() {
         return resourceFile.length();
     }
-    
+
     /**
      * Returns the input stream for the underlying file.
      */

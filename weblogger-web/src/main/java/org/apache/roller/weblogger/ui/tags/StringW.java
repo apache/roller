@@ -1,12 +1,12 @@
 /*
  * Copyright 1999,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,8 @@ package org.apache.roller.weblogger.ui.tags;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * A set of String library static methods. While extending String or 
- * StringBuffer would have been the nicest solution, that is not 
+ * A set of String library static methods. While extending String or
+ * StringBuffer would have been the nicest solution, that is not
  * possible, so a simple set of static methods seems the most workable.
  *
  * Method ideas have so far been taken from the PHP4, Ruby and .NET languages.
@@ -33,12 +33,12 @@ import org.apache.commons.lang.StringUtils;
 final public class StringW {
 
     /**
-     * Quote a string so that it may be used in a regular expression 
-     * without any parts of the string being considered as a 
+     * Quote a string so that it may be used in a regular expression
+     * without any parts of the string being considered as a
      * part of the regular expression's control characters.
      */
     static public String quoteRegularExpression(String str) {
-        // replace ? + * / . ^ $ as long as they're not in character 
+        // replace ? + * / . ^ $ as long as they're not in character
         // class. so must be done by hand
         char[] chrs = str.toCharArray();
         int sz = chrs.length;
@@ -55,7 +55,7 @@ final public class StringW {
               case '^' :
               case '$' :
                 buffer.append("\\");
-              default : 
+              default :
                 buffer.append(chrs[i]);
             }
         }
@@ -63,16 +63,16 @@ final public class StringW {
     }
 
     /**
-     * Create a word-wrapped version of a String. Wrap at 80 characters and 
-     * use newlines as the delimiter. If a word is over 80 characters long 
+     * Create a word-wrapped version of a String. Wrap at 80 characters and
+     * use newlines as the delimiter. If a word is over 80 characters long
      * use a - sign to split it.
      */
     static public String wordWrap(String str) {
         return wordWrap(str, 80, "\n", "-", true);
     }
     /**
-     * Create a word-wrapped version of a String. Wrap at a specified width and 
-     * use newlines as the delimiter. If a word is over the width in lenght 
+     * Create a word-wrapped version of a String. Wrap at a specified width and
+     * use newlines as the delimiter. If a word is over the width in lenght
      * use a - sign to split it.
      */
     static public String wordWrap(String str, int width) {
@@ -91,7 +91,7 @@ final public class StringW {
   static public String wordWrap(String str, int width, String delim, String split ) {
     return wordWrap(str, width, delim, split, true);
   }
-  
+
     /**
      * Word-wrap a string.
      *
@@ -150,7 +150,7 @@ final public class StringW {
 //                System.err.println("Substr: '"substr.substring(0,idx)+"'");
                 buffer.append(delim);
                 i -= width-idx-delim.length();
-                
+
 //                System.err.println("loop[i] is now: "+i);
 //                System.err.println("ounfd-whitespace: '"+substr.charAt(idx+1)+"'.");
                 // Erase a space after a delim. Is this too obscure?
@@ -235,24 +235,24 @@ final public class StringW {
     }
 
     /**
-     * Truncates a string nicely. It will search for the first space 
-     * after the lower limit and truncate the string there.  It will 
-     * also append any string passed as a parameter to the end of the 
-     * string.  The hard limit can be specified to forcibily truncate a 
-     * string (in the case of an extremely long word or such).  All 
-     * HTML/XML markup will be stripped from the string prior to 
+     * Truncates a string nicely. It will search for the first space
+     * after the lower limit and truncate the string there.  It will
+     * also append any string passed as a parameter to the end of the
+     * string.  The hard limit can be specified to forcibily truncate a
+     * string (in the case of an extremely long word or such).  All
+     * HTML/XML markup will be stripped from the string prior to
      * processing for truncation.
      *
      * @param str         String the string to be truncated.
      * @param lower       int value of the lower limit.
-     * @param upper       int value of the upper limit, -1 if no limit is 
-     *                    desired. If the uppper limit is lower than the 
-     *                    lower limit, it will be adjusted to be same as 
+     * @param upper       int value of the upper limit, -1 if no limit is
+     *                    desired. If the uppper limit is lower than the
+     *                    lower limit, it will be adjusted to be same as
      *                    the lower limit.
-     * @param appendToEnd String to be appended to the end of the 
-     *                    truncated string. 
-     *                    This is appended ONLY if the string was indeed 
-     *                    truncated. The append is does not count towards 
+     * @param appendToEnd String to be appended to the end of the
+     *                    truncated string.
+     *                    This is appended ONLY if the string was indeed
+     *                    truncated. The append is does not count towards
      *                    any lower/upper limits.
      *
      * @author timster@mac.com
@@ -261,21 +261,21 @@ final public class StringW {
 	{
 		// strip markup from the string
 		str = XmlW.removeXml(str);
-		
+
 		// quickly adjust the upper if it is set lower than 'lower'
 		if(upper < lower) {
 			upper = lower;
-		}		
-		
+		}
+
 		// now determine if the string fits within the upper limit
 		// if it does, go straight to return, do not pass 'go' and collect $200
 		if(str.length() > upper) {
 			// the magic location int
 			int loc;
-		
+
 			// first we determine where the next space appears after lower
 			loc = str.lastIndexOf(' ', upper);
-			
+
 			// now we'll see if the location is greater than the lower limit
 			if(loc >= lower) {
 				// yes it was, so we'll cut it off here
@@ -284,11 +284,11 @@ final public class StringW {
 				// no it wasnt, so we'll cut it off at the upper limit
 				str = str.substring(0, upper);
 			}
-	
-			// the string was truncated, so we append the appendToEnd String				
+
+			// the string was truncated, so we append the appendToEnd String
 			str = str + appendToEnd;
 		}
-		
+
 		return str;
 	}
 }

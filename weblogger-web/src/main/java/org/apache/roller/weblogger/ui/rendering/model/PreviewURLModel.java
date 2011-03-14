@@ -31,22 +31,22 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  * generated to make them work for previewing mode.
  */
 public class PreviewURLModel extends URLModel {
-    
+
     private WeblogPreviewRequest previewRequest = null;
     private Weblog weblog = null;
     private String locale = null;
-    
+
     private URLStrategy urlStrategy = null;
-    
-    
+
+
     public void init(Map initData) throws WebloggerException {
-        
+
         // need a weblog request so that we can know the weblog and locale
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("Expected 'weblogRequest' init param!");
         }
-        
+
         // PreviewURLModel only works on preview requests, so cast weblogRequest
         // into a WeblogPreviewRequest and if it fails then throw exception
         if(weblogRequest instanceof WeblogPreviewRequest) {
@@ -55,20 +55,20 @@ public class PreviewURLModel extends URLModel {
             throw new WebloggerException("weblogRequest is not a WeblogPreviewRequest."+
                     "  PreviewURLModel only supports preview requests.");
         }
-        
+
         this.weblog = weblogRequest.getWeblog();
         this.locale = weblogRequest.getLocale();
-        
+
         // look for url strategy
         urlStrategy = (URLStrategy) initData.get("urlStrategy");
         if(urlStrategy == null) {
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
-        
+
         super.init(initData);
     }
-    
-    
+
+
     /**
      * We need resource urls to point to our custom PreviewResourceServlet
      * because when previewing a theme the ResourceServlet has no way of
@@ -78,5 +78,5 @@ public class PreviewURLModel extends URLModel {
     public String resource(String filePath) {
         return urlStrategy.getWeblogResourceURL(weblog, filePath, true);
     }
-    
+
 }

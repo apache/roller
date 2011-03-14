@@ -37,16 +37,16 @@ import org.apache.roller.planet.ui.core.struts2.PlanetActionSupport;
  * TODO: validation and security.
  */
 public class PlanetsList extends PlanetActionSupport {
-    
+
     private static Log log = LogFactory.getLog(PlanetsList.class);
-    
+
     private static final String LIST = "list";
-    
+
     // action properties
     private String planetid = null;
     private Collection planets = Collections.EMPTY_LIST;
-    
-    
+
+
     public String execute() {
         try {
             PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
@@ -57,20 +57,20 @@ public class PlanetsList extends PlanetActionSupport {
             log.error("PlanetsList.error.general", e);
             return LIST;
         }
-        
+
         return LIST;
     }
-    
-    
+
+
     /**
      * Delete a planet.
      */
     public String deletePlanet() {
-        
+
         if(getPlanetid() != null && getPlanetid().length() > 0) {
             // delete a planet
             log.debug("Deleting Planet ... "+getPlanetid());
-            
+
             try {
                 PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
                 Planet planet = pMgr.getPlanetById(getPlanetid());
@@ -78,7 +78,7 @@ public class PlanetsList extends PlanetActionSupport {
                     pMgr.deletePlanet(planet);
                     PlanetFactory.getPlanet().flush();
                 }
-                
+
                 // delete succeeded, handle rest of request as usual
                 setSuccess("PlanetsList.message.planetDeleteSucceeded", planet.getHandle());
                 return execute();
@@ -87,19 +87,19 @@ public class PlanetsList extends PlanetActionSupport {
                 setError("PlanetsList.error.planetDeleteFailed", getPlanetid());
                 return LIST;
             }
-            
+
         } else {
             setError("PlanetsList.error.planetNull");
             return execute();
         }
-        
+
     }
-    
-    
+
+
     public Collection getPlanets() {
         return this.planets;
     }
-    
+
     private void setPlanets(Collection planets) {
         this.planets = planets;
     }
@@ -111,5 +111,5 @@ public class PlanetsList extends PlanetActionSupport {
     public void setPlanetid(String planetid) {
         this.planetid = planetid;
     }
-    
+
 }

@@ -47,15 +47,15 @@ import org.apache.roller.weblogger.business.Weblogger;
  */
 @com.google.inject.Singleton
 public class JPAPropertiesManagerImpl implements PropertiesManager {
-    
+
     /** The logger instance for this class. */
     private static Log log = LogFactory.getLog(
         JPAPropertiesManagerImpl.class);
 
     private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
-    
-    
+
+
     /**
      * Creates a new instance of JPAPropertiesManagerImpl
      */
@@ -65,13 +65,13 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         this.roller = roller;
         this.strategy = strategy;
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public void initialize() throws InitializationException {
-        
+
         Map props = null;
         try {
             props = this.getProperties();
@@ -91,10 +91,10 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
                     "Please check that the database has been upgraded!", e);
             throw new RuntimeException(e);
         }
-        
+
     }
-    
-    
+
+
     /**
      * Retrieve a single property by name.
      */
@@ -106,7 +106,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
     /**
      * Retrieve all properties.
-     * 
+     *
      * Properties are returned in a Map to make them easy to lookup.  The Map
      * uses the property name as the key and the RuntimeConfigProperty object
      * as the value.
@@ -135,7 +135,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     /**
      * Save a single property.
      */
-    public void saveProperty(RuntimeConfigProperty property) 
+    public void saveProperty(RuntimeConfigProperty property)
             throws WebloggerException {
         this.strategy.store(property);
     }
@@ -152,7 +152,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             this.strategy.store((RuntimeConfigProperty) props.next());
         }
     }
-    
+
 
     /**
      * This method compares the property definitions in the RuntimeConfigDefs
@@ -201,7 +201,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
                         log.info("Found uninitialized property " +
                             propDef.getName() +
-                            " ... setting value to [" + 
+                            " ... setting value to [" +
                             propDef.getDefaultValue() + "]");
                     }
                 }

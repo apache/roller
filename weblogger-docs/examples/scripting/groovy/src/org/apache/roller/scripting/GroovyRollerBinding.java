@@ -35,13 +35,13 @@ public class GroovyRollerBinding extends Binding {
     private Binding binding;
     private MarkupBuilder html;
     private PrintWriter printWriter;
-    
+
     public GroovyRollerBinding(Map model, Writer writer) {
         this.printWriter = new PrintWriter(writer);
         binding = new Binding(model);
-        binding.setVariable("utils", new UtilitiesModel()); 
+        binding.setVariable("utils", new UtilitiesModel());
     }
-        
+
     public void setVariable(String name, Object value) {
         if (name == null) {
             throw new IllegalArgumentException("Can't bind variable to null key.");
@@ -53,7 +53,7 @@ public class GroovyRollerBinding extends Binding {
             throw new IllegalArgumentException("Can't bind variable to key named '" + name + "'.");
         }
         if ("html".equals(name)) {
-            throw new IllegalArgumentException("Can't bind variable to key named '" + name + "'."); 
+            throw new IllegalArgumentException("Can't bind variable to key named '" + name + "'.");
         }
         binding.setVariable(name, value);
     }
@@ -86,5 +86,5 @@ public class GroovyRollerBinding extends Binding {
         }
 
         return binding.getVariable(name);
-    }    
+    }
 }

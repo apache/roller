@@ -44,11 +44,11 @@ import org.jdom.input.SAXBuilder;
  */
 @com.google.inject.Singleton
 public class JPABookmarkManagerImpl implements BookmarkManager {
-    
+
     private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
-    
-    
+
+
     /**
      * The logger instance for this class.
      */
@@ -65,9 +65,9 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy = strategy;
     }
 
-   
+
     public void saveBookmark(WeblogBookmark bookmark) throws WebloggerException {
-        boolean exists = getBookmark(bookmark.getId()) != null;        
+        boolean exists = getBookmark(bookmark.getId()) != null;
         if (!exists) {
             // New object make sure that relationship is set on managed copy of other side
             bookmark.getFolder().getBookmarks().add(bookmark);
@@ -85,19 +85,19 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
     public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException {
         Weblog weblog = bookmark.getWebsite();
-        
+
         //Remove the bookmark from its parent folder
         bookmark.getFolder().getBookmarks().remove(bookmark);
-        
+
         // Now remove it from database
         this.strategy.remove(bookmark);
-        
+
         // update weblog last modified date.  date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(weblog);
     }
 
     public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {
-        
+
         if (folder.getId() == null || this.getFolder(folder.getId()) == null) {
             // New folder, so make sure name is unique
             if (isDuplicateFolderName(folder)) {
@@ -129,19 +129,19 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         Weblog weblog = roller.getWeblogManager().getWeblog(websiteid);
         roller.getWeblogManager().saveWeblog(weblog);
     }
-    
+
     public void moveFolder(WeblogBookmarkFolder srcFolder, WeblogBookmarkFolder destFolder)
             throws WebloggerException {
-        
+
         // TODO: this check should be made before calling this method?
         if (destFolder.descendentOf(srcFolder)) {
             throw new WebloggerException(
                     "ERROR cannot move parent folder into it's own child");
         }
-        
+
         log.debug("Moving folder " + srcFolder.getPath() + " under " +
             destFolder.getPath());
-        
+
         // Manage relationships
         WeblogBookmarkFolder oldParent = srcFolder.getParent();
         if(oldParent != null) {
@@ -149,48 +149,48 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         }
         srcFolder.setParent(destFolder);
         destFolder.getFolders().add(srcFolder);
-        
+
         if("/".equals(destFolder.getPath())) {
             srcFolder.setPath("/"+srcFolder.getName());
         } else {
             srcFolder.setPath(destFolder.getPath() + "/" + srcFolder.getName());
         }
         saveFolder(srcFolder);
-        
-        // the main work to be done for a category move is to update the 
+
+        // the main work to be done for a category move is to update the
         // path attribute of the category and all descendent categories
         updatePathTree(srcFolder);
-    }    
+    }
 
     // updates the paths of all descendents of the given folder
     private void updatePathTree(WeblogBookmarkFolder folder) throws WebloggerException {
-        
+
         log.debug("Updating path tree for folder "+folder.getPath());
-        
+
         WeblogBookmarkFolder childFolder = null;
         Iterator childFolders = folder.getFolders().iterator();
         while(childFolders.hasNext()) {
             childFolder = (WeblogBookmarkFolder) childFolders.next();
-            
+
             log.debug("OLD child folder path was "+childFolder.getPath());
-            
+
             // update path and save
             if("/".equals(folder.getPath())) {
                 childFolder.setPath("/" + childFolder.getName());
             } else {
-                childFolder.setPath(folder.getPath() + "/" + 
+                childFolder.setPath(folder.getPath() + "/" +
                     childFolder.getName());
             }
             saveFolder(childFolder);
-            
+
             log.debug("NEW child folder path is "+ childFolder.getPath());
-            
+
             // then make recursive call to update this folders children
             updatePathTree(childFolder);
         }
     }
 
-    
+
     /**
      * Retrieve folder and lazy-load it's sub-folders and bookmarks.
      */
@@ -198,7 +198,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         return (WeblogBookmarkFolder) strategy.load(WeblogBookmarkFolder.class, id);
     }
 
-    
+
     public void importBookmarks(
             Weblog website, String folderName, String opml)
             throws WebloggerException {
@@ -212,7 +212,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             WeblogBookmarkFolder newFolder = getFolder(website, folderName);
             if (newFolder == null) {
                 newFolder = new WeblogBookmarkFolder(
-                        getRootFolder(website), 
+                        getRootFolder(website),
                         folderName, folderName, website);
                 this.strategy.store(newFolder);
             }
@@ -231,7 +231,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     // convenience method used when importing bookmarks
-    // NOTE: this method does not commit any changes; 
+    // NOTE: this method does not commit any changes;
     // that is done by importBookmarks()
     private void importOpmlElement(
             Weblog website, Element elem, WeblogBookmarkFolder parent)
@@ -248,7 +248,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         desc =    null!=desc ? desc : title;
         xmlUrl =  null!=xmlUrl ? xmlUrl : url;
         url =     null!=htmlUrl ? htmlUrl : url;
-        
+
         // better to truncate imported OPML fields than to fail import or drop whole bookmark
         // TODO: add way to notify user that fields were truncated
         if (title != null   && title.length() > 254) title  = title.substring(0,  254);
@@ -258,12 +258,12 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
         if (elem.getChildren().size()==0) {
             // Leaf element.  Store a bookmark
-            // Currently bookmarks must have at least a name and 
+            // Currently bookmarks must have at least a name and
             // HTML url to be stored. Previous logic was
-            // trying to skip invalid ones, but was letting ones 
+            // trying to skip invalid ones, but was letting ones
             // with an xml url and no html url through
             // which could result in a db exception.
-            // TODO: Consider providing error feedback instead of 
+            // TODO: Consider providing error feedback instead of
             // silently skipping the invalid bookmarks here.
             if (null != title && null != url) {
                 WeblogBookmark bd = new WeblogBookmark(parent,
@@ -326,7 +326,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
      * @see org.apache.roller.weblogger.model.BookmarkManager#retrieveBookmarks(
      *      org.apache.roller.weblogger.pojos.WeblogBookmarkFolder, boolean)
      */
-    public List getBookmarks(WeblogBookmarkFolder folder, boolean subfolders) 
+    public List getBookmarks(WeblogBookmarkFolder folder, boolean subfolders)
             throws WebloggerException {
         Query query = null;
         List results = null;
@@ -339,13 +339,13 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         } else {
             // if we are doing subfolders then do a case sensitive
             // query using folder path
-            query = strategy.getNamedQuery( 
+            query = strategy.getNamedQuery(
                 "BoomarkData.getByFolder.pathLike&Folder.website");
             query.setParameter(1, folder.getPath() + '%');
             query.setParameter(2, folder.getWebsite());
             results = query.getResultList();
         }
-            
+
         return results;
     }
 
@@ -353,7 +353,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             throws WebloggerException {
         if (website == null)
             throw new WebloggerException("website is null");
-        
+
         Query q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&ParentNull");
         q.setParameter(1, website);
         try {
@@ -367,17 +367,17 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             throws WebloggerException {
         if (website == null)
             throw new WebloggerException("Website is null");
-        
+
         Query q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite");
         q.setParameter(1, website);
         return q.getResultList();
     }
 
-    
+
     /**
      * make sure the given folder doesn't already exist.
      */
-    private boolean isDuplicateFolderName(WeblogBookmarkFolder folder) 
+    private boolean isDuplicateFolderName(WeblogBookmarkFolder folder)
         throws WebloggerException {
 
         // ensure that no sibling categories share the same name
@@ -385,11 +385,11 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         if (null != parent) {
             return (getFolder(folder.getWebsite(), folder.getPath()) != null);
         }
-        
+
         return false;
     }
 
 
     public void release() {}
-    
+
 }

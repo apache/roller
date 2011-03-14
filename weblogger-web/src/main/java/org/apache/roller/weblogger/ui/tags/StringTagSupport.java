@@ -1,12 +1,12 @@
 /*
  * Copyright 1999,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,16 +24,16 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 
 /**
  * Abstract support class for the String Taglib.
- * It handles the JSP taglib side of things and calls abstract 
+ * It handles the JSP taglib side of things and calls abstract
  * protected methods to delegate the String functionality.
  * <dl>
  * <dt>var</dt><dd>
- *             PageContext variable to put the 
+ *             PageContext variable to put the
  *             return result in instead of pushing
  *             out to the html page.
  * </dd>
- * </dl> 
- * 
+ * </dl>
+ *
  * @author bayard@generationjava.com
  */
 abstract public class StringTagSupport extends BodyTagSupport {
@@ -65,11 +65,11 @@ abstract public class StringTagSupport extends BodyTagSupport {
     public void setVar(String var) {
         this.var = var;
     }
-       
+
     /**
      * Handles the manipulation of the String tag,
-     * evaluating the body of the tag. The evaluation 
-     * is delegated to the changeString(String) method 
+     * evaluating the body of the tag. The evaluation
+     * is delegated to the changeString(String) method
      */
     public int doEndTag() throws JspException {
 
@@ -77,11 +77,11 @@ abstract public class StringTagSupport extends BodyTagSupport {
 	 *  Although most of the tags that extends must have a body, some don't, like RandomStringTag
 	 *  So I'm removing the code below...
      */
-		 
+
 //       if( (bodyContent == null) && (!canBeEmpty()) ) {
  //           return EVAL_PAGE;
  //      }
- 
+
         String text = "";
         if(bodyContent != null) {
             StringWriter body = new StringWriter();
@@ -100,7 +100,7 @@ abstract public class StringTagSupport extends BodyTagSupport {
         } else {
           // then, try to transform it
           text = changeString(text);
-        
+
           // TODO: RandomString is not working if body is set...
           /*
             System.err.println("...."+text+"....");
@@ -108,7 +108,7 @@ abstract public class StringTagSupport extends BodyTagSupport {
         	System.out.println( "length = " + text.length());
             }
           */
-        
+
           if(this.var == null) {
             JspWriter writer = pageContext.getOut();
             try {
@@ -125,7 +125,7 @@ abstract public class StringTagSupport extends BodyTagSupport {
         return (EVAL_PAGE);
     }
 
-    /** 
+    /**
      * Perform an operation on the passed String.
      * The object returned by this operation (if not null) will be
      * associated to PageContext attribute represented by this.var.
@@ -137,8 +137,8 @@ abstract public class StringTagSupport extends BodyTagSupport {
   public Object evaluateString(String str) throws JspException {
     return null;
   }
-  
-    /** 
+
+    /**
      * Perform a transformation on the passed in String.
      *
      * @param str String to be manipulated
@@ -149,7 +149,7 @@ abstract public class StringTagSupport extends BodyTagSupport {
 
     /**
      * Initialise any properties to default values.
-     * This method is called upon construction, and 
+     * This method is called upon construction, and
      * after changeString(String) is called.
      * This is a default empty implementation.
      */

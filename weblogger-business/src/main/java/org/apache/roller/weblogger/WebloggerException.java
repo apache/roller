@@ -25,13 +25,13 @@ import org.apache.roller.RollerException;
  * A base exception class for Roller Weblogger.
  */
 public class WebloggerException extends RollerException {
-    
-    
+
+
     public WebloggerException() {
         super();
     }
-    
-    
+
+
     /**
      * Construct WebloggerException with message string.
      *
@@ -40,8 +40,8 @@ public class WebloggerException extends RollerException {
     public WebloggerException(String s) {
         super(s);
     }
-    
-    
+
+
     /**
      * Construct WebloggerException, wrapping existing throwable.
      *
@@ -51,8 +51,8 @@ public class WebloggerException extends RollerException {
     public WebloggerException(String s, Throwable t) {
         super(s, t);
     }
-    
-    
+
+
     /**
      * Construct WebloggerException, wrapping existing throwable.
      *
@@ -61,5 +61,5 @@ public class WebloggerException extends RollerException {
     public WebloggerException(Throwable t) {
         super(t);
     }
-    
+
 }

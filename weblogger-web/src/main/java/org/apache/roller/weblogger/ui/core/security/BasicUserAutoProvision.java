@@ -28,20 +28,20 @@ import org.apache.roller.weblogger.pojos.User;
 
 /**
  * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
- * 
+ *
  */
 public class BasicUserAutoProvision implements AutoProvision {
-  
+
   private static Log log = LogFactory.getFactory().getInstance(BasicUserAutoProvision.class);
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.roller.weblogger.ui.core.security.AutoProvision#execute()
    */
   public boolean execute(HttpServletRequest request) {
     User ud = CustomUserRegistry.getUserDetailsFromAuthentication(request);
-    
+
     if(ud != null) {
       UserManager mgr;
       try {

@@ -36,8 +36,8 @@ import java.util.regex.Pattern;
 /**
  * Thin wrapper around WebloggerConfig and WebloggerRuntimeConfig for centralizing access to the many configurable
  * settings for pings.
- * 
- * 
+ *
+ *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class PingConfig {
@@ -99,7 +99,7 @@ public class PingConfig {
     // targets that implement minor variants of the WeblogUpdates.ping call.
     // This is initialized once at startup, and referenced when pings are made.
     private static final Map configuredVariants = new HashMap();
-    
+
     // Pattern used to parse common ping targets as well as ping variants.
     // Each initial commmon ping target is specified in the format {{name}{url}}
     // Ping variants are also specified in a nested brace format {{url}{options}}

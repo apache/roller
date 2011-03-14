@@ -22,12 +22,12 @@ package org.apache.roller.weblogger.ui.core.plugins;
  * Represents an editor for a WeblogEntry.
  */
 public interface WeblogEntryEditor {
-    
+
     /**
      * The unique identifier for this editor.
      *
-     * It is important that each editor have a unique identifier.  The id for 
-     * the editor is how it will be tracked and associated with each weblog 
+     * It is important that each editor have a unique identifier.  The id for
+     * the editor is how it will be tracked and associated with each weblog
      * that is using it, so having 2 editors with the same id would cause some
      * nasty problems.  It is also preferable if the id not be a full class
      * name because then if you ever want to refactor the location of the class
@@ -36,8 +36,8 @@ public interface WeblogEntryEditor {
      * @return The unique identifier for this WeblogEntryEditor.
      */
     public String getId();
-    
-    
+
+
     /**
      * The display name for the editor, as seen by users.
      *
@@ -49,8 +49,8 @@ public interface WeblogEntryEditor {
      * @return The display name of this WeblogEntryEditor.
      */
     public String getName();
-    
-    
+
+
     /**
      * The location of the jsp page inside the webapp that renders this editor.
      *

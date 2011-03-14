@@ -44,22 +44,22 @@ import org.apache.roller.weblogger.ui.rendering.RequestMapper;
  * @web.filter name="RequestMappingFilter"
  */
 public class RequestMappingFilter implements Filter {
-    
+
     private static Log log = LogFactory.getLog(RequestMappingFilter.class);
-    
+
     // list of RequestMappers that want to inspect the request
     private final List requestMappers = new ArrayList();
-    
-    
+
+
     public void init(FilterConfig filterConfig) {
-        
+
         // lookup set of request mappers we are going to use
         String rollerMappers = WebloggerConfig.getProperty("rendering.rollerRequestMappers");
         String userMappers = WebloggerConfig.getProperty("rendering.userRequestMappers");
-        
+
         // instantiate user defined request mapper classes
         if(userMappers != null && userMappers.trim().length() > 0) {
-            
+
             RequestMapper requestMapper = null;
             String[] uMappers = userMappers.split(",");
             for(int i=0; i < uMappers.length; i++) {
@@ -75,10 +75,10 @@ public class RequestMappingFilter implements Filter {
                 }
             }
         }
-        
+
         // instantiate roller standard request mapper classes
         if(rollerMappers != null && rollerMappers.trim().length() > 0) {
-            
+
             RequestMapper requestMapper = null;
             String[] rMappers = rollerMappers.split(",");
             for(int i=0; i < rMappers.length; i++) {
@@ -94,37 +94,37 @@ public class RequestMappingFilter implements Filter {
                 }
             }
         }
-        
+
         if(requestMappers.size() < 1) {
             // hmm ... failed to load any request mappers?
             log.warn("Failed to load any request mappers.  "+
                     "Weblog urls probably won't function as you expect.");
         }
-        
+
         log.info("Request mapping filter initialized, "+requestMappers.size()+
                 " mappers configured.");
     }
-    
-    
+
+
     /**
      * Inspect incoming urls and see if they should be routed.
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        
+
         log.debug("entering");
-        
+
         // give each mapper a chance to handle the request
         RequestMapper mapper = null;
         Iterator mappersIT = this.requestMappers.iterator();
         while(mappersIT.hasNext()) {
             mapper = (RequestMapper) mappersIT.next();
-            
+
             log.debug("trying mapper "+mapper.getClass().getName());
-            
+
             boolean wasHandled = mapper.handleRequest(request, response);
             if(wasHandled) {
                 // if mapper has handled the request then we are done
@@ -133,16 +133,16 @@ public class RequestMappingFilter implements Filter {
                 return;
             }
         }
-        
+
         log.debug("request not mapped");
-        
+
         // nobody handled the request, so let it continue as usual
         chain.doFilter(request, response);
-        
+
         log.debug("exiting");
     }
-    
-    
+
+
     public void destroy() {}
-    
+
 }

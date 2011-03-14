@@ -29,7 +29,7 @@ import org.apache.roller.util.UUIDGenerator;
  * Ping target.   Each instance represents a possible target of a weblog update ping that we send.  Ping targets are
  * either common (defined centrally by an administrator and used by any website), or custom (defined by the user of a
  * specific website) for update pings issued for that website.
- * 
+ *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class PingTarget implements Serializable {
@@ -242,11 +242,11 @@ public class PingTarget implements Serializable {
         if (other instanceof PingTarget != true) return false;
         PingTarget o = (PingTarget)other;
         return new EqualsBuilder()
-            .append(getId(), o.getId()) 
+            .append(getId(), o.getId())
             .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
             .append(id)
             .toHashCode();

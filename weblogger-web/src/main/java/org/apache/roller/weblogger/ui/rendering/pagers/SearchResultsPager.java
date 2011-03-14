@@ -29,43 +29,43 @@ import org.apache.roller.weblogger.util.I18nMessages;
  * Pager for navigating through search results.
  */
 public class SearchResultsPager implements WeblogEntriesPager {
-    
+
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
-    
+
     // url strategy
     URLStrategy urlStrategy = null;
-    
+
     private Map entries = null;
-    
+
     private Weblog weblog = null;
     private String      locale = null;
     private String      query = null;
     private String      category = null;
     private int         page = 0;
     private boolean     moreResults = false;
-    
-    
+
+
     public SearchResultsPager() {}
-    
+
     public SearchResultsPager(URLStrategy strat, WeblogSearchRequest searchRequest, Map entries, boolean more) {
-        
+
         // url strategy for building urls
         this.urlStrategy = strat;
-        
+
         // store search results
         this.entries = entries;
-        
+
         // data from search request
         this.weblog = searchRequest.getWeblog();
         this.query = searchRequest.getQuery();
         this.category = searchRequest.getWeblogCategoryName();
         this.locale = searchRequest.getLocale();
         this.page = searchRequest.getPageNum();
-        
+
         // does this pager have more results?
         this.moreResults = more;
-        
+
         // get a message utils instance to handle i18n of messages
         Locale viewLocale = null;
         if(locale != null) {
@@ -80,13 +80,13 @@ public class SearchResultsPager implements WeblogEntriesPager {
         }
         this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
-    
-    
+
+
     public Map getEntries() {
         return entries;
     }
-    
-    
+
+
     public String getHomeLink() {
         return urlStrategy.getWeblogURL(weblog, locale, false);
     }
@@ -95,7 +95,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
         return messageUtils.getString("searchPager.home");
     }
 
-    
+
     public String getNextLink() {
         if(moreResults) {
             return urlStrategy.getWeblogSearchURL(weblog, locale, query, category, page + 1, false);
@@ -124,7 +124,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
         return null;
     }
 
-    
+
     public String getNextCollectionLink() {
         return null;
     }
@@ -140,5 +140,5 @@ public class SearchResultsPager implements WeblogEntriesPager {
     public String getPrevCollectionName() {
         return null;
     }
-    
+
 }

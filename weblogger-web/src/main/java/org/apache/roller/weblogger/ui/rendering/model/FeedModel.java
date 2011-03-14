@@ -42,24 +42,24 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * Model which provides information needed to render a feed.
  */
 public class FeedModel implements Model {
-    
-    private static Log log = LogFactory.getLog(FeedModel.class); 
-    
+
+    private static Log log = LogFactory.getLog(FeedModel.class);
+
     private static int DEFAULT_ENTRIES = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
-    
+
     private WeblogFeedRequest feedRequest = null;
     private URLStrategy urlStrategy = null;
     private Weblog weblog = null;
-    
-    
+
+
     public void init(Map initData) throws WebloggerException {
-        
+
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }
-        
+
         // PageModel only works on page requests, so cast weblogRequest
         // into a WeblogPageRequest and if it fails then throw exception
         if(weblogRequest instanceof WeblogFeedRequest) {
@@ -68,101 +68,101 @@ public class FeedModel implements Model {
             throw new WebloggerException("weblogRequest is not a WeblogFeedRequest."+
                     "  FeedModel only supports feed requests.");
         }
-        
+
         // look for url strategy
         urlStrategy = (URLStrategy) initData.get("urlStrategy");
         if(urlStrategy == null) {
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
-        
+
         // extract weblog object
         weblog = feedRequest.getWeblog();
     }
-    
-    
+
+
     /** Template context name to be used for model */
     public String getModelName() {
         return "model";
     }
-    
-    
+
+
     /**
      * Get the weblog locale used to render this page, null if no locale.
      */
     public String getLocale() {
         return feedRequest.getLocale();
     }
-    
-    
+
+
     /**
      * Get weblog being displayed.
      */
     public WeblogWrapper getWeblog() {
         return WeblogWrapper.wrap(weblog, urlStrategy);
     }
-    
-    
+
+
     /**
      * Get category path or name specified by request.
      */
     public boolean getExcerpts() {
         return feedRequest.isExcerpts();
     }
-    
-    
+
+
     /**
      * Get category path or name specified by request.
      */
     public String getCategoryPath() {
         return feedRequest.getWeblogCategoryName();
     }
-    
+
     /**
-     * Gets most recent entries limited by: weblog and category specified in 
+     * Gets most recent entries limited by: weblog and category specified in
      * request plus the weblog.entryDisplayCount.
      */
     public Pager getWeblogEntriesPager() {
-        return new FeedEntriesPager(feedRequest);        
+        return new FeedEntriesPager(feedRequest);
     }
-    
-    
+
+
     /**
-     * Gets most recent comments limited by: weblog specified in request and 
+     * Gets most recent comments limited by: weblog specified in request and
      * the weblog.entryDisplayCount.
      */
     public Pager getCommentsPager() {
         return new FeedCommentsPager(feedRequest);
-    }    
-        
+    }
+
     /**
-     * Gets most recently uploaded media files limited by: weblog specified 
+     * Gets most recently uploaded media files limited by: weblog specified
      * in request and the weblog.entryDisplayCount.
      */
     public Pager getMediaFilesPager() {
         return new FeedFilesPager(feedRequest);
-    }    
-        
+    }
+
     /**
      * Returns the list of tags specified in the request /?tags=foo+bar
      * @return
      */
     public List getTags() {
         return feedRequest.getTags();
-    }    
+    }
 
     public class FeedEntriesPager extends WeblogEntriesListPager {
-        
+
         private WeblogFeedRequest feedRequest;
-        
+
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
-            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
+            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getLocale(), feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, null, false, true), 
+                    feedRequest.getFormat(), null, null, null, false, true),
                     feedRequest.getWeblog(), null, feedRequest.getWeblogCategoryName(), feedRequest.getTags(),
                     feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
             this.feedRequest = feedRequest;
         }
-        
+
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
@@ -171,30 +171,30 @@ public class FeedModel implements Model {
             String category = feedRequest.getWeblogCategoryName();
             if(category != null && category.trim().length() > 0) {
                 params.put("cat", URLUtilities.encode(category));
-            }  
+            }
             if(feedRequest.isExcerpts()) {
                 params.put("excerpts", "true");
-            }            
+            }
             return super.createURL(url, params);
         }
-        
+
         public String getUrl() {
             return createURL(super.getUrl(), new HashMap());
         }
     }
-    
+
     public class FeedCommentsPager extends CommentsPager {
-        
+
         private WeblogFeedRequest feedRequest;
-        
-        public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
-            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
+
+        public FeedCommentsPager(WeblogFeedRequest feedRequest) {
+            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
                     null, false, true), feedRequest.getWeblog(), feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
             this.feedRequest = feedRequest;
         }
-        
+
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
@@ -203,30 +203,30 @@ public class FeedModel implements Model {
             String category = feedRequest.getWeblogCategoryName();
             if(category != null && category.trim().length() > 0) {
                 params.put("cat", URLUtilities.encode(category));
-            }  
+            }
             if(feedRequest.isExcerpts()) {
                 params.put("excerpts", "true");
-            }   
+            }
             return super.createURL(url, params);
         }
-        
+
         public String getUrl() {
             return createURL(super.getUrl(), new HashMap());
         }
-    }      
+    }
 
     public class FeedFilesPager extends MediaFilesPager {
-        
+
         private WeblogFeedRequest feedRequest;
-        
-        public FeedFilesPager(WeblogFeedRequest feedRequest) {            
-            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
+
+        public FeedFilesPager(WeblogFeedRequest feedRequest) {
+            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(),
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
                     null, false, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), 10);
             this.feedRequest = feedRequest;
         }
-        
+
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
@@ -235,15 +235,15 @@ public class FeedModel implements Model {
             String category = feedRequest.getWeblogCategoryName();
             if(category != null && category.trim().length() > 0) {
                 params.put("cat", URLUtilities.encode(category));
-            }  
+            }
             if(feedRequest.isExcerpts()) {
                 params.put("excerpts", "true");
-            }   
+            }
             return super.createURL(url, params);
         }
-        
+
         public String getUrl() {
             return createURL(super.getUrl(), new HashMap());
         }
-    }      
+    }
 }

@@ -34,34 +34,34 @@ import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
  * </pre>
  */
 public class RefreshPlanetTask extends PlanetTask {
-    
+
     private static Log log = LogFactory.getLog(RefreshPlanetTask.class);
-    
-    
+
+
     public void run() {
-        try {            
+        try {
             // Update all feeds in planet
             log.info("Refreshing Planet entries");
             FeedUpdater updater = new SingleThreadedFeedUpdater();
             updater.updateSubscriptions();
             PlanetFactory.getPlanet().release();
-            
+
         } catch (Exception e) {
             log.error("ERROR refreshing planet", e);
         }
     }
-    
-    
+
+
     public static void main(String[] args) throws Exception {
-        
+
         RefreshPlanetTask task = new RefreshPlanetTask();
         task.initialize();
-        
+
         // need to prepare and bootstrap Planet as well
         PlanetStartup.prepare();
         PlanetFactory.bootstrap();
-        
+
         task.run();
     }
-    
+
 }

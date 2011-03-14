@@ -35,20 +35,20 @@ import org.apache.roller.weblogger.ui.rendering.RenderingException;
  * Renderer that compiles/executes Roller Template as a Groovy Template.
  *
  * <p>Implementation notes</p>
- * 
- * <p>Uses TemplateEngine passed from RefererFactory, which is probably the 
+ *
+ * <p>Uses TemplateEngine passed from RefererFactory, which is probably the
  * right thing to do. Need to add some caching so we don't have to recompile
  * every time a tempalte is executed.</p>
  *
  * <p>Check the TemplateServlet code for some examples of template execution:</br />
- * http://svn.codehaus.org/groovy/trunk/groovy/groovy-core/src/main/groovy/servlet/ 
+ * http://svn.codehaus.org/groovy/trunk/groovy/groovy-core/src/main/groovy/servlet/
  */
 public class GSPRenderer implements Renderer {
     private static Log log = LogFactory.getLog(GroovletRenderer.class);
-    private groovy.text.Template groovyTemplate = null;   
+    private groovy.text.Template groovyTemplate = null;
     private WeblogTemplate template = null;
     private Exception parseException = null;
-    
+
     public GSPRenderer(TemplateEngine templateEngine, WeblogTemplate template) {
         this.template = template;
         try {
@@ -59,28 +59,28 @@ public class GSPRenderer implements Renderer {
             parseException = ex;
         }
     }
-    
+
     public void render(Map model, Writer writer) throws RenderingException {
         try {
-            if (parseException == null) {                
+            if (parseException == null) {
 
                 long startTime = System.currentTimeMillis();
                 Binding binding = new GroovyRollerBinding(model, writer);
                 groovyTemplate.make(binding.getVariables()).writeTo(writer);
                 long endTime = System.currentTimeMillis();
-                
+
                 long renderTime = (endTime - startTime)/1000;
                 log.debug("Rendered ["+template.getId()+"] in "+renderTime+" secs");
             } else {
                 renderThrowable(parseException, writer);
             }
-            
+
         } catch (Exception ex) {
             log.debug("Executing Groovy template", ex);
             renderThrowable(ex, writer);
         }
     }
-    
+
     private void renderThrowable(Throwable ex, Writer writer) {
         Binding binding = new Binding();
         binding.setVariable("ex", ex);
@@ -89,7 +89,7 @@ public class GSPRenderer implements Renderer {
         shell.evaluate(
              "s = \"<p><b>Exception</b>: ${ex}<br /><b>Message</b>: ${ex.message}</p>\";"
            +" out.println(s);"
-           +" out.flush();");         
+           +" out.flush();");
     }
 }
 

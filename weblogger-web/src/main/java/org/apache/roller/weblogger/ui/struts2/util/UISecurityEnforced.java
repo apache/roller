@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Implemented by struts2 actions which want to enforce some level of security
  * protection on their action.
- * 
+ *
  * Available enforcements are ...
  *   - require a logged in user
  *   - reguire a valid weblog to work on
@@ -33,15 +33,15 @@ import java.util.List;
  *
  */
 public interface UISecurityEnforced {
-    
+
     /**
      * Does the action require an authenticated user?
      *
      * @return boolean True if authenticated user is required, false otherwise.
      */
     public boolean isUserRequired();
-    
-    
+
+
     /**
      * Does the action require a valid weblog to work on?
      *
@@ -50,15 +50,15 @@ public interface UISecurityEnforced {
      * @return boolean True if action weblog is required, false otherwise.
      */
     public boolean isWeblogRequired();
-    
-    
+
+
     /**
      * List of global permission actions required to access resource.
      */
     public List<String> requiredWeblogPermissionActions();
-    
-    
-    /** 
+
+
+    /**
      * List of weblog permissions required to access action if applicable.
      */
     public List<String> requiredGlobalPermissionActions();

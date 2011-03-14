@@ -47,11 +47,11 @@ import org.apache.roller.weblogger.util.Utilities;
  * information embedded in the url for later use.
  */
 public class WeblogPageRequest extends WeblogRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogPageRequest.class);
-    
+
     private static final String PAGE_SERVLET = "/roller-ui/rendering/page";
-    
+
     // lightweight attributes
     private String context = null;
     private String weblogAnchor = null;
@@ -61,41 +61,41 @@ public class WeblogPageRequest extends WeblogRequest {
     private List tags = null;
     private int pageNum = 0;
     private Map customParams = new HashMap();
-    
+
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
     private ThemeTemplate weblogPage = null;
     private WeblogCategory weblogCategory = null;
-    
-    
+
+
     public WeblogPageRequest() {}
-    
-    
+
+
     /**
      * Construct the WeblogPageRequest by parsing the incoming url
      */
-    public WeblogPageRequest(HttpServletRequest request) 
+    public WeblogPageRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         String servlet = request.getServletPath();
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // parse the request object and figure out what we've got
         log.debug("parsing path "+pathInfo);
-        
+
         // was this request bound for the right servlet?
         if(!isValidDestination(servlet)) {
             throw new InvalidRequestException("invalid destination for request, "+
                     request.getRequestURL());
         }
-        
-        
+
+
         /*
          * parse path info
          *
@@ -110,19 +110,19 @@ public class WeblogPageRequest extends WeblogRequest {
          * path info may be null, which indicates the weblog homepage
          */
         if(pathInfo != null && pathInfo.trim().length() > 0) {
-            
+
             // all views use 2 path elements, except category
             String[] pathElements = pathInfo.split("/", 2);
-            
+
             // the first part of the path always represents the context
             this.context = pathElements[0];
-            
+
             // now check the rest of the path and extract other details
             if(pathElements.length == 2) {
-                
+
                 if("entry".equals(this.context)) {
                     this.weblogAnchor = URLUtilities.decode(pathElements[1]);
-                    
+
                 } else if("date".equals(this.context)) {
                     if(this.isValidDateString(pathElements[1])) {
                         this.weblogDate = pathElements[1];
@@ -130,15 +130,15 @@ public class WeblogPageRequest extends WeblogRequest {
                         throw new InvalidRequestException("invalid date, "+
                             request.getRequestURL());
                     }
-                    
+
                 } else if("category".equals(this.context)) {
                     this.weblogCategoryName = URLUtilities.decode(pathElements[1]);
-                    
+
                     // all categories must start with a /
                     if(!this.weblogCategoryName.startsWith("/")) {
                         this.weblogCategoryName = "/"+this.weblogCategoryName;
                     }
-                    
+
                 } else if("page".equals(this.context)) {
                     this.weblogPageName = pathElements[1];
                     String tagsString = request.getParameter("tags");
@@ -148,16 +148,16 @@ public class WeblogPageRequest extends WeblogRequest {
 
                 } else if("tags".equals(this.context)) {
                     String tagsString = pathElements[1].replace('+', ' ');
-                    this.tags = Utilities.splitStringAsTags(URLUtilities.decode(tagsString));                  
-                    int maxSize = WebloggerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);                  
+                    this.tags = Utilities.splitStringAsTags(URLUtilities.decode(tagsString));
+                    int maxSize = WebloggerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);
                     if(this.tags.size() > maxSize)
                         throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
-                                      
+
                 } else {
                     throw new InvalidRequestException("context "+this.context+
                             "not supported, "+request.getRequestURL());
                 }
-                
+
             } else {
                 // empty data is only allowed for the tags section
                 if(!"tags".equals(this.context)) {
@@ -165,12 +165,12 @@ public class WeblogPageRequest extends WeblogRequest {
                             request.getRequestURL());
                 }
             }
-            
+
         } else {
             // default view, weblog homepage
         }
-        
-        
+
+
         /*
          * parse request parameters
          *
@@ -185,7 +185,7 @@ public class WeblogPageRequest extends WeblogRequest {
          * we prevent mixing of path based and query param style urls.
          */
         if(pathInfo == null || this.weblogPageName != null) {
-            
+
             // check for entry/anchor params which indicate permalink
             if(request.getParameter("entry") != null) {
                 String anchor = request.getParameter("entry");
@@ -198,7 +198,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     this.weblogAnchor = anchor;
                 }
             }
-            
+
             // only check for other params if we didn't find an anchor above or tags
             if(this.weblogAnchor == null && this.tags == null) {
                 if(request.getParameter("date") != null) {
@@ -210,11 +210,11 @@ public class WeblogPageRequest extends WeblogRequest {
                                 request.getRequestURL());
                     }
                 }
-                
+
                 if(request.getParameter("cat") != null) {
                     this.weblogCategoryName =
                             URLUtilities.decode(request.getParameter("cat"));
-                    
+
                     // all categories must start with a /
                     if(!this.weblogCategoryName.startsWith("/")) {
                         this.weblogCategoryName = "/"+this.weblogCategoryName;
@@ -222,7 +222,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 }
             }
         }
-        
+
         // page request param is supported in all views
         if(request.getParameter("page") != null) {
             String pageInt = request.getParameter("page");
@@ -232,7 +232,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 // ignored, bad input
             }
         }
-        
+
         // build customParams Map, we remove built-in params because we only
         // want this map to represent params defined by the template author
         customParams = new HashMap(request.getParameterMap());
@@ -242,8 +242,8 @@ public class WeblogPageRequest extends WeblogRequest {
         customParams.remove("cat");
         customParams.remove("page");
         customParams.remove("tags");
-            
-            
+
+
         if(log.isDebugEnabled()) {
             log.debug("context = "+this.context);
             log.debug("weblogAnchor = "+this.weblogAnchor);
@@ -254,13 +254,13 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("pageNum = "+this.pageNum);
         }
     }
-    
-    
+
+
     boolean isValidDestination(String servlet) {
         return (servlet != null && PAGE_SERVLET.equals(servlet));
     }
-    
-    
+
+
     private boolean isValidDateString(String dateString) {
         // string must be all numeric and 6 or 8 characters
         return (dateString != null && StringUtils.isNumeric(dateString) &&
@@ -322,17 +322,17 @@ public class WeblogPageRequest extends WeblogRequest {
     public void setCustomParams(Map customParams) {
         this.customParams = customParams;
     }
-    
+
     public List getTags() {
       return tags;
     }
-    
+
     public void setTags(List tags) {
       this.tags = tags;
     }
-    
+
     public WeblogEntry getWeblogEntry() {
-        
+
         if(weblogEntry == null && weblogAnchor != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -341,7 +341,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 log.error("Error getting weblog entry "+weblogAnchor, ex);
             }
         }
-        
+
         return weblogEntry;
     }
 
@@ -350,15 +350,15 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     public ThemeTemplate getWeblogPage() {
-        
+
         if(weblogPage == null && weblogPageName != null) {
             try {
-                weblogPage = getWeblog().getTheme().getTemplateByLink(weblogPageName);                
+                weblogPage = getWeblog().getTheme().getTemplateByLink(weblogPageName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog page "+weblogPageName, ex);
             }
         }
-        
+
         return weblogPage;
     }
 
@@ -367,7 +367,7 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     public WeblogCategory getWeblogCategory() {
-        
+
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -376,12 +376,12 @@ public class WeblogPageRequest extends WeblogRequest {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);
             }
         }
-        
+
         return weblogCategory;
     }
 
     public void setWeblogCategory(WeblogCategory weblogCategory) {
         this.weblogCategory = weblogCategory;
     }
-    
+
 }

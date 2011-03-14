@@ -40,29 +40,29 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Action which handles editing for a single WeblogTemplate.
  */
 public class TemplateEdit extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(TemplateEdit.class);
-    
+
     // form bean for collection all template properties
     private TemplateEditBean bean = new TemplateEditBean();
-    
+
     // the template we are working on
     private WeblogTemplate template = null;
-    
-    
+
+
     public TemplateEdit() {
         this.actionName = "templateEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "pagesForm.title";
     }
-    
-    
+
+
     @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     public void myPrepare() {
         try {
             setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getPage(getBean().getId()));
@@ -70,23 +70,23 @@ public class TemplateEdit extends UIAction {
             log.error("Error looking up template - "+getBean().getId(), ex);
         }
     }
-    
-    
+
+
     /**
      * Show template edit page.
      */
     @SkipValidation
     public String execute() {
-        
+
         if(getTemplate() == null) {
             // TODO: i18n
             addError("Unable to locate specified template");
             return LIST;
         }
-        
+
         WeblogTemplate page = getTemplate();
         getBean().copyFrom(template);
-        
+
         // empty content-type indicates that page uses auto content-type detection
         if (StringUtils.isEmpty(page.getOutputContentType())) {
             getBean().setAutoContentType(Boolean.TRUE);
@@ -94,31 +94,31 @@ public class TemplateEdit extends UIAction {
             getBean().setAutoContentType(Boolean.FALSE);
             getBean().setManualContentType(page.getOutputContentType());
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Save an existing template.
      */
     public String save() {
-        
+
         if(getTemplate() == null) {
             // TODO: i18n
             addError("Unable to locate specified template");
             return LIST;
         }
-        
+
         // validation
         myValidate();
-        
+
         if(!hasActionErrors()) try {
-            
+
             WeblogTemplate template = getTemplate();
             getBean().copyTo(template);
             template.setLastModified(new Date());
-            
+
             if (getBean().getAutoContentType() == null ||
                     !getBean().getAutoContentType().booleanValue()) {
                 template.setOutputContentType(getBean().getManualContentType());
@@ -126,29 +126,29 @@ public class TemplateEdit extends UIAction {
                 // empty content-type indicates that template uses auto content-type detection
                 template.setOutputContentType(null);
             }
-            
+
             // save template and flush
             WebloggerFactory.getWeblogger().getWeblogManager().savePage(template);
             WebloggerFactory.getWeblogger().flush();
-            
+
             // notify caches
             CacheManager.invalidate(template);
-            
+
             // success message
             addMessage("pageForm.save.success", template.getName());
-            
+
         } catch (WebloggerException ex) {
             log.error("Error updating page - "+getBean().getId(), ex);
             // TODO: i18n
             addError("Error saving template");
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     private void myValidate() {
-        
+
         // if name changed make sure there isn't a conflict
         if(!getTemplate().getName().equals(getBean().getName())) {
             try {
@@ -159,7 +159,7 @@ public class TemplateEdit extends UIAction {
                 log.error("Error checking page name uniqueness", ex);
             }
         }
-        
+
         // if link changed make sure there isn't a conflict
         if(!StringUtils.isEmpty(getBean().getLink()) &&
                 !getBean().getLink().equals(getTemplate().getLink())) {
@@ -172,15 +172,15 @@ public class TemplateEdit extends UIAction {
             }
         }
     }
-    
-    
+
+
     public List getTemplateLanguages() {
         String langs = WebloggerConfig.getProperty("rendering.templateLanguages","velocity");
         String[] langsArray = Utilities.stringToStringArray(langs, ",");
         return Arrays.asList(langsArray);
     }
-    
-    
+
+
     public TemplateEditBean getBean() {
         return bean;
     }
@@ -196,5 +196,5 @@ public class TemplateEdit extends UIAction {
     public void setTemplate(WeblogTemplate template) {
         this.template = template;
     }
-    
+
 }

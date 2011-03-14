@@ -32,50 +32,50 @@ import org.apache.roller.weblogger.business.runnable.ThreadManager;
  * Test TaskLock related business operations.
  */
 public class TaskLockTest extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(TaskLockTest.class);
-    
-    
+
+
     public TaskLockTest(String name) {
         super(name);
     }
-    
-    
+
+
     public static Test suite() {
         return new TestSuite(TaskLockTest.class);
     }
-    
-    
+
+
     public void setUp() throws Exception {
         // setup weblogger
         TestUtils.setupWeblogger();
     }
-    
+
     public void tearDown() throws Exception {
     }
-    
-    
+
+
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      * @throws Exception if one is raised
      */
     public void testTaskLockCRUD() throws Exception {
-        
+
         ThreadManager mgr = WebloggerFactory.getWeblogger().getThreadManager();
-        
+
         // need a test task to play with
         TestTask task = new TestTask();
         task.init();
-        
+
         // try to acquire a lock
         assertTrue("Failed to acquire lease.",mgr.registerLease(task));
         // We don't flush here because registerLease should flush on its own
         TestUtils.endSession(false);
-        
+
         // make sure task is locked
         assertFalse("Acquired lease a second time when we shouldn't have been able to.",mgr.registerLease(task));
         TestUtils.endSession(false);
-        
+
         // try to release a lock
         assertTrue("Release of lease failed.",mgr.unregisterLease(task));
         // We don't flush here because unregisterLease should flush on its own
@@ -86,5 +86,5 @@ public class TaskLockTest extends TestCase {
         assertTrue("Second release failed.", mgr.unregisterLease(task));
         TestUtils.endSession(false);
     }
-    
+
 }

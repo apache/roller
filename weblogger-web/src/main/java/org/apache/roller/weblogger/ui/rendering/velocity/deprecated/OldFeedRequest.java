@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 /**
  * Represents a request for an *old* Roller weblog feed.
- * 
+ *
  * any of /rss/*, /atom/*, /flavor/*
  *
  * While these urls are no longer used we do provide redirect support for them
@@ -38,42 +38,42 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
  * help with parsing these urls since they are fairly complex.
  */
 public class OldFeedRequest {
-    
+
     private static Log mLogger = LogFactory.getLog(OldFeedRequest.class);
-    
+
     private static Set feedServlets = new HashSet();
-    
+
     private String context = null;
     private String flavor = null;
     private String weblogHandle = null;
     private String weblogCategory = null;
     private boolean excerpts = false;
-    
-    
+
+
     static {
         // initialize our servlet list
         feedServlets.add("rss");
         feedServlets.add("flavor");
         feedServlets.add("atom");
     }
-    
-    
+
+
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
      */
     public OldFeedRequest(HttpServletRequest request) throws Exception {
-        
+
         // parse the request object and figure out what we've got
         mLogger.debug("parsing url "+request.getRequestURL());
-        
+
         String servlet = request.getServletPath();
         String pathInfo = request.getPathInfo();
-        
+
         // what servlet is our destination?
         if(servlet != null) {
             // strip off the leading slash
             servlet = servlet.substring(1);
-            
+
             if(feedServlets.contains(servlet)) {
                 this.context = "weblog";
                 this.flavor = servlet;
@@ -84,29 +84,29 @@ public class OldFeedRequest {
         } else {
             throw new Exception("not a weblog feed request, "+request.getRequestURL());
         }
-        
+
         // parse the path info
         if(pathInfo != null && pathInfo.trim().length() > 1) {
             // strip off the leading slash
             pathInfo = pathInfo.substring(1);
             String[] pathElements = pathInfo.split("/");
-            
+
             if(pathElements[0].length() > 0) {
                 this.weblogHandle = pathElements[0];
             }
-            
+
         } else {
-            
+
             // no path info means this was a non-weblog request
             // we handle a few exceptions for this which include
             //   /rss - main rss feed
             //   /atom - main atom feed
             //   /flavor - main flavor feed
-            
+
             this.context = "main";
         }
-        
-        /* 
+
+        /*
          * parse request parameters
          *
          * the only params we currently care about are:
@@ -119,28 +119,28 @@ public class OldFeedRequest {
         if(request.getParameter("flavor") != null) {
             this.flavor = request.getParameter("flavor");
         }
-        
+
         if(request.getParameter("path") != null) {
             this.weblogCategory = request.getParameter("path");
         }
-        
+
         if(request.getParameter("catname") != null) {
             this.weblogCategory = request.getParameter("catname");
         }
-        
+
         if(request.getParameter("excerpts") != null) {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
         }
-        
+
         // one small final adjustment.
         // if our flavor is "flavor" then that means someone is just getting
         // the default flavor, which is rss, so let's set that
         if(this.flavor.equals("flavor")) {
             this.flavor = "rss";
         }
-        
+
     }
-    
+
 
     public String getContext() {
         return context;

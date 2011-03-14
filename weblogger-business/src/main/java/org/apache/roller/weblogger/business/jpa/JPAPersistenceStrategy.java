@@ -47,21 +47,21 @@ import org.apache.roller.weblogger.business.DatabaseProvider;
  */
 @com.google.inject.Singleton
 public class JPAPersistenceStrategy {
-    
-    private static Log logger = 
+
+    private static Log logger =
         LogFactory.getFactory().getInstance(JPAPersistenceStrategy.class);
-    
+
     /**
      * The thread local EntityManager.
      */
     private final ThreadLocal threadLocalEntityManager = new ThreadLocal();
-    
+
     /**
      * The EntityManagerFactory for this Roller instance.
      */
     private EntityManagerFactory emf = null;
-    
-            
+
+
     /**
      * Construct by finding JPA EntityManagerFactory.
      * @param dbProvider database configuration information for manual configuration.
@@ -85,8 +85,8 @@ public class JPAPersistenceStrategy {
             Enumeration keys = WebloggerConfig.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
-                if (       key.startsWith("javax.persistence.") 
-                        || key.startsWith("openjpa.") 
+                if (       key.startsWith("javax.persistence.")
+                        || key.startsWith("openjpa.")
                         || key.startsWith("hibernate.")) {
                     String value = WebloggerConfig.getProperty(key);
                     logger.info(key + ": " + value);
@@ -106,14 +106,14 @@ public class JPAPersistenceStrategy {
 
             try {
                 this.emf = Persistence.createEntityManagerFactory("RollerPU", emfProps);
-                
+
             } catch (Throwable pe) {
                 logger.error("ERROR: creating entity manager", pe);
                 throw new WebloggerException(pe);
             }
         }
     }
-                        
+
     /**
      * Flush changes to the datastore, commit transaction, release em.
      * @throws org.apache.roller.weblogger.WebloggerException on any error
@@ -126,7 +126,7 @@ public class JPAPersistenceStrategy {
             throw new WebloggerException(pe);
         }
     }
-    
+
     /**
      * Release database session, rolls back any uncommitted changes.
      */
@@ -138,7 +138,7 @@ public class JPAPersistenceStrategy {
         em.close();
         setThreadLocalEntityManager(null);
     }
-    
+
     /**
      * Store object using an existing transaction.
      * @param obj the object to persist
@@ -153,7 +153,7 @@ public class JPAPersistenceStrategy {
         }
         return obj;
     }
-    
+
     /**
      * Remove object from persistence storage.
      * @param clazz the class of object to remove
@@ -165,7 +165,7 @@ public class JPAPersistenceStrategy {
         Object po = em.find(clazz, id);
         em.remove(po);
     }
-    
+
     /**
      * Remove object from persistence storage.
      * @param po the persistent object to remove
@@ -175,7 +175,7 @@ public class JPAPersistenceStrategy {
         EntityManager em = getEntityManager(true);
         em.remove(po);
     }
-    
+
     /**
      * Remove object from persistence storage.
      * @param pos the persistent objects to remove
@@ -187,8 +187,8 @@ public class JPAPersistenceStrategy {
             Object obj = iterator.next();
             em.remove(obj);
         }
-    }    
-    
+    }
+
     /**
      * Retrieve object, no transaction needed.
      * @param clazz the class of object to retrieve
@@ -201,7 +201,7 @@ public class JPAPersistenceStrategy {
         EntityManager em = getEntityManager(false);
         return em.find(clazz, id);
     }
-    
+
     /**
      * Return true if a transaction is active on the current EntityManager.
      * @param em the persistence manager
@@ -214,7 +214,7 @@ public class JPAPersistenceStrategy {
         }
         return em.getTransaction().isActive();
     }
-    
+
     /**
      * Get the EntityManager associated with the current thread of control.
      * @param isTransactionRequired true if a transaction is begun if not
@@ -228,7 +228,7 @@ public class JPAPersistenceStrategy {
         }
         return em;
     }
-    
+
     /**
      * Get the current ThreadLocal EntityManager
      */
@@ -240,14 +240,14 @@ public class JPAPersistenceStrategy {
         }
         return em;
     }
-    
+
     /**
      * Set the current ThreadLocal EntityManager
      */
     private void setThreadLocalEntityManager(Object em) {
         threadLocalEntityManager.set(em);
     }
-    
+
     /**
      * Get named query with FlushModeType.COMMIT
      * @param queryName the name of the query
@@ -261,7 +261,7 @@ public class JPAPersistenceStrategy {
         q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
-    
+
     /**
      * Create query from queryString with FlushModeType.COMMIT
      * @param queryString the quuery
@@ -275,7 +275,7 @@ public class JPAPersistenceStrategy {
         q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
-    
+
     /**
      * Get named update query with default flush mode
      * @param queryName the name of the query
@@ -287,7 +287,7 @@ public class JPAPersistenceStrategy {
         Query q = em.createNamedQuery(queryName);
         return q;
     }
-    
+
     /**
      * Loads properties from given resourceName using given class loader
      * @param resourceName The name of the resource containing properties
@@ -316,10 +316,10 @@ public class JPAPersistenceStrategy {
             } catch (IOException ioe) {
             }
         }
-        
+
         return props;
     }
-    
+
     /**
      * Get the context class loader associated with the current thread. This is
      * done in a doPrivileged block because it is a secure method.
@@ -332,5 +332,5 @@ public class JPAPersistenceStrategy {
                 return Thread.currentThread().getContextClassLoader();
             }
         });
-    }  
+    }
 }

@@ -52,8 +52,8 @@ public class JPAWebloggerImpl extends WebloggerImpl {
 
     // a persistence utility class
     private final JPAPersistenceStrategy strategy;
-    
-    
+
+
     /**
      * Single constructor.
      * @throws org.apache.roller.weblogger.WebloggerException on any error
@@ -79,7 +79,7 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         WeblogEntryManager   weblogEntryManager,
         OAuthManager         oauthManager,
         URLStrategy          urlStrategy) throws WebloggerException {
-        
+
         super(
             autoPingManager,
             bookmarkManager,
@@ -99,23 +99,23 @@ public class JPAWebloggerImpl extends WebloggerImpl {
             weblogEntryManager,
             oauthManager,
             urlStrategy);
-        
+
         this.strategy = strategy;
     }
-    
-    
+
+
     public void flush() throws WebloggerException {
         this.strategy.flush();
     }
 
-    
+
     public void release() {
         super.release();
         // tell JPA to close down
         this.strategy.release();
     }
 
-    
+
     public void shutdown() {
         // do our own shutdown first
         this.release();

@@ -27,42 +27,42 @@ import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
 
 /**
  * Represents a request for a Roller planet group page.
- * 
+ *
  * /planet-ui/rendering/opml/*
  *
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
 public class PlanetGroupOpmlRequest extends PlanetGroupRequest {
-    
+
     private static Log log = LogFactory.getLog(PlanetGroupOpmlRequest.class);
-    
+
     // lightweight attributes
-    
-    
+
+
     public PlanetGroupOpmlRequest() {}
-    
-    
+
+
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
      */
-    public PlanetGroupOpmlRequest(HttpServletRequest request) 
+    public PlanetGroupOpmlRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // parse the request object and figure out what we've got
         log.debug("parsing path "+pathInfo);
-        
+
         if(pathInfo != null) {
             throw new InvalidRequestException("not a valid planet opml page, "+
                     request.getRequestURL());
         }
     }
-    
+
 }

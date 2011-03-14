@@ -29,18 +29,18 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author Shing Wai Chan
  */
-public class CmaRollerContext extends RollerContext { 
-    
+public class CmaRollerContext extends RollerContext {
+
     private static Log log = LogFactory.getLog(CmaRollerContext.class);
-    
+
     public CmaRollerContext() {
         super();
     }
-    
+
     /**
      * Setup Acegi security features.
      */
-    protected void initializeSecurityFeatures(ServletContext context) { 
+    protected void initializeSecurityFeatures(ServletContext context) {
         // no need to setup Acegi security
     }
 }

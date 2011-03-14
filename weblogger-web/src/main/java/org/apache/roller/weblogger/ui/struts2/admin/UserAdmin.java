@@ -28,31 +28,31 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Action which displays user admin search page.
  */
 public class UserAdmin extends UIAction {
-    
-    
+
+
     public UserAdmin() {
         this.actionName = "userAdmin";
         this.desiredMenu = "admin";
         this.pageTitle = "userAdmin.title.searchUser";
     }
-    
-    
-    // admin role required    
+
+
+    // admin role required
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
-    
+
     // no weblog required
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     /**
      * Show user admin search page.
      */
     public String execute() {
         return SUCCESS;
     }
-    
+
 }

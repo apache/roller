@@ -37,15 +37,15 @@ import org.apache.roller.weblogger.config.PingConfig;
 
 /**
  * The abstract version of the Weblogger implementation.
- * 
+ *
  * Here we put code that pertains to *all* implementations of the Weblogger
  * interface, regardless of their persistence strategy.
  */
 @com.google.inject.Singleton
 public abstract class WebloggerImpl implements Weblogger {
-    
+
     private static Log log = LogFactory.getLog(WebloggerImpl.class);
-    
+
     // managers
     private final AutoPingManager      autoPingManager;
     private final BookmarkManager      bookmarkManager;
@@ -64,17 +64,17 @@ public abstract class WebloggerImpl implements Weblogger {
     private final WeblogManager        weblogManager;
     private final WeblogEntryManager   weblogEntryManager;
     private final OAuthManager         oauthManager;
-    
+
     // url strategy
     private final URLStrategy          urlStrategy;
-    
+
     // some simple attributes
     private final String version;
     private final String revision;
     private final String buildTime;
     private final String buildUser;
-    
-    
+
+
     protected WebloggerImpl(
         AutoPingManager      autoPingManager,
         BookmarkManager      bookmarkManager,
@@ -86,15 +86,15 @@ public abstract class WebloggerImpl implements Weblogger {
         PluginManager        pluginManager,
         PropertiesManager    propertiesManager,
         RefererManager       refererManager,
-        ReferrerQueueManager refererQueueManager, 
+        ReferrerQueueManager refererQueueManager,
         ThemeManager         themeManager,
         ThreadManager        threadManager,
         UserManager          userManager,
         WeblogManager        weblogManager,
         WeblogEntryManager   weblogEntryManager,
         OAuthManager         oauthManager,
-        URLStrategy          urlStrategy) throws WebloggerException { 
-                
+        URLStrategy          urlStrategy) throws WebloggerException {
+
         this.autoPingManager     = autoPingManager;
         this.bookmarkManager     = bookmarkManager;
         this.indexManager        = indexManager;
@@ -113,169 +113,169 @@ public abstract class WebloggerImpl implements Weblogger {
         this.weblogEntryManager  = weblogEntryManager;
         this.oauthManager        = oauthManager;
         this.urlStrategy         = urlStrategy;
-        
+
         Properties props = new Properties();
         try {
             props.load(getClass().getResourceAsStream("/roller-version.properties"));
         } catch (IOException e) {
             log.error("roller-version.properties not found", e);
         }
-        
+
         version = props.getProperty("ro.version", "UNKNOWN");
         revision = props.getProperty("ro.revision", "UNKNOWN");
         buildTime = props.getProperty("ro.buildTime", "UNKNOWN");
         buildUser = props.getProperty("ro.buildUser", "UNKNOWN");
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getThreadManager()
      */
     public ThreadManager getThreadManager() {
         return threadManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getIndexManager()
      */
     public IndexManager getIndexManager() {
         return indexManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getThemeManager()
      */
     public ThemeManager getThemeManager() {
         return themeManager;
     }
-    
-    
+
+
     /**
      * @see org.apache.roller.weblogger.business.referrers.ReferrerQueueManager
      */
     public ReferrerQueueManager getReferrerQueueManager() {
         return refererQueueManager;
     }
-    
-    
-    
+
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getUserManager()
      */
     public UserManager getUserManager() {
         return userManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getBookmarkManager()
      */
     public BookmarkManager getBookmarkManager() {
         return bookmarkManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getMediaFileManager()
      */
     public MediaFileManager getMediaFileManager() {
         return mediaFileManager;
     }
-    
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getFileContentManager()
      */
     public FileContentManager getFileContentManager() {
         return fileContentManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getWeblogEntryManager()
      */
     public WeblogEntryManager getWeblogEntryManager() {
         return weblogEntryManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getWeblogManager()
      */
     public WeblogManager getWeblogManager() {
         return weblogManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getRefererManager()
      */
     public RefererManager getRefererManager() {
         return refererManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getPropertiesManager()
      */
     public PropertiesManager getPropertiesManager() {
         return propertiesManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
      */
     public PingQueueManager getPingQueueManager() {
         return pingQueueManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
      */
     public AutoPingManager getAutopingManager() {
         return autoPingManager;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
      */
     public PingTargetManager getPingTargetManager() {
         return pingTargetManager;
     }
-    
-    
+
+
     /**
      *
      *
@@ -302,8 +302,8 @@ public abstract class WebloggerImpl implements Weblogger {
     public URLStrategy getUrlStrategy() {
         return urlStrategy;
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
@@ -324,15 +324,15 @@ public abstract class WebloggerImpl implements Weblogger {
             log.error("Error calling Roller.release()", e);
         }
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public void initialize() throws InitializationException {
-        
+
         log.info("Initializing Roller Weblogger business tier");
-        
+
         // TODO: this should probably be done in a more uniform fashion, possibly
         // using annotations?  biggest issue is controlling ordering
         getPropertiesManager().initialize();
@@ -340,23 +340,23 @@ public abstract class WebloggerImpl implements Weblogger {
         getThreadManager().initialize();
         getIndexManager().initialize();
         getMediaFileManager().initialize();
-        
+
         try {
             // Initialize ping systems
             // TODO: this should probably be moving inside ping manager initialize() methods?
-            
+
             // Initialize common targets from the configuration
             PingConfig.initializeCommonTargets();
-            
+
             // Initialize ping variants
             PingConfig.initializePingVariants();
-            
+
             // Remove custom ping targets if they have been disallowed
             if (PingConfig.getDisallowCustomTargets()) {
                 log.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
                 WebloggerFactory.getWeblogger().getPingTargetManager().removeAllCustomPingTargets();
             }
-            
+
             // Remove all autoping configurations if ping usage has been disabled.
             if (PingConfig.getDisablePingUsage()) {
                 log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
@@ -365,19 +365,19 @@ public abstract class WebloggerImpl implements Weblogger {
         } catch (Throwable t) {
             throw new InitializationException("Error initializing ping systems", t);
         }
-        
+
         // we always need to do a flush after initialization because it's
         // possible that some changes need to be persisted
         try {
             flush();
         } catch(WebloggerException ex) {
             throw new InitializationException("Error flushing after initialization", ex);
-        } 
-        
+        }
+
         log.info("Roller Weblogger business tier successfully initialized");
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
@@ -391,35 +391,35 @@ public abstract class WebloggerImpl implements Weblogger {
             log.error("Error calling Roller.shutdown()", e);
         }
     }
-    
-    
+
+
     /**
      * Weblogger version
      */
     public String getVersion() {
         return version;
     }
-    
+
     /**
      * Get source code repository revision # used to create build
      */
     public String getRevision() {
         return revision;
     }
-        
+
     /**
      * Weblogger build time
      */
     public String getBuildTime() {
         return buildTime;
     }
-    
-    
+
+
     /**
      * Get username that built Weblogger
      */
     public String getBuildUser() {
         return buildUser;
     }
-    
+
 }

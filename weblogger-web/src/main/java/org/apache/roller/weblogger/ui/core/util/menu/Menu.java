@@ -26,15 +26,15 @@ import java.util.List;
  * A Menu of MenuTab objects.
  */
 public class Menu {
-    
+
     private List tabs = new ArrayList();
-    
-    
+
+
     public void addTab(MenuTab tab) {
         this.tabs.add(tab);
     }
-    
-    
+
+
     public List getTabs() {
         return tabs;
     }
@@ -42,5 +42,5 @@ public class Menu {
     public void setTabs(List menus) {
         this.tabs = menus;
     }
-    
+
 }

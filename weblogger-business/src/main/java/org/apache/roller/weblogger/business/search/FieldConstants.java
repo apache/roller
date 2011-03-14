@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.business.search;
  * Field constants for indexing blog entries and comments.
  * @author Mindaugas Idzelis  (min@idzelis.com)
  */
-public final class FieldConstants {    
+public final class FieldConstants {
     public static final String ANCHOR = "anchor";
     public static final String UPDATED = "updated";
     public static final String ID = "id";

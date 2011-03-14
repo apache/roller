@@ -28,10 +28,10 @@ import org.apache.roller.planet.config.PlanetConfig;
  * An abstract class representing a scheduled task in Roller Planet.
  */
 public abstract class PlanetTask implements Runnable {
-    
+
     /**
      * Initialize the task basically the same way the webapp would initialize.
      */
     public void initialize() throws Exception {
-    }       
+    }
 }

@@ -34,34 +34,34 @@ import org.apache.roller.weblogger.ui.struts2.common.PingTargetsBase;
  * Action for managing weblog custom ping targets.
  */
 public class CustomPingTargets extends PingTargetsBase {
-    
+
     private static Log log = LogFactory.getLog(CustomPingTargets.class);
-    
-    
+
+
     public CustomPingTargets() {
         this.actionName = "customPingTargets";
         this.desiredMenu = "editor";
         this.pageTitle = "customPingTargets.customPingTargets";
     }
-    
-    
+
+
     // no weblog required
     public boolean isWeblogRequired() {
         return true;
     }
-    
+
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     protected Log getLogger() {
         return log;
     }
-    
-    
+
+
     public void loadPingTargets() {
-        
+
         if(!PingConfig.getDisallowCustomTargets()) try {
             PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             setPingTargets(pingTargetMgr.getCustomPingTargets(getActionWeblog()));
@@ -71,5 +71,5 @@ public class CustomPingTargets extends PingTargetsBase {
             addError("Error loading common ping targets");
         }
     }
-    
+
 }

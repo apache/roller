@@ -40,39 +40,39 @@ import org.apache.commons.logging.LogFactory;
  * @web.filter name="DebugFilter"
  */
 public class DebugFilter implements Filter {
-    
+
     private static Log log = LogFactory.getLog(DebugFilter.class);
-    
-    
+
+
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        
+
         log.info("ENTERING "+request.getRequestURL());
-        
+
         // some info about the request and response
         log.info("Response Object:");
         log.info("   isCommited = "+response.isCommitted());
         log.info("   bufferSize = "+response.getBufferSize());
         log.info("");
-        
+
         chain.doFilter(request, response);
-        
+
         log.info("EXITING "+request.getRequestURL());
-        
+
         // some info about the request and response
         log.info("Response Object:");
         log.info("   isCommited = "+response.isCommitted());
         log.info("   bufferSize = "+response.getBufferSize());
         log.info("");
     }
-    
-    
+
+
     public void destroy() {}
-    
-    
+
+
     public void init(FilterConfig filterConfig) {}
-    
+
 }

@@ -34,38 +34,38 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * Pager for navigating through search results feeds.
  */
 public class SearchResultsFeedPager extends AbstractPager {
-    
+
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
-    
+
     private List entries = null;
-    
+
     private Weblog weblog = null;
     private boolean     moreResults = false;
-    
+
     private WeblogFeedRequest feedRequest = null;
-    
+
     private String url = null;
-    
-            
+
+
     public SearchResultsFeedPager(URLStrategy strat, String baseUrl, int pageNum,
             WeblogFeedRequest feedRequest, List entries, boolean more) {
-        
+
         super(strat, baseUrl, pageNum);
-        
+
         this.url = baseUrl;
-        
+
         this.feedRequest = feedRequest;
-        
+
         // store search results
         this.entries = entries;
-        
+
         // data from search request
         this.weblog = feedRequest.getWeblog();
-        
+
         // does this pager have more results?
         this.moreResults = more;
-        
+
         // get a message utils instance to handle i18n of messages
         Locale viewLocale = null;
         if(feedRequest.getLocale() != null) {
@@ -80,23 +80,23 @@ public class SearchResultsFeedPager extends AbstractPager {
         }
         this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
-    
+
     public List getItems() {
         return this.entries;
     }
-    
+
     public boolean hasMoreItems() {
         return this.moreResults;
     }
-    
+
     public String getHomeLink() {
         return urlStrategy.getWeblogURL(weblog, weblog.getLocale(), false);
     }
 
     public String getHomeName() {
         return messageUtils.getString("searchPager.home");
-    }  
-    
+    }
+
     protected String createURL(String url, Map params) {
         String category = feedRequest.getWeblogCategoryName();
         if(category != null && category.trim().length() > 0) {
@@ -105,17 +105,17 @@ public class SearchResultsFeedPager extends AbstractPager {
         String term = feedRequest.getTerm();
         if(term != null && term.trim().length() > 0) {
             params.put("q", URLUtilities.encode(term.trim()));
-        }     
+        }
         List tags = feedRequest.getTags();
         if(tags != null && tags.size() > 0) {
             params.put("tags", URLUtilities.getEncodedTagsString(tags));
         }
         if(feedRequest.isExcerpts()) {
             params.put("excerpts", "true");
-        }        
+        }
         return super.createURL(url, params);
     }
-    
+
     public String getUrl() {
         return createURL(url, new HashMap());
     }

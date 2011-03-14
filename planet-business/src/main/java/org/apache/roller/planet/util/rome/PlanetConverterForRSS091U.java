@@ -33,7 +33,7 @@ public class PlanetConverterForRSS091U extends ConverterForRSS091Userland {
     }
     protected SyndEntry createSyndEntry(Item item) {
         SyndEntry entry = super.createSyndEntry(item, true);
-        entry.setPublishedDate(item.getPubDate()); 
+        entry.setPublishedDate(item.getPubDate());
         return entry;
     }
 }

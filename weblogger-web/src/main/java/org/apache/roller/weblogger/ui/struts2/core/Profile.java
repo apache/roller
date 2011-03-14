@@ -36,19 +36,19 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  */
 public class Profile extends UIAction {
     private static Log log = LogFactory.getLog(Profile.class);
-    
+
     private ProfileBean bean = new ProfileBean();
-    private String openIdConfiguration = 
+    private String openIdConfiguration =
         WebloggerConfig.getProperty("authentication.openid");
-    private boolean usingSso = 
+    private boolean usingSso =
         WebloggerConfig.getBooleanProperty("users.sso.enabled");
-            
-    
+
+
     public Profile() {
         this.pageTitle = "yourProfile.title";
     }
-    
-    
+
+
     // override default security, we do not require an action weblog
     public boolean isWeblogRequired() {
         return false;
@@ -58,14 +58,14 @@ public class Profile extends UIAction {
     @SkipValidation
     public String execute() {
         User ud = getAuthenticatedUser();
-        
+
         // load up the form from the users existing profile data
         getBean().copyFrom(ud);
         getBean().setPasswordText(null);
         getBean().setPasswordConfirm(null);
         getBean().setLocale(ud.getLocale());
         getBean().setTimeZone(ud.getTimeZone());
-        
+
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
         try {
             UserAttribute openIdUrl = mgr.getUserAttribute(
@@ -80,13 +80,13 @@ public class Profile extends UIAction {
         return INPUT;
     }
 
-    
+
     public String save() {
 
         myValidate();
 
         if (!hasActionErrors()) {
-            
+
             // We ONLY modify the user currently logged in
             User existingUser = getAuthenticatedUser();
 
@@ -97,14 +97,14 @@ public class Profile extends UIAction {
             existingUser.setLocale(getBean().getLocale());
             existingUser.setTimeZone(getBean().getTimeZone());
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            
-            if (StringUtils.isNotEmpty(getBean().getOpenIdUrl())) { 
+
+            if (StringUtils.isNotEmpty(getBean().getOpenIdUrl())) {
                 try {
                     String openidurl = getBean().getOpenIdUrl();
                     if (openidurl != null && openidurl.endsWith("/")) {
                         openidurl = openidurl.substring(0, openidurl.length() - 1);
                     }
-                    mgr.setUserAttribute(existingUser.getUserName(), 
+                    mgr.setUserAttribute(existingUser.getUserName(),
                         UserAttribute.Attributes.OPENID_URL.toString(), openidurl);
                 } catch (Exception ex) {
                     log.error("Unexpected error saving user OpenID URL", ex);
@@ -143,7 +143,7 @@ public class Profile extends UIAction {
         return INPUT;
     }
 
-    
+
     public void myValidate() {
 
         // check that passwords match if they were specified
@@ -157,7 +157,7 @@ public class Profile extends UIAction {
     public String getOpenIdConfiguration() {
         return openIdConfiguration;
     }
-    
+
     public ProfileBean getBean() {
         return bean;
     }
@@ -165,7 +165,7 @@ public class Profile extends UIAction {
     public void setBean(ProfileBean bean) {
         this.bean = bean;
     }
-    
+
     public boolean getUsingSso() {
         return this.usingSso;
     }

@@ -26,15 +26,15 @@ import junit.framework.TestSuite;
  * Test various utility classes that do not require a database or container.
  */
 public class UtilitiesTestSuite {
-    
+
     public static Test suite() {
 
         TestSuite suite = new TestSuite();
-        
+
         suite.addTestSuite(PropertyExpanderTest.class);
         suite.addTestSuite(RegexUtilTest.class);
-        
+
         return suite;
     }
-    
+
 }

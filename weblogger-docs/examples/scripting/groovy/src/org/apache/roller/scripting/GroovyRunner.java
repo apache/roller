@@ -29,8 +29,8 @@ import org.apache.roller.weblogger.util.*;
  * Setup Roller classloader and run a Groovy script
  */
 public class GroovyRunner {
-    public GroovyRunner() {} 
-    
+    public GroovyRunner() {}
+
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
             System.err.println("USAGE: java -cp roller-business.jar TaskRunner WEBAPPDIR JARSDIR SCRIPTNAME");
@@ -44,7 +44,7 @@ public class GroovyRunner {
         String webappDir  = args[0];
         String jarsDir    = args[1];
         String scriptFile = args[2];
-        System.out.println("WEBAPPDIR  = " + webappDir); 
+        System.out.println("WEBAPPDIR  = " + webappDir);
         System.out.println("JARSDIR    = " + jarsDir);
         System.out.println("SCRIPTFILE = " + scriptFile);
 
@@ -54,18 +54,18 @@ public class GroovyRunner {
             System.err.println("ERROR: webapp.dir and jars.dir must specify existing directories");
             System.exit(-1);
         }
-       
+
         // Create new classloader and use it from here on out
         ClassLoader cl = new StandaloneWebappClassLoader(
             webappDir, jarsDir, GroovyRunner.class.getClassLoader());
         Thread.currentThread().setContextClassLoader(cl);
-        
+
         // Apparently bug GROOVY-1194 prevents both of these approaches from working
-        
+
         // Approach #1
         //GroovyShell gshell = new GroovyShell(cl);
         //gshell.evaluate(new File(args[2]));
-                
+
         // Approach #2
         //ClassLoader parent = GroovyRunner.class.getClassLoader();
         GroovyClassLoader loader = new GroovyClassLoader(cl);

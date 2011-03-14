@@ -45,23 +45,23 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 @com.google.inject.Singleton
 public class JPAPingTargetManagerImpl implements PingTargetManager {
-    
+
     /** The logger instance for this class. */
     private static Log log = LogFactory.getLog(
         JPAPingTargetManagerImpl.class);
 
     private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
-    
-    
+
+
     @com.google.inject.Inject
     protected JPAPingTargetManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
         this.roller = roller;
         this.strategy = strategy;
     }
 
-    
-    public void removePingTarget(PingTarget pingTarget) 
+
+    public void removePingTarget(PingTarget pingTarget)
             throws WebloggerException {
         // remove contents and then target
         this.removePingTargetContents(pingTarget);
@@ -72,13 +72,13 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
      * Convenience method which removes any queued pings or auto pings that
      * reference the given ping target.
      */
-    private void removePingTargetContents(PingTarget ping) 
+    private void removePingTargetContents(PingTarget ping)
             throws WebloggerException {
         // Remove the website's ping queue entries
         Query q = strategy.getNamedUpdate("PingQueueEntry.removeByPingTarget");
         q.setParameter(1, ping);
         q.executeUpdate();
-        
+
         // Remove the website's auto ping configurations
         q = strategy.getNamedUpdate("AutoPing.removeByPingTarget");
         q.setParameter(1, ping);
@@ -102,14 +102,14 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         return (PingTarget)strategy.load(PingTarget.class, id);
     }
 
-    public boolean isNameUnique(PingTarget pingTarget) 
+    public boolean isNameUnique(PingTarget pingTarget)
             throws WebloggerException {
         String name = pingTarget.getName();
         if (name == null || name.trim().length() == 0) return false;
-        
+
         String id = pingTarget.getId();
-        
-        // Determine the set of "brother" targets (custom or common) 
+
+        // Determine the set of "brother" targets (custom or common)
         // among which this name should be unique.
         List brotherTargets = null;
         Weblog website = pingTarget.getWebsite();
@@ -118,14 +118,14 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         } else {
             brotherTargets = getCustomPingTargets(website);
         }
-        
-        // Within that set of targets, fail if there is a target 
+
+        // Within that set of targets, fail if there is a target
         // with the same name and that target doesn't
         // have the same id.
         for (Iterator i = brotherTargets.iterator(); i.hasNext();) {
             PingTarget brother = (PingTarget) i.next();
             // Fail if it has the same name but not the same id.
-            if (brother.getName().equals(name) && 
+            if (brother.getName().equals(name) &&
                 (id == null || !brother.getId().equals(id))) {
                 return false;
             }
@@ -134,17 +134,17 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         return true;
     }
 
-    
-    public boolean isUrlWellFormed(PingTarget pingTarget) 
+
+    public boolean isUrlWellFormed(PingTarget pingTarget)
             throws WebloggerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
         try {
             URL parsedUrl = new URL(url);
-            // OK.  If we get here, it parses ok.  Now just check 
+            // OK.  If we get here, it parses ok.  Now just check
             // that the protocol is http and there is a host portion.
             boolean isHttp = parsedUrl.getProtocol().equals("http");
-            boolean hasHost = (parsedUrl.getHost() != null) && 
+            boolean hasHost = (parsedUrl.getHost() != null) &&
                 (parsedUrl.getHost().trim().length() > 0);
             return isHttp && hasHost;
         } catch (MalformedURLException e) {
@@ -152,8 +152,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         }
     }
 
-    
-    public boolean isHostnameKnown(PingTarget pingTarget) 
+
+    public boolean isHostnameKnown(PingTarget pingTarget)
             throws WebloggerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
@@ -186,5 +186,5 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     public void release() {}
-    
+
 }

@@ -49,10 +49,10 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 public class SearchOperation extends ReadFromIndexOperation {
 
     //~ Static fields/initializers =============================================
-    
+
     private static Log mLogger =
             LogFactory.getFactory().getInstance(SearchOperation.class);
-    
+
     private static String[] SEARCH_FIELDS = new String[] {
         FieldConstants.CONTENT,
         FieldConstants.TITLE,
@@ -63,23 +63,23 @@ public class SearchOperation extends ReadFromIndexOperation {
     private static BooleanClause.Occur[] SEARCH_FLAGS = new BooleanClause.Occur[] {
         BooleanClause.Occur.SHOULD,
         BooleanClause.Occur.SHOULD,
-        BooleanClause.Occur.SHOULD, 
+        BooleanClause.Occur.SHOULD,
         BooleanClause.Occur.SHOULD
     };
 
     private static Sort SORTER = new Sort( new SortField(
             FieldConstants.PUBLISHED, SortField.STRING, true) );
-    
+
     //~ Instance fields ========================================================
-    
+
     private String term;
     private String websiteHandle;
     private String category;
     private Hits searchresults;
     private String parseError;
-    
+
     //~ Constructors ===========================================================
-    
+
     /**
      * Create a new operation that searches the index.
      */
@@ -87,21 +87,21 @@ public class SearchOperation extends ReadFromIndexOperation {
         // TODO: finish moving  IndexManager to backend, so this cast is not needed
         super((IndexManagerImpl)mgr);
     }
-    
+
     //~ Methods ================================================================
-    
+
     public void setTerm(String term) {
         this.term = term;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */
     public void doRun() {
         searchresults = null;
-        
+
         IndexSearcher searcher = null;
-        
+
         try {
             IndexReader reader = manager.getSharedIndexReader();
             searcher = new IndexSearcher(reader);
@@ -109,20 +109,20 @@ public class SearchOperation extends ReadFromIndexOperation {
             Query query = MultiFieldQueryParser.parse(term,
                 SEARCH_FIELDS, SEARCH_FLAGS,
                 new StandardAnalyzer(Version.LUCENE_CURRENT));
-            
+
             Term tUsername =
                 IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, websiteHandle);
-            
+
             if (tUsername != null) {
                 BooleanQuery bQuery = new BooleanQuery();
                 bQuery.add(query, BooleanClause.Occur.MUST);
                 bQuery.add(new TermQuery(tUsername), BooleanClause.Occur.MUST);
                 query = bQuery;
             }
-            
+
             Term tCategory =
                 IndexUtil.getTerm(FieldConstants.CATEGORY, category);
-            
+
             if (tCategory != null) {
                 BooleanQuery bQuery = new BooleanQuery();
                 bQuery.add(query, BooleanClause.Occur.MUST);
@@ -141,33 +141,33 @@ public class SearchOperation extends ReadFromIndexOperation {
         }
         // don't need to close the reader, since we didn't do any writing!
     }
-    
+
     public Hits getResults() {
         return searchresults;
     }
-    
+
     public int getResultsCount() {
         if (searchresults == null) return -1;
-        
+
         return searchresults.length();
     }
-    
+
     public String getParseError() {
         return parseError;
     }
-    
+
     /**
      * @param string
      */
     public void setWebsiteHandle(String websiteHandle) {
         this.websiteHandle = websiteHandle;
     }
-    
+
     /**
      * @param parameter
      */
     public void setCategory(String category) {
         this.category = category;
     }
-    
+
 }

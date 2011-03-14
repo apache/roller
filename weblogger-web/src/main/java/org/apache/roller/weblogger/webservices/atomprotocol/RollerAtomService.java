@@ -61,11 +61,11 @@ public class RollerAtomService extends AtomService {
     public RollerAtomService(User user, String atomURL) throws WebloggerException, AtomException {
         Weblogger roller = WebloggerFactory.getWeblogger();
         List perms = null;
-        
+
         if (!WebloggerRuntimeConfig.getBooleanProperty("webservices.enableAtomPub")) {
         	throw new AtomException("AtomPub not enabled for this Roller installation");
         }
-        
+
         try {
             perms = roller.getUserManager().getWeblogPermissions(user);
         } catch (WebloggerException re) {
@@ -137,24 +137,24 @@ public class RollerAtomService extends AtomService {
             }
         }
     }
-    
+
     /**
-     * Build accept range by taking things that appear to be content-type rules 
+     * Build accept range by taking things that appear to be content-type rules
      * from site's file-upload allowed extensions.
      */
     private List getAcceptedContentTypeRange() throws WebloggerException {
         List accepts = new ArrayList();
         Weblogger roller = WebloggerFactory.getWeblogger();
-        Map config = roller.getPropertiesManager().getProperties();        
+        Map config = roller.getPropertiesManager().getProperties();
         String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         for (int i=0; i<rules.length; i++) {
             if (rules[i].indexOf("/") == -1) continue;
             accepts.add(rules[i]);
         }
-        return accepts;             
-    }      
-            
+        return accepts;
+    }
+
     public static String getWeblogCategoryScheme(Weblog website) {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(website, null, true);
     }

@@ -45,83 +45,83 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Actions for setting up automatic ping configuration for a weblog.
  */
 public class Pings extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(Pings.class);
-    
+
     // ping target id to work on
     private String pingTargetId = null;
-    
+
     // ping target object we are working on, if available
     private PingTarget pingTarget = null;
-    
+
     // commong ping targets list
     private List commonPingTargets = Collections.EMPTY_LIST;
-    
+
     // custom ping targets list for weblog
     private List customPingTargets = Collections.EMPTY_LIST;
-    
+
     // track the enabled/disabled status for pings
     private Map pingStatus = Collections.EMPTY_MAP;
-    
-    
+
+
     public Pings() {
         this.actionName = "pings";
         this.desiredMenu = "editor";
         this.pageTitle = "pings.title";
     }
-    
-    
+
+
     // admin perms required
     public String requireWeblogPermissions() {
         return WeblogPermission.ADMIN;
     }
-    
-    
+
+
     public void myPrepare() {
-        
+
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-        
+
         // load selected ping target, if possible
         if(getPingTargetId() != null) try {
             setPingTarget(pingTargetMgr.getPingTarget(getPingTargetId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up ping target - "+getPingTargetId(), ex);
         }
-        
+
         try {
             // load common ping targets list
             setCommonPingTargets(pingTargetMgr.getCommonPingTargets());
-            
+
             // load custom ping targets list for weblog, if applicable
             if(!PingConfig.getDisallowCustomTargets()) {
                 setCustomPingTargets(pingTargetMgr.getCustomPingTargets(getActionWeblog()));
             }
-            
+
         } catch (WebloggerException ex) {
             log.error("Error loading ping target lists for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error loading ping targets");
         }
     }
-    
-    
+
+
     /*
      * Display the common ping targets with page
      */
     public String execute() {
-        
+
         // load map of enabled auto pings
         buildIsEnabledMap();
-        
+
         return LIST;
     }
-    
-    
+
+
     /**
      * Enable a ping target.
      */
     public String enable() {
-        
+
         if(getPingTarget() != null) try {
             AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
             AutoPing autoPing = new AutoPing(null, getPingTarget(), getActionWeblog());
@@ -132,16 +132,16 @@ public class Pings extends UIAction {
             // TODO: i18n
             addError("Error enabling auto ping");
         }
-        
+
         return execute();
     }
-    
-    
+
+
     /**
      * Disable a ping target.
      */
     public String disable() {
-        
+
         if(getPingTarget() != null) try {
             AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
             autoPingMgr.removeAutoPing(getPingTarget(), getActionWeblog());
@@ -151,16 +151,16 @@ public class Pings extends UIAction {
             // TODO: i18n
             addError("Error disabling auto ping");
         }
-        
+
         return execute();
     }
-    
-    
+
+
     /**
      * Ping the selected target now.
      */
     public String pingNow() {
-        
+
         if(getPingTarget() != null) try {
             if (PingConfig.getSuspendPingProcessing()) {
                 log.debug("Ping processing is disabled.");
@@ -188,11 +188,11 @@ public class Pings extends UIAction {
             addError("ping.transmissionFailed");
             addSpecificMessages(ex);
         }
-        
+
         return execute();
     }
-    
-    
+
+
     // some extra error messaging
     private void addSpecificMessages(Exception ex) {
         if (ex instanceof UnknownHostException) {
@@ -202,31 +202,31 @@ public class Pings extends UIAction {
         }
     }
 
-    
+
     /**
      * Private helper to build a map indexed by ping target id with values Boolean.TRUE and Boolean.FALSE
      * based on whether the ping target is enabled (has a corresponding auto ping configuration).
      */
     private void buildIsEnabledMap() {
-        
+
         AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
-        
+
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
         Map isEnabled = new HashMap();
-        
+
         List autopings = Collections.EMPTY_LIST;
         try {
             autopings = autoPingMgr.getAutoPingsByWebsite(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error("Error looking up auto pings for weblog - "+getActionWeblog().getHandle(), ex);
         }
-        
+
         // Add the enabled auto ping configs with TRUE
         for (Iterator i = autopings.iterator(); i.hasNext();) {
             AutoPing autoPing = (AutoPing) i.next();
             isEnabled.put(autoPing.getPingTarget().getId(), Boolean.TRUE);
         }
-        
+
         // Somewhat awkward, but the two loops save building a separate combined list.
         // Add disabled common ones with FALSE
         for (Iterator i = getCommonPingTargets().iterator(); i.hasNext();) {
@@ -235,7 +235,7 @@ public class Pings extends UIAction {
                 isEnabled.put(pingTarget.getId(), Boolean.FALSE);
             }
         }
-        
+
         // Add disabled custom ones with FALSE
         for (Iterator i = getCustomPingTargets().iterator(); i.hasNext();) {
             PingTarget pingTarget = (PingTarget) i.next();
@@ -243,13 +243,13 @@ public class Pings extends UIAction {
                 isEnabled.put(pingTarget.getId(), Boolean.FALSE);
             }
         }
-        
+
         if(isEnabled.size() > 0) {
             setPingStatus(isEnabled);
         }
     }
-    
-    
+
+
     public String getPingTargetId() {
         return pingTargetId;
     }

@@ -43,19 +43,19 @@ import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
  */
 public class PlanetManagerLocalTest extends TestCase {
     public static Log log = LogFactory.getLog(PlanetManagerLocalTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
-    
+
     public static void main(String[] args) {
         TestRunner.run(PlanetManagerLocalTest.class);
     }
-    
+
     /**
      * All tests in this suite require a user and a weblog.
      */
     public void setUp() throws Exception {
-        
+
         try {
             TestUtils.setupWeblogger();
             TestUtils.setupPlanet();
@@ -102,20 +102,20 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry3.setUpdateTime(new Timestamp(new Date().getTime()));
             testEntry3.setWebsite(testWeblog);
             testEntry3.setCreatorUserName(testUser.getUserName());
-            testEntry3.setCategory(testWeblog.getDefaultCategory());           
+            testEntry3.setCategory(testWeblog.getDefaultCategory());
             testEntry3.setStatus(WeblogEntry.PUBLISHED);
             WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry3);
 
             TestUtils.endSession(true);
-            
+
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
     public void tearDown() throws Exception {
-        
+
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
             TestUtils.teardownUser(testUser.getUserName());
@@ -125,16 +125,16 @@ public class PlanetManagerLocalTest extends TestCase {
             throw new Exception("Test teardown failed", ex);
         }
     }
-    
+
     public void testRefreshEntries() {
-        try {      
+        try {
             PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
-            
+
             // run sync task to fill aggregator with websites created by super
             SyncWebsitesTask syncTask = new SyncWebsitesTask();
             syncTask.init();
             syncTask.runTask();
-            
+
             Planet planetObject = planet.getPlanetById("zzz_default_planet_zzz");
             assertNotNull(planetObject);
             PlanetGroup group = planet.getGroup(planetObject, "all");
@@ -142,7 +142,7 @@ public class PlanetManagerLocalTest extends TestCase {
 
             RefreshRollerPlanetTask refreshTask = new RefreshRollerPlanetTask();
             refreshTask.runTask();
-            
+
             planetObject = planet.getPlanet("default");
             group = planet.getGroup(planetObject, "all");
             List agg = planet.getEntries(group, 0, -1);
@@ -153,11 +153,11 @@ public class PlanetManagerLocalTest extends TestCase {
             fail();
         }
     }
-    
+
     public static Test suite() {
         return new TestSuite(PlanetManagerLocalTest.class);
     }
-    
-    
+
+
 }
 

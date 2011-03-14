@@ -25,7 +25,7 @@ import org.apache.roller.weblogger.pojos.User;
  * A simple bean for managing the form data used by the RegisterForm.
  */
 public class ProfileBean {
-    
+
     private String id = null;
     private String userName = null;
     private String password = null;
@@ -35,13 +35,13 @@ public class ProfileBean {
     private String locale = null;
     private String timeZone = null;
     private String openidUrl = null;
-    
+
     private String passwordText = null;
     private String passwordConfirm = null;
-    
-    
-    
-    
+
+
+
+
     public String getId() {
         return id;
     }
@@ -113,7 +113,7 @@ public class ProfileBean {
     public void setOpenIdUrl(String openidUrl) {
         this.openidUrl = openidUrl;
     }
-    
+
     public String getPasswordText() {
         return passwordText;
     }
@@ -129,20 +129,20 @@ public class ProfileBean {
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
     }
-    
-    
+
+
     public void copyTo(User dataHolder) {
-        
+
         dataHolder.setScreenName(this.screenName);
         dataHolder.setFullName(this.fullName);
         dataHolder.setEmailAddress(this.emailAddress);
         dataHolder.setLocale(this.locale);
         dataHolder.setTimeZone(this.timeZone);
     }
-    
-    
+
+
     public void copyFrom(User dataHolder) {
-        
+
         this.id = dataHolder.getId();
         this.userName = dataHolder.getUserName();
         this.password = dataHolder.getPassword();
@@ -152,5 +152,5 @@ public class ProfileBean {
         this.locale = dataHolder.getLocale();
         this.timeZone = dataHolder.getTimeZone();
     }
-    
+
 }

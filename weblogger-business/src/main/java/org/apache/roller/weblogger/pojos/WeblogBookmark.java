@@ -32,11 +32,11 @@ import org.apache.roller.util.UUIDGenerator;
  * the your BookmarkManager implementation.</p>
  */
 public class WeblogBookmark implements Serializable, Comparable {
-    
+
     public static final long serialVersionUID = 2315131256728236003L;
-    
+
     private WeblogBookmarkFolder folder;
-    
+
     private String id = UUIDGenerator.generateUUID();
     private String name;
     private String description;
@@ -45,13 +45,13 @@ public class WeblogBookmark implements Serializable, Comparable {
     private Integer priority;
     private String image;
     private String feedUrl;
-    
+
     //----------------------------------------------------------- Constructors
-    
+
     /** Default constructor, for use in form beans only. */
     public WeblogBookmark() {
     }
-    
+
     public WeblogBookmark(
             WeblogBookmarkFolder parent,
             String name,
@@ -70,9 +70,9 @@ public class WeblogBookmark implements Serializable, Comparable {
         this.priority = priority;
         this.image = image;
     }
-    
+
     //------------------------------------------------------------- Attributes
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      *
@@ -84,12 +84,12 @@ public class WeblogBookmark implements Serializable, Comparable {
     public String getId() {
         return this.id;
     }
-    
+
     /** @ejb:persistent-field */
     public void setId(String id) {
         this.id = id;
     }
-    
+
     /**
      * Name of bookmark.
      *
@@ -105,12 +105,12 @@ public class WeblogBookmark implements Serializable, Comparable {
     public String getName() {
         return this.name;
     }
-    
+
     /** @ejb:persistent-field */
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * Description of bookmark.
      *
@@ -123,12 +123,12 @@ public class WeblogBookmark implements Serializable, Comparable {
     public String getDescription() {
         return this.description;
     }
-    
+
     /** @ejb:persistent-field */
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     /**
      * URL of bookmark.
      *
@@ -141,12 +141,12 @@ public class WeblogBookmark implements Serializable, Comparable {
     public String getUrl() {
         return this.url;
     }
-    
+
     /** @ejb:persistent-field */
     public void setUrl(String url) {
         this.url = url;
     }
-    
+
     /**
      * Weight indicates prominence of link
      *
@@ -163,12 +163,12 @@ public class WeblogBookmark implements Serializable, Comparable {
     public java.lang.Integer getWeight() {
         return this.weight;
     }
-    
+
     /** @ejb:persistent-field */
     public void setWeight(java.lang.Integer weight) {
         this.weight = weight;
     }
-    
+
     /**
      * Priority determines order of display
      *
@@ -185,12 +185,12 @@ public class WeblogBookmark implements Serializable, Comparable {
     public java.lang.Integer getPriority() {
         return this.priority;
     }
-    
+
     /** @ejb:persistent-field */
     public void setPriority(java.lang.Integer priority) {
         this.priority = priority;
     }
-    
+
     /**
      * @ejb:persistent-field
      *
@@ -201,12 +201,12 @@ public class WeblogBookmark implements Serializable, Comparable {
     public String getImage() {
         return this.image;
     }
-    
+
     /** @ejb:persistent-field */
     public void setImage(String image) {
         this.image = image;
     }
-    
+
     /**
      * @ejb:persistent-field
      *
@@ -217,14 +217,14 @@ public class WeblogBookmark implements Serializable, Comparable {
     public String getFeedUrl() {
         return this.feedUrl;
     }
-    
+
     /** @ejb:persistent-field */
     public void setFeedUrl(String feedUrl) {
         this.feedUrl = feedUrl;
     }
-    
+
     //---------------------------------------------------------- Relationships
-    
+
     /**
      * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
@@ -233,14 +233,14 @@ public class WeblogBookmark implements Serializable, Comparable {
     public org.apache.roller.weblogger.pojos.WeblogBookmarkFolder getFolder() {
         return this.folder;
     }
-    
+
     /** @ejb:persistent-field */
     public void setFolder(org.apache.roller.weblogger.pojos.WeblogBookmarkFolder folder) {
         this.folder = folder;
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
@@ -249,7 +249,7 @@ public class WeblogBookmark implements Serializable, Comparable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof WeblogBookmark != true) return false;
@@ -259,26 +259,26 @@ public class WeblogBookmark implements Serializable, Comparable {
         .append(getFolder(), o.getFolder())
         .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())
         .append(getFolder())
         .toHashCode();
     }
-    
-    
+
+
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(Object o) {
         return bookmarkComparator.compare(this, o);
     }
-    
+
     private BookmarkComparator bookmarkComparator = new BookmarkComparator();
-    
+
     public Weblog getWebsite() {
         return this.folder.getWebsite();
     }
-    
+
 }

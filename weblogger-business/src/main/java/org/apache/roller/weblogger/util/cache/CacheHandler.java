@@ -40,13 +40,13 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * this interface so that they can know when to remove items from their cache.
  */
 public interface CacheHandler {
-    
+
     public void invalidate(WeblogEntry entry);
-    
+
     public void invalidate(Weblog website);
-    
+
     public void invalidate(WeblogBookmark bookmark);
-    
+
     public void invalidate(WeblogBookmarkFolder folder);
 
     public void invalidate(WeblogEntryComment comment);
@@ -58,5 +58,5 @@ public interface CacheHandler {
     public void invalidate(WeblogCategory category);
 
     public void invalidate(WeblogTemplate template);
-    
+
 }

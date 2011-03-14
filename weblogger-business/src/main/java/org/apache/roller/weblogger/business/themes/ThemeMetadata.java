@@ -26,7 +26,7 @@ import java.util.Set;
  * Represents a parsed version of a theme xml metadata descriptor.
  */
 public class ThemeMetadata {
-    
+
     private String id = null;
     private String name = null;
     private String author = null;
@@ -34,20 +34,20 @@ public class ThemeMetadata {
     private ThemeMetadataTemplate stylesheet = null;
     private Set templates = new HashSet();
     private Set resources = new HashSet();
-    
-    
+
+
     public ThemeMetadata() {}
 
-    
+
     public void addTemplate(ThemeMetadataTemplate template) {
         this.templates.add(template);
     }
-    
+
     public void addResource(String resource) {
         this.resources.add(resource);
     }
-    
-    
+
+
     public String getId() {
         return id;
     }
@@ -55,7 +55,7 @@ public class ThemeMetadata {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -103,5 +103,5 @@ public class ThemeMetadata {
     public void setStylesheet(ThemeMetadataTemplate stylesheet) {
         this.stylesheet = stylesheet;
     }
-    
+
 }

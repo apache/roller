@@ -55,14 +55,14 @@ public class JPARefererManagerImpl implements RefererManager {
 
     protected static final String DAYHITS = "dayHits";
     protected static final String TOTALHITS = "totalHits";
-    
-    private static final Comparator statCountCountReverseComparator = 
+
+    private static final Comparator statCountCountReverseComparator =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
-    
+
     /** The strategy for this manager. */
     private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
-    
+
 
     /**
      * Creates a new instance of JPARefererManagerImpl
@@ -74,7 +74,7 @@ public class JPARefererManagerImpl implements RefererManager {
         this.strategy = strategy;
     }
 
-    
+
     public void saveReferer(WeblogReferrer referer) throws WebloggerException {
         strategy.store(referer);
     }
@@ -124,7 +124,7 @@ public class JPARefererManagerImpl implements RefererManager {
             throws WebloggerException {
         if (null == website) throw new WebloggerException("website is null");
         if (null == website.getBlacklist()) return;
-        
+
         String[] blacklist = StringUtils.split(
                 StringUtils.deleteWhitespace(website.getBlacklist()),",");
         if (blacklist.length == 0) return;
@@ -138,7 +138,7 @@ public class JPARefererManagerImpl implements RefererManager {
     protected List getExistingReferers(Weblog website, String dateString,
             String permalink) throws WebloggerException {
 
-        Query q = strategy.getNamedQuery( 
+        Query q = strategy.getNamedQuery(
             "WeblogReferrer.getByWebsite&DateString&RefererPermalink");
         q.setParameter(1, website);
         q.setParameter(2, dateString);
@@ -149,7 +149,7 @@ public class JPARefererManagerImpl implements RefererManager {
     protected List getMatchingReferers(Weblog website, String requestUrl,
             String refererUrl) throws WebloggerException {
 
-        Query q = strategy.getNamedQuery( 
+        Query q = strategy.getNamedQuery(
             "WeblogReferrer.getByWebsite&RequestUrl&RefererUrl");
         q.setParameter(1, website);
         q.setParameter(2, requestUrl);
@@ -167,21 +167,21 @@ public class JPARefererManagerImpl implements RefererManager {
      */
     public List getHotWeblogs(int sinceDays, int offset, int length)
             throws WebloggerException {
-        
+
         String msg = "Getting hot weblogs";
         List results = new ArrayList();
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, -1 * sinceDays);
         Date startDate = cal.getTime();
-             
+
         if (length == -1) {
             length = Integer.MAX_VALUE - offset;
         }
 
-        Query q = strategy.getNamedQuery( 
+        Query q = strategy.getNamedQuery(
             "WeblogReferrer.getHotWeblogsByWebsite.enabled&Website.active&Website.lastModifiedGreater");
-        
+
         if (offset != 0 || length != -1) {
             q.setFirstResult(offset);
             q.setMaxResults(length);
@@ -202,7 +202,7 @@ public class JPARefererManagerImpl implements RefererManager {
                 websiteHandle,
                 websiteName,
                 "statCount.weblogDayHits",
-                hits));              
+                hits));
         }
         // Original query ordered by desc hits.
         // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
@@ -211,14 +211,14 @@ public class JPARefererManagerImpl implements RefererManager {
         return results;
     }
 
-    protected int getHits(Weblog website, String type) 
+    protected int getHits(Weblog website, String type)
             throws WebloggerException {
         int hits = -1;
         if (log.isDebugEnabled()) {
             log.debug("getHits: " + website.getName());
         }
         //TODO: JPAPort. This query retrieves both SUM(r.dayHits), SUM(r.totalHits)
-        //The method only comsumes one of them. We can optimize the logic to retrieve only the 
+        //The method only comsumes one of them. We can optimize the logic to retrieve only the
         //requied SUM
         Query query = strategy.getNamedQuery(
             "WeblogReferrer.getHitsByWebsite.enabled&Website.id");
@@ -227,7 +227,7 @@ public class JPARefererManagerImpl implements RefererManager {
         List results = query.getResultList();
 
         Object[] resultsArray = (Object[]) results.get(0);
-        
+
         if (resultsArray.length > 0 && type.equals(DAYHITS)) {
             if ( resultsArray[0] != null ) {
                 hits = ((Long) resultsArray[0]).intValue();
@@ -239,7 +239,7 @@ public class JPARefererManagerImpl implements RefererManager {
         } else {
             hits = 0;
         }
-        
+
         return hits;
     }
 
@@ -279,10 +279,10 @@ public class JPARefererManagerImpl implements RefererManager {
 
         if (website==null )
             throw new WebloggerException("website is null");
-        
+
         if (date==null )
             throw new WebloggerException("Date is null");
-        
+
         Query q = strategy.getNamedQuery(
             "WeblogReferrer.getByWebsite&DateString&DuplicateOrderByTotalHitsDesc");
         q.setParameter(1, website);
@@ -315,7 +315,7 @@ public class JPARefererManagerImpl implements RefererManager {
      */
     protected List getReferersToWebsite(Weblog website, String refererUrl)
             throws WebloggerException {
-        Query q = strategy.getNamedQuery( 
+        Query q = strategy.getNamedQuery(
             "WeblogReferrer.getByWebsite&RefererUrl");
         q.setParameter(1, website);
         q.setParameter(2, refererUrl);
@@ -330,7 +330,7 @@ public class JPARefererManagerImpl implements RefererManager {
                                             String title,
                                             String excerpt)
             throws WebloggerException {
-        Query q = strategy.getNamedQuery( 
+        Query q = strategy.getNamedQuery(
             "WeblogReferrer.getByWebsite&RequestURL&TitleOrExcerpt");
         q.setParameter(1, website);
         q.setParameter(2, requestUrl);
@@ -416,7 +416,7 @@ public class JPARefererManagerImpl implements RefererManager {
                         secondTryUrl = "http://www"+referrerUrl.substring(7);
                     }
 
-                    matchRef = getMatchingReferers(weblog, requestUrl, 
+                    matchRef = getMatchingReferers(weblog, requestUrl,
                         secondTryUrl);
                     if ( matchRef.size() == 1 ) {
                         referrerUrl = secondTryUrl;
@@ -623,12 +623,12 @@ public class JPARefererManagerImpl implements RefererManager {
         }
 
     }
-    
+
     /**
      * Release all resources held by manager.
      */
     public void release() {}
-    
+
     protected void clearDayHits() throws WebloggerException {
         Query query = strategy.getNamedUpdate("WeblogReferrer.clearDayHits");
         query.executeUpdate();
@@ -647,7 +647,7 @@ public class JPARefererManagerImpl implements RefererManager {
         return (List) query.getResultList();
     }
 
-    protected List getBlackListedReferer(Weblog website, String[] blacklist) 
+    protected List getBlackListedReferer(Weblog website, String[] blacklist)
             throws WebloggerException {
         StringBuffer queryString = getQueryStringForBlackList(blacklist);
         queryString.append(" AND r.website = ?1 ");

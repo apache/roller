@@ -28,7 +28,7 @@ import java.util.Map;
  * all of the public urls used by Roller Planet.
  */
 public interface URLStrategy {
-    
+
     /**
      * Get root url for a given planet.
      *
@@ -36,8 +36,8 @@ public interface URLStrategy {
      * @returns The url to the planet.
      */
     public String getPlanetURL(String planetHandle);
-    
-    
+
+
     /**
      * Get url for a specific aggregation group of a planet.
      *
@@ -47,8 +47,8 @@ public interface URLStrategy {
      * @returns The url to the planet group.
      */
     public String getPlanetGroupURL(String planetHandle, String groupHandle, int pageNum);
-    
-    
+
+
     /**
      * Get url to a feed for a specific group of a planet, in the given format.
      *
@@ -58,8 +58,8 @@ public interface URLStrategy {
      * @returns The url to the feed.
      */
     public String getPlanetGroupFeedURL(String planetHandle, String groupHandle, String format);
-    
-    
+
+
     /**
      * Get url to a opml file for a specific group of a planet.
      *
@@ -68,23 +68,23 @@ public interface URLStrategy {
      * @returns The url to the feed.
      */
     public String getPlanetGroupOpmlURL(String planetHandle, String groupHandle);
-    
-    
+
+
     /**
      * Compose a map of key=value params into a query string.
      */
     public String getQueryString(Map params);
-    
-    
+
+
     /**
      * URL encode a string.
      */
     public String encode(String str);
-    
-    
+
+
     /**
      * URL decode a string.
      */
     public String decode(String str);
-    
+
 }

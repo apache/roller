@@ -32,7 +32,7 @@ import org.apache.roller.util.PropertyExpander;
  * This is the single entry point for accessing configuration properties in Roller.
  */
 public class PlanetConfig {
-    
+
     private static String default_config = "/org/apache/roller/planet/config/planet.properties";
     private static String custom_config = "/planet-custom.properties";
     private static String custom_jvm_param = "planet.custom.config";
@@ -41,8 +41,8 @@ public class PlanetConfig {
     private static Properties mConfig;
 
     private static Log log = LogFactory.getLog(PlanetConfig.class);
-    
-    
+
+
     /*
      * Static block run once at class loading
      *
@@ -141,11 +141,11 @@ public class PlanetConfig {
         log.debug("Fetching property ["+key+"="+mConfig.getProperty(key)+"]");
         return mConfig.getProperty(key);
     }
-    
+
     /**
      * Retrieve a property value
      * @param     key Name of the property
-     * @param     defaultValue Default value of property if not found     
+     * @param     defaultValue Default value of property if not found
      * @return    String Value of property requested or defaultValue
      */
     public static String getProperty(String key, String defaultValue) {
@@ -153,7 +153,7 @@ public class PlanetConfig {
         String value = mConfig.getProperty(key);
         if(value == null)
           return defaultValue;
-        
+
         return value;
     }
 
@@ -204,11 +204,11 @@ public class PlanetConfig {
     public static Enumeration keys() {
         return mConfig.keys();
     }
-      
+
     /**
      * Set the "context.realpath" property at runtime.
      * <p />
-     * Properties are meant to be read-only, but we make this exception to make 
+     * Properties are meant to be read-only, but we make this exception to make
      * it possible for unit tests to control the cache directory.
      * <p />
      * This property is *not* persisted in any way.

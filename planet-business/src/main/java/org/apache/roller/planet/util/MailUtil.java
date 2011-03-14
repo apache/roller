@@ -31,8 +31,8 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.lang.StringUtils;
 
 public class MailUtil extends Object {
-   
-	private static Log mLogger = 
+
+	private static Log mLogger =
 		LogFactory.getFactory().getInstance(MailUtil.class);
 
     // agangolli: Incorporated suggested changes from Ken Blackler.
@@ -40,7 +40,7 @@ public class MailUtil extends Object {
     /**
      * This method is used to send a Message with a pre-defined
      * mime-type.
-     * 
+     *
      * @param from e-mail address of sender
      * @param to e-mail address(es) of recipients
      * @param subject subject of e-mail
@@ -58,7 +58,7 @@ public class MailUtil extends Object {
         String subject,
         String content,
         String mimeType
-    ) 
+    )
     throws MessagingException
     {
         Message message = new MimeMessage(session);
@@ -73,8 +73,8 @@ public class MailUtil extends Object {
 		if (to!=null)
 		{
 			InternetAddress[] sendTo = new InternetAddress[to.length];
-	
-			for (int i = 0; i < to.length; i++) 
+
+			for (int i = 0; i < to.length; i++)
 			{
 				sendTo[i] = new InternetAddress(to[i]);
 				if (mLogger.isDebugEnabled()) mLogger.debug("sending e-mail to: " + to[i]);
@@ -82,40 +82,40 @@ public class MailUtil extends Object {
 			message.setRecipients(Message.RecipientType.TO, sendTo);
 		}
 
-		if (cc != null) 
+		if (cc != null)
 		{
 			InternetAddress[] copyTo = new InternetAddress[cc.length];
 
-			for (int i = 0; i < cc.length; i++) 
+			for (int i = 0; i < cc.length; i++)
 			{
 				copyTo[i] = new InternetAddress(cc[i]);
 				if (mLogger.isDebugEnabled()) mLogger.debug("copying e-mail to: " + cc[i]);
 			}
 			message.setRecipients(Message.RecipientType.CC, copyTo);
-		}	        
+		}
 
-		if (bcc != null) 
+		if (bcc != null)
 		{
 			InternetAddress[] copyTo = new InternetAddress[bcc.length];
 
-			for (int i = 0; i < bcc.length; i++) 
+			for (int i = 0; i < bcc.length; i++)
 			{
 				copyTo[i] = new InternetAddress(bcc[i]);
 				if (mLogger.isDebugEnabled()) mLogger.debug("blind copying e-mail to: " + bcc[i]);
 			}
 			message.setRecipients(Message.RecipientType.BCC, copyTo);
-		}	        
+		}
         message.setSubject((subject == null) ? "(no subject)" : subject);
         message.setContent(content, mimeType);
-        message.setSentDate(new java.util.Date()); 
+        message.setSentDate(new java.util.Date());
 
 		// First collect all the addresses together.
         Address[] remainingAddresses = message.getAllRecipients();
         int nAddresses = remainingAddresses.length;
         boolean bFailedToSome = false;
-        
+
         SendFailedException sendex = new SendFailedException("Unable to send message to some recipients");
-        
+
 		// Try to send while there remain some potentially good addresses
 		do
         {
@@ -131,18 +131,18 @@ public class MailUtil extends Object {
 			{
 				bFailedToSome=true;
 				sendex.setNextException(ex);
-				
+
 				// Extract the remaining potentially good addresses
 				remainingAddresses=ex.getValidUnsentAddresses();
 			}
         } while (remainingAddresses!=null && remainingAddresses.length>0 && remainingAddresses.length!=nAddresses);
-        
+
         if (bFailedToSome) throw sendex;
     }
 
     /**
      * This method is used to send a Text Message.
-     * 
+     *
      * @param from e-mail address of sender
      * @param to e-mail addresses of recipients
      * @param subject subject of e-mail
@@ -158,16 +158,16 @@ public class MailUtil extends Object {
         String[] bcc,
         String subject,
         String content
-    ) 
+    )
     throws MessagingException
     {
         sendMessage(session, from, to, cc, bcc, subject, content, "text/plain; charset=utf-8");
     }
-    
+
 	/**
 	 * This method overrides the sendTextMessage to specify
 	 * one receiver and mulitple cc recipients.
-	 * 
+	 *
 	 * @param from e-mail address of sender
 	 * @param to e-mail addresses of recipients
 	 * @param subject subject of e-mail
@@ -183,7 +183,7 @@ public class MailUtil extends Object {
         String[] bcc,
 		String subject,
 		String content
-	) 
+	)
 	throws MessagingException
 	{
         String[] recipient = null;
@@ -191,12 +191,12 @@ public class MailUtil extends Object {
 
 		sendMessage(session, from, recipient, cc, bcc, subject, content, "text/plain; charset=utf-8");
 	}
-	
+
     /**
 	 * This method overrides the sendTextMessage to specify
-	 * only one receiver and cc recipients, rather than 
+	 * only one receiver and cc recipients, rather than
 	 * an array of recipients.
-     * 
+     *
      * @param from e-mail address of sender
      * @param to e-mail address of recipient
      * @param cc e-mail address of cc recipient
@@ -213,7 +213,7 @@ public class MailUtil extends Object {
         String bcc,
         String subject,
         String content
-    ) 
+    )
     throws MessagingException
     {
         String[] recipient = null;
@@ -226,10 +226,10 @@ public class MailUtil extends Object {
 
         sendMessage(session, from, recipient, copy, bcopy, subject, content, "text/plain; charset=utf-8");
     }
-    
+
     /**
      * This method is used to send a HTML Message
-     * 
+     *
      * @param from e-mail address of sender
      * @param to e-mail address(es) of recipients
      * @param subject subject of e-mail
@@ -245,16 +245,16 @@ public class MailUtil extends Object {
         String[] bcc,
         String subject,
         String content
-    ) 
+    )
     throws MessagingException
     {
         sendMessage(session, from, to, cc, bcc, subject, content, "text/html; charset=utf-8");
     }
-    
+
     /**
      * This method overrides the sendHTMLMessage to specify
      * only one sender, rather than an array of senders.
-     * 
+     *
      * @param from e-mail address of sender
      * @param to e-mail address of recipients
      * @param subject subject of e-mail
@@ -270,7 +270,7 @@ public class MailUtil extends Object {
         String bcc,
         String subject,
         String content
-    ) 
+    )
     throws MessagingException
     {
         String[] recipient = null;
@@ -283,11 +283,11 @@ public class MailUtil extends Object {
 
         sendMessage(session, from, recipient, copy, bcopy, subject, content, "text/html; charset=utf-8");
     }
-    
+
 	/**
 	 * This method overrides the sendHTMLMessage to specify
 	 * one receiver and mulitple cc recipients.
-	 * 
+	 *
 	 * @param from e-mail address of sender
 	 * @param to e-mail address of recipient
 	 * @param cc e-mail addresses of recipients
@@ -304,7 +304,7 @@ public class MailUtil extends Object {
 		String[] bcc,
 		String subject,
 		String content
-	) 
+	)
 	throws MessagingException
 	{
         String[] recipient = null;

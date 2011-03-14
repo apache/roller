@@ -29,14 +29,14 @@ import org.apache.roller.planet.pojos.Planet;
 
 /**
  * Represents a request to a weblog.
- * 
+ *
  * This is a fairly generic parsed request which is only trying to figure out
- * the elements of a weblog request which apply to all weblogs.  We try to 
- * determine the weblogHandle, if a locale was specified, and then what extra 
+ * the elements of a weblog request which apply to all weblogs.  We try to
+ * determine the weblogHandle, if a locale was specified, and then what extra
  * path info remains.  The basic format is like this ...
- * 
+ *
  * /<planetHandle>[/extra/path/info]
- * 
+ *
  * All weblog urls require a weblogHandle, so we ensure that part of the url is
  * properly specified.  locale is always optional, so we do our best to see
  * if a locale is specified.  and path info is always optional.
@@ -47,41 +47,41 @@ import org.apache.roller.planet.pojos.Planet;
  * this class and simply pick up where it left off in the parsing process.
  */
 public class PlanetRequest extends ParsedRequest {
-    
+
     private static Log log = LogFactory.getLog(PlanetRequest.class);
-    
+
     // lightweight attributes
     private String planetHandle = null;
     protected String pathInfo = null;
-    
+
     // heavyweight attributes
     private Planet planet = null;
-    
-    
+
+
     public PlanetRequest() {}
-    
-    
-    public PlanetRequest(HttpServletRequest request) 
+
+
+    public PlanetRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         super(request);
-        
+
         String path = request.getPathInfo();
-        
+
         log.debug("parsing path "+path);
-        
+
         // first, cleanup extra slashes and extract the planet handle
         if(path != null && path.trim().length() > 1) {
-            
+
             // strip off the leading slash
             path = path.substring(1);
-            
+
             // strip off trailing slash if needed
             if(path.endsWith("/")) {
                 path = path.substring(0, path.length() - 1);
             }
-            
+
             String[] pathElements = path.split("/", 2);
             if(pathElements[0].trim().length() > 0) {
                 this.planetHandle = pathElements[0];
@@ -90,7 +90,7 @@ public class PlanetRequest extends ParsedRequest {
                 throw new InvalidRequestException("not a planet request, "+
                         request.getRequestURL());
             }
-            
+
             // if there is more left of the path info then hold onto it
             if(pathElements.length == 2) {
                 pathInfo = pathElements[1];
@@ -98,14 +98,14 @@ public class PlanetRequest extends ParsedRequest {
                 pathInfo = null;
             }
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("planetHandle = "+this.planetHandle);
             log.debug("pathInfo = "+this.pathInfo);
         }
     }
-    
-    
+
+
     public String getPlanetHandle() {
         return planetHandle;
     }
@@ -115,7 +115,7 @@ public class PlanetRequest extends ParsedRequest {
     }
 
     public Planet getPlanet() {
-        
+
         if(planet == null && planetHandle != null) {
             try {
                 PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
@@ -124,14 +124,14 @@ public class PlanetRequest extends ParsedRequest {
                 log.error("Error looking up planet "+planetHandle, ex);
             }
         }
-        
+
         return planet;
     }
 
     public void setPlanet(Planet planet) {
         this.planet = planet;
     }
-    
+
     public String getPathInfo() {
         return pathInfo;
     }
@@ -139,5 +139,5 @@ public class PlanetRequest extends ParsedRequest {
     public void setPathInfo(String pathInfo) {
         this.pathInfo = pathInfo;
     }
-    
+
 }

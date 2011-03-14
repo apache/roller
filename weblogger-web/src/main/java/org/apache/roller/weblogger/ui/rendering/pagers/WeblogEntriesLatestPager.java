@@ -40,16 +40,16 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
  * A pager over a collection of recent weblog entries.
  */
 public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
-    
+
     private static Log log = LogFactory.getLog(WeblogEntriesLatestPager.class);
-    
+
     // collection for the pager
     private Map entries = null;
-    
+
     // are there more pages?
     private boolean more = false;
-    
-    
+
+
     public WeblogEntriesLatestPager(
             URLStrategy        strat,
             Weblog             weblog,
@@ -60,16 +60,16 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
             String             catPath,
             List               tags,
             int                page) {
-        
+
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
-        
+
         // initialize the pager collection
         getEntries();
     }
-    
-    
+
+
     public Map getEntries() {
-        
+
         if (entries == null) {
             entries = new TreeMap(new ReverseComparator());
             try {
@@ -85,14 +85,14 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                         locale,
                         offset,
                         length + 1);
-                
+
                 // need to wrap pojos
                 int count = 0;
                 java.util.Date key = null;
                 Iterator days = mmap.keySet().iterator();
                 while(days.hasNext()) {
                     key = (java.util.Date)days.next();
-                    
+
                     // now we need to go through each entry in a day and wrap
                     List wrapped = new ArrayList();
                     List unwrapped= (List) mmap.get(key);
@@ -103,7 +103,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                             more = true;
                         }
                     }
-                    
+
                     // done with that day, put it in the map
                     if(wrapped.size() > 0) {
                         entries.put(key, wrapped);
@@ -113,13 +113,13 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                 log.error("ERROR: getting entry month map", e);
             }
         }
-        
+
         return entries;
     }
-    
-    
+
+
     public boolean hasMoreEntries() {
         return more;
     }
-    
+
 }

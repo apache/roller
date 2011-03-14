@@ -33,7 +33,7 @@ import org.apache.roller.util.UUIDGenerator;
 
 
 /**
- * Automatic ping configuration.  An instance of this class relates a website 
+ * Automatic ping configuration.  An instance of this class relates a website
  * and ping target; it indicates that the specified ping target should be pinged
  * when the corresponding website is changed.  Pinging can be restricted to
  * changes to specific categories on the website by instances of the
@@ -70,8 +70,8 @@ public class AutoPing implements Serializable {
     private Weblog website = null;
 
     public static final long serialVersionUID = -9105985454111986435L;
-    
-    
+
+
     /**
      * Default constructor leaves all fields null. Required for bean compliance.
      */
@@ -92,7 +92,7 @@ public class AutoPing implements Serializable {
 
     /**
      * Get the unique id (primary key) of this object.
-     * @return the unique id of this object. 
+     * @return the unique id of this object.
      */
     @Id
     @Column(nullable=false,updatable=false)
@@ -106,12 +106,12 @@ public class AutoPing implements Serializable {
      */
     public void setId(String id) {
         // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+        if (id != null && id.trim().length() == 0) return;
         this.id = id;
     }
 
     /**
-     * Get the website.  Get the website whose changes should result in a ping 
+     * Get the website.  Get the website whose changes should result in a ping
      * to the ping target specified by this object.
      * @return the website.
      */
@@ -122,7 +122,7 @@ public class AutoPing implements Serializable {
     }
 
     /**
-     * Set the website.  Set the website whose changes should result in a ping 
+     * Set the website.  Set the website whose changes should result in a ping
      * to the ping target specified by this object.
      * @param website the website.
      */
@@ -159,20 +159,20 @@ public class AutoPing implements Serializable {
         buf.append("}");
         return buf.toString();
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof AutoPing != true) return false;
         AutoPing o = (AutoPing)other;
         return new EqualsBuilder()
             .append(getId(), o.getId())
-            .append(getPingTarget(), o.getPingTarget()) 
-            .append(getWebsite(), o.getWebsite()) 
+            .append(getPingTarget(), o.getPingTarget())
+            .append(getWebsite(), o.getWebsite())
             .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
-    
+
 }

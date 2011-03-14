@@ -44,9 +44,9 @@ import org.apache.roller.util.DateUtil;
  * Calendar model for calendar intended for use on view-weblog page.
  */
 public class WeblogCalendarModel implements CalendarModel {
-    
+
     private static Log log = LogFactory.getLog(WeblogCalendarModel.class);
-    
+
     protected Map               monthMap;
     protected Date              day;
     protected String            cat = null;
@@ -55,64 +55,64 @@ public class WeblogCalendarModel implements CalendarModel {
     protected Calendar          calendar = null;
     protected Weblog       weblog = null;
     protected Date              prevMonth = null; // prev month or null if none
-    protected Date              nextMonth = null; // next month or null if none    
+    protected Date              nextMonth = null; // next month or null if none
     protected WeblogPageRequest pageRequest = null;
-    
-    
+
+
     public WeblogCalendarModel(WeblogPageRequest pRequest, String catArgument) {
-        
+
         this.pageRequest = pRequest;
         try {
-            this.weblog = pageRequest.getWeblog();            
+            this.weblog = pageRequest.getWeblog();
             if(weblog == null) {
                 throw new WebloggerException("unable to lookup weblog: "+
                         pageRequest.getWeblogHandle());
             }
-            pageLink = pageRequest.getWeblogPageName();            
+            pageLink = pageRequest.getWeblogPageName();
 //            day = DateUtil.parseWeblogURLDateString(pageRequest.getWeblogDate(),
 //                    weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             day = parseWeblogURLDateString(pageRequest.getWeblogDate(),
                   weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             locale = pageRequest.getLocale();
-            
+
             // Category method argument overrides category from URL
             if (catArgument != null) {
                 cat = catArgument;
             } else if (pageRequest.getWeblogCategoryName() != null) {
                 cat = pageRequest.getWeblogCategoryName();
             }
-            
+
             initDay(day);
 
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
             log.debug("ERROR: initializing calendar", e);
         }
-        
+
     }
-    
-    
+
+
     protected void initDay(Date month) {
         calendar = Calendar.getInstance(
                 weblog.getTimeZoneInstance(),
                 weblog.getLocaleInstance());
-        
+
         Calendar cal = (Calendar)calendar.clone();
         Date startDate = DateUtil.getStartOfMonth(month,cal);
         Date endDate = DateUtil.getEndOfMonth(month,cal);
-        
+
         // Determine previous non-empty month
         // Get entries before startDate, using category restriction limit 1
         // Use entry's date as previous month
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List prevEntries = mgr.getWeblogEntries(
-                    
+
                     weblog,                    // website
                     null,                      // user
                     null,                      // startDate
                     // since we need an entry.pubTime<startDate, but the method use <=
-                    new Date(startDate.getTime()-1),                 // endDate 
+                    new Date(startDate.getTime()-1),                 // endDate
                     cat,                       // cat
                     null,WeblogEntry.PUBLISHED, // status
                     null,                      // text
@@ -127,19 +127,19 @@ public class WeblogCalendarModel implements CalendarModel {
         } catch (WebloggerException e) {
             log.error("ERROR determining previous non-empty month");
         }
-        
+
         // Determine next non-empty month
         // Get entries after endDate, using category restriction limit 1
         // Use entry's date as next month
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List nextEntries = mgr.getWeblogEntries(
-                    
+
                     weblog,                    // website
                     null,                      // user
                     // since we need an entry.pubTime>endDate, but the method use >=
                     new Date(endDate.getTime()+1),                   // startDate
-                    null,                      // endDate 
+                    null,                      // endDate
                     cat,                       // cat
                     null,WeblogEntry.PUBLISHED, // status
                     null,                      // text
@@ -153,23 +153,23 @@ public class WeblogCalendarModel implements CalendarModel {
             }
         } catch (WebloggerException e) {
             log.error("ERROR determining next non-empty month");
-        }  
-        
+        }
+
         // Fix for ROL-840 Don't include future entries
         Date now = new Date();
         if (endDate.after(now)) {
         	endDate = now;
         	nextMonth = null;
         }
-        
+
         loadWeblogEntries(startDate, endDate, cat);
     }
-    
+
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             monthMap = mgr.getWeblogEntryStringMap(
-                    
+
                     weblog,                  // website
                     startDate,                 // startDate
                     endDate,                   // endDate
@@ -182,18 +182,18 @@ public class WeblogCalendarModel implements CalendarModel {
             monthMap = new HashMap();
         }
     }
-    
+
     public void setDay(String month) throws Exception {
         SimpleDateFormat fmt = DateUtil.get8charDateFormat();
         fmt.setCalendar(getCalendar());
         ParsePosition pos = new ParsePosition(0);
         initDay( fmt.parse( month, pos ) );
     }
-    
+
     public Date getDay() {
         return (Date)day.clone();
     }
-    
+
     public String getParameterValue(Date day) {
         return (String)monthMap.get( day );
     }
@@ -204,8 +204,8 @@ public class WeblogCalendarModel implements CalendarModel {
     	format.setCalendar(cal);
     	return DateUtil.format(date,format);
     }
-    
-    
+
+
     // convenience method returns 6 char month stamp YYYYMM
     public static String format6chars(Date date, Calendar cal) {
     	SimpleDateFormat format = DateUtil.get6charDateFormat();
@@ -217,10 +217,10 @@ public class WeblogCalendarModel implements CalendarModel {
      * Parse data as either 6-char or 8-char format.
      */
     public static Date parseWeblogURLDateString(String dateString, TimeZone tz, Locale locale) {
-        
+
         Date ret = new Date();
         Calendar cal = Calendar.getInstance(tz,locale);
-        
+
         if (dateString != null
                 && dateString.length()==8
                 && StringUtils.isNumeric(dateString) ) {
@@ -228,7 +228,7 @@ public class WeblogCalendarModel implements CalendarModel {
             char8DateFormat.setCalendar(cal);
             ParsePosition pos = new ParsePosition(0);
             ret = char8DateFormat.parse(dateString, pos);
-            
+
             // make sure the requested date is not in the future
 //            Date today = null;
 //            Calendar todayCal = Calendar.getInstance();
@@ -240,7 +240,7 @@ public class WeblogCalendarModel implements CalendarModel {
             if(ret.after(today)) {
                 ret = today;
             }
-            
+
         } else if(dateString != null
                 && dateString.length()==6
                 && StringUtils.isNumeric(dateString)) {
@@ -248,7 +248,7 @@ public class WeblogCalendarModel implements CalendarModel {
             char6DateFormat.setCalendar(cal);
             ParsePosition pos = new ParsePosition(0);
             ret = char6DateFormat.parse(dateString, pos);
-            
+
             // make sure the requested date is not in the future
 //            Calendar todayCal = Calendar.getInstance();
 //            todayCal = Calendar.getInstance(tz, locale);
@@ -259,10 +259,10 @@ public class WeblogCalendarModel implements CalendarModel {
                 ret = today;
             }
         }
-        
+
         return ret;
     }
-    
+
     /**
      * Create URL for use on view-weblog page
      * @param day       Day for URL or null if no entries on that day
@@ -292,15 +292,15 @@ public class WeblogCalendarModel implements CalendarModel {
         }
         return url;
     }
-    
+
     public String getContent(Date day) {
         return null;
     }
-    
+
     public Calendar getCalendar() {
         return (Calendar)calendar.clone();
     }
-    
+
     public Date getNextMonth() {
         return nextMonth;
     }
@@ -308,7 +308,7 @@ public class WeblogCalendarModel implements CalendarModel {
     public Date getPrevMonth() {
         return prevMonth;
     }
-       
+
     public String computeNextMonthUrl() {
         return computeUrl(nextMonth, true, true);
     }
@@ -316,7 +316,7 @@ public class WeblogCalendarModel implements CalendarModel {
     public String computePrevMonthUrl() {
         return computeUrl(prevMonth, true, true);
     }
-    
+
     public String computeTodayMonthUrl() {
     	String url;
         if (pageLink == null) { // create default URL
@@ -326,5 +326,5 @@ public class WeblogCalendarModel implements CalendarModel {
         }
     	return url;
     }
-    
+
 }

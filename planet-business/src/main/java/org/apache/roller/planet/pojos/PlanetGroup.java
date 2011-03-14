@@ -33,9 +33,9 @@ import org.apache.roller.util.UUIDGenerator;
  * @hibernate.class lazy="true" table="rag_group"
  */
 public class PlanetGroup implements Serializable, Comparable {
-    
+
     transient private String[] catArray = null;
-    
+
     // attributes
     private String id = UUIDGenerator.generateUUID();
     private String handle = null;
@@ -43,25 +43,25 @@ public class PlanetGroup implements Serializable, Comparable {
     private String description = null;
     private int maxPageEntries = 45;
     private int maxFeedEntries = 45;
-    
+
     // is this really used?
     private String categoryRestriction = null;
-    
+
     // associations
     private Planet planet = null;
     private Set subscriptions = new TreeSet();
-    
-    
+
+
     public PlanetGroup() {}
-    
+
     public PlanetGroup(Planet planet, String handle, String title, String desc) {
         this.planet = planet;
         this.handle = handle;
         this.title = title;
         this.description = desc;
     }
-    
-    
+
+
     /**
      * For comparing groups and sorting, ordered by Title.
      */
@@ -69,105 +69,105 @@ public class PlanetGroup implements Serializable, Comparable {
         PlanetGroup other = (PlanetGroup) o;
         return getTitle().compareTo(other.getTitle());
     }
-    
-    
+
+
     /**
      * @hibernate.id column="id" generator-class="assigned"
      */
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+
     /**
      * @hibernate.property column="handle" non-null="false" unique="false"
      */
     public String getHandle() {
         return handle;
     }
-    
+
     public void setHandle(String handle) {
         this.handle = handle;
     }
-    
-    
+
+
     /**
      * @hibernate.property column="title" non-null="false" unique="false"
      */
     public String getTitle() {
         return title;
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
-    
-    
+
+
     /**
      * @hibernate.property column="description" non-null="false" unique="false"
      */
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
+
+
     /**
      * @hibernate.property column="max_feed_entries" non-null="false" unique="false"
      */
     public int getMaxFeedEntries() {
         return maxFeedEntries;
     }
-    
+
     public void setMaxFeedEntries(int maxFeedEntries) {
         this.maxFeedEntries = maxFeedEntries;
     }
-    
-    
+
+
     /**
      * @hibernate.property column="max_page_entries" non-null="false" unique="false"
      */
     public int getMaxPageEntries() {
         return maxPageEntries;
     }
-    
+
     public void setMaxPageEntries(int maxPageEntries) {
         this.maxPageEntries = maxPageEntries;
     }
-    
-    
+
+
     /**
      * @hibernate.property column="cat_restriction" non-null="false" unique="false"
      */
     public String getCategoryRestriction() {
         return categoryRestriction;
     }
-    
+
     public void setCategoryRestriction(String categoryRestriction) {
         this.categoryRestriction = categoryRestriction;
         catArray = null;
     }
-    
-    
+
+
     /**
      * @hibernate.many-to-one column="planet_id" cascade="none" non-null="false"
      */
     public Planet getPlanet() {
         return planet;
     }
-    
+
     public void setPlanet(Planet planet) {
         this.planet = planet;
     }
-    
-    
+
+
     /**
      * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="none" sort="natural"
      * @hibernate.collection-key column="group_id"
@@ -176,12 +176,12 @@ public class PlanetGroup implements Serializable, Comparable {
     public Set getSubscriptions() {
         return subscriptions;
     }
-    
+
     public void setSubscriptions(Set subscriptions) {
         this.subscriptions = subscriptions;
     }
-    
-    
+
+
     /**
      * Return a list of the most recent 10 entries from this group.
      */
@@ -193,8 +193,8 @@ public class PlanetGroup implements Serializable, Comparable {
             return Collections.EMPTY_LIST;
         }
     }
-    
-    
+
+
     /**
      * Returns true if entry is qualified for inclusion in this group.
      */
@@ -206,19 +206,19 @@ public class PlanetGroup implements Serializable, Comparable {
         }
         return  false;
     }
-    
-    
+
+
     private String[] getCategoryRestrictionAsArray() {
         if (catArray == null && categoryRestriction != null) {
             StringTokenizer toker = new StringTokenizer(categoryRestriction,",");
             catArray = new String[toker.countTokens()];
             int i = 0;
-            
+
             while (toker.hasMoreTokens()) {
                 catArray[i++] = toker.nextToken();
             }
         }
         return catArray;
     }
-    
+
 }

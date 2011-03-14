@@ -25,8 +25,8 @@ import java.io.InputStream;
  * Represents a static resource of some kind.
  */
 public interface Resource {
-    
-    
+
+
     /**
      * The short name of this resource.
      * i.e. "some.jpg"
@@ -34,8 +34,8 @@ public interface Resource {
      * @return The short name for the resource.
      */
     public String getName();
-    
-    
+
+
     /**
      * The path to this resource, relative to its container.
      * i.e. "images/some.jpg"
@@ -43,29 +43,29 @@ public interface Resource {
      * @return The path to the resource, relative to its container.
      */
     public String getPath();
-    
-    
+
+
     /**
      * The last-modified time for this resource.
      *
      * @return The last time the resource changed, as a long value.
      */
     public long getLastModified();
-    
-    
+
+
     /**
      * The length of this resource, in bytes.
      *
      * @return The length of the resource in bytes.
      */
     public long getLength();
-    
-    
+
+
     /**
      * An InputStream that the resource can be read from.
      *
      * @return an InputStream for the resource.
      */
     public InputStream getInputStream();
-    
+
 }

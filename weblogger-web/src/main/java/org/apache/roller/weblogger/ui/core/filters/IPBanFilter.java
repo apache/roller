@@ -38,22 +38,22 @@ import org.apache.roller.weblogger.util.IPBanList;
  * @web.filter name="IPBanFilter"
  */
 public class IPBanFilter implements Filter {
-    
+
     private static Log log = LogFactory.getLog(IPBanFilter.class);
-    
-    
+
+
     public void init(FilterConfig filterConfig) throws ServletException {
-        
+
         log.info("INIT IPBanFilter");
     }
-    
-    
+
+
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        
+
         // check if client is allowed
         if(IPBanList.getInstance().isBanned(request.getRemoteAddr())) {
             log.debug("BANNED "+request.getRemoteAddr());
@@ -63,8 +63,8 @@ public class IPBanFilter implements Filter {
             chain.doFilter(request, response);
         }
     }
-    
-    
+
+
     public void destroy() {}
-    
+
 }

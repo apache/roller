@@ -1,12 +1,12 @@
 /*
  * Copyright 1999,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ import org.apache.commons.lang.math.NumberUtils;
  *             String to append to end of truncated string.
  * </dd>
  * </dl>
- * 
+ *
  * @author timster@mac.com
  */
 public class TruncateNicelyTag extends StringTagSupport {
@@ -93,10 +93,10 @@ public class TruncateNicelyTag extends StringTagSupport {
 	}
 
     public String changeString(String text) throws JspException {
-					
+
 		int l = NumberUtils.stringToInt(lower);
 		int u = NumberUtils.stringToInt(upper);
-	
+
 		return StringW.truncateNicely(text, l, u, this.appendToEnd);
     }
 

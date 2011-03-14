@@ -34,44 +34,44 @@ import org.apache.roller.weblogger.util.Utilities;
  * A bean for managing comments.
  */
 public class GlobalCommentManagementBean {
-    
+
     private String searchString = null;
     private String startDateString = null;
     private String endDateString = null;
     private String spamString = "ALL";
     private String approvedString = "ALL";
     private int page = 0;
-    
+
     private String[] spamComments = new String[0];
     private String[] deleteComments = new String[0];
-    
+
     // Limit updates to just this set of comma-separated IDs
     private String ids = null;
-    
-    
+
+
     public void loadCheckboxes(List comments) {
-        
+
         List<String> allComments = new ArrayList();
         List<String> spamList = new ArrayList();
-        
+
         Iterator it = comments.iterator();
         while (it.hasNext()) {
             WeblogEntryComment comment = (WeblogEntryComment)it.next();
             allComments.add(comment.getId());
-            
+
             if (WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                 spamList.add(comment.getId());
             }
         }
-        
+
         String[] idArray = (String[]) allComments.toArray(new String[allComments.size()]);
         this.setIds(Utilities.stringArrayToString(idArray,","));
-        
+
         spamComments = (String[])spamList.toArray(
             new String[spamList.size()]);
     }
-    
-    
+
+
     public String getStatus() {
         if (approvedString.equals("ONLY_APPROVED")) {
             return WeblogEntryComment.APPROVED;
@@ -90,7 +90,7 @@ public class GlobalCommentManagementBean {
             return null;
         }
     }
-    
+
     public Date getStartDate() {
         if(!StringUtils.isEmpty(getStartDateString())) try {
             DateFormat df = new SimpleDateFormat("MM/dd/yy");
@@ -109,36 +109,36 @@ public class GlobalCommentManagementBean {
         }
         return null;
     }
-    
-    
+
+
     public String getSpamString() {
         return spamString;
     }
-    
+
     public void setSpamString(String spamString) {
         this.spamString = spamString;
     }
-    
+
     public String getPendingString() {
         return approvedString;
     }
-    
+
     public void setPendingString(String pendingString) {
         this.approvedString = pendingString;
     }
-    
+
     public String getIds() {
         return ids;
     }
-    
+
     public void setIds(String ids) {
         this.ids = ids;
     }
-    
+
     public String getSearchString() {
         return searchString;
     }
-    
+
     public void setSearchString(String searchString) {
         this.searchString = searchString;
     }
@@ -190,5 +190,5 @@ public class GlobalCommentManagementBean {
     public void setEndDateString(String endDateString) {
         this.endDateString = endDateString;
     }
-    
+
 }

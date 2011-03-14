@@ -73,7 +73,7 @@ public class PageServlet extends HttpServlet {
     private boolean excludeOwnerPages = false;
     private WeblogPageCache weblogPageCache = null;
     private SiteWideCache siteWideCache = null;
-    
+
     // Development theme reloading
 	Boolean themeReload = false;
 
@@ -110,7 +110,7 @@ public class PageServlet extends HttpServlet {
                 log.error("Error parsing referrer.robotCheck.userAgentPattern value '" + robotPatternStr + "'.  Robots will not be filtered. ", e);
             }
         }
-        
+
         // Development theme reloading
 		themeReload = WebloggerConfig.getBooleanProperty("themes.reload.mode");
     }
@@ -188,7 +188,7 @@ public class PageServlet extends HttpServlet {
         } else {
             cacheKey = weblogPageCache.generateKey(pageRequest);
         }
-        
+
         // Development only. Reload if theme has been modified
 		if (themeReload) {
 			try {
@@ -200,7 +200,7 @@ public class PageServlet extends HttpServlet {
 					} else {
 						weblogPageCache.clear();
 					}
-					I18nMessages.reloadBundle(weblog.getLocaleInstance()); 
+					I18nMessages.reloadBundle(weblog.getLocaleInstance());
 				}
 
 			} catch (Exception ex) {

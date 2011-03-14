@@ -26,19 +26,19 @@ package org.apache.roller.weblogger.util;
  * in postings via enclosures.
  */
 public class MediacastResource {
-    
+
     private String url = null;
     private String contentType = null;
     private long length = 0;
-    
-    
+
+
     public MediacastResource(String u, String c, long l) {
         this.setUrl(u);
         this.setContentType(c);
         this.setLength(l);
     }
 
-    
+
     public String getUrl() {
         return url;
     }
@@ -62,16 +62,16 @@ public class MediacastResource {
     public void setLength(long length) {
         this.length = length;
     }
-    
-    
+
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        
+
         buf.append("url = ").append(getUrl()).append("\n");
         buf.append("contentType = ").append(getContentType()).append("\n");
         buf.append("length = ").append(getLength()).append("\n");
-        
+
         return buf.toString();
     }
-    
+
 }

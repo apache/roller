@@ -25,7 +25,7 @@ import org.apache.roller.planet.pojos.Subscription;
 /**
  * A FeedUpdater is responsible for processing the updates of all Subscriptions
  * and their entries.  It is intended to combine the use of the FeedFetcher for
- * pulling fresh feed data with the PlanetManager for updating and persisting 
+ * pulling fresh feed data with the PlanetManager for updating and persisting
  * the updated data.
  *
  * NOTE: it must be explicitly stated that the operations of the FeedUpdater are
@@ -33,33 +33,33 @@ import org.apache.roller.planet.pojos.Subscription;
  * So callers of these methods should bear that in mind when using this class.
  */
 public interface FeedUpdater {
-    
+
     /**
      * Update a single Subscription.
      *
      * This method takes in an existing Subscription and updates it with
-     * the data from the subscriptions source after fetching an updated version 
+     * the data from the subscriptions source after fetching an updated version
      * of the subscription.
      *
      * @param subscription The PlanetSubscription to be updated.
      * @throws FetcherException If there is an error updating the subscription.
      */
     public void updateSubscription(Subscription sub) throws UpdaterException;
-    
-    
+
+
     /**
      * Update all Subscriptions in the system.
      *
      * @throws UpdaterException If there is an error during the update and the operation cannot continue.
      */
     public void updateSubscriptions() throws UpdaterException;
-    
-    
+
+
     /**
      * Update all Subscriptions that are part of the specified group.
      *
      * @throws UpdaterException If there is an error during the update and the operation cannot continue.
      */
     public void updateSubscriptions(PlanetGroup group) throws UpdaterException;
-    
+
 }

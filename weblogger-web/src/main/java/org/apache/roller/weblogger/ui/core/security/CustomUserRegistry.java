@@ -40,7 +40,7 @@ import org.apache.roller.weblogger.pojos.User;
  *
  */
 public class CustomUserRegistry {
-    
+
     private static final Log log = LogFactory.getLog(CustomUserRegistry.class);
 
     private static final String DEFAULT_SNAME_LDAP_ATTRIBUTE = "screenname";
@@ -49,7 +49,7 @@ public class CustomUserRegistry {
     private static final String DEFAULT_EMAIL_LDAP_ATTRIBUTE = "mail";
     private static final String DEFAULT_LOCALE_LDAP_ATTRIBUTE = "locale";
     private static final String DEFAULT_TIMEZONE_LDAP_ATTRIBUTE = "timezone";
-    
+
     private static final String SNAME_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.screenname";
     private static final String UID_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.uid";
     private static final String NAME_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.name";
@@ -64,9 +64,9 @@ public class CustomUserRegistry {
             log.info("SSO is not enabled. Skipping CustomUserRegistry functionality.");
             return null;
         }
-        
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
+
         User ud = new User();
         // setting default
         ud.setId(null);
@@ -97,7 +97,7 @@ public class CustomUserRegistry {
 
             timezone = getRequestAttribute(request, WebloggerConfig.getProperty(TIMEZONE_LDAP_PROPERTY, DEFAULT_TIMEZONE_LDAP_ATTRIBUTE));
 
- 
+
             if (userName == null && fullName == null && screenName == null &&
                     email == null && locale == null && timezone == null) {
 
@@ -107,26 +107,26 @@ public class CustomUserRegistry {
                 enabled = true;
             }
         } else {
-        
+
             Object oPrincipal = authentication.getPrincipal();
-        
+
             if(oPrincipal == null) {
                 log.warn("Principal is null. Skipping auto-registration.");
                 return null;
             }
-        
+
             if (!(oPrincipal instanceof UserDetails)) {
                 log.warn("Unsupported Principal type in Authentication. Skipping auto-registration.");
                 return null;
             }
-        
+
             UserDetails userDetails = (UserDetails) oPrincipal;
-        
+
             userName = userDetails.getUsername();
             password = userDetails.getPassword();
             enabled = userDetails.isEnabled();
-        
-        
+
+
             if(userDetails instanceof RollerUserDetails) {
                 RollerUserDetails rollerDetails = (RollerUserDetails) userDetails;
 
@@ -135,7 +135,7 @@ public class CustomUserRegistry {
                 email = rollerDetails.getEmailAddress();
                 locale = rollerDetails.getLocale();
                 timezone = rollerDetails.getTimeZone();
-            
+
             } else if(userDetails instanceof LdapUserDetails) {
                 LdapUserDetails ldapDetails = (LdapUserDetails) userDetails;
 
@@ -145,7 +145,7 @@ public class CustomUserRegistry {
                 email = getLdapAttribute(attributes, WebloggerConfig.getProperty(EMAIL_LDAP_PROPERTY, DEFAULT_EMAIL_LDAP_ATTRIBUTE));
                 locale = getLdapAttribute(attributes, WebloggerConfig.getProperty(LOCALE_LDAP_PROPERTY, DEFAULT_LOCALE_LDAP_ATTRIBUTE));
                 timezone = getLdapAttribute(attributes, WebloggerConfig.getProperty(TIMEZONE_LDAP_PROPERTY, DEFAULT_TIMEZONE_LDAP_ATTRIBUTE));
-            
+
             }
         }
 
@@ -170,29 +170,29 @@ public class CustomUserRegistry {
 
         return ud;
     }
-    
+
     private static String getLdapAttribute(Attributes attributes, String name) {
         if(attributes == null) {
             return null;
         }
-        
+
         Attribute attribute = attributes.get(name);
-        
+
         if(attribute == null) {
             return null;
         }
-        
+
         Object oValue  = null;
         try {
             oValue = attribute.get();
         } catch (NamingException e) {
             return null;
         }
-        
+
         if(oValue == null) {
             return null;
         }
-        
+
         return oValue.toString();
     }
 
@@ -203,7 +203,7 @@ public class CustomUserRegistry {
         if (attrObj instanceof String) {
             attr = (String)attrObj;
         } else if (attrObj instanceof Set) {
-            Set attrSet = (Set)attrObj;           
+            Set attrSet = (Set)attrObj;
             if (!attrSet.isEmpty()) {
                 attr = (String)attrSet.iterator().next();
             }
@@ -211,5 +211,5 @@ public class CustomUserRegistry {
 
         return attr;
     }
-    
+
 }

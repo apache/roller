@@ -42,48 +42,48 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 public class BootstrapFilter implements Filter {
     private ServletContext context = null;
     private static Log log = LogFactory.getLog(BootstrapFilter.class);
-    
-    
+
+
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        
+
         log.debug("Entered "+request.getRequestURI());
-        
+
         if ("auto".equals(WebloggerConfig.getProperty("installation.type"))
-                && !WebloggerFactory.isBootstrapped() 
+                && !WebloggerFactory.isBootstrapped()
                 && !isInstallUrl(request.getRequestURI())) {
-                    
+
             log.debug("Forwarding to install page");
-            
+
             // we doing an install, so forward to installer
             RequestDispatcher rd = context.getRequestDispatcher(
                 "/roller-ui/install/install.rol");
             rd.forward(req, res);
-            
+
         } else {
             chain.doFilter(request, response);
         }
-        
+
         log.debug("Exiting "+request.getRequestURI());
     }
-    
-    
+
+
     private boolean isInstallUrl(String uri) {
         return (uri != null && (
                    uri.endsWith("bootstrap.rol")
-                || uri.endsWith("create.rol") 
-                || uri.endsWith("upgrade.rol") 
-                || uri.endsWith(".js") 
+                || uri.endsWith("create.rol")
+                || uri.endsWith("upgrade.rol")
+                || uri.endsWith(".js")
                 || uri.endsWith(".css")));
     }
-    
-    
+
+
     public void init(FilterConfig filterConfig) throws ServletException {
         context = filterConfig.getServletContext();
     }
-    
-    public void destroy() {}    
+
+    public void destroy() {}
 }

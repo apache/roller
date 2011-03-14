@@ -56,11 +56,11 @@ import org.apache.roller.weblogger.util.I18nUtils;
  * @author David M Johnson
  */
 public class Weblog implements Serializable {
-    
+
     public static final long serialVersionUID = 206437645033737127L;
-    
+
     private static Log log = LogFactory.getLog(Weblog.class);
-    
+
     // Simple properties
     private String  id               = UUIDGenerator.generateUUID();
     private String  handle           = null;
@@ -94,17 +94,17 @@ public class Weblog implements Serializable {
     private String  iconPath         = null;
     private String  about            = null;
     private String  creator          = null;
-    
+
     // Associated objects
     private List           permissions = new ArrayList();
     private WeblogCategory bloggerCategory = null;
     private WeblogCategory defaultCategory = null;
-    
+
     private Map initializedPlugins = null;
-    
-    public Weblog() {    
+
+    public Weblog() {
     }
-    
+
     public Weblog(
             String handle,
             String creator,
@@ -115,7 +115,7 @@ public class Weblog implements Serializable {
             String editorTheme,
             String locale,
             String timeZone) {
-        
+
         this.handle = handle;
         this.creator = creator;
         this.name = name;
@@ -126,7 +126,7 @@ public class Weblog implements Serializable {
         this.locale = locale;
         this.timeZone = timeZone;
     }
-    
+
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
@@ -147,16 +147,16 @@ public class Weblog implements Serializable {
         if (other instanceof Weblog != true) return false;
         Weblog o = (Weblog)other;
         return new EqualsBuilder()
-            .append(getHandle(), o.getHandle()) 
+            .append(getHandle(), o.getHandle())
             .isEquals();
     }
-    
-    public int hashCode() { 
+
+    public int hashCode() {
         return new HashCodeBuilder()
             .append(getHandle())
             .toHashCode();
-    } 
-    
+    }
+
     /**
      * @hibernate.bag lazy="true" inverse="true" cascade="delete"
      * @hibernate.collection-key column="website_id"
@@ -169,8 +169,8 @@ public class Weblog implements Serializable {
     public void setPermissions(List perms) {
         permissions = perms;
     }*/
-    
-    
+
+
     /**
      * Get the Theme object in use by this weblog, or null if no theme selected.
      */
@@ -182,44 +182,44 @@ public class Weblog implements Serializable {
         } catch (WebloggerException ex) {
             log.error("Error getting theme for weblog - "+getHandle(), ex);
         }
-        
+
         // TODO: maybe we should return a default theme in this case?
         return null;
     }
-    
-    
+
+
     /**
      * Lookup the default page for this website.
      */
     public ThemeTemplate getDefaultPage() throws WebloggerException {
-        
+
         // look for the page in our Theme
         Theme weblogTheme = getTheme();
         if(weblogTheme != null) {
             return weblogTheme.getDefaultTemplate();
         }
-        
+
         return null;
     }
-    
-    
+
+
     /**
      * Id of the Website.
      *
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.id column="id"
-     *  generator-class="assigned"  
+     *  generator-class="assigned"
      */
     public String getId() {
         return this.id;
     }
-    
+
     /** @ejb:persistent-field */
     public void setId(String id) {
         this.id = id;
     }
-    
+
     /**
      * Short URL safe string that uniquely identifies the website.
      * @ejb:persistent-field
@@ -229,12 +229,12 @@ public class Weblog implements Serializable {
     public String getHandle() {
         return this.handle;
     }
-    
+
     /** @ejb:persistent-field */
     public void setHandle(String handle) {
         this.handle = handle;
     }
-    
+
     /**
      * Name of the Website.
      *
@@ -245,12 +245,12 @@ public class Weblog implements Serializable {
     public String getName() {
         return this.name;
     }
-    
+
     /** @ejb:persistent-field */
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * Description
      *
@@ -261,12 +261,12 @@ public class Weblog implements Serializable {
     public String getDescription() {
         return this.description;
     }
-    
+
     /** @ejb:persistent-field */
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     /**
      * Original creator of website.
      * @roller.wrapPojoMethod type="pojo"
@@ -279,7 +279,7 @@ public class Weblog implements Serializable {
         }
         return null;
     }
-    
+
     /**
      * Username of original creator of website.
      * @roller.wrapPojoMethod type="pojo"
@@ -287,11 +287,11 @@ public class Weblog implements Serializable {
     public String getCreatorUserName() {
         return creator;
     }
-    
+
     public void setCreatorUserName(String creatorUserName) {
         creator = creatorUserName;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -300,14 +300,14 @@ public class Weblog implements Serializable {
     public String getDefaultPageId() {
         return this.defaultPageId;
     }
-    
+
     /**
      * @ejb:persistent-field
      */
     public void setDefaultPageId(String defaultPageId) {
         this.defaultPageId = defaultPageId;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @deprecated
@@ -317,7 +317,7 @@ public class Weblog implements Serializable {
     public String getWeblogDayPageId() {
         return this.weblogDayPageId;
     }
-    
+
     /**
      * @deprecated
      * @ejb:persistent-field
@@ -325,7 +325,7 @@ public class Weblog implements Serializable {
     public void setWeblogDayPageId(String weblogDayPageId) {
         this.weblogDayPageId = weblogDayPageId;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -334,12 +334,12 @@ public class Weblog implements Serializable {
     public Boolean getEnableBloggerApi() {
         return this.enableBloggerApi;
     }
-    
+
     /** @ejb:persistent-field */
     public void setEnableBloggerApi(Boolean enableBloggerApi) {
         this.enableBloggerApi = enableBloggerApi;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -348,12 +348,12 @@ public class Weblog implements Serializable {
     public WeblogCategory getBloggerCategory() {
         return bloggerCategory;
     }
-    
+
     /** @ejb:persistent-field */
     public void setBloggerCategory(WeblogCategory bloggerCategory) {
         this.bloggerCategory = bloggerCategory;
     }
-    
+
     /**
      * By default,the default category for a weblog is the root and all macros
      * work with the top level categories that are immediately under the root.
@@ -366,12 +366,12 @@ public class Weblog implements Serializable {
     public WeblogCategory getDefaultCategory() {
         return defaultCategory;
     }
-    
+
     /** @ejb:persistent-field */
     public void setDefaultCategory(WeblogCategory defaultCategory) {
         this.defaultCategory = defaultCategory;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -380,12 +380,12 @@ public class Weblog implements Serializable {
     public String getEditorPage() {
         return this.editorPage;
     }
-    
+
     /** @ejb:persistent-field */
     public void setEditorPage(String editorPage) {
         this.editorPage = editorPage;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -394,12 +394,12 @@ public class Weblog implements Serializable {
     public String getBlacklist() {
         return this.blacklist;
     }
-    
+
     /** @ejb:persistent-field */
     public void setBlacklist(String blacklist) {
         this.blacklist = blacklist;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -408,12 +408,12 @@ public class Weblog implements Serializable {
     public Boolean getAllowComments() {
         return this.allowComments;
     }
-    
+
     /** @ejb:persistent-field */
     public void setAllowComments(Boolean allowComments) {
         this.allowComments = allowComments;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -422,12 +422,12 @@ public class Weblog implements Serializable {
     public Boolean getDefaultAllowComments() {
         return defaultAllowComments;
     }
-    
+
     /** @ejb:persistent-field */
     public void setDefaultAllowComments(Boolean defaultAllowComments) {
         this.defaultAllowComments = defaultAllowComments;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -436,12 +436,12 @@ public class Weblog implements Serializable {
     public int getDefaultCommentDays() {
         return defaultCommentDays;
     }
-    
+
     /** @ejb:persistent-field */
     public void setDefaultCommentDays(int defaultCommentDays) {
         this.defaultCommentDays = defaultCommentDays;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -450,12 +450,12 @@ public class Weblog implements Serializable {
     public Boolean getModerateComments() {
         return moderateComments;
     }
-    
+
     /** @ejb:persistent-field */
     public void setModerateComments(Boolean moderateComments) {
         this.moderateComments = moderateComments;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -464,12 +464,12 @@ public class Weblog implements Serializable {
     public Boolean getEmailComments() {
         return this.emailComments;
     }
-    
+
     /** @ejb:persistent-field */
     public void setEmailComments(Boolean emailComments) {
         this.emailComments = emailComments;
     }
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -478,12 +478,12 @@ public class Weblog implements Serializable {
     public String getEmailFromAddress() {
         return this.emailFromAddress;
     }
-    
+
     /** @ejb:persistent-field */
     public void setEmailFromAddress(String emailFromAddress) {
         this.emailFromAddress = emailFromAddress;
     }
-    
+
     /**
      * @ejb:persistent-field
      * @roller.wrapPojoMethod type="simple"
@@ -492,12 +492,12 @@ public class Weblog implements Serializable {
     public String getEmailAddress() {
         return this.emailAddress;
     }
-    
+
     /** @ejb:persistent-field */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
-    
+
     /**
      * EditorTheme of the Website.
      *
@@ -508,12 +508,12 @@ public class Weblog implements Serializable {
     public String getEditorTheme() {
         return this.editorTheme;
     }
-    
+
     /** @ejb:persistent-field */
     public void setEditorTheme(String editorTheme) {
         this.editorTheme = editorTheme;
     }
-    
+
     /**
      * Locale of the Website.
      *
@@ -524,12 +524,12 @@ public class Weblog implements Serializable {
     public String getLocale() {
         return this.locale;
     }
-    
+
     /** @ejb:persistent-field */
     public void setLocale(String locale) {
         this.locale = locale;
     }
-    
+
     /**
      * Timezone of the Website.
      *
@@ -540,12 +540,12 @@ public class Weblog implements Serializable {
     public String getTimeZone() {
         return this.timeZone;
     }
-    
+
     /** @ejb:persistent-field */
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
-    
+
     /**
      * @ejb:persistent-field
      * @hibernate.property column="datecreated" non-null="true" unique="false"
@@ -566,7 +566,7 @@ public class Weblog implements Serializable {
             dateCreated = null;
         }
     }
-    
+
     /**
      * Comma-delimited list of user's default Plugins.
      *
@@ -577,18 +577,18 @@ public class Weblog implements Serializable {
     public String getDefaultPlugins() {
         return defaultPlugins;
     }
-    
+
     /** @ejb:persistent-field */
     public void setDefaultPlugins(String string) {
         defaultPlugins = string;
     }
-    
-    
+
+
     /**
      * Set bean properties based on other bean.
      */
     public void setData(Weblog other) {
-        
+
         this.setId(other.getId());
         this.setName(other.getName());
         this.setHandle(other.getHandle());
@@ -615,8 +615,8 @@ public class Weblog implements Serializable {
         this.setActive(other.getActive());
         this.setLastModified(other.getLastModified());
     }
-    
-    
+
+
     /**
      * Parse locale value and instantiate a Locale object,
      * otherwise return default Locale.
@@ -626,8 +626,8 @@ public class Weblog implements Serializable {
     public Locale getLocaleInstance() {
         return I18nUtils.toLocale(getLocale());
     }
-    
-    
+
+
     /**
      * Return TimeZone instance for value of timeZone,
      * otherwise return system default instance.
@@ -645,16 +645,16 @@ public class Weblog implements Serializable {
         }
         return TimeZone.getTimeZone(timeZone);
     }
-    
-    
+
+
     /**
      * Returns true if user has all permission action specified.
      */
     public boolean hasUserPermission(User user, String action) {
         return hasUserPermissions(user, Collections.singletonList(action));
     }
-    
-    
+
+
     /**
      * Returns true if user has all permissions actions specified in the weblog.
      */
@@ -664,14 +664,14 @@ public class Weblog implements Serializable {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogPermission userPerms = new WeblogPermission(this, user, actions);
             return umgr.checkPermission(userPerms, user);
-            
+
         } catch (WebloggerException ex) {
             // something is going seriously wrong, not much we can do here
             log.error("ERROR checking user permssion", ex);
         }
         return false;
     }
-    
+
     /** Get number of users associated with website */
     public int getUserCount() {
         int count = 0;
@@ -682,20 +682,20 @@ public class Weblog implements Serializable {
                 WeblogPermission perm = (WeblogPermission) iter.next();
                 count++;
             }
-            
+
         } catch (WebloggerException ex) {
             // something is seriously wrong, not me we can do here
             log.error("ERROR error getting admin user count", ex);
         }
         return count;
     }
-    
+
     /** No-op needed to please XDoclet generated code */
     private int userCount = 0;
     public void setUserCount(int userCount) {
         // no-op
     }
-    
+
     public int getAdminUserCount() {
         int count = 0;
         try {
@@ -707,21 +707,21 @@ public class Weblog implements Serializable {
                     count++;
                 }
             }
-            
+
         } catch (WebloggerException ex) {
             // something is seriously wrong, not me we can do here
             log.error("ERROR error getting admin user count", ex);
         }
         return count;
     }
-    
+
     /** No-op needed to please XDoclet generated code */
     private int adminUserCount = 0;
     public void setAdminUserCount(int adminUserCount) {
         // no-op
     }
-    
-    
+
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -730,14 +730,14 @@ public class Weblog implements Serializable {
     public int getEntryDisplayCount() {
         return entryDisplayCount;
     }
-    
+
     /**
      * @ejb:persistent-field
      */
     public void setEntryDisplayCount(int entryDisplayCount) {
         this.entryDisplayCount = entryDisplayCount;
     }
-    
+
     /**
      * Set to FALSE to completely disable and hide this weblog from public view.
      *
@@ -748,12 +748,12 @@ public class Weblog implements Serializable {
     public Boolean getEnabled() {
         return this.enabled;
     }
-    
+
     /** @ejb:persistent-field */
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     /**
      * Set to FALSE to exclude this weblog from community areas such as the
      * front page and the planet page.
@@ -765,26 +765,26 @@ public class Weblog implements Serializable {
     public Boolean getActive() {
         return active;
     }
-    
+
     public void setActive(Boolean active) {
         this.active = active;
     }
-    
+
     /**
      * Returns true if comment moderation is required by website or config.
-     */ 
-    public boolean getCommentModerationRequired() { 
+     */
+    public boolean getCommentModerationRequired() {
         return (getModerateComments().booleanValue()
          || WebloggerRuntimeConfig.getBooleanProperty("users.moderation.required"));
     }
-    
-    /** No-op */
-    public void setCommentModerationRequired(boolean modRequired) {}    
 
-    
+    /** No-op */
+    public void setCommentModerationRequired(boolean modRequired) {}
+
+
     /**
      * The last time any visible part of this weblog was modified.
-     * This includes a change to weblog settings, entries, themes, templates, 
+     * This includes a change to weblog settings, entries, themes, templates,
      * comments, categories, bookmarks, folders, etc.
      *
      * Pings and Referrers are explicitly not included because pings to not
@@ -802,8 +802,8 @@ public class Weblog implements Serializable {
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
-  
-    
+
+
     /**
      * Is multi-language blog support enabled for this weblog?
      *
@@ -820,8 +820,8 @@ public class Weblog implements Serializable {
     public void setEnableMultiLang(boolean enableMultiLang) {
         this.enableMultiLang = enableMultiLang;
     }
-    
-    
+
+
     /**
      * Should the default weblog view show entries from all languages?
      *
@@ -839,9 +839,9 @@ public class Weblog implements Serializable {
     public void setShowAllLangs(boolean showAllLangs) {
         this.showAllLangs = showAllLangs;
     }
-    
-    
-    /** 
+
+
+    /**
      * @roller.wrapPojoMethod type="simple"
      */
     public String getURL() {
@@ -851,16 +851,16 @@ public class Weblog implements Serializable {
     public void setURL(String url) {
         // noop
     }
-    
-    
+
+
     /**
      * @roller.wrapPojoMethod type="simple"
      */
     public String getAbsoluteURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, true);
     }
-    
-    
+
+
     /**
      * Comma-separated list of additional page models to be created when this
      * weblog is rendered.
@@ -875,7 +875,7 @@ public class Weblog implements Serializable {
         this.pageModels = pageModels;
     }
 
-    
+
     /**
      * The path under the weblog's resources to a stylesheet override.
      *
@@ -888,8 +888,8 @@ public class Weblog implements Serializable {
     public void setCustomStylesheetPath(String customStylesheetPath) {
         this.customStylesheetPath = customStylesheetPath;
     }
-    
-    
+
+
     /**
      * The path under the weblog's resources to an icon image.
      *
@@ -903,7 +903,7 @@ public class Weblog implements Serializable {
         this.iconPath = iconPath;
     }
 
-    
+
     /**
      * A short description about the weblog.
      *
@@ -920,8 +920,8 @@ public class Weblog implements Serializable {
     public void setAbout(String about) {
         this.about = about;
     }
-    
-    
+
+
     /**
      * Get initialized plugins for use during rendering process.
      */
@@ -930,15 +930,15 @@ public class Weblog implements Serializable {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 PluginManager ppmgr = roller.getPluginManager();
-                initializedPlugins = ppmgr.getWeblogEntryPlugins(this); 
+                initializedPlugins = ppmgr.getWeblogEntryPlugins(this);
             } catch (Exception e) {
                 this.log.error("ERROR: initializing plugins");
             }
         }
         return initializedPlugins;
     }
-    
-    /** 
+
+    /**
      * Get weblog entry specified by anchor or null if no such entry exists.
      * @param anchor Weblog entry anchor
      * @return Weblog entry specified by anchor
@@ -955,15 +955,15 @@ public class Weblog implements Serializable {
         }
         return entry;
     }
-    
+
     /**
      * Returns categories under the default category of the weblog.
-     * 
+     *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogCategory"
      */
     public Set getWeblogCategories() {
         Set ret = new HashSet();
-//        try {           
+//        try {
             WeblogCategory category = this.getDefaultCategory();
             ret = category.getWeblogCategories();
 //        } catch (WebloggerException e) {
@@ -971,18 +971,18 @@ public class Weblog implements Serializable {
 //        }
         return ret;
     }
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojosWeblogCategorya"
      */
     public Set getWeblogCategories(String categoryPath) {
         Set ret = new HashSet();
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();            
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             WeblogCategory category = null;
             if (categoryPath != null && !categoryPath.equals("nil")) {
                 category = wmgr.getWeblogCategoryByPath(this, categoryPath);
@@ -996,10 +996,10 @@ public class Weblog implements Serializable {
         return ret;
     }
 
-    
+
     /**
-     * 
-     * 
+     *
+     *
      * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.weblogger.pojosWeblogCategorya"
      */
     public WeblogCategory getWeblogCategory(String categoryPath) {
@@ -1017,8 +1017,8 @@ public class Weblog implements Serializable {
         }
         return category;
     }
-    
-    
+
+
     /**
      * Get up to 100 most recent published entries in weblog.
      * @param cat Category path or null for no category restriction
@@ -1027,7 +1027,7 @@ public class Weblog implements Serializable {
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryData"
      */
-    public List getRecentWeblogEntries(String cat, int length) {  
+    public List getRecentWeblogEntries(String cat, int length) {
         if (cat != null && "nil".equals(cat)) cat = null;
         if (length > 100) length = 100;
         List recentEntries = new ArrayList();
@@ -1035,25 +1035,25 @@ public class Weblog implements Serializable {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             recentEntries = wmgr.getWeblogEntries(
-                    
-                    this, 
+
+                    this,
                     null,       // user
                     null,       // startDate
                     null,       // endDate
                     cat,        // cat or null
-                    null,WeblogEntry.PUBLISHED, 
+                    null,WeblogEntry.PUBLISHED,
                     null,       // text
                     "pubTime",  // sortby
                     null,
-                    null, 
+                    null,
                     0,
-                    length); 
+                    length);
         } catch (WebloggerException e) {
             log.error("ERROR: getting recent entries", e);
         }
         return recentEntries;
     }
-    
+
     /**
      * Get up to 100 most recent published entries in weblog.
      * @param cat Category path or null for no category restriction
@@ -1062,7 +1062,7 @@ public class Weblog implements Serializable {
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryData"
      */
-    public List getRecentWeblogEntriesByTag(String tag, int length) {  
+    public List getRecentWeblogEntriesByTag(String tag, int length) {
         if (tag != null && "nil".equals(tag)) tag = null;
         if (length > 100) length = 100;
         List recentEntries = new ArrayList();
@@ -1074,25 +1074,25 @@ public class Weblog implements Serializable {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             recentEntries = wmgr.getWeblogEntries(
-                    
-                    this, 
+
+                    this,
                     null,       // user
                     null,       // startDate
                     null,       // endDate
                     null,       // cat or null
-                    tags,WeblogEntry.PUBLISHED, 
+                    tags,WeblogEntry.PUBLISHED,
                     null,       // text
                     "pubTime",  // sortby
                     null,
-                    null, 
+                    null,
                     0,
-                    length); 
+                    length);
         } catch (WebloggerException e) {
             log.error("ERROR: getting recent entries", e);
         }
         return recentEntries;
-    }   
-    
+    }
+
     /**
      * Get up to 100 most recent approved and non-spam comments in weblog.
      * @param length Max entries to return (1-100)
@@ -1100,14 +1100,14 @@ public class Weblog implements Serializable {
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryComment"
      */
-    public List getRecentComments(int length) {   
+    public List getRecentComments(int length) {
         if (length > 100) length = 100;
         List recentComments = new ArrayList();
         if (length < 1) return recentComments;
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             recentComments = wmgr.getComments(
-                    
+
                     this,
                     null,          // weblog entry
                     null,          // search String
@@ -1122,7 +1122,7 @@ public class Weblog implements Serializable {
         return recentComments;
     }
 
-    
+
     /**
      * Get bookmark folder by name.
      * @param folderName Name or path of bookmark folder to be returned (null for root)
@@ -1146,8 +1146,8 @@ public class Weblog implements Serializable {
         return ret;
     }
 
-    
-    /** 
+
+    /**
      * Return collection of referrers for current day.
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogReferrer"
      */
@@ -1157,16 +1157,16 @@ public class Weblog implements Serializable {
             Weblogger roller = WebloggerFactory.getWeblogger();
             RefererManager rmgr = roller.getRefererManager();
             return rmgr.getTodaysReferers(this);
-            
+
         } catch (WebloggerException e) {
             log.error("PageModel getTodaysReferers()", e);
         }
-        return (referers == null ? Collections.EMPTY_LIST : referers);        
+        return (referers == null ? Collections.EMPTY_LIST : referers);
     }
-    
+
     /** No-op method to please XDoclet */
     public void setTodaysReferrers(List ignored) {}
-    
+
     /**
      * Get number of hits counted today.
      * @roller.wrapPojoMethod type="simple"
@@ -1176,19 +1176,19 @@ public class Weblog implements Serializable {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager mgr = roller.getWeblogEntryManager();
             WeblogHitCount hitCount = mgr.getHitCountByWeblog(this);
-            
+
             return (hitCount != null) ? hitCount.getDailyHits() : 0;
-            
+
         } catch (WebloggerException e) {
             log.error("Error getting weblog hit count", e);
         }
         return 0;
     }
-    
+
     /** No-op method to please XDoclet */
     public void setTodaysHits(int ignored) {}
 
-        
+
     /**
      * Get a list of TagStats objects for the most popular tags
      *
@@ -1204,10 +1204,10 @@ public class Weblog implements Serializable {
         if(sinceDays > 0) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1 * sinceDays);        
-            startDate = cal.getTime();     
-        }        
-        try {            
+            cal.add(Calendar.DATE, -1 * sinceDays);
+            startDate = cal.getTime();
+        }
+        try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             results = wmgr.getPopularTags(this, startDate, 0, length);
@@ -1215,7 +1215,7 @@ public class Weblog implements Serializable {
             log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
         }
         return results;
-    }      
+    }
 
     /**
      * @roller.wrapPojoMethod type="simple"
@@ -1225,16 +1225,16 @@ public class Weblog implements Serializable {
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager mgr = roller.getWeblogEntryManager();
-            count = mgr.getCommentCount(this);            
+            count = mgr.getCommentCount(this);
         } catch (WebloggerException e) {
             log.error("Error getting comment count for weblog " + this.getName(), e);
         }
         return count;
     }
-    
+
     /** No-op method to please XDoclet */
     public void setCommentCount(int ignored) {}
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      */
@@ -1243,7 +1243,7 @@ public class Weblog implements Serializable {
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager mgr = roller.getWeblogEntryManager();
-            count = mgr.getEntryCount(this);            
+            count = mgr.getEntryCount(this);
         } catch (WebloggerException e) {
             log.error("Error getting entry count for weblog " + this.getName(), e);
         }

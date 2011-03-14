@@ -34,37 +34,37 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Manage weblog referrer data.
  */
 public class Referrers extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(Referrers.class);
-    
+
     // list of referrers to display
     private List<WeblogReferrer> referrers = Collections.EMPTY_LIST;
-    
+
     // referrers hits today
     private int dayHits = 0;
-    
+
     // ids of referrers to remove
     private String[] removeIds = null;
-    
-    
+
+
     public Referrers() {
         this.actionName = "referrers";
         this.desiredMenu = "editor";
         this.pageTitle = "referers.todaysReferers";
     }
-    
-    
+
+
     @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     /**
      * Show list of weblog referrers.
      */
     public String execute() {
-        
+
         RefererManager refmgr = WebloggerFactory.getWeblogger().getRefererManager();
         try {
             setDayHits(refmgr.getDayHits(getActionWeblog()));
@@ -74,58 +74,58 @@ public class Referrers extends UIAction {
             // TODO: i18n
             addError("Error loading referrer data");
         }
-        
+
         return LIST;
     }
-    
-    
+
+
     /**
      * Reset all referrer counts.
      */
     public String reset() {
-        
+
         try {
             RefererManager refmgr = WebloggerFactory.getWeblogger().getRefererManager();
             refmgr.clearReferrers(getActionWeblog());
             WebloggerFactory.getWeblogger().flush();
-            
+
             CacheManager.invalidate(getActionWeblog());
         } catch (Exception ex) {
             log.error("Error resetting referrers", ex);
             // TODO: i18n
             addError("Error resetting referrers");
         }
-        
+
         return execute();
     }
-    
-    
+
+
     /**
      * Remove selected referrers.
      */
     public String remove() {
-        
+
         String[] removeIds = getRemoveIds();
         if(removeIds != null) {
             RefererManager refmgr = WebloggerFactory.getWeblogger().getRefererManager();
-            
+
             try {
                 WeblogReferrer referer = null;
                 for (int i=0; i < removeIds.length; i++) {
                     referer = refmgr.getReferer(removeIds[i]);
-                    
+
                     // make sure referrer belongs to action weblog
                     if(getActionWeblog().equals(referer.getWebsite())) {
                         refmgr.removeReferer(referer);
                     }
                 }
-                
+
                 // flush
                 WebloggerFactory.getWeblogger().flush();
-                
+
                 // notify caches
                 CacheManager.invalidate(getActionWeblog());
-                
+
                 addMessage("referers.deletedReferers");
 
             } catch (Exception ex) {
@@ -136,11 +136,11 @@ public class Referrers extends UIAction {
         } else {
             addError("referers.noReferersSpecified");
         }
-        
+
         return execute();
     }
 
-    
+
     public List<WeblogReferrer> getReferrers() {
         return referrers;
     }
@@ -164,5 +164,5 @@ public class Referrers extends UIAction {
     public void setRemoveIds(String[] removeIds) {
         this.removeIds = removeIds;
     }
-    
+
 }

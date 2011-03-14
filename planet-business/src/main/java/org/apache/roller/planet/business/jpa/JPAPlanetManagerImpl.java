@@ -46,32 +46,32 @@ import org.apache.roller.planet.business.AbstractManagerImpl;
  */
 @com.google.inject.Singleton
 public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetManager {
-    
+
     private static Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);
-    
+
     /** The strategy for this manager. */
     private final JPAPersistenceStrategy strategy;
-    
+
     protected Map lastUpdatedByGroup = new HashMap();
     protected static final String NO_GROUP = "zzz_nogroup_zzz";
-    
-    
-    @com.google.inject.Inject  
+
+
+    @com.google.inject.Inject
     protected JPAPlanetManagerImpl(JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Planet Manager");
-        
+
         this.strategy = strategy;
     }
-    
-    
+
+
     public void saveGroup(PlanetGroup group) throws PlanetException {
         strategy.store(group);
     }
-    
+
     public void saveEntry(SubscriptionEntry entry) throws PlanetException {
         strategy.store(entry);
     }
-    
+
     public void saveSubscription(Subscription sub)
     throws PlanetException {
         Subscription existing = getSubscription(sub.getFeedURL());
@@ -81,20 +81,20 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             throw new PlanetException("ERROR: duplicate feed URLs not allowed");
         }
     }
-    
+
     public void deleteEntry(SubscriptionEntry entry) throws PlanetException {
         strategy.remove(entry);
     }
-    
+
     public void deleteGroup(PlanetGroup group) throws PlanetException {
         strategy.remove(group);
     }
-    
+
     public void deleteSubscription(Subscription sub)
     throws PlanetException {
         strategy.remove(sub);
     }
-    
+
     public Subscription getSubscription(String feedUrl)
     throws PlanetException {
         Query q = strategy.getNamedQuery("Subscription.getByFeedURL");
@@ -105,13 +105,13 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             return null;
         }
     }
-    
+
     public Subscription getSubscriptionById(String id)
     throws PlanetException {
         return (Subscription) strategy.load(
                 Subscription.class, id);
     }
-    
+
     public Iterator getAllSubscriptions() {
         try {
             return ((List)strategy.getNamedQuery(
@@ -121,17 +121,17 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
                     "ERROR fetching subscription collection", e);
         }
     }
-    
+
     public int getSubscriptionCount() throws PlanetException {
         Query q = strategy.getNamedQuery("Subscription.getAll");
         return q.getResultList().size();
     }
-    
+
     public List getTopSubscriptions(int offset, int length)
     throws PlanetException {
         return getTopSubscriptions(null, offset, length);
     }
-    
+
     /**
      * Get top X subscriptions, restricted by group.
      */
@@ -154,7 +154,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         }
         return result;
     }
-    
+
     public PlanetGroup getGroup(String handle) throws PlanetException {
         Query q = strategy.getNamedQuery("PlanetGroup.getByHandle");
         q.setParameter(1, handle);
@@ -164,18 +164,18 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             return null;
         }
     }
-    
+
     public PlanetGroup getGroupById(String id) throws PlanetException {
         return (PlanetGroup) strategy.load(PlanetGroup.class, id);
-    }        
-    
+    }
+
     public void release() {}
-    
-    
+
+
     public void savePlanet(Planet planet) throws PlanetException {
         strategy.store(planet);
     }
-    
+
     public Planet getPlanet(String handle) throws PlanetException {
         Query q = strategy.getNamedQuery("Planet.getByHandle");
         q.setParameter(1, handle);
@@ -185,15 +185,15 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             return null;
         }
     }
-    
+
     public Planet getPlanetById(String id) throws PlanetException {
         return (Planet)strategy.load(Planet.class, id);
     }
-    
+
     public List getPlanets() throws PlanetException {
         return (List)strategy.getNamedQuery("Planet.getAll").getResultList();
     }
-    
+
     public List getGroupHandles(Planet planet) throws PlanetException {
         List handles = new ArrayList();
         Iterator list = getGroups(planet).iterator();
@@ -203,13 +203,13 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         }
         return handles;
     }
-    
+
     public List getGroups(Planet planet) throws PlanetException {
         Query q = strategy.getNamedQuery("PlanetGroup.getByPlanet");
         q.setParameter(1, planet.getHandle());
         return q.getResultList();
     }
-    
+
     public PlanetGroup getGroup(Planet planet, String handle) throws PlanetException {
         Query q = strategy.getNamedQuery("PlanetGroup.getByPlanetAndHandle");
         q.setParameter(1, planet.getHandle());
@@ -220,22 +220,22 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             return null;
         }
     }
-    
+
     public void deletePlanet(Planet planet) throws PlanetException {
         strategy.remove(planet);
     }
-    
-    public void deleteEntries(Subscription sub) 
+
+    public void deleteEntries(Subscription sub)
         throws PlanetException {
         Iterator entries = sub.getEntries().iterator();
         while(entries.hasNext()) {
             strategy.remove(entries.next());
         }
-        
+
         // make sure and clear the other side of the assocation
         sub.getEntries().clear();
     }
-    
+
     public List getSubscriptions() throws PlanetException {
         Query q = strategy.getNamedQuery("Subscription.getAllOrderByFeedURL");
         return q.getResultList();
@@ -245,7 +245,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return (SubscriptionEntry) strategy.load(SubscriptionEntry.class, id);
     }
 
-    public List getEntries(Subscription sub, int offset, int len) throws PlanetException {            
+    public List getEntries(Subscription sub, int offset, int len) throws PlanetException {
         if (sub == null) {
             throw new PlanetException("subscription cannot be null");
         }
@@ -262,24 +262,24 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
 
     public List getEntries(PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws PlanetException {
         StringBuffer queryString = new StringBuffer();
-                
+
         if (group == null) {
             throw new PlanetException("group cannot be null or empty");
         }
-        
+
         List ret = null;
         try {
             long startTime = System.currentTimeMillis();
-            
+
             StringBuffer sb = new StringBuffer();
             List params = new ArrayList();
             int size = 0;
             sb.append("SELECT e FROM SubscriptionEntry e ");
             sb.append("JOIN e.subscription.groups g ");
-                        
+
             params.add(size++, group.getHandle());
             sb.append("WHERE g.handle = ?").append(size);
-            
+
             if (startDate != null) {
                 params.add(size++, new Timestamp(startDate.getTime()));
                 sb.append(" AND e.pubTime > ?").append(size);
@@ -289,7 +289,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
                 sb.append(" AND e.pubTime < :?").append(size);
             }
             sb.append(" ORDER BY e.pubTime DESC");
-            
+
             Query query = strategy.getDynamicQuery(sb.toString());
             for (int i=0; i<params.size(); i++) {
                 query.setParameter(i+1, params.get(i));
@@ -300,17 +300,17 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             if (len != -1) {
                 query.setMaxResults(len);
             }
-            
+
             ret = query.getResultList();
-            
+
             long endTime = System.currentTimeMillis();
-            
+
             log.debug("Generated aggregation of " + ret.size() + " in " + ((endTime-startTime)/1000.0) + " seconds");
-            
+
         } catch (Throwable e) {
             throw new PlanetException(e);
         }
-        
+
         return ret;
     }
 }

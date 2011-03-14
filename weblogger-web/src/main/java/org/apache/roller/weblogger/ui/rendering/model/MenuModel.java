@@ -33,31 +33,31 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 
 /**
  * Model which provides methods for displaying editor menu/navigation-bar.
- * 
+ *
  * Implemented by calling hybrid JSP tag.
  */
 public class MenuModel implements Model {
-    
+
     private static Log logger = LogFactory.getLog(MenuModel.class);
-    
+
     private WeblogPageRequest pageRequest = null;
-    
-    
+
+
     /** Template context name to be used for model */
     public String getModelName() {
         return "menuModel";
     }
-    
-    
+
+
     /** Init page model based on request */
     public void init(Map initData) throws WebloggerException {
-        
+
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }
-        
+
         // MenuModel only works on page requests, so cast weblogRequest
         // into a WeblogPageRequest and if it fails then throw exception
         if(weblogRequest instanceof WeblogPageRequest) {
@@ -67,18 +67,18 @@ public class MenuModel implements Model {
                     "  MenuModel only supports page requests.");
         }
     }
-    
-    
+
+
     /**
-     * Get a Menu representing the admin UI action menu, if the user is 
+     * Get a Menu representing the admin UI action menu, if the user is
      * currently logged in and is an admin.
      */
     public Menu getAdminMenu() {
         try {
-            GlobalPermission adminPerm = 
+            GlobalPermission adminPerm =
                 new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
             boolean hasAdmin = WebloggerFactory.getWeblogger().getUserManager()
-                    .checkPermission(adminPerm, pageRequest.getUser());            
+                    .checkPermission(adminPerm, pageRequest.getUser());
             if (pageRequest.isLoggedIn() && hasAdmin) {
                 return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
             }
@@ -87,8 +87,8 @@ public class MenuModel implements Model {
         }
         return null;
     }
-    
-    
+
+
     /**
      * Get a Menu representing the author UI action menu, if the use is
      * currently logged in.
@@ -99,5 +99,5 @@ public class MenuModel implements Model {
         }
         return null;
     }
-    
+
 }

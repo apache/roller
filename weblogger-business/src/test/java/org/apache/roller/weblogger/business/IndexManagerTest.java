@@ -40,12 +40,12 @@ import org.apache.commons.logging.LogFactory;
 public class IndexManagerTest extends TestCase {
     User testUser = null;
     Weblog testWeblog = null;
-    public static Log log = LogFactory.getLog(IndexManagerTest.class);    
+    public static Log log = LogFactory.getLog(IndexManagerTest.class);
 
     public IndexManagerTest(String name) {
         super(name);
     }
-        
+
     public static Test suite() {
         return new TestSuite(IndexManagerTest.class);
     }
@@ -54,10 +54,10 @@ public class IndexManagerTest extends TestCase {
      * All tests in this suite require a user and a weblog.
      */
     public void setUp() throws Exception {
-        
+
         // setup weblogger
         TestUtils.setupWeblogger();
-        
+
         try {
             testUser = TestUtils.setupUser("entryTestUser");
             testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
@@ -65,15 +65,15 @@ public class IndexManagerTest extends TestCase {
 
             //WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             //assertEquals(1, wmgr.getWeblogCount());
- 
+
         } catch (Exception ex) {
             log.error("ERROR in test setup", ex);
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
     public void tearDown() throws Exception {
-        
+
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
             TestUtils.teardownUser(testUser.getUserName());
@@ -83,11 +83,11 @@ public class IndexManagerTest extends TestCase {
             throw new Exception("Test teardown failed", ex);
         }
     }
-        
+
     public void testSearch() throws Exception {
         WeblogEntryManager wem = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
-        WeblogEntry wd1 = new WeblogEntry();            
+        WeblogEntry wd1 = new WeblogEntry();
         wd1.setTitle("The Tholian Web");
         wd1.setText(
          "When the Enterprise attempts to ascertain the fate of the  "
@@ -154,5 +154,5 @@ public class IndexManagerTest extends TestCase {
         search3.setTerm("Enterprise");
         imgr.executeIndexOperationNow(search3);
         assertEquals(0, search3.getResultsCount());
-    }    
+    }
 }

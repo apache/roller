@@ -36,22 +36,22 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Paging through a collection of media files.
  */
 public class MediaFilesPager extends AbstractPager {
-    
+
     private static Log log = LogFactory.getLog(MediaFilesPager.class);
-    
+
     private Weblog weblog = null;
     private int sinceDays = -1;
     private int length = 0;
-    
+
     // the collection for the pager
     private List<MediaFile> mediaFiles;
-    
+
     // are there more items?
     private boolean more = false;
-    
+
     // most recent update time of current set of entries
-    private Date lastUpdated = null;        
-    
+    private Date lastUpdated = null;
+
     public MediaFilesPager(
             URLStrategy    strat,
             String         baseUrl,
@@ -59,26 +59,26 @@ public class MediaFilesPager extends AbstractPager {
             int            sinceDays,
             int            page,
             int            length) {
-        
+
         super(strat, baseUrl, page);
-        
+
         this.weblog = weblog;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
+
     public List<MediaFile> getItems() {
-        
+
         if (this.mediaFiles == null) {
             // calculate offset
             //int offset = getPage() * length;
-            
+
             List<MediaFile> results = new ArrayList<MediaFile>();
-            
+
             try {
                 MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
                 results = mgr.fetchRecentPublicMediaFiles(length);
@@ -87,15 +87,15 @@ public class MediaFilesPager extends AbstractPager {
             }
             this.mediaFiles = results;
         }
-        
+
         return this.mediaFiles;
     }
-    
-    
+
+
     public boolean hasMoreItems() {
         return more;
     }
-    
+
     /** Get last updated time from items in pager */
     public Date getLastUpdated() {
         if (lastUpdated == null) {

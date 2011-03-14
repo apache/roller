@@ -43,32 +43,32 @@ import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
  * $url.getCategory("foo")
  */
 public class SiteURLModel implements Model {
-    
+
     private static Log log = LogFactory.getLog(SiteURLModel.class);
-    
+
     private URLStrategy urlStrategy = null;
-    
-    
+
+
     public SiteURLModel() {}
-    
+
     public String getModelName() {
         return "url";
     }
-    
+
     public void init(Map initData) throws PlanetException {
-        
+
         // grab a reference to the url strategy
         this.urlStrategy = PlanetFactory.getPlanet().getURLStrategy();
     }
-    
-    
+
+
     public String getSite() {
         return PlanetRuntimeConfig.getProperty("site.absoluteurl");
     }
-    
-    
+
+
     public String planet(String planetHandle) {
         return this.urlStrategy.getPlanetURL(planetHandle);
     }
-    
+
 }

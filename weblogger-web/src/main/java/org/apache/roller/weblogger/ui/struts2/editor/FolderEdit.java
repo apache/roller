@@ -37,29 +37,29 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Edit an existing folder.
  */
 public class FolderEdit extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(FolderEdit.class);
-    
+
     // the folder we are editing
     private WeblogBookmarkFolder folder = null;
-    
+
     // bean for managing form data
     private FolderBean bean = new FolderBean();
-    
-    
+
+
     public FolderEdit() {
         this.actionName = "folderEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "folderForm.edit.title";
     }
-    
-    
+
+
     // author perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }
-    
-    
+
+
     // load folder to edit
     public void myPrepare() {
         try {
@@ -71,72 +71,72 @@ public class FolderEdit extends UIAction {
             log.error("Error looking up folder", ex);
         }
     }
-    
-    
+
+
     /**
      * Show folder edit page.
      */
     @SkipValidation
     public String execute() {
-        
+
         if(getFolder() == null) {
             // TODO: i18n
             addError("Cannot edit null folder");
             return ERROR;
         }
-        
+
         // make sure bean is properly loaded from pojo data
         getBean().copyFrom(getFolder());
-        
+
         return INPUT;
     }
 
-    
+
     /**
      * Save updated folder data.
      */
     public String save() {
-        
+
         if(getFolder() == null) {
             // TODO: i18n
             addError("Cannot edit null folder");
             return ERROR;
         }
-        
+
         // validation
         myValidate();
-        
+
         if(!hasActionErrors()) try {
-            
+
             // copy updated attributes
             getBean().copyTo(getFolder());
-            
+
             // save changes
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             bmgr.saveFolder(getFolder());
             WebloggerFactory.getWeblogger().flush();
-            
+
             // notify caches
             CacheManager.invalidate(getFolder());
-            
+
             // TODO: i18n
             addMessage("folder updated");
-            
+
         } catch(Exception ex) {
             log.error("Error saving folder", ex);
             // TODO: i18n
             addError("Error saving folder");
         }
-        
+
         return INPUT;
     }
 
-    
+
     // TODO: validation
     public void myValidate() {
-        
+
         // name is required, has max length, no html
-        
+
         // make sure new name is not a duplicate of an existing folder
         if(!getFolder().getName().equals(getBean().getName())) {
             WeblogBookmarkFolder parent = getFolder().getParent();
@@ -145,7 +145,7 @@ public class FolderEdit extends UIAction {
             }
         }
     }
-    
+
 
     public WeblogBookmarkFolder getFolder() {
         return folder;
@@ -162,5 +162,5 @@ public class FolderEdit extends UIAction {
     public void setBean(FolderBean bean) {
         this.bean = bean;
     }
-    
+
 }

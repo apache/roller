@@ -26,15 +26,15 @@ import java.util.List;
  * A parsed xml defined menu.
  */
 public class ParsedMenu {
-    
+
     private List tabs = new ArrayList();
-    
-    
+
+
     public void addTab(ParsedTab tab) {
         this.tabs.add(tab);
     }
-    
-    
+
+
     public List getTabs() {
         return tabs;
     }
@@ -42,5 +42,5 @@ public class ParsedMenu {
     public void setTabs(List tabs) {
         this.tabs = tabs;
     }
-    
+
 }

@@ -25,13 +25,13 @@ import org.apache.roller.weblogger.WebloggerException;
  * Exception generated from Weblogger initialization process.
  */
 public class InitializationException extends WebloggerException {
-    
+
     public InitializationException(String msg) {
         super(msg);
     }
-    
+
     public InitializationException(String msg, Throwable t) {
         super(msg, t);
     }
-    
+
 }

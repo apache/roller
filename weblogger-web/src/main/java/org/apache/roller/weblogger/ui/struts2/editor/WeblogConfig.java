@@ -45,50 +45,50 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Action for modifying weblog configuration.
  */
 public class WeblogConfig extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(WeblogConfig.class);
-    
+
     // bean for managing submitted data
     private WeblogConfigBean bean = new WeblogConfigBean();
-    
+
     // categories list
     private List weblogCategories = Collections.EMPTY_LIST;
-    
+
     // list of available editors
     private List editorsList = Collections.EMPTY_LIST;
-    
+
     // list of available plugins
     private List pluginsList = Collections.EMPTY_LIST;
-    
-    
+
+
     public WeblogConfig() {
         this.actionName = "weblogConfig";
         this.desiredMenu = "editor";
         this.pageTitle = "websiteSettings.title";
     }
-    
-    
+
+
     // admin perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     public void myPrepare() {
-        
+
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            
+
             // set categories list
             setWeblogCategories(wmgr.getWeblogCategories(getActionWeblog(), false));
-            
+
             // set the Editor Page list
             UIPluginManager pmgr = RollerContext.getUIPluginManager();
             List editorsList = pmgr.getWeblogEntryEditors();
             if(editorsList != null) {
                 setEditorsList(editorsList);
             }
-            
+
             // set plugins list
             PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
             Map pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
@@ -104,91 +104,91 @@ public class WeblogConfig extends UIAction {
             log.error("Error preparing weblog config action", ex);
         }
     }
-    
-    
+
+
     @SkipValidation
     public String execute() {
-        
+
         // load bean with data from weblog
         getBean().copyFrom(getActionWeblog());
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Save weblog configuration.
      */
     public String save() {
-        
+
         // run validation
         myValidate();
-        
+
         if(!hasActionErrors()) try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            
+
             Weblog weblog = getActionWeblog();
-            
+
             getBean().copyTo(weblog);
-            
+
             // if blogger category changed then lookup new cat and set it
-            if(getBean().getBloggerCategoryId() != null && 
+            if(getBean().getBloggerCategoryId() != null &&
                     !weblog.getBloggerCategory().getId().equals(getBean().getBloggerCategoryId())) {
                 weblog.setBloggerCategory(wmgr.getWeblogCategory(getBean().getBloggerCategoryId()));
             }
-            
+
             // ROL-485: comments not allowed on inactive weblogs
             if(!weblog.getActive()) {
                 weblog.setAllowComments(Boolean.FALSE);
                 addMessage("websiteSettings.commentsOffForInactiveWeblog");
             }
-            
+
             // if blog has unchecked 'show all langs' then we must make sure
             // the multi-language blogging option is enabled.
             // TODO: this should be properly reflected via the UI
             if(!weblog.isShowAllLangs() && !weblog.isEnableMultiLang()) {
                 weblog.setEnableMultiLang(true);
             }
-            
+
             // save config
             WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
-            
+
             // ROL-1050: apply comment defaults to existing entries
             if(getBean().getApplyCommentDefaults()) {
                 wmgr.applyCommentDefaultsToEntries(weblog);
             }
-            
+
             // apply referer filters
             WebloggerFactory.getWeblogger().getRefererManager().applyRefererFilters(weblog);
-            
+
             // flush
             WebloggerFactory.getWeblogger().flush();
-            
+
             addMessage("websiteSettings.savedChanges");
-            
+
             // Clear cache entries associated with website
             CacheManager.invalidate(weblog);
-            
+
         } catch (Exception ex) {
             log.error("Error updating weblog config", ex);
             // TODO: i18n
             addError("Error updating configuration");
         }
-        
+
         return  INPUT;
     }
-    
-    
+
+
     // validation
     private void myValidate() {
-        
+
         // make sure user didn't enter an invalid entry display count
         int maxEntries = WebloggerRuntimeConfig.getIntProperty("site.pages.maxEntries");
         if(getBean().getEntryDisplayCount() > maxEntries) {
             addError("websiteSettings.error.entryDisplayCount");
         }
-        
+
         // check blacklist
         List regexRules = new ArrayList();
         List stringRules = new ArrayList();
@@ -201,8 +201,8 @@ public class WeblogConfig extends UIAction {
             addError("websiteSettings.error.processingBlacklist", e.getMessage());
         }
     }
-    
-    
+
+
     public WeblogConfigBean getBean() {
         return bean;
     }
@@ -222,7 +222,7 @@ public class WeblogConfig extends UIAction {
     public List getEditorsList() {
         return editorsList;
     }
-    
+
     public void setEditorsList(List editorsList) {
         this.editorsList = editorsList;
     }
@@ -234,5 +234,5 @@ public class WeblogConfig extends UIAction {
     public void setPluginsList(List pluginsList) {
         this.pluginsList = pluginsList;
     }
-    
+
 }

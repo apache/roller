@@ -26,8 +26,8 @@ import java.util.Map;
  * Renders content to writer based on values in a map.
  */
 public interface Renderer {
-    
-    
+
+
     /**
      * Render the content for this Renderer to the given Writer using
      * the given set of model objects.
@@ -35,5 +35,5 @@ public interface Renderer {
      * Throws an exception if there is a problem during rendering.
      */
     public void render(Map model, Writer writer) throws RenderingException;
-    
+
 }

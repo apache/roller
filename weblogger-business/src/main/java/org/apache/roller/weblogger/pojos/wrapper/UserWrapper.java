@@ -27,25 +27,25 @@ import org.apache.roller.weblogger.pojos.User;
  * Pojo safety wrapper for User objects.
  */
 public class UserWrapper {
-    
+
     // keep a reference to the wrapped pojo
     private final User pojo;
-    
+
     // this is private so that we can force the use of the .wrap(pojo) method
     private UserWrapper(User toWrap) {
         this.pojo = toWrap;
     }
-    
-    
+
+
     // wrap the given pojo if it is not null
     public static UserWrapper wrap(User toWrap) {
         if(toWrap != null)
             return new UserWrapper(toWrap);
-        
+
         return null;
     }
-    
-    
+
+
     /**
      * This is here for backwards compatability.  We no longer allow the
      * username to be displayed publicly, so screen name is returned instead.
@@ -56,35 +56,35 @@ public class UserWrapper {
         }
         return this.pojo.getUserName();
     }
-    
-    
+
+
     public String getScreenName() {
         return this.pojo.getScreenName();
     }
-    
-    
+
+
     public String getFullName() {
         return this.pojo.getFullName();
     }
-    
-    
+
+
     public String getEmailAddress() {
         return this.pojo.getEmailAddress();
     }
-    
-    
+
+
     public Date getDateCreated() {
         return this.pojo.getDateCreated();
     }
-    
-    
+
+
     public String getLocale() {
         return this.pojo.getLocale();
     }
-    
-    
+
+
     public String getTimeZone() {
         return this.pojo.getTimeZone();
     }
-    
+
 }

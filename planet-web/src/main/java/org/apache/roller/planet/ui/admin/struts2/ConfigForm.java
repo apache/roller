@@ -39,34 +39,34 @@ import org.apache.struts2.interceptor.ParameterAware;
  *
  * TODO: validation and security.
  */
-public class ConfigForm extends PlanetActionSupport 
+public class ConfigForm extends PlanetActionSupport
         implements Preparable, ParameterAware {
-    
+
     private static Log log = LogFactory.getLog(ConfigForm.class);
-    
+
     // original request parameters
     private Map parameters = Collections.EMPTY_MAP;
-    
+
     // runtime properties data
     private Map properties = Collections.EMPTY_MAP;
-    
-    
+
+
     public void prepare() throws Exception {
         // just grab our properties map and put it in the request
         PropertiesManager pMgr = PlanetFactory.getPlanet().getPropertiesManager();
         this.properties = pMgr.getProperties();
     }
 
-    
+
     public String execute() {
         return INPUT;
     }
-    
-    
+
+
     public String save() {
-        
+
         log.debug("Handling update request");
-        
+
         try {
             // only set values for properties that are already defined
             String propName = null;
@@ -75,52 +75,52 @@ public class ConfigForm extends PlanetActionSupport
             Iterator propsIT = this.properties.keySet().iterator();
             while(propsIT.hasNext()) {
                 propName = (String) propsIT.next();
-                
+
                 log.debug("Checking property ["+propName+"]");
-                
+
                 updProp = (RuntimeConfigProperty) this.properties.get(propName);
                 String[] propValues = (String[]) this.parameters.get(updProp.getName());
                 if(propValues != null && propValues.length > 0) {
                     // we don't deal with multi-valued props
                     incomingProp = propValues[0];
                 }
-                
+
                 // some special treatment for booleans
                 // this is a bit hacky since we are assuming that any prop
                 // with a value of "true" or "false" is meant to be a boolean
                 // it may not always be the case, but we should be okay for now
                 if( updProp.getValue() != null // null check needed w/Oracle
                         && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
-                    
+
                     if(incomingProp == null || !incomingProp.equals("on"))
                         incomingProp = "false";
                     else
                         incomingProp = "true";
                 }
-                
+
                 // only work on props that were submitted with the request
                 if(incomingProp != null) {
                     log.debug("Setting new value for ["+propName+"]");
-                    
+
                     updProp.setValue(incomingProp.trim());
                 }
             }
-            
+
             // save it
             PropertiesManager pMgr = PlanetFactory.getPlanet().getPropertiesManager();
             pMgr.saveProperties(this.properties);
             PlanetFactory.getPlanet().flush();
-            
+
         } catch (PlanetException e) {
             log.error(e);
             setError("ConfigForm.error.saveFailed");
         }
-        
+
         setSuccess("ConfigForm.message.saveSucceeded");
         return INPUT;
     }
 
-    
+
     public Map getParameters() {
         return parameters;
     }
@@ -136,5 +136,5 @@ public class ConfigForm extends PlanetActionSupport
     public void setProperties(Map properties) {
         this.properties = properties;
     }
-    
+
 }

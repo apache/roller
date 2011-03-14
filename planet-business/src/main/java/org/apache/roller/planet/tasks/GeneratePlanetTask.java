@@ -37,7 +37,7 @@ import org.apache.velocity.texen.Generator;
 
 
 /**
- * Generates Planet files based on those entries and the Planet configuration. 
+ * Generates Planet files based on those entries and the Planet configuration.
  * <pre>
  * - Uses PlanetConfig properties for templateDir, outputDir and template name
  * - Creates outputdir and a subdirectory for each group
@@ -45,31 +45,31 @@ import org.apache.velocity.texen.Generator;
  * </pre>
  */
 public class GeneratePlanetTask extends PlanetTask {
-    
+
     private static Log log = LogFactory.getLog(GeneratePlanetTask.class);
-    
-    
+
+
     public void run() {
-        try {            
+        try {
             Planet planet = PlanetFactory.getPlanet();
             PlanetManager planetManager = planet.getPlanetManager();
-                        
+
             // Ignore values from database
             //String mainPage = planetManager.getConfiguration().getMainPage();
             //String templateDir = planetManager.getConfiguration().getTemplateDir();
             //String outputDir = planetManager.getConfiguration().getMainPage();
-            
+
             // Use values from PlanetConfig instead
-            String mainPage =    
+            String mainPage =
                 PlanetConfig.getProperty("planet.aggregator.mainPage");
-            String templateDir = 
-                PlanetConfig.getProperty("planet.aggregator.template.dir"); 
-            String outputDir =   
+            String templateDir =
+                PlanetConfig.getProperty("planet.aggregator.template.dir");
+            String outputDir =
                 PlanetConfig.getProperty("planet.aggregator.output.dir");
-            
+
             log.info("Calling Velocity Texen to generate Planet files");
             log.info("   Control file       ["+mainPage+"]");
-            log.info("   Template directory ["+templateDir+"]"); 
+            log.info("   Template directory ["+templateDir+"]");
             log.info("   Output directory   ["+outputDir+"]");
 
             // Fire up Velocity engine, point it at templates and init
@@ -79,19 +79,19 @@ public class GeneratePlanetTask extends PlanetTask {
               "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
             engine.setProperty("file.resource.loader.path", templateDir);
             engine.init();
-            
-            // Build context with current date 
+
+            // Build context with current date
             VelocityContext context = new VelocityContext();
             context.put("date", new Date());
             // TODO fix: Use one utilities model and not one of the below
             //context.put("utils", new UtilitiesModel());
             context.put("utilities", new Utilities());
             context.put("planet", new StaticPlanetModel());
-            
+
             // Ensure that output directories exists, one for each group
             File outputDirObj = new File(outputDir);
             if (!outputDirObj.exists()) outputDirObj.mkdirs();
-            
+
             List groups = Collections.EMPTY_LIST;
             // groups must be part of a planet now, so getGroupHandles() was removed
             //List groups = planetManager.getGroupHandles();
@@ -101,7 +101,7 @@ public class GeneratePlanetTask extends PlanetTask {
                 File groupDir = new File(groupDirName);
                 if (!groupDir.exists()) groupDir.mkdirs();
             }
-            
+
             // Generate files: execute control template
             Generator generator = Generator.getInstance();
             generator.setVelocityEngine(engine);
@@ -111,16 +111,16 @@ public class GeneratePlanetTask extends PlanetTask {
             generator.setTemplatePath(templateDir);
             generator.parse(mainPage, context);
             generator.shutdown();
-            
+
         } catch (Exception e) {
             log.error("ERROR generating planet", e);
         }
     }
-    
+
     public static void main(String[] args) throws Exception{
         GeneratePlanetTask task = new GeneratePlanetTask();
         task.initialize();
         task.run();
     }
-    
+
 }

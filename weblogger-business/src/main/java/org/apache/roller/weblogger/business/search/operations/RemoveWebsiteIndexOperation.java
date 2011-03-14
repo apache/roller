@@ -38,19 +38,19 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * @author Mindaugas Idzelis  (min@idzelis.com)
  */
 public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
-    
+
     //~ Static fields/initializers =============================================
-    
+
     private static Log mLogger =
             LogFactory.getFactory().getInstance(RemoveWebsiteIndexOperation.class);
-    
+
     //~ Instance fields ========================================================
-    
+
     private Weblog website;
     private Weblogger roller;
-    
+
     //~ Constructors ===========================================================
-    
+
     /**
      * Create a new operation that will recreate an index.
      * @param website The website to rebuild the index for, or null for all sites.
@@ -60,12 +60,12 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         this.roller = roller;
         this.website = website;
     }
-    
+
     //~ Methods ================================================================
-    
+
     public void doRun() {
         Date start = new Date();
-        
+
         // since this operation can be run on a separate thread we must treat
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
@@ -75,7 +75,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
             mLogger.error("Error getting website object", ex);
             return;
         }
-        
+
         IndexReader reader = beginDeleting();
         try {
             if (reader != null) {
@@ -85,7 +85,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
                 }
                 Term tHandle =
                         IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, handle);
-                
+
                 if (tHandle != null) {
                     reader.deleteDocuments(tHandle);
                 }
@@ -95,10 +95,10 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         } finally {
             endDeleting();
         }
-        
+
         Date end = new Date();
         double length = (end.getTime() - start.getTime()) / (double) 1000;
-        
+
         if (website != null) {
             mLogger.info("Completed deleting indices for website '" +
                     website.getName() + "' in '" + length + "' seconds");

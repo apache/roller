@@ -53,125 +53,125 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
  * Cache for site-wide weblog content.
  */
 public class SiteWideCache implements CacheHandler {
-    
+
     private static Log log = LogFactory.getLog(SiteWideCache.class);
-    
+
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
     public static final String CACHE_ID = "cache.sitewide";
-    
+
     // keep cached content
     private boolean cacheEnabled = true;
     private Cache contentCache = null;
-    
+
     // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
     private long timeout = 15 * 60 * 1000;
-    
+
     // reference to our singleton instance
     private static SiteWideCache singletonInstance = new SiteWideCache();
-    
-    
+
+
     private SiteWideCache() {
-        
+
         cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
-        
+
         Map cacheProps = new HashMap();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
         String prop = null;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
-            
+
             // we are only interested in props for this cache
             if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
+                cacheProps.put(prop.substring(CACHE_ID.length()+1),
                         WebloggerConfig.getProperty(prop));
             }
         }
-        
+
         log.info(cacheProps);
-        
+
         if(cacheEnabled) {
             contentCache = CacheManager.constructCache(this, cacheProps);
         } else {
             log.warn("Caching has been DISABLED");
         }
     }
-    
-    
+
+
     public static SiteWideCache getInstance() {
         return singletonInstance;
     }
-    
-    
+
+
     public Object get(String key) {
-        
+
         if(!cacheEnabled)
             return null;
-        
+
         Object entry = contentCache.get(key);
-        
+
         if(entry == null) {
             log.debug("MISS "+key);
         } else {
             log.debug("HIT "+key);
         }
-        
+
         return entry;
     }
-    
-    
+
+
     public void put(String key, Object value) {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         contentCache.put(key, value);
         log.debug("PUT "+key);
     }
 
-    
+
     public void remove(String key) {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         contentCache.remove(key);
         log.debug("REMOVE "+key);
     }
-    
-    
+
+
     public void clear() {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         contentCache.clear();
         this.lastUpdateTime = null;
         log.debug("CLEAR");
     }
-    
-    
+
+
     public Date getLastModified() {
-        
+
         Date lastModified = null;
-        
+
         // first try our cached version
         if(this.lastUpdateTime != null) {
             lastModified = (Date) this.lastUpdateTime.getValue();
         }
-        
+
         // still null, we need to get a fresh value
         if(lastModified == null) {
             lastModified = new Date();
             this.lastUpdateTime = new ExpiringCacheEntry(lastModified, this.timeout);
         }
-        
+
         return lastModified;
     }
-    
-    
+
+
     /**
      * Generate a cache key from a parsed weblog page request.
      * This generates a key of the form ...
@@ -190,13 +190,13 @@ public class SiteWideCache implements CacheHandler {
      *
      */
     public String generateKey(WeblogPageRequest pageRequest) {
-        
+
         StringBuffer key = new StringBuffer();
-        
+
         key.append(this.CACHE_ID).append(":");
         key.append("page/");
         key.append(pageRequest.getWeblogHandle());
-        
+
         if(pageRequest.getWeblogAnchor() != null) {
             String anchor = null;
             try {
@@ -205,18 +205,18 @@ public class SiteWideCache implements CacheHandler {
             } catch(UnsupportedEncodingException ex) {
                 // ignored
             }
-            
+
             key.append("/entry/").append(anchor);
         } else {
-            
+
             if(pageRequest.getWeblogPageName() != null) {
                 key.append("/page/").append(pageRequest.getWeblogPageName());
             }
-            
+
             if(pageRequest.getWeblogDate() != null) {
                 key.append("/").append(pageRequest.getWeblogDate());
             }
-            
+
             if(pageRequest.getWeblogCategoryName() != null) {
                 String cat = null;
                 try {
@@ -225,10 +225,10 @@ public class SiteWideCache implements CacheHandler {
                 } catch(UnsupportedEncodingException ex) {
                     // ignored
                 }
-                
+
                 key.append("/").append(cat);
             }
-            
+
             if("tags".equals(pageRequest.getContext())) {
                 key.append("/tags/");
                 if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
@@ -238,32 +238,32 @@ public class SiteWideCache implements CacheHandler {
                 }
             }
         }
-        
+
         if(pageRequest.getLocale() != null) {
             key.append("/").append(pageRequest.getLocale());
         }
-        
+
         // add page number when applicable
         if(pageRequest.getWeblogAnchor() == null) {
             key.append("/page=").append(pageRequest.getPageNum());
         }
-        
+
         // add login state
         if(pageRequest.getAuthenticUser() != null) {
             key.append("/user=").append(pageRequest.getAuthenticUser());
         }
-        
+
         // we allow for arbitrary query params for custom pages
         if(pageRequest.getCustomParams().size() > 0) {
             String queryString = paramsToString(pageRequest.getCustomParams());
-            
+
             key.append("/qp=").append(queryString);
         }
 
         return key.toString();
     }
-    
-    
+
+
     /**
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
@@ -278,20 +278,20 @@ public class SiteWideCache implements CacheHandler {
      *
      */
     public String generateKey(WeblogFeedRequest feedRequest) {
-        
+
         StringBuffer key = new StringBuffer();
-        
+
         key.append(this.CACHE_ID).append(":");
         key.append("feed/");
         key.append(feedRequest.getWeblogHandle());
-        
+
         key.append("/").append(feedRequest.getType());
         key.append("/").append(feedRequest.getFormat());
-        
+
         if (feedRequest.getTerm() != null) {
             key.append("/search/").append(feedRequest.getTerm());
         }
-        
+
         if(feedRequest.getWeblogCategoryName() != null) {
             String cat = feedRequest.getWeblogCategoryName();
             try {
@@ -299,54 +299,54 @@ public class SiteWideCache implements CacheHandler {
             } catch (UnsupportedEncodingException ex) {
                 // should never happen, utf-8 is always supported
             }
-            
+
             key.append("/").append(cat);
         }
-        
+
         if(feedRequest.getLocale() != null) {
             key.append("/").append(feedRequest.getLocale());
         }
-        
+
         if(feedRequest.isExcerpts()) {
             key.append("/excerpts");
         }
-        
+
         if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
           String[] tags = new String[feedRequest.getTags().size()];
           new TreeSet(feedRequest.getTags()).toArray(tags);
           key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
-        }       
-        
+        }
+
         return key.toString();
     }
-    
-    
+
+
     /**
      * A weblog entry has changed.
      */
     public void invalidate(WeblogEntry entry) {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         this.contentCache.clear();
         this.lastUpdateTime = null;
     }
-    
-    
+
+
     /**
      * A weblog has changed.
      */
     public void invalidate(Weblog website) {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         this.contentCache.clear();
         this.lastUpdateTime = null;
     }
-    
-    
+
+
     /**
      * A bookmark has changed.
      */
@@ -355,8 +355,8 @@ public class SiteWideCache implements CacheHandler {
             invalidate(bookmark.getWebsite());
         }
     }
-    
-    
+
+
     /**
      * A folder has changed.
      */
@@ -365,8 +365,8 @@ public class SiteWideCache implements CacheHandler {
             invalidate(folder.getWebsite());
         }
     }
-    
-    
+
+
     /**
      * A comment has changed.
      */
@@ -375,24 +375,24 @@ public class SiteWideCache implements CacheHandler {
             invalidate(comment.getWeblogEntry().getWebsite());
         }
     }
-    
-    
+
+
     /**
      * A referer has changed.
      */
     public void invalidate(WeblogReferrer referer) {
         // ignored
     }
-    
-    
+
+
     /**
      * A user profile has changed.
      */
     public void invalidate(User user) {
         // ignored
     }
-    
-    
+
+
     /**
      * A category has changed.
      */
@@ -401,8 +401,8 @@ public class SiteWideCache implements CacheHandler {
             invalidate(category.getWebsite());
         }
     }
-    
-    
+
+
     /**
      * A weblog template has changed.
      */
@@ -411,29 +411,29 @@ public class SiteWideCache implements CacheHandler {
             invalidate(template.getWebsite());
         }
     }
-    
-    
+
+
     private String paramsToString(Map map) {
-        
+
         if(map == null) {
             return null;
         }
-        
+
         StringBuffer string = new StringBuffer();
-        
+
         String key = null;
         String[] value = null;
         Iterator keys = map.keySet().iterator();
         while(keys.hasNext()) {
             key = (String) keys.next();
             value = (String[]) map.get(key);
-            
+
             if(value != null) {
                 string.append(",").append(key).append("=").append(value[0]);
             }
         }
-        
+
         return Utilities.toBase64(string.toString().substring(1).getBytes());
     }
-    
+
 }

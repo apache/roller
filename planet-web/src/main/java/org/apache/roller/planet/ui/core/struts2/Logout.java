@@ -25,10 +25,10 @@ import com.opensymphony.xwork2.ActionSupport;
  * Logout Action.
  */
 public class Logout extends ActionSupport {
-    
+
     public String execute() {
         // nothing to do right now
         return SUCCESS;
     }
-    
+
 }

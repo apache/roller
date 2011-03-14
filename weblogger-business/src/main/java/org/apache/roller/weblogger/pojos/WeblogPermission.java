@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.pojos; 
+package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.security.Permission;
@@ -39,7 +39,7 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
     public static final String POST = "post";
     public static final String ADMIN = "admin";
     public static final List<String> ALL_ACTIONS = new ArrayList<String>();
-    
+
     static {
         ALL_ACTIONS.add(EDIT_DRAFT);
         ALL_ACTIONS.add(POST);
@@ -57,22 +57,22 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
         objectId = weblog.getHandle();
         userName = user.getUserName();
     }
-    
+
     public WeblogPermission(Weblog weblog, User user, List<String> actions) {
         super("WeblogPermission user: " + user.getUserName());
-        setActionsAsList(actions); 
+        setActionsAsList(actions);
         objectType = "Weblog";
         objectId = weblog.getHandle();
         userName = user.getUserName();
     }
-    
+
     public WeblogPermission(Weblog weblog, List<String> actions) {
         super("WeblogPermission user: N/A");
-        setActionsAsList(actions); 
+        setActionsAsList(actions);
         objectType = "Weblog";
         objectId = weblog.getHandle();
     }
-    
+
     public Weblog getWeblog() throws WebloggerException {
         if (objectId != null) {
             return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(objectId, null);
@@ -98,17 +98,17 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
     public boolean implies(Permission perm) {
         if (perm instanceof WeblogPermission) {
             WeblogPermission rperm = (WeblogPermission)perm;
-            
+
             if (hasAction(ADMIN)) {
                 // admin implies all other permissions
                 return true;
-                
+
             } else if (hasAction(POST)) {
                 // Best we've got is POST, so make sure perm doesn't specify POST
                 for (String action : rperm.getActionsAsList()) {
                     if (action.equals(ADMIN)) return false;
                 }
-                
+
             } else if (hasAction(EDIT_DRAFT)) {
                 // Best we've got is EDIT_DRAFT, so make sure perm doesn't specify anything else
                 for (String action : rperm.getActionsAsList()) {
@@ -120,11 +120,11 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
         }
         return false;
     }
-    
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("GlobalPermission: ");
-        for (String action : getActionsAsList()) { 
+        for (String action : getActionsAsList()) {
             sb.append(" ").append(action).append(" ");
         }
         return sb.toString();

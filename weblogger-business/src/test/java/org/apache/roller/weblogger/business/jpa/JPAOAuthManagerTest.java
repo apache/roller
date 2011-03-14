@@ -30,14 +30,14 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 /**
  * Test Weblogger Bookmark Management.
  */
-public class JPAOAuthManagerTest extends TestCase {    
+public class JPAOAuthManagerTest extends TestCase {
     public static Log log = LogFactory.getLog(JPAOAuthManagerTest.class);
 
     public void setUp() throws Exception {
-        
+
         // setup weblogger
         TestUtils.setupWeblogger();
-        
+
         try {
             TestUtils.endSession(true);
         } catch (Exception ex) {
@@ -45,9 +45,9 @@ public class JPAOAuthManagerTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
     public void tearDown() throws Exception {
-        
+
         try {
             TestUtils.endSession(true);
         } catch (Exception ex) {

@@ -29,15 +29,15 @@ class BasicAuthenticator extends Authenticator {
     public BasicAuthenticator(HttpServletRequest req) {
         super(req);
     }
-    
+
     public void authenticate() throws HandlerException {
         setUserName(null);
-        
+
         String authHeader = getRequest().getHeader("Authorization");
         if (authHeader == null) {
             throw new UnauthorizedException("ERROR: Authorization header was not set");
         }
-        
+
         StringTokenizer st = new StringTokenizer(authHeader);
         if (st.hasMoreTokens()) {
             String basic = st.nextToken();
@@ -49,14 +49,14 @@ class BasicAuthenticator extends Authenticator {
                     String userName = userPass.substring(0, p);
                     String password = userPass.substring(p+1);
                     verifyUser(userName, password);
-                    
+
                     //success
                     setUserName(userName);
                 }
             }
         }
 
-        // FIX from Nick Lothian, see 
+        // FIX from Nick Lothian, see
         if (getUserName() == null) {
                throw new UnauthorizedException("ERROR: Could not authorize user");
         }

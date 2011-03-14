@@ -37,28 +37,28 @@ import org.apache.roller.weblogger.pojos.User;
 
 /**
  * Enable Roller's User Roles to work in CMA setup without a JDBC realm.
- * 
- * If you're using Container Manager Authenticaton (CMA) and you're not using 
+ *
+ * If you're using Container Manager Authenticaton (CMA) and you're not using
  * the a JDBC realm that can add the User Roles defined by Roller, then you can
  * use this class to ensure that the request Role methods operate against the
  * User Roles as defined by Roller's User Manager.
  */
 public class RoleAssignmentFilter implements Filter {
-    
+
     private static Log log = LogFactory.getLog(RoleAssignmentFilter.class);
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
-        log.debug("Entered "+request.getRequestURI());        
+        log.debug("Entered "+request.getRequestURI());
         chain.doFilter(new RoleAssignmentRequestWrapper(request), res);
         log.debug("Exiting "+request.getRequestURI());
     }
-    
-    
+
+
     public void init(FilterConfig filterConfig) throws ServletException {}
-    
-    public void destroy() {}    
+
+    public void destroy() {}
 }
 
 

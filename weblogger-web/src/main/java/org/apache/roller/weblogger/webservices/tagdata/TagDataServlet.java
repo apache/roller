@@ -48,7 +48,7 @@ import org.apache.roller.weblogger.util.Utilities;
  * </ul>
  * See the <a href="http://cwiki.apache.org/confluence/display/ROLLER/Proposal+Tag+Data+API">
  * Tag Data API</a> proposal for details.
- * 
+ *
  * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
  * @author Dave Johnson (<a href="mailto:davidm.johnson@sun.com">davidm.johnson@sun.com</a>)
  */
@@ -56,16 +56,16 @@ public class TagDataServlet extends HttpServlet {
 
     private final int MAX = WebloggerConfig.getIntProperty("services.tagdata.max", 30);
 
-    
+
     protected void doPost(
-            HttpServletRequest request, HttpServletResponse response) 
+            HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
     }
 
-    
+
     public void doGet(
-            HttpServletRequest request, HttpServletResponse response) 
+            HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String[] pathInfo = new String[0];
@@ -74,7 +74,7 @@ public class TagDataServlet extends HttpServlet {
         String prefix = null;
         String format = "json";
         int page = 0;
-        
+
         // TODO: last modified or ETag support, caching, etc.
 
         if (request.getPathInfo() != null) {
@@ -136,25 +136,25 @@ public class TagDataServlet extends HttpServlet {
             }
             pw.println("\n  ]\n}");
             response.flushBuffer();
-            
+
         } else if ("xml".equals(format)) {
             URLStrategy urlstrat = roller.getUrlStrategy();
             response.setContentType("application/tagdata+xml; charset=utf-8");
             PrintWriter pw = response.getWriter();
-            pw.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>"); 
-            pw.println("<categories fixed=\"no\" "); 
-            pw.println("   xmlns=\"http://www.w3.org/2007/app\""); 
-            pw.println("   xmlns:atom=\"http://www.w3.org/2005/Atom\""); 
+            pw.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            pw.println("<categories fixed=\"no\" ");
+            pw.println("   xmlns=\"http://www.w3.org/2007/app\"");
+            pw.println("   xmlns:atom=\"http://www.w3.org/2005/Atom\"");
             pw.println("   xmlns:tagdata=\"http://roller.apache.org/ns/tagdata\">");
             int count = 0;
             for (Iterator it = tags.iterator(); it.hasNext();) {
                 TagStat stat = (TagStat) it.next();
                 String term = stat.getName();
-                String viewURI = urlstrat.getWeblogCollectionURL(weblog, 
-                        null,  // locale 
+                String viewURI = urlstrat.getWeblogCollectionURL(weblog,
+                        null,  // locale
                         null,  // category
                         null,  // date string
-                        Collections.singletonList(stat.getName()), 
+                        Collections.singletonList(stat.getName()),
                         0,     // page
                         true); // absolute
                 int frequency = stat.getCount();

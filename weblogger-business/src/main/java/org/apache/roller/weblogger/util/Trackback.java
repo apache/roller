@@ -47,16 +47,16 @@ import org.jdom.input.SAXBuilder;
  * Represents a trackback request.
  */
 public class Trackback {
-    
+
     private static final Log log = LogFactory.getLog(Trackback.class);
-    
+
     private final WeblogEntry entry;
     private final String trackbackURL;
-    
-    
+
+
     public Trackback(WeblogEntry tEntry, String tURL)
             throws TrackbackNotAllowedException {
-        
+
         // Make sure trackback to URL is allowed
         boolean allowTrackback = true;
         String allowedURLs = WebloggerConfig.getProperty("trackback.allowedURLs");
@@ -73,7 +73,7 @@ public class Trackback {
                 }
             }
         }
-        
+
         if(!allowTrackback) {
             throw new TrackbackNotAllowedException(tURL);
         } else {
@@ -84,30 +84,30 @@ public class Trackback {
                 // bad url
                 throw new IllegalArgumentException("bad url: "+tURL);
             }
-            
+
             entry = tEntry;
             trackbackURL = tURL;
         }
-        
+
     }
-    
-    
+
+
     /**
      * Sends trackback from entry to remote URL.
      * See Trackback spec for details: http://www.sixapart.com/pronet/docs/trackback_spec
      */
     public RollerMessages send() throws WebloggerException {
-        
+
         RollerMessages messages = new RollerMessages();
-        
+
         log.debug("Sending trackback to url - "+trackbackURL);
-        
+
         // Construct data
         String title = entry.getTitle();
         String excerpt = StringUtils.left( Utilities.removeHTML(entry.getDisplayContent()),255 );
         String url = entry.getPermalink();
         String blog_name = entry.getWebsite().getName();
-        
+
         // build trackback post parameters as query string
         Map params = new HashMap();
         params.put("title", URLUtilities.encode(title));
@@ -115,26 +115,26 @@ public class Trackback {
         params.put("url", URLUtilities.encode(url));
         params.put("blog_name", URLUtilities.encode(blog_name));
         String queryString = URLUtilities.getQueryString(params);
-        
+
         log.debug("query string - "+queryString);
-        
+
         // prepare http request
         HttpClient client = new HttpClient();
         client.setConnectionTimeout(45 * 1000);
         HttpMethod method = new PostMethod(trackbackURL);
         method.setQueryString(queryString);
-        
+
         try {
             // execute trackback
             int statusCode = client.executeMethod(method);
-            
+
             // read response
             byte[] response = method.getResponseBody();
             String responseString = Utilities.escapeHTML(new String(response, "UTF-8"));
-            
+
             log.debug("result = "+statusCode+" "+method.getStatusText());
             log.debug("response:\n"+responseString);
-            
+
             if(statusCode == HttpStatus.SC_OK) {
                 // trackback request succeeded, message will give details
                 try {
@@ -152,7 +152,7 @@ public class Trackback {
                 messages.addError("weblogEdit.trackbackErrorResponse",
                         new String[] {""+statusCode, method.getStatusText()});
             }
-            
+
         } catch (IOException e) {
             // some kind of transport error sending trackback post
             log.debug("Error sending trackback", e);
@@ -161,29 +161,29 @@ public class Trackback {
             // release used connection
             method.releaseConnection();
         }
-        
+
         return messages;
     }
-    
-    
+
+
     /**
      * Parse XML returned from trackback POST, returns error or success message
      * in RollerMessages object.
      */
-    private RollerMessages parseTrackbackResponse(String response, RollerMessages messages) 
+    private RollerMessages parseTrackbackResponse(String response, RollerMessages messages)
             throws JDOMException, IOException {
-        
+
         SAXBuilder builder = new SAXBuilder();
         Document doc = builder.build(
                 new StringReader(StringEscapeUtils.unescapeHtml(response)));
         Element root = doc.getRootElement();
-        
+
         if ("response".equals(root.getName())) {
             int code = -99;
             try {
                 code = Integer.parseInt(root.getChildText("error"));
             } catch (NumberFormatException ignoredByDesign) {}
-            
+
             String message = root.getChildText("message");
             if (code != 0) {
                 messages.addError("weblogEdit.trackbackFailure", Utilities.removeHTML(message));
@@ -193,8 +193,8 @@ public class Trackback {
         } else {
             messages.addError("weblogEdit.trackbackErrorParsing", Utilities.removeHTML(response));
         }
-        
+
         return messages;
     }
-    
+
 }

@@ -39,37 +39,37 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
  * Request token request handler
- * 
+ *
  * @author Praveen Alavilli
  * @author Dave Johnson (adapted for Roller)
  */
 public class RequestTokenServlet extends HttpServlet {
     protected static Log log =
             LogFactory.getFactory().getInstance(RequestTokenServlet.class);
-    
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
     }
-    
+
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         processRequest(request, response);
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         processRequest(request, response);
     }
-        
+
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
         try {
             OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
-            OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();            
+            OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
             OAuthAccessor accessor = omgr.getAccessor(requestMessage);
 
             if (accessor == null) {
@@ -100,11 +100,11 @@ public class RequestTokenServlet extends HttpServlet {
                     "oauth_token", token,
                     "oauth_token_secret", accessor.tokenSecret), out);
             out.close();
-            
+
         } catch (Exception e){
             handleException(e, request, response, true);
         }
-        
+
     }
 
     public void handleException(Exception e, HttpServletRequest request,

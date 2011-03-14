@@ -33,7 +33,7 @@ import java.io.Serializable;
  * This essentially allows us to track when an object is cached and then before
  * we can retrieve that cached object we must compare it with it's last known
  * invalidation time to make sure it hasn't expired.  This is useful because
- * instead of actively purging lots of cached objects from the cache at 
+ * instead of actively purging lots of cached objects from the cache at
  * invalidation time, we can now be lazy and just invalidate them when we
  * actually try to retrieve the cached object.
  *
@@ -43,17 +43,17 @@ import java.io.Serializable;
  * we try to use them.
  */
 public class LazyExpiringCacheEntry implements Serializable {
-    
+
     private Object value = null;
     private long timeCached = -1;
-    
-    
+
+
     public LazyExpiringCacheEntry(Object item) {
         this.value = item;
         this.timeCached = System.currentTimeMillis();
     }
-    
-    
+
+
     /**
      * Retrieve the value of this cache entry if it is still "fresh".
      *
@@ -66,19 +66,19 @@ public class LazyExpiringCacheEntry implements Serializable {
             return this.value;
         }
     }
-    
-    
+
+
     /**
      * Determine if this cache entry has expired.
      */
     public boolean isInvalid(long lastInvalidated) {
-        
+
         return (this.timeCached < lastInvalidated);
     }
 
-    
+
     public long getTimeCached() {
         return timeCached;
     }
-    
+
 }

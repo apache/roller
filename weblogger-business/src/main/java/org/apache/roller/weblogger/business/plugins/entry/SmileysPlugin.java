@@ -36,18 +36,18 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Converts ascii emoticons into HTML image tags.
  */
 public class SmileysPlugin implements WeblogEntryPlugin {
-    
+
     private static Log log = LogFactory.getLog(SmileysPlugin.class);
-    
+
     public static Pattern[] smileyPatterns = new Pattern[0]; // public for tests
     static String[] imageTags = new String[0];
     private static Properties smileyDefs = new Properties();
-    
+
     private String name = "Emoticons";
     private String description = "Change ASCII emoticons to graphics.  " +
             ":-) becomes <img src='./images/smileys/smile.gif'>";
-    
-    
+
+
     static {
         try {
             smileyDefs.load(SmileysPlugin.class.getResourceAsStream("smileys.properties"));
@@ -56,22 +56,22 @@ public class SmileysPlugin implements WeblogEntryPlugin {
         }
     }
 
-    
+
     public SmileysPlugin() {
         log.debug("SmileysPlugin instantiated.");
     }
-    
-    
+
+
     public String getName() {
         return name;
     }
-    
-    
+
+
     public String getDescription() {
         return StringEscapeUtils.escapeJavaScript(description);
     }
-    
-    
+
+
     /*
      * Convert the SmileyDefs into RegEx patterns and img tags for
      * later use.  Need an HttpServletRequest though so that we can
@@ -81,7 +81,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1) {
             String baseURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            
+
             Pattern[] tempP = new Pattern[SmileysPlugin.smileyDefs.size()];
             String[] tempS = new String[SmileysPlugin.smileyDefs.size()];
             log.debug("# smileys: " + smileyDefs.size());
@@ -104,8 +104,8 @@ public class SmileysPlugin implements WeblogEntryPlugin {
             SmileysPlugin.imageTags = tempS;
         }
     }
-    
-    
+
+
     /**
      * Find occurences of ascii emoticons and turn them into HTML image pointers.
      */
@@ -117,8 +117,8 @@ public class SmileysPlugin implements WeblogEntryPlugin {
         }
         return text;
     }
-    
-    
+
+
     /*
      * To display the smiley 'glyph' certain characters
      * must be HTML escaped.
@@ -139,7 +139,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
         }
         return buf.toString();
     }
-    
+
     /**
      * Some characters have to escaped with a backslash before
      * being compiled into a Regular Expression.
@@ -150,7 +150,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     private static char[] escape_regex = new char[]
     {'-', '(', ')', '\\', '|', ':', '^', '$', '*', '+', '?',
      '{', '}', '!', '=', '<', '>', '&', '[', ']' };
-    
+
     private String regexEscape(String smiley) {
         char[] chars = smiley.toCharArray();
         StringBuffer buf = new StringBuffer();
@@ -165,5 +165,5 @@ public class SmileysPlugin implements WeblogEntryPlugin {
         }
         return buf.toString();
     }
-    
+
 }

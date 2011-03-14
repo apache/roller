@@ -29,58 +29,58 @@ import org.apache.roller.planet.pojos.PlanetGroup;
 
 /**
  * Represents a request to a planet group.
- * 
+ *
  * /<planetHandle>/group/<groupHandle>[/extra/path/info]
  *
  */
 public class PlanetGroupRequest extends PlanetRequest {
-    
+
     private static Log log = LogFactory.getLog(PlanetGroupRequest.class);
-    
+
     // lightweight attributes
     private String groupHandle = null;
-    
+
     // heavyweight attributes
     private PlanetGroup group = null;
-    
-    
+
+
     public PlanetGroupRequest() {}
-    
-    
-    public PlanetGroupRequest(HttpServletRequest request) 
+
+
+    public PlanetGroupRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         super(request);
-        
+
         String myPathInfo = this.getPathInfo();
-        
+
         log.debug("parsing path "+myPathInfo);
-        
-        /* 
+
+        /*
          * parse the path info.  must look like this ...
          *
          * <groupHandle>[/extra/info]
          */
         if(myPathInfo != null && myPathInfo.trim().length() > 1) {
-            
+
             String[] urlPath = myPathInfo.split("/", 2);
             this.groupHandle = urlPath[0];
             this.pathInfo = null;
-            
+
             if(urlPath.length == 2) {
                 this.pathInfo = urlPath[1];
             }
-            
+
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("groupHandle = "+this.groupHandle);
             log.debug("pathInfo = "+this.pathInfo);
         }
     }
-    
-    
+
+
     public String getGroupHandle() {
         return groupHandle;
     }
@@ -90,7 +90,7 @@ public class PlanetGroupRequest extends PlanetRequest {
     }
 
     public PlanetGroup getGroup() {
-        
+
         if(group == null && groupHandle != null) {
             try {
                 PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
@@ -99,12 +99,12 @@ public class PlanetGroupRequest extends PlanetRequest {
                 log.error("Error looking up group "+groupHandle, ex);
             }
         }
-        
+
         return group;
     }
 
     public void setGroup(PlanetGroup group) {
         this.group = group;
     }
-    
+
 }

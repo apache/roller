@@ -37,21 +37,21 @@ import org.apache.roller.planet.pojos.Subscription;
  * Paging through a collection of planet entries.
  */
 public class PlanetEntriesPager extends AbstractPager {
-    
+
     private static Log log = LogFactory.getLog(PlanetEntriesPager.class);
-    
+
     private String feedURL = null;
     private PlanetGroup group = null;
     private int sinceDays = -1;
     private int length = 0;
-    
+
     // the collection for the pager
     private List entries = null;
-    
+
     // are there more items?
     private boolean more = false;
-    
-    
+
+
     public PlanetEntriesPager(
             String         feedURL,
             PlanetGroup group,
@@ -59,25 +59,25 @@ public class PlanetEntriesPager extends AbstractPager {
             int            sinceDays,
             int            page,
             int            length) {
-        
+
         super(baseUrl, page);
-        
+
         this.feedURL = feedURL;
         this.group = group;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
+
     public List getItems() {
-        
+
         if (entries == null) {
             // calculate offset
             int offset = getPage() * length;
-            
+
             Date startDate = null;
             if(sinceDays > 0) {
                 Calendar cal = Calendar.getInstance();
@@ -85,11 +85,11 @@ public class PlanetEntriesPager extends AbstractPager {
                 cal.add(Calendar.DATE, -1 * sinceDays);
                 startDate = cal.getTime();
             }
-            
+
             List results = new ArrayList();
             try {
                 PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-                
+
                 List rawEntries = null;
                 if (feedURL != null) {
                     Subscription sub = planetManager.getSubscription(feedURL);
@@ -102,33 +102,33 @@ public class PlanetEntriesPager extends AbstractPager {
                     //rawEntries = planetManager.getEntries(startDate, null, offset, length+1);
                     rawEntries = Collections.EMPTY_LIST;
                 }
-                
+
                 // check if there are more results for paging
                 if(rawEntries.size() > length) {
                     more = true;
                     rawEntries.remove(rawEntries.size() - 1);
                 }
-                
+
                 // wrap 'em
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
                     SubscriptionEntry entry = (SubscriptionEntry) it.next();
                     // TODO needs pojo wrapping from planet
                     results.add(entry);
                 }
-                
+
             } catch (Exception e) {
                 log.error("ERROR: get aggregation", e);
             }
-            
+
             entries = results;
         }
-        
+
         return entries;
     }
-    
-    
+
+
     public boolean hasMoreItems() {
         return more;
     }
-    
+
 }

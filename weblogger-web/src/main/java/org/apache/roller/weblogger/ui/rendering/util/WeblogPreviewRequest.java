@@ -35,46 +35,46 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * Represents a request for a weblog preview.
  */
 public class WeblogPreviewRequest extends WeblogPageRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogPreviewRequest.class);
-    
+
     private static final String PREVIEW_SERVLET = "/roller-ui/authoring/preview";
-    
+
     // lightweight attributes
     private String themeName = null;
     private String previewEntry = null;
-    
+
     // heavyweight attributes
     private Theme theme = null;
     private WeblogEntry weblogEntry = null;
-    
-    public WeblogPreviewRequest(HttpServletRequest request) 
+
+    public WeblogPreviewRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let parent go first
         super(request);
-        
+
         // we may have a specific theme to preview
         if(request.getParameter("theme") != null) {
             this.themeName = request.getParameter("theme");
         }
-        
+
         // we may also have a specific entry to preview
         if(request.getParameter("previewEntry") != null) {
             this.previewEntry = URLUtilities.decode(request.getParameter("previewEntry"));
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("theme = "+this.themeName);
         }
     }
-    
-    
+
+
     boolean isValidDestination(String servlet) {
         return (servlet != null && PREVIEW_SERVLET.equals(servlet));
     }
-    
-    
+
+
     public String getThemeName() {
         return themeName;
     }
@@ -82,19 +82,19 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     public void setThemeName(String theme) {
         this.themeName = theme;
     }
-    
+
     // override so that previews never show login status
     public String getAuthenticUser() {
         return null;
     }
-    
+
     // override so that previews never show login status
     public boolean isLoggedIn() {
         return false;
     }
 
     public Theme getTheme() {
-        
+
         if(theme == null && themeName != null) {
             try {
                 ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
@@ -105,7 +105,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
                 log.error("Error looking up theme "+themeName, re);
             }
         }
-        
+
         return theme;
     }
 
@@ -120,18 +120,18 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     public void setPreviewEntry(String previewEntry) {
         this.previewEntry = previewEntry;
     }
-    
+
     // if we have a preview entry we would prefer to return that
     public WeblogEntry getWeblogEntry() {
-        
-        if(weblogEntry == null && 
+
+        if(weblogEntry == null &&
                 (previewEntry != null || super.getWeblogAnchor() != null)) {
-            
+
             String anchor = previewEntry;
             if(previewEntry == null) {
                 anchor = super.getWeblogAnchor();
             }
-            
+
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), anchor);
@@ -139,12 +139,12 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
                 log.error("Error getting weblog entry "+anchor, ex);
             }
         }
-        
+
         return weblogEntry;
     }
-    
+
     public void setWeblogEntry(WeblogEntry weblogEntry) {
         this.weblogEntry = weblogEntry;
     }
-    
+
 }

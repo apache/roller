@@ -30,20 +30,20 @@ import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Roller password utility: don't run this unless you know what you are doing!</br >
- * 
+ *
  * <p>Configuration:<br />
- * 
+ *
  * Program looks in current directory for db.properties file with database
- * connection properties driverClassName and connectionUrl. 
- * 
+ * connection properties driverClassName and connectionUrl.
+ *
  * Program expects JDBC driver jar to be on classpath.</p>
- * 
+ *
  * <p>Usage:<br />
- * 
+ *
  * java -cp ./WEB-INF/lib/rollerbeans.jar;./jdbc.jar org.apache.roller.weblogger.business.utils.PasswordUtility<br />
- * 
+ *
  * <br />Options:<br />
- * 
+ *
  * -save &lt;file-name&gt;: Save username/passwords in property file<br />
  * -encrypt               : turn on encryption and encrypt passwords<br />
  * -restore &lt;file-name>   : turn off encryption and restore passwords from file<br />
@@ -51,42 +51,42 @@ import org.apache.roller.weblogger.util.Utilities;
  * -grant_admin &lt;username&gt;<br />
  * -revoke_admin &lt;username&gt;</p>
  */
-public class PasswordUtility 
+public class PasswordUtility
 {
     public static void main(String[] args) throws Exception
     {
         Properties props = new Properties();
         props.load(new FileInputStream("rollerdb.properties"));
-        
+
         String algorithm = props.getProperty("algorithm");
-        
+
         Connection con = createConnection(props,"");
-        
-        if (args.length == 2 && args[0].equals("-save")) 
+
+        if (args.length == 2 && args[0].equals("-save"))
         {
             savePasswords(con, args[1]);
         }
-        else if (args.length == 1 && args[0].equals("-encrypt")) 
+        else if (args.length == 1 && args[0].equals("-encrypt"))
         {
             encryptionOn(con, algorithm);
         }
-        else if (args.length == 2 && args[0].equals("-restore")) 
+        else if (args.length == 2 && args[0].equals("-restore"))
         {
             encryptionOff(con, args[1]);
         }
-        else if (args.length == 3 && args[0].equals("-reset")) 
+        else if (args.length == 3 && args[0].equals("-reset"))
         {
             resetPassword(con, args[1], args[2], algorithm);
         }
-        else if (args.length == 2 && args[0].equals("-grant_admin")) 
+        else if (args.length == 2 && args[0].equals("-grant_admin"))
         {
             grantAdmin(con, args[1]);
         }
-        else if (args.length == 2 && args[0].equals("-revoke_admin")) 
+        else if (args.length == 2 && args[0].equals("-revoke_admin"))
         {
             revokeAdmin(con, args[1]);
         }
-        else 
+        else
         {
             System.out.println("");
             System.out.println("USAGE: save passwords to a properties file");
@@ -109,19 +109,19 @@ public class PasswordUtility
             System.out.println("");
         }
     }
-    
-    /** 
+
+    /**
      * Create connection based on properties:<br/>
      * - driverClassName<br/>
      * - connectionUrl<br/>
      * - userName<br/>
      * - password<br/>
      */
-    public static Connection createConnection(Properties props, String prefix) 
+    public static Connection createConnection(Properties props, String prefix)
         throws Exception
     {
         Connection con = null;
-        if (prefix == null) 
+        if (prefix == null)
         {
             prefix = "";
         }
@@ -129,7 +129,7 @@ public class PasswordUtility
         String connectionUrl = props.getProperty(prefix+"connectionUrl");
         String userName = props.getProperty(prefix+"userName");
         String password = props.getProperty(prefix+"password");
-        
+
         Class.forName(driverClassName);
         if (userName != null && password != null)
         {
@@ -141,9 +141,9 @@ public class PasswordUtility
         }
         return con;
     }
-    
-    /** 
-     * Saves usernames and passwords to properties file, passwords keyed by usernames 
+
+    /**
+     * Saves usernames and passwords to properties file, passwords keyed by usernames
      */
     private static void savePasswords(
                     Connection con, String fileName) throws Exception
@@ -152,7 +152,7 @@ public class PasswordUtility
         PreparedStatement userquery = con.prepareStatement(
            "select username,passphrase from rolleruser");
         ResultSet users = userquery.executeQuery();
-        while (users.next()) 
+        while (users.next())
         {
             String username = users.getString(1);
             String passphrase = users.getString(2);
@@ -163,7 +163,7 @@ public class PasswordUtility
         fos.close();
     }
 
-    /** 
+    /**
      * Encrypt all passwords in rolleruser and turn ON encryption flag in rollerconfig
      */
     private static void encryptionOn(
@@ -195,12 +195,12 @@ public class PasswordUtility
             userUpdate.executeUpdate();
             System.out.println("Encrypted password for user: " + username);
         }
-        
+
         configUpdate.setBoolean(1, true);
         configUpdate.executeUpdate();
     }
 
-    /** 
+    /**
      * Restore passwords in rolleruser and turn OFF encryption flag in rollerconfig
      */
     private static void encryptionOff(
@@ -223,34 +223,34 @@ public class PasswordUtility
             userUpdate.setString(2, username);
             userUpdate.executeUpdate();
         }
-        
+
         configUpdate.setBoolean(1, false);
         configUpdate.executeUpdate();
     }
 
-    /** 
-     * Reset user's password to specified value using specified algorythm (if needed) 
+    /**
+     * Reset user's password to specified value using specified algorythm (if needed)
      */
     private static void resetPassword(
-                    Connection con, String username, String password, String algorithm) 
+                    Connection con, String username, String password, String algorithm)
     	    throws Exception
     {
-		PreparedStatement encryptionQuery = 
+		PreparedStatement encryptionQuery =
             con.prepareStatement("select encryptpasswords from rollerconfig");
-		PreparedStatement userUpdate = 
+		PreparedStatement userUpdate =
             con.prepareStatement("update rolleruser set passphrase=? where username=?");
-		
+
 		ResultSet rs = encryptionQuery.executeQuery();
 		rs.next();
 		boolean encryption = rs.getBoolean(1);
-		
-		String newpassword = 
+
+		String newpassword =
 		    encryption ? Utilities.encodePassword(password, algorithm) : password;
 		userUpdate.setString(1, newpassword);
 		userUpdate.setString(2, username);
 		userUpdate.executeUpdate();
-    }   
-    
+    }
+
     /**
      * Grant admin role to user by adding admin role for user to userrole table
      */
@@ -259,19 +259,19 @@ public class PasswordUtility
         // Find userid of specified user
         String userid = null;
         PreparedStatement userQuery = con.prepareStatement(
-           "select id from rolleruser where username=?");    
+           "select id from rolleruser where username=?");
         userQuery.setString(1, userName);
         ResultSet userRS = userQuery.executeQuery();
-        if (!userRS.next()) 
+        if (!userRS.next())
         {
             System.err.println("ERROR: username not found in database");
             return;
         }
-        else 
+        else
         {
             userid = userRS.getString(1);
         }
-        
+
         // Is user already an admin?
         PreparedStatement roleQuery = con.prepareStatement(
            "select username from userrole where username=? and rolename='admin'");
@@ -289,7 +289,7 @@ public class PasswordUtility
             adminInsert.executeUpdate();
             System.out.println("User granted admin role");
         }
-        else 
+        else
         {
             System.out.println("User was already an admin");
         }
@@ -303,19 +303,19 @@ public class PasswordUtility
         // Find userid of specified user
         String userid = null;
         PreparedStatement userQuery = con.prepareStatement(
-           "select id from rolleruser where username=?");    
+           "select id from rolleruser where username=?");
         userQuery.setString(1, userName);
         ResultSet userRS = userQuery.executeQuery();
-        if (!userRS.next()) 
+        if (!userRS.next())
         {
             System.err.println("ERROR: username not found in database");
             return;
         }
-        else 
+        else
         {
             userid = userRS.getString(1);
         }
-        
+
         // Delete user's admin entries from userrole table
         PreparedStatement roleDelete = con.prepareStatement(
            "delete from userrole where userid=? and rolename='admin'");

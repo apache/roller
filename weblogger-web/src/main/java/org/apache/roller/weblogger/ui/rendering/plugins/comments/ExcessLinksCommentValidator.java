@@ -29,14 +29,14 @@ import org.apache.roller.weblogger.util.RollerMessages;
  * Validates comment only if it has fewer links than comment.validator.excessSize.threshold
  */
 public class ExcessLinksCommentValidator implements CommentValidator {
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");  
-    private Pattern linkPattern = Pattern.compile("<a\\s*href\\s*=");    
+    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
+    private Pattern linkPattern = Pattern.compile("<a\\s*href\\s*=");
     private int threshold;
-        
+
     public ExcessLinksCommentValidator() {
         threshold = WebloggerConfig.getIntProperty("comment.validator.excessLinks.threshold");
     }
-        
+
     public String getName() {
         return bundle.getString("comment.validator.excessLinksName");
     }
@@ -52,5 +52,5 @@ public class ExcessLinksCommentValidator implements CommentValidator {
         }
         return 100;
     }
-    
+
 }

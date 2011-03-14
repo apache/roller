@@ -27,63 +27,63 @@ import org.apache.roller.planet.pojos.Subscription;
  * Test Entry CRUD.
  */
 public class EntryBasicTests extends TestCase {
-    
+
     private Subscription testSub = null;
-    
-    
+
+
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupPlanet();
-        
+
         testSub = TestUtils.setupSubscription("entryBasicTest");
     }
-    
-    
+
+
     protected void tearDown() throws Exception {
         TestUtils.teardownSubscription(testSub.getId());
     }
-    
-    
+
+
     public void testEntryCRUD() throws Exception {
-        
+
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
-        
+
         SubscriptionEntry testEntry = new SubscriptionEntry();
         testEntry.setPermalink("entryBasics");
         testEntry.setTitle("entryBasics");
         testEntry.setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
         testEntry.setSubscription(sub);
-        
+
         // add
         mgr.saveEntry(testEntry);
         TestUtils.endSession(true);
-        
+
         // verify
         SubscriptionEntry entry = null;
         entry = mgr.getEntryById(testEntry.getId());
         assertNotNull(entry);
         assertEquals("entryBasics", entry.getPermalink());
-        
+
         // modify
         entry.setTitle("foo");
         mgr.saveEntry(entry);
         TestUtils.endSession(true);
-        
+
         // verify
         entry = null;
         entry = mgr.getEntryById(testEntry.getId());
         assertNotNull(entry);
         assertEquals("foo", entry.getTitle());
-        
+
         // remove
         mgr.deleteEntry(entry);
         TestUtils.endSession(true);
-        
+
         // verify
         entry = null;
         entry = mgr.getEntryById(testEntry.getId());
         assertNull(entry);
     }
-    
+
 }

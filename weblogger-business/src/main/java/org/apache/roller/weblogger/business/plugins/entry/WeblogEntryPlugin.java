@@ -31,19 +31,19 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * These plugins affect both the entry summary and entry body.
  */
 public interface WeblogEntryPlugin {
-    
+
     /**
      * Returns the display name of this Plugin.
      */
     public String getName();
-    
-    
+
+
     /**
      * Briefly describes the function of the Plugin.  May contain HTML.
      */
     public String getDescription();
-    
-    
+
+
     /**
      * Give plugin a chance to initialize and add objects the rendering model.
      *
@@ -51,8 +51,8 @@ public interface WeblogEntryPlugin {
      * @param model      Rendering model where objects can be placed
      */
     public void init(Weblog weblog) throws WebloggerException;
-    
-    
+
+
     /**
      * Apply plugin to the specified text.
      *
@@ -61,5 +61,5 @@ public interface WeblogEntryPlugin {
      * @return            Results of applying plugin to entry.
      */
     public String render(WeblogEntry entry, String str);
-    
+
 }

@@ -40,70 +40,70 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
  * @web.filter name="InitFilter"
  */
 public class InitFilter implements Filter {
-    
+
     private static Log log = LogFactory.getLog(InitFilter.class);
-    
+
     private boolean initialized = false;
-    
-    
+
+
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         if(!initialized) {
             // first request, lets do our initialization
             HttpServletRequest request = (HttpServletRequest) req;
             HttpServletResponse response = (HttpServletResponse) res;
-            
+
             // determine absolute and relative url paths to the app
             String relPath = request.getContextPath();
             String absPath = this.getAbsoluteUrl(request);
-            
+
             // set them in our config
             WebloggerRuntimeConfig.setAbsoluteContextURL(absPath);
             WebloggerRuntimeConfig.setRelativeContextURL(relPath);
-            
+
             log.debug("relPath = "+relPath);
             log.debug("absPath = "+absPath);
-            
+
             this.initialized = true;
         }
-        
+
         chain.doFilter(req, res);
     }
-    
-    
+
+
     private String getAbsoluteUrl(HttpServletRequest request) {
-        
+
         String url = null;
-        
+
         String fullUrl = request.getRequestURL().toString();
-        
+
         // if the uri is only "/" then we are basically done
         if("/".equals(request.getRequestURI())) {
             log.info(fullUrl.substring(0, fullUrl.length()-1));
             return fullUrl.substring(0, fullUrl.length()-1);
         }
-        
+
         // find first "/" starting after hostname is specified
         int index = fullUrl.indexOf("/", fullUrl.indexOf(request.getServerName()));
-        
+
         // extract just the part leading up to uri
         url = fullUrl.substring(0, index);
-        
+
         // then just add on the context path
         url += request.getContextPath();
-        
+
         // make certain that we don't end with a /
         if(url.endsWith("/")) {
             url = url.substring(0, url.length()-1);
         }
-        
+
         return url;
     }
-    
-    
+
+
     public void init(FilterConfig filterConfig) throws ServletException {}
-    
+
     public void destroy() {}
-    
+
 }

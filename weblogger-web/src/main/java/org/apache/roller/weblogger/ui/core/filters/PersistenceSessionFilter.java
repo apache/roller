@@ -41,28 +41,28 @@ import org.apache.roller.planet.business.PlanetFactory;
  * @web.filter name="PersistenceSessionFilter"
  */
 public class PersistenceSessionFilter implements Filter {
-    
+
     private static Log log = LogFactory.getLog(PersistenceSessionFilter.class);
-    
-    
+
+
     /**
      * Release Roller persistence session at end of request processing.
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        
+
         log.debug("Entered "+request.getRequestURI());
-        
+
         try {
             chain.doFilter(request, response);
         } finally {
             if (WebloggerFactory.isBootstrapped()) {
                 log.debug("Releasing Roller Session");
                 WebloggerFactory.getWeblogger().release();
-                
+
                 // if planet is enabled then release planet backend as well
                 if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
                     if (PlanetFactory.isBootstrapped()) {
@@ -70,16 +70,16 @@ public class PersistenceSessionFilter implements Filter {
                     }
                 }
             }
-            
+
         }
-        
+
         log.debug("Exiting "+request.getRequestURI());
     }
-    
-    
+
+
     public void init(FilterConfig filterConfig) throws ServletException {}
-    
+
     public void destroy() {}
-    
+
 }
 

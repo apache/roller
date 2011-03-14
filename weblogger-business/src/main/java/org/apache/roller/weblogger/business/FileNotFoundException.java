@@ -25,17 +25,17 @@ import org.apache.roller.weblogger.WebloggerException;
  * Thrown from the FileManager if a file path does not exist.
  */
 public class FileNotFoundException extends WebloggerException {
-    
+
     public FileNotFoundException(String s) {
         super(s);
     }
-    
+
     public FileNotFoundException(String s, Throwable t) {
         super(s, t);
     }
-    
+
     public FileNotFoundException(Throwable t) {
         super(t);
     }
-    
+
 }

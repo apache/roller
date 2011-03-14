@@ -30,38 +30,38 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
  * paragraph formatting using <p> and <br/> tags.
  */
 public class AutoformatPlugin implements WeblogEntryCommentPlugin {
-    
+
     private static final Log log = LogFactory.getLog(AutoformatPlugin.class);
-    
-    
+
+
     public AutoformatPlugin() {
         // no-op
     }
-    
-    
+
+
     /**
-     * Unique identifier.  This should never change. 
+     * Unique identifier.  This should never change.
      */
     public String getId() {
         return "AutoFormat";
     }
-    
-    
+
+
     public String getName() {
         return "Auto Format";
     }
-    
-    
+
+
     public String getDescription() {
         return "Converts plain text style paragraphs into html paragraphs.";
     }
-    
-    
+
+
     public String render(final WeblogEntryComment comment, String text) {
-        
+
         log.debug("starting value:\n"+text);
-        
-        /* 
+
+        /*
          * setup a buffered reader and iterate through each line
          * inserting html as needed
          *
@@ -70,11 +70,11 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
         StringBuffer buf = new StringBuffer();
         try {
             BufferedReader br = new BufferedReader(new StringReader(text));
-            
+
             String line = null;
             boolean insidePara = false;
             while((line = br.readLine()) != null) {
-                
+
                 if(!insidePara && line.trim().length() > 0) {
                     // start of a new paragraph
                     buf.append("\n<p>");
@@ -90,19 +90,19 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
                     insidePara = false;
                 }
             }
-            
+
             // if the text ends without an empty line then we need to
             // terminate the last paragraph now
             if(insidePara)
                 buf.append("</p>\n\n");
-            
+
         } catch(Exception e) {
             log.warn("trouble rendering text.", e);
         }
-        
+
         log.debug("ending value:\n"+buf.toString());
-        
+
         return buf.toString();
     }
-    
+
 }

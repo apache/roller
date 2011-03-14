@@ -29,37 +29,37 @@ import org.apache.roller.weblogger.util.I18nMessages;
  * Provides access to application resources required for I18N.
  * Uses model name 'text' because that's what the Velocity Tools did.
  */
-public class MessageModel implements Model {  
-    
+public class MessageModel implements Model {
+
     I18nMessages messages = null;
-    
-    
+
+
     /** Template context name to be used for model */
     public String getModelName() {
         return "text";
     }
-    
-    
+
+
     /** Init page model based on request */
     public void init(Map initData) throws WebloggerException {
-        
+
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }
-        
+
         // get messages util based on desired locale
         this.messages = I18nMessages.getMessages(weblogRequest.getLocaleInstance());
     }
-    
-    
+
+
     /** Return message string */
     public String get(String key) {
         return messages.getString(key);
     }
-    
-    
+
+
     /** Return parameterized message string */
     public String get(String key, List args) {
         return messages.getString(key, args);

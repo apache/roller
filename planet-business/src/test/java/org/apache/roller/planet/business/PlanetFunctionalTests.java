@@ -28,49 +28,49 @@ import org.apache.roller.planet.pojos.Planet;
  * Test Planet functionality.
  */
 public class PlanetFunctionalTests extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(PlanetFunctionalTests.class);
-    
+
     private Planet testPlanet = null;
-    
-    
+
+
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupPlanet();
 
         testPlanet = TestUtils.setupPlanet("planetFuncTest");
     }
-    
-    
+
+
     protected void tearDown() throws Exception {
         TestUtils.teardownPlanet(testPlanet.getId());
     }
-    
-    
+
+
     /**
      * Test lookup mechanisms.
      */
     public void testPlanetLookups() throws Exception {
-        
+
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        
+
         Planet planet = null;
-        
+
         // by id
         planet = mgr.getPlanetById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("planetFuncTest", planet.getHandle());
-        
+
         // by handle
         planet = null;
         planet = mgr.getPlanet("planetFuncTest");
         assertNotNull(planet);
         assertEquals("planetFuncTest", planet.getHandle());
-        
+
         // all planets
         List planets = mgr.getPlanets();
         assertNotNull(planets);
         assertEquals(1, planets.size());
     }
-    
+
 }

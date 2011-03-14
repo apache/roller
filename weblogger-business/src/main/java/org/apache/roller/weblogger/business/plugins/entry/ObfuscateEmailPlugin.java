@@ -33,35 +33,35 @@ import org.apache.roller.util.RegexUtil;
  * Obfuscate email addresses in entry text.
  */
 public class ObfuscateEmailPlugin implements WeblogEntryPlugin {
-    
+
     private static Log mLogger = LogFactory.getLog(ObfuscateEmailPlugin.class);
-    
+
     protected String name = "Email Scrambler";
-    
+
     protected String description = "Automatically converts email addresses " +
             "to me-AT-mail-DOT-com format.  Also &quot;scrambles&quot; mailto: links.";
-    
-    
+
+
     public ObfuscateEmailPlugin() {
         mLogger.debug("ObfuscateEmailPlugin instantiated.");
     }
-    
-    
+
+
     public String getName() {
         return name;
     }
-    
-    
+
+
     public String getDescription() {
         return StringEscapeUtils.escapeJavaScript(description);
     }
-    
-    
+
+
     public void init(Weblog website) throws WebloggerException {}
-    
-    
+
+
     public String render(WeblogEntry entry, String str) {
         return RegexUtil.encodeEmail(str);
     }
-    
+
 }

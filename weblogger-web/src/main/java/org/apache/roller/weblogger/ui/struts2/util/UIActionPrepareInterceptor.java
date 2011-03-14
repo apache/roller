@@ -31,23 +31,23 @@ import org.apache.roller.weblogger.ui.struts2.editor.EntryEdit;
  * A struts2 interceptor for doing custom prepare logic.
  */
 public class UIActionPrepareInterceptor extends AbstractInterceptor {
-    
+
     private static Log log = LogFactory.getLog(UIActionPrepareInterceptor.class);
 
-    
+
     public String intercept(ActionInvocation invocation) throws Exception {
-        
+
         log.debug("Entering UIActionPrepareInterceptor");
-        
+
         final Object action = invocation.getAction();
         final ActionContext context = invocation.getInvocationContext();
-        
+
         // is this one of our own UIAction classes?
         if (action instanceof UIActionPreparable) {
-            
+
             log.debug("action is UIActionPreparable, calling myPrepare() method");
-            
-            // The EntryAdd->EntryEdit chain is the one place where we need 
+
+            // The EntryAdd->EntryEdit chain is the one place where we need
             // to pass a parameter along the chain, thus this somewhat ugly hack
             if (invocation.getStack().getRoot().size() > 1) {
                 Object action0= invocation.getStack().getRoot().get(0);
@@ -57,13 +57,13 @@ public class UIActionPrepareInterceptor extends AbstractInterceptor {
                     EntryAdd addAction = (EntryAdd)action1;
                     editAction.getBean().setId(addAction.getBean().getId());
                 }
-            }            
-            
+            }
+
             UIActionPreparable theAction = (UIActionPreparable) action;
             theAction.myPrepare();
         }
-        
+
         return invocation.invoke();
     }
-    
+
 }

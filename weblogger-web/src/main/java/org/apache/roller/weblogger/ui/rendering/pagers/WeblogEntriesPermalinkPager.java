@@ -40,17 +40,17 @@ import org.apache.roller.weblogger.util.Utilities;
  *
  */
 public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
-    
+
     private static Log log = LogFactory.getLog(WeblogEntriesPermalinkPager.class);
-    
+
     WeblogEntry currEntry = null;
     WeblogEntry nextEntry = null;
     WeblogEntry prevEntry = null;
-    
+
     // collection for the pager
     Map entries = null;
-    
-    
+
+
     public WeblogEntriesPermalinkPager(
             URLStrategy        strat,
             Weblog             weblog,
@@ -61,13 +61,13 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             String             catPath,
             List               tags,
             int                page) {
-        
+
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
-        
+
         getEntries();
     }
-    
-    
+
+
     public Map getEntries() {
         if (entries == null) try {
             Weblogger roller = WebloggerFactory.getWeblogger();
@@ -82,29 +82,29 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
         }
 
 
-        
+
         return entries;
     }
-    
-    
+
+
     public String getHomeLink() {
         return createURL(0, 0, weblog, locale, pageLink, null, dateString, catPath, tags);
     }
-    
-    
+
+
     public String getHomeName() {
         return messageUtils.getString("weblogEntriesPager.single.home");
     }
-    
-    
+
+
     public String getNextLink() {
         if (getNextEntry() != null) {
             return createURL(0, 0, weblog, locale, pageLink, nextEntry.getAnchor(), dateString, catPath, tags);
         }
         return null;
     }
-    
-    
+
+
     public String getNextName() {
         if (getNextEntry() != null) {
             String title = Utilities.truncateNicely(getNextEntry().getTitle(), 15, 20, "...");
@@ -112,16 +112,16 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
         }
         return null;
     }
-    
-    
+
+
     public String getPrevLink() {
         if (getPrevEntry() != null) {
             return createURL(0, 0, weblog, locale, pageLink, prevEntry.getAnchor(), dateString, catPath, tags);
         }
         return null;
     }
-    
-    
+
+
     public String getPrevName() {
         if (getPrevEntry() != null) {
             String title = Utilities.truncateNicely(getPrevEntry().getTitle(), 15, 20, "...");
@@ -129,8 +129,8 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
         }
         return null;
     }
-    
-    
+
+
     private WeblogEntry getNextEntry() {
         if (nextEntry == null) try {
             Weblogger roller = WebloggerFactory.getWeblogger();
@@ -147,8 +147,8 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
 
         return nextEntry;
     }
-    
-    
+
+
     private WeblogEntry getPrevEntry() {
         if (prevEntry == null) try {
             Weblogger roller = WebloggerFactory.getWeblogger();
@@ -165,5 +165,5 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
 
         return prevEntry;
     }
-    
+
 }

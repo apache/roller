@@ -39,8 +39,8 @@ public class OAuthAuthorize extends UIAction implements ServletRequestAware {
     public OAuthAuthorize() {
         this.pageTitle = "oauthAuthorize.title";
     }
-    
-    
+
+
     // override default security, we do not require an action weblog
     @Override
     public boolean isWeblogRequired() {
@@ -52,7 +52,7 @@ public class OAuthAuthorize extends UIAction implements ServletRequestAware {
     @Override
     public String execute() {
         boolean flush = false;
-        
+
         try {
             User ud = getAuthenticatedUser();
 

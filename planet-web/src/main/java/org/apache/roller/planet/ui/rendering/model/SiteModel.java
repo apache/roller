@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.ui.rendering.model; 
+package org.apache.roller.planet.ui.rendering.model;
 
 import java.util.List;
 import java.util.Map;
@@ -32,42 +32,42 @@ import org.apache.roller.planet.config.PlanetRuntimeConfig;
  * Model which provides information on an application wide scope.
  */
 public class SiteModel implements Model {
-    
+
     private static Log log = LogFactory.getLog(SiteModel.class);
-    
-    
-    /** 
+
+
+    /**
      * Creates an un-initialized new instance.
      */
     public SiteModel() {}
-    
-    
-    /** 
+
+
+    /**
      * Template context name to be used for model.
      */
     public String getModelName() {
         return "site";
     }
-    
-    
-    /** 
-     * Init page model based on request. 
+
+
+    /**
+     * Init page model based on request.
      */
     public void init(Map initData) throws PlanetException {
         // no-op
     }
-    
-    
+
+
     public String getTitle() {
         return PlanetRuntimeConfig.getProperty("site.name");
     }
-    
-    
+
+
     public String getDescription() {
         return PlanetRuntimeConfig.getProperty("site.description");
     }
-    
-    
+
+
     /**
      * Get the list of all planets.
      */
@@ -78,8 +78,8 @@ public class SiteModel implements Model {
         } catch(Exception e) {
             log.error("Error getting planets list", e);
         }
-        
+
         return null;
     }
-    
+
 }

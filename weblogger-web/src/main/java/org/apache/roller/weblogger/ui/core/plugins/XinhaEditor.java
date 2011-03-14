@@ -24,23 +24,23 @@ package org.apache.roller.weblogger.ui.core.plugins;
  * Uses ID of 'editor-rte.jsp' for historical reasons.
  */
 public class XinhaEditor implements WeblogEntryEditor {
-    
-    
+
+
     public XinhaEditor() {}
-    
-    
+
+
     public String getId() {
         // return RTE becuase at one point we replaced RTE with Xinha
         // the real RTE editor will have to use a differernt ID.
         return "editor-rte.jsp";
     }
-    
+
     public String getName() {
         return "editor.xinha.name";
     }
-    
+
     public String getJspPage() {
         return "/roller-ui/authoring/editors/editor-xinha.jsp";
     }
-    
+
 }

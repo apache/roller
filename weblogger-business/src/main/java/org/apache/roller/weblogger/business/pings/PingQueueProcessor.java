@@ -37,24 +37,24 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class PingQueueProcessor {
-    
+
     private static final Log logger = LogFactory.getLog(PingQueueProcessor.class);
-    
+
     private static PingQueueProcessor theInstance;
-    
+
     private PingQueueManager pingQueueMgr;
-    
-    
+
+
     public static PingQueueProcessor getInstance() {
         return theInstance;
     }
-    
-    
+
+
     private PingQueueProcessor() throws WebloggerException {
         pingQueueMgr = WebloggerFactory.getWeblogger().getPingQueueManager();
     }
-    
-    
+
+
     /**
      * Initialize the singleton.  This is called during <code>RollerContext</code> initialization.
      *
@@ -68,8 +68,8 @@ public class PingQueueProcessor {
         theInstance = new PingQueueProcessor();
         if (logger.isDebugEnabled()) logger.debug("Ping queue processor initialized.");
     }
-    
-    
+
+
     /**
      * Process the ping queue.  Performs one pass through the ping queue, processing every entry once.  On ping failure
      * an entry is requeued for processing on subsequent passes until the configured maximum number of attempts is
@@ -80,23 +80,23 @@ public class PingQueueProcessor {
             logger.info("Ping processing has been suspended.  Skipping current round of ping queue processing.");
             return;
         }
-        
+
         String absoluteContextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         if (absoluteContextUrl == null) {
             logger.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
             return;
         }
-        
+
         // TODO: Group by ping target and ping all sites for that target?
         // We're currently not taking advantage of grouping by ping target site and then sending
         // all of the pings for that target at once.  If it becomes an efficiency issue, we should do
         // that.
-        
+
         try {
             if (logger.isDebugEnabled()) logger.debug("Started processing ping queue.");
             // Get all of the entries
             List entries = pingQueueMgr.getAllQueueEntries();
-            
+
             // Process each entry
             for (Iterator i = entries.iterator(); i.hasNext();) {
                 PingQueueEntry pingQueueEntry = (PingQueueEntry) i.next();
@@ -107,8 +107,8 @@ public class PingQueueProcessor {
             logger.error("Unexpected exception processing ping queue!  Aborting this pass of ping queue processing.", ex);
         }
     }
-    
-    
+
+
     /**
      * Process an individual ping queue entry.
      *
@@ -118,7 +118,7 @@ public class PingQueueProcessor {
      */
     private void processQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException {
         if (logger.isDebugEnabled()) logger.debug("Processing ping queue entry: " + pingQueueEntry);
-        
+
         PingTarget pingTarget = pingQueueEntry.getPingTarget();
         Weblog website = pingQueueEntry.getWebsite();
         boolean pingSucceeded = false;
@@ -145,8 +145,8 @@ public class PingQueueProcessor {
             pingQueueMgr.removeQueueEntry(pingQueueEntry);
         }
     }
-    
-    
+
+
     /**
      * Handle any ping error.
      *
@@ -156,7 +156,7 @@ public class PingQueueProcessor {
      */
     private void handlePingError(PingQueueEntry pingQueueEntry, Exception ex)
             throws WebloggerException {
-        
+
         if ((pingQueueEntry.incrementAttempts() < PingConfig.getMaxPingAttempts()) && WeblogUpdatePinger.shouldRetry(ex)) {
             // We have attempts remaining, and it looks like we should retry,
             // so requeue the entry for processing on subsequent rounds
@@ -171,5 +171,5 @@ public class PingQueueProcessor {
             // TODO: mark ping target invalid?
         }
     }
-    
+
 }

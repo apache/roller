@@ -30,23 +30,23 @@ import java.util.Date;
  * an object.
  */
 public class StaticTemplate implements Template, Serializable {
-    
+
     private String id = null;
     private String name = null;
     private String description = null;
     private Date lastModified = new Date();
     private String templateLanguage = null;
     private String  outputContentType = null;
-    
-    
+
+
     public StaticTemplate(String id, String lang) {
         this.id = id;
         this.name = id;
         this.description = id;
         this.templateLanguage = lang;
     }
-    
-    
+
+
     public String getId() {
         return id;
     }
@@ -86,7 +86,7 @@ public class StaticTemplate implements Template, Serializable {
     public void setTemplateLanguage(String templateLanguage) {
         this.templateLanguage = templateLanguage;
     }
-    
+
     public String getOutputContentType() {
         return outputContentType;
     }
@@ -94,5 +94,5 @@ public class StaticTemplate implements Template, Serializable {
     public void setOutputContentType(String outputContentType) {
         this.outputContentType = outputContentType;
     }
-    
+
 }

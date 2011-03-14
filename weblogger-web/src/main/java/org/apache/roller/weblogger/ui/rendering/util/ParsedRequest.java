@@ -39,21 +39,21 @@ import org.apache.roller.weblogger.pojos.User;
  * needed.
  */
 public abstract class ParsedRequest {
-    
+
     private static Log log = LogFactory.getLog(ParsedRequest.class);
-    
+
     HttpServletRequest request = null;
-    
+
     // lightweight attributes
     private String authenticUser = null;
-    
+
     // heavyweight attributes
     private User user = null;
-    
-    
+
+
     ParsedRequest() {}
-    
-    
+
+
     /**
      * Parse the given http request and extract any information we can.
      *
@@ -61,31 +61,31 @@ public abstract class ParsedRequest {
      * relevant to all requests to Roller.
      */
     public ParsedRequest(HttpServletRequest request) throws InvalidRequestException {
-        
+
         // keep a reference to the original request
         this.request = request;
-        
+
         // login status
         java.security.Principal prince = request.getUserPrincipal();
         if(prince != null) {
             this.authenticUser = prince.getName();
         }
-        
+
     }
-    
-    
+
+
     public String getAuthenticUser() {
         return this.authenticUser;
     }
-    
-    
+
+
     public void setAuthenticUser(String authenticUser) {
         this.authenticUser = authenticUser;
     }
-    
-    
+
+
     public User getUser() {
-        
+
         if(user == null && authenticUser != null) {
             try {
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -94,18 +94,18 @@ public abstract class ParsedRequest {
                 log.error("Error looking up user "+authenticUser, ex);
             }
         }
-        
+
         return user;
     }
-    
-    
+
+
     public void setUser(User u) {
         this.user = u;
     }
-    
-    
+
+
     public boolean isLoggedIn() {
         return (this.authenticUser != null);
     }
-    
+
 }

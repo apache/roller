@@ -37,19 +37,19 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
  * multiple weblogs using a common set of resources.
  */
 public abstract class SharedTheme implements Theme, Serializable, Comparable {
-    
+
     protected String id = null;
     protected String name = null;
     protected String description = null;
     protected String author = null;
     protected Date lastModified = null;
     protected boolean enabled = false;
-    
+
     public abstract List getResources();
-    
+
     public abstract ThemeResource getPreviewImage();
-    
-    
+
+
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
@@ -57,8 +57,8 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable {
         SharedTheme other = (SharedTheme) o;
         return getName().compareTo(other.getName());
     }
-    
-    
+
+
     public String getId() {
         return id;
     }
@@ -66,7 +66,7 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -90,7 +90,7 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable {
     public void setAuthor(String author) {
         this.author = author;
     }
-    
+
     public Date getLastModified() {
         return lastModified;
     }
@@ -98,7 +98,7 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable {
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
-    
+
     public boolean isEnabled() {
         return enabled;
     }

@@ -36,9 +36,9 @@ public class CommentValidationManager {
     private static Log     log = LogFactory.getLog(CommentValidationManager.class);
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     private List           validators = new ArrayList();
-    
+
     public CommentValidationManager() {
-        
+
         // instantiate the validators that are configured
         try {
             String vals = WebloggerConfig.getProperty("comment.validator.classnames");
@@ -57,27 +57,27 @@ public class CommentValidationManager {
                     log.warn("Error accessing comment validator: " + valsarray[i]);
                 }
             }
-                        
+
         } catch (Exception e) {
             log.error("Error instantiating comment validators");
         }
         log.info("Configured " + validators.size() + " CommentValidators");
     }
-    
+
     /**
      * Add validator to those managed by this manager (testing purposes).
      */
     public void addCommentValidator(CommentValidator val) {
         validators.add(val);
     }
-    
+
     /**
      * Return total number of validators (for teasting purposes).
      */
     public int getValidatorCount() {
         return validators.size();
     }
-    
+
     /**
      * @param comment Comment to be validated
      * @param messages Messages object to which errors will be added
@@ -98,5 +98,5 @@ public class CommentValidationManager {
         }
         return total;
     }
-    
+
 }

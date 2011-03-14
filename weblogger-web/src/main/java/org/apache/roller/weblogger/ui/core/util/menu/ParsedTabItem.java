@@ -25,7 +25,7 @@ import java.util.List;
  * A parsed "tab-item" from an xml defined menu config.
  */
 public class ParsedTabItem {
-    
+
     private String name = null;
     private String action = null;
     private String[] subActions = null;
@@ -33,8 +33,8 @@ public class ParsedTabItem {
     private List<String> globalPermissionActions = null;
     private String enabledProperty = null;
     private String disabledProperty = null;
-    
-    
+
+
     public String getName() {
         return name;
     }
@@ -89,6 +89,6 @@ public class ParsedTabItem {
 
     public void setDisabledProperty(String disabledProperty) {
         this.disabledProperty = disabledProperty;
-    }    
+    }
 }
 

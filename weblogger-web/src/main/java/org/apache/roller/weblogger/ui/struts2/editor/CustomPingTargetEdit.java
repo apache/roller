@@ -30,25 +30,25 @@ import org.apache.roller.weblogger.ui.struts2.common.PingTargetEditBase;
  * Action for modifying a weblog custom ping target.
  */
 public class CustomPingTargetEdit extends PingTargetEditBase {
-    
+
     private static Log log = LogFactory.getLog(CustomPingTargetEdit.class);
-    
-    
+
+
     public CustomPingTargetEdit() {
         this.actionName = "customPingTargetEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "pingTarget.pingTarget";
     }
-    
-    
+
+
     // admin perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     protected Log getLogger() {
         return log;
     }
-    
+
 }

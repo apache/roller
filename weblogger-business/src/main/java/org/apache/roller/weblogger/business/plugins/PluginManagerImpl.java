@@ -38,34 +38,34 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
  * Plugin management for business layer and more generally applied plugins.
  */
 public class PluginManagerImpl implements PluginManager {
-    
+
     private static Log log = LogFactory.getLog(PluginManagerImpl.class);
-    
+
     // Plugin classes keyed by plugin name
     static Map mPagePlugins = new LinkedHashMap();
-    
+
     // Comment plugins
     private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList();
-    
-    
+
+
     /**
      * Creates a new instance of PluginManagerImpl
      */
     public PluginManagerImpl() {
         // load weblog entry plugins
         loadPagePluginClasses();
-        
+
         // load weblog entry comment plugins
         loadCommentPlugins();
     }
-    
-    
+
+
     public boolean hasPagePlugins() {
         log.debug("mPluginClasses.size(): " + mPagePlugins.size());
         return (mPagePlugins != null && mPagePlugins.size() > 0);
     }
-    
-    
+
+
     /**
      * Create and init plugins for processing entries in a specified website.
      */
@@ -84,8 +84,8 @@ public class PluginManagerImpl implements PluginManager {
         }
         return ret;
     }
-    
-    
+
+
     public String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str) {
         String ret = str;
         WeblogEntry copy = new WeblogEntry(entry);
@@ -104,27 +104,27 @@ public class PluginManagerImpl implements PluginManager {
         }
         return ret;
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public List<WeblogEntryCommentPlugin> getCommentPlugins() {
         return commentPlugins;
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public String applyCommentPlugins(WeblogEntryComment comment, String text) {
-        
+
         if(comment == null || text == null) {
             throw new IllegalArgumentException("comment cannot be null");
         }
-        
+
         String content = text;
-        
+
         if (commentPlugins.size() > 0) {
             for( WeblogEntryCommentPlugin plugin : commentPlugins ) {
                 if(comment.getPlugins() != null &&
@@ -134,11 +134,11 @@ public class PluginManagerImpl implements PluginManager {
                 }
             }
         }
-        
+
         return content;
     }
-    
-    
+
+
     /**
      * Initialize PagePlugins declared in roller.properties.
      * By using the full class name we also allow for the implementation of
@@ -147,7 +147,7 @@ public class PluginManagerImpl implements PluginManager {
      */
     private void loadPagePluginClasses() {
         log.debug("Initializing page plugins");
-        
+
         String pluginStr = WebloggerConfig.getProperty("plugins.page");
         if (log.isDebugEnabled()) log.debug(pluginStr);
         if (pluginStr != null) {
@@ -173,31 +173,31 @@ public class PluginManagerImpl implements PluginManager {
             }
         }
     }
-    
-    
+
+
     /**
      * Initialize all comment plugins defined in weblogger config.
      */
     private void loadCommentPlugins() {
-        
+
         log.debug("Initializing comment plugins");
-        
+
         String pluginStr = WebloggerConfig.getProperty("comment.formatter.classnames");
         if (pluginStr != null) {
             String[] plugins = StringUtils.stripAll(StringUtils.split(pluginStr, ","));
             for (int i=0; i < plugins.length; i++) {
                 log.debug("trying " + plugins[i]);
-                
+
                 try {
                     Class pluginClass = Class.forName(plugins[i]);
-                    WeblogEntryCommentPlugin plugin = 
+                    WeblogEntryCommentPlugin plugin =
                             (WeblogEntryCommentPlugin) pluginClass.newInstance();
-                    
+
                     // make sure and maintain ordering
                     commentPlugins.add(i, plugin);
-                    
+
                     log.debug("Configured comment plugin: "+plugins[i]);
-                    
+
                 } catch (ClassCastException e) {
                     log.error("ClassCastException for " + plugins[i]);
                 } catch (ClassNotFoundException e) {
@@ -209,10 +209,10 @@ public class PluginManagerImpl implements PluginManager {
                 }
             }
         }
-        
+
     }
-    
-    
+
+
     private static boolean isPagePlugin(Class pluginClass) {
         Class[] interfaces = pluginClass.getInterfaces();
         for (int i=0; i<interfaces.length; i++) {
@@ -220,10 +220,10 @@ public class PluginManagerImpl implements PluginManager {
         }
         return false;
     }
-    
-    
+
+
     public void release() {
         // no op
     }
-    
+
 }

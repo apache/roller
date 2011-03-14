@@ -33,11 +33,11 @@ import java.util.List;
  * @author Allen Gilliland
  */
 public class ConfigDef {
-    
+
     private List displayGroups = null;
     private String name = null;
-    
-    
+
+
     public ConfigDef() {
         this.displayGroups = new ArrayList();
     }
@@ -46,20 +46,20 @@ public class ConfigDef {
         this.displayGroups = displaygroups;
     }
 
-    
+
     public boolean addDisplayGroup(DisplayGroup group) {
         return this.displayGroups.add(group);
     }
-    
+
     public boolean removeDisplayGroup(DisplayGroup group) {
         return this.displayGroups.remove(group);
     }
-    
-    
+
+
     public String toString() {
         return name;
     }
-    
+
     public List getDisplayGroups() {
         return displayGroups;
     }
@@ -75,5 +75,5 @@ public class ConfigDef {
     public void setName(String name) {
         this.name = name;
     }
-    
+
 }

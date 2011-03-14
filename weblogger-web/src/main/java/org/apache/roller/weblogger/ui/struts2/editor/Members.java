@@ -41,45 +41,45 @@ import org.apache.struts2.interceptor.ParameterAware;
  * website.permissions collection when a permission is deleted.
  */
 public class Members extends UIAction implements ParameterAware {
-    
+
     private static Log log = LogFactory.getLog(Members.class);
-    
+
     // raw parameters from request
     private Map parameters = Collections.EMPTY_MAP;
-    
-    
+
+
     public Members() {
         log.debug("Instantiating members action");
-        
+
         this.actionName = "members";
         this.desiredMenu = "editor";
         this.pageTitle = "memberPermissions.title";
     }
-    
-    
+
+
     // admin perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     public String execute() {
-        
+
         log.debug("Showing weblog members page");
-        
+
         return LIST;
     }
-    
-    
+
+
     public String save() {
-        
+
         log.debug("Attempting to processing weblog permissions updates");
-        
+
         int removed = 0;
         int changed = 0;
         List<WeblogPermission> permsList = new ArrayList<WeblogPermission>();
         try {
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();   
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             List<WeblogPermission> permissions = userMgr.getWeblogPermissions(getActionWeblog());
 
             // we have to copy the permissions list so that when we remove permissions
@@ -87,16 +87,16 @@ public class Members extends UIAction implements ParameterAware {
             for( WeblogPermission perm : permissions ) {
                 permsList.add(perm);
             }
-        
+
             for (WeblogPermission perms : permsList) {
-                
+
                 String sval = getParameter("perm-" + perms.getUser().getId());
                 if (sval != null) {
                     boolean error = false;
                     User user = getAuthenticatedUser();
                     if (perms.getUser().getUserName().equals(user.getUserName())) {
                         // if modifying self
-                        if (sval.equals(WeblogPermission.EDIT_DRAFT) 
+                        if (sval.equals(WeblogPermission.EDIT_DRAFT)
                             && (perms.hasAction(WeblogPermission.POST) || perms.hasAction(WeblogPermission.ADMIN))) {
                             error = true;
                             addError("memberPermissions.noSelfDemotions");
@@ -105,8 +105,8 @@ public class Members extends UIAction implements ParameterAware {
                             error = true;
                             addError("memberPermissions.noSelfDemotions");
                         }
-                        
-                    } 
+
+                    }
                     if (!error && !perms.hasAction(sval)) {
                         if (sval == null) {
                             userMgr.revokeWeblogPermission(
@@ -122,29 +122,29 @@ public class Members extends UIAction implements ParameterAware {
                     }
                 }
             }
-            
+
             if (removed > 0 || changed > 0) {
-                log.debug("Weblog permissions updated, flushing changes");                
+                log.debug("Weblog permissions updated, flushing changes");
                 WebloggerFactory.getWeblogger().flush();
             }
-            
+
         } catch (Exception ex) {
             log.error("Error saving permissions on weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error saving permissions");
         }
-        
+
         if (removed > 0) {
             addMessage("memberPermissions.membersRemoved", ""+removed);
         }
         if (changed > 0) {
             addMessage("memberPermissions.membersChanged", ""+changed);
         }
-        
+
         return LIST;
     }
-    
-    
+
+
     // convenience for accessing a single parameter with a single value
     public String getParameter(String key) {
         if(key != null) {
@@ -155,8 +155,8 @@ public class Members extends UIAction implements ParameterAware {
         }
         return null;
     }
-    
-    
+
+
     public Map getParameters() {
         return parameters;
     }
@@ -164,7 +164,7 @@ public class Members extends UIAction implements ParameterAware {
     public void setParameters(Map parameters) {
         this.parameters = parameters;
     }
-    
+
     public List<WeblogPermission> getWeblogPermissions() {
         try {
             return WebloggerFactory.getWeblogger().getUserManager().getWeblogPermissions(getActionWeblog());

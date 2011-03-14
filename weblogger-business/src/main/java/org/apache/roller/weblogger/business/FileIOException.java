@@ -26,17 +26,17 @@ import org.apache.roller.weblogger.WebloggerException;
  * working on a file, such as during a save or delete.
  */
 public class FileIOException extends WebloggerException {
-    
+
     public FileIOException(String s) {
         super(s);
     }
-    
+
     public FileIOException(String s, Throwable t) {
         super(s, t);
     }
-    
+
     public FileIOException(Throwable t) {
         super(t);
     }
-    
+
 }

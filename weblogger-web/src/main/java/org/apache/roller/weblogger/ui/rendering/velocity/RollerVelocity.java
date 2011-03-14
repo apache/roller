@@ -37,49 +37,49 @@ import org.apache.velocity.exception.ResourceNotFoundException;
  * access to the instance via the Singleton getInstance() method.
  */
 public class RollerVelocity {
-    
+
     public static final String VELOCITY_CONFIG = "/WEB-INF/velocity.properties";
-    
+
     private static Log log = LogFactory.getLog(RollerVelocity.class);
-    
+
     private static VelocityEngine velocityEngine = null;
-    
-    
+
+
     static {
         log.info("Initializing Velocity Rendering Engine");
-        
+
         // initialize the Velocity engine
         Properties velocityProps = new Properties();
-        
+
         try {
             InputStream instream =
                     RollerContext.getServletContext().getResourceAsStream(VELOCITY_CONFIG);
-            
+
             velocityProps.load(instream);
-            
+
             // need to dynamically add old macro libraries if they are enabled
             if(WebloggerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
                 String macroLibraries = (String) velocityProps.get("velocimacro.library");
                 String oldLibraries = WebloggerConfig.getProperty("velocity.oldMacroLibraries");
-                
+
                 // set the new value
                 velocityProps.setProperty("velocimacro.library", oldLibraries+","+macroLibraries);
             }
-            
+
             log.debug("Velocity engine props = "+velocityProps);
-            
+
             // construct the VelocityEngine
             velocityEngine = new VelocityEngine();
-            
+
             // init velocity with our properties
             velocityEngine.init(velocityProps);
-            
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-    
-    
+
+
     /**
      * Access to the VelocityEngine.
      *
@@ -89,8 +89,8 @@ public class RollerVelocity {
     public static VelocityEngine getEngine() {
         return velocityEngine;
     }
-    
-    
+
+
     /**
      * Convenience static method for looking up a template.
      */
@@ -98,8 +98,8 @@ public class RollerVelocity {
             throws ResourceNotFoundException, ParseErrorException, Exception {
         return velocityEngine.getTemplate(name);
     }
-    
-    
+
+
     /**
      * Convenience static method for looking up a template.
      */
@@ -107,5 +107,5 @@ public class RollerVelocity {
             throws ResourceNotFoundException, ParseErrorException, Exception {
         return velocityEngine.getTemplate(name, encoding);
     }
-    
+
 }

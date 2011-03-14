@@ -54,7 +54,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 
 /**
  * Load Velocity Context with Weblogger objects, values, and custom plugins.
- * 
+ *
  * NOTE: This class has been deprecated and should no longer be used.  It is
  *       left here so that old weblogs which rely on it will continue to
  *       function properly.  This should only be used by weblog pages.
@@ -72,9 +72,9 @@ public class ContextLoader {
     public static final String WEBLOGCATEGORYNAME_KEY = "cat";
     public static final String WEBLOGENTRIES_KEY      = "entries";
     public static final String WEBLOGDAY_KEY          = "day";
-    
+
     public static final String WEBLOGENTRYID_KEY      = "entryid";
-    
+
     public static final String WEBLOGCATEGORYID_KEY   = "categoryId";
     public static final String PINGTARGETID_KEY       = "pingtargetId";
     public static final String REFERERID_KEY          = "refId";
@@ -85,12 +85,12 @@ public class ContextLoader {
     public static final String PARENTID_KEY           = "parentId";
     public static final String NEWSFEEDID_KEY         = "feedId";
     public static final String PAGEID_KEY             = "pageId";
-    public static final String LOGIN_COOKIE           = "sessionId";    
-    public static final String OWNING_WEBSITE         = "OWNING_WEBSITE";    
+    public static final String LOGIN_COOKIE           = "sessionId";
+    public static final String OWNING_WEBSITE         = "OWNING_WEBSITE";
 
     private static Log mLogger = LogFactory.getLog(ContextLoader.class);
-    
-    
+
+
     /**
      * Setup the a Velocity context by loading it with objects, values, and
      * RollerPagePlugins needed for Weblogger page execution.
@@ -102,9 +102,9 @@ public class ContextLoader {
             PageContext pageContext,
             WeblogPageRequest pageRequest,
             URLStrategy urlStrategy) throws WebloggerException {
-        
+
         mLogger.debug("setupContext( ctx = "+ctx+")");
-        
+
         Weblog weblog = null;
         WeblogEntry entry = null;
         WeblogCategory category = null;
@@ -114,7 +114,7 @@ public class ContextLoader {
         boolean isDay = false;
         boolean isMonth = false;
         String locale = null;
-        
+
         // get data from page request
         locale = pageRequest.getLocale();
         weblog = pageRequest.getWeblog();
@@ -124,10 +124,10 @@ public class ContextLoader {
         if(page == null) {
             page = weblog.getTheme().getDefaultTemplate();
         }
-        
+
         // setup date, isDay, and isMonth
         if(pageRequest.getWeblogDate() != null) {
-            
+
             Date now = new Date();
             if(pageRequest.getWeblogDate().length() == 8) {
                 isDay = true;
@@ -153,7 +153,7 @@ public class ContextLoader {
                 isMonth = true;
             }
         }
-        
+
         try {
             // Add old page model object to context
             OldWeblogPageModel pageModel = new OldWeblogPageModel();
@@ -167,26 +167,26 @@ public class ContextLoader {
                     isMonth,
                     locale);
             ctx.put("pageModel", pageModel);
-            
+
             // along with old pages list :/
             ctx.put("pages", pageModel.getPages());
-            
+
         } catch (Exception e) {
             throw new WebloggerException("ERROR creating Page Model",e);
         }
-        
+
         // Add page helper to context
-        OldPageHelper pageHelper = new OldPageHelper(request, 
-                response, 
-                ctx, 
-                weblog, 
-                (date == null) ? new Date() : date, 
-                folder, 
-                page.getName(), 
+        OldPageHelper pageHelper = new OldPageHelper(request,
+                response,
+                ctx,
+                weblog,
+                (date == null) ? new Date() : date,
+                folder,
+                page.getName(),
                 pageContext,
                 pageRequest);
         ctx.put("pageHelper", pageHelper);
-        
+
         // Load standard Weblogger objects and values into the context
         loadWeblogValues(ctx, weblog, pageRequest.getLocaleInstance(), request, urlStrategy);
         loadPathValues(ctx, request, weblog, locale, urlStrategy);
@@ -194,14 +194,14 @@ public class ContextLoader {
         loadUtilityObjects(ctx, request, weblog, page);
         loadRequestParamKeys(ctx);
         loadStatusMessage(ctx, request);
-        
+
         // If single entry is specified, load comments too
         if (entry != null) {
             loadCommentValues(ctx, request, entry, urlStrategy);
         }
     }
-    
-    
+
+
     /**
      * Load website object and related objects.
      */
@@ -211,39 +211,39 @@ public class ContextLoader {
             Locale locale,
             HttpServletRequest request,
             URLStrategy urlStrategy) throws WebloggerException {
-        
+
         // weblog cannot be null
         if(weblog == null)
             return;
-        
+
         Weblogger mRoller = WebloggerFactory.getWeblogger();
         Map props = mRoller.getPropertiesManager().getProperties();
-        
+
         ctx.put("userName",         weblog.getHandle());
         ctx.put("fullName",         weblog.getName() );
         ctx.put("emailAddress",     weblog.getEmailAddress() );
         ctx.put("encodedEmail",     RegexUtil.encode(weblog.getEmailAddress()));
         ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(weblog.getEmailAddress()));
-        
+
         // setup Locale for future rendering
         ctx.put("locale", weblog.getLocaleInstance());
-        
+
         // setup Timezone for future rendering
         ctx.put("timezone", weblog.getTimeZoneInstance());
         ctx.put("timeZone", weblog.getTimeZoneInstance());
         ctx.put("website",WeblogWrapper.wrap(weblog, urlStrategy) );
-        
+
         String siteName = ((RuntimeConfigProperty)props.get("site.name")).getValue();
         if ("Roller-based Site".equals(siteName)) siteName = "Main";
         ctx.put("siteName", siteName);
-        
+
         String siteShortName = ((RuntimeConfigProperty)props.get("site.shortName")).getValue();
         ctx.put("siteShortName", siteShortName);
-        
+
         // add language of the session (using locale specified by request)
         ctx.put("viewLocale", locale);
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
-        
+
         // alternative display pages - customization
         ThemeTemplate entryPage = weblog.getTheme().getTemplateByName("_entry");
         if (entryPage != null) {
@@ -254,20 +254,20 @@ public class ContextLoader {
         //if (descPage != null) {
         //ctx.put("descPage", TemplateWrapper.wrap(descPage));
         //}
-        
+
         boolean commentsEnabled =
                 WebloggerRuntimeConfig.getBooleanProperty("users.comments.enabled");
         boolean trackbacksEnabled =
                 WebloggerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
         boolean linkbacksEnabled =
                 WebloggerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
-        
+
         ctx.put("commentsEnabled",   new Boolean(commentsEnabled) );
         ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
         ctx.put("linkbacksEnabled",  new Boolean(linkbacksEnabled) );
     }
-    
-    
+
+
     /**
      * Load comments for one weblog entry and related objects.
      */
@@ -276,21 +276,21 @@ public class ContextLoader {
             HttpServletRequest request,
             WeblogEntry entry,
             URLStrategy urlStrategy) throws WebloggerException {
-        
+
         mLogger.debug("Loading comment values");
-        
+
         boolean escapeHtml =
                 !WebloggerRuntimeConfig.getBooleanProperty("users.comments.htmlenabled");
         ctx.put("isCommentPage",     Boolean.TRUE);
         ctx.put("escapeHtml",        new Boolean(escapeHtml) );
         ctx.put("autoformat",        new Boolean(false) );
-        
+
         // Make sure comment form object is available in context
         WeblogEntryCommentForm commentForm =
                 (WeblogEntryCommentForm) request.getAttribute("commentForm");
         if ( commentForm == null ) {
             commentForm = new WeblogEntryCommentForm();
-            
+
             // Set fields to spaces to please Velocity
             commentForm.setName("");
             commentForm.setEmail("");
@@ -298,20 +298,20 @@ public class ContextLoader {
             commentForm.setContent("");
         }
         ctx.put("commentForm",commentForm);
-        
+
         // Either put a preview comment in to context
         if(commentForm.isPreview()) {
             ArrayList list = new ArrayList();
             list.add(commentForm.getPreviewComment());
             ctx.put("previewComments", list);
         }
-        
+
         if (entry.getStatus().equals(WeblogEntry.PUBLISHED)) {
             ctx.put("entry",WeblogEntryWrapper.wrap(entry, urlStrategy));
         }
     }
-    
-    
+
+
     /**
      * Load objects needed for RSS and Atom newsfeed generation.
      */
@@ -321,26 +321,26 @@ public class ContextLoader {
             Weblog website,
             WeblogCategory category)
             throws WebloggerException {
-        
+
         mLogger.debug("Loading rss values");
-        
+
         int entryLength = -1;
         String sExcerpts = request.getParameter("excerpts");
         if ( sExcerpts!=null && sExcerpts.equalsIgnoreCase("true")) {
             entryLength = 150;
         }
         ctx.put("entryLength",  new Integer(entryLength));
-        
+
         // Display same number of entries in feed as displayed on page
         int entryCount = website.getEntryDisplayCount();
-        
+
         // But don't exceed installation-wide maxEntries settings
         int defaultEntries =
                 WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
         if (entryCount < 1) entryCount = defaultEntries;
         if (entryCount > defaultEntries) entryCount = defaultEntries;
         ctx.put("entryCount",  new Integer(entryCount));
-        
+
         String catname = null;
         String catPath = null;
         if (category != null ) {
@@ -352,8 +352,8 @@ public class ContextLoader {
         ctx.put("updateTime", website.getLastModified());
         ctx.put("now", new Date());
     }
-    
-    
+
+
     /**
      * Load useful utility objects for string and date formatting.
      */
@@ -362,9 +362,9 @@ public class ContextLoader {
             HttpServletRequest request,
             Weblog website,
             ThemeTemplate page) throws WebloggerException {
-        
+
         mLogger.debug("Loading utility objects");
-        
+
         // date formatter for macro's set this up with the Locale to make
         // sure we can reuse it with other patterns in the macro's
         Locale viewLocale = (Locale) ctx.get("viewLocale");
@@ -374,12 +374,12 @@ public class ContextLoader {
         }
         // add formatter to context
         ctx.put("dateFormatter", sdf );
-        
+
         // Note: in the macro's, the formats are taken from the ResourceBundles.
         // Only the plainFormat is specified here, because it is used to render
         // the Entry Day link.
         ctx.put("plainFormat", "yyyyMMdd");
-        
+
         ctx.put("page",ThemeTemplateWrapper.wrap(page));
         ctx.put("utilities",       new OldUtilities() );
         ctx.put("stringUtils",     new OldStringUtils() );
@@ -387,11 +387,11 @@ public class ContextLoader {
         ctx.put("rollerBuildTime", WebloggerFactory.getWeblogger().getBuildTime() );
         ctx.put("rollerBuildUser", WebloggerFactory.getWeblogger().getBuildUser() );
         ctx.put("newsfeedCache",   NewsfeedCache.getInstance() );
-        
+
         ctx.put("requestParameters", request.getParameterMap());
     }
-    
-    
+
+
     /**
      * Load URL paths useful in page templates.
      */
@@ -401,9 +401,9 @@ public class ContextLoader {
             Weblog   website,
             String locale,
             URLStrategy urlStrategy) throws WebloggerException {
-        
+
         mLogger.debug("Loading path values");
-        
+
         String url = null;
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
             url = urlStrategy.getWeblogURL(website, locale, true);
@@ -415,7 +415,7 @@ public class ContextLoader {
         ctx.put("absBaseURL", WebloggerRuntimeConfig.getAbsoluteContextURL() );
         ctx.put("ctxPath",    WebloggerRuntimeConfig.getRelativeContextURL() );
         ctx.put("uploadPath", ContextLoader.figureResourcePath());
-        
+
         try {
             URL absUrl = new URL(WebloggerRuntimeConfig.getAbsoluteContextURL());
             ctx.put("host", absUrl.getHost());
@@ -423,26 +423,26 @@ public class ContextLoader {
             throw new WebloggerException(e);
         }
     }
-    
-    
+
+
     /**
      * Determine URL path to Weblogger upload directory.
      */
     private static String figureResourcePath() {
-        
+
         // legacy junk.  this no longer makes any sense as of 3.0, but oh well
         return "/resources";
     }
-    
-    
+
+
     /**
      * If there is an ERROR or STATUS message in the session,
      * place it into the Context for rendering later.
      */
     private static void loadStatusMessage(Map ctx, HttpServletRequest req) {
-        
+
         mLogger.debug("Loading status message");
-        
+
         HttpSession session = req.getSession(false);
         String msg = null;
         if (session != null)
@@ -451,7 +451,7 @@ public class ContextLoader {
             ctx.put("errorMessage", msg);
             session.removeAttribute(RollerSession.ERROR_MESSAGE);
         }
-        
+
         if (session != null)
             msg = (String)session.getAttribute(RollerSession.STATUS_MESSAGE);
         if (msg != null) {
@@ -459,12 +459,12 @@ public class ContextLoader {
             session.removeAttribute(RollerSession.STATUS_MESSAGE);
         }
     }
-    
-    
+
+
     private static void loadRequestParamKeys(Map ctx) {
-        
+
         mLogger.debug("Loading request param keys");
-        
+
         // Since Velocity *requires* accessor methods, these values from
         // RollerRequest are not available to it, put them into the context
         ctx.put("USERNAME_KEY",           USERNAME_KEY);
@@ -484,5 +484,5 @@ public class ContextLoader {
         ctx.put("WEBLOGDAY_KEY",          WEBLOGDAY_KEY);
         ctx.put("WEBLOGCOMMENTID_KEY",    WEBLOGCOMMENTID_KEY);
     }
-       
+
 }

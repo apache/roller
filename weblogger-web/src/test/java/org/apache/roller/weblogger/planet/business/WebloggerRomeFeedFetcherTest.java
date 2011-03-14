@@ -33,24 +33,24 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Test custom weblogger feed fetcher.
  */
 public class WebloggerRomeFeedFetcherTest extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(WebloggerRomeFeedFetcherTest.class);
-    
+
     //User testUser = null;
     //Weblog testWeblog = null;
     String feed_url = "weblogger:webloggerFetcherTestWeblog";
-    
-    
+
+
     /**
      * All tests in this suite require a user and a weblog.
      */
     @Override
     public void setUp() throws Exception {
-        
+
         // setup weblogger
         TestUtils.setupWeblogger();
         TestUtils.setupPlanet();
-        
+
         try {
             //testUser = TestUtils.setupUser("webloggerFetcherTestUser");
             //testWeblog = TestUtils.setupWeblog("webloggerFetcherTestWeblog", testUser);
@@ -60,22 +60,22 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
     @Override
     public void tearDown() throws Exception {
-        
+
         try {
             //TestUtils.teardownWeblog(testWeblog.getId());
             //TestUtils.teardownUser(testUser.getUserName());
             //TestUtils.endSession(true);
-            
+
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test teardown failed", ex);
         }
     }
-    
-    
+
+
     public void testFetchSubscription() throws Exception {
         try {
             FeedFetcher feedFetcher = PlanetFactory.getPlanet().getFeedFetcher();
@@ -94,5 +94,5 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
             e.printStackTrace();
         }
     }
-    
+
 }

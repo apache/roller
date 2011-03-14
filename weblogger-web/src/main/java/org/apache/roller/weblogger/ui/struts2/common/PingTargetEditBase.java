@@ -31,46 +31,46 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Base implementation for action that can edit an existing ping target.
  */
 public abstract class PingTargetEditBase extends UIAction {
-    
+
     // ping target we are working on, if any
     private PingTarget pingTarget = null;
-    
+
     // a bean for managing submitted data
     private PingTargetFormBean bean = new PingTargetFormBean();
-    
-    
+
+
     // get logger
     protected abstract Log getLogger();
-    
-    
+
+
     /**
      * Prepare action by loading ping target to work on.
      */
     public void myPrepare() {
-        
+
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         if(!StringUtils.isEmpty(getBean().getId())) {
-            
+
             try {
                 setPingTarget(pingTargetMgr.getPingTarget(getBean().getId()));
             } catch (WebloggerException ex) {
                 getLogger().error("Error looking up ping target - "+getBean().getId());
             }
-            
+
             if(getPingTarget() == null) {
                 // TODO: i18n
                 addError("No such ping target id: " + getBean().getId());
             }
-            
+
         } else {
             // TODO: i18n
             addError("Missing ping target id: " + getBean().getId());
         }
     }
-    
-    
+
+
     public String execute() {
-        
+
         if(!hasActionErrors()) {
             // load bean with data from ping target
             getBean().copyFrom(getPingTarget());
@@ -79,58 +79,58 @@ public abstract class PingTargetEditBase extends UIAction {
             // an existing ping target to work on, so return ERROR result
             return ERROR;
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Save ping target.
      */
     public String save() {
-        
+
         if(hasActionErrors()) {
             // if we already have an error then that means we couldn't load
             // an existing ping target to work on, so return ERROR result
             return INPUT;
         }
-        
+
         // copy data from form into ping target
         getBean().copyTo(getPingTarget());
-        
+
         // Call private helper to validate ping target
         // If there are errors, go back to the target edit page.
         myValidate(getPingTarget());
-        
+
         if(!hasActionErrors()) try {
             // Appears to be ok.  Save it and flush.
             PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             pingTargetMgr.savePingTarget(getPingTarget());
             WebloggerFactory.getWeblogger().flush();
-            
+
             addMessage("pingTarget.saved");
-            
+
         } catch (WebloggerException ex) {
             getLogger().error("Error saving ping target", ex);
             // TODO: i18n
             addError("Error saving ping target.");
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Private helper to validate a ping target.
      */
     protected void myValidate(PingTarget pingTarget) {
-        
+
         try {
             PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             if (!pingTargetMgr.isNameUnique(pingTarget)) {
                 addError("pingTarget.nameNotUnique");
             }
-            
+
             if (!pingTargetMgr.isUrlWellFormed(pingTarget)) {
                 addError("pingTarget.malformedUrl");
             } else if (!pingTargetMgr.isHostnameKnown(pingTarget)) {
@@ -142,8 +142,8 @@ public abstract class PingTargetEditBase extends UIAction {
             addError("Error doing ping target validation");
         }
     }
-    
-    
+
+
     public PingTarget getPingTarget() {
         return pingTarget;
     }
@@ -151,7 +151,7 @@ public abstract class PingTargetEditBase extends UIAction {
     public void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
     }
-    
+
     public PingTargetFormBean getBean() {
         return bean;
     }
@@ -159,5 +159,5 @@ public abstract class PingTargetEditBase extends UIAction {
     public void setBean(PingTargetFormBean bean) {
         this.bean = bean;
     }
-    
+
 }

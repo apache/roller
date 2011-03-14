@@ -33,10 +33,10 @@ import java.util.List;
  * @author Allen Gilliland
  */
 public class RuntimeConfigDefs {
-    
+
     private List configDefs = null;
-    
-    
+
+
     public RuntimeConfigDefs() {
         this.configDefs = new ArrayList();
     }
@@ -44,17 +44,17 @@ public class RuntimeConfigDefs {
     public RuntimeConfigDefs(List configs) {
         this.configDefs = configs;
     }
-    
-    
+
+
     public boolean addConfigDef(ConfigDef config) {
         return this.configDefs.add(config);
     }
-    
+
     public boolean removeConfigDef(ConfigDef config) {
         return this.configDefs.remove(config);
     }
-    
-    
+
+
     public List getConfigDefs() {
         return configDefs;
     }
@@ -62,5 +62,5 @@ public class RuntimeConfigDefs {
     public void setConfigDefs(List configDefs) {
         this.configDefs = configDefs;
     }
-    
+
 }

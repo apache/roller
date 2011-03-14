@@ -25,11 +25,11 @@ import org.apache.roller.planet.pojos.Subscription;
 /**
  * A FeedFetcher is what is responsible for actually pulling subscriptions from
  * their source and transforming them into Roller Planet Subscriptions and Entries.
- * 
+ *
  * It does not perform any persistence of feeds.
  */
 public interface FeedFetcher {
-    
+
     /**
      * Fetch a single subscription.
      *
@@ -37,9 +37,9 @@ public interface FeedFetcher {
      * return a transient instance of a Subscription representing the
      * given feed.
      *
-     * It is important to understand that this method will *NOT* return a 
+     * It is important to understand that this method will *NOT* return a
      * persistent version of an existing Subscription if it happens to
-     * exist.  This method is only here to pull feeds from their source 
+     * exist.  This method is only here to pull feeds from their source
      * so that they may be used in any way desired by the rest of the system.
      *
      * @param feedURL The feed url to use when fetching the subscription.
@@ -47,8 +47,8 @@ public interface FeedFetcher {
      * @throws FetcherException If there is an error fetching the subscription.
      */
     public Subscription fetchSubscription(String feedURL) throws FetcherException;
-    
-    
+
+
     /**
      * Conditionally fetch a single subscription.
      *
@@ -58,9 +58,9 @@ public interface FeedFetcher {
      * a more efficient way to fetch subscriptions which are being updated so
      * subscriptions are not continually fetched when unnecessary.
      *
-     * It is important to understand that this method will *NOT* return a 
+     * It is important to understand that this method will *NOT* return a
      * persistent version of an existing Subscription if it happens to
-     * exist.  This method is only here to pull feeds from their source 
+     * exist.  This method is only here to pull feeds from their source
      * so that they may be used in any way desired by the rest of the system.
      *
      * @param feedURL The feed url to use when fetching the subscription.

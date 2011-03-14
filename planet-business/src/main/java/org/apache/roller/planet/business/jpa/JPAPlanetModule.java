@@ -37,13 +37,13 @@ public class JPAPlanetModule implements Module {
     public void configure(Binder binder) {
 
         binder.bind(Planet.class).to(JPAPlanetImpl.class);
-        
-        binder.bind(JPAPersistenceStrategy.class); 
-        
-        binder.bind(PlanetManager.class).to(     JPAPlanetManagerImpl.class);   
-        binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);   
+
+        binder.bind(JPAPersistenceStrategy.class);
+
+        binder.bind(PlanetManager.class).to(     JPAPlanetManagerImpl.class);
+        binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);
         binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
         binder.bind(FeedFetcher.class).to(       RomeFeedFetcher.class);
     }
-    
+
 }

@@ -29,47 +29,47 @@ import org.apache.commons.logging.LogFactory;
  * /roller-ui/rendering/resources/*
  */
 public class WeblogMediaResourceRequest extends WeblogRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogMediaResourceRequest.class);
-        
+
     // lightweight attributes
     private String resourceId = null;
 
     private boolean thumbnail = false;
-    
-    
+
+
     public WeblogMediaResourceRequest() {}
-    
-    
+
+
     /**
      * Construct the WeblogResourceRequest by parsing the incoming url
      */
-    public WeblogMediaResourceRequest(HttpServletRequest request) 
+    public WeblogMediaResourceRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         String servlet = request.getServletPath();
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // parse the request object and figure out what we've got
         log.debug("parsing path "+pathInfo);
-                
-        
-        /* 
+
+
+        /*
          * any id is okay...
          */
         if (pathInfo != null && pathInfo.trim().length() > 1) {
-            
+
             this.resourceId = pathInfo;
             if (pathInfo.startsWith("/")) {
                 this.resourceId = pathInfo.substring(1);
             }
-        
+
         } else {
             throw new InvalidRequestException("invalid resource path info, "+
                     request.getRequestURL());
@@ -78,12 +78,12 @@ public class WeblogMediaResourceRequest extends WeblogRequest {
         if (request.getParameter("t") != null && "true".equals(request.getParameter("t"))) {
             thumbnail = true;
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("resourceId = "+this.resourceId);
         }
     }
-    
+
     public String getResourceId() {
         return resourceId;
     }
@@ -91,9 +91,9 @@ public class WeblogMediaResourceRequest extends WeblogRequest {
     public void setResourceId(String resourceId) {
         this.resourceId = resourceId;
     }
-            
+
     protected boolean isLocale(String potentialLocale) {
-        // We don't support locales in the resource Servlet so we've got to 
+        // We don't support locales in the resource Servlet so we've got to
         // keep parent from treating upload sub-directory name as a locale.
         return false;
     }

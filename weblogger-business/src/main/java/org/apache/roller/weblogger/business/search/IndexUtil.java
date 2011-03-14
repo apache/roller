@@ -32,7 +32,7 @@ import java.io.StringReader;
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class IndexUtil {
-    
+
     /**
      * Create a lucene term from the first token of the input string.
      *
@@ -45,7 +45,7 @@ public class IndexUtil {
         Analyzer analyer = IndexManagerImpl.getAnalyzer();
         TokenStream tokens = analyer.tokenStream(field,
                 new StringReader(input));
-        
+
         Token token = null;
         Term term = null;
         try {
@@ -57,5 +57,5 @@ public class IndexUtil {
         }
         return term;
     }
-    
+
 }

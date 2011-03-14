@@ -35,29 +35,29 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Remove a template.
  */
 public class TemplateRemove extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(TemplateRemove.class);
-    
+
     // id of template to remove
     private String removeId = null;
-    
+
     // template object that we will remove
     private WeblogTemplate template = null;
-    
-    
+
+
     public TemplateRemove() {
         this.actionName = "templateRemove";
         this.desiredMenu = "editor";
         this.pageTitle = "editPages.title.removeOK";
     }
-    
-    
+
+
     // must be a weblog admin to use this action
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     public void myPrepare() {
         if(getRemoveId() != null) try {
             setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getPage(getRemoveId()));
@@ -67,21 +67,21 @@ public class TemplateRemove extends UIAction {
             addError("Could not find template to remove - "+getRemoveId());
         }
     }
-    
-    
+
+
     /**
      * Display the remove template confirmation.
      */
     public String execute() {
         return "confirm";
     }
-    
-    
+
+
     /**
      * Remove a new template.
      */
     public String remove() {
-        
+
         if(getTemplate() != null) try {
             if(!getTemplate().isRequired()) {
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -91,23 +91,23 @@ public class TemplateRemove extends UIAction {
 
                 WebloggerFactory.getWeblogger().getWeblogManager().removePage(getTemplate());
                 WebloggerFactory.getWeblogger().flush();
-                                
+
                 return SUCCESS;
             } else {
                 // TODO: i18n
                 addError("Cannot remove required template");
             }
-            
+
         } catch(Exception ex) {
             log.error("Error removing page - "+getRemoveId(), ex);
             // TODO: i18n
             addError("Error removing page");
         }
-        
+
         return "confirm";
     }
 
-    
+
     public String getRemoveId() {
         return removeId;
     }
@@ -123,5 +123,5 @@ public class TemplateRemove extends UIAction {
     public void setTemplate(WeblogTemplate template) {
         this.template = template;
     }
-    
+
 }

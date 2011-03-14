@@ -39,34 +39,34 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Remove a category.
  */
 public class CategoryRemove extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(CategoryRemove.class);
-    
+
     // id of category to remove
     private String removeId = null;
-    
+
     // category object that we will remove
     private WeblogCategory category = null;
-    
+
     // category id of the category to move to
     private String targetCategoryId = null;
-    
+
     // all categories from the action weblog
     private Set allCategories = Collections.EMPTY_SET;
-    
-    
+
+
     public CategoryRemove() {
         this.actionName = "categoryRemove";
         this.desiredMenu = "editor";
         this.pageTitle = "categoriesForm.rootTitle";
     }
-    
-    
+
+
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }
-    
-    
+
+
     public void myPrepare() {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -77,16 +77,16 @@ public class CategoryRemove extends UIAction {
             log.error("Error looking up category", ex);
         }
     }
-    
-    
+
+
     /**
      * Display the remove template confirmation.
      */
     public String execute() {
-        
+
         // build list of categories for display
         TreeSet allCategories = new TreeSet(new WeblogCategoryPathComparator());
-        
+
         try {
             // Build list of all categories, except for current one, sorted by path.
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -101,51 +101,51 @@ public class CategoryRemove extends UIAction {
             // TODO: i18n
             addError("Error building categories list");
         }
-        
+
         if (allCategories.size() > 0) {
             setAllCategories(allCategories);
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Remove a new template.
      */
     public String remove() {
-        
+
         if(getCategory() != null) try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            
+
             if(getTargetCategoryId() != null) {
                 WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
                 wmgr.moveWeblogCategoryContents(getCategory(), target);
                 WebloggerFactory.getWeblogger().flush();
             }
-            
+
             // notify cache
             String id = getCategory().getId();
             CacheManager.invalidate(getCategory());
-            
+
             wmgr.removeWeblogCategory(getCategory());
             WebloggerFactory.getWeblogger().flush();
-            
+
             // set category id to parent for next page
             setRemoveId(id);
-            
+
             return SUCCESS;
-            
+
         } catch(Exception ex) {
             log.error("Error removing category - "+getRemoveId(), ex);
             // TODO: i18n
             addError("Error removing category");
         }
-        
+
         return execute();
     }
 
-    
+
     public String getRemoveId() {
         return removeId;
     }
@@ -177,5 +177,5 @@ public class CategoryRemove extends UIAction {
     public void setAllCategories(Set allCategories) {
         this.allCategories = allCategories;
     }
-    
+
 }

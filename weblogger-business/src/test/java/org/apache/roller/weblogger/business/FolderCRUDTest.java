@@ -31,23 +31,23 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Test basic folder operations.
  */
 public class FolderCRUDTest extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(FolderCRUDTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
-    
-    
+
+
     /**
      * All tests in this suite require a user and a weblog.
      */
     public void setUp() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         // setup weblogger
         TestUtils.setupWeblogger();
-        
+
         try {
             testUser = TestUtils.setupUser("folderCRUDTestUser");
             testWeblog = TestUtils.setupWeblog("folderCRUDTestWeblog", testUser);
@@ -56,14 +56,14 @@ public class FolderCRUDTest extends TestCase {
             log.error(ex);
             throw new Exception("Test setup failed", ex);
         }
-        
+
         log.info("END");
     }
-    
+
     public void tearDown() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
             TestUtils.teardownUser(testUser.getUserName());
@@ -72,99 +72,99 @@ public class FolderCRUDTest extends TestCase {
             log.error(ex);
             throw new Exception("Test teardown failed", ex);
         }
-        
+
         log.info("END");
     }
-    
-    
+
+
     /**
      * Test WeblogBookmarkFolder.equals() method.
      */
     public void testFolderEquality() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
-        
+
         WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(null, "root", "root", TestUtils.getManagedWebsite(testWeblog));
         assertTrue(root.equals(testFolder));
-        
+
         testFolder = new WeblogBookmarkFolder(root, "root", "root", TestUtils.getManagedWebsite(testWeblog));
         assertFalse(root.equals(testFolder));
-        
+
         log.info("END");
     }
-    
-    
+
+
     /**
      * Test add/modify/remove of folders.
      */
     public void testBasicCRUD() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
-        
+
         // start out with no folders and no bookmarks
         assertEquals(0, root.getFolders().size());
         assertEquals(0, root.getBookmarks().size());
-        
+
         // add a folder
         WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder(root, "folderBasicCRUD", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(newFolder);
         TestUtils.endSession(true);
-        
+
         // check that folder was saved
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(1, root.getFolders().size());
         WeblogBookmarkFolder folder = (WeblogBookmarkFolder) root.getFolders().iterator().next();
         assertEquals(newFolder, folder);
-        
+
         // modify folder
         folder.setName("folderTest1");
         bmgr.saveFolder(folder);
         TestUtils.endSession(true);
-        
+
         // check that folder was saved
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         folder = (WeblogBookmarkFolder) root.getFolders().iterator().next();
         assertEquals("folderTest1", folder.getName());
-        
+
         // test remove folder
         bmgr.removeFolder(folder);
         TestUtils.endSession(true);
-        
+
         // make sure folder was removed
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(0, root.getFolders().size());
         folder = bmgr.getFolder(newFolder.getId());
         assertNull(folder);
-        
+
         log.info("END");
     }
-    
-    
+
+
     /**
      * Make sure that deleting a folder deletes all child folders.
      */
     public void testFolderCascadingDelete() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
-        
+
         // add a small tree /fold1/fold2
         WeblogBookmarkFolder fold1 = new WeblogBookmarkFolder(root, "fold1", null, testWeblog);
         root.addFolder(fold1);
@@ -173,7 +173,7 @@ public class FolderCRUDTest extends TestCase {
         fold1.addFolder(fold2);
         bmgr.saveFolder(fold2);
         TestUtils.endSession(true);
-        
+
         // check that tree can be navigated
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
@@ -183,18 +183,18 @@ public class FolderCRUDTest extends TestCase {
         assertEquals(1, fold1.getFolders().size());
         fold2 = (WeblogBookmarkFolder) fold1.getFolders().iterator().next();
         assertEquals("fold2", fold2.getName());
-        
+
         // now delete folder and subfolders should be deleted by cascade
         bmgr.removeFolder(fold1);
         TestUtils.endSession(true);
-        
+
         // verify cascading delete succeeded
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(0, root.getFolders().size());
         assertNull(bmgr.getFolder(testWeblog, "/fold1/fold2"));
-        
+
         log.info("END");
     }
-    
+
 }

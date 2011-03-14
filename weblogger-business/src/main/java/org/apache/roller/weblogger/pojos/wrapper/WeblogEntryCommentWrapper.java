@@ -31,40 +31,40 @@ import org.apache.roller.weblogger.util.Utilities;
  * Pojo safety wrapper for WeblogEntryComment object.
  */
 public class WeblogEntryCommentWrapper {
-    
+
     // keep a reference to the wrapped pojo
     private final WeblogEntryComment pojo;
-    
+
     // url strategy to use for any url building
     private final URLStrategy urlStrategy;
-    
-    
+
+
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogEntryCommentWrapper(WeblogEntryComment toWrap, URLStrategy strat) {
         this.pojo = toWrap;
         this.urlStrategy = strat;
     }
-    
-    
+
+
     // wrap the given pojo if it is not null
     public static WeblogEntryCommentWrapper wrap(WeblogEntryComment toWrap, URLStrategy strat) {
         if(toWrap != null)
             return new WeblogEntryCommentWrapper(toWrap, strat);
-        
+
         return null;
     }
-    
-    
+
+
     public String getId() {
         return this.pojo.getId();
     }
-    
-    
+
+
     public WeblogEntryWrapper getWeblogEntry() {
         return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry(), urlStrategy);
     }
-    
-    
+
+
     /**
      * Get the name of the comment writer.
      *
@@ -73,8 +73,8 @@ public class WeblogEntryCommentWrapper {
     public String getName() {
         return StringEscapeUtils.escapeHtml(this.pojo.getName());
     }
-    
-    
+
+
     /**
      * Get the email address of the comment writer, if specified.
      *
@@ -83,8 +83,8 @@ public class WeblogEntryCommentWrapper {
     public String getEmail() {
         return StringEscapeUtils.escapeHtml(this.pojo.getEmail());
     }
-    
-    
+
+
     /**
      * Get the url of the comment writer, if specified.
      *
@@ -93,57 +93,57 @@ public class WeblogEntryCommentWrapper {
     public String getUrl() {
         return StringEscapeUtils.escapeHtml(this.pojo.getUrl());
     }
-    
-    
+
+
     /**
      * Get the comment contents.
      *
-     * Any configured comment plugins are applied first, then the value is 
+     * Any configured comment plugins are applied first, then the value is
      * always html escaped.
      */
     public String getContent() {
-        
+
         String content = this.pojo.getContent();
-        
+
         // escape content if content-type is text/plain
         if("text/plain".equals(this.pojo.getContentType())) {
             content = StringEscapeUtils.escapeHtml(content);
         }
-        
+
         // apply plugins
         PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
         content = pmgr.applyCommentPlugins(this.pojo, content);
-        
+
         // always add rel=nofollow for links
         content = Utilities.addNofollow(content);
-        
+
         return content;
     }
-    
-    
+
+
     /**
      * Get the time the comment was posted.
      */
     public Timestamp getPostTime() {
         return this.pojo.getPostTime();
     }
-    
-    
+
+
     public String getStatus() {
         return this.pojo.getStatus();
     }
-    
-    
+
+
     public Boolean getNotify() {
         return this.pojo.getNotify();
     }
-    
-    
+
+
     public String getRemoteHost() {
         return this.pojo.getRemoteHost();
     }
-    
-    
+
+
     /**
      * Get the http referrer of the comment poster, used for trackbacks.
      *
@@ -152,30 +152,30 @@ public class WeblogEntryCommentWrapper {
     public String getReferrer() {
         return StringEscapeUtils.escapeHtml(this.pojo.getReferrer());
     }
-    
-    
+
+
     public String getUserAgent() {
         return this.pojo.getUserAgent();
     }
-    
-    
+
+
     public Boolean getSpam() {
         return this.pojo.getSpam();
     }
-    
-    
+
+
     public Boolean getPending() {
         return this.pojo.getPending();
     }
-    
-    
+
+
     public Boolean getApproved() {
         return this.pojo.getApproved();
     }
-    
-    
+
+
     public String getTimestamp() {
         return this.pojo.getTimestamp();
     }
-    
+
 }

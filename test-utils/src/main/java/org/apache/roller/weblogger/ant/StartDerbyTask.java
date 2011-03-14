@@ -36,7 +36,7 @@ public class StartDerbyTask extends Task {
     private String databaseScriptsDir = null;
     private String port = null;
     private boolean skip = false;
-    
+
     public void execute() throws BuildException {
         try {
             if (!isSkip()) {
@@ -83,9 +83,9 @@ public class StartDerbyTask extends Task {
                         System.out.println(message);
                     }
                     ignored.printStackTrace();
-                }               
+                }
 
-                
+
             } else {
                 System.out.println("Skipping Derby startup");
             }
@@ -93,7 +93,7 @@ public class StartDerbyTask extends Task {
             e.printStackTrace();
             throw new BuildException("ERROR starting Derby");
         }
-        
+
     }
     /**
      * @return Returns the databaseDir.

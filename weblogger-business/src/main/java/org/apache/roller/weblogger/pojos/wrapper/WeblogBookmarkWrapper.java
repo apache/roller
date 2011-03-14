@@ -25,67 +25,67 @@ import org.apache.roller.weblogger.pojos.WeblogBookmark;
  * Pojo safety wrapper for WeblogBookmark object.
  */
 public class WeblogBookmarkWrapper {
-    
+
     // keep a reference to the wrapped pojo
     private final WeblogBookmark pojo;
-    
+
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogBookmarkWrapper(WeblogBookmark toWrap) {
         this.pojo = toWrap;
     }
-    
-    
+
+
     // wrap the given pojo if it is not null
     public static WeblogBookmarkWrapper wrap(WeblogBookmark toWrap) {
         if(toWrap != null)
             return new WeblogBookmarkWrapper(toWrap);
-        
+
         return null;
     }
-    
-    
+
+
     public String getId() {
         return this.pojo.getId();
     }
-    
-    
+
+
     public String getName() {
         return this.pojo.getName();
     }
-    
-    
+
+
     public String getDescription() {
         return this.pojo.getDescription();
     }
-    
-    
+
+
     public String getUrl() {
         return this.pojo.getUrl();
     }
-    
-    
+
+
     public Integer getWeight() {
         return this.pojo.getWeight();
     }
-    
-    
+
+
     public Integer getPriority() {
         return this.pojo.getPriority();
     }
-    
-    
+
+
     public String getImage() {
         return this.pojo.getImage();
     }
-    
-    
+
+
     public String getFeedUrl() {
         return this.pojo.getFeedUrl();
     }
-    
-    
+
+
     public WeblogBookmarkFolderWrapper getFolder() {
         return WeblogBookmarkFolderWrapper.wrap(this.pojo.getFolder());
     }
-    
+
 }

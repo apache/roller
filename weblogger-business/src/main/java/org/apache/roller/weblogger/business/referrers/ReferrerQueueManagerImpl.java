@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 
 /**
  * The base implementation of the ReferrerQueueManager.
- * 
+ *
  * This class is implemented using the singleton pattern to ensure that only
  * one instance exists at any given time.
  *
@@ -55,57 +55,57 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  */
 @com.google.inject.Singleton
 public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
-    
+
     private static Log mLogger = LogFactory.getLog(ReferrerQueueManagerImpl.class);
-    
+
     private final Weblogger roller;
-    
+
     private boolean asyncMode = false;
     private int numWorkers = 1;
     private int sleepTime = 10000;
     private List workers = null;
     private List referrerQueue = null;
 
-    
+
     // private because we are a singleton
     @com.google.inject.Inject
     protected ReferrerQueueManagerImpl(Weblogger roller) {
-        
+
         mLogger.info("Instantiating Referrer Queue Manager");
-        
+
         this.roller = roller;
 
         // lookup config options
         this.asyncMode = WebloggerConfig.getBooleanProperty("referrers.asyncProcessing.enabled");
-        
+
         mLogger.info("Asynchronous referrer processing = "+this.asyncMode);
-        
+
         if(this.asyncMode) {
-            
-            
+
+
             String num = WebloggerConfig.getProperty("referrers.queue.numWorkers");
             String sleep = WebloggerConfig.getProperty("referrers.queue.sleepTime");
-            
+
             try {
                 this.numWorkers = Integer.parseInt(num);
-                
+
                 if(numWorkers < 1)
                     this.numWorkers = 1;
-                
+
             } catch(NumberFormatException nfe) {
                 mLogger.warn("Invalid num workers ["+num+"], using default");
             }
-            
+
             try {
                 // multiply by 1000 because we expect input in seconds
                 this.sleepTime = Integer.parseInt(sleep) * 1000;
             } catch(NumberFormatException nfe) {
                 mLogger.warn("Invalid sleep time ["+sleep+"], using default");
             }
-            
+
             // create the processing queue
             this.referrerQueue = Collections.synchronizedList(new ArrayList());
-            
+
             // start up workers
             this.workers = new ArrayList();
             ContinuousWorkerThread worker = null;
@@ -118,8 +118,8 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
             }
         }
     }
-    
-    
+
+
     /**
      * Process an incoming referrer.
      *
@@ -128,24 +128,24 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
      * now.
      */
     public void processReferrer(IncomingReferrer referrer) {
-        
+
         if(this.asyncMode) {
             mLogger.debug("QUEUING: "+referrer.getRequestUrl());
-            
+
             // add to queue
             this.enqueue(referrer);
         } else {
             // process now
             ReferrerProcessingJob job = new ReferrerProcessingJob();
-            
+
             // setup input
             HashMap inputs = new HashMap();
             inputs.put("referrer", referrer);
             job.input(inputs);
-            
+
             // execute
             job.execute();
-            
+
             try {
                 // flush changes
                 roller.flush();
@@ -153,43 +153,43 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
                 mLogger.error("ERROR commiting referrer", ex);
             }
         }
-        
+
     }
-    
-    
+
+
     /**
      * Place a referrer in the queue.
      */
     public void enqueue(IncomingReferrer referrer) {
         this.referrerQueue.add(referrer);
-        
+
         if(this.referrerQueue.size() > 250) {
             mLogger.warn("Referrer queue is rather full. queued="+this.referrerQueue.size());
         }
     }
-    
-    
+
+
     /**
      * Retrieve the next referrer in the queue.
      */
     public synchronized IncomingReferrer dequeue() {
-        
+
         if(!this.referrerQueue.isEmpty()) {
             return (IncomingReferrer) this.referrerQueue.remove(0);
         }
-        
+
         return null;
     }
-    
-    
+
+
     /**
      * clean up.
      */
     public void shutdown() {
-        
+
         if(this.workers != null && this.workers.size() > 0) {
             mLogger.info("stopping all ReferrerQueue worker threads");
-            
+
             // kill all of our threads
             WorkerThread worker = null;
             Iterator it = this.workers.iterator();
@@ -198,7 +198,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
                 worker.interrupt();
             }
         }
-        
+
     }
-    
+
 }

@@ -28,40 +28,40 @@ import java.util.Date;
  * Velocity rendering engine.
  */
 public interface Template {
-    
+
     /**
      * The unique identifier for this Template.
      */
     public String getId();
-    
-    
+
+
     /**
      * A simple name for this Template.
      */
     public String getName();
-    
-    
+
+
     /**
      * A description of the contents of this Template.
      */
     public String getDescription();
-    
-    
+
+
     /**
      * The last time the template was modified.
      */
     public Date getLastModified();
-    
-    
+
+
     /**
      * The templating language used by this template.
      */
     public String getTemplateLanguage();
-    
-    
+
+
     /**
      * Content-type of output or null if none defined.
      */
     public String getOutputContentType();
-    
+
 }

@@ -29,28 +29,28 @@ import org.apache.roller.util.Utilities;
 /**
  * RendererFactory that calls BSF scripting languages (groovy, jruby and javascript).
  */
-public class BSFRendererFactory implements RendererFactory {   
+public class BSFRendererFactory implements RendererFactory {
     private static String[] names = {"groovy", "jruby", "javascript"};
-    private static final List bsfLanguages; 
+    private static final List bsfLanguages;
     static {
         String value = RollerConfig.getProperty("bsfrenderer.languageNames");
         if (value != null) {
-            names = Utilities.stringToStringArray(value,",");            
-        } 
+            names = Utilities.stringToStringArray(value,",");
+        }
         bsfLanguages = Arrays.asList(names);
-    }        
-    public Renderer getRenderer(Template template) {        
+    }
+    public Renderer getRenderer(Template template) {
         Renderer renderer = null;
         if(template.getTemplateLanguage() == null || template.getId() == null) {
             return null;
-        }        
-        if(bsfLanguages.contains(template.getTemplateLanguage())) {             
+        }
+        if(bsfLanguages.contains(template.getTemplateLanguage())) {
             try {
                renderer = new BSFRenderer(template);
             } catch(Exception ex) {
                 return null;
-            }                        
-        }      
+            }
+        }
         return renderer;
-    }    
+    }
 }

@@ -32,28 +32,28 @@ import org.apache.roller.planet.ui.rendering.RenderingException;
 
 /**
  * A governing class for Rollers rendering system.
- * 
- * The purpose of the RendererManager is to provide a level of abstraction 
+ *
+ * The purpose of the RendererManager is to provide a level of abstraction
  * between classes that are rendering content and the implementations of the
  * rendering technology.  This allows us to provide easily pluggable rendering
  * implementations.
  */
 public class RendererManager {
-    
+
     private static Log log = LogFactory.getLog(RendererManager.class);
-    
+
     // a set of all renderer factories we are consulting
     private static Set rendererFactories = new HashSet();
-    
-    
+
+
     static {
         // lookup set of renderer factories we are going to use
         String rollerFactories = PlanetConfig.getProperty("rendering.rollerRendererFactories");
         String userFactories = PlanetConfig.getProperty("rendering.userRendererFactories");
-        
+
         // instantiate user defined renderer factory classes
         if(userFactories != null && userFactories.trim().length() > 0) {
-            
+
             RendererFactory rendererFactory = null;
             String[] uFactories = userFactories.split(",");
             for(int i=0; i < uFactories.length; i++) {
@@ -69,10 +69,10 @@ public class RendererManager {
                 }
             }
         }
-        
+
         // instantiate roller standard renderer factory classes
         if(rollerFactories != null && rollerFactories.trim().length() > 0) {
-            
+
             RendererFactory rendererFactory = null;
             String[] rFactories = rollerFactories.split(",");
             for(int i=0; i < rFactories.length; i++) {
@@ -88,21 +88,21 @@ public class RendererManager {
                 }
             }
         }
-        
+
         if(rendererFactories.size() < 1) {
             // hmm ... failed to load any renderer factories?
             log.warn("Failed to load any renderer factories.  "+
                     "Rendering probably won't function as you expect.");
         }
-        
+
         log.info("Renderer Manager Initialized.");
     }
-    
-    
+
+
     // this class is non-instantiable
     private RendererManager() {}
-    
-    
+
+
     /**
      * Find the appropriate Renderer for the given content.
      *
@@ -110,24 +110,24 @@ public class RendererManager {
      * instance and tries to find a Renderer for the content.  If no Renderer
      * can be found then we throw an exception.
      */
-    public static Renderer getRenderer(Template template) 
+    public static Renderer getRenderer(Template template)
             throws RenderingException {
-        
+
         Renderer renderer = null;
-        
+
         // iterate over our renderer factories and see if one of them
         // wants to handle this content
         Iterator factories = rendererFactories.iterator();
         while(factories.hasNext()) {
             renderer = ((RendererFactory)factories.next()).getRenderer(template);
-            
+
             if(renderer != null) {
                 return renderer;
             }
         }
-        
+
         throw new RenderingException("No renderer found for template "+
                 template.getId()+"!");
     }
-    
+
 }

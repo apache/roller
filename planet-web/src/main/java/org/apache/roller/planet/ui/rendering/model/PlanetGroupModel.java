@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.ui.rendering.model; 
+package org.apache.roller.planet.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -32,40 +32,40 @@ import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
  * Model which provides information common to a planet group request
  */
 public class PlanetGroupModel implements Model {
-    
+
     private static Log log = LogFactory.getLog(PlanetGroupModel.class);
-    
+
     private PlanetGroupRequest planetGroupRequest = null;
     private Planet planet = null;
     private PlanetGroup group = null;
-    
-    
-    /** 
+
+
+    /**
      * Creates an un-initialized new instance, Roller calls init() to complete
-     * construction. 
+     * construction.
      */
     public PlanetGroupModel() {}
-    
-    
-    /** 
+
+
+    /**
      * Template context name to be used for model.
      */
     public String getModelName() {
         return "model";
     }
-    
-    
-    /** 
-     * Init page model based on request. 
+
+
+    /**
+     * Init page model based on request.
      */
     public void init(Map initData) throws PlanetException {
-        
+
         // we expect the init data to contain a planetRequest object
         PlanetRequest planetRequest = (PlanetRequest) initData.get("planetRequest");
         if(planetRequest == null) {
             throw new PlanetException("expected planetRequest from init data");
         }
-        
+
         // only works on planet group requests, so cast planetRequest
         // into a PlanetGroupRequest and if it fails then throw exception
         if(planetRequest instanceof PlanetGroupRequest) {
@@ -74,28 +74,28 @@ public class PlanetGroupModel implements Model {
             throw new PlanetException("planetRequest is not a PlanetGroupRequest."+
                     "  PlanetGroupModel only supports planet group requests.");
         }
-        
+
         // extract planet object
         planet = planetGroupRequest.getPlanet();
-        
+
         // extract group object
         group = planetGroupRequest.getGroup();
     }
-    
-    
+
+
     /**
      * Get planet being displayed.
      */
     public Planet getPlanet() {
         return planet;
     }
-    
-    
+
+
     /**
      * Get group being displayed.
      */
     public PlanetGroup getGroup() {
         return group;
     }
-    
+
 }

@@ -28,52 +28,52 @@ import org.apache.roller.planet.pojos.Planet;
  * Test Planet CRUD.
  */
 public class PlanetBasicTests extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(PlanetBasicTests.class);
-    
-    
+
+
     public void testPlanetCRUD() throws Exception {
-        
+
         // setup planet
         TestUtils.setupPlanet();
 
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        
+
         Planet testPlanet = new Planet("testPlanet", "testPlanet", "testPlanet");
         Planet planet = null;
-        
+
         planet = mgr.getPlanet("testPlanet");
         assertNull(planet);
-        
+
         // add
         mgr.savePlanet(testPlanet);
         TestUtils.endSession(true);
-        
+
         // verify
         planet = null;
         planet = mgr.getPlanetById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("testPlanet", planet.getHandle());
-        
+
         // modify
         planet.setTitle("foo");
         mgr.savePlanet(planet);
         TestUtils.endSession(true);
-        
+
         // verify
         planet = null;
         planet = mgr.getPlanetById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("foo", planet.getTitle());
-        
+
         // remove
         mgr.deletePlanet(planet);
         TestUtils.endSession(true);
-        
+
         // verify
         planet = null;
         planet = mgr.getPlanet(testPlanet.getId());
         assertNull(planet);
     }
-    
+
 }

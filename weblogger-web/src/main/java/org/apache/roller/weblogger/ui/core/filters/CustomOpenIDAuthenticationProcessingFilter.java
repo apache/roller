@@ -35,7 +35,7 @@ import org.springframework.security.ui.openid.OpenIDConsumer;
  * Handle response from OpenID provider.
  * @author Tatyana Tokareva
  */
-public class CustomOpenIDAuthenticationProcessingFilter 
+public class CustomOpenIDAuthenticationProcessingFilter
         extends OpenIDAuthenticationProcessingFilter implements Filter {
 
     private OpenIDConsumer consumer;
@@ -46,28 +46,28 @@ public class CustomOpenIDAuthenticationProcessingFilter
     public Authentication attemptAuthentication(HttpServletRequest req) throws AuthenticationException {
         OpenIDAuthenticationToken auth = null;
 
-        // Processing standard OpenId user authentication    
+        // Processing standard OpenId user authentication
         auth = (OpenIDAuthenticationToken) super.attemptAuthentication(req);
 
         if (auth.getAuthorities()[0].getAuthority().equals("openidLogin")) {
 
-            /* TODO: when Spring Security 2.1 is released, we can uncomment 
-             * this code, which will allow us to pre-populate the new user 
+            /* TODO: when Spring Security 2.1 is released, we can uncomment
+             * this code, which will allow us to pre-populate the new user
              * registration form with information from the OpenID Provider.
-             * 
+             *
             Collection<OpenIDUserAttribute> sREGAttributesList = auth.getAttributes();
             OpenIDUserAttribute openidName = new OpenIDUserAttribute(
                 OpenIDUserAttribute.Attributes.openidname.toString(), "");
             openidName.setValue(auth.getIdentityUrl());
             sREGAttributesList.add(openidName);
-            
+
             // TODO: find a better place to stash attributes
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();            
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             mgr.userAttributes.put(
                 UserAttribute.Attributes.openidUrl.toString(),
                 sREGAttributesList);
             */
-            
+
             // Username not found in Roller for this user, so throw exception
             // which will route user to the new user registration page.
             throw new UsernameNotFoundException("ERROR no user: new openid user");

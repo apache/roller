@@ -39,23 +39,23 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
  * Paging through a collection of comments.
  */
 public class CommentsPager extends AbstractPager {
-    
+
     private static Log log = LogFactory.getLog(CommentsPager.class);
-    
+
     private Weblog weblog = null;
     private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
-    
+
     // the collection for the pager
     private List comments = null;
-    
+
     // are there more items?
     private boolean more = false;
-    
+
     // most recent update time of current set of entries
-    private Date lastUpdated = null;        
-    
+    private Date lastUpdated = null;
+
     public CommentsPager(
             URLStrategy    strat,
             String         baseUrl,
@@ -64,27 +64,27 @@ public class CommentsPager extends AbstractPager {
             int            sinceDays,
             int            page,
             int            length) {
-        
+
         super(strat, baseUrl, page);
-        
+
         this.weblog = weblog;
         this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
+
     public List getItems() {
-        
+
         if (comments == null) {
             // calculate offset
             int offset = getPage() * length;
-            
+
             List results = new ArrayList();
-            
+
             Date startDate = null;
             if(sinceDays > 0) {
                 Calendar cal = Calendar.getInstance();
@@ -92,13 +92,13 @@ public class CommentsPager extends AbstractPager {
                 cal.add(Calendar.DATE, -1 * sinceDays);
                 startDate = cal.getTime();
             }
-            
+
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
                 List entries = wmgr.getComments(
                         weblog, null, null, startDate, null, WeblogEntryComment.APPROVED, true, offset, length + 1);
-                
+
                 // wrap the results
                 int count = 0;
                 for (Iterator it = entries.iterator(); it.hasNext();) {
@@ -109,22 +109,22 @@ public class CommentsPager extends AbstractPager {
                         more = true;
                     }
                 }
-                
+
             } catch (Exception e) {
                 log.error("ERROR: fetching comment list", e);
             }
-            
+
             comments = results;
         }
-        
+
         return comments;
     }
-    
-    
+
+
     public boolean hasMoreItems() {
         return more;
     }
-    
+
     /** Get last updated time from items in pager */
     public Date getLastUpdated() {
         if (lastUpdated == null) {

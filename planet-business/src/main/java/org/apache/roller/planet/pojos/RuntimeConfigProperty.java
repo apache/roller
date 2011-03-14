@@ -25,25 +25,25 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Represents a single runtime property of the system.
- * 
+ *
  * @hibernate.cache usage="read-write"
  * @hibernate.class lazy="true" table="rag_properties"
  */
 public class RuntimeConfigProperty implements Serializable {
-    
+
     private String name = null;
     private String value = null;
-    
-    
+
+
     public RuntimeConfigProperty() {}
-    
-    
+
+
     public RuntimeConfigProperty(String name, String value) {
         this.name = name;
         this.value = value;
     }
-    
-    
+
+
     /**
      * Getter for property name.
      *
@@ -52,20 +52,20 @@ public class RuntimeConfigProperty implements Serializable {
      * @hibernate.id column="name" generator-class="assigned"
      */
     public String getName() {
-        
+
         return this.name;
     }
-    
+
     /**
      * Setter for property name.
      *
      * @param name New value of property name.
      */
     public void setName(String name) {
-        
+
         this.name = name;
     }
-    
+
     /**
      * Getter for property value.
      *
@@ -74,26 +74,26 @@ public class RuntimeConfigProperty implements Serializable {
      * @hibernate.property column="value" non-null="false" unique="false"
      */
     public String getValue() {
-        
+
         return this.value;
     }
-    
+
     /**
      * Setter for property value.
      *
      * @param value New value of property value.
      */
     public void setValue(String value) {
-        
+
         this.value = value;
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         return (this.name + "=" + this.value);
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof RuntimeConfigProperty != true) return false;
@@ -102,7 +102,7 @@ public class RuntimeConfigProperty implements Serializable {
         .append(getName(), o.getName())
         .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())

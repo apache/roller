@@ -26,9 +26,9 @@ import org.apache.roller.weblogger.WebloggerException;
  * by the system administrator.
  */
 public class TrackbackNotAllowedException extends WebloggerException {
-    
+
     public TrackbackNotAllowedException(String url) {
         super(url);
     }
-    
+
 }

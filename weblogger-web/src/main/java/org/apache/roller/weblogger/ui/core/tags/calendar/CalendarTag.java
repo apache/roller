@@ -45,37 +45,37 @@ import javax.servlet.jsp.tagext.TagSupport;
 public class CalendarTag extends TagSupport {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(CalendarTag.class);
-    
+
     // JSP Attributes
-    
+
     /** @jsp.attribute required="true" */
     public String getName() { return mName; }
     public void setName( String name ) { mName = name; }
     private String mName = null;
-    
+
     /* @jsp.attribute description="Date in yyyyMMdd format"
     public String getDate() { return mDate; }
     public void setDate( String s ) { mDate = s; }
     private String mDate = null;
      */
-    
+
     /** @jsp.attribute */
     public String getModel() { return mModelName; }
     public void setModel( String s ) { mModelName= s; }
     private String mModelName = null;
-    
+
     /** @jsp.attribute */
     public String getClassSuffix() { return mClassSuffix; }
     public void setClassSuffix( String s ) { mClassSuffix= s; }
     private String mClassSuffix = "";
-    
+
     // not a tag attribute
     public void setLocale(Locale locale) {
         if (locale != null)
             mLocale = locale;
     }
     private Locale mLocale = Locale.getDefault();
-    
+
     // not a tag attribute
     /*
     private TimeZone mTimeZone = TimeZone.getDefault();
@@ -91,9 +91,9 @@ public class CalendarTag extends TagSupport {
         return mTimeZone;
     }
      */
-    
+
     private String[] mDayNames = null;
-    
+
     public CalendarTag() {
         /*
          * Empty constructor.
@@ -103,7 +103,7 @@ public class CalendarTag extends TagSupport {
          * doStartTag() method.
          */
     }
-    
+
     //------------------------------------------------------------------------
     /**
      * Write to a PrintWriter so that tag may be used from Velocity
@@ -112,17 +112,17 @@ public class CalendarTag extends TagSupport {
         try {
             // build week day names
             this.buildDayNames();
-            
+
             Date day=null;       // day to be displayed
             Calendar dayCal;     // set to day to be displayed
             Calendar cal;        // for iterating through days of month
             Calendar todayCal;   // for iterating through days of month
             CalendarModel model; // the calendar model
-            
+
             // ---------------------------------
             // --- initialize date variables ---
             // ---------------------------------
-            
+
             // check for parameter map and target url
             StringTokenizer toker = new StringTokenizer(mModelName,".");
             String tok1 = toker.nextToken();
@@ -133,42 +133,42 @@ public class CalendarTag extends TagSupport {
             } else {
                 model = (CalendarModel)pageContext.findAttribute( mModelName );
             }
-            
+
             // no model specified, nothing to generate
             if (model == null) {
                 return SKIP_BODY;
             }
-            
+
             day = model.getDay();
-            
+
             // ceate object to represent today
             todayCal = model.getCalendar();
             todayCal.setTime( new Date() );
-            
+
             // formatter Month-Year title of calendar
             SimpleDateFormat formatTitle = new SimpleDateFormat("MMMM yyyy", mLocale);
-            
+
             HttpServletRequest request =
                     (HttpServletRequest)pageContext.getRequest();
-            
+
             // get Resource Bundle
             ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources", mLocale);
-            
+
             // go back to first day in month
             cal = model.getCalendar();
             day = DateUtil.getNoonOfDay(day, cal);
             cal.set( Calendar.DAY_OF_MONTH, cal.getMinimum(Calendar.DAY_OF_MONTH) );
-            
+
             // Go back to first day of week before that (Sunday in US, Monday in France, e.g.)
             // in the calendar
             while ( cal.get( Calendar.DAY_OF_WEEK ) != cal.getFirstDayOfWeek() ) {
                 cal.add( Calendar.DATE, -1 );
             }
-            
+
             // create table of 5 weeks, 7 days per row
             dayCal = model.getCalendar();
             dayCal.setTime( day );
-            
+
             // -------------------------
             // --- draw the calendar ---
             // -------------------------
@@ -192,7 +192,7 @@ public class CalendarTag extends TagSupport {
                 + "\" class=\"hCalendarNavBar\">&raquo;</a>");
             }
             pw.print("</td></tr>");
-            
+
             // emit the HTML calendar
             for ( int w=-1; w<6; w++ ) {
                 pw.print("<tr>");
@@ -205,12 +205,12 @@ public class CalendarTag extends TagSupport {
                         pw.print("</th>");
                         continue;
                     }
-                    
+
                     // determine URL for this calendar day
                     Date tddate = cal.getTime();
                     String url = model.computeUrl(tddate, false, false);
                     String content = model.getContent( tddate );
-                    
+
                     if // day is in calendar month
                             ((cal.get(Calendar.MONTH) == dayCal.get(Calendar.MONTH))
                             && (cal.get(Calendar.YEAR) == dayCal.get(Calendar.YEAR))) {
@@ -229,25 +229,25 @@ public class CalendarTag extends TagSupport {
                     {
                         printDayNotInMonth(pw, cal);
                     }
-                    
+
                     // increment calendar by one day
                     cal.add( Calendar.DATE, 1 );
                 }
                 pw.print("</tr>");
             }
-            
+
             pw.print("<tr class=\"hCalendarNextPrev"
                     +mClassSuffix+"\">");
             pw.print("<td colspan=\"7\" align=\"center\">");
-            
+
             pw.print("<a href=\""+model.computeTodayMonthUrl()
             +"\" class=\"hCalendarNavBar\">"
                     +bundle.getString("calendar.today")
                     +"</a>");
-            
+
             pw.print("</td>");
             pw.print("</tr>");
-            
+
             pw.print("</table>");
         } catch (Exception e) {
             pw.print("<span class=\"error\">");
@@ -257,14 +257,14 @@ public class CalendarTag extends TagSupport {
         }
         return Tag.SKIP_BODY;
     }
-    
+
     private void printDayNotInMonth(PrintWriter pw, Calendar cal) {
         pw.print("<td class=\"hCalendarDayNotInMonth"+mClassSuffix+"\">");
         //pw.print(cal.get(Calendar.DAY_OF_MONTH));
         pw.print("&nbsp;");
         pw.print("</td>");
     }
-    
+
     private void printDayInThisMonth(PrintWriter pw, Calendar cal, String url, String content) {
         if ( content!=null ) {
             pw.print("<td class=\"hCalendarDayCurrent"
@@ -290,7 +290,7 @@ public class CalendarTag extends TagSupport {
             pw.print("</td>");
         }
     }
-    
+
     private void printToday(PrintWriter pw, Calendar cal, String url, String content) {
         if ( content!=null ) {
             pw.print("<td class=\"hCalendarDayCurrent"
@@ -314,7 +314,7 @@ public class CalendarTag extends TagSupport {
             pw.print("</div></td>");
         }
     }
-    
+
     /**
      * Helper method to build the names of the weekdays. This
      * used to take place in the <code>CalendarTag</code> constructor,
@@ -331,8 +331,8 @@ public class CalendarTag extends TagSupport {
             dayNameCal.add(Calendar.DATE, 1);
         }
     }
-    
-    
+
+
     public String toString() {
         String ret = null;
         try {
@@ -347,24 +347,24 @@ public class CalendarTag extends TagSupport {
         }
         return ret;
     }
-    
+
     public String emit() {
         return toString();
     }
-    
+
     public int doStartTag() throws JspException {
         return doStartTag( new PrintWriter( pageContext.getOut(), true) );
     }
-    
-    
+
+
     public int doEndTag() throws JspException {
         return doEndTag( new PrintWriter( pageContext.getOut(), true) );
     }
-    
+
     /** Default processing of the end tag returning EVAL_PAGE. */
     public int doEndTag( PrintWriter pw ) throws JspException {
         return EVAL_PAGE;
     }
-    
+
 }
 

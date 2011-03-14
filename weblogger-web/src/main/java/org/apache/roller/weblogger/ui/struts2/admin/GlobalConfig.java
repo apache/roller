@@ -49,21 +49,21 @@ import org.apache.struts2.interceptor.ServletRequestAware;
  * Action which handles editing of global configuration.
  */
 public class GlobalConfig extends UIAction implements ParameterAware, ServletRequestAware {
-    
+
     private static Log log = LogFactory.getLog(GlobalConfig.class);
-    
+
     // the request parameters as <String, String[]>
     private Map params = Collections.EMPTY_MAP;
-    
+
     // map of config properties
     private Map properties = Collections.EMPTY_MAP;
-    
+
     // the runtime config def used to populate the display
     private ConfigDef globalConfigDef = null;
-    
+
     // list of comment plugins
     private List<WeblogEntryCommentPlugin> pluginsList = Collections.EMPTY_LIST;
-    
+
     // comment plugins that are enabled.  this is what the html form submits to
     private String[] commentPlugins = new String[0];
 
@@ -74,25 +74,25 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     // weblogs for frontpage blog chooser
     private Collection<Weblog> weblogs;
 
-    
+
     public GlobalConfig() {
         this.actionName = "globalConfig";
         this.desiredMenu = "admin";
         this.pageTitle = "configForm.title";
     }
-    
-    
+
+
     @Override
     public boolean isWeblogRequired() {
         return false;
     }
-    
+
     @Override
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
-    
-    
+
+
     /**
      * Prepare action by loading runtime properties map.
      */
@@ -107,7 +107,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             // TODO: i18n
             addError("Unexpected error accessing Roller properties");
         }
-        
+
         try {
             WeblogManager mgr =  WebloggerFactory.getWeblogger().getWeblogManager();
             setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
@@ -124,34 +124,34 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 setGlobalConfigDef(configDef);
             }
         }
-        
+
         // load plugins list
         PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
         setPluginsList(pmgr.getCommentPlugins());
     }
-    
-    
+
+
     /**
      * Display global properties editor form.
      */
     @Override
     public String execute() {
-        
+
         // setup array of configured plugins
         if (!StringUtils.isEmpty(WebloggerRuntimeConfig.getProperty("users.comments.plugins"))) {
             setCommentPlugins(StringUtils.split(WebloggerRuntimeConfig.getProperty("users.comments.plugins"), ","));
         }
-        
+
         return SUCCESS;
     }
-    
-    
+
+
     /**
      * Save global properties.
      */
     public String save() {
         if (!"POST".equals(httpMethod)) return ERROR;
-        
+
         // only set values for properties that are already defined
         String propName = null;
         RuntimeConfigProperty updProp = null;
@@ -161,63 +161,63 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             propName = (String) propsIT.next();
             updProp = (RuntimeConfigProperty) getProperties().get(propName);
             incomingProp = this.getParameter(updProp.getName());
-            
+
             log.debug("Checking property ["+propName+"]");
             log.debug("Request value is ["+incomingProp+"]");
-            
+
             // some special treatment for booleans
             // this is a bit hacky since we are assuming that any prop
             // with a value of "true" or "false" is meant to be a boolean
             // it may not always be the case, but we should be okay for now
             if( updProp.getValue() != null // null check needed w/Oracle
                     && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
-                
+
                 if(incomingProp == null || !incomingProp.equals("on"))
                     incomingProp = "false";
                 else
                     incomingProp = "true";
             }
-            
+
             // only work on props that were submitted with the request
             if(incomingProp != null) {
                 log.debug("Setting new value for ["+propName+"]");
-                
+
                 // NOTE: the old way had some locale sensitive way to do this??
                 updProp.setValue(incomingProp.trim());
             }
         }
-        
+
         // special handling for comment plugins
         String enabledPlugins = "";
         if(getCommentPlugins().length > 0) {
             enabledPlugins = StringUtils.join(getCommentPlugins(), ",");
         }
-        RuntimeConfigProperty prop = 
+        RuntimeConfigProperty prop =
                     (RuntimeConfigProperty) getProperties().get("users.comments.plugins");
         prop.setValue(enabledPlugins);
-            
+
         try {
             // save 'em and flush
             PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
             mgr.saveProperties(getProperties());
             WebloggerFactory.getWeblogger().flush();
-            
+
             // notify user of our success
             addMessage("weblogEdit.changesSaved");
-            
+
         } catch (WebloggerException ex) {
             log.error("Error saving roller properties", ex);
             // TODO: i18n
             addError("error.update.rollerConfig");
         }
-                
+
         return SUCCESS;
     }
-    
-    
+
+
     public void setParameters(Map parameters) {
         this.params = parameters;
-        
+
         if(log.isDebugEnabled()) {
             log.debug("Parameter map:");
             Set<String> keys = parameters.keySet();
@@ -226,18 +226,18 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             }
         }
     }
-    
+
     // convenience method for getting a single parameter as a String
     private String getParameter(String key) {
-        
+
         String[] p = (String[]) this.params.get(key);
         if(p != null && p.length > 0) {
             return p[0];
         }
         return null;
     }
-    
-    
+
+
     public Map getProperties() {
         return properties;
     }
@@ -253,7 +253,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public void setGlobalConfigDef(ConfigDef globalConfigDef) {
         this.globalConfigDef = globalConfigDef;
     }
-    
+
     public List<WeblogEntryCommentPlugin> getPluginsList() {
         return pluginsList;
     }
@@ -261,7 +261,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public void setPluginsList(List<WeblogEntryCommentPlugin> pluginsList) {
         this.pluginsList = pluginsList;
     }
-    
+
     public String[] getCommentPlugins() {
         return commentPlugins;
     }
@@ -273,7 +273,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public void setServletRequest(HttpServletRequest req) {
         httpMethod = req.getMethod();
     }
-    
+
     public Collection<Weblog> getWeblogs() {
         return weblogs;
     }

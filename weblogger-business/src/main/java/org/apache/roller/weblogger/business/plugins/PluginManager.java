@@ -30,13 +30,13 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
  * Plugin management for business layer and more generally applied plugins.
  */
 public interface PluginManager {
-    
+
     /**
      * Returns true if plugins are present
      */
     public boolean hasPagePlugins();
-    
-    
+
+
     /**
      * Returns a list of all registered weblog entry plugins initialized for
      * use with the specified weblog.
@@ -44,8 +44,8 @@ public interface PluginManager {
      * @param website        Website being processed
      */
     public Map getWeblogEntryPlugins(Weblog website);
-    
-    
+
+
     /**
      * Apply a set of weblog entry plugins to the specified string and
      * return the results.  This method must *NOT* alter the contents of
@@ -57,8 +57,8 @@ public interface PluginManager {
      * @return        the transformed text
      */
     public String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str);
-    
-    
+
+
     /**
      * Get the list of WeblogEntryCommentPlugin classes configured.
      *
@@ -68,8 +68,8 @@ public interface PluginManager {
      * Should return an empty list if no plugins are configured.
      */
     public List<WeblogEntryCommentPlugin> getCommentPlugins();
-    
-    
+
+
     /**
      * Apply comment plugins.
      *
@@ -78,11 +78,11 @@ public interface PluginManager {
      * @return String The transformed comment text.
      */
     public String applyCommentPlugins(WeblogEntryComment comment, String text);
-    
-    
+
+
     /**
      * Release all resources associated with Roller session.
      */
     public void release();
-    
+
 }

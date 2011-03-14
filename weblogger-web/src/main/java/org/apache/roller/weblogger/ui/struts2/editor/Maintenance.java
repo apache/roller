@@ -36,67 +36,67 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * the page cache or re-indexing the search index.
  */
 public class Maintenance extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(Maintenance.class);
-    
-    
+
+
     public Maintenance() {
         this.actionName = "maintenance";
         this.desiredMenu = "editor";
         this.pageTitle = "maintenance.title";
     }
-    
-    
+
+
     // admin perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     public String execute() {
         return SUCCESS;
     }
-    
-    
+
+
     /**
      * Rebuild search index for weblog.
      */
     public String index() {
-        
+
         try {
             IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
             manager.rebuildWebsiteIndex(getActionWeblog());
-            
+
             addMessage("maintenance.message.indexed");
         } catch (Exception ex) {
             log.error("Error doing index rebuild", ex);
             // TODO: i18n
             addError("Error rebuilding search index");
         }
-        
+
         return SUCCESS;
     }
 
-    
+
     /**
      * Flush page cache for weblog.
      */
     public String flushCache() {
-        
+
         try {
             Weblog weblog = getActionWeblog();
-            
+
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());
-            
+
             WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
             WebloggerFactory.getWeblogger().flush();
-            
+
             // also notify cache manager
             CacheManager.invalidate(weblog);
 
             addMessage("maintenance.message.flushed");
-            
+
         } catch (Exception ex) {
             log.error("Error saving weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
@@ -105,5 +105,5 @@ public class Maintenance extends UIAction {
 
         return SUCCESS;
     }
-    
+
 }

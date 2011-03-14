@@ -34,34 +34,34 @@ import org.apache.struts2.StrutsStatics;
 /**
  * A struts2 interceptor for configuring specifics of the weblogger ui.
  */
-public class UIActionInterceptor extends AbstractInterceptor 
+public class UIActionInterceptor extends AbstractInterceptor
         implements StrutsStatics {
-    
+
     private static Log log = LogFactory.getLog(UIActionInterceptor.class);
-    
-    
+
+
     public String intercept(ActionInvocation invocation) throws Exception {
-        
+
         log.debug("Entering UIActionInterceptor");
-        
+
         final Object action = invocation.getAction();
         final ActionContext context = invocation.getInvocationContext();
-        
+
         HttpServletRequest request = (HttpServletRequest) context.get(HTTP_REQUEST);
-        
+
         // is this one of our own UIAction classes?
         if (action instanceof UIAction) {
-            
+
             log.debug("action is a UIAction, setting relevant attributes");
-            
+
             UIAction theAction = (UIAction) action;
-            
+
             // extract the authenticated user and set it
             RollerSession rses = RollerSession.getRollerSession(request);
             if(rses != null) {
                 theAction.setAuthenticatedUser(rses.getAuthenticatedUser());
             }
-            
+
             // extract the work weblog and set it
             String weblogHandle = theAction.getWeblog();
             if(!StringUtils.isEmpty(weblogHandle)) {
@@ -76,8 +76,8 @@ public class UIActionInterceptor extends AbstractInterceptor
                 }
             }
         }
-        
+
         return invocation.invoke();
     }
-    
+
 }

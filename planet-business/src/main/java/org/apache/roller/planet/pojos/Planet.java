@@ -25,29 +25,29 @@ import java.util.TreeSet;
 
 /**
  * A Roller "Planet".
- * 
+ *
  * @hibernate.class lazy="true" table="rag_planet"
  */
 public class Planet implements Comparable {
-    
+
     private String id = UUIDGenerator.generateUUID();
     private String handle = null;
     private String title = null;
     private String description = null;
     private Set groups = new TreeSet();
-    
-    
+
+
     public Planet() {
     }
-    
-    
+
+
     public Planet(String handle, String title, String desc) {
         this.title = title;
         this.handle = handle;
         this.description = desc;
     }
-    
-    
+
+
     /**
      * For comparing planets and sorting, ordered by Title.
      */
@@ -55,8 +55,8 @@ public class Planet implements Comparable {
         Planet other = (Planet) o;
         return getTitle().compareTo(other.getTitle());
     }
-    
-    
+
+
     /**
      * @hibernate.id column="id" generator-class="assigned"
      */
@@ -67,8 +67,8 @@ public class Planet implements Comparable {
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+
     /**
      * @hibernate.property column="handle" non-null="true" unique="true"
      */
@@ -79,8 +79,8 @@ public class Planet implements Comparable {
     public void setHandle(String handle) {
         this.handle = handle;
     }
-    
-       
+
+
     /**
      * @hibernate.property column="title" non-null="true" unique="false"
      */
@@ -91,8 +91,8 @@ public class Planet implements Comparable {
     public void setTitle(String title) {
         this.title = title;
     }
-    
-    
+
+
     /**
      * @hibernate.property column="description" non-null="false" unique="false"
      */
@@ -104,8 +104,8 @@ public class Planet implements Comparable {
         this.description = description;
     }
 
-    
-    /** 
+
+    /**
      * @hibernate.set lazy="true" inverse="true" cascade="all" sort="natural"
      * @hibernate.collection-key column="planet_id"
      * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetGroup"
@@ -117,5 +117,5 @@ public class Planet implements Comparable {
     public void setGroups(Set groups) {
         this.groups = groups;
     }
-    
+
 }

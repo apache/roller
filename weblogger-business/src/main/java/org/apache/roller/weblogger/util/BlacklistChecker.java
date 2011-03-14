@@ -31,11 +31,11 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * @author Lance Lavandowska
  * @author Dave Johnson
  */
-public class BlacklistChecker { 
+public class BlacklistChecker {
     private static Log mLogger = LogFactory.getLog(BlacklistChecker.class);
-    
-    /** 
-     * Test comment, applying all blacklists, if configured 
+
+    /**
+     * Test comment, applying all blacklists, if configured
      * @return True if comment matches blacklist term
      */
     public static boolean checkComment(WeblogEntryComment comment) {
@@ -44,9 +44,9 @@ public class BlacklistChecker {
         }
         return false;
     }
-    
-    /** 
-     * Test trackback comment, applying all blacklists, if configured 
+
+    /**
+     * Test trackback comment, applying all blacklists, if configured
      * @return True if comment matches blacklist term
      */
     public static boolean checkTrackback(WeblogEntryComment comment) {
@@ -56,8 +56,8 @@ public class BlacklistChecker {
         return false;
     }
 
-    /** 
-     * Test referrer URL, applying blacklist and website blacklist only if configured 
+    /**
+     * Test referrer URL, applying blacklist and website blacklist only if configured
      * @return True if comment matches blacklist term
      */
     public static boolean checkReferrer(Weblog website, String referrerURL) {
@@ -75,8 +75,8 @@ public class BlacklistChecker {
         return false;
     }
 
-    /** 
-     * Test comment against built in blacklist, site blacklist and website blacklist 
+    /**
+     * Test comment against built in blacklist, site blacklist and website blacklist
      * @return True if comment matches blacklist term
      */
     private static boolean testComment(WeblogEntryComment c) {
@@ -85,7 +85,7 @@ public class BlacklistChecker {
         List regexRules = new ArrayList();
         Weblog website = c.getWeblogEntry().getWebsite();
         Blacklist.populateSpamRules(
-            website.getBlacklist(), stringRules, regexRules, 
+            website.getBlacklist(), stringRules, regexRules,
             WebloggerRuntimeConfig.getProperty("spam.blacklist"));
         Blacklist blacklist = Blacklist.getBlacklist();
         if (   blacklist.isBlacklisted(c.getUrl(),     stringRules, regexRules)
@@ -95,6 +95,6 @@ public class BlacklistChecker {
             ret = true;
         }
         return ret;
-    }        
+    }
 }
 

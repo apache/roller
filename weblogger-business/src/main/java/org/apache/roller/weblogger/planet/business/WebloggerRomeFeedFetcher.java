@@ -39,48 +39,48 @@ import org.apache.roller.weblogger.pojos.Weblog;
 
 
 /**
- * Extends Roller Planet's feed fetcher to fetch local feeds directly from 
+ * Extends Roller Planet's feed fetcher to fetch local feeds directly from
  * Weblogger so we don't waste time with lots of feed processing.
  *
  * We expect local feeds to have urls of the style ... weblogger:<blog handle>
  */
 public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
-    
-    private static Log log = LogFactory.getLog(WebloggerRomeFeedFetcher.class); 
-    
-    
+
+    private static Log log = LogFactory.getLog(WebloggerRomeFeedFetcher.class);
+
+
     /**
      * Creates a new instance of WebloggerRomeFeedFetcher
      */
     public WebloggerRomeFeedFetcher() {
         super();
     }
-    
-    
+
+
     @Override
     public Subscription fetchSubscription(String feedURL, Date lastModified)
             throws FetcherException {
-        
+
         if(feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
         }
-        
+
         // we handle special weblogger planet integrated subscriptions which have
         // feedURLs defined as ... weblogger:<blog handle>
         if(!feedURL.startsWith("weblogger:")) {
-            log.debug("Feed is remote, letting parent handle it - "+feedURL);            
+            log.debug("Feed is remote, letting parent handle it - "+feedURL);
             return super.fetchSubscription(feedURL, lastModified);
         }
-        
+
         // extract blog handle from our special feed url
         String weblogHandle = null;
         String[] items = feedURL.split(":", 2);
         if(items != null && items.length > 1) {
             weblogHandle = items[1];
         }
-        
+
         log.debug("Handling LOCAL feed - "+feedURL);
-        
+
         Weblog localWeblog;
         try {
             localWeblog = WebloggerFactory.getWeblogger().getWeblogManager()
@@ -88,17 +88,17 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
             if (localWeblog == null) {
                 throw new FetcherException("Local feed - "+feedURL+" no longer exists in weblogger");
             }
-            
+
         } catch (WebloggerException ex) {
             throw new FetcherException("Problem looking up local weblog - "+weblogHandle, ex);
         }
-        
+
         // if weblog hasn't changed since last fetch then bail
         if(lastModified != null && !localWeblog.getLastModified().after(lastModified)) {
             log.debug("Skipping unmodified LOCAL weblog");
             return null;
         }
-        
+
         // build planet subscription from weblog
         Subscription newSub = new Subscription();
         newSub.setFeedURL(feedURL);
@@ -106,12 +106,12 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
         newSub.setTitle(localWeblog.getName());
         newSub.setAuthor(localWeblog.getName());
         newSub.setLastUpdated(localWeblog.getLastModified());
-        
+
         // must have a last updated time
         if(newSub.getLastUpdated() == null) {
             newSub.setLastUpdated(new Date());
         }
-        
+
         // lookup recent entries from weblog and add them to the subscription
         try {
             int entryCount = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
@@ -119,7 +119,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
             if (log.isDebugEnabled()) {
                 log.debug("Seeking up to " + entryCount + " entries from " + localWeblog.getHandle());
             }
-            
+
             // grab recent entries for this weblog
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List<WeblogEntry> entries = wmgr.getWeblogEntries(
@@ -136,7 +136,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
                     null,                        // locale
                     0,                           // offset
                     entryCount);                 // range
-            
+
             log.debug("Found " + entries.size());
 
             // Populate subscription object with new entries
@@ -151,23 +151,23 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
                     content = rollerEntry.getSummary();
                 }
                 content = ppmgr.applyWeblogEntryPlugins(pagePlugins, rollerEntry, content);
-                
+
                 entry.setAuthor(rollerEntry.getCreator().getScreenName());
                 entry.setTitle(rollerEntry.getTitle());
                 entry.setPubTime(rollerEntry.getPubTime());
                 entry.setText(content);
                 entry.setPermalink(rollerEntry.getPermalink());
                 entry.setCategoriesString(rollerEntry.getCategory().getPath());
-                
+
                 newSub.addEntry(entry);
             }
-            
+
         } catch (WebloggerException ex) {
             throw new FetcherException("Error processing entries for local weblog - "+weblogHandle, ex);
         }
-        
+
         // all done
         return newSub;
     }
-        
+
 }

@@ -63,12 +63,12 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
      */
     @Override
     public boolean registerLease(RollerTask task) {
-        
+
         log.debug("Attempting to register lease for task - "+task.getName());
-        
+
         // keep a copy of the current time
         Date currentTime = new Date();
-        
+
         // query for existing lease record first
         TaskLock taskLock = null;
         try {
@@ -85,7 +85,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         if(taskLock != null) try {
             // calculate lease expiration time
             Date leaseExpiration = taskLock.getLeaseExpiration();
-            
+
             // calculate run time for task, this is expected time, not actual time
             // i.e. if a task is meant to run daily at midnight this should
             // reflect 00:00:00 on the current day
@@ -100,7 +100,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
                 // start of this minute
                 runTime = DateUtil.getStartOfMinute(currentTime);
             }
-            
+
             if(log.isDebugEnabled()) {
                 log.debug("last run = "+taskLock.getLastRun());
                 log.debug("new run time = "+runTime);
@@ -118,7 +118,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             q.setParameter(5, taskLock.getTimeAquired());
             q.setParameter(6, new Timestamp(leaseExpiration.getTime()));
             int result = q.executeUpdate();
-            
+
             if(result == 1) {
                 strategy.flush();
                 return true;
@@ -165,7 +165,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             q.setParameter(2, task.getName());
             q.setParameter(3, task.getClientId());
             int result = q.executeUpdate();
-            
+
             if(result == 1) {
                 strategy.flush();
                 return true;
@@ -183,8 +183,8 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         return false;
 
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
@@ -199,7 +199,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         }
     }
 
-    
+
     /**
      * @inheritDoc
      */

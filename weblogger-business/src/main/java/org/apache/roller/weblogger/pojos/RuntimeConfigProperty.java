@@ -27,22 +27,22 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * This POJO represents a single property of the roller system.
  */
 public class RuntimeConfigProperty implements Serializable {
-    
+
     public static final long serialVersionUID = 6913562779484028899L;
-    
+
     private String name;
     private String value;
-    
-    
+
+
     public RuntimeConfigProperty() {}
-    
-    
+
+
     public RuntimeConfigProperty(String name, String value) {
         this.name = name;
         this.value = value;
     }
-    
-    
+
+
     /**
      * Getter for property name.
      *
@@ -51,7 +51,7 @@ public class RuntimeConfigProperty implements Serializable {
     public String getName() {
         return this.name;
     }
-    
+
     /**
      * Setter for property name.
      *
@@ -60,7 +60,7 @@ public class RuntimeConfigProperty implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * Getter for property value.
      *
@@ -69,7 +69,7 @@ public class RuntimeConfigProperty implements Serializable {
     public String getValue() {
         return this.value;
     }
-    
+
     /**
      * Setter for property value.
      *
@@ -78,13 +78,13 @@ public class RuntimeConfigProperty implements Serializable {
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     //------------------------------------------------------- Good citizenship
-    
+
     public String toString() {
         return (this.name + "=" + this.value);
     }
-    
+
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof RuntimeConfigProperty != true) return false;
@@ -93,11 +93,11 @@ public class RuntimeConfigProperty implements Serializable {
         .append(getName(), o.getName())
         .isEquals();
     }
-    
+
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())
         .toHashCode();
     }
-    
+
 }

@@ -35,22 +35,22 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Test deleting of Folder parent objects to test cascading deletes.
  */
 public class FolderParentDeletesTest extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(FolderFunctionalityTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
-    
+
     /**
      * All tests in this suite require a user and a weblog.
      */
     public void setUp() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         // setup weblogger
         TestUtils.setupWeblogger();
-        
+
         try {
             testUser = TestUtils.setupUser("folderParentDeletesTestUser");
             testWeblog = TestUtils.setupWeblog("folderParentDeletesTestWeblog", testUser);
@@ -59,14 +59,14 @@ public class FolderParentDeletesTest extends TestCase {
             log.error(ex);
             throw new Exception("Test setup failed", ex);
         }
-        
+
         log.info("END");
     }
-    
+
     public void tearDown() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         try {
             TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
@@ -74,35 +74,35 @@ public class FolderParentDeletesTest extends TestCase {
             log.error(ex);
             throw new Exception("Test teardown failed", ex);
         }
-        
+
         log.info("END");
     }
-    
-    
+
+
     /**
      * Test that deleting a folders parent object deletes all folders.
      */
     public void testFolderParentDeletes() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
-        
+
         // add a small tree /parentDelete-fold1/parentDelete-fold2
         WeblogBookmarkFolder fold1 = new WeblogBookmarkFolder(
                 root, "parentDelete-fold1", null, TestUtils.getManagedWebsite(testWeblog));
         root.addFolder(fold1);
         bmgr.saveFolder(fold1);
-        
+
         WeblogBookmarkFolder fold2 = new WeblogBookmarkFolder(
                 fold1, "parentDelete-fold2", null, TestUtils.getManagedWebsite(testWeblog));
         fold1.addFolder(fold2);
         bmgr.saveFolder(fold2);
         TestUtils.endSession(true);
-        
+
         // now delete the weblog owning these categories
         Exception ex = null;
         try {
@@ -112,8 +112,8 @@ public class FolderParentDeletesTest extends TestCase {
             ex = e;
         }
         assertNull(ex);
-        
+
         log.info("END");
     }
-    
+
 }

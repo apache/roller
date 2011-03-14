@@ -33,14 +33,14 @@ import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
 /**
  * Atom Admin Servlet implements the Atom Admin endpoint.
  * This servlet simply delegates work to a particular handler object.
- * 
+ *
  * @author jtb
  * @web.servlet name="AdminServlet"
  * @web.servlet-mapping url-pattern="/roller-services/rap/*"
  */
 public class AdminServlet extends HttpServlet {
     private static Log logger = LogFactory.getFactory().getInstance(AdminServlet.class);
-    
+
     /**
      * Handles an Atom GET by calling handler and writing results to response.
      */
@@ -48,22 +48,22 @@ public class AdminServlet extends HttpServlet {
         try {
             Handler handler = Handler.getHandler(req);
             String userName = handler.getUserName();
-            
+
             EntrySet c = handler.processGet();
-            
-            res.setStatus(HttpServletResponse.SC_OK);            
+
+            res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType("application/xml; charset=utf-8");
             String s = c.toString();
             Writer writer = res.getWriter();
-            writer.write(s);            
-            writer.close();            
+            writer.write(s);
+            writer.close();
         } catch (HandlerException he) {
             res.sendError(he.getStatus(), he.getMessage());
             he.printStackTrace(res.getWriter());
             logger.error(he);
         }
     }
-    
+
     /**
      * Handles an Atom POST by calling handler to identify URI, reading/parsing
      * data, calling handler and writing results to response.
@@ -72,22 +72,22 @@ public class AdminServlet extends HttpServlet {
         try {
             Handler handler = Handler.getHandler(req);
             String userName = handler.getUserName();
-            
+
             EntrySet c = handler.processPost(new InputStreamReader(req.getInputStream()));
-            
-            res.setStatus(HttpServletResponse.SC_CREATED);            
+
+            res.setStatus(HttpServletResponse.SC_CREATED);
             res.setContentType("application/xml; charset=utf-8");
             String s = c.toString();
             Writer writer = res.getWriter();
-            writer.write(s);            
-            writer.close();            
+            writer.write(s);
+            writer.close();
         } catch (HandlerException he) {
             res.sendError(he.getStatus(), he.getMessage());
             he.printStackTrace(res.getWriter());
             logger.error(he);
         }
     }
-    
+
     /**
      * Handles an Atom PUT by calling handler to identify URI, reading/parsing
      * data, calling handler and writing results to response.
@@ -96,22 +96,22 @@ public class AdminServlet extends HttpServlet {
         try {
             Handler handler = Handler.getHandler(req);
             String userName = handler.getUserName();
-            
+
             EntrySet c = handler.processPut(new InputStreamReader(req.getInputStream()));
-            
-            res.setStatus(HttpServletResponse.SC_OK);            
+
+            res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType("application/xml; charset=utf-8");
             String s = c.toString();
             Writer writer = res.getWriter();
-            writer.write(s);            
-            writer.close();            
+            writer.write(s);
+            writer.close();
         } catch (HandlerException he) {
             res.sendError(he.getStatus(), he.getMessage());
             he.printStackTrace(res.getWriter());
             logger.error(he);
         }
     }
-    
+
     /**
      * Handle Atom Admin DELETE by calling appropriate handler.
      */
@@ -119,15 +119,15 @@ public class AdminServlet extends HttpServlet {
         try {
             Handler handler = Handler.getHandler(req);
             String userName = handler.getUserName();
-            
+
             EntrySet es = handler.processDelete();
-            
-            res.setStatus(HttpServletResponse.SC_OK);                        
+
+            res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType("application/xml; charset=utf-8");
             String s = es.toString();
             Writer writer = res.getWriter();
-            writer.write(s);            
-            writer.close();                        
+            writer.write(s);
+            writer.close();
         } catch (HandlerException he) {
             res.sendError(he.getStatus(), he.getMessage());
             he.printStackTrace(res.getWriter());

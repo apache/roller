@@ -25,11 +25,11 @@ import org.apache.roller.util.UUIDGenerator;
  *
  */
 public class MediaFileTag {
-	
+
 	private String id = UUIDGenerator.generateUUID();
 	String name;
 	MediaFile mediaFile;
-	
+
 	public MediaFileTag() {
 	}
 
@@ -49,7 +49,7 @@ public class MediaFileTag {
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}

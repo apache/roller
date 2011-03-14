@@ -31,22 +31,22 @@ import java.util.Map;
  * @author Allen Gilliland
  */
 public interface Job {
-    
+
     /**
      * Execute the job.
      */
     public void execute();
-    
-    
+
+
     /**
      * Pass in input to be used for the job.
      */
     public void input(Map input);
-    
-    
+
+
     /**
      * Get any output from the job.
      */
     public Map output();
-    
+
 }

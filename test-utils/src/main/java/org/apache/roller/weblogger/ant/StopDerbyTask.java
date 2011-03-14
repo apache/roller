@@ -41,7 +41,7 @@ public class StopDerbyTask extends Task {
             if (!isSkip()) {
 
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
-                
+
                 String driverURL =
                     "jdbc:derby://localhost:" + port + "/rollerdb";
                 Connection conn =
@@ -60,7 +60,7 @@ public class StopDerbyTask extends Task {
                 System.out.println("==============");
                 System.out.println("Stopping Derby");
                 System.out.println("==============");
-                
+
                 try {
                     DriverManager.getConnection(driverURL + ";shutdown=true");
                 } catch (Exception ignored) {}

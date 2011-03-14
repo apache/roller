@@ -32,73 +32,73 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Test deleting of WeblogCategory parent objects to test cascading deletes.
  */
 public class WeblogCategoryParentDeletesTest extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(WeblogCategoryParentDeletesTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
-    
-    
+
+
     /**
      * All tests in this suite require a user and a weblog.
      */
     public void setUp() {
-        
+
         log.info("BEGIN");
-        
+
         try {
             // setup weblogger
             TestUtils.setupWeblogger();
-        
+
             testUser = TestUtils.setupUser("categoryParentDeletesTestUser");
             testWeblog = TestUtils.setupWeblog("categoryParentDeletesTestWeblog", testUser);
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
         }
-        
+
         log.info("END");
     }
-    
+
     public void tearDown() {
-        
+
         log.info("BEGIN");
-        
+
         try {
             TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
         }
-        
+
         log.info("END");
     }
-    
-    
+
+
     /**
      * Test that deleting a categories parent object deletes all categories.
      */
     public void testCategoryParentDeletes() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
+
         // root category is always available
         WeblogCategory root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
-        
+
         // add a small category tree /subcat/subcat2
         WeblogCategory subcat = new WeblogCategory(
             TestUtils.getManagedWebsite(testWeblog), root, "categoryParentDeletes1", null, null);
         root.addCategory(subcat);
         mgr.saveWeblogCategory(subcat);
-        
+
         WeblogCategory subcat2 = new WeblogCategory(
             TestUtils.getManagedWebsite(testWeblog), subcat, "categoryParentDeletes2", null, null);
         subcat.addCategory(subcat2);
         mgr.saveWeblogCategory(subcat2);
         TestUtils.endSession(true);
-        
+
         // now delete the weblog owning these categories
         Exception ex = null;
         try {
@@ -108,8 +108,8 @@ public class WeblogCategoryParentDeletesTest extends TestCase {
             ex = e;
         }
         assertNull(ex);
-        
+
         log.info("END");
     }
-    
+
 }

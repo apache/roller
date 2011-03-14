@@ -33,105 +33,105 @@ import org.apache.roller.planet.pojos.Subscription;
  * Manages Planets, Groups, Subscriptions, and Entries.
  */
 public interface PlanetManager extends Manager {
-    
-    
+
+
     public void savePlanet(Planet planet) throws PlanetException;
-    
-    
+
+
     public void deletePlanet(Planet planet) throws PlanetException;
-    
-    
+
+
     public Planet getPlanet(String handle) throws PlanetException;
-    
-    
+
+
     public Planet getPlanetById(String id) throws PlanetException;
-    
-    
+
+
     public List getPlanets() throws PlanetException;
-    
-    
+
+
     /**
      * Save new or update existing a group
      */
     public void saveGroup(PlanetGroup sub) throws PlanetException;
-    
-    
-    /** 
-     * Delete group and any subscriptions that are orphaned. 
+
+
+    /**
+     * Delete group and any subscriptions that are orphaned.
      */
     public void deleteGroup(PlanetGroup group) throws PlanetException;
-    
-    
+
+
     public PlanetGroup getGroup(Planet planet, String handle) throws PlanetException;
-    
-    
+
+
     /**
      * Get group by ID rather than handle.
      */
     public PlanetGroup getGroupById(String id) throws PlanetException;
-    
-    
+
+
     /**
      * Save or update a subscription
      */
     public void saveSubscription(Subscription sub) throws PlanetException;
-    
-    
-    /** 
-     * Delete subscription, remove it from groups, cache, etc. 
+
+
+    /**
+     * Delete subscription, remove it from groups, cache, etc.
      */
     public void deleteSubscription(Subscription group) throws PlanetException;
-    
-    
+
+
     /**
      * Get subscription by feedUrl.
      */
     public Subscription getSubscription(String feedUrl) throws PlanetException;
-    
-    
+
+
     /**
      * Get subscription by ID rather than feedUrl.
      */
     public Subscription getSubscriptionById(String id) throws PlanetException;
-    
-    
+
+
     /**
      * Get all subscriptions.
      */
     public List getSubscriptions() throws PlanetException;
-    
-    
+
+
     /**
      * Get total number of subscriptions.
      */
     public int getSubscriptionCount() throws PlanetException;
-    
-    
+
+
     /**
      * Get top X subscriptions.
      */
     public List getTopSubscriptions(int offset, int len) throws PlanetException;
-    
-    
+
+
     /**
      * Get top X subscriptions, restricted by group.
      */
-    public List getTopSubscriptions(PlanetGroup group, int offset, int len) 
+    public List getTopSubscriptions(PlanetGroup group, int offset, int len)
         throws PlanetException;
-    
-    
+
+
     /**
      * Save new or update existing entry
      */
     public void saveEntry(SubscriptionEntry entry) throws PlanetException;
-    
-    
-    /** 
-     * Delete entry. 
+
+
+    /**
+     * Delete entry.
      */
     public void deleteEntry(SubscriptionEntry entry) throws PlanetException;
-    
-    
+
+
     /**
      * Delete all entries for a subscription.
      *
@@ -139,21 +139,21 @@ public interface PlanetManager extends Manager {
      * @throws PlanetException If there is a problem doing the delete.
      */
     public void deleteEntries(Subscription sub) throws PlanetException;
-    
-    
+
+
     /**
      * Lookup an entry by id.
      */
     public SubscriptionEntry getEntryById(String id) throws PlanetException;
-    
-    
+
+
     /**
      * Get entries in a single feed as list of SubscriptionEntry objects.
      */
-    public List getEntries(Subscription sub, int offset, int len) 
+    public List getEntries(Subscription sub, int offset, int len)
         throws PlanetException;
-    
-    
+
+
     /**
      * Get Entries for a Group in reverse chonological order.
      *
@@ -161,12 +161,12 @@ public interface PlanetManager extends Manager {
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */
-    public List getEntries(PlanetGroup group, int offset, int len) 
+    public List getEntries(PlanetGroup group, int offset, int len)
         throws PlanetException;
-    
-    
+
+
     /**
-     * Get Entries for a Group in reverse chonological order, optionally 
+     * Get Entries for a Group in reverse chonological order, optionally
      * constrained to a certain timeframe.
      *
      * @param group Restrict to entries from one group.
@@ -175,10 +175,10 @@ public interface PlanetManager extends Manager {
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */
-    public List getEntries(PlanetGroup group, 
-                           Date startDate, 
+    public List getEntries(PlanetGroup group,
+                           Date startDate,
                            Date endDate,
-                           int offset, 
+                           int offset,
                            int len) throws PlanetException;
-    
+
 }

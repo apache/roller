@@ -31,8 +31,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Manages autoping storage/retrieval, queries and queue.
  */
 public interface AutoPingManager {
-    
-    
+
+
     /**
      * Store an auto ping configuration.
      *
@@ -40,8 +40,8 @@ public interface AutoPingManager {
      * @throws WebloggerException
      */
     public void saveAutoPing(AutoPing autoPing) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove the auto ping configuration with given id.
      *
@@ -49,8 +49,8 @@ public interface AutoPingManager {
      * @throws WebloggerException
      */
     public void removeAutoPing(AutoPing autoPing) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove the auto ping configuration for the given ping target and website, if one exists.  Returns silently if it
      * doesn't exist.
@@ -60,25 +60,25 @@ public interface AutoPingManager {
      * @throws WebloggerException
      */
     public void removeAutoPing(PingTarget pingTarget, Weblog website) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove a collection of auto ping configurations.
-     * 
+     *
      * @param autopings a <code>Collection</code> of <code>AAutoPing/code> objects
      * @throws WebloggerException
      */
     public void removeAutoPings(Collection autopings) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove all auto ping configurations for all websites.
      *
      * @throws WebloggerException
      */
     public void removeAllAutoPings() throws WebloggerException;
-    
-    
+
+
     /**
      * Retrieve an auto ping configuration by id.
      *
@@ -87,26 +87,26 @@ public interface AutoPingManager {
      * @throws WebloggerException
      */
     public AutoPing getAutoPing(String id) throws WebloggerException;
-    
-    
+
+
     /**
      * Get all of the auto ping configurations for the given website.
-     * 
+     *
      * @param website
      * @return a list of auto ping configurations for the given website as <code>AuAutoPingcode> objects.
      */
     public List getAutoPingsByWebsite(Weblog website) throws WebloggerException;
-    
-    
+
+
     /**
      * Get all of the auto ping configurations for a given target (across all websites).
-     * 
+     *
      * @param pingTarget
      * @return a list of auto ping configurations for the given target as <code>AuAutoPingcode> objects.
      */
     public List getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
-    
-    
+
+
     /**
      * Get the auto ping configurations that should be pinged upon creation/change of the given weblog entry.
      *
@@ -114,8 +114,8 @@ public interface AutoPingManager {
      * @return a list of the ping configurations that should be applied due to this change
      */
     public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
-    
-    
+
+
     /**
      * Queue the auto ping configurations that should be pinged upon change to the given weblog entry.  This calls the
      * {@link PingQueueManager} to queue ping requests for each ping configuration that should be applied on change to
@@ -124,8 +124,8 @@ public interface AutoPingManager {
      * @param changedWeblogEntry the entry that has been created or changed
      */
     public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
-    
-    
+
+
     /**
      * Get the category restrictions on the given auto ping configuration.
      *
@@ -135,8 +135,8 @@ public interface AutoPingManager {
      *         in any category of the website).
      */
     public List getCategoryRestrictions(AutoPing autoPing) throws WebloggerException;
-    
-    
+
+
     /**
      * Set the category restrictions on the given ping configuration to the specified ones.  If the new collection is
      * empty, all category restrictions are removed.
@@ -146,11 +146,11 @@ public interface AutoPingManager {
      */
     public void setCategoryRestrictions(AutoPing autoPing,
             Collection newCategories);
-    
-    
+
+
     /**
      * Release all resources associated with Roller session.
      */
     public void release();
-    
+
 }

@@ -25,10 +25,10 @@ import com.opensymphony.xwork2.ActionSupport;
  * Menu Action.
  */
 public class MainMenu extends ActionSupport {
-    
+
     public String execute() {
         // nothing to do right now
         return SUCCESS;
     }
-    
+
 }

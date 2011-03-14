@@ -32,21 +32,21 @@ import org.apache.roller.weblogger.util.RollerMessages;
  * intended for use with trackbacks only.
  */
 public class TrackbackLinkbackCommentValidator implements CommentValidator {
-    
+
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
-    
+
     public String getName() {
         return bundle.getString("comment.validator.trackbackLinkbackName");
     }
-    
+
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
-        
+
         // linkback validation can be toggled at runtime, so check if it's enabled
         // if it's disabled then just return a score of 100
         if(!WebloggerRuntimeConfig.getBooleanProperty("site.trackbackVerification.enabled")) {
             return 100;
         }
-        
+
         int ret = 0;
         LinkbackExtractor linkback = null;
         try {
@@ -59,7 +59,7 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
                     true));
         } catch (MalformedURLException ignored1) {
         } catch (IOException ignored2) {}
-        
+
         if (linkback != null && linkback.getExcerpt() != null) {
             ret = 100;
         } else {
@@ -67,5 +67,5 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
         }
         return ret;
     }
-    
+
 }

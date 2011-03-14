@@ -40,129 +40,129 @@ import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
  * Extends the Struts2 ActionSupport class to add in support for handling an
  * error and status success.  Other actions extending this one only need to
  * calle setError() and setSuccess() accordingly.
- * 
+ *
  * NOTE: as a small convenience, all errors and messages are assumed to be keys
  * which point to a success in a resource bundle, so we automatically call
  * getText(key) on the param passed into setError() and setSuccess().
  */
-public abstract class UIAction extends ActionSupport 
+public abstract class UIAction extends ActionSupport
         implements UIActionPreparable, UISecurityEnforced {
-    
+
     // a result that sends the user to an access denied warning
     public static final String DENIED = "access-denied";
-    
+
     // a common result name used to indicate the result should list some data
     public static final String LIST = "list";
-    
+
     // the authenticated user accessing this action, or null if client is not logged in
     private User authenticatedUser = null;
-    
+
     // the weblog this action is intended to work on, or null if no weblog specified
     private Weblog actionWeblog = null;
-    
+
     // the weblog handle of the action weblog
     private String weblog = null;
-    
+
     // action name (used by tabbed menu utility)
     protected String actionName = null;
-    
+
     // the name of the menu this action wants to show, or null for no menu
     protected String desiredMenu = null;
-    
+
     // page title
     protected String pageTitle = null;
-    
-    
+
+
     public void myPrepare() {
         // no-op
     }
-    
-    
+
+
     // default action permissions, user is required
     public boolean isUserRequired() {
         return true;
     }
-    
-    
+
+
     // default action permissions, weblog is required
     public boolean isWeblogRequired() {
         return true;
     }
-    
-    
+
+
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }
-    
-    
+
+
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.LOGIN);
     }
-    
-    
+
+
     // convenient way to tell if user being dealt with is an admin
     public boolean isUserIsAdmin() {
         try {
-            GlobalPermission adminPerm = new GlobalPermission( 
+            GlobalPermission adminPerm = new GlobalPermission(
                 Collections.singletonList(GlobalPermission.ADMIN));
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             return umgr.checkPermission(adminPerm, getAuthenticatedUser());
         } catch (Exception e) {}
         return false;
     }
-    
-    
+
+
     public String getSiteURL() {
         return WebloggerRuntimeConfig.getRelativeContextURL();
     }
-    
+
     public String getAbsoluteSiteURL() {
         return WebloggerRuntimeConfig.getAbsoluteContextURL();
     }
-    
+
     public String getProp(String key) {
         // first try static config
         String value = WebloggerConfig.getProperty(key);
         if(value == null) {
             value = WebloggerRuntimeConfig.getProperty(key);
         }
-        
+
         return (value == null) ? key : value;
     }
-    
+
     public boolean getBooleanProp(String key) {
         // first try static config
         String value = WebloggerConfig.getProperty(key);
         if(value == null) {
             value = WebloggerRuntimeConfig.getProperty(key);
         }
-        
+
         return (value == null) ? false : (new Boolean(value)).booleanValue();
     }
-    
+
     public int getIntProp(String key) {
         // first try static config
         String value = WebloggerConfig.getProperty(key);
         if(value == null) {
             value = WebloggerRuntimeConfig.getProperty(key);
         }
-        
+
         return (value == null) ? 0 : (new Integer(value)).intValue();
     }
-    
-    
+
+
     public void addError(String errorKey) {
         addActionError(getText(errorKey));
     }
-    
+
     public void addError(String errorKey, String param) {
         addActionError(getText(errorKey, errorKey, param));
     }
-    
+
     public void addError(String errorKey, List args) {
         addActionError(getText(errorKey, args));
     }
-    
+
     /**
      * This simply returns the result of hasActionErrors() but we need it
      * because without it you can't easily check if there were errors since
@@ -171,20 +171,20 @@ public abstract class UIAction extends ActionSupport
     public boolean errorsExist() {
         return hasActionErrors();
     }
-    
-    
+
+
     public void addMessage(String msgKey) {
         addActionMessage(getText(msgKey));
     }
-    
+
     public void addMessage(String msgKey, String param) {
         addActionMessage(getText(msgKey, msgKey, param));
     }
-    
+
     public void addMessage(String msgKey, List args) {
         addActionMessage(getText(msgKey, args));
     }
-    
+
     /**
      * This simply returns the result of hasActionMessages() but we need it
      * because without it you can't easily check if there were messages since
@@ -193,7 +193,7 @@ public abstract class UIAction extends ActionSupport
     public boolean messagesExist() {
         return hasActionMessages();
     }
-    
+
 
     public User getAuthenticatedUser() {
         return authenticatedUser;
@@ -218,7 +218,7 @@ public abstract class UIAction extends ActionSupport
     public void setWeblog(String weblog) {
         this.weblog = weblog;
     }
-    
+
     public String getPageTitle() {
         return getText(pageTitle);
     }
@@ -226,12 +226,12 @@ public abstract class UIAction extends ActionSupport
     public void setPageTitle(String pageTitle) {
         this.pageTitle = pageTitle;
     }
-    
-    
+
+
     public String getActionName() {
         return this.actionName;
     }
-    
+
     public void setActionName(String actionName) {
         this.actionName = actionName;
     }
@@ -243,12 +243,12 @@ public abstract class UIAction extends ActionSupport
     public void setDesiredMenu(String desiredMenu) {
         this.desiredMenu = desiredMenu;
     }
-    
+
     public Menu getMenu() {
         return MenuHelper.getMenu(getDesiredMenu(), getActionName(), getAuthenticatedUser(), getActionWeblog());
     }
-    
-    
+
+
     public String getShortDateFormat() {
         DateFormat sdf = DateFormat.getDateInstance(
                 DateFormat.SHORT, getLocale());
@@ -257,7 +257,7 @@ public abstract class UIAction extends ActionSupport
         }
         return "yyyy/MM/dd";
     }
-    
+
     public String getMediumDateFormat() {
         DateFormat sdf = DateFormat.getDateInstance(
                 DateFormat.MEDIUM, getLocale());
@@ -266,15 +266,15 @@ public abstract class UIAction extends ActionSupport
         }
         return "MMM dd, yyyy";
     }
-    
+
     public List getLocalesList() {
         return UIUtils.getLocales();
     }
-    
+
     public List getTimeZonesList() {
         return UIUtils.getTimeZones();
     }
-    
+
     public List getHoursList() {
         List ret = new ArrayList();
         for (int i=0; i<24; i++) {
@@ -282,7 +282,7 @@ public abstract class UIAction extends ActionSupport
         }
         return ret;
     }
-    
+
     public List getMinutesList() {
         List ret = new ArrayList();
         for (int i=0; i<60; i++) {
@@ -290,15 +290,15 @@ public abstract class UIAction extends ActionSupport
         }
         return ret;
     }
-    
+
     public List getSecondsList() {
         return getMinutesList();
     }
-    
+
     public List getCommentDaysList() {
-        
+
         List opts = new ArrayList();
-        
+
         opts.add(new KeyValueObject(new Integer(0), getText("weblogEdit.unlimitedCommentDays")));
         opts.add(new KeyValueObject(new Integer(1), getText("weblogEdit.days1")));
         opts.add(new KeyValueObject(new Integer(2), getText("weblogEdit.days2")));
@@ -311,8 +311,8 @@ public abstract class UIAction extends ActionSupport
         opts.add(new KeyValueObject(new Integer(30), getText("weblogEdit.days30")));
         opts.add(new KeyValueObject(new Integer(60), getText("weblogEdit.days60")));
         opts.add(new KeyValueObject(new Integer(90), getText("weblogEdit.days90")));
-        
+
         return opts;
     }
-    
+
 }

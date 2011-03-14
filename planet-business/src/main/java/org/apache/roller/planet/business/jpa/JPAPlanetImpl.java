@@ -30,52 +30,52 @@ import org.apache.roller.planet.business.InitializationException;
 import org.apache.roller.planet.business.PropertiesManager;
 
 /**
- * Implements Planet, the entry point interface for the Roller-Planet business 
+ * Implements Planet, the entry point interface for the Roller-Planet business
  * tier APIs using the Java Persistence API (JPA).
  */
 @com.google.inject.Singleton
-public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {   
-    
+public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
+
     private static Log log = LogFactory.getLog(JPAPlanetImpl.class);
-    
+
     // a persistence utility class
     private final JPAPersistenceStrategy strategy;
-        
+
     // references to the managers we maintain
     private final PlanetManager planetManager;
     private final PropertiesManager propertiesManager;
-    
+
     // url strategy
     private final URLStrategy urlStrategy;
-    
+
     // feed fetcher
     private final FeedFetcher feedFetcher;
-    
-        
-    @com.google.inject.Inject  
+
+
+    @com.google.inject.Inject
     protected JPAPlanetImpl(
-            JPAPersistenceStrategy strategy, 
-            PlanetManager     planetManager, 
+            JPAPersistenceStrategy strategy,
+            PlanetManager     planetManager,
             PropertiesManager propertiesManager,
             URLStrategy       urlStrategy,
             FeedFetcher       feedFetcher) throws PlanetException {
-        
+
         this.strategy = strategy;
         this.propertiesManager = propertiesManager;
         this.planetManager = planetManager;
         this.urlStrategy = urlStrategy;
         this.feedFetcher = feedFetcher;
     }
-    
+
 
     @Override
     public void initialize() throws InitializationException {
-        
+
         log.info("Initializing Roller Planet business tier");
-        
+
         getPropertiesManager().initialize();
         getPlanetManager().initialize();
-        
+
         // we always need to do a flush after initialization because it's
         // possible that some changes need to be persisted
         try {
@@ -83,28 +83,28 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
         } catch(PlanetException ex) {
             throw new InitializationException("Error flushing after initialization", ex);
         }
-        
+
         log.info("Roller Planet business tier successfully initialized");
     }
-    
-    
+
+
     public void flush() throws PlanetException {
         this.strategy.flush();
     }
 
-    
+
     @Override
     public void release() {
         this.strategy.release();
     }
 
-    
+
     @Override
     public void shutdown() {
         this.release();
     }
-    
-    
+
+
     /**
      * @see org.apache.roller.business.Roller#getBookmarkManager()
      */
@@ -112,22 +112,22 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
         return planetManager;
     }
 
-     
+
     /**
      * @see org.apache.roller.business.Roller#getBookmarkManager()
      */
     public PropertiesManager getPropertiesManager() {
         return propertiesManager;
     }
-    
-    
+
+
     public URLStrategy getURLStrategy() {
         return this.urlStrategy;
     }
-    
-    
+
+
     public FeedFetcher getFeedFetcher() {
         return this.feedFetcher;
     }
-    
+
 }

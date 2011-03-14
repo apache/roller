@@ -53,10 +53,10 @@ public interface Pager {
      * Link value for prev page in current collection view
      */
     public String getPrevName();
-    
+
     /**
      * Get current list of items available from the pager.
      */
     public List getItems();
-    
+
 }

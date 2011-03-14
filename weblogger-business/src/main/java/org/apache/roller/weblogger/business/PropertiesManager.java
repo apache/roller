@@ -27,42 +27,42 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
  * Manages global properties for Roller.
  */
 public interface PropertiesManager {
-    
+
     /**
      * Initialize the properties manager.
      *
      * @throws InitializationException If there is a problem during initialization.
      */
     public void initialize() throws InitializationException;
-    
-    
+
+
     /**
      * Release all resources associated with Roller session.
      */
     public void release();
-    
-    
+
+
     /**
      * Save a single property
      */
     public void saveProperty(RuntimeConfigProperty property) throws WebloggerException;
-    
-    
+
+
     /**
      * Save a list of properties
      */
     public void saveProperties(Map properties) throws WebloggerException;
-    
-    
+
+
     /**
      * Retrieve a single property by name
      */
     public RuntimeConfigProperty getProperty(String name) throws WebloggerException;
-    
-    
+
+
     /**
      * Retrieve a list of all properties
      */
     public Map getProperties() throws WebloggerException;
-    
+
 }

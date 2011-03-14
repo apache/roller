@@ -41,33 +41,33 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Automatically insert links into entry text based on users bookmarks.
  */
 public class BookmarkPlugin implements WeblogEntryPlugin {
-    
+
     private static Log mLogger = LogFactory.getLog(BookmarkPlugin.class);
-    
+
     protected String name = "Bookmark Linker";
     protected String description = "Automatically uses your Bookmarks to " +
             "create links.  Simply use the Name of a Bookmark and it will be " +
             "converted into a hyperlink using the Bookmark's URL.";
-    
-    
+
+
     public BookmarkPlugin() {
         mLogger.debug("BookmarkPlugin instantiated.");
     }
-    
-    
+
+
     public String getName() {
         return name;
     }
-    
-    
+
+
     public String getDescription() {
         return StringEscapeUtils.escapeJavaScript(description);
     }
-    
-    
+
+
     public void init(Weblog website) throws WebloggerException {}
-    
-    
+
+
     public String render(WeblogEntry entry, String str) {
         String text = str;
         try {
@@ -82,8 +82,8 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
         }
         return text;
     }
-    
-    
+
+
     /**
      * Recursively travel down Folder tree, attempting
      * to match up Bookmarks in each Folder.
@@ -93,21 +93,21 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
      * @return
      */
     private String lookInFolders(String text, Collection folders) {
-        
+
         Iterator it = folders.iterator();
         while (it.hasNext()) {
             WeblogBookmarkFolder folder = (WeblogBookmarkFolder)it.next();
             text = matchBookmarks(text, folder);
-            
+
             if (!folder.getFolders().isEmpty()) {
                 lookInFolders(text, folder.getFolders());
             }
         }
-        
+
         return text;
     }
-    
-    
+
+
     private String matchBookmarks(String text,WeblogBookmarkFolder folder) {
         Iterator bookmarks = folder.getBookmarks().iterator();
         String workingText = text;
@@ -154,5 +154,5 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
         }
         return workingText.toString();
     }
-    
+
 }

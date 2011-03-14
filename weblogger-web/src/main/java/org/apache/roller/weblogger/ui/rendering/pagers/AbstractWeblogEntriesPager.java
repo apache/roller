@@ -43,15 +43,15 @@ import org.apache.roller.weblogger.util.I18nMessages;
  * paging their own way.
  */
 public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
-    
+
     private static Log log = LogFactory.getLog(AbstractWeblogEntriesPager.class);
-    
+
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
-    
+
     // url strategy for building urls
     URLStrategy urlStrategy = null;
-    
+
     Weblog weblog = null;
     String locale = null;
     String pageLink = null;
@@ -62,8 +62,8 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     int offset = 0;
     int page = 0;
     int length = 0;
-    
-    
+
+
     public AbstractWeblogEntriesPager(
             URLStrategy        strat,
             Weblog             weblog,
@@ -74,31 +74,31 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             String             catPath,
             List               tags,
             int                page) {
-        
+
         this.urlStrategy = strat;
-        
+
         this.weblog = weblog;
         this.locale = locale;
         this.pageLink = pageLink;
         this.entryAnchor = entryAnchor;
         this.dateString = dateString;
         this.catPath = catPath;
-        
+
         if(tags != null)
           this.tags = tags;
-        
+
         // make sure offset, length, and page are valid
         int maxLength = WebloggerRuntimeConfig.getIntProperty("site.pages.maxEntries");
         length = weblog.getEntryDisplayCount();
         if(length > maxLength) {
             length = maxLength;
         }
-        
+
         if(page > 0) {
             this.page = page;
         }
         this.offset = length * page;
-        
+
         // get a message utils instance to handle i18n of messages
         Locale viewLocale = null;
         if(locale != null) {
@@ -113,75 +113,75 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         }
         this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
-    
-    
+
+
     public boolean hasMoreEntries() {
         return false;
     }
-    
-    
+
+
     public String getHomeLink() {
         return createURL(0, 0, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags);
     }
-    
-    
+
+
     public String getHomeName() {
         return messageUtils.getString("weblogEntriesPager.latest.home");
     }
-    
-    
+
+
     public String getNextLink() {
         if (hasMoreEntries()) {
             return createURL(page, 1, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags);
         }
         return null;
     }
-    
-    
+
+
     public String getNextName() {
         if (hasMoreEntries()) {
             return messageUtils.getString("weblogEntriesPager.latest.next");
         }
         return null;
     }
-    
-    
+
+
     public String getPrevLink() {
         if (page > 0) {
             return createURL(page, -1, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags);
         }
         return null;
     }
-    
-    
+
+
     public String getPrevName() {
         if (page > 0) {
             return messageUtils.getString("weblogEntriesPager.latest.prev");
         }
         return null;
     }
-    
-    
+
+
     public String getNextCollectionLink() {
         return null;
     }
-    
-    
+
+
     public String getNextCollectionName() {
         return null;
     }
-    
-    
+
+
     public String getPrevCollectionLink() {
         return null;
     }
-    
-    
+
+
     public String getPrevCollectionName() {
         return null;
     }
-    
-    
+
+
     /**
      * Parse data as either 6-char or 8-char format.
      */
@@ -197,7 +197,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         	char8DateFormat.setCalendar(cal);
             ParsePosition pos = new ParsePosition(0);
             ret = char8DateFormat.parse( dateString, pos );
-            
+
             // make sure the requested date is not in the future
             Date today = getToday();
             if (ret.after(today)) ret = today;
@@ -208,15 +208,15 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         	char6DateFormat.setCalendar(cal);
             ParsePosition pos = new ParsePosition(0);
             ret = char6DateFormat.parse( dateString, pos );
-            
+
             // make sure the requested date is not in the future
             Date today = getToday();
             if (ret.after(today)) ret = today;
         }
         return ret;
     }
-    
-    
+
+
     /**
      * Return today based on current blog's timezone/locale.
      */
@@ -227,8 +227,8 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         todayCal.setTime(new Date());
         return todayCal.getTime();
     }
-    
-    
+
+
     /**
      * Create URL that encodes pager state using most appropriate forms of URL.
      * @param pageAdd To be added to page number, or 0 for no page number
@@ -243,16 +243,16 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             String             dateString,
             String             catPath,
             List               tags) {
-        
+
         int pageNum = page + pageAdd;
-        
+
         if (pageLink != null) {
             return urlStrategy.getWeblogPageURL(website, locale, pageLink, entryAnchor, catPath, dateString, tags, pageNum, false);
         } else if (entryAnchor != null) {
             return urlStrategy.getWeblogEntryURL(website, locale, entryAnchor, true);
         }
-        
+
         return urlStrategy.getWeblogCollectionURL(website, locale, catPath, dateString, tags, pageNum, false);
     }
-    
+
 }

@@ -44,46 +44,46 @@ import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
  *
  */
 public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
-    
+
     private static Log mLogger = LogFactory.getLog(ConvertLineBreaksPlugin.class);
-    
+
     private static final String name = "Convert Line Breaks";
     private static final String description = "Convert plain text paragraphs to html by adding p and br tags";
     private static final String version = "0.1";
-    
-    
+
+
     public ConvertLineBreaksPlugin() {
         mLogger.debug("Instantiating ConvertLineBreaksPlugin v"+this.version);
     }
-    
-    
+
+
     public String getName() {
         return name;
     }
-    
-    
+
+
     public String getDescription() {
         return description;
     }
-    
-    
+
+
     public void init(Weblog website) throws WebloggerException {
         // we don't need to do any init.
         mLogger.debug("initing");
     }
-    
-    
+
+
     /**
      * Transform the given plain text into html text by inserting p and br
      * tags around paragraphs and after line breaks.
      */
     public String render(WeblogEntry entry, String str) {
-        
+
         if(str == null || str.trim().equals(""))
             return "";
-        
+
         mLogger.debug("Rendering string of length "+str.length());
-        
+
         /* setup a buffered reader and iterate through each line
          * inserting html as needed
          *
@@ -92,11 +92,11 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
         StringBuffer buf = new StringBuffer();
         try {
             BufferedReader br = new BufferedReader(new StringReader(str));
-            
+
             String line = null;
             boolean insidePara = false;
             while((line = br.readLine()) != null) {
-                
+
                 if(!insidePara && line.trim().length() > 0) {
                     // start of a new paragraph
                     buf.append("\n<p>");
@@ -112,18 +112,18 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
                     insidePara = false;
                 }
             }
-            
+
             // if the text ends without an empty line then we need to
             // terminate the last paragraph now
             if(insidePara)
                 buf.append("</p>\n\n");
-            
+
         } catch(Exception e) {
             mLogger.warn("trouble rendering text.", e);
             return str;
         }
-        
+
         return buf.toString();
     }
-    
+
 }

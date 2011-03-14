@@ -26,19 +26,19 @@ import java.util.Date;
  */
 public interface CalendarModel {
     public Calendar getCalendar();
-    
+
     public void setDay( String month ) throws Exception;
-    
+
     public Date getDay();
-    
+
     public Date getNextMonth();
 
     public Date getPrevMonth();
-    
+
     public String computePrevMonthUrl();
-    
+
     public String computeTodayMonthUrl();
-    
+
     public String computeNextMonthUrl();
 
     /**
@@ -46,7 +46,7 @@ public interface CalendarModel {
      * is the beginning of the month containing the creation date.
      */
     //public Date getInitialMonth();
-    
+
     /**
      * Create URL for use on edit-weblog page, preserves the request
      * parameters used by the tabbed-menu tag for navigation.
@@ -57,7 +57,7 @@ public interface CalendarModel {
      * @return         URL for day, or null if no weblog entry on that day
      */
     public String computeUrl( java.util.Date day, boolean monthURL, boolean valid );
-    
+
     /**
      * Get calendar cell content or null if none.
      *

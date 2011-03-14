@@ -25,15 +25,15 @@ import javax.servlet.http.HttpServletRequest;
  * Default authenticator does nothing, always returns true.
  */
 public class DefaultCommentAuthenticator implements CommentAuthenticator {
-    
-    
+
+
     public String getHtml(HttpServletRequest request) {
         return "<!-- custom authenticator would go here -->";
     }
-    
-    
+
+
     public boolean authenticate(HttpServletRequest request) {
         return true;
     }
-    
+
 }

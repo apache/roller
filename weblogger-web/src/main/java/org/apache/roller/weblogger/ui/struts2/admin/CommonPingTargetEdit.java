@@ -30,29 +30,29 @@ import org.apache.roller.weblogger.ui.struts2.common.PingTargetEditBase;
  * Action for modifying a common ping target.
  */
 public class CommonPingTargetEdit extends PingTargetEditBase {
-    
+
     private static Log log = LogFactory.getLog(CommonPingTargetEdit.class);
-    
-    
+
+
     public CommonPingTargetEdit() {
         this.actionName = "commonPingTargetEdit";
         this.desiredMenu = "admin";
         this.pageTitle = "pingTarget.pingTarget";
     }
-    
-    
+
+
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
-    
+
     // no weblog required
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     protected Log getLogger() {
         return log;
     }
-    
+
 }

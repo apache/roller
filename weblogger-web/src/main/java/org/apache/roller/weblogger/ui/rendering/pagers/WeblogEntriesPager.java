@@ -22,11 +22,11 @@ import java.util.Map;
 
 /**
  * Pager for weblog entries, handles latest, single-entry, month and day views.
- * Collection returned is a list of lists of entries, where each list of 
+ * Collection returned is a list of lists of entries, where each list of
  * entries represents one day.
  */
-public interface WeblogEntriesPager {  
-        
+public interface WeblogEntriesPager {
+
     /**
      * A map of entries representing this collection.
      *
@@ -34,7 +34,7 @@ public interface WeblogEntriesPager {
      * entry objects keyed by the date they were published.
      */
     public Map getEntries();
-        
+
     /**
      * Link value for returning to pager home
      */
@@ -64,26 +64,26 @@ public interface WeblogEntriesPager {
      * Link value for prev page in current collection view
      */
     public String getPrevName();
-    
+
         /**
      * Link value for next collection view
      */
     public String getNextCollectionLink();
-    
+
     /**
      * Name for next collection view
      */
-    public String getNextCollectionName();  
-    
+    public String getNextCollectionName();
+
     /**
      * Link value for prev collection view
      */
-    public String getPrevCollectionLink(); 
-    
+    public String getPrevCollectionLink();
+
     /**
      * Name for prev collection view
      */
-    public String getPrevCollectionName(); 
-    
+    public String getPrevCollectionName();
+
 }
 

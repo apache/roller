@@ -29,29 +29,29 @@ import org.apache.roller.weblogger.pojos.User;
 /**
  * Test User related business operations.
  */
-public class UserAttributeTest extends TestCase {    
+public class UserAttributeTest extends TestCase {
     public static Log log = LogFactory.getLog(UserAttributeTest.class);
-    
-    
+
+
     public UserAttributeTest(String name) {
         super(name);
     }
-    
-    
+
+
     public static Test suite() {
         return new TestSuite(UserAttributeTest.class);
     }
-    
-    
+
+
     public void setUp() throws Exception {
         // setup weblogger
         TestUtils.setupWeblogger();
     }
-    
+
     public void tearDown() throws Exception {
     }
-    
-    
+
+
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
@@ -62,20 +62,20 @@ public class UserAttributeTest extends TestCase {
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         umgr.setUserAttribute(user.getUserName(), "testattname", "testattvalue");
         TestUtils.endSession(true);
-        
+
         assertEquals(user.getId(), umgr.getUserByAttribute("testattname", "testattvalue").getId());
-        
+
         user = TestUtils.getManagedUser(user);
         user.setEnabled(Boolean.FALSE);
         umgr.saveUser(user);
         TestUtils.endSession(true);
-        
+
         assertNull(umgr.getUserByAttribute("testattname", "testattvalue"));
-        
+
         TestUtils.teardownUser("auser");
 
         assertEquals(0, umgr.getUserAttributes("auser").size());
-        
+
         log.debug("END");
     }
 }

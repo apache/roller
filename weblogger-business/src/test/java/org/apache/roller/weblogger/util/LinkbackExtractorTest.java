@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
  * Test linkback extractor.
  */
 public class LinkbackExtractorTest extends TestCase {
-    
+
     /**
      * Constructor for LinkbackExtractorTest.
      * @param arg0
@@ -34,24 +34,24 @@ public class LinkbackExtractorTest extends TestCase {
     public LinkbackExtractorTest(String arg0) {
         super(arg0);
     }
-    
+
     public static void main(String[] args) {
     }
-    
+
     /**
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     /**
      * @see TestCase#tearDown()
      */
     protected void tearDown() throws Exception {
         super.tearDown();
     }
-    
+
     public void testLinkbackExtractor() throws Exception {
         String[][] testrefs = new String[][]
         {
@@ -64,7 +64,7 @@ public class LinkbackExtractorTest extends TestCase {
                         "http://www.rollerweblogger.org/page/roller/20030125"
             }
         };
-        
+
         for ( int i=0; i<testrefs.length; i++ ) {
             String refurl = testrefs[i][0];
             String requrl = testrefs[i][1];
@@ -74,9 +74,9 @@ public class LinkbackExtractorTest extends TestCase {
             System.out.println(le.getExcerpt());
         }
     }
-    
+
     public static Test suite() {
         return new TestSuite(LinkbackExtractorTest.class);
     }
-    
+
 }

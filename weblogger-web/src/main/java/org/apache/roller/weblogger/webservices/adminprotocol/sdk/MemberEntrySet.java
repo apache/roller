@@ -35,30 +35,30 @@ import org.jdom.input.SAXBuilder;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types;
 
 /**
- * This class describes a set of member entries. 
+ * This class describes a set of member entries.
  *
  * @author jtb
  */
 public class MemberEntrySet extends EntrySet {
     static interface Tags {
         public static final String MEMBERS = "members";
-    }       
-        
+    }
+
     public MemberEntrySet(String urlPrefix) {
-        setHref(urlPrefix + "/" + Types.MEMBERS);        
-    }    
+        setHref(urlPrefix + "/" + Types.MEMBERS);
+    }
 
     public MemberEntrySet(Document d, String urlPrefix) throws UnexpectedRootElementException {
         populate(d, urlPrefix);
     }
-    
-    public MemberEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {               
+
+    public MemberEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
 
-        populate(d, urlPrefix);        
-    }    
-    
+        populate(d, urlPrefix);
+    }
+
     private void populate(Document d, String urlPrefix) throws UnexpectedRootElementException {
         Element root = d.getRootElement();
         String rootName = root.getName();
@@ -77,8 +77,8 @@ public class MemberEntrySet extends EntrySet {
         }
         setHref(urlPrefix + "/" + Types.MEMBERS);
     }
-        
+
     public String getType() {
         return Types.MEMBERS;
-    }    
+    }
 }

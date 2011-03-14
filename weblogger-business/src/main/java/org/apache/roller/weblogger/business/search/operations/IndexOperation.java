@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
 /**
- * This is the base class for all index operation. 
+ * This is the base class for all index operation.
  * These operations include:<br>
  *    SearchOperation<br>
  *    AddWeblogOperation<br>
@@ -125,7 +125,7 @@ public abstract class IndexOperation implements Runnable {
 
         // text
         doc.add(new Field(FieldConstants.TITLE,
-                data.getTitle(), 
+                data.getTitle(),
                 Field.Store.YES, Field.Index.ANALYZED));
 
         // index the entry text, but don't store it - moved to end of block

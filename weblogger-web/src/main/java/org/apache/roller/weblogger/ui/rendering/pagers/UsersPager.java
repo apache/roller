@@ -37,21 +37,21 @@ import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
  * Paging through a collection of users.
  */
 public class UsersPager extends AbstractPager {
-    
+
     private static Log log = LogFactory.getLog(UsersPager.class);
-    
+
     private String letter = null;
     private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
-    
+
     // collection for the pager
     private List users;
-    
+
     // are there more items?
     private boolean more = false;
-    
-    
+
+
     public UsersPager(
             URLStrategy    strat,
             String         baseUrl,
@@ -59,18 +59,18 @@ public class UsersPager extends AbstractPager {
             int            sinceDays,
             int            page,
             int            length) {
-        
+
         super(strat, baseUrl, page);
-        
+
         this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
+
     public UsersPager(
             URLStrategy    strat,
             String         baseUrl,
@@ -79,19 +79,19 @@ public class UsersPager extends AbstractPager {
             int            sinceDays,
             int            page,
             int            length) {
-        
+
         super(strat, baseUrl, page);
-        
+
         this.letter = letter;
         this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
+
     public String getNextLink() {
         // need to add letter param if it exists
         if(letter != null) {
@@ -107,8 +107,8 @@ public class UsersPager extends AbstractPager {
             return super.getNextLink();
         }
     }
-    
-    
+
+
     public String getPrevLink() {
         // need to add letter param if it exists
         if(letter != null) {
@@ -124,14 +124,14 @@ public class UsersPager extends AbstractPager {
             return super.getPrevLink();
         }
     }
-    
-    
+
+
     public List getItems() {
-        
+
         if (users == null) {
             // calculate offset
             int offset = getPage() * length;
-            
+
             List results = new ArrayList();
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
@@ -142,7 +142,7 @@ public class UsersPager extends AbstractPager {
                 } else {
                     rawUsers = umgr.getUsersByLetter(letter.charAt(0), offset, length + 1);
                 }
-                
+
                 // wrap the results
                 int count = 0;
                 for (Iterator it = rawUsers.iterator(); it.hasNext();) {
@@ -153,20 +153,20 @@ public class UsersPager extends AbstractPager {
                         more = true;
                     }
                 }
-                
+
             } catch (Exception e) {
                 log.error("ERROR: fetching user list", e);
             }
-            
+
             users = results;
         }
-        
+
         return users;
     }
-    
-    
+
+
     public boolean hasMoreItems() {
         return more;
     }
-    
+
 }

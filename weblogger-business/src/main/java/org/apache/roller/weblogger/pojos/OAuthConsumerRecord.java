@@ -62,7 +62,7 @@ public class OAuthConsumerRecord implements Serializable {
     public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
-    
+
     /**
      * @return the username
      */

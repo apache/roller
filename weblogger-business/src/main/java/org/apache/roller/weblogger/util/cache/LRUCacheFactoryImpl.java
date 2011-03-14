@@ -27,38 +27,38 @@ import org.apache.commons.logging.LogFactory;
  * Roller LRU Cache factory.
  */
 public class LRUCacheFactoryImpl implements CacheFactory {
-    
+
     private static Log log = LogFactory.getLog(LRUCacheFactoryImpl.class);
-    
-    
+
+
     // protected so that only the CacheManager can instantiate us
     protected LRUCacheFactoryImpl() {}
-    
-    
+
+
     /**
      * Construct a new instance of a Roller LRUCache.
      */
     public Cache constructCache(Map properties) {
-        
+
         int size = 100;
         String id = "unknown";
-        
+
         try {
             size = Integer.parseInt((String) properties.get("size"));
         } catch(Exception e) {
             // ignored
         }
-        
+
         String cacheId = (String) properties.get("id");
         if(cacheId != null) {
             id = cacheId;
         }
-        
+
         Cache cache = new LRUCacheImpl(id, size);
-        
+
         log.debug("new cache constructed. size="+size);
-        
+
         return cache;
     }
-    
+
 }

@@ -39,11 +39,11 @@ import org.apache.roller.weblogger.util.RollerMessages;
  * You can get a free personal use key by registering as a user at wordpress.com.
  * See Akismet site for API details (http://akismet.com/development/api/)
  */
-public class AkismetCommentValidator implements CommentValidator { 
-    private static Log log = LogFactory.getLog(AkismetCommentValidator.class);    
+public class AkismetCommentValidator implements CommentValidator {
+    private static Log log = LogFactory.getLog(AkismetCommentValidator.class);
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     private String apikey;
-    
+
     /** Creates a new instance of AkismetCommentValidator */
     public AkismetCommentValidator() {
         apikey = WebloggerConfig.getProperty("comment.validator.akismet.apikey");
@@ -72,8 +72,8 @@ public class AkismetCommentValidator implements CommentValidator {
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
 
-            conn.setRequestProperty("User_Agent", "Roller " + WebloggerFactory.getWeblogger().getVersion()); 
-            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8"); 
+            conn.setRequestProperty("User_Agent", "Roller " + WebloggerFactory.getWeblogger().getVersion());
+            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
             conn.setRequestProperty("Content-length", Integer.toString(sb.length()));
 
             OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream());
@@ -81,7 +81,7 @@ public class AkismetCommentValidator implements CommentValidator {
             osr.flush();
             osr.close();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String response = br.readLine();
             if ("true".equals(response)) {
                 messages.addError("comment.validator.akismetMessage");
@@ -91,7 +91,7 @@ public class AkismetCommentValidator implements CommentValidator {
         } catch (Exception e) {
             log.error("ERROR checking comment against Akismet", e);
         }
-        return 0; // interpret error as spam: better safe than sorry? 
+        return 0; // interpret error as spam: better safe than sorry?
     }
 }
 

@@ -66,7 +66,7 @@ public class OpmlServlet extends HttpServlet {
             throws ServletException, IOException {
 
         log.debug("Entering");
-        
+
         Planet planet = null;
         PlanetGroup group = null;
 
@@ -80,7 +80,7 @@ public class OpmlServlet extends HttpServlet {
                 throw new PlanetException("unable to lookup planet: "+
                         opmlRequest.getPlanetHandle());
             }
-            
+
             group = opmlRequest.getGroup();
             if(group == null) {
                 throw new PlanetException("unable to lookup group: "+
@@ -96,15 +96,15 @@ public class OpmlServlet extends HttpServlet {
 
         // set content type
         response.setContentType("application/xml; charset=utf-8");
-        
-        
+
+
         // looks like we need to render content
         HashMap model = new HashMap();
         try {
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("planetRequest", opmlRequest);
-            
+
             // Load models for feeds
             String opmlModels = PlanetConfig.getProperty("rendering.opmlModels");
             ModelLoader.loadModels(opmlModels, model, initData, true);

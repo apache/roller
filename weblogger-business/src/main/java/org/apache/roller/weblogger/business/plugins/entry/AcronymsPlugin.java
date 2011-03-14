@@ -45,9 +45,9 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * @version $Revision: 1.3 $
  */
 public class AcronymsPlugin implements WeblogEntryPlugin {
-    
+
     private static final Log mLogger = LogFactory.getLog(AcronymsPlugin.class);
-    
+
     protected String name = "Acronyms";
     protected String description = "Expands acronyms defined in _acronym page. " +
             "Example: definition 'HTML=Hyper Text Markup Language' " +
@@ -55,34 +55,34 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
             "You must create an " +
             "<a href='page.do?method=editPages&rmik=tabbedmenu.website.pages'>" +
             "_acronym page</a> to use Acronyms.";
-    
-    
+
+
     public AcronymsPlugin() {
         super();
         mLogger.debug("AcronymsPlugin instantiated.");
     }
-    
-    
+
+
     public String getName() {
         return name;
     }
-    
-    
+
+
     public String getDescription() {
         return StringEscapeUtils.escapeJavaScript(description);
     }
-    
-    
+
+
     public void init(Weblog website) throws WebloggerException {}
-    
-    
+
+
     public String render(WeblogEntry entry, String str) {
         String text = str;
-        
+
         if (mLogger.isDebugEnabled()) {
             mLogger.debug("render(entry = "+entry.getId()+")");
         }
-        
+
         /*
          * Get acronyms Properties.
          */
@@ -91,7 +91,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         if (acronyms.size() == 0) {
             return text;
         }
-        
+
         /*
          * Compile the user's acronyms into RegEx patterns.
          */
@@ -110,16 +110,16 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
                     + "</acronym>";
             count++;
         }
-        
+
         // if there are none, no work to do
         if (acronymPatterns == null || acronymPatterns.length == 0) {
             return text;
         }
-        
+
         return matchAcronyms(text, acronymPatterns, acronymTags);
     }
-    
-    
+
+
     /**
      * Look for any _acronyms Page and parse it into Properties.
      * @param website
@@ -141,8 +141,8 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         }
         return acronyms;
     }
-    
-    
+
+
     /**
      * Iterates through the acronym properties and replaces matching
      * acronyms in the entry text with acronym html-tags.
@@ -155,7 +155,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         if (mLogger.isDebugEnabled()) {
             mLogger.debug("matchAcronyms("+text+")");
         }
-        
+
         Matcher matcher = null;
         for (int i=0; i<acronymPatterns.length; i++) {
             matcher = acronymPatterns[i].matcher(text);
@@ -163,7 +163,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         }
         return text;
     }
-    
+
     /**
      * Parse the Template of the provided WeblogTemplate and turns it
      * into a <code>Properties</code> collection.
@@ -173,14 +173,14 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
      */
     private Properties parseAcronymPage(WeblogTemplate acronymPage, Properties acronyms) {
         String rawAcronyms = acronymPage.getContents();
-        
+
         if (mLogger.isDebugEnabled()) {
             mLogger.debug("parsing _acronyms template: \n'"+rawAcronyms+"'");
         }
-        
+
         String regex = "\n"; // end of line
         String[] lines = rawAcronyms.split(regex);
-        
+
         if (lines != null) {
             for (int i = 0; i < lines.length; i++) {
                 int index = lines[i].indexOf('=');
@@ -192,8 +192,8 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
                 }
             }
         }
-        
+
         return acronyms;
     }
-    
+
 }

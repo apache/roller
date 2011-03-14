@@ -28,34 +28,34 @@ import java.io.Serializable;
  * and timeout period with them so we can know when they expire.
  */
 public class ExpiringCacheEntry implements Serializable {
-    
+
     private Object value;
     private long timeCached = -1;
     private long timeout = 0;
-    
-    
+
+
     public ExpiringCacheEntry(Object value, long timeout) {
         this.value = value;
-        
+
         // make sure that we don't support negative values
         if(timeout > 0) {
             this.timeout = timeout;
         }
-        
+
         this.timeCached = System.currentTimeMillis();
     }
-    
-    
+
+
     public long getTimeCached() {
         return this.timeCached;
     }
-    
-    
+
+
     public long getTimeout() {
         return this.timeout;
     }
-    
-    
+
+
     /**
      * Retrieve the value of this cache entry.
      *
@@ -68,16 +68,16 @@ public class ExpiringCacheEntry implements Serializable {
             return this.value;
         }
     }
-    
-    
+
+
     /**
      * Determine if this cache entry has expired.
      */
     public boolean hasExpired() {
-        
+
         long now = System.currentTimeMillis();
-        
+
         return ((this.timeCached + this.timeout) < now);
     }
-    
+
 }

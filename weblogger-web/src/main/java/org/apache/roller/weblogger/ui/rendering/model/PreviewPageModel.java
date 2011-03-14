@@ -34,22 +34,22 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  * An extension of the PageModel to make some adjustments for previewing.
  */
 public class PreviewPageModel extends PageModel {
-    
+
     private WeblogPreviewRequest previewRequest = null;
     private URLStrategy urlStrategy = null;
-    
-    
-    /** 
+
+
+    /**
      * Init model.
      */
     public void init(Map initData) throws WebloggerException {
-        
+
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }
-        
+
         // PreviewPageModel only works on preview requests, so cast weblogRequest
         // into a WeblogPreviewRequest and if it fails then throw exception
         if(weblogRequest instanceof WeblogPreviewRequest) {
@@ -58,45 +58,45 @@ public class PreviewPageModel extends PageModel {
             throw new WebloggerException("weblogRequest is not a WeblogPreviewRequest."+
                     "  PreviewPageModel only supports preview requests.");
         }
-        
+
         // look for url strategy
         urlStrategy = (URLStrategy) initData.get("urlStrategy");
         if(urlStrategy == null) {
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
-        
+
         super.init(initData);
-    }    
-    
-    
+    }
+
+
     public boolean isPermalink() {
         return (previewRequest.getPreviewEntry() != null ||
                 previewRequest.getWeblogAnchor() != null);
     }
-    
-    
+
+
     public WeblogEntryWrapper getWeblogEntry() {
-        
+
         if(previewRequest.getPreviewEntry() != null ||
                 previewRequest.getWeblogAnchor() != null) {
             return WeblogEntryWrapper.wrap(previewRequest.getWeblogEntry(), urlStrategy);
         }
         return null;
     }
-    
-    
+
+
     /**
      * Override method that returns pager so that we can introduce a custom
      * pager for preview pages which can display things that we don't want
      * available on the "live" weblog, like DRAFT entries.
      */
     public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {
-        
+
         String anchor = previewRequest.getPreviewEntry();
         if(anchor == null) {
             anchor = previewRequest.getWeblogAnchor();
         }
-        
+
         if (anchor != null) {
             return new WeblogEntriesPreviewPager(
                     urlStrategy,
@@ -120,7 +120,7 @@ public class PreviewPageModel extends PageModel {
                     previewRequest.getTags(),
                     previewRequest.getPageNum());
         }
-        
+
     }
 
 }

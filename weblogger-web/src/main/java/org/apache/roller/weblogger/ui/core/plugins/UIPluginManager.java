@@ -25,15 +25,15 @@ import java.util.List;
  * Plugin management for UI layer plugins.
  */
 public interface UIPluginManager {
-    
+
     /**
      * Get the list of all configured WeblogEntryEditors.
      *
      * @return List of all configure WeblogEntryEditor objects.
      */
     public List getWeblogEntryEditors();
-    
-    
+
+
     /**
      * Get a WeblogEntryEditor by name.  If the specified editor cannot be found
      * or the id is null, then the default editor should be returned.
@@ -43,5 +43,5 @@ public interface UIPluginManager {
      *      desired editor could not be found.
      */
     public WeblogEntryEditor getWeblogEntryEditor(String id);
-    
+
 }

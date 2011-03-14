@@ -33,11 +33,11 @@ package org.apache.roller.weblogger.ui.struts2.util;
  * can leave the default struts2 prepare() logic in place for any actions we
  * may define that want to use that, but also provide a prepare option that is
  * executed at the very end of our interceptor stack, just before the action
- * method is executed.  This way our custom prepare method can make use of 
+ * method is executed.  This way our custom prepare method can make use of
  * anything our custom interceptors provide.
  */
 public interface UIActionPreparable {
-    
+
     public void myPrepare();
-    
+
 }

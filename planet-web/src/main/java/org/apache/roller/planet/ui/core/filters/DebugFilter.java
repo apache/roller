@@ -37,26 +37,26 @@ import org.apache.commons.logging.LogFactory;
  * Used for debugging, not mapped by default.
  */
 public class DebugFilter implements Filter {
-    
+
     private static Log log = LogFactory.getLog(DebugFilter.class);
-    
-    
+
+
     public void init(FilterConfig filterConfig) {
-        
+
     }
-    
-    
+
+
     /**
      * Inspect incoming urls and see if they should be routed.
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        
+
         log.info("entering");
-        
+
         // print out session details
         HttpSession session = request.getSession(false);
         if(session != null) {
@@ -67,10 +67,10 @@ public class DebugFilter implements Filter {
                 log.info(attr+" = "+session.getAttribute("attr"));
             }
         }
-        
+
         // keep going
         chain.doFilter(request, response);
-        
+
         // print out session details
         session = request.getSession(false);
         if(session != null) {
@@ -81,11 +81,11 @@ public class DebugFilter implements Filter {
                 log.info(attr+" = "+session.getAttribute("attr"));
             }
         }
-        
+
         log.info("exiting");
     }
-    
-    
+
+
     public void destroy() {}
-    
+
 }

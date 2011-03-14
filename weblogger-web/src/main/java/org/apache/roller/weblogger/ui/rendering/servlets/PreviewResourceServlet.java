@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewResourceReques
 
 
 /**
- * Special previewing servlet which serves files uploaded by users as well as 
+ * Special previewing servlet which serves files uploaded by users as well as
  * static resources in shared themes.  This servlet differs from the normal
  * ResourceServlet because it can accept urls parameters which affect how it
  * behaves which are used for previewing.
@@ -54,7 +54,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewResourceReques
 public class PreviewResourceServlet extends HttpServlet {
 
     private static Log log = LogFactory.getLog(PreviewResourceServlet.class);
-    
+
     private ServletContext context = null;
 
 
@@ -63,7 +63,7 @@ public class PreviewResourceServlet extends HttpServlet {
         super.init(config);
 
         log.info("Initializing PreviewResourceServlet");
-        
+
         this.context = config.getServletContext();
     }
 
@@ -73,12 +73,12 @@ public class PreviewResourceServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Weblog weblog = null;
         String ctx = request.getContextPath();
         String servlet = request.getServletPath();
         String reqURI = request.getRequestURI();
-        
+
         WeblogPreviewResourceRequest resourceRequest = null;
         try {
             // parse the incoming request and extract the relevant data
@@ -96,12 +96,12 @@ public class PreviewResourceServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         log.debug("Resource requested ["+resourceRequest.getResourcePath()+"]");
-        
+
         long resourceLastMod = 0;
         InputStream resourceStream = null;
-        
+
         // first, see if we have a preview theme to operate from
         if(!StringUtils.isEmpty(resourceRequest.getThemeName())) {
             Theme theme = resourceRequest.getTheme();
@@ -111,7 +111,7 @@ public class PreviewResourceServlet extends HttpServlet {
                 resourceStream = resource.getInputStream();
             }
         }
-        
+
         // second, see if resource comes from weblog's configured shared theme
         if(resourceStream == null) {
             try {
@@ -129,7 +129,7 @@ public class PreviewResourceServlet extends HttpServlet {
                 return;
             }
         }
-        
+
         // if not from theme then see if resource is in weblog's upload dir
         if(resourceStream == null) {
             try {
@@ -147,7 +147,7 @@ public class PreviewResourceServlet extends HttpServlet {
                 return;
             }
         }
-        
+
         // Respond with 304 Not Modified if it is not modified.
         if (ModDateHeaderUtil.respondIfNotModified(request, response, resourceLastMod)) {
             return;
@@ -155,11 +155,11 @@ public class PreviewResourceServlet extends HttpServlet {
             // set last-modified date
             ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod);
         }
-        
+
 
         // set the content type based on whatever is in our web.xml mime defs
         response.setContentType(this.context.getMimeType(resourceRequest.getResourcePath()));
-        
+
         OutputStream out = null;
         try {
             // ok, lets serve up the file
@@ -169,11 +169,11 @@ public class PreviewResourceServlet extends HttpServlet {
             while((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
-            
+
             // cleanup
             out.close();
             resourceStream.close();
-            
+
         } catch (Exception ex) {
             log.error("Error writing resource file", ex);
             if(!response.isCommitted()) {

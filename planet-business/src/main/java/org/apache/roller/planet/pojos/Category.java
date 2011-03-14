@@ -22,10 +22,10 @@ package org.apache.roller.planet.pojos;
  * Represents a category of an entry.
  */
 public class Category {
-    
+
     private String name = null;
     private String path = null;
-    
+
 
     public String getName() {
         return name;
@@ -42,5 +42,5 @@ public class Category {
     public void setPath(String path) {
         this.path = path;
     }
-    
+
 }

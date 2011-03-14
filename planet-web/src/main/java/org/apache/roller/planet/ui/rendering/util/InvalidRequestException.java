@@ -26,13 +26,13 @@ import org.apache.roller.planet.PlanetException;
  * its subclasses when the request being parsed is invalid in any way.
  */
 public class InvalidRequestException extends PlanetException {
-    
+
     public InvalidRequestException(String msg) {
         super(msg);
     }
-    
+
     public InvalidRequestException(String msg, Exception e) {
         super(msg, e);
     }
-    
+
 }

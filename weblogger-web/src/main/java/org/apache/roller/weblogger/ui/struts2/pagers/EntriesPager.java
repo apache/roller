@@ -31,30 +31,30 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * Paging through a collection of entries.
  */
 public class EntriesPager {
-    
+
     private static final Log log = LogFactory.getLog(EntriesPager.class);
-    
+
     // the collection for the pager
     private final List<WeblogEntry> items;
-    
+
     // base url for the pager
     private final String baseUrl;
-    
+
     // what page we are on
     private final int pageNum;
-    
+
     // are there more items?
     private final boolean moreItems;
-    
-    
+
+
     public EntriesPager(String url, int page, List<WeblogEntry> entries, boolean hasMore) {
         this.baseUrl = url;
         this.pageNum = page;
         this.items = entries;
         this.moreItems = hasMore;
     }
-    
-    
+
+
     public String getNextLink() {
         if(isMoreItems()) {
             int nextPage = pageNum + 1;
@@ -64,8 +64,8 @@ public class EntriesPager {
         }
         return null;
     }
-    
-    
+
+
     public String getPrevLink() {
         if (pageNum > 0) {
             int prevPage = pageNum - 1;
@@ -75,11 +75,11 @@ public class EntriesPager {
         }
         return null;
     }
-    
-    
+
+
     private String createURL(String base, Map<String, String> params) {
         String qString = URLUtilities.getQueryString(params);
-        
+
         if(base.indexOf("?") != -1) {
             // if base url already has params them just append our query string
             return base + "&" + qString.substring(1);
@@ -87,8 +87,8 @@ public class EntriesPager {
             return base + qString;
         }
     }
-    
-    
+
+
     public List<WeblogEntry> getItems() {
         return items;
     }
@@ -96,5 +96,5 @@ public class EntriesPager {
     public boolean isMoreItems() {
         return moreItems;
     }
-    
+
 }

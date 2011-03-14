@@ -66,7 +66,7 @@ public class PageServlet extends HttpServlet {
             throws ServletException, IOException {
 
         log.debug("Entering");
-        
+
         Planet planet = null;
         PlanetGroup group = null;
 
@@ -80,7 +80,7 @@ public class PageServlet extends HttpServlet {
                 throw new PlanetException("unable to lookup planet: "+
                         pageRequest.getPlanetHandle());
             }
-            
+
             group = pageRequest.getGroup();
 
         } catch(Exception e) {
@@ -92,15 +92,15 @@ public class PageServlet extends HttpServlet {
 
         // set content type
         response.setContentType("text/html; charset=utf-8");
-        
-        
+
+
         // looks like we need to render content
         HashMap model = new HashMap();
         try {
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("planetRequest", pageRequest);
-            
+
             // Load models for pages
             String pageModels = PlanetConfig.getProperty("rendering.pageModels");
             ModelLoader.loadModels(pageModels, model, initData, true);
@@ -118,7 +118,7 @@ public class PageServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            
+
             // what template are we going to render?
             Template template = null;
             if(group == null) {
@@ -128,10 +128,10 @@ public class PageServlet extends HttpServlet {
                 // group homepage
                 template = new StaticTemplate("group.vm", null, "velocity");
             }
-            
+
             // get the Renderer
             renderer = RendererManager.getRenderer(template);
-            
+
         } catch(Exception e) {
             // nobody wants to render my content :(
 
@@ -139,8 +139,8 @@ public class PageServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
+
         // render content
         try {
             log.debug("Doing rendering");

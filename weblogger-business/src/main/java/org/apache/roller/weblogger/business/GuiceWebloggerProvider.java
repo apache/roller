@@ -28,71 +28,71 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * A Guice specific implementation of a WebloggerProvider.
  */
 public class GuiceWebloggerProvider implements WebloggerProvider {
-    
+
     // Guice injector
     protected final Injector injector;
-    
+
     // maintain our own singleton instance of Weblogger
     protected Weblogger webloggerInstance = null;
-    
-    
+
+
     /**
-     * Instantiate a new GuiceWebloggerProvider using default guice module 
+     * Instantiate a new GuiceWebloggerProvider using default guice module
      * configured in WebloggerConfig via 'guice.backend.module' property.
      */
     public GuiceWebloggerProvider() {
-        
+
         String moduleClassname = WebloggerConfig.getProperty("guice.backend.module");
         if(moduleClassname == null) {
             throw new NullPointerException("unable to lookup default guice module via property 'guice.backend.module'");
         }
-        
+
         try {
             Class moduleClass = Class.forName(moduleClassname);
             Module module = (Module)moduleClass.newInstance();
             injector = Guice.createInjector(module);
-        } catch (Throwable e) {                
+        } catch (Throwable e) {
             // Fatal misconfiguration, cannot recover
             throw new RuntimeException("Error instantiating backend module " + moduleClassname, e);
         }
     }
-    
-    
+
+
     /**
      * Instantiate a new GuiceWebloggerProvider using the given Guice module.
      *
      * @param moduleClassname The full classname of the Guice module to use.
      */
     public GuiceWebloggerProvider(String moduleClassname) {
-        
+
         if(moduleClassname == null) {
             throw new NullPointerException("moduleClassname cannot be null");
         }
-        
+
         try {
             Class moduleClass = Class.forName(moduleClassname);
             Module module = (Module)moduleClass.newInstance();
             injector = Guice.createInjector(module);
-        } catch (Throwable e) {                
+        } catch (Throwable e) {
             // Fatal misconfiguration, cannot recover
             throw new RuntimeException("Error instantiating backend module " + moduleClassname, e);
         }
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public void bootstrap() {
         webloggerInstance =  injector.getInstance(Weblogger.class);
     }
-    
-    
+
+
     /**
      * @inheritDoc
      */
     public Weblogger getWeblogger() {
         return webloggerInstance;
     }
-    
+
 }

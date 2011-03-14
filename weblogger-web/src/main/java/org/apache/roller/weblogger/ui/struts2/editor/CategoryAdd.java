@@ -37,32 +37,32 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Add a new subCategory to an existing Category.
  */
 public class CategoryAdd extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(CategoryAdd.class);
-    
+
     // the id of the Category we are adding the new subCategory into
     private String categoryId = null;
-    
+
     // the category we are adding the new subcategory into
     private WeblogCategory category = null;
-    
+
     // bean for managing form data
     private CategoryBean bean = new CategoryBean();
-    
-    
+
+
     public CategoryAdd() {
         this.actionName = "categoryAdd";
         this.desiredMenu = "editor";
         this.pageTitle = "categoryForm.add.title";
     }
-    
-    
+
+
     // author perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     public void myPrepare() {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -73,85 +73,85 @@ public class CategoryAdd extends UIAction {
             log.error("Error looking up category", ex);
         }
     }
-    
-    
+
+
     /**
      * Show category form.
      */
     @SkipValidation
     public String execute() {
-        
+
         if(getCategory() == null) {
             // TODO: i18n
             addError("Cannot add category to null parent category");
             return ERROR;
         }
-        
+
         return INPUT;
     }
 
-    
+
     /**
      * Save new category.
      */
     public String save() {
-        
+
         if(getCategory() == null) {
             // TODO: i18n
             addError("Cannot add category to null parent category");
             return ERROR;
         }
-        
+
         // validation
         myValidate();
-        
+
         if(!hasActionErrors()) try {
-            
+
             WeblogCategory newCategory = new WeblogCategory(
                     getActionWeblog(),
                     getCategory(),
                     getBean().getName(),
                     getBean().getDescription(),
                     getBean().getImage());
-            
+
             // add new folder to parent
             getCategory().addCategory(newCategory);
-            
+
             // save changes
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             wmgr.saveWeblogCategory(newCategory);
             WebloggerFactory.getWeblogger().flush();
-            
+
             // notify caches
             CacheManager.invalidate(newCategory);
-            
+
             // TODO: i18n
             addMessage("category added");
-            
+
             return SUCCESS;
-            
+
         } catch(Exception ex) {
             log.error("Error saving new category", ex);
             // TODO: i18n
             addError("Error saving new category");
         }
-        
+
         return INPUT;
     }
 
-    
+
     // TODO: validation
     public void myValidate() {
-        
+
         // name is required, has max length, no html
-        
+
         // make sure new name is not a duplicate of an existing folder
         if(getCategory().hasCategory(getBean().getName())) {
             addError("categoryForm.error.duplicateName", getBean().getName());
         }
     }
 
-    
+
     public String getCategoryId() {
         return categoryId;
     }
@@ -175,5 +175,5 @@ public class CategoryAdd extends UIAction {
     public void setBean(CategoryBean bean) {
         this.bean = bean;
     }
-    
+
 }

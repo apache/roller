@@ -27,7 +27,7 @@ import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.io.ModuleGenerator;
 
 public class ContentModuleGenerator implements ModuleGenerator {
-    private static final Namespace CONTENT_NS  = 
+    private static final Namespace CONTENT_NS  =
         Namespace.getNamespace(ContentModule.URI);
 
     public String getNamespaceUri() {

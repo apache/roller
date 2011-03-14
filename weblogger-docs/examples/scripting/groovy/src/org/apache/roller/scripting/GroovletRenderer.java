@@ -33,9 +33,9 @@ import org.apache.roller.weblogger.ui.rendering.RenderingException;
  * Renderer that evaluates Roller Template as Groovy script.
  *
  * <p>Implementation notes</p>
- * 
- * <p>Executes template using GroovyShell. I'd much prefer to use the 
- * GroovyScriptEngine, but it doesn't seem flexible enough as it returns each 
+ *
+ * <p>Executes template using GroovyShell. I'd much prefer to use the
+ * GroovyScriptEngine, but it doesn't seem flexible enough as it returns each
  * resource as a URLConnection.</p>
  *
  * <p>Check the Groovy Servlet code for an example of GroovyScriptEngine:</br />
@@ -45,28 +45,28 @@ import org.apache.roller.weblogger.ui.rendering.RenderingException;
 public class GroovletRenderer implements Renderer {
     private static Log log = LogFactory.getLog(GroovletRenderer.class);
     private WeblogTemplate template = null;
-    
+
     public GroovletRenderer(WeblogTemplate template) {
         this.template = template;
     }
-    
+
     public void render(Map model, Writer writer) throws RenderingException {
         try {
-            long startTime = System.currentTimeMillis();            
+            long startTime = System.currentTimeMillis();
             Binding binding = new GroovyRollerBinding(model, writer);
             GroovyShell shell = new GroovyShell(binding);
-            shell.evaluate(template.getContents());              
+            shell.evaluate(template.getContents());
             long endTime = System.currentTimeMillis();
 
             long renderTime = (endTime - startTime)/1000;
-            log.debug("Rendered ["+template.getId()+"] in "+renderTime+" secs"); 
-            
+            log.debug("Rendered ["+template.getId()+"] in "+renderTime+" secs");
+
         } catch (Throwable ex) {
             log.debug("Executing Groovy script", ex);
             renderThrowable(ex, writer);
         }
     }
-    
+
     private void renderThrowable(Throwable ex, Writer writer) {
         Binding binding = new Binding();
         binding.setVariable("ex", ex);
@@ -75,8 +75,8 @@ public class GroovletRenderer implements Renderer {
         shell.evaluate(
              "s = \"<p><b>Exception</b>: ${ex}<br /><b>Message</b>: ${ex.message}</p>\";"
            +" out.println(s);"
-           +" out.flush();");         
+           +" out.flush();");
     }
 }
 
-    
+

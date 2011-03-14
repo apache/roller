@@ -29,17 +29,17 @@ import org.apache.commons.logging.LogFactory;
  * Asks the commenter to answer a simple math question.
  */
 public class MathCommentAuthenticator implements CommentAuthenticator {
-    
+
     private transient ResourceBundle bundle =
             ResourceBundle.getBundle("ApplicationResources");
-    
+
     private static Log mLogger = LogFactory.getLog(MathCommentAuthenticator.class);
-    
-    
+
+
     public String getHtml(HttpServletRequest request) {
-        
+
         String answer = "";
-        
+
         HttpSession session = request.getSession(true);
         if (session.getAttribute("mathAnswer") == null) {
             // starting a new test
@@ -54,13 +54,13 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
             answer = request.getParameter("answer");
             answer = (answer == null) ? "" : answer;
         }
-        
+
         // pull existing values out of session
         Integer value1o = (Integer)request.getSession().getAttribute("mathValue1");
         Integer value2o = (Integer)request.getSession().getAttribute("mathValue2");
-        
+
         StringBuffer sb = new StringBuffer();
-        
+
         sb.append("<p>");
         sb.append(bundle.getString("comments.mathAuthenticatorQuestion"));
         sb.append("</p><p>");
@@ -71,23 +71,23 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         sb.append("<input name=\"answer\" value=\"");
         sb.append(answer);
         sb.append("\" /></p>");
-        
+
         return sb.toString();
     }
-    
-    
+
+
     public boolean authenticate(HttpServletRequest request) {
-        
+
         boolean authentic = false;
-        
+
         HttpSession session = request.getSession(false);
         String answerString = request.getParameter("answer");
-        
+
         if (answerString != null && session != null) {
             try {
                 int answer = Integer.parseInt(answerString);
                 Integer sum = (Integer) session.getAttribute("mathAnswer");
-                
+
                 if (sum != null && answer == sum.intValue()) {
                     authentic = true;
                     session.removeAttribute("mathAnswer");
@@ -101,9 +101,9 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
                 mLogger.error(e);
             }
         }
-        
+
         return authentic;
     }
-    
+
 }
 

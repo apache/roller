@@ -43,75 +43,75 @@ import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
  * $url.getCategory("foo")
  */
 public class PlanetURLModel implements Model {
-    
+
     private static Log log = LogFactory.getLog(PlanetURLModel.class);
-    
+
     private URLStrategy urlStrategy = null;
     private Planet planet = null;
-    
-    
+
+
     public PlanetURLModel() {}
-    
+
     public String getModelName() {
         return "url";
     }
-    
+
     public void init(Map initData) throws PlanetException {
-        
+
         // grab a reference to the url strategy
         this.urlStrategy = PlanetFactory.getPlanet().getURLStrategy();
-        
+
         // need a weblog request so that we can know the weblog and locale
         PlanetRequest planetRequest = (PlanetRequest) initData.get("planetRequest");
         if(planetRequest == null) {
             throw new PlanetException("Expected 'planetRequest' init param!");
         }
-        
+
         this.planet = planetRequest.getPlanet();
     }
-    
-    
+
+
     public String getSite() {
         return PlanetRuntimeConfig.getProperty("site.absoluteurl");
     }
-    
-        
+
+
     public String getHome() {
         return urlStrategy.getPlanetURL(planet.getHandle());
     }
-    
-    
+
+
     public String group(String groupHandle) {
         return urlStrategy.getPlanetGroupURL(planet.getHandle(), groupHandle, -1);
     }
-    
-    
+
+
     public String group(String groupHandle, int pageNum) {
         return urlStrategy.getPlanetGroupURL(planet.getHandle(), groupHandle, pageNum);
     }
-    
-    
+
+
     public FeedURLS getFeed() {
         return new FeedURLS();
     }
-    
-    
+
+
     public String opml(String groupHandle) {
         return urlStrategy.getPlanetGroupOpmlURL(planet.getHandle(), groupHandle);
     }
-    
-    
+
+
     ///////  Inner Classes  ///////
-    
+
     public class FeedURLS {
-        
+
         public String rss(String groupHandle) {
             return urlStrategy.getPlanetGroupFeedURL(planet.getHandle(), groupHandle, "rss");
         }
-        
+
         public String atom(String groupHandle) {
             return urlStrategy.getPlanetGroupFeedURL(planet.getHandle(), groupHandle, "atom");
         }
     }
-    
+
 }

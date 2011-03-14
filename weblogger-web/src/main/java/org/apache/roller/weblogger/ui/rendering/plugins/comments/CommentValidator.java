@@ -23,8 +23,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 /** Interface for comment validation plugin */
-public interface CommentValidator {  
-    
+public interface CommentValidator {
+
     /**
      * Plain text name of validator for display purposes.
      */
@@ -35,5 +35,5 @@ public interface CommentValidator {
      * @param messages Messages object to which errors will added
      * @return Number indicating confidence that comment is valid (100 meaning 100%)
      */
-    public int validate(WeblogEntryComment comment, RollerMessages messages);   
+    public int validate(WeblogEntryComment comment, RollerMessages messages);
 }

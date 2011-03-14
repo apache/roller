@@ -29,8 +29,8 @@ public class RollerMessages
 {
     private List mErrors = new ArrayList();
     private List mMessages = new ArrayList();
-    
-    public RollerMessages() 
+
+    public RollerMessages()
     {
     }
     public void addError(String key)
@@ -65,15 +65,15 @@ public class RollerMessages
     {
         return mMessages.iterator();
     }
-    public int getErrorCount() 
+    public int getErrorCount()
     {
         return mErrors.size();
     }
-    public int getMessageCount() 
+    public int getMessageCount()
     {
         return mMessages.size();
     }
-    public String toString() 
+    public String toString()
     {
         StringBuffer sb = new StringBuffer();
         Iterator msgs = mMessages.iterator();

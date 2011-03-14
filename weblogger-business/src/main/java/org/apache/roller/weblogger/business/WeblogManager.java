@@ -31,48 +31,48 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
  * Interface to weblog and page template management.
  */
 public interface WeblogManager {
-    
+
     /**
      * Add new website, give creator admin permission, creates blogroll,
      * creates categories and other objects required for new website.
      * @param newWebsite New website to be created, must have creator.
      */
     public void addWeblog(Weblog newWebsite) throws WebloggerException;
-    
-    
+
+
     /**
      * Store a single weblog.
      */
     public void saveWeblog(Weblog data) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove website object.
      */
     public void removeWeblog(Weblog website) throws WebloggerException;
-    
-    
+
+
     /**
      * Get website object by name.
      */
     public Weblog getWeblog(String id) throws WebloggerException;
-    
-    
+
+
     /**
      * Get website specified by handle (or null if enabled website not found).
      * @param handle  Handle of website
      */
     public Weblog getWeblogByHandle(String handle) throws WebloggerException;
-    
-    
+
+
     /**
      * Get website specified by handle with option to return only enabled websites.
      * @param handle  Handle of website
      */
     public Weblog getWeblogByHandle(String handle, Boolean enabled)
         throws WebloggerException;
-    
-    
+
+
     /**
      * Get websites optionally restricted by user, enabled and active status.
      * @param enabled   Get all with this enabled state (or null or all)
@@ -91,8 +91,8 @@ public interface WeblogManager {
             int      offset,
             int      length)
             throws WebloggerException;
-    
-    
+
+
     /**
      * Get websites of a user.
      * @param user        Get all weblogs for this user
@@ -100,8 +100,8 @@ public interface WeblogManager {
      * @return List of WebsiteData objects.
      */
     public List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException;
-    
-    
+
+
     /**
      * Get users of a weblog.
      * @param user        Get all users for this weblog
@@ -109,8 +109,8 @@ public interface WeblogManager {
      * @return List of WebsiteData objects.
      */
     public List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
-    
-    
+
+
     /**
      * Get websites ordered by descending number of comments.
      * @param startDate Restrict to those created after (or null for all)
@@ -125,71 +125,71 @@ public interface WeblogManager {
             int  offset,
             int  length)
             throws WebloggerException;
-    
-    
+
+
     /**
      * Get map with 26 entries, one for each letter A-Z and
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.
      */
     public Map getWeblogHandleLetterMap() throws WebloggerException;
-    
-    
-    /** 
-     * Get collection of weblogs whose handles begin with specified letter 
+
+
+    /**
+     * Get collection of weblogs whose handles begin with specified letter
      */
-    public List getWeblogsByLetter(char letter, int offset, int length) 
+    public List getWeblogsByLetter(char letter, int offset, int length)
         throws WebloggerException;
-    
+
         /**
      * Store page.
      */
     public void savePage(WeblogTemplate data) throws WebloggerException;
-    
-    
+
+
     /**
      * Remove page.
      */
     public void removePage(WeblogTemplate page) throws WebloggerException;
-    
-    
+
+
     /**
      * Get page by id.
      */
     public WeblogTemplate getPage(String id) throws WebloggerException;
-    
-    
+
+
     /**
      * Get user's page by action.
      */
     public WeblogTemplate getPageByAction(Weblog w, String a) throws WebloggerException;
-    
-    
+
+
     /**
      * Get user's page by name.
      */
     public WeblogTemplate getPageByName(Weblog w, String p) throws WebloggerException;
-    
-    
+
+
     /**
      * Get website's page by link.
      */
     public WeblogTemplate getPageByLink(Weblog w, String p)
         throws WebloggerException;
-    
-    
+
+
     /**
      * Get website's pages
      */
     public List getPages(Weblog w) throws WebloggerException;
-   
-    
+
+
     /**
      * Get count of active weblogs
-     */    
+     */
     public long getWeblogCount() throws WebloggerException;
-    
-    
+
+
     /**
      * Release any resources held by manager.
      */

@@ -25,17 +25,17 @@ import org.apache.roller.weblogger.WebloggerException;
  * A generic Roller rendering exception.
  */
 public class RenderingException extends WebloggerException {
-    
+
     public RenderingException(String s) {
         super(s);
     }
-    
+
     public RenderingException(String s, Throwable t) {
         super(s, t);
     }
-    
+
     public RenderingException(Throwable t) {
         super(t);
     }
-    
+
 }

@@ -36,40 +36,40 @@ import org.apache.velocity.exception.ResourceNotFoundException;
  * access to the instance via the Singleton getInstance() method.
  */
 public class PlanetVelocity {
-    
+
     public static final String VELOCITY_CONFIG = "/WEB-INF/velocity.properties";
-    
+
     private static Log log = LogFactory.getLog(PlanetVelocity.class);
-    
+
     private static VelocityEngine velocityEngine = null;
-    
-    
+
+
     static {
         log.info("Initializing Velocity Rendering Engine");
-        
+
         // initialize the Velocity engine
         Properties velocityProps = new Properties();
-        
+
         try {
             InputStream instream =
                     PlanetContext.getServletContext().getResourceAsStream(VELOCITY_CONFIG);
-            
+
             velocityProps.load(instream);
-            
+
             log.debug("Velocity engine props = "+velocityProps);
-            
+
             // construct the VelocityEngine
             velocityEngine = new VelocityEngine();
-            
+
             // init velocity with our properties
             velocityEngine.init(velocityProps);
-            
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-    
-    
+
+
     /**
      * Access to the VelocityEngine.
      *
@@ -79,8 +79,8 @@ public class PlanetVelocity {
     public static VelocityEngine getEngine() {
         return velocityEngine;
     }
-    
-    
+
+
     /**
      * Convenience static method for looking up a template.
      */
@@ -88,8 +88,8 @@ public class PlanetVelocity {
             throws ResourceNotFoundException, ParseErrorException, Exception {
         return velocityEngine.getTemplate(name);
     }
-    
-    
+
+
     /**
      * Convenience static method for looking up a template.
      */
@@ -97,5 +97,5 @@ public class PlanetVelocity {
             throws ResourceNotFoundException, ParseErrorException, Exception {
         return velocityEngine.getTemplate(name, encoding);
     }
-    
+
 }

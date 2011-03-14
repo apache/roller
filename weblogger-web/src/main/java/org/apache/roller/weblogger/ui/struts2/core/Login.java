@@ -26,20 +26,20 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Handle user logins.
  */
 public class Login extends UIAction {
-    
+
     private String error = null;
     private boolean openidEnabled = WebloggerConfig.getBooleanProperty("authentication.openid.enabled");
-    
+
     public Login() {
         this.pageTitle = "loginPage.title";
     }
-    
-    
+
+
     // override default security, we do not require an authenticated user
     public boolean isUserRequired() {
         return false;
     }
-    
+
     // override default security, we do not require an action weblog
     public boolean isWeblogRequired() {
         return false;
@@ -48,18 +48,18 @@ public class Login extends UIAction {
     public String getOpenIdConfiguration() {
         return WebloggerConfig.getProperty("authentication.openid");
     }
-    
+
     public String execute() {
-        
+
         // set action error message if there was login error
         if(getError() != null) {
             addError("error.password.mismatch");
         }
-        
+
         return SUCCESS;
     }
 
-    
+
     public String getError() {
         return error;
     }
@@ -67,5 +67,5 @@ public class Login extends UIAction {
     public void setError(String error) {
         this.error = error;
     }
-    
+
 }

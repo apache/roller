@@ -31,40 +31,40 @@ import org.apache.roller.weblogger.ui.struts2.common.PingTargetAddBase;
  * Action for adding a common ping target.
  */
 public class CommonPingTargetAdd extends PingTargetAddBase {
-    
+
     private static Log log = LogFactory.getLog(CommonPingTargetAdd.class);
-    
-    
+
+
     public CommonPingTargetAdd() {
         this.actionName = "commonPingTargetAdd";
         this.desiredMenu = "admin";
         this.pageTitle = "pingTarget.pingTarget";
     }
-    
-    
+
+
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
-    
+
     // no weblog required
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     protected Log getLogger() {
         return log;
     }
-    
-    
+
+
     protected PingTarget createPingTarget() {
-        
+
         return new PingTarget(
-                null, 
-                getBean().getName(), 
-                getBean().getPingUrl(), 
-                null, 
+                null,
+                getBean().getName(),
+                getBean().getPingUrl(),
+                null,
                 false);
     }
-    
+
 }

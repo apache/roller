@@ -32,36 +32,36 @@ import org.apache.roller.weblogger.pojos.Theme;
  *
  */
 public class WeblogPreviewResourceRequest extends WeblogResourceRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogPreviewResourceRequest.class);
-        
+
     // lightweight attributes
     private String themeName = null;
-    
+
     // heavyweight attributes
     private Theme theme = null;
-    
-    
+
+
     public WeblogPreviewResourceRequest() {}
-    
-    
-    public WeblogPreviewResourceRequest(HttpServletRequest request) 
+
+
+    public WeblogPreviewResourceRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let parent go first
         super(request);
-        
+
         // all we need to worry about is the query params
         // the only param we expect is "theme"
         if(request.getParameter("theme") != null) {
             this.themeName = request.getParameter("theme");
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("theme = "+this.themeName);
         }
     }
-    
+
     public String getThemeName() {
         return themeName;
     }
@@ -69,19 +69,19 @@ public class WeblogPreviewResourceRequest extends WeblogResourceRequest {
     public void setThemeName(String theme) {
         this.themeName = theme;
     }
-    
+
     // override so that previews never show login status
     public String getAuthenticUser() {
         return null;
     }
-    
+
     // override so that previews never show login status
     public boolean isLoggedIn() {
         return false;
     }
 
     public Theme getTheme() {
-        
+
         if(theme == null && themeName != null) {
             try {
                 ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
@@ -92,7 +92,7 @@ public class WeblogPreviewResourceRequest extends WeblogResourceRequest {
                 log.error("Error looking up theme "+themeName, re);
             }
         }
-        
+
         return theme;
     }
 

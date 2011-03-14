@@ -34,19 +34,19 @@ import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Return OpenSearch descriptor that describes Roller's search facilities.
- * For more informaton see the 
+ * For more informaton see the
  * <a href="http://cwiki.apache.org/confluence/display/ROLLER/Proposal+OpenSearch">OpenSearch proposal</a>.
  * @author Dave Johnson (<a href="mailto:davidm.johnson@sun.com">davidm.johnson@sun.com</a>)
  */
 public class OpenSearchServlet extends HttpServlet {
-    
+
     public void doGet(
-            HttpServletRequest request, HttpServletResponse response) 
+            HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String[] pathInfo = new String[0];
         String handle = null;
-        
+
         // Will return descriptor for searching specified blog
         if (request.getPathInfo() != null) {
             pathInfo = Utilities.stringToStringArray(request.getPathInfo(), "/");
@@ -70,7 +70,7 @@ public class OpenSearchServlet extends HttpServlet {
         String contact = null;
         String searchFeed = null;
         String searchPage = null;
-        
+
         URLStrategy strat = WebloggerFactory.getWeblogger().getUrlStrategy();
         Weblog weblog = null;
         try {
@@ -91,7 +91,7 @@ public class OpenSearchServlet extends HttpServlet {
                     WebloggerRuntimeConfig.getProperty("site.description"));
             contact = StringEscapeUtils.escapeXml(
                     WebloggerRuntimeConfig.getProperty("site.adminemail"));
-                    
+
         } else {
             shortName = StringEscapeUtils.escapeXml(weblog.getName());
             description = StringEscapeUtils.escapeXml(weblog.getDescription());
@@ -99,7 +99,7 @@ public class OpenSearchServlet extends HttpServlet {
         }
 
         response.setContentType("application/opensearchdescription+xml");
-        
+
         PrintWriter pw = new PrintWriter(response.getWriter());
         pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         pw.println("<OpenSearchDescription xmlns=\"http://a9.com/-/spec/opensearch/1.1/\">");
@@ -111,7 +111,7 @@ public class OpenSearchServlet extends HttpServlet {
         pw.println("   <Url type=\"text/html\" ");
         pw.println("      template=\"" + searchPage + "\"/>");
         pw.println("</OpenSearchDescription>");
-        pw.flush();            
+        pw.flush();
         pw.close();
     }
 }

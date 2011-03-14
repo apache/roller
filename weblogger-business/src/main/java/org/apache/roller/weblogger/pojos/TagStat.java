@@ -20,9 +20,9 @@ package org.apache.roller.weblogger.pojos;
 
 /**
  * Tag bean.
- * 
+ *
  * @author Elias Torres
- * 
+ *
  */
 public class TagStat implements java.io.Serializable {
 
@@ -31,7 +31,7 @@ public class TagStat implements java.io.Serializable {
     private String name;
 
     private int count;
-    
+
     private int intensity;
 
     public TagStat() {

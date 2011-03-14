@@ -28,20 +28,20 @@ import java.io.Serializable;
  * rendering for a given weblog design.
  */
 public abstract class WeblogTheme implements Theme, Serializable {
-    
+
     // this is the name that will be used to identify a user customized theme
     public static final String CUSTOM = "custom";
-    
+
     protected Weblog weblog = null;
-    
-    
+
+
     public WeblogTheme(Weblog weblog) {
         this.weblog = weblog;
     }
-    
-    
+
+
     public Weblog getWeblog() {
         return this.weblog;
     }
-    
+
 }

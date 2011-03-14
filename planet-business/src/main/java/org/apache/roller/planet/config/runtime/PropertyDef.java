@@ -30,62 +30,62 @@ package org.apache.roller.planet.config.runtime;
  *   - cols (optional)
  */
 public class PropertyDef {
-    
+
     private String name = null;
     private String key = null;
     private String type = null;
     private String defaultValue = null;
     private int rows = 5;
     private int cols = 25;
-    
-    
+
+
     /** Creates a new instance of PropertyDef */
     public PropertyDef() {}
-    
+
     public String toString() {
         return "["+name+","+key+","+type+","+defaultValue+","+rows+","+cols+"]";
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getKey() {
         return key;
     }
-    
+
     public void setKey(String key) {
         this.key = key;
     }
-    
+
     public String getType() {
         return type;
     }
-    
+
     public void setType(String type) {
         this.type = type;
     }
-    
+
     public String getDefaultValue() {
         return defaultValue;
     }
-    
+
     public void setDefaultValue(String defaultvalue) {
         this.defaultValue = defaultvalue;
     }
-    
+
     public int getRows() {
         return rows;
     }
-    
+
     public void setRows(int rows) {
         this.rows = rows;
     }
-    
+
     public void setRows(String rows) {
         //convert to int
         try {
@@ -98,11 +98,11 @@ public class PropertyDef {
     public int getCols() {
         return cols;
     }
-    
+
     public void setCols(int cols) {
         this.cols = cols;
     }
-    
+
     public void setCols(String cols) {
         //convert to int
         try {

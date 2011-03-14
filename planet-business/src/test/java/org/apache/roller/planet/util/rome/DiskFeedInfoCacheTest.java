@@ -30,35 +30,35 @@ import org.apache.roller.planet.config.PlanetConfig;
  * @author David M Johnson
  */
 public class DiskFeedInfoCacheTest extends TestCase {
-    
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(DiskFeedInfoCacheTest.class);
     }
-    
+
     public void testCache() throws Exception {
         URL url = new URL("http://cnn.com");
         SyndFeedInfo info = new SyndFeedInfo();
         info.setUrl(url);
-        
+
         String testPlanetCache = PlanetConfig.getProperty("cache.dir");
         assertNotNull("testPlanetCache not null", testPlanetCache);
         assertTrue("testPlanetCache not zero length", testPlanetCache.trim().length() > 0);
-        
+
         File cacheDir = new File(testPlanetCache);
         if (!cacheDir.exists()) cacheDir.mkdirs();
-        
+
         DiskFeedInfoCache cache =
                 new DiskFeedInfoCache(PlanetConfig.getProperty("cache.dir"));
         cache.setFeedInfo(info.getUrl(), info);
-        
+
         SyndFeedInfo info2 = cache.getFeedInfo(url);
         assertNotNull(info2);
         assertEquals(url, info2.getUrl());
     }
-    
+
     public static Test suite() {
         return new TestSuite(DiskFeedInfoCacheTest.class);
-        
+
     }
-    
+
 }

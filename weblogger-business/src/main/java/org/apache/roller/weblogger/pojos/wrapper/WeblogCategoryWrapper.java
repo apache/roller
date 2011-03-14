@@ -32,68 +32,68 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
  * Pojo safety wrapper for WeblogCategory objects.
  */
 public class WeblogCategoryWrapper {
-    
+
     // keep a reference to the wrapped pojo
     private final WeblogCategory pojo;
-    
+
     // url strategy to use for any url building
     private final URLStrategy urlStrategy;
-    
-    
+
+
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogCategoryWrapper(WeblogCategory toWrap, URLStrategy strat) {
         this.pojo = toWrap;
         this.urlStrategy = strat;
     }
-    
-    
+
+
     // wrap the given pojo if it is not null
     public static WeblogCategoryWrapper wrap(WeblogCategory toWrap, URLStrategy strat) {
         if(toWrap != null)
             return new WeblogCategoryWrapper(toWrap, strat);
-        
+
         return null;
     }
-    
-    
+
+
     public String getId() {
         return this.pojo.getId();
     }
-    
-    
+
+
     public String getName() {
         return this.pojo.getName();
     }
-    
-    
+
+
     public String getDescription() {
         return this.pojo.getDescription();
     }
-    
-    
+
+
     public String getImage() {
         return this.pojo.getImage();
     }
-    
-    
+
+
     public String getPath() {
         return this.pojo.getPath();
     }
-    
-    
+
+
     public WeblogWrapper getWebsite() {
         return WeblogWrapper.wrap(this.pojo.getWebsite(), urlStrategy);
     }
-    
-    
+
+
     public WeblogCategoryWrapper getParent() {
         return WeblogCategoryWrapper.wrap(this.pojo.getParent(), urlStrategy);
     }
-    
-    
+
+
     public List getWeblogCategories() {
         Set initialCollection = this.pojo.getWeblogCategories();
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -104,16 +104,16 @@ public class WeblogCategoryWrapper {
             wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next(), urlStrategy));
             i++;
         }
-        
+
         return wrappedCollection;
     }
-    
-    
+
+
     public List retrieveWeblogEntries(boolean subcats)
             throws WebloggerException {
-        
+
         List initialCollection = this.pojo.retrieveWeblogEntries(subcats);
-        
+
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
@@ -124,19 +124,19 @@ public class WeblogCategoryWrapper {
             wrappedCollection.add(i,WeblogEntryWrapper.wrap((WeblogEntry) it.next(), urlStrategy));
             i++;
         }
-        
+
         return wrappedCollection;
     }
-    
-    
+
+
     // TODO: this method doesn't work and propably doesn't need to be here anyways?
     public boolean descendentOf(WeblogCategory ancestor) {
         return this.pojo.descendentOf(ancestor);
     }
-    
-    
+
+
     public boolean isInUse() {
         return this.pojo.isInUse();
     }
-    
+
 }

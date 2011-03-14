@@ -30,116 +30,116 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
  * config properties.
  */
 public class ConfigModel implements Model {
-    
+
     private static Log log = LogFactory.getLog(ConfigModel.class);
-    
-    
+
+
     /** Template context name to be used for model */
     public String getModelName() {
         return "config";
     }
-    
-    
+
+
     /** Init model */
     public void init(Map map) throws WebloggerException {
         // no-op
     }
-    
-    
+
+
     public String getSiteName() {
         return getProperty("site.name");
     }
-    
+
     public String getSiteShortName() {
         return getProperty("site.shortName");
     }
-    
+
     public String getSiteDescription() {
         return getProperty("site.description");
     }
-    
+
     public String getSiteEmail() {
         return getProperty("site.adminemail");
     }
-    
+
     public boolean getRegistrationEnabled() {
         return getBooleanProperty("users.registration.enabled");
     }
-    
+
     public String getRegistrationURL() {
         return getProperty("users.registration.url");
     }
-    
+
     public boolean getFeedHistoryEnabled() {
         return getBooleanProperty("site.newsfeeds.history.enabled");
     }
-    
+
     public int getFeedSize() {
         return getIntProperty("site.newsfeeds.defaultEntries");
     }
-    
+
     public int getFeedMaxSize() {
         return getIntProperty("site.newsfeeds.defaultEntries");
     }
-    
+
     public boolean getFeedStyle() {
         return getBooleanProperty("site.newsfeeds.styledFeeds");
     }
-    
+
     public boolean getCommentHtmlAllowed() {
         return getBooleanProperty("users.comments.htmlenabled");
     }
-    
+
     public boolean getCommentAutoFormat() {
         // this prop was removed in 4.0
         return false;
     }
-    
+
     public boolean getCommentEscapeHtml() {
         // replaced by new htmlallowed property in 4.0
         return !getCommentHtmlAllowed();
     }
-    
+
     public boolean getCommentEmailNotify() {
         return getBooleanProperty("users.comments.emailnotify");
     }
-    
+
     public boolean getTrackbacksEnabled() {
         return getBooleanProperty("users.trackbacks.enabled");
     }
-    
-    
+
+
     /** Get Roller version string */
     public String getRollerVersion() {
         return WebloggerFactory.getWeblogger().getVersion();
     }
-    
-    
+
+
     /** Get timestamp of Roller build */
     public String getRollerBuildTimestamp() {
         return WebloggerFactory.getWeblogger().getBuildTime();
     }
-    
-    
+
+
     /** Get username who created Roller build */
     public String getRollerBuildUser() {
         return WebloggerFactory.getWeblogger().getBuildUser();
     }
-    
-    
+
+
     private String getProperty(String name) {
         return WebloggerRuntimeConfig.getProperty(name);
     }
-    
-    
+
+
     private int getIntProperty(String name) {
         return WebloggerRuntimeConfig.getIntProperty(name);
     }
-    
-    
+
+
     private boolean getBooleanProperty(String name) {
         return WebloggerRuntimeConfig.getBooleanProperty(name);
     }
-    
+
 }
 

@@ -25,13 +25,13 @@ import org.apache.roller.RollerException;
  * A base exception class for Roller Planet.
  */
 public class PlanetException extends RollerException {
-    
-    
+
+
     public PlanetException() {
         super();
     }
-    
-    
+
+
     /**
      * Construct PlanetException with message string.
      *
@@ -40,8 +40,8 @@ public class PlanetException extends RollerException {
     public PlanetException(String s) {
         super(s);
     }
-    
-    
+
+
     /**
      * Construct PlanetException, wrapping existing throwable.
      *
@@ -51,8 +51,8 @@ public class PlanetException extends RollerException {
     public PlanetException(String s, Throwable t) {
         super(s, t);
     }
-    
-    
+
+
     /**
      * Construct PlanetException, wrapping existing throwable.
      *
@@ -61,5 +61,5 @@ public class PlanetException extends RollerException {
     public PlanetException(Throwable t) {
         super(t);
     }
-    
+
 }

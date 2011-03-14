@@ -38,60 +38,60 @@ import org.apache.roller.weblogger.util.MailUtil;
  * TODO: handle 'disabled' result
  */
 public class MembersInvite extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(MembersInvite.class);
-    
+
     // user being invited
     private String userName = null;
-    
+
     // permissions being given to user
     private String permissionString = null;
-    
-    
+
+
     public MembersInvite() {
         this.actionName = "invite";
         this.desiredMenu = "editor";
         this.pageTitle = "inviteMember.title";
     }
-    
-    
+
+
     // admin perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     public String execute() {
-        
+
         // if group blogging is disabled then you can't change permissions
         if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
             // TODO: i18n
             addError("invitations disabled");
             return SUCCESS;
         }
-        
+
         log.debug("Showing weblog inivitation form");
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Save the new invitation and notify the user.
      */
     public String save() {
-        
+
         // if group blogging is disabled then you can't change permissions
         if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
             // TODO: i18n
             addError("invitations disabled");
             return SUCCESS;
         }
-        
+
         log.debug("Attempting to process weblog invitation");
-        
+
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-        
+
         // user being invited
         User user = null;
         try {
@@ -104,36 +104,36 @@ public class MembersInvite extends UIAction {
             // TODO: i18n
             addError("Error looking up invitee");
         }
-        
+
         // if we already have an error then bail now
         if(hasActionErrors()) {
             return INPUT;
         }
-        
+
         // check for existing permissions or invitation
         try {
             WeblogPermission perm = umgr.getWeblogPermission(getActionWeblog(), user);
-            
+
             if (perm != null && perm.isPending()) {
                 addError("inviteMember.error.userAlreadyInvited");
             } else if (perm != null) {
                 addError("inviteMember.error.userAlreadyMember");
             }
-            
+
         } catch (WebloggerException ex) {
             log.error("Error looking up permissions for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error checking existing permissions");
         }
-        
+
         // if no errors then send the invitation
         if(!hasActionErrors()) try {
-            umgr.grantWeblogPermissionPending(getActionWeblog(), user, 
+            umgr.grantWeblogPermissionPending(getActionWeblog(), user,
                     Collections.singletonList(getPermissionString()));
             WebloggerFactory.getWeblogger().flush();
-            
+
             addMessage("inviteMember.userInvited");
-            
+
             if (MailUtil.isMailConfigured()) try {
                 MailUtil.sendWeblogInvitation(getActionWeblog(), user);
             } catch (WebloggerException e) {
@@ -142,22 +142,22 @@ public class MembersInvite extends UIAction {
                 // means that validation broke during the chain
                 addMessage("error.untranslated", e.getMessage());
             }
-            
+
             log.debug("Invitation successfully recorded");
-            
+
             return SUCCESS;
-            
+
         } catch (Exception ex) {
             log.error("Error creating user invitation", ex);
             // TODO: i18n
             addError("Error creating user invitation");
         }
-        
+
         log.debug("Invitation had errors, giving user another chance");
-        
+
         return INPUT;
     }
-    
+
 
     public String getUserName() {
         return userName;
@@ -174,5 +174,5 @@ public class MembersInvite extends UIAction {
     public void setPermissionString(String permission) {
         this.permissionString = permission;
     }
-    
+
 }

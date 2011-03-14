@@ -30,14 +30,14 @@ import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
  * Represents a request to a weblog.
- * 
+ *
  * This is a fairly generic parsed request which is only trying to figure out
- * the elements of a weblog request which apply to all weblogs.  We try to 
- * determine the weblogHandle, if a locale was specified, and then what extra 
+ * the elements of a weblog request which apply to all weblogs.  We try to
+ * determine the weblogHandle, if a locale was specified, and then what extra
  * path info remains.  The basic format is like this ...
- * 
+ *
  * /<weblogHandle>[/locale][/extra/path/info]
- * 
+ *
  * All weblog urls require a weblogHandle, so we ensure that part of the url is
  * properly specified.  locale is always optional, so we do our best to see
  * if a locale is specified.  and path info is always optional.
@@ -48,43 +48,43 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * this class and simply pick up where it left off in the parsing process.
  */
 public class WeblogRequest extends ParsedRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogRequest.class);
-    
+
     // lightweight attributes
     private String weblogHandle = null;
     private String locale = null;
     private String pathInfo = null;
-    
+
     // heavyweight attributes
     private Weblog weblog = null;
     private Locale localeInstance = null;
-    
-    
+
+
     public WeblogRequest() {}
-    
-    
-    public WeblogRequest(HttpServletRequest request) 
+
+
+    public WeblogRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         super(request);
-        
+
         String path = request.getPathInfo();
-        
+
         log.debug("parsing path "+path);
-        
+
         // first, cleanup extra slashes and extract the weblog weblogHandle
         if(path != null && path.trim().length() > 1) {
-            
+
             // strip off the leading slash
             path = path.substring(1);
-            
+
             // strip off trailing slash if needed
             if(path.endsWith("/")) {
                 path = path.substring(0, path.length() - 1);
             }
-            
+
             String[] pathElements = path.split("/", 2);
             if(pathElements[0].trim().length() > 0) {
                 this.weblogHandle = pathElements[0];
@@ -93,7 +93,7 @@ public class WeblogRequest extends ParsedRequest {
                 throw new InvalidRequestException("not a weblog request, "+
                         request.getRequestURL());
             }
-            
+
             // if there is more left of the path info then hold onto it
             if(pathElements.length == 2) {
                 path = pathElements[1];
@@ -101,14 +101,14 @@ public class WeblogRequest extends ParsedRequest {
                 path = null;
             }
         }
-        
+
         // second, check if we have a locale, everything else is extra path info
         if(path != null && path.trim().length() > 0) {
-            
+
             String[] pathElements = path.split("/", 2);
             if(this.isLocale(pathElements[0])) {
                 this.locale = pathElements[0];
-                
+
                 // everything else is path info
                 if(pathElements.length == 2) {
                     this.pathInfo = pathElements[1];
@@ -118,46 +118,46 @@ public class WeblogRequest extends ParsedRequest {
                 this.pathInfo = path;
             }
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("handle = "+this.weblogHandle);
             log.debug("locale = "+this.locale);
             log.debug("pathInfo = "+this.pathInfo);
         }
     }
-    
+
 
     /**
      * Convenience method which determines if the given string is a valid
      * locale string.
      */
     protected boolean isLocale(String potentialLocale) {
-        
+
         boolean isLocale = false;
-        
+
         // we only support 2 or 5 character locale strings, so check that first
-        if(potentialLocale != null && 
+        if(potentialLocale != null &&
                 (potentialLocale.length() == 2 || potentialLocale.length() == 5)) {
-            
+
             // now make sure that the format is proper ... e.g. "en_US"
             // we are not going to be picky about capitalization
             String[] langCountry = potentialLocale.split("_");
-            if(langCountry.length == 1 && 
+            if(langCountry.length == 1 &&
                     langCountry[0] != null && langCountry[0].length() == 2) {
                 isLocale = true;
-                
-            } else if(langCountry.length == 2 && 
-                    langCountry[0] != null && langCountry[0].length() == 2 && 
+
+            } else if(langCountry.length == 2 &&
+                    langCountry[0] != null && langCountry[0].length() == 2 &&
                     langCountry[1] != null && langCountry[1].length() == 2) {
-                
+
                 isLocale = true;
             }
         }
-        
+
         return isLocale;
     }
-    
-    
+
+
     public String getWeblogHandle() {
         return weblogHandle;
     }
@@ -165,7 +165,7 @@ public class WeblogRequest extends ParsedRequest {
     public void setWeblogHandle(String weblogHandle) {
         this.weblogHandle = weblogHandle;
     }
-    
+
     public String getLocale() {
         return locale;
     }
@@ -183,7 +183,7 @@ public class WeblogRequest extends ParsedRequest {
     }
 
     public Weblog getWeblog() {
-        
+
         if(weblog == null && weblogHandle != null) {
             try {
                 weblog = WebloggerFactory.getWeblogger().getWeblogManager()
@@ -192,15 +192,15 @@ public class WeblogRequest extends ParsedRequest {
                 log.error("Error looking up weblog "+weblogHandle, ex);
             }
         }
-        
+
         return weblog;
     }
 
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
-    
-    
+
+
     /**
      * Get the Locale instance to be used for this request.
      *
@@ -209,7 +209,7 @@ public class WeblogRequest extends ParsedRequest {
      *   2. if no locale is specified, then use the weblog default locale
      */
     public Locale getLocaleInstance() {
-        
+
         if(localeInstance == null && locale != null) {
             String[] langCountry = locale.split("_");
             if(langCountry.length == 1) {
@@ -220,12 +220,12 @@ public class WeblogRequest extends ParsedRequest {
         } else if(localeInstance == null) {
             localeInstance = getWeblog().getLocaleInstance();
         }
-        
+
         return localeInstance;
     }
 
     public void setLocaleInstance(Locale localeInstance) {
         this.localeInstance = localeInstance;
     }
-    
+
 }

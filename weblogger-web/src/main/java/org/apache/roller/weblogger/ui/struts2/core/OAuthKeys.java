@@ -40,8 +40,8 @@ public class OAuthKeys extends UIAction {
     public OAuthKeys() {
         this.pageTitle = "oauthKeys.title";
     }
-    
-    
+
+
     // override default security, we do not require an action weblog
     public boolean isWeblogRequired() {
         return false;
@@ -51,7 +51,7 @@ public class OAuthKeys extends UIAction {
     @SkipValidation
     public String execute() {
         boolean flush = false;
-        
+
         try {
             User ud = getAuthenticatedUser();
             OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
@@ -71,7 +71,7 @@ public class OAuthKeys extends UIAction {
                     flush = true;
                 }
             }
-            
+
             if (flush) {
                 WebloggerFactory.getWeblogger().flush();
             }

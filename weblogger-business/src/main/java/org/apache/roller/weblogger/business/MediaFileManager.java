@@ -183,7 +183,7 @@ public interface MediaFileManager {
      */
     public List<MediaFile> fetchRecentPublicMediaFiles(int length)
             throws WebloggerException;
-    
+
     /**
      * Remove all media files associated with a weblog.
      * @param website

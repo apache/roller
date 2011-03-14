@@ -30,39 +30,39 @@ import org.apache.roller.weblogger.util.Utilities;
 /**
  * Comment plugin which turns plain text URLs into hyperlinks using
  * the html anchor (&lt;a&gt;) tag.
- * 
+ *
  * Contributed by Matthew Montgomery.
  */
 public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
     private static final Log log = LogFactory.getLog(LinkMarkupPlugin.class);
 
     private static final Pattern pattern = Pattern.compile(
-            "http[s]?://[^/][\\S]+", Pattern.CASE_INSENSITIVE);  
-    
+            "http[s]?://[^/][\\S]+", Pattern.CASE_INSENSITIVE);
+
     public LinkMarkupPlugin() {
         log.debug("Instantiating LinkMarkupPlugin");
     }
-    
+
     /**
-     * Unique identifier.  This should never change. 
+     * Unique identifier.  This should never change.
      */
     public String getId() {
         return "LinkMarkup";
     }
-    
-    
+
+
     /** Returns the display name of this Plugin. */
     public String getName() {
         return "Link Markup";
     }
-    
-    
+
+
     /** Briefly describes the function of the Plugin.  May contain HTML. */
     public String getDescription() {
         return "Automatically creates hyperlinks out of embedded URLs.";
     }
-    
-    
+
+
     /**
      * Apply plugin to the specified text.
      *
@@ -74,14 +74,14 @@ public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
     public String render(final WeblogEntryComment comment, String text) {
         StringBuilder result;
         result = new StringBuilder();
-        
+
         if (text != null) {
             Matcher matcher;
             matcher = pattern.matcher(text);
 
             int start = 0;
             int end = text.length();
-            
+
             while (start < end) {
                 if (matcher.find()) {
                     // Copy up to the match
@@ -113,10 +113,10 @@ public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
             }
         }
         else {
-            result.append(text);    
+            result.append(text);
         }
 
         return result.toString();
     }
-    
+
 }

@@ -25,12 +25,12 @@ import org.apache.roller.planet.pojos.PlanetGroup;
  * A simple bean for managing the form data used by the PlanetGroups.
  */
 public class PlanetGroupsBean {
-    
+
     private String id = null;
     private String title = null;
     private String handle = null;
-    
-    
+
+
     public String getId() {
         return id;
     }
@@ -54,20 +54,20 @@ public class PlanetGroupsBean {
     public void setHandle(String handle) {
         this.handle = handle;
     }
-    
-    
+
+
     public void copyTo(PlanetGroup dataHolder) {
-        
+
         dataHolder.setTitle(getTitle());
         dataHolder.setHandle(getHandle());
     }
-    
-    
+
+
     public void copyFrom(PlanetGroup dataHolder) {
-        
+
         setId(dataHolder.getId());
         setTitle(dataHolder.getTitle());
         setHandle(dataHolder.getHandle());
     }
-    
+
 }

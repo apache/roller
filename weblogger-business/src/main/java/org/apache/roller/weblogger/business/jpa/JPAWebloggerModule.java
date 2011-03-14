@@ -57,32 +57,32 @@ public class JPAWebloggerModule implements Module {
     public void configure(Binder binder) {
 
         binder.bind(Weblogger.class).to(JPAWebloggerImpl.class);
-        
-        binder.bind(JPAPersistenceStrategy.class);       
+
+        binder.bind(JPAPersistenceStrategy.class);
         binder.bind(org.apache.roller.weblogger.planet.business.jpa.JPARollerPlanetPersistenceStrategy.class);
-        
-        binder.bind(AutoPingManager.class).to(     JPAAutoPingManagerImpl.class);   
-        binder.bind(BookmarkManager.class).to(     JPABookmarkManagerImpl.class);  
-        binder.bind(PingQueueManager.class).to(    JPAPingQueueManagerImpl.class);   
-        binder.bind(PingTargetManager.class).to(   JPAPingTargetManagerImpl.class); 
-        binder.bind(PropertiesManager.class).to(   JPAPropertiesManagerImpl.class);   
+
+        binder.bind(AutoPingManager.class).to(     JPAAutoPingManagerImpl.class);
+        binder.bind(BookmarkManager.class).to(     JPABookmarkManagerImpl.class);
+        binder.bind(PingQueueManager.class).to(    JPAPingQueueManagerImpl.class);
+        binder.bind(PingTargetManager.class).to(   JPAPingTargetManagerImpl.class);
+        binder.bind(PropertiesManager.class).to(   JPAPropertiesManagerImpl.class);
         binder.bind(RefererManager.class).to(      JPARefererManagerImpl.class);
-        binder.bind(ThreadManager.class).to(       JPAThreadManagerImpl.class);  
-        binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);   
-        binder.bind(WeblogManager.class).to(       JPAWeblogManagerImpl.class);   
-        binder.bind(WeblogEntryManager.class).to(  JPAWeblogEntryManagerImpl.class);   
+        binder.bind(ThreadManager.class).to(       JPAThreadManagerImpl.class);
+        binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);
+        binder.bind(WeblogManager.class).to(       JPAWeblogManagerImpl.class);
+        binder.bind(WeblogEntryManager.class).to(  JPAWeblogEntryManagerImpl.class);
         binder.bind(OAuthManager.class).to(        JPAOAuthManagerImpl.class);
 
         binder.bind(OAuthValidator.class).to(      SimpleOAuthValidator.class);
-                
-        binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class);  
+
+        binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class);
         binder.bind(MediaFileManager.class).to(    JPAMediaFileManagerImpl.class);
         binder.bind(FileContentManager.class).to(  FileContentManagerImpl.class);
         binder.bind(IndexManager.class).to(        IndexManagerImpl.class);
-        binder.bind(PluginManager.class).to(       PluginManagerImpl.class);    
+        binder.bind(PluginManager.class).to(       PluginManagerImpl.class);
         binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);
-        
+
         binder.bind(URLStrategy.class).to(         MultiWeblogURLStrategy.class);
     }
-    
+
 }

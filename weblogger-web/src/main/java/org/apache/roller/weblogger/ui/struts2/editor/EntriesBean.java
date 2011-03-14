@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.util.Utilities;
  * A bean for managing entries query data.
  */
 public class EntriesBean {
-    
+
     private String endDateString = null;
     private String startDateString = null;
     private String categoryPath = null;
@@ -39,11 +39,11 @@ public class EntriesBean {
     private String status = "ALL";
     private String sortBy = "updateTime";
     private int page = 0;
-    
-    
+
+
     public EntriesBean() {
     }
-    
+
     // convenience method
     public List<String> getTags() {
         if(getTagsAsString() != null) {
@@ -52,7 +52,7 @@ public class EntriesBean {
             return null;
         }
     }
-    
+
     public Date getStartDate() {
         if(!StringUtils.isEmpty(getStartDateString())) try {
             DateFormat df = new SimpleDateFormat("MM/dd/yy");
@@ -68,48 +68,48 @@ public class EntriesBean {
         } catch(Exception e) { }
         return null;
     }
-    
-    
+
+
     public String getCategoryPath() {
         return categoryPath;
     }
-    
+
     public void setCategoryPath(String categoryId) {
         this.categoryPath = categoryId;
     }
-    
+
     public String getTagsAsString() {
         return tagsAsString;
     }
-    
+
     public void setTagsAsString(String tags) {
         this.tagsAsString = tags;
     }
-    
+
     public String getText() {
         return text;
     }
-    
+
     public void setText(String text) {
         this.text = text;
     }
-    
+
     public String getStatus() {
         return status;
     }
-    
+
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
     public String getSortBy() {
         return sortBy;
     }
-    
+
     public void setSortBy(String sortBy) {
         this.sortBy = sortBy;
     }
-    
+
     public int getPage() {
         return page;
     }
@@ -117,11 +117,11 @@ public class EntriesBean {
     public void setPage(int page) {
         this.page = page;
     }
-    
-    
+
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        
+
         buf.append("startDate = ").append(getStartDate()).append("\n");
         buf.append("endDate = ").append(getEndDate()).append("\n");
         buf.append("status = ").append(getStatus()).append("\n");
@@ -130,7 +130,7 @@ public class EntriesBean {
         buf.append("tags = ").append(getTagsAsString()).append("\n");
         buf.append("text = ").append(getText()).append("\n");
         buf.append("page = ").append(getPage()).append("\n");
-        
+
         return buf.toString();
     }
 
@@ -149,5 +149,5 @@ public class EntriesBean {
     public void setStartDateString(String startDateString) {
         this.startDateString = startDateString;
     }
-    
+
 }

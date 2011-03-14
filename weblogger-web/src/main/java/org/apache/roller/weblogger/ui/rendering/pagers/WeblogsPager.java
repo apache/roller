@@ -40,21 +40,21 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
  * Paging through a collection of weblogs.
  */
 public class WeblogsPager extends AbstractPager {
-    
+
     private static Log log = LogFactory.getLog(WeblogsPager.class);
-    
+
     private String letter = null;
     private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
-    
+
     // collection for the pager
     private List weblogs;
-    
+
     // are there more items?
     private boolean more = false;
-    
-    
+
+
     public WeblogsPager(
             URLStrategy    strat,
             String         baseUrl,
@@ -62,18 +62,18 @@ public class WeblogsPager extends AbstractPager {
             int            sinceDays,
             int            page,
             int            length) {
-        
+
         super(strat, baseUrl, page);
-        
+
         this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
+
     public WeblogsPager(
             URLStrategy    strat,
             String         baseUrl,
@@ -82,19 +82,19 @@ public class WeblogsPager extends AbstractPager {
             int            sinceDays,
             int            page,
             int            length) {
-        
+
         super(strat, baseUrl, page);
-        
+
         this.letter = letter;
         this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
-        
+
         // initialize the collection
         getItems();
     }
-    
-    
+
+
     public String getNextLink() {
         // need to add letter param if it exists
         if(letter != null) {
@@ -110,8 +110,8 @@ public class WeblogsPager extends AbstractPager {
             return super.getNextLink();
         }
     }
-    
-    
+
+
     public String getPrevLink() {
         // need to add letter param if it exists
         if(letter != null) {
@@ -127,14 +127,14 @@ public class WeblogsPager extends AbstractPager {
             return super.getPrevLink();
         }
     }
-    
-    
+
+
     public List getItems() {
-        
+
         if (weblogs == null) {
             // calculate offset
             int offset = getPage() * length;
-            
+
             List results = new ArrayList();
             Date startDate = null;
             if (sinceDays != -1) {
@@ -152,31 +152,31 @@ public class WeblogsPager extends AbstractPager {
                 } else {
                     rawWeblogs = wmgr.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }
-                
+
                 // wrap the results
                 int count = 0;
                 for (Iterator it = rawWeblogs.iterator(); it.hasNext();) {
                     Weblog website = (Weblog) it.next();
                     if (count++ < length) {
-                        results.add(WeblogWrapper.wrap(website, urlStrategy));                    
+                        results.add(WeblogWrapper.wrap(website, urlStrategy));
                     } else {
                         more = true;
                     }
                 }
-                
+
             } catch (Exception e) {
                 log.error("ERROR: fetching weblog list", e);
             }
-            
+
             weblogs = results;
         }
-        
+
         return weblogs;
     }
-    
-    
+
+
     public boolean hasMoreItems() {
         return more;
     }
-    
+
 }

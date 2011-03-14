@@ -40,51 +40,51 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
  * Cache for planet content.
  */
 public class PlanetCache {
-    
+
     private static Log log = LogFactory.getLog(PlanetCache.class);
-    
+
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
     public static final String CACHE_ID = "cache.planet";
-    
+
     // keep cached content
     private boolean cacheEnabled = true;
     private Cache contentCache = null;
-    
+
     // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
     private long timeout = 15 * 60 * 1000;
-    
+
     // reference to our singleton instance
     private static PlanetCache singletonInstance = new PlanetCache();
-    
-    
+
+
     private PlanetCache() {
-        
+
         cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
-        
+
         Map cacheProps = new HashMap();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
         String prop = null;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
-            
+
             // we are only interested in props for this cache
             if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
+                cacheProps.put(prop.substring(CACHE_ID.length()+1),
                         WebloggerConfig.getProperty(prop));
             }
         }
-        
+
         log.info("Planet cache = "+cacheProps);
-        
+
         if(cacheEnabled) {
             contentCache = CacheManager.constructCache(null, cacheProps);
         } else {
             log.warn("Caching has been DISABLED");
         }
-        
+
         // lookup our timeout value
         String timeoutString = WebloggerConfig.getProperty("cache.planet.timeout");
         try {
@@ -94,88 +94,88 @@ public class PlanetCache {
             // ignored ... illegal value
         }
     }
-    
-    
+
+
     public static PlanetCache getInstance() {
         return singletonInstance;
     }
-    
-    
+
+
     public Object get(String key) {
-        
+
         if(!cacheEnabled)
             return null;
-        
+
         Object entry = contentCache.get(key);
-        
+
         if(entry == null) {
             log.debug("MISS "+key);
         } else {
             log.debug("HIT "+key);
         }
-        
+
         return entry;
     }
-    
-    
+
+
     public void put(String key, Object value) {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         contentCache.put(key, value);
         log.debug("PUT "+key);
     }
-    
-    
+
+
     public void remove(String key) {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         contentCache.remove(key);
         log.debug("REMOVE "+key);
     }
-    
-    
+
+
     public void clear() {
-        
+
         if(!cacheEnabled)
             return;
-        
+
         contentCache.clear();
         this.lastUpdateTime = null;
         log.debug("CLEAR");
     }
-    
-    
+
+
     public Date getLastModified() {
-        
+
         Date lastModified = null;
-        
+
         // first try our cached version
         if(this.lastUpdateTime != null) {
             lastModified = (Date) this.lastUpdateTime.getValue();
         }
-        
+
         // still null, we need to get a fresh value
         if(lastModified == null) {
-            
+
             // TODO: ROLLER40 last updated for planet
             lastModified = null; // PlanetFactory.getPlanet().getPlanetManager().getLastUpdated();
-            
+
             if (lastModified == null) {
                 lastModified = new Date();
                 log.warn("Can't get lastUpdate time, using current time instead");
             }
-            
+
             this.lastUpdateTime = new ExpiringCacheEntry(lastModified, this.timeout);
         }
-        
+
         return lastModified;
     }
-    
-    
+
+
     /**
      * Generate a cache key from a parsed planet request.
      * This generates a key of the form ...
@@ -192,21 +192,21 @@ public class PlanetCache {
      *
      */
     public String generateKey(PlanetRequest planetRequest) {
-        
+
         StringBuffer key = new StringBuffer();
-        
+
         key.append(this.CACHE_ID).append(":");
         key.append(planetRequest.getContext());
         key.append("/");
         key.append(planetRequest.getType());
-        
+
         if(planetRequest.getFlavor() != null) {
             key.append("/").append(planetRequest.getFlavor());
         }
-        
+
         // add language
         key.append("/").append(planetRequest.getLanguage());
-        
+
         if(planetRequest.getFlavor() != null) {
             // add excerpts
             if(planetRequest.isExcerpts()) {
@@ -218,7 +218,7 @@ public class PlanetCache {
                 key.append("/user=").append(planetRequest.getAuthenticUser());
             }
         }
-        
+
         // add group
         if (planetRequest.getGroup() != null) {
             key.append("/group=").append(planetRequest.getGroup());
@@ -226,5 +226,5 @@ public class PlanetCache {
 
         return key.toString();
     }
-    
+
 }

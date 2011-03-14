@@ -40,32 +40,32 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * That includes:
  */
 public class CommentTest extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(CommentTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
     WeblogEntry testEntry = null;
-    
-    
+
+
     public CommentTest(String name) {
         super(name);
     }
-    
-    
+
+
     public static Test suite() {
         return new TestSuite(CommentTest.class);
     }
-    
-    
+
+
     /**
      * All tests in this suite require a user, weblog, and an entry.
      */
     public void setUp() throws Exception {
-        
+
         // setup weblogger
         TestUtils.setupWeblogger();
-        
+
         try {
             testUser = TestUtils.setupUser("commentTestUser");
             testWeblog = TestUtils.setupWeblog("commentTestWeblog", testUser);
@@ -76,9 +76,9 @@ public class CommentTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
     public void tearDown() throws Exception {
-        
+
         try {
             TestUtils.teardownWeblogEntry(testEntry.getId());
             TestUtils.teardownWeblog(testWeblog.getId());
@@ -89,15 +89,15 @@ public class CommentTest extends TestCase {
             throw new Exception("Test teardown failed", ex);
         }
     }
-    
-    
+
+
     /**
      * Test basic persistence operations ... Create, Update, Delete
      */
     public void testCommentCRUD() throws Exception {
-        
+
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
+
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setName("test");
         comment.setEmail("test");
@@ -107,100 +107,100 @@ public class CommentTest extends TestCase {
         comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         comment.setWeblogEntry(TestUtils.getManagedWeblogEntry(testEntry));
         comment.setStatus(WeblogEntryComment.APPROVED);
-        
+
         // create a comment
         mgr.saveComment(comment);
         String id = comment.getId();
         TestUtils.endSession(true);
-        
+
         // make sure comment was created
         comment = null;
         comment = mgr.getComment(id);
         assertNotNull(comment);
         assertEquals("this is a test comment", comment.getContent());
-        
+
         // update a comment
         comment.setContent("testtest");
         mgr.saveComment(comment);
         TestUtils.endSession(true);
-        
+
         // make sure comment was updated
         comment = null;
         comment = mgr.getComment(id);
         assertNotNull(comment);
         assertEquals("testtest", comment.getContent());
-        
+
         // delete a comment
         mgr.removeComment(comment);
         TestUtils.endSession(true);
-        
+
         // make sure comment was deleted
         comment = null;
         comment = mgr.getComment(id);
         assertNull(comment);
     }
-    
-    
+
+
     /**
-     * Test lookup mechanisms ... 
+     * Test lookup mechanisms ...
      */
     public void testCommentLookups() throws Exception {
-        
+
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         List comments = null;
-        
+
         // we need some comments to play with
         testEntry = TestUtils.getManagedWeblogEntry(testEntry);
         WeblogEntryComment comment1 = TestUtils.setupComment("comment1", testEntry);
         WeblogEntryComment comment2 = TestUtils.setupComment("comment2", testEntry);
         WeblogEntryComment comment3 = TestUtils.setupComment("comment3", testEntry);
         TestUtils.endSession(true);
-        
+
         // get all comments
         comments = null;
         comments = mgr.getComments(null, null, null, null, null, null, false, 0, -1);
         assertNotNull(comments);
         assertEquals(3, comments.size());
-        
+
         // get all comments for entry
         testEntry = TestUtils.getManagedWeblogEntry(testEntry);
         comments = null;
         comments = mgr.getComments(null, testEntry, null, null, null, null, false, 0, -1);
         assertNotNull(comments);
         assertEquals(3, comments.size());
-        
+
         // make some changes
         comment3 = mgr.getComment(comment3.getId());
         comment3.setStatus(WeblogEntryComment.PENDING);
         mgr.saveComment(comment3);
         TestUtils.endSession(true);
-        
+
         // get pending comments
         comments = null;
         comments = mgr.getComments(null, null, null, null, null, WeblogEntryComment.PENDING, false, 0, -1);
         assertNotNull(comments);
         assertEquals(1, comments.size());
-        
+
         // get approved comments
         comments = null;
         comments = mgr.getComments(null, null, null, null, null, WeblogEntryComment.APPROVED, false, 0, -1);
         assertNotNull(comments);
         assertEquals(2, comments.size());
-        
+
         // get comments with offset
         comments = null;
         comments = mgr.getComments(null, null, null, null, null, null, false, 1, -1);
         assertNotNull(comments);
         assertEquals(2, comments.size());
-        
+
         // remove test comments
         TestUtils.teardownComment(comment1.getId());
         TestUtils.teardownComment(comment2.getId());
         TestUtils.teardownComment(comment3.getId());
         TestUtils.endSession(true);
     }
-    
-    
+
+
     /**
      * Test that when deleting parent objects of a comment that everything
      * down the chain is properly deleted as well.  i.e. deleting an entry
@@ -208,18 +208,18 @@ public class CommentTest extends TestCase {
      * delete all comments, etc.
      */
     public void testCommentParentDeletes() throws Exception {
-        
+
         log.info("BEGIN");
-        
+
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();        
-            WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();        
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
 
             // first make sure we can delete an entry with comments
             User user = TestUtils.setupUser("commentParentDeleteUser");
             Weblog weblog = TestUtils.setupWeblog("commentParentDelete", user);
-            WeblogEntry entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", 
+            WeblogEntry entry = TestUtils.setupWeblogEntry("CommentParentDeletes1",
                     weblog.getDefaultCategory(), weblog, user);
             TestUtils.endSession(true);
 
@@ -242,7 +242,7 @@ public class CommentTest extends TestCase {
             // now make sure we can delete a weblog with comments
             weblog = TestUtils.getManagedWebsite(weblog);
             user = TestUtils.getManagedUser(user);
-            entry = TestUtils.setupWeblogEntry("CommentParentDeletes2", 
+            entry = TestUtils.setupWeblogEntry("CommentParentDeletes2",
                     weblog.getDefaultCategory(), weblog, user);
             TestUtils.endSession(true);
 
@@ -252,7 +252,7 @@ public class CommentTest extends TestCase {
             TestUtils.setupComment("comment3", entry);
             TestUtils.endSession(true);
 
-            // now deleting the website should succeed 
+            // now deleting the website should succeed
             ex = null;
             try {
                 weblog = TestUtils.getManagedWebsite(weblog);
@@ -260,7 +260,7 @@ public class CommentTest extends TestCase {
                 TestUtils.endSession(true);
             } catch (WebloggerException e) {
                 StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw); 
+                PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
                 log.info(sw.toString());
                 ex = e;
@@ -269,24 +269,24 @@ public class CommentTest extends TestCase {
 
             // and delete test user as well
             umgr.removeUser(TestUtils.getManagedUser(user));
-            
+
         } finally {
             TestUtils.endSession(true);
         }
-        
+
         log.info("END");
     }
-    
-    
+
+
     /**
-     * Apparently, HSQL has "issues" with LIKE expressions, 
-     * so I'm commenting this out for now. 
-     
+     * Apparently, HSQL has "issues" with LIKE expressions,
+     * so I'm commenting this out for now.
+
     public void _testBulkCommentDelete() throws Exception {
-        
+
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         List comments = null;
-        
+
         // we need some comments to play with
         WeblogEntryComment comment1 = TestUtils.setupComment("deletemeXXX", testEntry);
         WeblogEntryComment comment2 = TestUtils.setupComment("XXXdeleteme", testEntry);
@@ -295,7 +295,7 @@ public class CommentTest extends TestCase {
         WeblogEntryComment comment5 = TestUtils.setupComment("saveme", testEntry);
         WeblogEntryComment comment6 = TestUtils.setupComment("saveme", testEntry);
         TestUtils.endSession(true);
-        
+
         // get all comments
         comments = null;
         comments = mgr.getComments(
@@ -312,7 +312,7 @@ public class CommentTest extends TestCase {
             -1);  // length
         assertNotNull(comments);
         assertEquals(6, comments.size());
-        
+
         comments = mgr.getComments(
             null, // website
             null, // entry
@@ -327,7 +327,7 @@ public class CommentTest extends TestCase {
             -1);  // length
         assertNotNull(comments);
         assertEquals(3, comments.size());
-       
+
         int countDeleted = mgr.removeMatchingComments(
             null,         // website
             null,         // entry
@@ -336,9 +336,9 @@ public class CommentTest extends TestCase {
             null,         // endDate
             null,         // pending
             null,         // approved
-            null);        // spam        
+            null);        // spam
         assertEquals(3, countDeleted);
-        
+
         comments = mgr.getComments(
             null, // website
             null, // entry
@@ -353,7 +353,7 @@ public class CommentTest extends TestCase {
             -1);  // length
         assertNotNull(comments);
         assertEquals(3, comments.size());
-        
+
         // remove test comments
         countDeleted = mgr.removeMatchingComments(
             null,         // website
@@ -363,49 +363,49 @@ public class CommentTest extends TestCase {
             null,         // endDate
             null,         // pending
             null,         // approved
-            null);        // spam        
+            null);        // spam
         assertEquals(3, countDeleted);
         TestUtils.endSession(true);
     }
     */
-    
+
     /**
      * Test extra CRUD methods ... removeComments(ids), removeCommentsForEntry
      */
 //    public void testAdvancedCommentCRUD() throws Exception {
-//        
+//
 //        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 //        List comments = null;
-//        
+//
 //        // we need some comments to play with
 //        WeblogEntryComment comment1 = TestUtils.setupComment("comment1", testEntry);
 //        WeblogEntryComment comment2 = TestUtils.setupComment("comment2", testEntry);
 //        WeblogEntryComment comment3 = TestUtils.setupComment("comment3", testEntry);
 //        WeblogEntryComment comment4 = TestUtils.setupComment("comment4", testEntry);
 //        TestUtils.endSession(true);
-//        
+//
 //        // remove a collection of comments
 //        String[] delComments = new String[2];
 //        delComments[0] = comment1.getId();
 //        delComments[1] = comment2.getId();
 //        mgr.removeComments(delComments);
 //        TestUtils.endSession(true);
-//        
+//
 //        // make sure comments were deleted
 //        comments = null;
 //        comments = mgr.getComments(null, null, null, null, null, null, null, null, false, 0, -1);
 //        assertNotNull(comments);
 //        assertEquals(2, comments.size());
-//        
+//
 //        // remove all comments for entry
 //        mgr.removeCommentsForEntry(testEntry.getId());
 //        TestUtils.endSession(true);
-//        
+//
 //        // make sure comments were deleted
 //        comments = null;
 //        comments = mgr.getComments(null, null, null, null, null, null, null, null, false, 0, -1);
 //        assertNotNull(comments);
 //        assertEquals(0, comments.size());
 //    }
-    
+
 }

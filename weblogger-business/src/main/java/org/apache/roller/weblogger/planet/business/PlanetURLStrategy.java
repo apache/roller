@@ -28,25 +28,25 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 /**
  * Override Planet's URL strategy for use within Roller.
  */
-public class PlanetURLStrategy extends MultiPlanetURLStrategy {   
-    
-    
+public class PlanetURLStrategy extends MultiPlanetURLStrategy {
+
+
     /**
      * Get URL configured for Planet.
      * @param planet There's only one planet in Roller, so this is ignored.
      */
     public String getPlanetURL(String planet) {
-        
+
         StringBuffer url = new StringBuffer();
-        
+
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        
+
         url.append(PlanetRuntimeConfig.getProperty("site.absoluteurl"));
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Get URL configured for Planet.
      * @param planet There's only one planet in Roller, so this is ignored.
@@ -57,25 +57,25 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
 
         StringBuffer url = new StringBuffer();
         String sep = "?";
-        
+
         url.append(getPlanetURL(planet));
         if (group != null) {
             url.append(sep);
             url.append("group=").append(group);
             sep = "&";
         }
-        
+
         if (pageNum > 0) {
             url.append(sep);
             url.append("page=");
             url.append(pageNum);
             sep = "&";
         }
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Get URL of planet group's newsfeed.
      * @param planet There's only one planet in Roller, so this is ignored.
@@ -83,10 +83,10 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      * @param feed  Feed format to be returned (ignored, currently only RSS is supported).
      */
     public String getPlanetGroupFeedURL(String planet, String group, String format) {
-        
+
         StringBuffer url = new StringBuffer();
         String sep = "?";
-        
+
         url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         url.append("planetrss");
 
@@ -95,11 +95,11 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
             url.append("group=").append(group);
             sep = "&";
         }
-        
+
         return url.toString();
     }
-    
-    
+
+
     /**
      * Currently, Roller doesn't support OPML so this returns null.
      * @param planet There's only one planet in Roller, so this is ignored.

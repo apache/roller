@@ -25,10 +25,10 @@ import com.opensymphony.xwork2.ActionSupport;
  * Login Action.
  */
 public class Login extends PlanetActionSupport {
-    
+
     private boolean failed = false;
-    
-    
+
+
     public String execute() {
         // nothing to do right now
         return SUCCESS;
@@ -41,5 +41,5 @@ public class Login extends PlanetActionSupport {
     public void setFailed(boolean failed) {
         this.failed = failed;
     }
-    
+
 }

@@ -26,19 +26,19 @@ import java.util.List;
  * Extends the Struts2 ActionSupport class to add in support for handling an
  * error and status success.  Other actions extending this one only need to
  * calle setError() and setSuccess() accordingly.
- * 
+ *
  * NOTE: as a small convenience, all errors and messages are assumed to be keys
  * which point to a success in a resource bundle, so we automatically call
  * getText(key) on the param passed into setError() and setSuccess().
  */
 public abstract class PlanetActionSupport extends ActionSupport {
-    
+
     // status params
     private String error = null;
     private String warning = null;
     private String success = null;
-    
-    
+
+
     public String getError() {
         return error;
     }
@@ -46,11 +46,11 @@ public abstract class PlanetActionSupport extends ActionSupport {
     public void setError(String error) {
         this.error = getText(error);
     }
-    
+
     public void setError(String error, String param) {
         this.error = getText(error, error, param);
     }
-    
+
     public String getWarning() {
         return warning;
     }
@@ -58,11 +58,11 @@ public abstract class PlanetActionSupport extends ActionSupport {
     public void setWarning(String warning) {
         this.warning = getText(warning);
     }
-    
+
     public void setWarning(String warning, String param) {
         this.warning = getText(warning, warning, param);
     }
-    
+
     public String getSuccess() {
         return success;
     }
@@ -70,9 +70,9 @@ public abstract class PlanetActionSupport extends ActionSupport {
     public void setSuccess(String message) {
         this.success = getText(message);
     }
-    
+
     public void setSuccess(String message, String param) {
         this.success = getText(message, message, param);
     }
-    
+
 }

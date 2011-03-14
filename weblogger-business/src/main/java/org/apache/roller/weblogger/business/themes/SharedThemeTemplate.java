@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
  * template which is part of a shared Theme.
  */
 public class SharedThemeTemplate implements ThemeTemplate, Serializable {
-    
+
     private String id = null;
     private String action = null;
     private String name = null;
@@ -41,16 +41,16 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private boolean hidden = false;
     private boolean navbar = false;
     private String  outputContentType = null;
-    
+
     private SharedTheme myTheme = null;
-    
-    
+
+
     public SharedThemeTemplate() {}
-    
-    public SharedThemeTemplate(SharedTheme theme, String id, String action, String name, 
-            String desc, String contents, String link, Date date, 
+
+    public SharedThemeTemplate(SharedTheme theme, String id, String action, String name,
+            String desc, String contents, String link, Date date,
             String tempLang, boolean hid, boolean navbar) {
-        
+
         this.myTheme = theme;
         this.id = id;
         this.action = action;
@@ -63,14 +63,14 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.hidden = hid;
         this.navbar = navbar;
     }
-    
-    
+
+
     // NOTE: decorators are deprecated as of 4.0 but we leave this here because
     //       they need to be left in place for backwards compatability
     public ThemeTemplate getDecorator() {
         return null;
     }
-    
+
     public String getId() {
         return id;
     }
@@ -158,9 +158,9 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     public void setOutputContentType(String outputContentType) {
         this.outputContentType = outputContentType;
     }
-    
+
     public String toString() {
-        return (id + "," + name + "," + description + "," + link + "," + 
+        return (id + "," + name + "," + description + "," + link + "," +
                 lastModified + "\n\n" + contents + "\n");
     }
 
@@ -171,5 +171,5 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     public void setAction(String action) {
         this.action = action;
     }
-    
+
 }

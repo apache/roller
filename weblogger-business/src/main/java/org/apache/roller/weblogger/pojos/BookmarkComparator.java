@@ -23,7 +23,7 @@ import java.util.Comparator;
 public class BookmarkComparator implements Comparator, Serializable
 {
     static final long serialVersionUID = 4009699640952161148L;
-    
+
     public int compare(Object val1, Object val2)
     throws ClassCastException
     {

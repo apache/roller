@@ -27,53 +27,53 @@ import org.apache.roller.planet.business.fetcher.FeedFetcher;
  * The main entry point interface of the Roller business tier.
  */
 public interface Planet {
-    
+
     /**
      * Get PlanetManager associated with this Roller instance.
      */
     public PlanetManager getPlanetManager();
-    
-    
+
+
     /**
      * Get PropertiesManager.
      */
     public PropertiesManager getPropertiesManager();
-    
-    
+
+
     /**
      * Get the configured URLStrategy.
      */
     public URLStrategy getURLStrategy();
-    
-    
+
+
     /**
      * Get the configured FeedFetcher.
      */
     public FeedFetcher getFeedFetcher();
-    
-        
+
+
     /**
      * Flush object states.
      */
     public void flush() throws PlanetException;
-    
-    
+
+
     /**
      * Initialize any resources necessary for this instance of Roller.
      */
     public void initialize() throws InitializationException;
-    
+
 
     /**
      * Release any resources associated with a session.
      */
     public void release();
-    
-    
+
+
     /**
      * Shutdown the application.
      */
     public void shutdown();
-    
+
 }
 

@@ -29,21 +29,21 @@ import org.apache.roller.weblogger.ui.rendering.RendererFactory;
  * RendererFactory for Velocity, creates VelocityRenderers.
  */
 public class VelocityRendererFactory implements RendererFactory {
-    
+
     private static Log log = LogFactory.getLog(VelocityRendererFactory.class);
-    
-    
+
+
     public Renderer getRenderer(Template template) {
-        
+
         Renderer renderer = null;
-        
+
         // nothing we can do with null values
         if(template.getTemplateLanguage() == null || template.getId() == null) {
             return null;
         }
-        
-        if("velocity".equals(template.getTemplateLanguage())) { 
-            
+
+        if("velocity".equals(template.getTemplateLanguage())) {
+
             // standard velocity template
             try {
                renderer = new VelocityRenderer(template);
@@ -51,11 +51,11 @@ public class VelocityRendererFactory implements RendererFactory {
                 // some kind of exception so we don't have a renderer
                 // we do catching/logging in VelocityRenderer constructor
                 return null;
-            }            
-            
+            }
+
         }
-        
+
         return renderer;
     }
-    
+
 }

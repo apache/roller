@@ -25,10 +25,10 @@ import java.io.InputStream;
  * Interface for retrieving database script.
  */
 public interface DatabaseScriptProvider {
-    
-    /** 
+
+    /**
      * Get an InputStream to a database script at the given path.
      */
     public InputStream getDatabaseScript(String path) throws Exception;
-    
+
 }

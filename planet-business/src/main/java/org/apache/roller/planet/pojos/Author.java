@@ -22,10 +22,10 @@ package org.apache.roller.planet.pojos;
  * Represents the author of an entry.
  */
 public class Author {
-    
+
     private String fullName = null;
     private String userName = null;
-    
+
 
     public String getFullName() {
         return fullName;
@@ -42,5 +42,5 @@ public class Author {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-    
+
 }

@@ -34,11 +34,11 @@ import org.apache.roller.weblogger.util.Utilities;
  * Represents a request to post a weblog entry comment.
  */
 public class WeblogCommentRequest extends WeblogRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogCommentRequest.class);
-    
+
     private static final String COMMENT_SERVLET = "/roller-ui/rendering/comment";
-    
+
     // lightweight attributes
     private String name = null;
     private String email = null;
@@ -46,71 +46,71 @@ public class WeblogCommentRequest extends WeblogRequest {
     private String content = null;
     private boolean notify = false;
     private String weblogAnchor = null;
-    
+
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
-    
-    
+
+
     public WeblogCommentRequest() {}
-    
-    
-    public WeblogCommentRequest(HttpServletRequest request) 
+
+
+    public WeblogCommentRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         String servlet = request.getServletPath();
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // was this request bound for the comment servlet?
         if(servlet == null || !COMMENT_SERVLET.equals(servlet)) {
             throw new InvalidRequestException("not a weblog comment request, "+
                     request.getRequestURL());
         }
-        
-        
+
+
         /*
          * parse path info.  we expect ...
          *
          * /entry/<anchor> - permalink
          */
         if(pathInfo != null && pathInfo.trim().length() > 0) {
-            
+
             // we should only ever get 2 path elements
             String[] pathElements = pathInfo.split("/");
             if(pathElements.length == 2) {
-                
+
                 String context = pathElements[0];
                 if("entry".equals(context)) {
                     try {
-                        this.weblogAnchor = 
+                        this.weblogAnchor =
                                 URLDecoder.decode(pathElements[1], "UTF-8");
                     } catch (UnsupportedEncodingException ex) {
                         // should never happen
                         log.error(ex);
                     }
-                    
+
                 } else {
                     throw new InvalidRequestException("bad path info, "+
                             request.getRequestURL());
                 }
-                
+
             } else {
                 throw new InvalidRequestException("bad path info, "+
                         request.getRequestURL());
             }
-            
+
         } else {
             // bad request
             throw new InvalidRequestException("bad path info, "+
                     request.getRequestURL());
         }
-        
-        
+
+
         /*
          * parse request parameters
          *
@@ -124,23 +124,23 @@ public class WeblogCommentRequest extends WeblogRequest {
         if(request.getParameter("name") != null) {
             this.name = Utilities.removeHTML(request.getParameter("name"));
         }
-        
+
         if(request.getParameter("email") != null) {
             this.email = Utilities.removeHTML(request.getParameter("email"));
         }
-        
+
         if(request.getParameter("url") != null) {
             this.url = Utilities.removeHTML(request.getParameter("url"));
         }
-        
+
         if(request.getParameter("content") != null) {
             this.content = request.getParameter("content");
         }
-        
+
         if(request.getParameter("notify") != null) {
             this.notify = true;
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("name = "+this.name);
             log.debug("email = "+this.email);
@@ -200,7 +200,7 @@ public class WeblogCommentRequest extends WeblogRequest {
     }
 
     public WeblogEntry getWeblogEntry() {
-        
+
         if(weblogEntry == null && weblogAnchor != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -209,12 +209,12 @@ public class WeblogCommentRequest extends WeblogRequest {
                 log.error("Error getting weblog entry "+weblogAnchor, ex);
             }
         }
-        
+
         return weblogEntry;
     }
 
     public void setWeblogEntry(WeblogEntry weblogEntry) {
         this.weblogEntry = weblogEntry;
     }
-    
+
 }

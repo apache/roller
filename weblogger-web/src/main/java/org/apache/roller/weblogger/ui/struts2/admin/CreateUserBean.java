@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.pojos.User;
  * Bean used by CreateUser action.
  */
 public class CreateUserBean {
-    
+
     private String id = null;
     private String userName = null;
     private String password = null;
@@ -41,10 +41,10 @@ public class CreateUserBean {
     private String timeZone = null;
     private Boolean enabled = Boolean.TRUE;
     private String activationCode = null;
-    
+
     private boolean administrator = false;
-    
-    
+
+
     public String getId() {
         return id;
     }
@@ -68,7 +68,7 @@ public class CreateUserBean {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public String getScreenName() {
         return screenName;
     }
@@ -76,7 +76,7 @@ public class CreateUserBean {
     public void setScreenName(String screenName) {
         this.screenName = screenName;
     }
-    
+
     public String getFullName() {
         return fullName;
     }
@@ -108,7 +108,7 @@ public class CreateUserBean {
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
-    
+
     public Boolean getEnabled() {
         return enabled;
     }
@@ -124,7 +124,7 @@ public class CreateUserBean {
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }
-    
+
     public boolean isAdministrator() {
         return administrator;
     }
@@ -132,10 +132,10 @@ public class CreateUserBean {
     public void setAdministrator(boolean administrator) {
         this.administrator = administrator;
     }
-    
-    
+
+
     public void copyTo(User dataHolder, Locale locale) {
-        
+
         dataHolder.setScreenName(this.screenName);
         dataHolder.setFullName(this.fullName);
         dataHolder.setEmailAddress(this.emailAddress);
@@ -144,8 +144,8 @@ public class CreateUserBean {
         dataHolder.setEnabled(new Boolean(this.enabled));
         dataHolder.setActivationCode(this.activationCode);
     }
-    
-    
+
+
     public void copyFrom(User dataHolder, Locale locale) {
 
         this.id = dataHolder.getId();
@@ -160,12 +160,12 @@ public class CreateUserBean {
         this.activationCode = dataHolder.getActivationCode();
 
         try {
-            GlobalPermission adminPerm = 
+            GlobalPermission adminPerm =
                 new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
             this.administrator = WebloggerFactory.getWeblogger().getUserManager()
                     .checkPermission(adminPerm, dataHolder);
 
         } catch (WebloggerException ex) {}
     }
-    
+
 }

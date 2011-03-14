@@ -40,7 +40,7 @@ public class MediaFileImageDim extends MediaFileBase {
 
     /**
      * Show form for choosing image dimension.
-     * 
+     *
      * @return String The result of the action.
      */
     @SkipValidation

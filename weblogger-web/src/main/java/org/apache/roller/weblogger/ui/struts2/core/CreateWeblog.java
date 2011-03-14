@@ -41,28 +41,28 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Allows user to create a new website.
  */
 public class CreateWeblog extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(CreateWeblog.class);
-    
+
     private CreateWeblogBean bean = new CreateWeblogBean();
-    
+
 
     public CreateWeblog() {
         this.pageTitle = "createWebsite.title";
     }
-    
-    
+
+
     // override default security, we do not require an action weblog
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     @SkipValidation
     public String execute() {
-        
+
         User user = getAuthenticatedUser();
-        
+
         try {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -78,18 +78,18 @@ public class CreateWeblog extends UIAction {
         } catch (WebloggerException ex) {
             log.error("error checking for existing weblogs count", ex);
         }
-        
+
         // pre-populate with some logical defaults
         getBean().setLocale(user.getLocale());
         getBean().setTimeZone(user.getTimeZone());
         getBean().setEmailAddress(user.getEmailAddress());
-        
+
         return INPUT;
     }
-    
-    
+
+
     public String save() {
-        
+
         User user = getAuthenticatedUser();
         try {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
@@ -106,11 +106,11 @@ public class CreateWeblog extends UIAction {
         } catch (WebloggerException ex) {
             log.error("error checking for existing weblogs count", ex);
         }
-        
+
         myValidate();
-        
+
         if(!hasActionErrors()) {
-            
+
             Weblog wd = new Weblog(
                     getBean().getHandle(),
                     user.getUserName(),
@@ -121,49 +121,49 @@ public class CreateWeblog extends UIAction {
                     getBean().getTheme(),
                     getBean().getLocale(),
                     getBean().getTimeZone());
-            
+
             // pick a weblog editor for this weblog
             String def = WebloggerRuntimeConfig.getProperty("users.editor.pages");
             String[] defs = Utilities.stringToStringArray(def,",");
             wd.setEditorPage(defs[0]);
-            
+
             try {
                 // add weblog and flush
                 WebloggerFactory.getWeblogger().getWeblogManager().addWeblog(wd);
                 WebloggerFactory.getWeblogger().flush();
-                
+
                 // tell the user their weblog was created
                 addMessage("createWebsite.created", getBean().getHandle());
-                
+
                 return SUCCESS;
-                
+
             } catch (WebloggerException e) {
                 log.error("ERROR adding weblog", e);
                 // TODO: error handling
                 addError(e.getMessage());
             }
-            
+
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     public void myValidate()  {
-        
+
         String allowed = WebloggerConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {
             allowed = Register.DEFAULT_ALLOWED_CHARS;
         }
-        
+
         // make sure handle only contains safe characters
         String safe = CharSetUtils.keep(getBean().getHandle(), allowed);
         if (!safe.equals(getBean().getHandle()) ) {
             addError("createWeblog.error.invalidHandle");
         }
-        
+
         // make sure theme was specified and is a valid value
-        
+
         // make sure handle isn't already taken
         if(!StringUtils.isEmpty(getBean().getHandle())) try {
             if (WebloggerFactory.getWeblogger().getWeblogManager()
@@ -178,14 +178,14 @@ public class CreateWeblog extends UIAction {
             addError("unexpected error");
         }
     }
-    
-    
+
+
     public List getThemes() {
         ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
         return themeMgr.getEnabledThemesList();
     }
-    
-    
+
+
     public CreateWeblogBean getBean() {
         return bean;
     }
@@ -193,5 +193,5 @@ public class CreateWeblog extends UIAction {
     public void setBean(CreateWeblogBean bean) {
         this.bean = bean;
     }
-    
+
 }

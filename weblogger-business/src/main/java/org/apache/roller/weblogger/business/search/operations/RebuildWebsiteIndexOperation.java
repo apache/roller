@@ -43,19 +43,19 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
-    
+
     //~ Static fields/initializers =============================================
-    
+
     private static Log mLogger =
         LogFactory.getFactory().getInstance(RebuildWebsiteIndexOperation.class);
-    
+
     //~ Instance fields ========================================================
-    
+
     private Weblog website;
     private Weblogger roller;
-    
+
     //~ Constructors ===========================================================
-    
+
     /**
      * Create a new operation that will recreate an index.
      *
@@ -66,13 +66,13 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         this.roller = roller;
         this.website = website;
     }
-    
+
     //~ Methods ================================================================
-    
+
     public void doRun() {
 
         Date start = new Date();
-        
+
         // since this operation can be run on a separate thread we must treat
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
@@ -89,7 +89,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         }
 
         IndexReader reader = beginDeleting();
-        
+
         try {
             if (reader != null) {
                 Term tWebsite = null;
@@ -111,14 +111,14 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         } finally {
             endDeleting();
         }
-        
+
         IndexWriter writer = beginWriting();
-        
+
         try {
             if (writer != null) {
                 WeblogEntryManager weblogManager = roller.getWeblogEntryManager();
-                List entries = weblogManager .getWeblogEntries(                        
-                        website,                   // website            
+                List entries = weblogManager .getWeblogEntries(
+                        website,                   // website
                         null,
                         null,                      // startDate
                         null,                      // endDate
@@ -126,7 +126,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                         null,WeblogEntry.PUBLISHED, // status
                         null,                      // text
                         null,                      // sortby (null means pubTime)
-                        null, 
+                        null,
                         null,
                         0, -1);     // offset, length, locale
                 mLogger.debug("Entries to index: " + entries.size());
@@ -146,10 +146,10 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
             endWriting();
             if (roller != null) roller.release();
         }
-        
+
         Date end = new Date();
         double length = (end.getTime() - start.getTime()) / (double) 1000;
-        
+
         if (website == null) {
             mLogger.info(
                     "Completed rebuilding index for all users in '" + length + "' secs");

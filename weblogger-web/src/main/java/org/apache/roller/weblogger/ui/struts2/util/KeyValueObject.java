@@ -23,13 +23,13 @@ package org.apache.roller.weblogger.ui.struts2.util;
  * A simple object to maintain a key/value pair.
  */
 public class KeyValueObject {
-    
+
     private Object key = null;
     private Object value = null;
-    
-    
+
+
     public KeyValueObject() {}
-    
+
     public KeyValueObject(Object key, Object value) {
         this.setKey(key);
         this.setValue(value);
@@ -50,5 +50,5 @@ public class KeyValueObject {
     public void setValue(Object value) {
         this.value = value;
     }
-    
+
 }

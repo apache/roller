@@ -62,7 +62,7 @@ public class MediaFile {
     private FileContent content;
     private FileContent thumbnail;
 
-    
+
     // TODO: anchor to be populated
     private String      anchor;
 
@@ -133,7 +133,7 @@ public class MediaFile {
 
     /**
      * Date uploaded
-     * 
+     *
      */
     public Timestamp getDateUploaded() {
         return dateUploaded;

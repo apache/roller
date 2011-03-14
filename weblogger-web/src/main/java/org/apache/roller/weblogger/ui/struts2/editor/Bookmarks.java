@@ -41,48 +41,48 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * List bookmarks and folders and allow for moving them around and deleting them.
  */
 public class Bookmarks extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(Bookmarks.class);
-    
+
     // the id of folder being viewed
     private String folderId = null;
-    
+
     // the folder being viewed
     private WeblogBookmarkFolder folder = null;
-    
+
     // the list of folders to move/delete
     private String[] selectedFolders = null;
-    
+
     // the list of bookmarks to move/delete
     private String[] selectedBookmarks = null;
-    
+
     // the target folder to move items to
     private String targetFolderId = null;
-    
+
     // all folders from the action weblog
     private Set allFolders = Collections.EMPTY_SET;
-    
+
     // path of folders representing selected folders hierarchy
     private List folderPath = Collections.EMPTY_LIST;
-    
-    
+
+
     public Bookmarks() {
         this.actionName = "bookmarks";
         this.desiredMenu = "editor";
         this.pageTitle = "bookmarksForm.rootTitle";
     }
-    
-    
+
+
     // admin perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
+
     public void myPrepare() {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            if(!StringUtils.isEmpty(getFolderId()) && 
+            if(!StringUtils.isEmpty(getFolderId()) &&
                     !"/".equals(getFolderId())) {
                 setFolder(bmgr.getFolder(getFolderId()));
             } else {
@@ -92,17 +92,17 @@ public class Bookmarks extends UIAction {
             log.error("Error looking up folder", ex);
         }
     }
-    
-    
+
+
     /**
      * Present the bookmarks and subfolders available in the folder specified
      * by the request.
      */
     public String execute() {
-        
+
         // build list of folders for display
         TreeSet allFolders = new TreeSet(new FolderPathComparator());
-        
+
         try {
             // Build list of all folders, except for current one, sorted by path.
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
@@ -112,7 +112,7 @@ public class Bookmarks extends UIAction {
                     allFolders.add(fd);
                 }
             }
-            
+
             // build folder path
             WeblogBookmarkFolder parent = getFolder().getParent();
             if(parent != null) {
@@ -129,24 +129,24 @@ public class Bookmarks extends UIAction {
             // TODO: i18n
             addError("Error building folders list");
         }
-        
+
         if (allFolders.size() > 0) {
             setAllFolders(allFolders);
         }
 
         return LIST;
     }
-    
-    
+
+
     /**
      * Delete folders and bookmarks.
      */
     public String delete() {
-        
+
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
+
         log.debug("Deleting selected folders and bookmarks.");
-        
+
         try {
             String folders[] = getSelectedFolders();
             if (null != folders) {
@@ -157,7 +157,7 @@ public class Bookmarks extends UIAction {
                     bmgr.removeFolder(fd); // removes child folders and bookmarks too
                 }
             }
-            
+
             WeblogBookmark bookmark = null;
             String bookmarks[] = getSelectedBookmarks();
             if (null != bookmarks) {
@@ -168,42 +168,42 @@ public class Bookmarks extends UIAction {
                     bmgr.removeBookmark(bookmark);
                 }
             }
-            
+
             // flush changes
             WebloggerFactory.getWeblogger().flush();
-            
+
             // notify caches
             CacheManager.invalidate(getActionWeblog());
-            
+
         } catch (WebloggerException ex) {
             log.error("Error doing folder/bookmark deletes", ex);
             // TODO: i18n
             addError("Error doing folder/bookmark deletes");
         }
-        
+
         return execute();
     }
-    
-    
+
+
     /**
      * Move folders and bookmarks to a new folder.
      */
     public String move() {
-        
+
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            
+
             log.debug("Moving folders and bookmarks to folder - "+getTargetFolderId());
-            
+
             // Move folders to new parent folder.
             String folders[] = getSelectedFolders();
             WeblogBookmarkFolder parent = bmgr.getFolder(getTargetFolderId());
             if (null != folders) {
                 for (int i = 0; i < folders.length; i++) {
                     WeblogBookmarkFolder fd = bmgr.getFolder(folders[i]);
-                    
+
                     // Don't move folder into itself.
-                    if (!fd.getId().equals(parent.getId()) && 
+                    if (!fd.getId().equals(parent.getId()) &&
                             !parent.descendentOf(fd)) {
                         bmgr.moveFolder(fd, parent);
                     } else {
@@ -211,7 +211,7 @@ public class Bookmarks extends UIAction {
                     }
                 }
             }
-            
+
             // Move bookmarks to new parent folder.
             String bookmarks[] = getSelectedBookmarks();
             if (null != bookmarks) {
@@ -222,22 +222,22 @@ public class Bookmarks extends UIAction {
                     bmgr.saveBookmark(bd);
                 }
             }
-            
+
             // flush changes
             WebloggerFactory.getWeblogger().flush();
-            
+
             // notify caches
             CacheManager.invalidate(getActionWeblog());
-            
+
         } catch (WebloggerException e) {
             log.error("Error doing folder/bookmark move", e);
             addError("bookmarksForm.error.move");
         }
-        
+
         return execute();
     }
-    
-    
+
+
     private static final class FolderPathComparator implements Comparator {
         public int compare(Object o1, Object o2) {
             WeblogBookmarkFolder f1 = (WeblogBookmarkFolder)o1;
@@ -245,7 +245,7 @@ public class Bookmarks extends UIAction {
             return f1.getPath().compareTo(f2.getPath());
         }
     }
-    
+
 
     public String getFolderId() {
         return folderId;
@@ -302,5 +302,5 @@ public class Bookmarks extends UIAction {
     public void setFolderPath(List folderPath) {
         this.folderPath = folderPath;
     }
-    
+
 }

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 /**
  * LRU cache with per-entry timeout logic.
- * 
+ *
  * @author Dave Johnson
  */
 public class LRUCache2
@@ -35,7 +35,7 @@ public class LRUCache2
 
     /**
      * Create cache.
-     * 
+     *
      * @param maxsize
      *            Maximum number of entries in cache.
      * @param timeout
@@ -50,7 +50,7 @@ public class LRUCache2
 
     /**
      * Create cache that uses custom environment.
-     * 
+     *
      * @param maxsize
      *            Maximum number of entries in cache.
      * @param timeout
@@ -157,7 +157,7 @@ public class LRUCache2
             return value;
         }
     }
-    
+
     // David Flanaghan: http://www.davidflanagan.com/blog/000014.html
     private static class LRULinkedHashMap extends LinkedHashMap
     {

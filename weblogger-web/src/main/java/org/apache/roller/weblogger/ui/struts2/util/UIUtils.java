@@ -30,41 +30,41 @@ import java.util.TimeZone;
  * A utilities class used by the Weblogger UI.
  */
 public final class UIUtils {
-    
+
     private static final List locales;
     private static final List timeZones;
-    
-    
+
+
     // load up the locales and time zones lists
     static {
         // build locales list
         locales = Arrays.asList(Locale.getAvailableLocales());
         Collections.sort(locales, new LocaleComparator());
-        
+
         // build time zones list
         timeZones = Arrays.asList(TimeZone.getAvailableIDs());
         Collections.sort(timeZones);
     }
-    
-    
+
+
     public static String getLocale(String localeName) {
-        Locale locale = new Locale(localeName,localeName);        
-        return locale.toString();        
+        Locale locale = new Locale(localeName,localeName);
+        return locale.toString();
     }
-    
+
     public static List getLocales() {
         return locales;
     }
-    
+
     public static String getTimeZone(String timeZoneName) {
-        return TimeZone.getTimeZone(timeZoneName).getID();                
+        return TimeZone.getTimeZone(timeZoneName).getID();
     }
-    
+
     public static List getTimeZones() {
         return timeZones;
     }
-    
-    
+
+
     // special comparator for sorting locales
     private static final class LocaleComparator implements Comparator {
         public int compare(Object obj1, Object obj2) {
@@ -80,5 +80,5 @@ public final class UIUtils {
             return 0;
         }
     }
-    
+
 }

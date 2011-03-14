@@ -41,16 +41,16 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * A collection of base functionality used by entry actions.
  */
 public abstract class EntryBase extends UIAction {
-   
+
     private static Log log = LogFactory.getLog(EntryBase.class);
-    
-    
+
+
     /**
      * Trigger reindexing of modified entry.
      */
     protected void reindexEntry(WeblogEntry entry) {
         IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
-        
+
         // if published, index the entry
         if (entry.isPublished()) {
             try {
@@ -60,8 +60,8 @@ public abstract class EntryBase extends UIAction {
             }
         }
     }
-    
-    
+
+
     /**
      * Get recent weblog entries using request parameters to determine
      * username, date, and category name parameters.
@@ -72,7 +72,7 @@ public abstract class EntryBase extends UIAction {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
             entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
-                    
+
                     getActionWeblog(), // userName
                     null,
                     null,              // startDate
@@ -89,8 +89,8 @@ public abstract class EntryBase extends UIAction {
         }
         return entries;
     }
-    
-    
+
+
     /**
      * Get recent weblog entries using request parameters to determine
      * username, date, and category name parameters.
@@ -101,7 +101,7 @@ public abstract class EntryBase extends UIAction {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
             entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
-                    
+
                     getActionWeblog(), // userName
                     null,
                     null,              // startDate
@@ -118,7 +118,7 @@ public abstract class EntryBase extends UIAction {
         }
         return entries;
     }
-    
+
     /**
      * Get recent weblog entries using request parameters to determine
      * username, date, and category name parameters.
@@ -129,7 +129,7 @@ public abstract class EntryBase extends UIAction {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
             entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
-                    
+
                     getActionWeblog(),
                     null,
                     null,              // startDate
@@ -146,7 +146,7 @@ public abstract class EntryBase extends UIAction {
         }
         return entries;
     }
-    
+
     /**
      * Get recent weblog entries using request parameters to determine
      * username, date, and category name parameters.
@@ -157,7 +157,7 @@ public abstract class EntryBase extends UIAction {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
             entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
-                    
+
                     getActionWeblog(),
                     null,
                     null,              // startDate
@@ -174,14 +174,14 @@ public abstract class EntryBase extends UIAction {
         }
         return entries;
     }
-    
-    
+
+
     public List<WeblogEntryPlugin> getEntryPlugins() {
         List<WeblogEntryPlugin> availablePlugins = Collections.EMPTY_LIST;
         try {
             PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
             Map<String, WeblogEntryPlugin> plugins = ppmgr.getWeblogEntryPlugins(getActionWeblog());
-            
+
             if(plugins.size() > 0) {
                 availablePlugins = new ArrayList();
                 for(WeblogEntryPlugin plugin : plugins.values()) {
@@ -193,21 +193,21 @@ public abstract class EntryBase extends UIAction {
         }
         return availablePlugins;
     }
-    
-    
+
+
     public WeblogEntryEditor getEditor() {
         UIPluginManager pmgr = RollerContext.getUIPluginManager();
         return pmgr.getWeblogEntryEditor(getActionWeblog().getEditorPage());
     }
-    
-    
+
+
     public boolean isUserAnAuthor() {
         return getActionWeblog().hasUserPermission(getAuthenticatedUser(),WeblogPermission.POST);
     }
-    
-    
+
+
     public String getJsonAutocompleteUrl() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogTagsJsonURL(getActionWeblog(), false, 0);
     }
-    
+
 }

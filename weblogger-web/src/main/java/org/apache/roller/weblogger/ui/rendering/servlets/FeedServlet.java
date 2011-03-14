@@ -133,8 +133,8 @@ public class FeedServlet extends HttpServlet {
         if (WebloggerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds") &&
             accepts != null && accepts.indexOf("*/*") != -1 &&
             userAgent != null && userAgent.startsWith("Mozilla")) {
-            // client is a browser and feed style is enabled so we want 
-            // browsers to load the page rather than popping up the download 
+            // client is a browser and feed style is enabled so we want
+            // browsers to load the page rather than popping up the download
             // dialog, so we provide a content-type that browsers will display
             response.setContentType("text/xml");
         } else if("rss".equals(feedRequest.getFormat())) {
@@ -169,27 +169,27 @@ public class FeedServlet extends HttpServlet {
         } else {
             log.debug("MISS "+cacheKey);
         }
-        
-        
+
+
         // validation.  make sure that request input makes sense.
         boolean invalid = false;
         if(feedRequest.getLocale() != null) {
-            
+
             // locale view only allowed if weblog has enabled it
             if(!feedRequest.getWeblog().isEnableMultiLang()) {
                 invalid = true;
             }
-            
+
         }
         if(feedRequest.getWeblogCategoryName() != null) {
-            
+
             // category specified.  category must exist.
             if(feedRequest.getWeblogCategory() == null) {
                 invalid = true;
             }
-            
+
         } else if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
-            
+
             try {
                 // tags specified.  make sure they exist.
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -198,19 +198,19 @@ public class FeedServlet extends HttpServlet {
                 invalid = true;
             }
         }
-        
+
         if(invalid) {
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
+
         // do we need to force a specific locale for the request?
         if(feedRequest.getLocale() == null && !weblog.isShowAllLangs()) {
             feedRequest.setLocale(weblog.getLocale());
         }
-        
+
         // looks like we need to render content
         HashMap model = new HashMap();
         String pageId = null;
@@ -236,7 +236,7 @@ public class FeedServlet extends HttpServlet {
 
             // define url strategy
             initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());
-            
+
             // Load models for feeds
             String feedModels = WebloggerConfig.getProperty("rendering.feedModels");
             ModelLoader.loadModels(feedModels, model, initData, true);
@@ -250,11 +250,11 @@ public class FeedServlet extends HttpServlet {
 
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
-            
+
             // Load search models if search feed
-            if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {               
+            if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
                 ModelLoader.loadModels(SearchResultsFeedModel.class.getName(), model, initData, true);
-            }                        
+            }
 
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);

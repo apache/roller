@@ -38,21 +38,21 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Test Weblogger Bookmark Management.
  */
 public class BookmarkTest extends TestCase {
-    
+
     public static Log log = LogFactory.getLog(BookmarkTest.class);
-    
+
     User testUser = null;
     Weblog testWeblog = null;
-    
-    
+
+
     /**
      * All tests in this suite require a user and a weblog.
      */
     public void setUp() throws Exception {
-        
+
         // setup weblogger
         TestUtils.setupWeblogger();
-        
+
         try {
             testUser = TestUtils.setupUser("bkmrkTestUser");
             testWeblog = TestUtils.setupWeblog("bkmrkTestWeblog", testUser);
@@ -62,9 +62,9 @@ public class BookmarkTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
     public void tearDown() throws Exception {
-        
+
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
             TestUtils.teardownUser(testUser.getUserName());
@@ -74,26 +74,26 @@ public class BookmarkTest extends TestCase {
             throw new Exception("Test teardown failed", ex);
         }
     }
-    
+
     public Weblogger getRoller() {
         return WebloggerFactory.getWeblogger();
     }
-    
-    
+
+
     public void testBookmarkCRUD() throws Exception {
-        
+
         BookmarkManager bmgr = getRoller().getBookmarkManager();
-        
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
-        
+
         WeblogBookmarkFolder folder = new WeblogBookmarkFolder(root, "TestFolder2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(folder);
         TestUtils.endSession(true);
-        
+
         // query for folder again since session ended
         folder = bmgr.getFolder(folder.getId());
-        
+
         // Add bookmark by adding to folder
         WeblogBookmark bookmark1 = new WeblogBookmark(
                 folder,
@@ -106,7 +106,7 @@ public class BookmarkTest extends TestCase {
                 "test.jpg");
         bookmark1.setFolder(folder);
         folder.addBookmark(bookmark1);
-        
+
         // Add another bookmark
         WeblogBookmark bookmark2 = new WeblogBookmark(
                 folder,
@@ -119,51 +119,51 @@ public class BookmarkTest extends TestCase {
                 "test.jpf");
         bookmark2.setFolder(folder);
         folder.addBookmark(bookmark2);
-        
+
         TestUtils.endSession(true);
-        
+
         WeblogBookmarkFolder testFolder = null;
         WeblogBookmark bookmarkb = null, bookmarka = null;
-        
+
         // See that two bookmarks were stored
         testFolder = bmgr.getFolder(folder.getId());
         assertEquals(2, testFolder.getBookmarks().size());
         Iterator<WeblogBookmark> iter = testFolder.getBookmarks().iterator();
         bookmarka = iter.next();
         bookmarkb = iter.next();
-        
+
         // Remove one bookmark
-        bmgr.removeBookmark(bookmarka);        
-        bmgr.removeBookmark(bookmarkb);        
+        bmgr.removeBookmark(bookmarka);
+        bmgr.removeBookmark(bookmarkb);
         bmgr.saveFolder(testFolder);
         TestUtils.endSession(true);
-                
+
         // Folder should now contain one bookmark
         assertNull(bmgr.getBookmark(bookmarka.getId()));
         assertNull(bmgr.getBookmark(bookmarkb.getId()));
         testFolder = bmgr.getFolder(folder.getId());
         assertEquals(0, testFolder.getBookmarks().size());
-        
+
         // Remove folder
         bmgr.removeFolder(testFolder);
         TestUtils.endSession(true);
-        
+
         // Folder and one remaining bookmark should be gone
         assertNull( bmgr.getBookmark(bookmarkb.getId()) );
         assertNull( bmgr.getFolder(folder.getId()) );
     }
-    
-    
+
+
     /**
      * Test all bookmark lookup methods.
      */
     public void _testBookmarkLookups() throws Exception {
-        
+
         BookmarkManager bmgr = getRoller().getBookmarkManager();
-        
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
-        
+
         // add some folders
         WeblogBookmarkFolder f1 = new WeblogBookmarkFolder(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f1);
@@ -171,11 +171,11 @@ public class BookmarkTest extends TestCase {
         bmgr.saveFolder(f2);
         WeblogBookmarkFolder f3 = new WeblogBookmarkFolder(root, "f3", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f3);
-        
+
         TestUtils.endSession(true);
-        
-        f1 = bmgr.getFolder(f1.getId());              
-        f2 = bmgr.getFolder(f2.getId());              
+
+        f1 = bmgr.getFolder(f1.getId());
+        f2 = bmgr.getFolder(f2.getId());
 
         // add some bookmarks
         WeblogBookmark b1 = new WeblogBookmark(
@@ -193,31 +193,31 @@ public class BookmarkTest extends TestCase {
                 "http://example.com", "http://example.com/rss",
                 new Integer(1), new Integer(1), "image.gif");
         bmgr.saveBookmark(b3);
-        
+
         TestUtils.endSession(true);
-        
+
         // test lookup by id
         WeblogBookmark testBookmark = bmgr.getBookmark(b1.getId());
         assertNotNull(testBookmark);
         assertEquals("b1", testBookmark.getName());
-        
+
         // test lookup of all bookmarks in single folder
         WeblogBookmarkFolder testFolder = bmgr.getFolder(f1.getId());
         List allBookmarks = bmgr.getBookmarks(testFolder, false);
         assertNotNull(allBookmarks);
         assertEquals(2, allBookmarks.size());
-        
+
         // getBookmarks(folder, false) should also match folder.getBookmarks()
         assertEquals(allBookmarks.size(), testFolder.getBookmarks().size());
-        
+
         // test lookup of all bookmarks in folder branch (including subfolders)
         testFolder = bmgr.getFolder(f1.getId());
         allBookmarks = bmgr.getBookmarks(testFolder, true);
         assertNotNull(allBookmarks);
         assertEquals(3, allBookmarks.size());
     }
-    
-    
+
+
     /**
      * Creates folder tree like this:
      *    root/
@@ -235,7 +235,7 @@ public class BookmarkTest extends TestCase {
      */
     public void _testMoveFolderContents() throws Exception {
         BookmarkManager bmgr = getRoller().getBookmarkManager();
-        try {        
+        try {
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
@@ -315,7 +315,7 @@ public class BookmarkTest extends TestCase {
             // check that paths and child folders are correct
             assertEquals("/dest/f1", f1.getPath());
             assertEquals(1, dest.getFolders().size());
-        
+
             bmgr.removeFolder(f1);
             bmgr.removeFolder(dest);
 
@@ -326,25 +326,25 @@ public class BookmarkTest extends TestCase {
             TestUtils.endSession(true);
         }
     }
-    
-    
+
+
     public void _testBookmarkImport() throws Exception {
-        
+
         InputStream fis = this.getClass().getResourceAsStream("/bookmarks.opml");
         getRoller().getBookmarkManager().importBookmarks(
                 TestUtils.getManagedWebsite(testWeblog), "ZZZ_imports_ZZZ", fileToString(fis));
         TestUtils.endSession(true);
-        
+
         WeblogBookmarkFolder fd = null;
-        
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         fd = getRoller().getBookmarkManager().getFolder(testWeblog, "ZZZ_imports_ZZZ");
         assertTrue(fd.retrieveBookmarks(true).size() > 0 );
         getRoller().getBookmarkManager().removeFolder(fd);
         TestUtils.endSession(true);
     }
-    
-    
+
+
     private String fileToString( InputStream is ) throws java.io.IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         String s = null;
@@ -354,5 +354,5 @@ public class BookmarkTest extends TestCase {
         }
         return sb.toString();
     }
-    
+
 }

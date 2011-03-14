@@ -25,7 +25,7 @@ import org.apache.roller.weblogger.pojos.WeblogBookmark;
  * Bean for managing bookmark data.
  */
 public class BookmarkBean {
-    
+
     private String id = null;
     private String name = null;
     private String description = null;
@@ -34,73 +34,73 @@ public class BookmarkBean {
     private Integer priority = new Integer(0);
     private String image = null;
     private String feedUrl = null;
-    
-    
+
+
     public String getId() {
         return this.id;
     }
-     
+
     public void setId( String id ) {
         this.id = id;
     }
-    
+
     public String getName() {
         return this.name;
     }
-    
+
     public void setName( String name ) {
         this.name = name;
     }
-    
+
     public String getDescription() {
         return this.description;
     }
-    
+
     public void setDescription( String description ) {
         this.description = description;
     }
-    
+
     public String getUrl() {
         return this.url;
     }
-    
+
     public void setUrl( String url ) {
         this.url = url;
     }
-    
+
     public Integer getWeight() {
         return this.weight;
     }
-    
+
     public void setWeight( Integer weight ) {
         this.weight = weight;
     }
-    
+
     public Integer getPriority() {
         return this.priority;
     }
-    
+
     public void setPriority( Integer priority ) {
         this.priority = priority;
     }
-    
+
     public String getImage() {
         return this.image;
     }
-    
+
     public void setImage( String image ) {
         this.image = image;
     }
-    
+
     public String getFeedUrl() {
         return this.feedUrl;
     }
-    
+
     public void setFeedUrl( String feedUrl ) {
         this.feedUrl = feedUrl;
     }
-    
-    
+
+
     public void copyTo(WeblogBookmark dataHolder) {
         dataHolder.setName(this.name);
         dataHolder.setDescription(this.description);
@@ -110,8 +110,8 @@ public class BookmarkBean {
         dataHolder.setImage(this.image);
         dataHolder.setFeedUrl(this.feedUrl);
     }
-    
-    
+
+
     public void copyFrom(WeblogBookmark dataHolder) {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
@@ -122,5 +122,5 @@ public class BookmarkBean {
         this.image = dataHolder.getImage();
         this.feedUrl = dataHolder.getFeedUrl();
     }
-    
+
 }

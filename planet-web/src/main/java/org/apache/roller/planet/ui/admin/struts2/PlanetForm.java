@@ -37,25 +37,25 @@ import org.apache.roller.planet.ui.core.struts2.PlanetActionSupport;
  * TODO: validation and security.
  */
 public class PlanetForm extends PlanetActionSupport implements Preparable {
-    
+
     private static Log log = LogFactory.getLog(PlanetForm.class);
-    
+
     // the objects to work on
     private Planet planet = null;
     private PlanetGroup group = null;
-    
+
     // form fields
     private String planetid = null;
     private String groupid = null;
-    
-    
+
+
     /**
      * Load relevant form data if possible.
      */
     public void prepare() throws Exception {
-        
+
         PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
-        
+
         // load existing planet
         if(getPlanetid() != null && !"".equals(getPlanetid())) {
             log.debug("Loading Planet ... "+getPlanetid());
@@ -66,26 +66,26 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
             this.planet = new Planet();
         }
     }
-    
-    
+
+
     public String execute() {
         return INPUT;
     }
-    
-    
+
+
     // TODO: Validation - check that planet handle is unique
     // TODO: Validation - make sure html is not allowed in handle or title
     public String save() {
-        
+
         if(this.planet != null) {
             // save planet
             log.debug("Saving Planet ...");
-            
+
             try {
                 PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
                 pmgr.savePlanet(this.planet);
                 PlanetFactory.getPlanet().flush();
-                
+
                 // need to set planetid attribute
                 setPlanetid(this.planet.getId());
             } catch (PlanetException ex) {
@@ -93,7 +93,7 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
                 setError("PlanetForm.error.saveFailed");
                 return INPUT;
             }
-            
+
             setSuccess("PlanetForm.message.saveSucceeded");
             return INPUT;
         } else {
@@ -102,14 +102,14 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
         }
 
     }
-    
-    
+
+
     public String deleteGroup() {
-        
+
         if(getGroupid() != null && !"".equals(getGroupid())) {
             // delete a planet group
             log.debug("Deleting Planet Group ... "+getGroupid());
-            
+
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
             try {
                 PlanetGroup group = pmgr.getGroupById(getGroupid());
@@ -118,7 +118,7 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
                 pmgr.savePlanet(this.planet);
                 pmgr.deleteGroup(group);
                 PlanetFactory.getPlanet().flush();
-                
+
                 setSuccess("PlanetForm.message.groupDeleteSucceeded", group.getHandle());
                 return INPUT;
             } catch (PlanetException ex) {
@@ -126,7 +126,7 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
                 setError("PlanetForm.error.groupDeleteFailed", getGroupid());
                 return INPUT;
             }
-            
+
         } else {
             setError("PlanetForm.error.groupNull");
             return INPUT;
@@ -148,7 +148,7 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
     public void setGroupid(String groupid) {
         this.groupid = groupid;
     }
-    
+
     public Planet getPlanet() {
         return planet;
     }
@@ -156,5 +156,5 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
     public void setPlanet(Planet planet) {
         this.planet = planet;
     }
-    
+
 }

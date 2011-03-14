@@ -26,30 +26,30 @@ import org.apache.commons.logging.LogFactory;
  * An LRU cache where entries expire after a given timeout period.
  */
 public class ExpiringLRUCacheImpl extends LRUCacheImpl {
-    
+
     private static Log log = LogFactory.getLog(ExpiringLRUCacheImpl.class);
-    
+
     private long timeout = 0;
-    
-    
+
+
     protected ExpiringLRUCacheImpl(String id) {
-        
+
         super(id);
         this.timeout = 60 * 60 * 1000;
     }
-    
-    
+
+
     protected ExpiringLRUCacheImpl(String id, int maxsize, long timeout) {
-        
+
         super(id, maxsize);
-        
+
         // timeout is specified in seconds; only positive values allowed
         if(timeout > 0) {
             this.timeout = timeout * 1000;
         }
     }
-    
-    
+
+
     /**
      * Store an entry in the cache.
      *
@@ -58,12 +58,12 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
      */
     @Override
     public synchronized void put(String key, Object value) {
-        
+
         ExpiringCacheEntry entry = new ExpiringCacheEntry(value, this.timeout);
         super.put(key, entry);
     }
-    
-    
+
+
     /**
      * Retrieve an entry from the cache.
      *
@@ -72,18 +72,18 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
      */
     @Override
     public synchronized Object get(String key) {
-        
+
         Object value = null;
         ExpiringCacheEntry entry = null;
-        
+
         synchronized(this) {
             entry = (ExpiringCacheEntry) super.get(key);
         }
-        
+
         if (entry != null) {
-            
+
             value = entry.getValue();
-            
+
             // if the value is null then that means this entry expired
             if (value == null) {
                 log.debug("EXPIRED ["+key+"]");
@@ -91,8 +91,8 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
                 super.remove(key);
             }
         }
-        
+
         return value;
     }
-    
+
 }

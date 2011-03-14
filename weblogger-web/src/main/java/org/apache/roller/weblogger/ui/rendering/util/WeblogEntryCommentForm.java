@@ -28,27 +28,27 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
  * permalink page.  We use this class to manage the interaction with that form.
  */
 public class WeblogEntryCommentForm {
-    
+
     private boolean error = false;
     private String message = null;
-    
+
     private String name = "";
     private String email = "";
     private String url = "";
     private String content = "";
     private boolean notify = false;
-    
+
     private WeblogEntryComment previewComment = null;
-    
-    
+
+
     public WeblogEntryCommentForm() {}
-    
-    
+
+
     public void setPreview(WeblogEntryComment preview) {
         this.previewComment = preview;
         setData(preview);
     }
-    
+
     public void setData(WeblogEntryComment comment) {
         this.name = comment.getName();
         this.email = comment.getEmail();
@@ -56,21 +56,21 @@ public class WeblogEntryCommentForm {
         this.content = comment.getContent();
         this.notify = comment.getNotify().booleanValue();
     }
-    
+
     public void setError(String errorMessage) {
         this.error = true;
         this.message = errorMessage;
     }
-    
+
     public WeblogEntryCommentWrapper getPreviewComment() {
         // NOTE: no need for url strategy when wrapping preview comment
         return WeblogEntryCommentWrapper.wrap(previewComment, null);
     }
-    
+
     public boolean isPreview() {
         return (this.previewComment != null);
     }
-    
+
     public String getName() {
         return StringEscapeUtils.escapeHtml(name);
     }
@@ -126,5 +126,5 @@ public class WeblogEntryCommentForm {
     public void setMessage(String message) {
         this.message = message;
     }
-    
+
 }

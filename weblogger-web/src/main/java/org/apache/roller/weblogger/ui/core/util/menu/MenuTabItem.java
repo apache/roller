@@ -23,12 +23,12 @@ package org.apache.roller.weblogger.ui.core.util.menu;
  * Items in a Tab.
  */
 public class MenuTabItem {
-    
+
     private String key = null;
     private String action = null;
     private boolean selected = false;
-    
-    
+
+
     public String getKey() {
         return key;
     }
@@ -52,5 +52,5 @@ public class MenuTabItem {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
-    
+
 }

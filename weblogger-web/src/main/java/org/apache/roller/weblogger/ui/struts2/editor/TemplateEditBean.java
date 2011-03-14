@@ -27,7 +27,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
  * Form bean for TemplateEdit action.
  */
 public class TemplateEditBean {
-    
+
     private String id = null;
     private String name = null;
     private String description = null;
@@ -38,93 +38,93 @@ public class TemplateEditBean {
     private boolean hidden = false;
     private Boolean autoContentType = Boolean.TRUE;
     private String manualContentType = null;
-    
-    
+
+
     public String getId() {
         return this.id;
     }
-    
+
     public void setId( String id ) {
         this.id = id;
     }
-    
+
     public String getName() {
         return this.name;
     }
-    
+
     public void setName( String name ) {
         this.name = name;
     }
-    
+
     public String getDescription() {
         return this.description;
     }
-    
+
     public void setDescription( String description ) {
         this.description = description;
     }
-    
+
     public String getLink() {
         return this.link;
     }
-    
+
     public void setLink( String link ) {
         this.link = link;
     }
-    
+
     public String getContents() {
         return this.contents;
     }
-    
+
     public void setContents( String contents ) {
         this.contents = contents;
     }
-    
+
     public String getTemplateLanguage() {
         return this.templateLanguage;
     }
-    
+
     public void setTemplateLanguage( String templateLanguage ) {
         this.templateLanguage = templateLanguage;
     }
-    
+
     public boolean isNavbar() {
         return this.navbar;
     }
-    
+
     public void setNavbar( boolean navbar ) {
         this.navbar = navbar;
     }
-    
+
     public boolean isHidden() {
         return this.hidden;
     }
-    
+
     public void setHidden( boolean hidden ) {
         this.hidden = hidden;
     }
-    
+
     public Boolean getAutoContentType() {
         return autoContentType;
     }
-    
+
     public void setAutoContentType(Boolean autoContentType) {
         this.autoContentType = autoContentType;
     }
-    
+
     public String getManualContentType() {
         return manualContentType;
     }
-    
+
     public void setManualContentType(String manualContentType) {
         this.manualContentType = manualContentType;
     }
-    
-    
+
+
     public void copyTo(WeblogTemplate dataHolder) {
-        
+
         dataHolder.setContents(getContents());
-        
+
         // the rest of the template properties can only be modified when
         // dealing with a CUSTOM weblog template
         if(dataHolder.isCustom()) {
@@ -136,10 +136,10 @@ public class TemplateEditBean {
             dataHolder.setTemplateLanguage(getTemplateLanguage());
         }
     }
-    
-    
+
+
     public void copyFrom(WeblogTemplate dataHolder) {
-        
+
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();
@@ -148,11 +148,11 @@ public class TemplateEditBean {
         this.navbar = dataHolder.isNavbar();
         this.hidden = dataHolder.isHidden();
         this.templateLanguage = dataHolder.getTemplateLanguage();
-        
+
         setManualContentType(dataHolder.getOutputContentType());
         if(getManualContentType() != null) {
             setAutoContentType(Boolean.FALSE);
         }
     }
-    
+
 }

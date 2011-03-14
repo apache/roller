@@ -52,8 +52,8 @@ import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
  * Base implementation of a ThemeManager.
- * 
- * This particular implementation reads theme data off the filesystem 
+ *
+ * This particular implementation reads theme data off the filesystem
  * and assumes that those themes are not changable at runtime.
  */
 @com.google.inject.Singleton
@@ -314,7 +314,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
                 MediaFile oldmf = fileMgr.getMediaFileByOriginalPath(website, justPath + "/" + justName);
                 if (oldmf != null) {
-                    fileMgr.removeMediaFile(website, oldmf); 
+                    fileMgr.removeMediaFile(website, oldmf);
                 }
 
                 // save file without file-type, quota checks, etc.
@@ -324,7 +324,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 mf.setWeblog(website);
                 mf.setName(justName);
                 mf.setOriginalPath(justPath + "/" + justName);
-                mf.setContentType(map.getContentType(justName)); 
+                mf.setContentType(map.getContentType(justName));
                 mf.setInputStream(is);
                 mf.setLength(resource.getLength());
 

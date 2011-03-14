@@ -34,19 +34,19 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
  * @author Mindaugas Idzelis  (min@idzelis.com)
  */
 public class AddEntryOperation extends WriteToIndexOperation {
-    
+
     //~ Static fields/initializers =============================================
-    
+
     private static Log mLogger =
             LogFactory.getFactory().getInstance(AddEntryOperation.class);
-    
+
     //~ Instance fields ========================================================
-    
+
     private WeblogEntry data;
     private Weblogger roller;
-    
+
     //~ Constructors ===========================================================
-    
+
     /**
      * Adds a web log entry into the index.
      */
@@ -55,12 +55,12 @@ public class AddEntryOperation extends WriteToIndexOperation {
         this.roller = roller;
         this.data = data;
     }
-    
+
     //~ Methods ================================================================
-    
+
     public void doRun() {
         IndexWriter writer = beginWriting();
-        
+
         // since this operation can be run on a separate thread we must treat
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
@@ -71,7 +71,7 @@ public class AddEntryOperation extends WriteToIndexOperation {
             mLogger.error("Error getting weblogentry object", ex);
             return;
         }
-        
+
         try {
             if (writer != null) {
                 writer.addDocument(getDocument(data));
@@ -82,5 +82,5 @@ public class AddEntryOperation extends WriteToIndexOperation {
             if (roller != null) roller.release();
             endWriting();
         }
-    }   
+    }
 }

@@ -36,26 +36,26 @@ import org.apache.roller.util.DateUtil;
  * Model for big calendar that displays titles for each day.
  */
 public class BigWeblogCalendarModel extends WeblogCalendarModel {
-    
+
     private static Log mLogger = LogFactory.getLog(BigWeblogCalendarModel.class);
-    
+
     protected static final SimpleDateFormat mStarDateFormat =
             DateUtil.get8charDateFormat();
-    
+
     protected static final SimpleDateFormat mSingleDayFormat =
             new SimpleDateFormat("dd");
-    
-    
+
+
     public BigWeblogCalendarModel(WeblogPageRequest pRequest, String cat) {
         super(pRequest, cat);
     }
-    
-    
+
+
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             monthMap = mgr.getWeblogEntryObjectMap(
-                    
+
                     weblog,                  // website
                     startDate,                 // startDate
                     endDate,                   // endDate
@@ -68,13 +68,13 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             monthMap = new HashMap();
         }
     }
-    
-    
+
+
     public String getContent(Date day) {
         String content = null;
         try {
             StringBuffer sb = new StringBuffer();
-            
+
             // get the 8 char YYYYMMDD datestring for day, returns null
             // if no weblog entry on that day
             String dateString = null;
@@ -82,23 +82,23 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             if ( entries != null ) {
                 dateString = mStarDateFormat.format(
                         ((WeblogEntry)entries.get(0)).getPubTime());
-                
+
                 // append 8 char date string on end of selfurl
                 String dayUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
-                              
+
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
                 sb.append("<a href=\"");
                 sb.append( dayUrl );
                 sb.append("\">");
                 sb.append( mSingleDayFormat.format( day ) );
                 sb.append("</a></div>");
-                
+
                 for ( int i=0; i<entries.size(); i++ ) {
                     sb.append("<div class=\"bCalendarDayContentBig\">");
                     sb.append("<a href=\"");
                     sb.append(((WeblogEntry)entries.get(i)).getPermalink());
                     sb.append("\">");
-                    
+
                     String title = ((WeblogEntry)entries.get(i)).getTitle().trim();
                     if ( title.length()==0 ) {
                         title = ((WeblogEntry)entries.get(i)).getAnchor();
@@ -106,11 +106,11 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                     if ( title.length() > 20 ) {
                         title = title.substring(0,20)+"...";
                     }
-                    
+
                     sb.append( title );
                     sb.append("</a></div>");
                 }
-                
+
             } else {
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
                 sb.append( mSingleDayFormat.format( day ) );
@@ -123,7 +123,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         }
         return content;
     }
-    
+
     /**
      * Create URL for use on view-weblog page
      * @param day              Day for URL or null if no entries on that day
@@ -148,10 +148,10 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             dateString = DateUtil.format6chars(day);
         }
         try {
-            if (nextPrevMonthURL && pageLink != null) { 
+            if (nextPrevMonthURL && pageLink != null) {
                 // next/prev month URLs point to current page
                 url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
-            } else { 
+            } else {
                 // all other URLs point back to main weblog page
                 url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
             }

@@ -28,56 +28,56 @@ import org.apache.roller.util.UUIDGenerator;
  * Represents locking information about a specific RollerTask.
  */
 public class TaskLock implements Serializable {
-    
+
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private Date timeAquired = null;
     private int timeLeased = 0;
     private Date lastRun = null;
     private String clientId = null;
-    
-    
+
+
     public TaskLock() {}
-    
-    
+
+
     /**
-     * Calculate the next allowed time this task is allowed to run allowed to run.  
+     * Calculate the next allowed time this task is allowed to run allowed to run.
      * i.e. lastRun + interval
      */
     public Date getNextAllowedRun(int interval) {
-        
+
         Date previousRun = getLastRun();
         if(previousRun == null) {
             return new Date(0);
         }
-        
+
         // calculate next run time
         Calendar cal = Calendar.getInstance();
         cal.setTime(previousRun);
         cal.add(Calendar.MINUTE, interval);
-        
+
         return cal.getTime();
     }
-    
-    
+
+
     /**
      * Get the time the last/current lease for this lock expires.
-     * 
+     *
      * expireTime = timeAcquired + (timeLeased * 60sec/min) - 1 sec
      * we remove 1 second to adjust for precision differences
      */
     public Date getLeaseExpiration() {
-        
+
         Date leaseAcquisitionTime = new Date(0);
         if(getTimeAquired() != null) {
             leaseAcquisitionTime = getTimeAquired();
         }
-        
+
         // calculate lease expiration time
         Calendar cal = Calendar.getInstance();
         cal.setTime(leaseAcquisitionTime);
         cal.add(Calendar.MINUTE, timeLeased);
-        
+
         return cal.getTime();
     }
 
@@ -97,22 +97,22 @@ public class TaskLock implements Serializable {
 
     @Override
     public boolean equals(Object other) {
-        
+
         if(this == other) return true;
         if( !(other instanceof TaskLock) ) return false;
-        
+
         // our natural key, or business key, is our name
         final TaskLock that = (TaskLock) other;
         return this.getName().equals(that.getName());
     }
-    
+
     @Override
     public int hashCode() {
         // our natrual key, or business key, is our name
         return this.getName().hashCode();
     }
-    
-    
+
+
     public String getId() {
         return id;
     }
@@ -121,7 +121,7 @@ public class TaskLock implements Serializable {
         this.id = id;
     }
 
-    
+
     public String getName() {
         return name;
     }
@@ -130,7 +130,7 @@ public class TaskLock implements Serializable {
         this.name = name;
     }
 
-    
+
     public Date getTimeAquired() {
         return timeAquired;
     }
@@ -139,7 +139,7 @@ public class TaskLock implements Serializable {
         this.timeAquired = timeAquired;
     }
 
-    
+
     public Date getLastRun() {
         return lastRun;
     }
@@ -147,8 +147,8 @@ public class TaskLock implements Serializable {
     public void setLastRun(Date lastRun) {
         this.lastRun = lastRun;
     }
-    
-    
+
+
     public int getTimeLeased() {
         return timeLeased;
     }
@@ -157,7 +157,7 @@ public class TaskLock implements Serializable {
         this.timeLeased = timeLeased;
     }
 
-    
+
     public String getClientId() {
         return clientId;
     }
@@ -165,5 +165,5 @@ public class TaskLock implements Serializable {
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
-    
+
 }

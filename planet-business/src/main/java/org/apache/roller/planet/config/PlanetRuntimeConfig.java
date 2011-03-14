@@ -38,102 +38,102 @@ import org.apache.roller.planet.config.runtime.RuntimeConfigDefsParser;
  * We also provide some methods for converting to different data types.
  */
 public class PlanetRuntimeConfig {
-    
+
     private static Log log = LogFactory.getLog(PlanetRuntimeConfig.class);
-    
+
     private static String runtime_config = "/org/apache/roller/planet/config/planetRuntimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
-    
+
     // special case for our context urls
     private static String relativeContextURL = null;
     private static String absoluteContextURL = null;
-    
-    
+
+
     // prevent instantiations
     private PlanetRuntimeConfig() {}
-    
-    
+
+
     /**
      * Retrieve a single property from the PropertiesManager ... returns null
      * if there is an error
      **/
     public static String getProperty(String name) {
-        
+
         String value = null;
-        
+
         try {
             PropertiesManager pmgr = PlanetFactory.getPlanet().getPropertiesManager();
             value = pmgr.getProperty(name).getValue();
         } catch(Exception e) {
             log.warn("Trouble accessing property: "+name, e);
         }
-        
+
         log.debug("fetched property ["+name+"="+value+"]");
 
         return value;
     }
-    
-    
+
+
     /**
      * Retrieve a property as a boolean ... defaults to false if there is an error
      **/
     public static boolean getBooleanProperty(String name) {
-        
+
         // get the value first, then convert
         String value = PlanetRuntimeConfig.getProperty(name);
-        
+
         if(value == null)
             return false;
-        
+
         return (new Boolean(value)).booleanValue();
     }
-    
-    
+
+
     /**
      * Retrieve a property as an int ... defaults to -1 if there is an error
      **/
     public static int getIntProperty(String name) {
-        
+
         // get the value first, then convert
         String value = PlanetRuntimeConfig.getProperty(name);
-        
+
         if(value == null)
             return -1;
-        
+
         int intval = -1;
         try {
             intval = Integer.parseInt(value);
         } catch(Exception e) {
             log.warn("Trouble converting to int: "+name, e);
         }
-        
+
         return intval;
     }
-    
-    
+
+
     public static RuntimeConfigDefs getRuntimeConfigDefs() {
-        
+
         if(configDefs == null) {
-            
+
             // unmarshall the config defs file
             try {
-                InputStream is = 
+                InputStream is =
                         PlanetRuntimeConfig.class.getResourceAsStream(runtime_config);
-                
+
                 RuntimeConfigDefsParser parser = new RuntimeConfigDefsParser();
                 configDefs = parser.unmarshall(is);
-                
+
             } catch(Exception e) {
                 // error while parsing :(
                 log.error("Error parsing runtime config defs", e);
             }
-            
+
         }
-        
+
         return configDefs;
     }
-    
-    
+
+
     /**
      * Get the runtime configuration definitions XML file as a string.
      *
@@ -143,27 +143,27 @@ public class PlanetRuntimeConfig {
      * the display for editing those properties.
      */
     public static String getRuntimeConfigDefsAsString() {
-        
+
         log.debug("Trying to load runtime config defs file");
-        
+
         try {
             InputStreamReader reader =
                     new InputStreamReader(PlanetConfig.class.getResourceAsStream(runtime_config));
             StringWriter configString = new StringWriter();
-            
+
             char[] buf = new char[8196];
             int length = 0;
             while((length = reader.read(buf)) > 0)
                 configString.write(buf, 0, length);
-            
+
             reader.close();
-            
+
             return configString.toString();
         } catch(Exception e) {
             log.error("Error loading runtime config defs file", e);
         }
-        
+
         return "";
     }
-    
+
 }

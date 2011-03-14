@@ -33,28 +33,28 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * @author Allen Gilliland
  */
 public class QueuedReferrerProcessingJob extends ReferrerProcessingJob {
-    
+
     public QueuedReferrerProcessingJob() {
         super();
     }
-    
-    
+
+
     public void execute() {
-        
+
         ReferrerQueueManager refQueue =
                 WebloggerFactory.getWeblogger().getReferrerQueueManager();
-        
+
         // check the queue for any incoming referrers
         referrer = refQueue.dequeue();
-        
+
         // work until the queue is empty
         while(referrer != null) {
             super.execute();
-            
+
             // check if there are more referrers to process
             referrer = refQueue.dequeue();
         }
-        
+
     }
-    
+
 }

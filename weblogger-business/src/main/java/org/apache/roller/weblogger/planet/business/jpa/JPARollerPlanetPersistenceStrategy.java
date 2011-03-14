@@ -36,20 +36,20 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  */
 @com.google.inject.Singleton
 public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
-    
-    private static Log logger = 
-        LogFactory.getFactory().getInstance(JPARollerPlanetPersistenceStrategy.class); 
-    
-    
+
+    private static Log logger =
+        LogFactory.getFactory().getInstance(JPARollerPlanetPersistenceStrategy.class);
+
+
     /**
      * Construct by finding using DatabaseProvider and WebloggerConfig.
-     * 
+     *
      * @throws org.apache.roller.PlanetException on any error
      */
-    protected JPARollerPlanetPersistenceStrategy() throws PlanetException { 
+    protected JPARollerPlanetPersistenceStrategy() throws PlanetException {
 
         DatabaseProvider dbProvider = WebloggerStartup.getDatabaseProvider();
-                        
+
         // Add all OpenJPA and Toplinks properties found in WebloggerConfig
         Properties emfProps = new Properties();
         Enumeration keys = WebloggerConfig.keys();
@@ -61,12 +61,12 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
                 emfProps.setProperty(key, value);
             }
         }
-        
+
         if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
             // We're doing JNDI, so set OpenJPA JNDI name property
             String jndiName = "java:comp/env/" + dbProvider.getJndiName();
             emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
-            
+
         } else {
             emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
             emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
@@ -77,9 +77,9 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
             emfProps.setProperty("hibernate.connection.driver_class",dbProvider.getJdbcDriverClass());
             emfProps.setProperty("hibernate.connection.url",         dbProvider.getJdbcConnectionURL());
             emfProps.setProperty("hibernate.connection.username",    dbProvider.getJdbcUsername());
-            emfProps.setProperty("hibernate.connection.password",    dbProvider.getJdbcPassword()); 
+            emfProps.setProperty("hibernate.connection.password",    dbProvider.getJdbcPassword());
         }
-        
+
         try {
             emf = Persistence.createEntityManagerFactory("PlanetPU", emfProps);
         } catch (PersistenceException pe) {
@@ -87,5 +87,5 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
             throw new PlanetException(pe);
         }
     }
-    
+
 }

@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.util.Utilities;
  * A bean for managing comments.
  */
 public class CommentsBean {
-    
+
     private String entryId = null;
     private String searchString = null;
     private String startDateString = null;
@@ -42,45 +42,45 @@ public class CommentsBean {
     private String spamString = "ALL";
     private String approvedString = "ALL";
     private int page = 0;
-    
+
     private String[] approvedComments = new String[0];
     private String[] spamComments = new String[0];
     private String[] deleteComments = new String[0];
-    
+
     // Limit updates to just this set of comma-separated IDs
     private String ids = null;
-    
-    
+
+
     public void loadCheckboxes(List comments) {
-        
+
         List<String> allComments = new ArrayList();
         List<String> approvedList = new ArrayList();
         List<String> spamList = new ArrayList();
-        
+
         Iterator it = comments.iterator();
         while (it.hasNext()) {
             WeblogEntryComment comment = (WeblogEntryComment)it.next();
             allComments.add(comment.getId());
-            
+
             if(WeblogEntryComment.APPROVED.equals(comment.getStatus())) {
                 approvedList.add(comment.getId());
             } else if(WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                 spamList.add(comment.getId());
             }
         }
-        
+
         // list of ids we are working on
         String[] idArray = (String[]) allComments.toArray(new String[allComments.size()]);
         setIds(Utilities.stringArrayToString(idArray,","));
-        
+
         // approved ids list
         setApprovedComments((String[])approvedList.toArray(new String[approvedList.size()]));
-        
+
         // spam ids list
         setSpamComments((String[])spamList.toArray(new String[spamList.size()]));
     }
-    
-    
+
+
     public String getStatus() {
         if (approvedString.equals("ONLY_APPROVED")) {
             return WeblogEntryComment.APPROVED;
@@ -99,7 +99,7 @@ public class CommentsBean {
             return null;
         }
     }
-    
+
     public Date getStartDate() {
         if(!StringUtils.isEmpty(getStartDateString())) try {
             DateFormat df = new SimpleDateFormat("MM/dd/yy");
@@ -118,28 +118,28 @@ public class CommentsBean {
         }
         return null;
     }
-    
-    
+
+
     public String getSpamString() {
         return spamString;
     }
-    
+
     public void setSpamString(String spamString) {
         this.spamString = spamString;
     }
-    
+
     public String getIds() {
         return ids;
     }
-    
+
     public void setIds(String ids) {
         this.ids = ids;
     }
-    
+
     public String getSearchString() {
         return searchString;
     }
-    
+
     public void setSearchString(String searchString) {
         this.searchString = searchString;
     }
@@ -151,7 +151,7 @@ public class CommentsBean {
     public void setApprovedComments(String[] approvedComments) {
         this.approvedComments = approvedComments;
     }
-    
+
     public String[] getSpamComments() {
         return spamComments;
     }
@@ -207,5 +207,5 @@ public class CommentsBean {
     public void setEntryId(String entryId) {
         this.entryId = entryId;
     }
-    
+
 }

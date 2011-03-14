@@ -137,7 +137,7 @@ public class MediaFileDirectory {
 
     /**
      * The collection of files in this directory
-     * 
+     *
      */
     public Set<MediaFile> getMediaFiles() {
         return mediaFiles;
@@ -161,7 +161,7 @@ public class MediaFileDirectory {
 
     /**
      * Indicates whether this directory contains the specified file.
-     * 
+     *
      * @param name file name
      * @return true if the file is present in the directory, false otherwise.
      */
@@ -180,7 +180,7 @@ public class MediaFileDirectory {
 
     /**
      * Returns file with the given name, if present in this directory
-     * 
+     *
      * @param name file name
      * @return media file object
      */
@@ -199,7 +199,7 @@ public class MediaFileDirectory {
 
     /**
      * Indicates whether this directory contains the specified sub-directory.
-     * 
+     *
      * @param name directory name
      * @return true if the sub-directory is present, false otherwise.
      */
@@ -225,7 +225,7 @@ public class MediaFileDirectory {
 
     /**
      * Creates a new sub-directory
-     * 
+     *
      * @param name new directory name
      * @return reference to the newly created directory.
      */
