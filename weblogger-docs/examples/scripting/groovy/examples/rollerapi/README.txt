@@ -2,10 +2,10 @@
 Groovy scripts that run against the Roller API
 -------------------------------------------------------------------------------
 
-These scripts are designed to the computer on which Roller is installed. 
-Because they use the Roller API directly, you must run them with the provided 
-"groovy" script which sets up the classpath correctly for calling into the 
-Roller code base. 
+These scripts are designed to the computer on which Roller is installed.
+Because they use the Roller API directly, you must run them with the provided
+"groovy" script which sets up the classpath correctly for calling into the
+Roller code base.
 
 Before you can run you must:
 

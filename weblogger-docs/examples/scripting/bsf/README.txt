@@ -16,7 +16,7 @@ To use it in Roller:
 
 4) Restart Roller
 
-5) Create a new Weblog Template and set the Template Language to either 
+5) Create a new Weblog Template and set the Template Language to either
    "groovy", "jruby" or "javascript"
 
 6) In your page template you'll have access to all normal Roller models

@@ -5,6 +5,6 @@ In this directory you'll find:
     installguide/   - User guide in Open Office 2.0 ODT and PDF formats
     examples/       - example configuration and script files
     testing/        - Test plans (under development)
-   
-    
+
+
 

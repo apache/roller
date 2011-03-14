@@ -7,7 +7,7 @@ Like this:
   Count=11
 
 Then add following to the end of the CMS.ini file. Change 'yourserver.com'
-to the address of your Roller server. If you want the icon to work then drop 
+to the address of your Roller server. If you want the icon to work then drop
 rollerbadge.jpg in the same directory as CMS.ini.
 
   [CMS-11]
@@ -24,7 +24,7 @@ rollerbadge.jpg in the same directory as CMS.ini.
   PostMethod=3
   GetPostsMethod=3
   TemplateMethod=1
-  
+
 If you are a FreeRoller user, then here are your settings:
 
   [CMS-11]

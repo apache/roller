@@ -1,22 +1,22 @@
 
 <project name="roller-scripting" default="build" basedir=".">
-    <description>Build Roller-Groovy integration classes</description>   
+    <description>Build Roller-Groovy integration classes</description>
 
     <property file="./ant.properties" />
-        
+
     <path id="scripting.path">
-        <fileset dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">   
-            <include name="roller-core.jar"/>   
-            <include name="roller-web.jar"/>   
-            <include name="roller-business.jar"/>   
-            <include name="commons-logging.jar"/>   
+        <fileset dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">
+            <include name="roller-core.jar"/>
+            <include name="roller-web.jar"/>
+            <include name="roller-business.jar"/>
+            <include name="commons-logging.jar"/>
         </fileset>
         <fileset dir="${bsf.home}/lib">
             <include name="bsf.jar"/>
-        </fileset>                      
+        </fileset>
     </path>
-    
-    <target name="build">        
+
+    <target name="build">
         <mkdir dir="./build/classes" />
         <javac debug="on" destdir="./build/classes">
             <src path="./src" />
@@ -29,7 +29,7 @@
     </target>
 
     <!--
-    Copy BSF, JRuby, Groovy and Rhino jars. 
+    Copy BSF, JRuby, Groovy and Rhino jars.
     Versions tested:
        - Groovy 1.0
        - BSF 2.4.0
@@ -59,5 +59,5 @@
     <target name="clean">
         <delete dir="./build" />
     </target>
-    
+
 </project>

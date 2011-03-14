@@ -1,8 +1,8 @@
 README for rollertask
 
-rollertask.sh is a script that can be used to run the Roller tasks. Because 
+rollertask.sh is a script that can be used to run the Roller tasks. Because
 rollertask.sh runs outside of the Roller application, you have to put some
-files into place before you can run it. 
+files into place before you can run it.
 
 Here are the steps I used to setup rollertask.sh to run on my UNIX based system.
 

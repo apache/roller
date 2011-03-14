@@ -15,13 +15,13 @@ B) Some scripts that run against the Roller Admin Protocol
    examples/adminprotocol
 
 
-C) A Roller GroovletRenderer that can evaluate a Roller template as Groovy code 
+C) A Roller GroovletRenderer that can evaluate a Roller template as Groovy code
    with Groovlet-style "out" and "html" bindings.
 
    The implementation:
 
         org.apache.roller.scripting.GroovletRenderer
-        org.apache.roller.scripting.GroovletRendererFactory   
+        org.apache.roller.scripting.GroovletRendererFactory
         org.apache.roller.scripting.GroovyRollerBinding
 
     Here's an example Hello World template:
@@ -54,7 +54,7 @@ D) A Roller GSPRenderer that can evaluate a Roller template as a Groovy Template
     The implementation:
 
         org.apache.roller.scripting.GSPRenderer
-        org.apache.roller.scripting.GSPRendererFactory   
+        org.apache.roller.scripting.GSPRendererFactory
         org.apache.roller.scripting.GSPRollerBinding
 
     Here's an example Hello World template:
@@ -79,8 +79,8 @@ D) A Roller GSPRenderer that can evaluate a Roller template as a Groovy Template
                  <% map.get(it).each() { %>
                     <h2>${it.title}</h2>
                     <p>${it.text}</p><br />
-                 <% } 
-              }%> 
+                 <% }
+              }%>
            </body>
         </html>
 
@@ -98,12 +98,12 @@ To use renderers (C) and (D) in Roller:
 
 4) Restart Roller
 
-5) Create a new Weblog Page Template and set Template Language to either 
-   "groovlet" or "gsp". 
+5) Create a new Weblog Page Template and set Template Language to either
+   "groovlet" or "gsp".
 
 6) In your page template you'll have access to all normal Roller models
    plus the name "out" will be bound to a Writer that you can use for output.
-   Also, the name "html" will be bound to a markup builder. 
+   Also, the name "html" will be bound to a markup builder.
 
 
 

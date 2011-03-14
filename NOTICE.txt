@@ -5,8 +5,8 @@ COPYRIGHT NOTICES
 
 This product includes:
 
-* Software developed by the Apache Software Foundation (http://www.apache.org) 
-    Copyright 2006 The Apache Software Foundation. 
+* Software developed by the Apache Software Foundation (http://www.apache.org)
+    Copyright 2006 The Apache Software Foundation.
 
 * Software developed by the ROME project
     Copyright 2003-2006 Sun Microsystems, Inc.
@@ -20,7 +20,7 @@ This product includes:
 * Snippets of code from the Pebble blog server
     Copyright 2003 Simon Brown, All rights reserved.
 
-* Code written by Sun Microsystems, Inc. 
+* Code written by Sun Microsystems, Inc.
     Copyright 2005 Sun Microsystems, Inc.
 
 * Code written by Dave Johnson for RSS and Atom in Action
@@ -30,7 +30,7 @@ This product includes:
     Copyright 2002-2003 by OpenSymphony
 
 * A Struts LinkTag and LinkParamTag by BSquare Software
-    Copyright 2001 Bsquare Projects 
+    Copyright 2001 Bsquare Projects
 
 * The Xinha WYSIWYG editor, which includes HTMLArea
     Copyright dynarch.com, 2003-2004
@@ -52,11 +52,11 @@ OTHER NOTICES
 
 CREDITS
 
-Roller committers (in chronological order): 
+Roller committers (in chronological order):
 
 David M Johnson
-Lance Lanvandowska 
-Matt Raible 
+Lance Lanvandowska
+Matt Raible
 Mindaguas Idzelis (retired)
 Jaap Van Der Molen (retired)
 Anil Gangolli

@@ -3,7 +3,7 @@ Groovy scripts that run against the Roller Admin Protocol
 -------------------------------------------------------------------------------
 
 These scripts are designed to against a remote Roller installation using the
-Roller Admin Protocol (RAP). 
+Roller Admin Protocol (RAP).
 
 
 1) Have Groovy 1.0 installed on your system

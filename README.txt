@@ -35,7 +35,7 @@ indicated above, the following command will build and run all unit tests:
    mvn install
 
 After doing that, you should find the newly built Roller webapp, suitable
-for use with Tomcat in weblogger-web/target/roller. 
+for use with Tomcat in weblogger-web/target/roller.
 
 To build Roller release files, you do this:
 
@@ -47,7 +47,7 @@ To build Roller release files, you do this:
    mvn -Dtomcat=true install
    cd ..
 
-After that, you'll find Roller distribution files in weblogger-assembly/target. 
+After that, you'll find Roller distribution files in weblogger-assembly/target.
 The Tomcat specific release files will have 'for-tomcat' in their names.
 
 See the script build-tomcat-release.sh to see the sequence of commands used
@@ -58,11 +58,11 @@ to create Roller releases for Tomcat.
 BUILDING FOR JAVA EE 6
 
 The Tomcat build includes extra things that are not needed on a full Java EE
-application server. In fact, the Tomcat release won't work on some Java EE 
-servers. If we leave those extra things out, Roller can run on most Java EE 
+application server. In fact, the Tomcat release won't work on some Java EE
+servers. If we leave those extra things out, Roller can run on most Java EE
 servers.
 
-If you add a 'javaee' flag to the Roller build invocation, you can create 
+If you add a 'javaee' flag to the Roller build invocation, you can create
 Roller release files that will work on a Java EE 6 app server.
 
     mvn clean
@@ -76,10 +76,10 @@ Roller release files that will work on a Java EE 6 app server.
     mvn -Djavaee=true install
     cd ..
 
-When that finishes, you will find Roller distribution files in 
-weblogger-assembly/target. The Java EE specific release files will have 
+When that finishes, you will find Roller distribution files in
+weblogger-assembly/target. The Java EE specific release files will have
 'for-javaee' in their names.
-      
+
 See the script build-javaee-release.sh to see the sequence of commands used
 to create Roller releases for Java EE.
 
@@ -88,7 +88,7 @@ to create Roller releases for Java EE.
 BUILDING FOR JBOSS 6
 
 JBoss 6 is a Java EE server, but due to differences in JNDI naming, it needs
-a separate build. If you add a 'jboss' flag to the Roller build invocation, 
+a separate build. If you add a 'jboss' flag to the Roller build invocation,
 you can create Roller release files that will work on a JBoss 6 app server.
 
     mvn clean
@@ -102,10 +102,10 @@ you can create Roller release files that will work on a JBoss 6 app server.
     mvn -Djboss=true install
     cd ..
 
-When that finishes, you will find Roller distribution files in 
-weblogger-assembly/target. The Java EE specific release files will have 
+When that finishes, you will find Roller distribution files in
+weblogger-assembly/target. The Java EE specific release files will have
 'for-jboss' in their names.
-      
+
 See the script build-jbossee-release.sh to see the sequence of commands used
 to create Roller releases for JBoss.
 
@@ -115,7 +115,7 @@ NOTES
 
 1) Set MAVEN_OPTS to include your preferred server
 
-If you always build for one server, then you might wish to define 
+If you always build for one server, then you might wish to define
 MAVEN_OPTS to include your preferred server flag, for example:
 
    export MAVEN_OPTS=${MAVEN_OPTS} -Dtomcat=true
