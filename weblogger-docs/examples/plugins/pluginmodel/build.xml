@@ -1,9 +1,9 @@
 
 <project name="pluginmodel" default="dist">
-    
+
     <property name="tools" value="../../../../../../tools" />
     <property name="buildlib" value="../../../../build/lib" />
-    
+
     <target name="dist">
         <mkdir dir="build" />
         <mkdir dir="dist" />
@@ -24,5 +24,5 @@
         <delete dir="build" />
         <delete dir="clean" />
     </target>
-    
+
 </project>

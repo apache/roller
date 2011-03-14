@@ -18,7 +18,7 @@
 -->
 
 <!--
-   WARNING: to produce a Tomcat compatible build you MUST first build Roller 
+   WARNING: to produce a Tomcat compatible build you MUST first build Roller
    Weblogger AND NOT USING the -Djavaee=true option, e.g. mvn install
 -->
 <assembly>
@@ -27,7 +27,7 @@
         <format>war</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    
+
     <fileSets>
         <fileSet>
             <outputDirectory></outputDirectory>
@@ -38,5 +38,5 @@
             </excludes>
         </fileSet>
     </fileSets>
-    
+
 </assembly>

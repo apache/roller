@@ -1,7 +1,7 @@
 <ehcache>
 
     <diskStore path="java.io.tmpdir"/>
-    
+
     <!-- default cache expires items after 30 mins -->
     <defaultCache
         maxElementsInMemory="1000"
@@ -14,15 +14,15 @@
         maxElementsInMemory="100"
         eternal="false"
         overflowToDisk="false" />
-        
+
     <cache name="org.apache.roller.weblogger.pojos.User"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />
-        
+
     <cache name="org.apache.roller.weblogger.pojos.Weblog"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />
-  
+
 </ehcache>

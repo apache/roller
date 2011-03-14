@@ -22,7 +22,7 @@
     </New>
 
     <Call class="org.mortbay.log.Log" name="info">
-        <Arg>Redirecting stderr/stdout to 
+        <Arg>Redirecting stderr/stdout to
             <Ref id="ServerLogName"/>
         </Arg>
     </Call>

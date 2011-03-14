@@ -22,26 +22,26 @@ limitations under the License.
 
 <section><title>Welcome!</title>
     <p>
-        Apache Roller is a full-featured, multi-user and group-blog 
-        server suitable for blog sites large and small. This is the project's 
-        homepage, which provides a brief overview of the software and project as 
-        well as links to 
-        <a href="http://rollerweblogger.org/project">project news</a>, 
-        <a href="downloads.html">downloads</a>, 
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">user documentation</a>, 
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">install guide</a>, 
+        Apache Roller is a full-featured, multi-user and group-blog
+        server suitable for blog sites large and small. This is the project's
+        homepage, which provides a brief overview of the software and project as
+        well as links to
+        <a href="http://rollerweblogger.org/project">project news</a>,
+        <a href="downloads.html">downloads</a>,
+        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">user documentation</a>,
+        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">install guide</a>,
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">mailing-lists</a>,
         <a href="https://issues.apache.org/jira/browse/ROL">bug tracker</a>,
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER">wiki</a> and the 
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+FAQ">FAQ</a>. 
+        <a href="http://cwiki.apache.org/confluence/display/ROLLER">wiki</a> and the
+        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+FAQ">FAQ</a>.
     </p>
 </section>
 <section><title>Overview</title>
     <p>
         Roller is a Java web application that should be able to run on any Java EE
-        server and any relational database. Currently, Roller is best supported on 
-        Tomcat and MySQL -- but users have reported success running Roller on 
-        Glassfish, Websphere, JBoss, Resin, Geronimo, Derby, PostgresSQL, 
+        server and any relational database. Currently, Roller is best supported on
+        Tomcat and MySQL -- but users have reported success running Roller on
+        Glassfish, Websphere, JBoss, Resin, Geronimo, Derby, PostgresSQL,
         Oracle, etc.)
     </p>
     <p>Here are some of Roller's key features:</p>

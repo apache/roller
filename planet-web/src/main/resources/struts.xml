@@ -14,13 +14,13 @@
             <result>/WEB-INF/jsps/MainMenu.jsp</result>
         </action>
     </package>
-    
+
     <!-- site admin package space -->
     <package name="planetadmin" namespace="/planet-ui/admin" extends="planet">
-        
+
         <!-- use stack which supports the use of the Preparable interface on actions -->
         <default-interceptor-ref name="paramsPrepareParamsStack"/>
-        
+
         <action name="ConfigForm!*" method="{1}"
                 class="org.apache.roller.planet.ui.admin.struts2.ConfigForm">
             <result name="input">/WEB-INF/jsps/admin/ConfigForm.jsp</result>

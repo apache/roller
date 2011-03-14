@@ -1,5 +1,5 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
-    <persistence-unit name ="RollerPU" transaction-type="RESOURCE_LOCAL"> 
+    <persistence-unit name ="RollerPU" transaction-type="RESOURCE_LOCAL">
         <non-jta-data-source>${datasourceName}</non-jta-data-source>
         <mapping-file>org/apache/roller/weblogger/pojos/WeblogBookmark.orm.xml          </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryComment.orm.xml      </mapping-file>
@@ -24,9 +24,9 @@
         <mapping-file>org/apache/roller/weblogger/pojos/UserAttribute.orm.xml           </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/OAuthConsumerRecord.orm.xml     </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/OAuthAccessorRecord.orm.xml     </mapping-file>
-        <mapping-file>org/apache/roller/weblogger/pojos/MediaFile.orm.xml               </mapping-file>	
-        <mapping-file>org/apache/roller/weblogger/pojos/MediaFileTag.orm.xml            </mapping-file>	
+        <mapping-file>org/apache/roller/weblogger/pojos/MediaFile.orm.xml               </mapping-file>
+        <mapping-file>org/apache/roller/weblogger/pojos/MediaFileTag.orm.xml            </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/MediaFileDirectory.orm.xml      </mapping-file>
         <class>org.apache.roller.weblogger.pojos.AutoPing</class>
-    </persistence-unit>  
+    </persistence-unit>
 </persistence>

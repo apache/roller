@@ -24,14 +24,14 @@
             <artifactId>roller-weblogger-web</artifactId>
             <version>5.0.0-RC4</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jetty</artifactId>
             <version>6.1.26</version>
             <scope>provided</scope>
         </dependency>
-        
+
     </dependencies>
 
     <build>
@@ -112,7 +112,7 @@
                         <artifactId>test-utils</artifactId>
                         <version>5.0.0-RC4</version>
                     </dependency>
-                    
+
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>
@@ -129,7 +129,7 @@
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbyclient</artifactId>
                         <version>${derby.version}</version>
-                    </dependency>                    
+                    </dependency>
                 </dependencies>
             </plugin>
 
@@ -184,7 +184,7 @@
                     <!-- Ensure tests will run even if 'openjpa' profile not active -->
                     <forkMode>once</forkMode>
                     <argLine>-javaagent:${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.1/openjpa-2.0.1.jar</argLine>
-                    
+
                     <systemProperties>
                         <property>
                             <name>catalina.base</name>
@@ -303,7 +303,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
         </plugins>
 
         <testResources>

@@ -18,7 +18,7 @@
 -->
 
 <!--
-   WARNING: to produce a Tomcat compatible build you MUST first build Roller 
+   WARNING: to produce a Tomcat compatible build you MUST first build Roller
    Weblogger AND NOT USING the -Djavaee=true option, e.g. mvn install
 -->
 <assembly>
@@ -29,35 +29,35 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 
-    <files> 
-        <file> 
+    <files>
+        <file>
             <source>../weblogger-war-assembly/target/roller-${artifact.version}-tomcat.war</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat/webapp</outputDirectory>
-        </file> 
-        <file> 
+        </file>
+        <file>
             <source>../README.txt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat</outputDirectory>
-        </file> 
-        <file> 
+        </file>
+        <file>
             <source>../NOTICE.txt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat</outputDirectory>
-        </file> 
-        <file> 
+        </file>
+        <file>
             <source>../LICENSE.txt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat</outputDirectory>
-        </file> 
-        <file> 
+        </file>
+        <file>
             <source>../weblogger-docs/installguide/generated/roller-install-guide.pdf</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat/docs</outputDirectory>
-        </file> 
-        <file> 
+        </file>
+        <file>
             <source>../weblogger-docs/userguide/generated/roller-user-guide.pdf</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat/docs</outputDirectory>
-        </file> 
-        <file> 
+        </file>
+        <file>
             <source>../weblogger-docs/templateguide/generated/roller-template-guide.pdf</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat/docs</outputDirectory>
-        </file> 
+        </file>
     </files>
 
 </assembly>

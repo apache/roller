@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
     <description>Persistence Metadata for Roller</description>
     <persistence-unit-metadata>
@@ -21,7 +21,7 @@
         </named-query>
         <named-query name="WeblogEntryComment.getMostCommentedWebsiteByEndDate">
             <!--
-            DISTINCT is not required for this query - comments would never be duplicated in retrieved result 
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
             <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name</query>

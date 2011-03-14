@@ -36,7 +36,7 @@ limitations under the License.
    </path>
 
    <target name="prepare-texen">
-      <available classname="org.apache.velocity.texen.ant.TexenTask" 
+      <available classname="org.apache.velocity.texen.ant.TexenTask"
             property="TexenTask.present">
          <classpath refid="classpath"/>
       </available>
@@ -44,23 +44,23 @@ limitations under the License.
 
    <target depends="prepare-texen" name="prepare-error-texen" unless="TexenTask.present">
       <echo>
-           TexenTask is not present! Please check to make sure that 
+           TexenTask is not present! Please check to make sure that
             velocity.jar is in your classpath.
         </echo>
    </target>
 
    <target name='generate-site-map' depends='prepare-texen' if='TexenTask.present'>
       <mkdir dir='${texen.work}'/>
-      <taskdef 
-            name="texen" 
-            classname="org.apache.velocity.texen.ant.TexenTask" 
+      <taskdef
+            name="texen"
+            classname="org.apache.velocity.texen.ant.TexenTask"
             classpathref='classpath' />
       <!-- Use XSLT to extract indexes from development documents -->
-      <style 
+      <style
             processor="trax"
-            basedir='${docs.src}/dev' 
-            destdir='${texen.work}' 
-            extension='.xml' 
+            basedir='${docs.src}/dev'
+            destdir='${texen.work}'
+            extension='.xml'
             style='${texen.src}/index.xsl'>
          <exclude name='navigation.xml' />
          <exclude name='sitemap.xml' />
@@ -69,10 +69,10 @@ limitations under the License.
       </style>
 
       <!-- Use Texen to combine indexes into final document -->
-      <texen 
-            controlTemplate='control.vsl' 
-            outputDirectory='${docs.src}/dev' 
-            templatePath='${texen.src}' 
+      <texen
+            controlTemplate='control.vsl'
+            outputDirectory='${docs.src}/dev'
+            templatePath='${texen.src}'
             outputFile='../../${texen.work}/generation.report' />
    </target>
 
@@ -84,7 +84,7 @@ limitations under the License.
 
    <target depends="prepare" name="prepare-error" unless="AnakiaTask.present">
       <echo>
-            AnakiaTask is not present! Please check to make sure that 
+            AnakiaTask is not present! Please check to make sure that
             velocity.jar is in your classpath.
         </echo>
    </target>
@@ -105,11 +105,11 @@ limitations under the License.
 
       <copy todir="${docs.dest}/" filtering="no">
          <fileset dir="${docs.src}/">
-            <!-- 
+            <!--
                Ignore the Anakia style sheet used for processing
                    of the xdocs, and the unprocessed xdocs themselves,
                    but copy all other content to the directory which is
-                   checked out on the server. 
+                   checked out on the server.
                 -->
             <exclude name="**/*.xml"/>
             <exclude name="**/stylesheets/**"/>

@@ -18,7 +18,7 @@ limitations under the License.
 <title>Apache Roller</title>
 <logo href="images/roller-logo.jpg" />
 <body>
-    
+
 <projects><title>Project information</title>
     <li><a href="http://roller.apache.org">Project HOME</a></li>
     <li><a href="http://rollerweblogger.org/project">Project Blog</a></li>

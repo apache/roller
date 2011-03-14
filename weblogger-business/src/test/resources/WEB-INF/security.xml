@@ -36,7 +36,7 @@
         <!-- Uncomment the following for LDAP/SSO configuration -->
         <!--intercept-url pattern="/roller-ui/user.do*" access="register"/-->
 
-        <form-login login-page="/roller-ui/login.rol" authentication-failure-url="/roller-ui/login.rol?error=true" 
+        <form-login login-page="/roller-ui/login.rol" authentication-failure-url="/roller-ui/login.rol?error=true"
         	login-processing-url="/roller_j_security_check"/>
         <remember-me user-service-ref="rollerUserService" key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
     </http>
@@ -60,5 +60,5 @@
     <beans:bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
         <beans:property name="rolePrefix" value=""/>
     </beans:bean>
-    
+
 </beans:beans>

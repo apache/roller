@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5" 
+<web-app version="2.5"
     xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-    
+
     <display-name>Roller Weblogger</display-name>
 
     <context-param>
@@ -350,7 +350,7 @@
         <servlet-name>AuthorizationServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.webservices.oauth.AuthorizationServlet</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>AccessTokenServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.webservices.oauth.AccessTokenServlet</servlet-class>
@@ -393,7 +393,7 @@
         <servlet-name>MediaResourceServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/media-resources/*</url-pattern>
     </servlet-mapping>
-    
+
     <servlet-mapping>
         <servlet-name>CommentServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
@@ -584,7 +584,7 @@
     <resource-ref>
         <res-ref-name>jdbc/rollerdb</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>      
+        <res-auth>Container</res-auth>
         <mapped-name>jdbc/roller</mapped-name>
     </resource-ref>
 

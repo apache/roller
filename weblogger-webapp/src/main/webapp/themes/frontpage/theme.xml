@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <weblogtheme>
-    
+
     <id>frontpage</id>
     <name>Frontpage</name>
     <author>Dave Johnson</author>
-    
+
     <!-- theme preview image -->
     <preview-image path="sm-theme-frontpage.png" />
-    
+
     <!-- templates -->
     <template action="weblog">
         <name>Weblog</name>
@@ -19,7 +19,7 @@
         <contentType>text/html</contentType>
         <contentsFile>Weblog.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>_blogdirectory</name>
         <description>_blogdirectory</description>
@@ -30,7 +30,7 @@
         <contentType></contentType>
         <contentsFile>_blogdirectory.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>_blogprofile</name>
         <description>_blogprofile</description>
@@ -41,7 +41,7 @@
         <contentType></contentType>
         <contentsFile>_blogprofile.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>_blogs</name>
         <description>_blogs</description>
@@ -52,7 +52,7 @@
         <contentType></contentType>
         <contentsFile>_blogs.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>_css</name>
         <description>_css</description>
@@ -63,7 +63,7 @@
         <contentType></contentType>
         <contentsFile>_css.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>_day</name>
         <description>_day</description>
@@ -74,7 +74,7 @@
         <contentType></contentType>
         <contentsFile>_day.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>_decorator</name>
         <description>_decorator</description>
@@ -85,7 +85,7 @@
         <contentType></contentType>
         <contentsFile>_decorator.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>_entry</name>
         <description>_entry</description>
@@ -96,7 +96,7 @@
         <contentType></contentType>
         <contentsFile>_entry.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>_footer</name>
         <description>_footer</description>
@@ -107,7 +107,7 @@
         <contentType></contentType>
         <contentsFile>_footer.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>_header</name>
         <description>_header</description>
@@ -118,7 +118,7 @@
         <contentType></contentType>
         <contentsFile>_header.vm</contentsFile>
     </template>
-    
+
     <template action="custom">
         <name>directory</name>
         <description>weblog directory</description>
@@ -129,9 +129,9 @@
         <contentType></contentType>
         <contentsFile>directory.vm</contentsFile>
     </template>
-    
+
     <!-- resources -->
     <resource path="roller-tan-logo.gif" />
     <resource path="tan-banner.gif" />
-    
+
 </weblogtheme>

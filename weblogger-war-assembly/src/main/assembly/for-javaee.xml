@@ -18,7 +18,7 @@
 -->
 
 <!--
-   WARNING: to produce a Java EE compatible build you MUST first build Roller 
+   WARNING: to produce a Java EE compatible build you MUST first build Roller
    Weblogger using the -Djavaee=true option, e.g. mvn -Djavaee=true install
 -->
 <assembly>
@@ -27,8 +27,8 @@
         <format>war</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    
-    <fileSets>  
+
+    <fileSets>
         <fileSet>
             <outputDirectory></outputDirectory>
             <directory>../weblogger-webapp/target/roller</directory>
@@ -38,9 +38,9 @@
                 <exclude>**/geronimo**</exclude>
 
                 <!-- don't include Jetty config, needed for build time only -->
-                <exclude>**/jetty-env**</exclude>                
+                <exclude>**/jetty-env**</exclude>
             </excludes>
         </fileSet>
     </fileSets>
-    
+
 </assembly>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <weblogtheme>
-    
+
     <!-- YUI Grid based Roller theme -->
-    
+
     <id>fauxcoly</id>
     <name>Fauxcoly</name>
     <author>Dave Johnson</author>
-    
+
     <!-- theme preview image -->
     <preview-image path="images/fauxcoly-preview.png" />
 

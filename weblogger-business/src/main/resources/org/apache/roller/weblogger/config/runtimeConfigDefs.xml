@@ -21,21 +21,21 @@
   STOP!!!!  This is NOT a Roller configuration file!!
   Users of Roller should never need to edit this file.  The properties listed
   here are changed on the Roller Admin Settings page.
-  
+
   This file defines what properties are made available to get/set
   during the running of the Roller application.  These properties
   are stored in the database and the code *must* be able to make
   use of changed values during runtime.
-  
+
   Also included in this file is meta-data which defines what class
   of property we are dealing with, it's default value, and information
   on how to populate the display that allows for changing the value.
-  
+
   NOTE: order does matter!!  the display is populated in a linear fashion
 	starting from the first display-group and moving down.
 -->
 
-<runtime-configs> 
+<runtime-configs>
 
  <!--
    The global-properties represents the base set of roller runtime properties.
@@ -47,7 +47,7 @@
 
    <!-- Site Settings Group -->
    <display-group name="siteSettings" key="configForm.siteSettings" >
-   
+
       <property-def  name="site.name"  key="configForm.siteName">
          <type>string</type>
          <default-value>Roller Site</default-value>
@@ -59,11 +59,11 @@
       <property-def  name="site.description"  key="configForm.siteDescription">
          <type>text</type>
 	 <default-value>A default install of the Roller Weblogger open source blog server</default-value>
-      </property-def>      
+      </property-def>
       <property-def  name="site.frontpage.weblog.handle"  key="configForm.frontpageWeblogHandle">
          <type>string</type>
          <default-value></default-value>
-      </property-def>      
+      </property-def>
       <property-def  name="site.frontpage.weblog.aggregated"  key="configForm.frontpageWeblogAggregated">
          <type>boolean</type>
          <default-value>false</default-value>
@@ -86,10 +86,10 @@
       </property-def>
    </display-group >
 
-   
+
    <!-- User Settings Group -->
    <display-group name="userSettings" key="configForm.userSettings" >
-   
+
       <property-def  name="users.registration.enabled"  key="configForm.allowNewUsers">
          <type>boolean</type>
          <default-value>false</default-value>
@@ -114,8 +114,8 @@
       </property-def>
 
    </display-group >
-   
-   
+
+
    <display-group name="webServicesSettings" key="configForm.webServicesSettings" >
 
       <property-def name="webservices.enableXmlRpc"  key="configForm.enableXmlRpc">
@@ -137,7 +137,7 @@
 
    <!-- Weblog Rendering Settings Group -->
    <display-group name="weblogSettings" key="configForm.weblogSettings" >
-       
+
       <property-def  name="site.pages.maxEntries"  key="configForm.pageMaxEntries">
          <type>string</type>
          <default-value>30</default-value>
@@ -150,13 +150,13 @@
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
-      
+
    </display-group>
-   
-   
+
+
    <!-- Comment & Trackback Settings Group -->
    <display-group name="commentSettings" key="configForm.commentSettings" >
-   
+
       <property-def  name="users.comments.enabled"  key="configForm.enableComments">
          <type>boolean</type>
          <default-value>true</default-value>
@@ -184,7 +184,7 @@
       <property-def  name="users.comments.emailnotify"  key="configForm.emailComments">
          <type>boolean</type>
          <!-- defaults to false because we don't distribute mail jars -->
-         <default-value>false</default-value> 
+         <default-value>false</default-value>
       </property-def>
       <property-def  name="users.moderation.required"  key="configForm.moderationRequired">
          <type>boolean</type>
@@ -200,10 +200,10 @@
       </property-def>
 
    </display-group >
-   
+
    <!-- File Upload Settings Group -->
    <display-group name="uploadSettings" key="configForm.fileUploadSettings" >
-   
+
       <property-def  name="uploads.enabled"  key="configForm.enableFileUploads">
          <type>boolean</type>
          <default-value>true</default-value>
@@ -226,11 +226,11 @@
       </property-def>
 
    </display-group >
-   
-   
+
+
     <!-- Theme Settings Group -->
    <display-group name="themeSettings" key="configForm.themeSettings">
-   
+
       <property-def  name="users.themes.path"  key="configForm.newUserThemes">
          <type>string</type>
          <default-value>/themes</default-value>
@@ -239,13 +239,13 @@
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
-      
+
    </display-group>
-   
-   
+
+
    <!-- Spam Prevention Settings Group -->
    <display-group name="spamSettings" key="websiteSettings.spamPrevention" >
-   
+
       <property-def  name="spam.blacklist"  key="websiteSettings.ignoreUrls">
          <type>text</type>
          <default-value></default-value>
@@ -254,7 +254,7 @@
       </property-def>
 
    </display-group >
-   
+
  </config-def>
- 
+
 </runtime-configs>

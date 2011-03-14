@@ -23,8 +23,8 @@ limitations under the License.
 <section><title>Apache Roller Releases</title>
 
     <p>
-        Releases of the Apache Roller blog server are made available to the 
-        general public at no charge, under the 
+        Releases of the Apache Roller blog server are made available to the
+        general public at no charge, under the
         <a href="http://apache.org/licenses/">Apache License,</a>
         in both binary and source distributions.
     </p>
@@ -42,21 +42,21 @@ limitations under the License.
     </ul>
 
     <p>
-        Project releases are approved by vote of the Apache Roller Project 
-        Management Committee (PMC). Support for a release is provided by project 
-        volunteers on the project 
+        Project releases are approved by vote of the Apache Roller Project
+        Management Committee (PMC). Support for a release is provided by project
+        volunteers on the project
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">mailing lists.</a>
-        Additional free support is provided by many other volunteer subscribers 
-        to the list. Bugs found in a release may be discussed on the list and 
+        Additional free support is provided by many other volunteer subscribers
+        to the list. Bugs found in a release may be discussed on the list and
         reported through the
         <a href="http://opensource.atlassian.com/projects/roller">issue tracker.</a>
     </p>
-    
+
     <p>
         Roller is a Project of the
         <a href="http://apache.org/foundation">Apache Software Foundation</a>
         (ASF), formed by a resolution of the
-        <a href="http://apache.org/foundation/board/">ASF Board of Directors</a>. 
+        <a href="http://apache.org/foundation/board/">ASF Board of Directors</a>.
         As an ASF Project, Struts is subject to the
         <a href="http://apache.org/foundation/bylaws.html">ASF Bylaws</a>
         and the direction of the ASF Board.

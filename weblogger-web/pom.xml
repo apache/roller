@@ -105,7 +105,7 @@
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
-            <version>1.1.1</version> 
+            <version>1.1.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -412,14 +412,14 @@
 
     </dependencies>
 
-    <build> 
+    <build>
 
         <plugins>
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.4.3</version>
-                
+
                 <executions>
 
                     <execution>
@@ -475,9 +475,9 @@
                             </resources>
                         </configuration>
                     </execution>
-                    
+
                 </executions>
-                
+
                 <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
                 </configuration>
@@ -490,7 +490,7 @@
                     <!-- Ensure tests will run even if 'openjpa' profile not active -->
                     <forkMode>once</forkMode>
                     <argLine>-javaagent:${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.1/openjpa-2.0.1.jar</argLine>
-                    
+
                     <systemProperties>
                         <property>
                             <name>catalina.base</name>

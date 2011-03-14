@@ -58,14 +58,14 @@
     </build>
 
     <profiles>
-        
+
         <profile>
             <id>tomcat-assembly</id>
             <activation>
                 <property>
                     <name>tomcat</name>
                 </property>
-            </activation> 
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -80,14 +80,14 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <profile>
             <id>javaee-assembly</id>
             <activation>
                 <property>
                     <name>javaee</name>
                 </property>
-            </activation> 
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -102,14 +102,14 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <profile>
             <id>jboss-assembly</id>
             <activation>
                 <property>
                     <name>jboss</name>
                 </property>
-            </activation> 
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -124,7 +124,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
     </profiles>
 
 </project>

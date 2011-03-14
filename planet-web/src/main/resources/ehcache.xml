@@ -1,7 +1,7 @@
 <ehcache>
 
     <diskStore path="java.io.tmpdir"/>
-    
+
     <!-- default cache expires items after 30 mins -->
     <defaultCache
         maxElementsInMemory="1000"
@@ -9,5 +9,5 @@
         timeToIdleSeconds="1200"
         timeToLiveSeconds="1200"
         overflowToDisk="false" />
-  
+
 </ehcache>
