@@ -1,4 +1,4 @@
-export rcstring="-RC4"
+export rcstring="-RC5"
 export vstring="5.0.0"
 
 gpg --armor --detach-sig weblogger-assembly/target/roller-weblogger-${vstring}${rcstring}-for-jboss.tar.gz
