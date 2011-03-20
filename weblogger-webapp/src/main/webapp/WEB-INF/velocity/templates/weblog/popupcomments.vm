@@ -52,14 +52,7 @@
 
 <div id="footer">   
     
-<a href="http://opensource2.atlassian.com/projects/roller/">
-    <s:text name="footer.reportIssue" /></a> | 
-
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">
-    <s:text name="footer.userGuide" /></a> | 
-
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">
-    <s:text name="footer.mailingLists" /></a>
+Powered by <a href="http://roller.apache.org">Apache Roller</a> $config.rollerVersion
 
 </div>  
 </body>

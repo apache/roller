@@ -1,11 +1,7 @@
 <div id="footer">
-Powered by <a href="http://roller.apache.org">Apache Roller</a> $config.rollerVersion |
-<a href="http://opensource2.atlassian.com/projects/roller/">
-Report an Issue</a> | 
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">
-    User Guide</a> | 
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">
-    Mailing Lists</a>
+
+Powered by <a href="http://roller.apache.org">Apache Roller</a> $config.rollerVersion
+
 </div>
        
 <div id="datetagdiv" 
