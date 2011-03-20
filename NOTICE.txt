@@ -57,13 +57,13 @@ Roller committers (in chronological order):
 David M Johnson
 Lance Lanvandowska 
 Matt Raible 
-Mindaguas Idzelis (retired)
-Jaap Van Der Molen (retired)
+Mindaguas Idzelis (emeritus)
+Jaap Van Der Molen (emeritus)
 Anil Gangolli
 Henri Yandell
-Allen Gilliland
-Elias Torres
-Matt Schmidt
-Jeff Blattman
+Allen Gilliland (emeritus)
+Elias Torres (emeritus)
+Matt Schmidt (emeritus)
+Jeff Blattman (emeritus)
 Craig Russell
-
+Greg Huber
