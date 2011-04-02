@@ -115,7 +115,7 @@ public class ThemeEdit extends UIAction {
                     ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
                     t = themeMgr.getTheme(getImportThemeId());
                     themeMgr.importTheme(getActionWeblog(), t);
-                } catch(WebloggerException re) {
+                } catch(Exception re) {
                     log.error("Error customizing theme for weblog - "+getActionWeblog().getHandle(), re);
                     // TODO: i18n
                     addError("Error importing theme");

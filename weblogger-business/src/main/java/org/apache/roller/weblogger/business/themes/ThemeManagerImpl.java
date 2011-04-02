@@ -190,6 +190,10 @@ public class ThemeManagerImpl implements ThemeManager {
         log.debug("Importing theme [" + theme.getName() + "] to weblog [" + website.getName() + "]");
 
         WeblogManager wmgr = roller.getWeblogManager();
+        MediaFileManager fileMgr = roller.getMediaFileManager();
+        
+        MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
+        log.warn("Weblog " + website.getHandle() + " does not have a root MediaFile directory");
 
         Set importedActionTemplates = new HashSet();
         ThemeTemplate themeTemplate = null;
@@ -266,14 +270,10 @@ public class ThemeManagerImpl implements ThemeManager {
         }
         wmgr.saveWeblog(website);
 
-
         // now lets import all the theme resources
-        MediaFileManager fileMgr = roller.getMediaFileManager();
-
         List resources = theme.getResources();
         Iterator iterat = resources.iterator();
         ThemeResource resource = null;
-        MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
         while (iterat.hasNext()) {
             resource = (ThemeResource) iterat.next();
 
@@ -284,7 +284,8 @@ public class ThemeManagerImpl implements ThemeManager {
                     fileMgr.getMediaFileDirectoryByPath(website, resource.getPath());
                 if (mdir == null) {
                     log.debug("    Creating directory: " + resource.getPath());
-                    mdir = fileMgr.createMediaFileDirectory(root, resource.getPath());
+                    mdir = fileMgr.createMediaFileDirectory(
+                    	fileMgr.getMediaFileRootDirectory(website), resource.getPath());
                     roller.flush();
                 } else {
                     log.debug("    No action: directory already exists");
@@ -298,8 +299,10 @@ public class ThemeManagerImpl implements ThemeManager {
                 String justPath = null;
 
                 if (resourcePath.indexOf("/") == -1) {
-                    mdir = root;
-
+                    mdir = fileMgr.getMediaFileRootDirectory(website);
+                    justPath = "";
+                    justName = resourcePath;
+                    
                 } else {
                     justPath = resourcePath.substring(0, resourcePath.lastIndexOf("/"));
                     if (!justPath.startsWith("/")) justPath = "/" + justPath;
@@ -329,6 +332,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 mf.setLength(resource.getLength());
 
                 log.debug("    Saving file: " + justName);
+                log.debug("    Saviving in directory = " + mf.getDirectory());
                 RollerMessages errors = new RollerMessages();
                 fileMgr.createMediaFile(website, mf, errors);
                 try {
