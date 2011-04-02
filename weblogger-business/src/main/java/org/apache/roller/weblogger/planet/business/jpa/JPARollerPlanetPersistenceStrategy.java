@@ -20,19 +20,25 @@ package org.apache.roller.weblogger.planet.business.jpa;
 
 import java.util.Enumeration;
 import java.util.Properties;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
- * JPA strategy for Planet, uses WebloggerConfig to get JPA configuration.
+ * JPA strategy for Planet, uses PlanetConfig to get JPA configuration.
  */
 @com.google.inject.Singleton
 public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
@@ -42,7 +48,7 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
     
     
     /**
-     * Construct by finding using DatabaseProvider and WebloggerConfig.
+     * Uses database configuration information from WebloggerConfig (i.e. roller-custom.properties)
      * 
      * @throws org.apache.roller.PlanetException on any error
      */
@@ -50,42 +56,49 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
 
         DatabaseProvider dbProvider = WebloggerStartup.getDatabaseProvider();
                         
-        // Add all OpenJPA and Toplinks properties found in WebloggerConfig
-        Properties emfProps = new Properties();
-        Enumeration keys = WebloggerConfig.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
-                String value = WebloggerConfig.getProperty(key);
-                logger.info(key + ": " + value);
-                emfProps.setProperty(key, value);
+        String jpaConfigurationType = PlanetConfig.getProperty("jpa.configurationType");
+        if ("jndi".equals(jpaConfigurationType)) {
+        	// If JNDI configuration type specified in Planet Config then use it
+            // Lookup EMF via JNDI: added for Geronimo
+            String emfJndiName = "java:comp/env/" + PlanetConfig.getProperty("jpa.emf.jndi.name");
+            try {
+                emf = (EntityManagerFactory) new InitialContext().lookup(emfJndiName);
+            } catch (NamingException e) {
+                throw new PlanetException("Could not look up EntityManagerFactory in jndi at " + emfJndiName, e);
             }
-        }
-        
-        if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-            // We're doing JNDI, so set OpenJPA JNDI name property
-            String jndiName = "java:comp/env/" + dbProvider.getJndiName();
-            emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
             
         } else {
-            emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
-            emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
-            emfProps.setProperty("javax.persistence.jdbc.user", dbProvider.getJdbcUsername());
-            emfProps.setProperty("javax.persistence.jdbc.password", dbProvider.getJdbcPassword());
+        	
+            // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
+            Properties emfProps = new Properties();
+            Enumeration keys = WebloggerConfig.keys();
+            while (keys.hasMoreElements()) {
+                String key = (String) keys.nextElement();
+                if (       key.startsWith("javax.persistence.") 
+                        || key.startsWith("openjpa.") 
+                        || key.startsWith("hibernate.")) {
+                    String value = WebloggerConfig.getProperty(key);
+                    logger.info(key + ": " + value);
+                    emfProps.setProperty(key, value);
+                }
+            }
+	        
+            if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
+                emfProps.setProperty("javax.persistence.nonJtaDataSource", dbProvider.getJndiName());
 
-            // And Hibernate JPA?
-            emfProps.setProperty("hibernate.connection.driver_class",dbProvider.getJdbcDriverClass());
-            emfProps.setProperty("hibernate.connection.url",         dbProvider.getJdbcConnectionURL());
-            emfProps.setProperty("hibernate.connection.username",    dbProvider.getJdbcUsername());
-            emfProps.setProperty("hibernate.connection.password",    dbProvider.getJdbcPassword()); 
-        }
-        
-        try {
-            emf = Persistence.createEntityManagerFactory("PlanetPU", emfProps);
-        } catch (PersistenceException pe) {
-            logger.error("ERROR: creating entity manager", pe);
-            throw new PlanetException(pe);
-        }
-    }
-    
+            } else {
+                emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
+                emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
+                emfProps.setProperty("javax.persistence.jdbc.user", dbProvider.getJdbcUsername());
+                emfProps.setProperty("javax.persistence.jdbc.password", dbProvider.getJdbcPassword());
+            }
+            
+            try {
+                emf = Persistence.createEntityManagerFactory("PlanetPU", emfProps);
+            } catch (PersistenceException pe) {
+                logger.error("ERROR: creating entity manager", pe);
+                throw new PlanetException(pe);
+            }
+        }        
+    }  
 }
