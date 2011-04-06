@@ -55,19 +55,20 @@ public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
     
     
     public String render(final WeblogEntryComment comment, String text) {
-        
-        log.debug("starting value:\n"+text);
-        
         String output = text;
         
-        // escape html
-        output = Utilities.escapeHTML(output);
-        
-        // just use old utilities method
-        output = Utilities.transformToHTMLSubset(output);
-        
-        log.debug("ending value:\n"+output);
-        
+        // only do this if comment is HTML
+        if ("text/html".equals(comment.getContentType())) {
+            log.debug("ending value:\n" + output);
+            	        
+	        // escape html
+	        output = Utilities.escapeHTML(output);
+	        
+	        // just use old utilities method
+	        output = Utilities.transformToHTMLSubset(output);
+	        log.debug("starting value:\n"+text);
+        }
+                
         return output;
     }
     
