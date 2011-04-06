@@ -36,6 +36,9 @@
 				<exclude>**/._*</exclude>
 				<exclude>**/._*/**</exclude>
 				<exclude>**/.repository/**</exclude>
+				<exclude>**/.classpath</exclude>
+				<exclude>**/.project</exclude>
+				<exclude>**/.settings/**</exclude>
 			</excludes>
 		</fileSet>
 	</fileSets>
