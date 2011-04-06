@@ -24,6 +24,7 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.struts2.editor.EntryAdd;
+import org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile;
 import org.apache.roller.weblogger.ui.struts2.editor.EntryEdit;
 
 
@@ -56,6 +57,10 @@ public class UIActionPrepareInterceptor extends AbstractInterceptor {
                     EntryEdit editAction = (EntryEdit)action0;
                     EntryAdd addAction = (EntryAdd)action1;
                     editAction.getBean().setId(addAction.getBean().getId());
+                } else if (action0 instanceof EntryAdd && action1 instanceof EntryAddWithMediaFile) {
+                    EntryAdd addAction = (EntryAdd)action0;
+                	EntryAddWithMediaFile mediaAction = (EntryAddWithMediaFile)action1;
+                	addAction.setBean(mediaAction.getBean());
                 }
             }            
             
