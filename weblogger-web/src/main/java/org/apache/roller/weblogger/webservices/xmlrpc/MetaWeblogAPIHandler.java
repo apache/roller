@@ -25,20 +25,22 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.MediaFileManager;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
@@ -141,7 +143,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         String cat = null;
         if ( postcontent.get("categories") != null ) {
             Object[] cats = (Object[])postcontent.get("categories");
-            cat = (String)cats[0];
+            if (cats.length > 0) {
+            	cat = (String)cats[0];
+            }
         }
         mLogger.debug("      Title: " + title);
         mLogger.debug("   Category: " + cat);
@@ -376,8 +380,16 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             mf.setContentType(type);
             mf.setInputStream(new ByteArrayInputStream(bits));
             mf.setLength(bits.length);
-            
             String fileLink = mf.getPermalink();
+            
+            RollerMessages errors = new RollerMessages();
+            fmgr.createMediaFile(website, mf, errors);
+            
+            if (errors.getErrorCount() > 0) {
+                throw new Exception(errors.toString());
+            }
+
+            roller.flush();
             
             Hashtable returnStruct = new Hashtable(1);
             returnStruct.put("url", fileLink);
@@ -450,7 +462,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     private Hashtable createPostStruct(WeblogEntry entry, String userid) {
         
         String permalink =
-                WebloggerRuntimeConfig.getAbsoluteContextURL() + entry.getPermaLink();
+            WebloggerRuntimeConfig.getAbsoluteContextURL() + entry.getPermaLink();
         
         Hashtable struct = new Hashtable();
         struct.put("title", entry.getTitle());
@@ -479,17 +491,19 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     
     private Hashtable createCategoryStruct(WeblogCategory category, String userid) {
         
-        String contextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-        
         Hashtable struct = new Hashtable();
+        struct.put("title", category.getPath());
         struct.put("description", category.getPath());
         
-        String catUrl = contextUrl+"/page/"+userid+"?catname="+category.getPath();
-        catUrl = StringUtils.replace(catUrl," ","%20");
+        Weblogger roller = WebloggerFactory.getWeblogger();
+        URLStrategy strategy = roller.getUrlStrategy();
+        
+        String catUrl = strategy.getWeblogCollectionURL(category.getWebsite(),
+        		null, category.getPath(), null, null, 0, true);
         struct.put("htmlUrl", catUrl);
         
-        String rssUrl = contextUrl+"/rss/"+userid+"?catname="+category.getPath();
-        rssUrl = StringUtils.replace(catUrl," ","%20");
+        String rssUrl = strategy.getWeblogFeedURL(category.getWebsite(),
+               null, "entries", "rss", category.getPath(), null, null, false, true);
         struct.put("rssUrl",rssUrl);
         
         return struct;
