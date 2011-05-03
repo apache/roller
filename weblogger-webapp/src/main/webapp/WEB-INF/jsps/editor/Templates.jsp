@@ -34,6 +34,7 @@
 <table class="rollertable">
     <tr>
         <th width="30%"><s:text name="pagesForm.name" /></th>
+        <th width="10"><s:text name="pagesForm.action" /></th>
         <th width="60%"><s:text name="pagesForm.description" /></th>
         <th width="10"><s:text name="pagesForm.remove" /></th>
     </tr>
@@ -59,6 +60,8 @@
                 <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
             </td>
             
+            <td style="vertical-align:middle"><s:property value="#p.action" /></td>
+
             <td style="vertical-align:middle"><s:property value="#p.description" /></td>
                         
             <td class="center" style="vertical-align:middle">

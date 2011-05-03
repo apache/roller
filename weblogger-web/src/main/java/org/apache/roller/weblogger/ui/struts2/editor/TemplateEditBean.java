@@ -30,6 +30,7 @@ public class TemplateEditBean {
     
     private String id = null;
     private String name = null;
+    private String action = null;
     private String description = null;
     private String link = null;
     private String contents = null;
@@ -55,6 +56,14 @@ public class TemplateEditBean {
     public void setName( String name ) {
         this.name = name;
     }
+    
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getAction() {
+		return action;
+	}
     
     public String getDescription() {
         return this.description;
@@ -129,6 +138,7 @@ public class TemplateEditBean {
         // dealing with a CUSTOM weblog template
         if(dataHolder.isCustom()) {
             dataHolder.setName(getName());
+            dataHolder.setAction(getAction());
             dataHolder.setDescription(getDescription());
             dataHolder.setLink(getLink());
             dataHolder.setNavbar(isNavbar());
@@ -142,6 +152,7 @@ public class TemplateEditBean {
         
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
+        this.action = dataHolder.getAction();
         this.description = dataHolder.getDescription();
         this.link = dataHolder.getLink();
         this.contents = dataHolder.getContents();
@@ -154,5 +165,5 @@ public class TemplateEditBean {
             setAutoContentType(Boolean.FALSE);
         }
     }
-    
+
 }

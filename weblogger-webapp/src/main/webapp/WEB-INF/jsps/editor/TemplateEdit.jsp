@@ -52,6 +52,14 @@
             <td class="description"></td>
         </tr>
         
+        <tr>
+            <td class="label"><s:text name="pageForm.action" />&nbsp;</td>
+            <td class="field">
+                 <s:textfield name="bean.action" size="50" readonly="true" cssStyle="background: #e5e5e5" />
+            </td>
+            <td class="description"></td>
+        </tr>
+        
         <script type="text/javascript">
         <!--
         var weblogURL = '<s:property value="actionWeblog.absoluteURL" />';
