@@ -18,10 +18,10 @@
 
 package org.apache.roller.weblogger.business.themes;
 
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
+
 import java.io.Serializable;
 import java.util.Date;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
 
 
 /**
@@ -41,6 +41,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private boolean hidden = false;
     private boolean navbar = false;
     private String  outputContentType = null;
+    private String type = null;
     
     private SharedTheme myTheme = null;
     
@@ -49,7 +50,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     
     public SharedThemeTemplate(SharedTheme theme, String id, String action, String name, 
             String desc, String contents, String link, Date date, 
-            String tempLang, boolean hid, boolean navbar) {
+            String tempLang, boolean hid, boolean navbar, String type) {
         
         this.myTheme = theme;
         this.id = id;
@@ -62,6 +63,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.templateLanguage = tempLang;
         this.hidden = hid;
         this.navbar = navbar;
+        this.type = type;
     }
     
     
@@ -171,5 +173,12 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     public void setAction(String action) {
         this.action = action;
     }
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

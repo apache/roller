@@ -80,6 +80,7 @@ public class WeblogPageTest extends TestCase {
         testPage.setLastModified(new java.util.Date());
         testPage.setWebsite(TestUtils.getManagedWebsite(testWeblog));
         testPage.setTemplateLanguage("velocity");
+        testPage.setType("standard");
     }
     
     public void tearDown() throws Exception {
@@ -173,7 +174,7 @@ public class WeblogPageTest extends TestCase {
         
         // lookup by link
         page = null;
-        page = mgr.getPageByLink(testWeblog, testPage.getLink());
+        page = mgr.getPagesByLink(testWeblog, testPage.getLink()).get(0);
         assertNotNull(page);
         assertEquals(testPage.getContents(), page.getContents());
         

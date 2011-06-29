@@ -18,22 +18,12 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TimeZone;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogReferrer;
+import org.apache.roller.weblogger.pojos.*;
+
+import java.util.*;
 
 
 /**
@@ -76,9 +66,9 @@ public class WeblogWrapper {
     }
     
     
-    public ThemeTemplateWrapper getPageByLink(String link)
+    public List <ThemeTemplateWrapper> getPageByLink(String link)
             throws WebloggerException {
-        return ThemeTemplateWrapper.wrap(this.pojo.getTheme().getTemplateByLink(link));
+        return (List<ThemeTemplateWrapper>) ThemeTemplateWrapper.wrap((ThemeTemplate) this.pojo.getTheme().getTemplatesByLink(link));
     }
     
     
@@ -265,6 +255,14 @@ public class WeblogWrapper {
         // custom stylesheet comes from the weblog theme
         if(this.pojo.getTheme().getStylesheet() != null) {
             return urlStrategy.getWeblogPageURL(this.pojo, null, this.pojo.getTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
+        }
+        return null;
+    }
+
+    public String getMobileStylesheet() throws WebloggerException {
+            // custom stylesheet comes from the weblog theme
+        if(this.pojo.getMobileTheme().getStylesheet() != null) {
+            return urlStrategy.getWeblogPageURL(this.pojo, null, this.pojo.getMobileTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
         }
         return null;
     }

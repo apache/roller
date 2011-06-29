@@ -18,10 +18,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +27,11 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -49,6 +50,7 @@ public class Templates extends UIAction {
     // name and action of new template if we are adding a template
     private String newTmplName = null;
     private String newTmplAction = null;
+    private String type = null;
     
     
     public Templates() {
@@ -68,13 +70,24 @@ public class Templates extends UIAction {
         // query for templates list
         try {
             
-            // get current list of templates, minus custom stylesheet
+            // get current list of templates, minus custom stylesheet and auto generated mobile templates
             List<WeblogTemplate> raw = WebloggerFactory.getWeblogger().getWeblogManager().getPages(getActionWeblog()); 
             List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
+
             pages.addAll(raw);
-            if(getActionWeblog().getTheme().getStylesheet() != null) {
-                pages.remove(WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(getActionWeblog(), 
-                        getActionWeblog().getTheme().getStylesheet().getLink()));
+
+            for(WeblogTemplate template : raw){
+                if("mobile".equals(template.getType())&&template.getName().endsWith(".Mobile")){
+                    pages.remove(template);
+                }
+            }
+
+            if (getActionWeblog().getTheme().getStylesheet() != null) {
+                List<WeblogTemplate> stylesheets = WebloggerFactory.getWeblogger().getWeblogManager().getPagesByLink(getActionWeblog(),
+                        getActionWeblog().getTheme().getStylesheet().getLink());
+                if (stylesheets != null && !stylesheets.isEmpty()) {
+                    pages.remove(stylesheets.get(0));
+                }
             }
             setTemplates(pages);
             
@@ -127,6 +140,11 @@ public class Templates extends UIAction {
             newTemplate.setHidden(false);
             newTemplate.setNavbar(false);
             newTemplate.setLastModified( new Date() );
+            newTemplate.setType("standard");
+
+            if(WeblogTemplate.ACTION_CUSTOM.equals(getNewTmplAction())){
+                newTemplate.setLink(getNewTmplName());
+            }
             
             // all templates start out as velocity templates
             newTemplate.setTemplateLanguage("velocity");
@@ -148,10 +166,9 @@ public class Templates extends UIAction {
             
             // flush results to db
             WebloggerFactory.getWeblogger().flush();
-            
-            // reset form fields
-            setNewTmplName(null);
-            setNewTmplAction(null);
+
+            // add roller generated mobile template
+            addMobileTemplate();
             
         } catch (WebloggerException ex) {
             log.error("Error adding new template for weblog - "+getActionWeblog().getHandle(), ex);
@@ -160,6 +177,62 @@ public class Templates extends UIAction {
         }
         
         return execute();
+    }
+
+    public void addMobileTemplate(){
+
+         // validation
+       // myValidate();
+
+        if(!hasActionErrors()) try {
+
+            WeblogTemplate newMobileTemplate = new WeblogTemplate();
+            newMobileTemplate.setWebsite(getActionWeblog());
+            newMobileTemplate.setAction(getNewTmplAction());
+            newMobileTemplate.setName(getNewTmplName()+".Mobile");
+            newMobileTemplate.setDescription(newMobileTemplate.getName());
+            newMobileTemplate.setContents(getText("pageForm.newTemplateContent"));
+            newMobileTemplate.setHidden(false);
+            newMobileTemplate.setNavbar(false);
+            newMobileTemplate.setLastModified( new Date() );
+            newMobileTemplate.setType("mobile");
+
+             if(WeblogTemplate.ACTION_CUSTOM.equals(getNewTmplAction())){
+                newMobileTemplate.setLink(getNewTmplName());
+            }
+
+            // all templates start out as velocity templates
+            newMobileTemplate.setTemplateLanguage("velocity");
+
+            // for now, all templates just use _decorator
+            if(!"_decorator".equals(newMobileTemplate.getName())) {
+                newMobileTemplate.setDecoratorName("_decorator");
+            }
+
+            // save the new Template
+            WebloggerFactory.getWeblogger().getWeblogManager().savePage( newMobileTemplate );
+
+            // if this person happened to create a Weblog template from
+            // scratch then make sure and set the defaultPageId
+            if(WeblogTemplate.DEFAULT_PAGE.equals(newMobileTemplate.getName())) {
+                getActionWeblog().setDefaultPageId(newMobileTemplate.getId());
+                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(getActionWeblog());
+            }
+
+            // flush results to db
+            WebloggerFactory.getWeblogger().flush();
+
+            // reset form fields
+            setNewTmplName(null);
+            setNewTmplAction(null);
+            setType(null);
+
+        } catch (WebloggerException ex) {
+            log.error("Error adding new mobile template for weblog - "+getActionWeblog().getHandle(), ex);
+            // TODO: i18n
+            addError("Error adding new mobile template");
+        }
+
     }
     
     
@@ -221,5 +294,13 @@ public class Templates extends UIAction {
     public void setNewTmplAction(String newTmplAction) {
         this.newTmplAction = newTmplAction;
     }
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 }

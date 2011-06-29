@@ -44,6 +44,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     private String outputContentType = null;
     private String decoratorName = null;
     private ThemeTemplate decorator = null;
+    private String type = "standard";
     
     
     public StaticThemeTemplate(String id, String lang) {
@@ -97,6 +98,14 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     
     public String getOutputContentType() {
         return outputContentType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type){
+          this.type = type;
     }
 
     public void setOutputContentType(String outputContentType) {

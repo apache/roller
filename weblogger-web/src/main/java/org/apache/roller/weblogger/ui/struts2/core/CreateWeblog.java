@@ -18,23 +18,24 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import java.util.List;
 import org.apache.commons.lang.CharSetUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import java.util.List;
 
 
 /**
@@ -119,6 +120,7 @@ public class CreateWeblog extends UIAction {
                     getBean().getEmailAddress(),
                     getBean().getEmailAddress(),
                     getBean().getTheme(),
+                    getBean().getMobileTheme(),
                     getBean().getLocale(),
                     getBean().getTimeZone());
             
@@ -183,6 +185,16 @@ public class CreateWeblog extends UIAction {
     public List getThemes() {
         ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
         return themeMgr.getEnabledThemesList();
+    }
+
+    public List getMobileThemes(){
+       ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
+        return themeMgr.getEnabledMobileThemeList();
+    }
+
+    public List getStandardThemes(){
+            ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
+        return themeMgr.getEnabledStandardThemeList();
     }
     
     

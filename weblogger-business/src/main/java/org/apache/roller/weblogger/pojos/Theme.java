@@ -18,9 +18,10 @@
 
 package org.apache.roller.weblogger.pojos;
 
+import org.apache.roller.weblogger.WebloggerException;
+
 import java.util.Date;
 import java.util.List;
-import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
@@ -39,7 +40,11 @@ public interface Theme {
      * A common or display name for this Theme.
      */
     public String getName();
-    
+
+    /**
+     * Metadata to identify a theme Type  eg: standard , mobile  etc.
+     */
+     public String getType();
     
     /**
      * A description of the Theme.
@@ -95,7 +100,7 @@ public interface Theme {
      * Lookup a template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException;
+    public List<ThemeTemplate> getTemplatesByLink(String link) throws WebloggerException;
     
     
     /**

@@ -18,8 +18,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.Locale;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
@@ -39,6 +37,13 @@ public class TemplateEditBean {
     private boolean hidden = false;
     private Boolean autoContentType = Boolean.TRUE;
     private String manualContentType = null;
+    private String type = null;
+
+     // template ID of mobile template version
+    private String mobileTemplateId = null;
+
+    // template ID of standard template version
+    private String standardTemplateId = null;
     
     
     public String getId() {
@@ -159,11 +164,32 @@ public class TemplateEditBean {
         this.navbar = dataHolder.isNavbar();
         this.hidden = dataHolder.isHidden();
         this.templateLanguage = dataHolder.getTemplateLanguage();
+        this.type = dataHolder.getType();
         
         setManualContentType(dataHolder.getOutputContentType());
         if(getManualContentType() != null) {
             setAutoContentType(Boolean.FALSE);
         }
+    }
+
+    public String getMobileTemplateId() {
+        return mobileTemplateId;
+    }
+
+    public void setMobileTemplateId(String mobileTemplateId) {
+        this.mobileTemplateId = mobileTemplateId;
+    }
+
+    public String getStandardTemplateId() {
+        return standardTemplateId;
+    }
+
+    public void setStandardTemplateId(String standardTemplateId) {
+        this.standardTemplateId = standardTemplateId;
+    }
+
+    public boolean isMobile() {
+        return (id.equals(mobileTemplateId));
     }
 
 }

@@ -1,0 +1,34 @@
+## sidebar contents
+
+    <h2>Calendar</h2>
+    <div class="sidebar">
+    #showWeblogEntryCalendar($model.weblog "nil")
+    </div>
+
+    <h2>Feeds</h2>
+    <div class="sidebar">
+    #showAtomFeedsList($model.weblog)
+    </div>
+
+    <h2>Search</h2>
+    <div class="sidebar">
+    #showWeblogSearchForm($model.weblog false)
+    </div>
+
+    <h2>Links</h2>
+    <div class="sidebar">
+    #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+    #showBookmarkLinksList($rootFolder false false) 
+    </div>
+
+    <h2>Navigation</h2>
+    <div class="sidebar">
+    #showPageMenu($model.weblog)
+    #showAuthorMenu(true)
+    </div>
+
+    <h2>Referrers</h2>
+    <div class="sidebar">
+    #set($refs = $model.weblog.getTodaysReferrers())
+    #showReferrersList($refs 30 20 true)
+    </div>

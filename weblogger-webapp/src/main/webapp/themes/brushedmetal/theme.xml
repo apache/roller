@@ -4,6 +4,7 @@
     <id>brushedmetal</id>
     <name>Brushed Metal</name>
     <author>Bryan Bell</author>
+    <type>standard</type>
     
     <!-- theme preview image -->
     <preview-image path="brushedmetal-preview.png" />

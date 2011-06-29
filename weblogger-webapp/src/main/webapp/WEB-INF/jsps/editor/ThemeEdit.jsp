@@ -29,9 +29,10 @@ function fullPreview(selector) {
 }
 function updateThemeChooser(selected) {
     if (selected[0].value == 'shared') {
-        $('#sharedChooser').css('background','#CCFFCC'); 
-        $('#sharedChooser').css('border','1px solid #008000'); 
+        $('#sharedChooser').css('background','#CCFFCC');
+        $('#sharedChooser').css('border','1px solid #008000');
         $('#sharedOptioner').show();
+        $('#mobileSharedOptioner').show();
 
         $('#customChooser').css('background','#eee'); 
         $('#customChooser').css('border','1px solid #gray'); 
@@ -44,6 +45,7 @@ function updateThemeChooser(selected) {
         $('#sharedChooser').css('background','#eee'); 
         $('#sharedChooser').css('border','1px solid #gray'); 
         $('#sharedOptioner').hide();
+         $('#mobileSharedOptioner').hide();
     }
 }
 function toggleImportThemeDisplay() {
@@ -83,6 +85,11 @@ function toggleImportThemeDisplay() {
             </td>
         </tr>
     </table>
+
+
+    <table>
+        <tr>
+            <td>
 
     <div id="sharedOptioner" class="optioner" style="display:none;">
         <p>
@@ -127,8 +134,61 @@ function toggleImportThemeDisplay() {
                 <s:text name="themeEditor.customStylesheetDescription" />
             </p>
         </s:if>
-        <p><s:submit value="%{getText('themeEditor.save')}" /></p>
+        <p><s:submit value="%{getText('themeEditor.save')}"/></p>
     </div>
+    </td>
+            <td>
+         <div id="mobileSharedOptioner" class="optioner" style="display:none;">
+
+            <p>
+                <s:if test="!customTheme">
+                    <s:text name="themeEditor.yourCurrentTheme"/>:
+                    <b><s:property value="actionWeblog.mobileTheme.name"/></b>
+                </s:if>
+                <s:else>
+                    <s:text name="themeEditor.selectTheme"/>
+                </s:else>
+            </p>
+
+            <p>
+                <s:select id="mobileSharedSelector" name="mobileThemeId" list="mobileThemes"
+                          listKey="id" listValue="name" size="1"
+                          onchange="previewImage($('#sharedMobilePreviewImg'), this[selectedIndex].value)"/>
+            </p>
+
+            <p>
+                <img id="sharedMobilePreviewImg" src=""/>
+                <!-- initialize preview image at page load -->
+                <script type="text/javascript">
+                    <s:if test="customTheme">
+                    previewImage($('#sharedMobilePreviewImg'), '<s:property value="mobileThemes[0].id"/>');
+                    </s:if>
+                    <s:else>
+                    previewImage($('#sharedMobilePreviewImg'), '<s:property value="mobileThemeId"/>');
+                    </s:else>
+                </script>
+            </p>
+            <p>
+                &raquo; <a href="#" onclick="fullPreview($('#mobileSharedSelector').get(0))">
+                <s:text name="themeEditor.previewLink"/></a><br/>
+                <s:text name="themeEditor.previewDescription"/>
+            </p>
+
+            <s:if test="!customTheme && actionWeblog.theme.customStylesheet != null">
+                <p>
+                    <s:url action="stylesheetEdit" id="stylesheetEdit">
+                        <s:param name="weblog" value="%{actionWeblog.handle}"/>
+                    </s:url>
+                    &raquo; <s:a href="%{stylesheetEdit}"><s:text name="themeEditor.customStylesheetLink"/></s:a><br/>
+                    <s:text name="themeEditor.customStylesheetDescription"/>
+                </p>
+            </s:if>
+        <p><s:submit value="%{getText('themeEditor.save')}"  action="themeEdit!saveMobileTheme"/></p>
+    </div>
+     </td>
+            </tr>
+    </table>
+
 
     <div id="customOptioner" class="optioner" style="display:none;">
 

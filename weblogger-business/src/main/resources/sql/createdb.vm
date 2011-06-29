@@ -91,7 +91,8 @@ create table webpage (
     templatelang    varchar(20) not null,
     decorator       varchar(255) default null,
     outputtype      varchar(48) default null,
-    #columnNotNullWithDefault('action' 'varchar(16)' 'custom')
+    #columnNotNullWithDefault('action' 'varchar(16)' 'custom'),
+    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
 );
 create index wp_name_idx on webpage( name$!db.INDEXSIZE );
 create index wp_link_idx on webpage( link$!db.INDEXSIZE );
@@ -115,6 +116,7 @@ create table website (
     emailfromaddress  varchar(255),
     emailaddress      varchar(255) not null,
     editortheme       varchar(255),
+    mobilethemename       varchar(255),
     locale            varchar(20), 
     timezone          varchar(50),  
     defaultplugins    varchar(255),

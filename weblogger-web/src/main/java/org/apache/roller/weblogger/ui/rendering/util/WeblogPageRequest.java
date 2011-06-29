@@ -18,24 +18,25 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -353,7 +354,39 @@ public class WeblogPageRequest extends WeblogRequest {
         
         if(weblogPage == null && weblogPageName != null) {
             try {
-                weblogPage = getWeblog().getTheme().getTemplateByLink(weblogPageName);                
+
+                List <ThemeTemplate> weblogPages = getWeblog().getTheme().getTemplatesByLink(weblogPageName);
+
+                if(weblogPages != null && weblogPages.size() ==1){
+                    // default scenario of having one template only as CSS.
+                    return weblogPages.get(0);
+                }
+
+                else if (weblogPages != null && weblogPages.size()>1) {
+
+                    // return mobile template if the request coming from a mobile device
+                    if (MobileDeviceRepository.isMobileDevice(request)) {
+                        for (ThemeTemplate weblogPage : weblogPages) {
+                            if ("mobile".equals(weblogPage.getType())) {
+                                return weblogPage;
+                            }
+                        }
+                }
+                    else {
+                        for (ThemeTemplate weblogPage : weblogPages) {
+                            if ("standard".equals(weblogPage.getType())) {
+                                return weblogPage;
+                            }
+                        }
+                    }
+                }
+                else{
+                   // return null if we cannot find anything.
+                    return null;
+                }
+
+
+
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog page "+weblogPageName, ex);
             }

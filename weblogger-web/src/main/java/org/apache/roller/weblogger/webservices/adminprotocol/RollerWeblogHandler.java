@@ -18,31 +18,24 @@
 
 package org.apache.roller.weblogger.webservices.adminprotocol;
 
-import java.io.Reader;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Collections;
-import java.util.Date;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jdom.Document;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry;
-import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
-import org.apache.roller.weblogger.webservices.adminprotocol.sdk.UnexpectedRootElementException;
-import org.apache.roller.weblogger.webservices.adminprotocol.sdk.WeblogEntry;
-import org.apache.roller.weblogger.webservices.adminprotocol.sdk.WeblogEntrySet;
+import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.roller.weblogger.webservices.adminprotocol.sdk.*;
+import org.jdom.Document;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.util.*;
 
 /**
  * This class handles requests concerning Roller weblog resources.
@@ -53,6 +46,9 @@ class RollerWeblogHandler extends Handler {
     
     /** Theme name used when creating weblogs */
     private static final String DEFAULT_THEME = "basic";
+
+    //Default mobile theme when creating weblogs//
+    private static final String DEFAULT_MOBILE_THEME = "mobile";
     
     public RollerWeblogHandler(HttpServletRequest request) throws HandlerException {
         super(request);
@@ -176,7 +172,7 @@ class RollerWeblogHandler extends Handler {
                         entry.getDescription(),
                         entry.getEmailAddress(),
                         entry.getEmailAddress(),
-                        DEFAULT_THEME,
+                        DEFAULT_THEME,DEFAULT_MOBILE_THEME,
                         entry.getLocale().toString(),
                         entry.getTimezone().getID());
                 

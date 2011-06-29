@@ -18,22 +18,14 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.ThemeResource;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.*;
+
+import java.util.*;
 
 
 /**
@@ -59,7 +51,11 @@ public class WeblogSharedTheme extends WeblogTheme {
     public String getName() {
         return this.theme.getName();
     }
-    
+
+    public String getType() {
+        return this.theme.getType();
+    }
+
     public String getDescription() {
         return this.theme.getDescription();
     }
@@ -128,8 +124,18 @@ public class WeblogSharedTheme extends WeblogTheme {
         ThemeTemplate stylesheet = this.theme.getStylesheet();
         if(stylesheet != null) {
             // now try getting custom version from weblog
-            ThemeTemplate override = WebloggerFactory.getWeblogger()
-                    .getWeblogManager().getPageByLink(this.weblog, stylesheet.getLink());
+
+            // Get the style sheet for link. We do not have duplicates for same link as we have
+            //in other template pages for a theme.
+
+            List  styleSheetList = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getPagesByLink(this.weblog, stylesheet.getLink());
+
+            ThemeTemplate override = null;
+
+             if(styleSheetList != null && !styleSheetList.isEmpty()) {
+             override = (ThemeTemplate) styleSheetList.get(0);
+             }
             if(override != null) {
                 stylesheet = override;
             }
@@ -197,8 +203,9 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
-        
+    public List<ThemeTemplate> getTemplatesByLink(String link) throws WebloggerException {
+
+        List templatesList = null;
         if(link == null)
             return null;
         
@@ -206,21 +213,24 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
-        if(stylesheet != null && link.equals(stylesheet.getLink())) {
-            return stylesheet;
+        if(stylesheet != null && (link.equals(stylesheet.getLink()))) {
+            //we cannot return single Style sheet so we need to return a list with one single Style Sheet
+            List<ThemeTemplate> styleSheetList = new ArrayList<ThemeTemplate>();
+            styleSheetList.add(stylesheet);
+            return styleSheetList;
         }
         
         // first check if this user has selected a theme
         // if so then return the proper theme template
-        template = this.theme.getTemplateByLink(link);
+        templatesList = this.theme.getTemplatesByLink(link);
         
         // if we didn't get the Template from a theme then look in the db
-        if(template == null) {
-            template = WebloggerFactory.getWeblogger()
-                    .getWeblogManager().getPageByLink(this.weblog, link);
+        if(templatesList == null || templatesList.isEmpty()) {
+            templatesList = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getPagesByLink(this.weblog, link);
         }
         
-        return template;
+        return templatesList;
     }
     
     

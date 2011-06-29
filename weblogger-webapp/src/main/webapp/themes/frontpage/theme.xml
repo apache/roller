@@ -4,6 +4,7 @@
     <id>frontpage</id>
     <name>Frontpage</name>
     <author>Dave Johnson</author>
+    <type>standard</type>
     
     <!-- theme preview image -->
     <preview-image path="sm-theme-frontpage.png" />

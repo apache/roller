@@ -30,6 +30,7 @@ public class ThemeMetadata {
     private String id = null;
     private String name = null;
     private String author = null;
+    private String type = null;
     private String previewImage = null;
     private ThemeMetadataTemplate stylesheet = null;
     private Set templates = new HashSet();
@@ -103,5 +104,12 @@ public class ThemeMetadata {
     public void setStylesheet(ThemeMetadataTemplate stylesheet) {
         this.stylesheet = stylesheet;
     }
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

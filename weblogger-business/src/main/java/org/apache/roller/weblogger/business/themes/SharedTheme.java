@@ -18,18 +18,12 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -41,6 +35,7 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable {
     protected String id = null;
     protected String name = null;
     protected String description = null;
+    private   String type = null;
     protected String author = null;
     protected Date lastModified = null;
     protected boolean enabled = false;
@@ -107,4 +102,11 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable {
         this.enabled = enabled;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

@@ -18,23 +18,18 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.*;
 
 
 /**
@@ -60,7 +55,7 @@ public class SharedThemeFromDir extends SharedTheme {
     private Map templatesByName = new HashMap();
     
     // we keep templates in a Map for faster lookups by link
-    // the Map contains ... (template link, ThemeTemplate)
+    // the Map contains ... (template link, List<tThemeTemplate>)
     private Map templatesByLink = new HashMap();
     
     // we keep templates in a Map for faster lookups by action
@@ -88,8 +83,8 @@ public class SharedThemeFromDir extends SharedTheme {
     public ThemeResource getPreviewImage() {
         return this.previewImage;
     }
-    
-    
+
+
     /**
      * Get the collection of all templates associated with this Theme.
      */
@@ -129,8 +124,8 @@ public class SharedThemeFromDir extends SharedTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) {
-        return (ThemeTemplate) this.templatesByLink.get(link);
+    public List<ThemeTemplate> getTemplatesByLink(String link) {
+        return (List<ThemeTemplate>) this.templatesByLink.get(link);
     }
     
     
@@ -206,6 +201,7 @@ public class SharedThemeFromDir extends SharedTheme {
         setId(themeMetadata.getId());
         setName(themeMetadata.getName());
         setDescription(themeMetadata.getName());
+        setType(themeMetadata.getType());
         setAuthor(themeMetadata.getAuthor());
         setLastModified(null);
         setEnabled(true);
@@ -246,7 +242,7 @@ public class SharedThemeFromDir extends SharedTheme {
                         new Date(templateFile.lastModified()),
                         stylesheetTmpl.getTemplateLanguage(),
                         false,
-                        false);
+                        false,stylesheetTmpl.getType());
                 
                 // store it
                 this.stylesheet = theme_template;
@@ -316,7 +312,9 @@ public class SharedThemeFromDir extends SharedTheme {
                     new Date(templateFile.lastModified()),
                     templateMetadata.getTemplateLanguage(),
                     templateMetadata.isHidden(),
-                    templateMetadata.isNavbar());
+                    templateMetadata.isNavbar(),
+                    templateMetadata.getType());
+                ;
 
             // add it to the theme
             addTemplate(theme_template);
@@ -363,8 +361,18 @@ public class SharedThemeFromDir extends SharedTheme {
      */
     private void addTemplate(ThemeTemplate template) {
         this.templatesByName.put(template.getName(), template);
-        this.templatesByLink.put(template.getLink(), template);
-        if(!ThemeTemplate.ACTION_CUSTOM.equals(template.getAction())) {
+
+          // check if there is an existing template for given link and append if exists.
+        List<ThemeTemplate> templates = new ArrayList<ThemeTemplate>();
+        if (!templatesByLink.containsKey(template.getLink())) {
+            templates.add(template);
+            templatesByLink.put(template.getLink(), templates);
+        } else {
+            templates = (List<ThemeTemplate>) templatesByLink.get(template.getLink());
+            templates.add(template);
+            templatesByLink.put(template.getLink(), templates);
+        }
+        if (!ThemeTemplate.ACTION_CUSTOM.equals(template.getAction())) {
             this.templatesByAction.put(template.getAction(), template);
         }
     }

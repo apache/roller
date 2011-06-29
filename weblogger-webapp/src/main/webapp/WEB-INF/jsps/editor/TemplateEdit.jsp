@@ -42,7 +42,7 @@
         <tr>
             <td class="label"><s:text name="pageForm.name" />&nbsp;</td>
             <td class="field">
-                <s:if test="template.required">
+                <s:if test="template.required || bean.mobile">
                     <s:textfield name="bean.name" size="50" readonly="true" cssStyle="background: #e5e5e5" />
                 </s:if>
                 <s:else>
@@ -87,7 +87,7 @@
         -->
         </script>
         
-        <s:if test="!template.required && template.custom">
+        <s:if test="!template.required && template.custom && !bean.mobile">
             <tr>
                 <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
                 <td class="field">
@@ -99,6 +99,17 @@
                 <td class="description"></td>
             </tr>
         </s:if>
+
+         <s:elseif test="!template.required && template.custom && bean.mobile">
+            <tr>
+                <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
+                <td class="field">
+                    <s:textfield name="bean.link" size="50" readonly="true" cssStyle="background: #e5e5e5" />
+                    <br />
+                      </td>
+                <td class="description"></td>
+            </tr>
+        </s:elseif>
         
         <tr>
             <td class="label" valign="top" style="padding-top: 4px"><s:text name="pageForm.description" />&nbsp;</td>
@@ -114,7 +125,49 @@
         </tr>
         
     </table>
-    
+
+    <s:if test="mobileTemplateAvailable">
+
+     <s:set name="tabMenu" value="menu"/>
+
+    <table class="menuTabTable" cellspacing="0" >
+     <tr>
+          <s:if test="!bean.mobile">
+        <td class="menuTabSelected">
+    </s:if>
+    <s:else>
+        <td class="menuTabUnselected">
+    </s:else>
+
+          <div class="menu-tr">
+           <s:url id="edit" action="templateEdit">
+               <s:param name="weblog" value="actionWeblog.handle" />
+               <s:param name="bean.id" value="bean.standardTemplateId" />
+           </s:url>
+	       <div class="menu-tl">&nbsp;&nbsp;<s:a href="%{edit}">Standard</s:a>&nbsp;&nbsp; </div>
+	    </div></td>
+
+
+          <td class="menuTabSeparator"></td>
+
+        <s:if test="bean.mobile">
+        <td class="menuTabSelected">
+    </s:if>
+    <s:else>
+        <td class="menuTabUnselected">
+    </s:else>
+        <div class="menu-tr">
+
+           <s:url id="edit" action="templateEdit">
+               <s:param name="weblog" value="actionWeblog.handle" />
+               <s:param name="bean.id" value="bean.mobileTemplateId" />
+           </s:url>
+	       <div class="menu-tl">&nbsp;&nbsp;<s:a href="%{edit}">mobile</s:a>&nbsp;&nbsp; </div>
+	    </div></td>
+
+     </tr>
+        </table>
+   </s:if>
     <%-- ================================================================== --%>
     <%-- Template editing area w/resize buttons --%>
     

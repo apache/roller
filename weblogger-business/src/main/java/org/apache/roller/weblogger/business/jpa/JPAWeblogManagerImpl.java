@@ -18,51 +18,19 @@
 
 package org.apache.roller.weblogger.business.jpa;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.sql.Timestamp;
-import java.util.Comparator;
-import java.util.Hashtable;
-import javax.persistence.NoResultException;
-
-import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.*;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.AutoPing;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.PingQueueEntry;
-import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.pojos.WeblogReferrer;
-import org.apache.roller.weblogger.pojos.StatCount;
-import org.apache.roller.weblogger.pojos.StatCountCountComparator;
-import org.apache.roller.weblogger.pojos.TagStat;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
-import org.apache.roller.weblogger.pojos.WeblogEntryTag;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogBookmark;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.*;
+
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.sql.Timestamp;
+import java.util.*;
 
 
 /*
@@ -531,7 +499,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Use JPA directly because Weblogger's Query API does too much allocation.
      */
-    public WeblogTemplate getPageByLink(Weblog website, String pagelink)
+    public List<WeblogTemplate> getPagesByLink(Weblog website, String pagelink)
     throws WebloggerException {
         
         if (website == null)
@@ -544,7 +512,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         query.setParameter(1, website);
         query.setParameter(2, pagelink);
         try {
-            return (WeblogTemplate)query.getSingleResult();
+            return (List<WeblogTemplate>)query.getResultList();
         } catch (NoResultException e) {
             return null;
         }

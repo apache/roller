@@ -18,16 +18,17 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.WebloggerException;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -57,6 +58,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private boolean navbar = false;
     private String  decoratorName = null;
     private String  outputContentType = null;
+    private String  type = null;
     
     // associations
     private Weblog weblog = null;
@@ -263,5 +265,12 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
             .append(getWebsite())
             .toHashCode();
     }
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

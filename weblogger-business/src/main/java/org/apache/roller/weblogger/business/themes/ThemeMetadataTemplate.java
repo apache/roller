@@ -33,6 +33,7 @@ public class ThemeMetadataTemplate {
     private String templateLanguage = null;
     private String contentType = null;
     private String contentsFile = null;
+    private String type = null;
 
     public String getAction() {
         return action;
@@ -105,5 +106,12 @@ public class ThemeMetadataTemplate {
     public void setContentsFile(String contentsFile) {
         this.contentsFile = contentsFile;
     }
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

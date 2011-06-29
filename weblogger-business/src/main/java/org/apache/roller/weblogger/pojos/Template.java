@@ -63,5 +63,11 @@ public interface Template {
      * Content-type of output or null if none defined.
      */
     public String getOutputContentType();
+
+    /**
+     *
+     * type of the template , eg: standard , mobile etc.
+     */
+    public String getType();
     
 }

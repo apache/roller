@@ -174,7 +174,7 @@ public interface WeblogManager {
     /**
      * Get website's page by link.
      */
-    public WeblogTemplate getPageByLink(Weblog w, String p)
+    public List<WeblogTemplate> getPagesByLink(Weblog w, String p)
         throws WebloggerException;
     
     

@@ -22,6 +22,11 @@
 function previewImage(theme) {
     document.preview.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
 }
+
+function previewMobileThemeImage(theme) {
+    document.mobile_preview.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
+}
+
 function handlePreview(handle) {
     previewSpan = document.getElementById("handlePreview");
     var n1 = previewSpan.childNodes[0];
@@ -92,7 +97,7 @@ function handlePreview(handle) {
 <tr>
     <td class="label"><label for="theme" /><s:text name="createWebsite.theme" /></label></td>
     <td class="field">
-        <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name" onchange="previewImage(this[selectedIndex].value)"/>
+        <s:select name="bean.theme" size="1" list="standardThemes" listKey="id" listValue="name" onchange="previewImage(this[selectedIndex].value)"/>
        <br />
        <br />
        <img name="preview" src='' />
@@ -108,6 +113,27 @@ function handlePreview(handle) {
     </td>
     <td class="description"><s:text name="createWebsite.tip.theme" /></td>
 </tr>
+
+<tr>
+    <td class="label"><label for="mobileTheme" /><s:text name="Mobile Theme" /></label></td>
+    <td class="field">
+        <s:select name="bean.mobileTheme" size="1" list="mobileThemes" listKey="id" listValue="name" onchange="previewMobileThemeImage(this[selectedIndex].value)"/>
+       <br />
+       <br />
+       <img name="mobile_preview" src='' />
+       <!-- initialize preview image at page load -->
+       <script type="text/javascript">
+           <s:if test="bean.mobileTheme == null">
+              previewMobileThemeImage('<s:property value="mobileThemes[0].id"/>');
+           </s:if>
+           <s:else>
+               previewMobileThemeImage('<s:property value="bean.mobileTheme"/>');
+           </s:else>
+       </script>
+    </td>
+    <td class="description"><s:text name="The theme to be used for mobile devices." /></td>
+</tr>
+
 </table>
 
 <br />

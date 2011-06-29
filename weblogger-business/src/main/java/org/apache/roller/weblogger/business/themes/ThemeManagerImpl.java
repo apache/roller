@@ -17,38 +17,24 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.activation.FileTypeMap;
-import javax.activation.MimetypesFileTypeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeResource;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.util.RollerMessages;
+
+import javax.activation.FileTypeMap;
+import javax.activation.MimetypesFileTypeMap;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Base implementation of a ThemeManager.
@@ -241,6 +227,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 // NOTE: decorators are deprecated starting in 4.0
                 template.setDecoratorName(null);
                 template.setLastModified(new Date());
+                template.setType(themeTemplate.getType());
 
                 // save it
                 wmgr.savePage(template);
@@ -422,5 +409,39 @@ public class ThemeManagerImpl implements ThemeManager {
 
         return reloaded;
 
+    }
+
+    public List getEnabledMobileThemeList() {
+        List all_themes = new ArrayList(this.themes.values());
+        List mobileThemes = new ArrayList();
+
+        for(int i = 0 ; i<all_themes.size(); i++){
+            Theme theme = (Theme) all_themes.get(i);
+
+           if("mobile".equals(theme.getType())){
+               mobileThemes.add(theme);
+           }
+        }
+        // sort 'em ... default ordering for themes is by name
+        Collections.sort(mobileThemes);
+
+        return mobileThemes;
+    }
+
+    public List getEnabledStandardThemeList() {
+       List all_themes = new ArrayList(this.themes.values());
+        List standardThemes = new ArrayList();
+
+        for(int i = 0 ; i<all_themes.size(); i++){
+            Theme theme = (Theme) all_themes.get(i);
+
+           if("standard".equals(theme.getType())){
+               standardThemes.add(theme);
+           }
+        }
+        // sort 'em ... default ordering for themes is by name
+        Collections.sort(standardThemes);
+
+        return standardThemes;
     }
 }

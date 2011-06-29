@@ -18,21 +18,18 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
+import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -75,9 +72,14 @@ public class StylesheetEdit extends UIAction {
         if(stylesheet != null) {
             log.debug("custom stylesheet path is - "+stylesheet.getLink());
             try {
-                setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getPageByLink(getActionWeblog(), stylesheet.getLink()));
-                
+                 List styleSheets =  WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getPagesByLink(getActionWeblog(), stylesheet.getLink());
+
+                // Setting the template from the result set. We will be having only one style sheet.so get 0 index
+                if (stylesheet != null && !styleSheets.isEmpty()) {
+                    setTemplate((WeblogTemplate) styleSheets.get(0));
+                }
+
                 if(getTemplate() == null) {
                     log.debug("custom stylesheet not found, creating it");
                     
@@ -93,6 +95,8 @@ public class StylesheetEdit extends UIAction {
                     stylesheetTmpl.setNavbar(false);
                     stylesheetTmpl.setLastModified(new Date());
                     stylesheetTmpl.setTemplateLanguage(stylesheet.getTemplateLanguage());
+                    // setting the type for stylesheet as standard
+                    stylesheetTmpl.setType("standard");
                     
                     WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheetTmpl);
                     WebloggerFactory.getWeblogger().flush();

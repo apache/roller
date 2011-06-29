@@ -37,6 +37,7 @@ public class StaticTemplate implements Template, Serializable {
     private Date lastModified = new Date();
     private String templateLanguage = null;
     private String  outputContentType = null;
+    private String type = "standard";
     
     
     public StaticTemplate(String id, String lang) {
@@ -89,6 +90,14 @@ public class StaticTemplate implements Template, Serializable {
     
     public String getOutputContentType() {
         return outputContentType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type){
+         this.type = type;
     }
 
     public void setOutputContentType(String outputContentType) {

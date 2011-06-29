@@ -18,16 +18,17 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -58,6 +59,7 @@ public class ThemeMetadataParser {
         theme.setId(root.getChildText("id"));
         theme.setName(root.getChildText("name"));
         theme.setAuthor(root.getChildText("author"));
+        theme.setType(root.getChildText("type"));
         
         // if either id or name is null then throw a parsing exception
         if(StringUtils.isEmpty(theme.getId()) || StringUtils.isEmpty(theme.getName())) {
@@ -76,6 +78,11 @@ public class ThemeMetadataParser {
         Element stylesheet = root.getChild("stylesheet");
         if(stylesheet != null) {
             theme.setStylesheet(elementToStylesheet(stylesheet));
+            if ("mobile".equals(theme.getType())) {
+               theme.getStylesheet().setType("mobile");
+            } else {
+               theme.getStylesheet().setType("standard");
+            }
         }
         
         // now grab the static resources
@@ -93,6 +100,13 @@ public class ThemeMetadataParser {
         while (templatesIter.hasNext()) {
             Element template = (Element) templatesIter.next();
             ThemeMetadataTemplate tmpl = elementToTemplateMetadata(template);
+
+            if ("mobile".equals(theme.getType())) {
+                tmpl.setType("mobile");
+            } else {
+                tmpl.setType("standard");
+            }
+
             theme.addTemplate(tmpl);
             
             if(WeblogTemplate.ACTION_WEBLOG.equals(tmpl.getAction())) {
@@ -122,6 +136,7 @@ public class ThemeMetadataParser {
         template.setTemplateLanguage(element.getChildText("templateLanguage"));
         template.setContentType(element.getChildText("contentType"));
         template.setContentsFile(element.getChildText("contentsFile"));
+
         
         String navbar = element.getChildText("navbar");
         if("true".equalsIgnoreCase(navbar)) {
