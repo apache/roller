@@ -18,17 +18,18 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.Collections;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -40,9 +41,13 @@ public class TemplateRemove extends UIAction {
     
     // id of template to remove
     private String removeId = null;
+
+    private String removeMobileId = null;
     
     // template object that we will remove
     private WeblogTemplate template = null;
+
+    private WeblogTemplate mobileTemplate = null;
     
     
     public TemplateRemove() {
@@ -61,6 +66,8 @@ public class TemplateRemove extends UIAction {
     public void myPrepare() {
         if(getRemoveId() != null) try {
             setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getPage(getRemoveId()));
+            setRemoveMobileId(getMobileID());
+            setMobileTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getPage(getRemoveMobileId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up template by id - "+getRemoveId(), ex);
             // TODO: i18n
@@ -90,6 +97,13 @@ public class TemplateRemove extends UIAction {
                 CacheManager.invalidate(getTemplate());
 
                 WebloggerFactory.getWeblogger().getWeblogManager().removePage(getTemplate());
+
+                if (getMobileTemplate() != null) {
+                    CacheManager.invalidate(getMobileTemplate());
+
+                    WebloggerFactory.getWeblogger().getWeblogManager().removePage(getMobileTemplate());
+                }
+
                 WebloggerFactory.getWeblogger().flush();
                                 
                 return SUCCESS;
@@ -123,5 +137,42 @@ public class TemplateRemove extends UIAction {
     public void setTemplate(WeblogTemplate template) {
         this.template = template;
     }
-    
+
+ //get the ID for mobile tempalte
+    private String getMobileID(){
+
+        List<WeblogTemplate> templates = null;
+        try {
+            templates = WebloggerFactory.getWeblogger().getWeblogManager().
+                    getPagesByLink(getActionWeblog(), template.getLink()) ;
+        } catch (WebloggerException e) {
+            log.error("error while getting template list." , e);
+        }
+
+        if (templates != null && templates.size() >1){
+            for(WeblogTemplate template : templates){
+                  if("mobile".equals(template.getType())){
+                      return template.getId();
+                  }
+            }
+        }
+        return null;
+    }
+
+
+    public String getRemoveMobileId() {
+        return removeMobileId;
+    }
+
+    public void setRemoveMobileId(String removeMobileId) {
+        this.removeMobileId = removeMobileId;
+    }
+
+    public WeblogTemplate getMobileTemplate() {
+        return mobileTemplate;
+    }
+
+    public void setMobileTemplate(WeblogTemplate mobileTemplate) {
+        this.mobileTemplate = mobileTemplate;
+    }
 }
