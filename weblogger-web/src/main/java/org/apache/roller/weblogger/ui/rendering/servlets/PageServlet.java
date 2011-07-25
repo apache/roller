@@ -245,11 +245,8 @@ public class PageServlet extends HttpServlet {
         // figure out what template to use
         ThemeTemplate page = null;
 
-        if(MobileDeviceRepository.isMobileDevice(request)){
-           // setting the editor theme as mobile theme to render for mobile device
-            weblog.setEditorTheme(weblog.getMobileThemeName()) ;
-
-        }
+        //if request is coming from mobile
+        boolean isMobileRequest = MobileDeviceRepository.isMobileDevice(request);
 
         // If this is a popup request, then deal with it specially
         // TODO: do we really need to keep supporting this?
@@ -310,7 +307,12 @@ public class PageServlet extends HttpServlet {
         // if we haven't found a page yet then try our default page
         if (page == null) {
             try {
-                page = weblog.getTheme().getDefaultTemplate();
+             //   page = weblog.getTheme().getDefaultTemplate();
+                if (isMobileRequest) {
+                    page = weblog.getTheme("mobile").getDefaultTemplate();
+                } else {
+                    page = weblog.getTheme("standard").getDefaultTemplate();
+                }
             } catch (Exception e) {
                 log.error("Error getting default page for weblog = " + weblog.getHandle(), e);
             }
@@ -433,7 +435,6 @@ public class PageServlet extends HttpServlet {
             // Load models for pages
             String pageModels = WebloggerConfig.getProperty("rendering.pageModels");
             ModelLoader.loadModels(pageModels, model, initData, true);
-
             // Load special models for site-wide blog
             if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 String siteModels = WebloggerConfig.getProperty("rendering.siteModels");

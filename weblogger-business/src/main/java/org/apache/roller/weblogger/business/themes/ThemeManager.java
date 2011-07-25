@@ -93,17 +93,10 @@ public interface ThemeManager {
 	 */
 	public boolean reLoadThemeFromDisk(String reloadTheme);
 
-    /**
-     * To return the list of Mobile themes in themes list
-     *
-     * @return  ListofMobileThemes
-     */
-    public List getEnabledMobileThemeList();
 
     /**
-     * To return the list of Standard themes in themes list
-     *
+     *   To return the list of Themes for a given type
      * @return
      */
-    public List getEnabledStandardThemeList();
+    public List getEnabledThemesList(String type);
 }

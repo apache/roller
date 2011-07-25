@@ -76,8 +76,8 @@ public class ThemeEdit extends UIAction {
     
     public void myPrepare() {
         ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-        setThemes(themeMgr.getEnabledStandardThemeList());
-        setMobileThemes(themeMgr.getEnabledMobileThemeList());
+        setThemes(themeMgr.getEnabledThemesList("standard"));
+        setMobileThemes(themeMgr.getEnabledThemesList("mobile"));
     }
     
     
@@ -182,11 +182,17 @@ public class ThemeEdit extends UIAction {
             }
             
             if(!hasActionErrors()) try {
+                WeblogThemeAssoc themeAssoc = WebloggerFactory.getWeblogger().getWeblogManager().
+                        getThemeAssoc(getActionWeblog(),"standard");
+                themeAssoc.setName(getThemeId());
+                //TODO remove this setting editor theme
                 weblog.setEditorTheme(getThemeId());
+
                 log.debug("Saving theme "+getThemeId()+" for weblog "+weblog.getHandle());
                 
                 // save updated weblog and flush
                 WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
+                WebloggerFactory.getWeblogger().getWeblogManager().saveThemeAssoc(themeAssoc);
                 WebloggerFactory.getWeblogger().flush();
                 
                 // make sure to flush the page cache so ppl can see the change
@@ -238,10 +244,15 @@ public class ThemeEdit extends UIAction {
             
             if(!hasActionErrors()) try {
                 weblog.setMobileThemeName(getMobileThemeId());
+                WeblogThemeAssoc themeAssoc = WebloggerFactory.getWeblogger().getWeblogManager().
+                        getThemeAssoc(getActionWeblog(),"mobile");
+                themeAssoc.setName(getMobileThemeId());
+
                 log.debug("Saving theme "+getMobileThemeId()+" for weblog "+weblog.getHandle());
                 
                 // save updated weblog and flush
                 WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
+                WebloggerFactory.getWeblogger().getWeblogManager().saveThemeAssoc(themeAssoc);
                 WebloggerFactory.getWeblogger().flush();
                 
                 // make sure to flush the page cache so ppl can see the change

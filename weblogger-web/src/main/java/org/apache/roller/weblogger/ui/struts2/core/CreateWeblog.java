@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogThemeAssoc;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -128,10 +129,17 @@ public class CreateWeblog extends UIAction {
             String def = WebloggerRuntimeConfig.getProperty("users.editor.pages");
             String[] defs = Utilities.stringToStringArray(def,",");
             wd.setEditorPage(defs[0]);
-            
+
+            //Create Theme associativity objects for theme types.
+            WeblogThemeAssoc themeAssocStandard = new WeblogThemeAssoc(wd,getBean().getTheme() , false ,"standard");
+            WeblogThemeAssoc themeAssocMobile= new WeblogThemeAssoc(wd,getBean().getTheme() , false ,"mobile");
+
+
             try {
                 // add weblog and flush
                 WebloggerFactory.getWeblogger().getWeblogManager().addWeblog(wd);
+                WebloggerFactory.getWeblogger().getWeblogManager().saveThemeAssoc(themeAssocStandard);
+                WebloggerFactory.getWeblogger().getWeblogManager().saveThemeAssoc(themeAssocMobile);
                 WebloggerFactory.getWeblogger().flush();
                 
                 // tell the user their weblog was created
@@ -187,14 +195,15 @@ public class CreateWeblog extends UIAction {
         return themeMgr.getEnabledThemesList();
     }
 
+
     public List getMobileThemes(){
        ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-        return themeMgr.getEnabledMobileThemeList();
+        return themeMgr.getEnabledThemesList("mobile");
     }
 
     public List getStandardThemes(){
             ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-        return themeMgr.getEnabledStandardThemeList();
+        return themeMgr.getEnabledThemesList("standard");
     }
     
     

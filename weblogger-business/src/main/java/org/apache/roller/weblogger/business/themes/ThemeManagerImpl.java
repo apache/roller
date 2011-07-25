@@ -411,37 +411,20 @@ public class ThemeManagerImpl implements ThemeManager {
 
     }
 
-    public List getEnabledMobileThemeList() {
-        List all_themes = new ArrayList(this.themes.values());
-        List mobileThemes = new ArrayList();
+    public List getEnabledThemesList(String type){
+             List all_themes = new ArrayList(this.themes.values());
+        List themes = new ArrayList();
 
         for(int i = 0 ; i<all_themes.size(); i++){
             Theme theme = (Theme) all_themes.get(i);
 
-           if("mobile".equals(theme.getType())){
-               mobileThemes.add(theme);
+           if(type.equals(theme.getType())){
+               themes.add(theme);
            }
         }
         // sort 'em ... default ordering for themes is by name
-        Collections.sort(mobileThemes);
+        Collections.sort(themes);
 
-        return mobileThemes;
-    }
-
-    public List getEnabledStandardThemeList() {
-       List all_themes = new ArrayList(this.themes.values());
-        List standardThemes = new ArrayList();
-
-        for(int i = 0 ; i<all_themes.size(); i++){
-            Theme theme = (Theme) all_themes.get(i);
-
-           if("standard".equals(theme.getType())){
-               standardThemes.add(theme);
-           }
-        }
-        // sort 'em ... default ordering for themes is by name
-        Collections.sort(standardThemes);
-
-        return standardThemes;
+        return themes;
     }
 }

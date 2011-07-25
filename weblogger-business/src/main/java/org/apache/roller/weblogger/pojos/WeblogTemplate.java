@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -62,8 +63,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     
     // associations
     private Weblog weblog = null;
-    
-    
+
     static {
         requiredTemplates = new HashSet();
         requiredTemplates.add("Weblog");
@@ -103,7 +103,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setWebsite( Weblog website ) {
         this.weblog = website;
     }
-    
     
     public String getAction() {
         return action;
@@ -233,7 +232,19 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public boolean isCustom() {
         return ACTION_CUSTOM.equals(getAction()) && !isRequired();
     }
-    
+
+    public WeblogTemplateCode getTemplateCode(String type) throws WebloggerException {
+        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateCodeByType(this.id, type);
+    }
+
+      public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     
     //------------------------------------------------------- Good citizenship
 
@@ -266,11 +277,4 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
             .toHashCode();
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

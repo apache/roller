@@ -68,6 +68,8 @@ public interface Template {
      *
      * type of the template , eg: standard , mobile etc.
      */
+    //TODO need to remove this type from weblog template as one template acts in different types
+
     public String getType();
     
 }

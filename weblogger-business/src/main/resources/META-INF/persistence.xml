@@ -28,5 +28,7 @@
         <mapping-file>org/apache/roller/weblogger/pojos/MediaFileTag.orm.xml            </mapping-file>	
         <mapping-file>org/apache/roller/weblogger/pojos/MediaFileDirectory.orm.xml      </mapping-file>
         <class>org.apache.roller.weblogger.pojos.AutoPing</class>
+        <class>org.apache.roller.weblogger.pojos.WeblogThemeAssoc</class>
+        <class>org.apache.roller.weblogger.pojos.WeblogTemplateCode</class>
     </persistence-unit>  
 </persistence>

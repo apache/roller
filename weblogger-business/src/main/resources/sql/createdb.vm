@@ -142,6 +142,22 @@ alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
 -- This index is not necessary because of handle is already a primary key.
 -- create index ws_handle_idx    on website(handle);
 
+
+create table rol_weblogtheme (
+    id              varchar(48)  not null primary key,
+    weblogid varchar(48) not null,
+    name            varchar(255)  not null,
+    custom          $db.BOOLEAN_SQL_TYPE_FALSE not null,
+    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
+);
+
+create table rol_templatecode (
+    id                 varchar(48)  not null primary key,
+    templateid varchar(48) not null,
+    template     $db.TEXT_SQL_TYPE not null,
+    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
+);
+
 create table folder (
     id               varchar(48) not null primary key,
     name             varchar(255) not null,
