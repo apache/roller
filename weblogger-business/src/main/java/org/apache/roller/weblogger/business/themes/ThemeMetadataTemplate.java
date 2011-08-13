@@ -19,6 +19,8 @@
 package org.apache.roller.weblogger.business.themes;
 
 
+import java.util.Hashtable;
+
 /**
  * A parsed 'template' element of a theme metadata descriptor.
  */
@@ -34,6 +36,9 @@ public class ThemeMetadataTemplate {
     private String contentType = null;
     private String contentsFile = null;
     private String type = null;
+    // Hash table to keep metadata about parsed template code files
+    private Hashtable<String, ThemeMetadataTemplateCode> templateCodeTable
+            = new Hashtable<String, ThemeMetadataTemplateCode>();
 
     public String getAction() {
         return action;
@@ -114,4 +119,17 @@ public class ThemeMetadataTemplate {
     public void setType(String type) {
         this.type = type;
     }
+
+    public void addTemplateCode(String type, ThemeMetadataTemplateCode templateCode) {
+        this.getTemplateCodeTable().put(type, templateCode);
+    }
+
+    public ThemeMetadataTemplateCode getTemplateCode(String type){
+        return this.getTemplateCodeTable().get(type);
+    }
+
+    public Hashtable<String, ThemeMetadataTemplateCode> getTemplateCodeTable() {
+        return templateCodeTable;
+    }
+
 }

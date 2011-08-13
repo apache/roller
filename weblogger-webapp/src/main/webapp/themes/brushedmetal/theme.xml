@@ -14,8 +14,12 @@
         <name>brushedmetal-custom.css</name>
         <description>Stylesheet for Brushed Metal theme</description>
 	<link>brushedmetal-custom.css</link>
-        <templateLanguage>velocity</templateLanguage>
-        <contentsFile>brushedmetal-custom.css</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>brushedmetal-custom.css</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </stylesheet>
     
     <!-- templates -->
@@ -25,9 +29,12 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>weblog.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>weblog.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
     
     <template action="permalink">
@@ -36,9 +43,12 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>permalink.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>permalink.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
     
     <template action="search">
@@ -47,9 +57,12 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>searchresults.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>searchresults.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
     
     <template action="custom">
@@ -58,9 +71,12 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>_day.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>_day.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
     
     <template action="custom">
@@ -69,9 +85,12 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>sidebar.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>sidebar.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
     
     <!-- resources -->

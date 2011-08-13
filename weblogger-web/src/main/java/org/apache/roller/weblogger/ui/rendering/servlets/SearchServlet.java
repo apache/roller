@@ -110,15 +110,10 @@ public class SearchServlet extends HttpServlet {
         // lookup template to use for rendering
         ThemeTemplate page = null;
         try {
-            // if request is from a mobile get mobile templates search page
-            if(isMobileRequest){
-              page = weblog.getMobileTheme().getTemplateByAction(ThemeTemplate.ACTION_SEARCH);
-            }
-            // if there is no search page in mobile template look for standard templates page.
-            else if(page == null){
+
             // try looking for a specific search page
             page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ACTION_SEARCH);
-            }
+
             // if not found then fall back on default page
             if(page == null) {
                 page = weblog.getTheme().getDefaultTemplate();

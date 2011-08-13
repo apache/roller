@@ -47,8 +47,6 @@ class RollerWeblogHandler extends Handler {
     /** Theme name used when creating weblogs */
     private static final String DEFAULT_THEME = "basic";
 
-    //Default mobile theme when creating weblogs//
-    private static final String DEFAULT_MOBILE_THEME = "mobile";
     
     public RollerWeblogHandler(HttpServletRequest request) throws HandlerException {
         super(request);
@@ -172,7 +170,7 @@ class RollerWeblogHandler extends Handler {
                         entry.getDescription(),
                         entry.getEmailAddress(),
                         entry.getEmailAddress(),
-                        DEFAULT_THEME,DEFAULT_MOBILE_THEME,
+                        DEFAULT_THEME,
                         entry.getLocale().toString(),
                         entry.getTimezone().getID());
                 

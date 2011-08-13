@@ -88,7 +88,7 @@ public class ThemeEdit extends UIAction {
             setThemeId(null);
         } else {
             setThemeId(getActionWeblog().getTheme().getId());
-            setMobileThemeId(getActionWeblog().getMobileTheme().getId());
+          //  setMobileThemeId(getActionWeblog().getMobileTheme().getId());
             setImportThemeId(getActionWeblog().getTheme().getId());
         }
         
@@ -241,9 +241,8 @@ public class ThemeEdit extends UIAction {
                     addError("Theme not found");
                 }
             }
-            
             if(!hasActionErrors()) try {
-                weblog.setMobileThemeName(getMobileThemeId());
+              //  weblog.setMobileThemeName(getMobileThemeId());
                 WeblogThemeAssoc themeAssoc = WebloggerFactory.getWeblogger().getWeblogManager().
                         getThemeAssoc(getActionWeblog(),"mobile");
                 themeAssoc.setName(getMobileThemeId());

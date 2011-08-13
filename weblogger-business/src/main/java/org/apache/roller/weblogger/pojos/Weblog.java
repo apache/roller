@@ -94,7 +94,7 @@ public class Weblog implements Serializable {
     private String  iconPath         = null;
     private String  about            = null;
     private String  creator          = null;
-    private String mobileThemeName = null;
+
     
     // Associated objects
     private List           permissions = new ArrayList();
@@ -114,7 +114,6 @@ public class Weblog implements Serializable {
             String email,
             String emailFrom,
             String editorTheme,
-            String mobileTheme,
             String locale,
             String timeZone) {
         
@@ -125,7 +124,6 @@ public class Weblog implements Serializable {
         this.emailAddress = email;
         this.emailFromAddress = emailFrom;
         this.editorTheme = editorTheme;
-        this.mobileThemeName = mobileTheme;
         this.locale = locale;
         this.timeZone = timeZone;
     }
@@ -1261,26 +1259,6 @@ public class Weblog implements Serializable {
      *
      * @return  mobileTheme
      */
-    public String getMobileThemeName() {
-        return mobileThemeName;
-    }
-
-    public void setMobileThemeName(String mobileTheme) {
-        this.mobileThemeName = mobileTheme;
-    }
-
-    public Theme getMobileTheme(){
-            try {
-            // let the ThemeManager handle it
-            ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-            return themeMgr.getTheme(getMobileThemeName());
-        } catch (WebloggerException ex) {
-            log.error("Error getting theme for weblog - "+getHandle(), ex);
-        }
-
-        // TODO: maybe we should return a default theme in this case?
-        return null;
-    }
 
     public Theme getTheme(String type){
         WeblogThemeAssoc themeAssoc;

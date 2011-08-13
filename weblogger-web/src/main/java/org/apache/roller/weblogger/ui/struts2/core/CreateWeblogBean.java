@@ -31,7 +31,6 @@ public class CreateWeblogBean {
     private String locale;
     private String timeZone;
     private String theme;
-    private String mobileTheme;
     
     
     public String getDescription() {
@@ -90,11 +89,4 @@ public class CreateWeblogBean {
         this.timeZone = timeZone;
     }
 
-    public String getMobileTheme() {
-        return mobileTheme;
-    }
-
-    public void setMobileTheme(String mobileTheme) {
-        this.mobileTheme = mobileTheme;
-    }
 }

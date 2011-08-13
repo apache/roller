@@ -115,27 +115,17 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the stylesheet template for this theme.
      * Returns null if no stylesheet can be found.
      */
-    public ThemeTemplate getStylesheet() throws WebloggerException {
+     public ThemeTemplate getStylesheet() throws WebloggerException {
         // stylesheet is handled differently than other templates because with
         // the stylesheet we want to return the weblog custom version if it
         // exists, otherwise we return the shared theme version
-        
+
         // load from theme first to see if we even support a stylesheet
         ThemeTemplate stylesheet = this.theme.getStylesheet();
         if(stylesheet != null) {
             // now try getting custom version from weblog
-
-            // Get the style sheet for link. We do not have duplicates for same link as we have
-            //in other template pages for a theme.
-
-            List  styleSheetList = WebloggerFactory.getWeblogger()
-                    .getWeblogManager().getPagesByLink(this.weblog, stylesheet.getLink());
-
-            ThemeTemplate override = null;
-
-             if(styleSheetList != null && !styleSheetList.isEmpty()) {
-             override = (ThemeTemplate) styleSheetList.get(0);
-             }
+            ThemeTemplate override = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getPageByLink(this.weblog, stylesheet.getLink());
             if(override != null) {
                 stylesheet = override;
             }
@@ -203,34 +193,30 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public List<ThemeTemplate> getTemplatesByLink(String link) throws WebloggerException {
+     public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
 
-        List templatesList = null;
         if(link == null)
             return null;
-        
+
         ThemeTemplate template = null;
-        
+
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
-        if(stylesheet != null && (link.equals(stylesheet.getLink()))) {
-            //we cannot return single Style sheet so we need to return a list with one single Style Sheet
-            List<ThemeTemplate> styleSheetList = new ArrayList<ThemeTemplate>();
-            styleSheetList.add(stylesheet);
-            return styleSheetList;
+        if(stylesheet != null && link.equals(stylesheet.getLink())) {
+            return stylesheet;
         }
-        
+
         // first check if this user has selected a theme
         // if so then return the proper theme template
-        templatesList = this.theme.getTemplatesByLink(link);
-        
+        template = this.theme.getTemplateByLink(link);
+
         // if we didn't get the Template from a theme then look in the db
-        if(templatesList == null || templatesList.isEmpty()) {
-            templatesList = WebloggerFactory.getWeblogger()
-                    .getWeblogManager().getPagesByLink(this.weblog, link);
+        if(template == null) {
+            template = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getPageByLink(this.weblog, link);
         }
-        
-        return templatesList;
+
+        return template;
     }
     
     

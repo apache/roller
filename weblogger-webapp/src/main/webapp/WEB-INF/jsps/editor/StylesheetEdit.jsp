@@ -22,15 +22,52 @@
 <p class="pagetip">
     <s:text name="stylesheetEdit.tip" />
     <s:if test="!customTheme"><s:text name="stylesheetEdit.revertTip" /></s:if>
+    <s:if test="$(type == null)"><s:param name="type">standard</s:param></s:if>
 </p>
                 
 <s:form action="stylesheetEdit!save">
     <s:hidden name="weblog" />
-    
+    <s:hidden name="type"/>
+    <s:set name="type" value="type"/>
+
+     <table class="menuTabTable" cellspacing="0" >
+     <tr>
+          <s:if test="%{#type=='standard'}">
+        <td class="menuTabSelected">
+    </s:if>
+    <s:else>
+        <td class="menuTabUnselected">
+    </s:else>
+
+          <div class="menu-tr">
+           <s:url id="styleEdit" action="stylesheetEdit">
+               <s:param name="weblog" value="actionWeblog.handle" />
+               <s:param name="type">standard</s:param>
+           </s:url>
+	       <div class="menu-tl">&nbsp;&nbsp;<s:a href="%{styleEdit}">Standard</s:a>&nbsp;&nbsp; </div>
+	    </div></td>
+
+          <td class="menuTabSeparator"></td>
+        <s:if test="%{#type == 'mobile'}">
+        <td class="menuTabSelected">
+    </s:if>
+    <s:else>
+        <td class="menuTabUnselected">
+    </s:else>
+        <div class="menu-tr">
+
+           <s:url id="styleEdit" action="stylesheetEdit">
+                 <s:param name="weblog" value="actionWeblog.handle" />
+                 <s:param name="type">mobile</s:param>
+           </s:url>
+	       <div class="menu-tl">&nbsp;&nbsp;<s:a href="%{styleEdit}">Mobile</s:a>&nbsp;&nbsp; </div>
+	    </div></td>
+
+     </tr>
+        </table>
+
     <%-- ================================================================== --%>
     <%-- Template editing area w/resize buttons --%>
-    
-    <br />
     <s:textarea name="contents" cols="80" rows="30" cssStyle="width:100%" />
     
     <script type="text/javascript"><!--

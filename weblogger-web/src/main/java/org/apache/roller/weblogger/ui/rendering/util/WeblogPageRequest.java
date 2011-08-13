@@ -352,41 +352,10 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public ThemeTemplate getWeblogPage() {
         
+
         if(weblogPage == null && weblogPageName != null) {
             try {
-
-                List <ThemeTemplate> weblogPages = getWeblog().getTheme().getTemplatesByLink(weblogPageName);
-
-                if(weblogPages != null && weblogPages.size() ==1){
-                    // default scenario of having one template only as CSS.
-                    return weblogPages.get(0);
-                }
-
-                else if (weblogPages != null && weblogPages.size()>1) {
-
-                    // return mobile template if the request coming from a mobile device
-                    if (MobileDeviceRepository.isMobileDevice(request)) {
-                        for (ThemeTemplate weblogPage : weblogPages) {
-                            if ("mobile".equals(weblogPage.getType())) {
-                                return weblogPage;
-                            }
-                        }
-                }
-                    else {
-                        for (ThemeTemplate weblogPage : weblogPages) {
-                            if ("standard".equals(weblogPage.getType())) {
-                                return weblogPage;
-                            }
-                        }
-                    }
-                }
-                else{
-                   // return null if we cannot find anything.
-                    return null;
-                }
-
-
-
+                weblogPage = getWeblog().getTheme().getTemplateByLink(weblogPageName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog page "+weblogPageName, ex);
             }

@@ -174,7 +174,7 @@ public class WeblogPageTest extends TestCase {
         
         // lookup by link
         page = null;
-        page = mgr.getPagesByLink(testWeblog, testPage.getLink()).get(0);
+        page = mgr.getPageByLink(testWeblog, testPage.getLink());
         assertNotNull(page);
         assertEquals(testPage.getContents(), page.getContents());
         

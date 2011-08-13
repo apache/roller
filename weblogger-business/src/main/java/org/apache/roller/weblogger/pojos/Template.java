@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.pojos;
 
+import org.apache.roller.weblogger.WebloggerException;
+
 import java.util.Date;
 
 
@@ -56,7 +58,14 @@ public interface Template {
     /**
      * The templating language used by this template.
      */
+
     public String getTemplateLanguage();
+
+    /**
+     * Set the template language.This is used by template code object to assign
+     * correct template language for different template content types
+     */
+    public  void setTemplateLanguage(String templateLanguage);
     
     
     /**
@@ -70,6 +79,14 @@ public interface Template {
      */
     //TODO need to remove this type from weblog template as one template acts in different types
 
+    @Deprecated
+    //Moved to templateCode
     public String getType();
+
+    /**
+     *
+     * get the Template code object for the given type.
+     */
+    public WeblogTemplateCode getTemplateCode(String type) throws WebloggerException;
     
 }

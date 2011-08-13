@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
@@ -78,13 +79,19 @@ public class PreviewServlet extends HttpServlet {
         Weblog weblog = null;
         
         WeblogPreviewRequest previewRequest = null;
+
+         String type = null;
+
         try {
             previewRequest = new WeblogPreviewRequest(request);
-            
+
+            // type of the page we are going to preview
+            type = previewRequest.getType();
+
             // lookup weblog specified by preview request
             weblog = previewRequest.getWeblog();
-            if(weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: "+
+            if (weblog == null) {
+                throw new WebloggerException("unable to lookup weblog: " +
                         previewRequest.getWeblogHandle());
             }
         } catch (Exception e) {
@@ -110,9 +117,6 @@ public class PreviewServlet extends HttpServlet {
             tmpWebsite.setData(weblog);
             if(previewTheme != null && previewTheme.isEnabled()) {
                 tmpWebsite.setEditorTheme(previewTheme.getId());
-                //set mobile theme to the preview theme so it will not return null in velocity.
-                //This is bit hacky
-                tmpWebsite.setMobileThemeName(previewTheme.getId());
             } else if(WeblogTheme.CUSTOM.equals(previewRequest.getThemeName())) {
                 tmpWebsite.setEditorTheme(WeblogTheme.CUSTOM);
             }
@@ -174,6 +178,13 @@ public class PreviewServlet extends HttpServlet {
         
         
         log.debug("preview page found, dealing with it");
+
+        // load the correct template using template codes.
+        try {
+            page = RendererManager.prepareTemplate((ThemeTemplate) page, type);
+        } catch (RenderingException e) {
+            log.error("error while preparing template ", e);
+        }
         
         // set the content type
         String pageLink = previewRequest.getWeblogPageName();

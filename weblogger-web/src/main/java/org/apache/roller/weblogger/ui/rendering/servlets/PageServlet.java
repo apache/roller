@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.util.InvalidRequestException;
@@ -242,11 +243,16 @@ public class PageServlet extends HttpServlet {
 
         log.debug("Looking for template to use for rendering");
 
+        // Get the type from user agent
+        String type = MobileDeviceRepository.getRequestType(request);
+
+        // for previews we explicitly set the type attribute
+        if(request.getParameter("type") != null){
+            type = request.getParameter("type");
+        }
+
         // figure out what template to use
         ThemeTemplate page = null;
-
-        //if request is coming from mobile
-        boolean isMobileRequest = MobileDeviceRepository.isMobileDevice(request);
 
         // If this is a popup request, then deal with it specially
         // TODO: do we really need to keep supporting this?
@@ -307,12 +313,7 @@ public class PageServlet extends HttpServlet {
         // if we haven't found a page yet then try our default page
         if (page == null) {
             try {
-             //   page = weblog.getTheme().getDefaultTemplate();
-                if (isMobileRequest) {
-                    page = weblog.getTheme("mobile").getDefaultTemplate();
-                } else {
-                    page = weblog.getTheme("standard").getDefaultTemplate();
-                }
+                page = weblog.getTheme().getDefaultTemplate();
             } catch (Exception e) {
                 log.error("Error getting default page for weblog = " + weblog.getHandle(), e);
             }
@@ -328,6 +329,13 @@ public class PageServlet extends HttpServlet {
         }
 
         log.debug("page found, dealing with it");
+
+        // load the correct template using template codes.
+        try {
+            page = RendererManager.prepareTemplate(page, type);
+        } catch (RenderingException e) {
+            log.error("error while preparing template ", e);
+        }
 
         // validation.  make sure that request input makes sense.
         boolean invalid = false;

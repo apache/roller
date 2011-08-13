@@ -80,13 +80,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if no stylesheet can be found.
      */
     public ThemeTemplate getStylesheet() throws WebloggerException {
-        List styleSheetsList = getTemplatesByLink(this.weblog.getCustomStylesheetPath());
-
-        if(styleSheetsList != null && !styleSheetsList.isEmpty()){
-           return (ThemeTemplate) styleSheetsList.get(0);
-        }
-
-        return null;
+       return getTemplateByLink(this.weblog.getCustomStylesheetPath());
     }
     
     
@@ -128,12 +122,11 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public List<ThemeTemplate> getTemplatesByLink(String link) throws WebloggerException {
+    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
         if(link == null)
             return null;
-        List templatesList = WebloggerFactory.getWeblogger().getWeblogManager().getPagesByLink(this.weblog, link);
-        
-        return templatesList;
+
+          return WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(this.weblog, link);
     }
     
     

@@ -20,8 +20,10 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.openjpa.jdbc.kernel.exps.Null;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.mail.internet.ContentType;
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -47,6 +49,8 @@ public class WeblogTemplateCode implements Serializable {
     //template contents
     private String template = null;
     private String type = null;
+    private String ContentType = null;
+    private String templateLanguage = null;
 
     public WeblogTemplateCode(String templateId, String type){
         this.templateId = templateId;
@@ -126,4 +130,23 @@ public class WeblogTemplateCode implements Serializable {
             .toHashCode();
     }
 
+     @Basic
+    @Column(name ="templatelang",unique = false, updatable = true, insertable = true)
+    public String getTemplateLanguage() {
+        return templateLanguage;
+    }
+
+    public void setTemplateLanguage(String templateLanguage) {
+        this.templateLanguage = templateLanguage;
+    }
+
+     @Basic
+    @Column(name= "contenttype", unique = false, updatable = true, insertable = true)
+    public String getContentType() {
+        return ContentType;
+    }
+
+    public void setContentType(String contentType) {
+        ContentType = contentType;
+    }
 }

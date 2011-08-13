@@ -62,4 +62,13 @@ public class MobileDeviceRepository {
 
     }
 
+    public static String getRequestType(HttpServletRequest request) {
+        String type = "standard";
+
+        if (isMobileDevice(request)) {
+            type = "mobile";
+        }
+        return type;
+    }
+
 }

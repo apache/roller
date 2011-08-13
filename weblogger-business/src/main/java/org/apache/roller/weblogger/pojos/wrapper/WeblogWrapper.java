@@ -66,9 +66,9 @@ public class WeblogWrapper {
     }
     
     
-    public List <ThemeTemplateWrapper> getPageByLink(String link)
+    public ThemeTemplateWrapper getPageByLink(String link)
             throws WebloggerException {
-        return (List<ThemeTemplateWrapper>) ThemeTemplateWrapper.wrap((ThemeTemplate) this.pojo.getTheme().getTemplatesByLink(link));
+        return ThemeTemplateWrapper.wrap(this.pojo.getTheme().getTemplateByLink(link));
     }
     
     
@@ -259,14 +259,6 @@ public class WeblogWrapper {
         return null;
     }
 
-    public String getMobileStylesheet() throws WebloggerException {
-            // custom stylesheet comes from the weblog theme
-        if(this.pojo.getMobileTheme().getStylesheet() != null) {
-            return urlStrategy.getWeblogPageURL(this.pojo, null, this.pojo.getMobileTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
-        }
-        return null;
-    }
-    
     
     /**
      * Get path to weblog icon image if defined.

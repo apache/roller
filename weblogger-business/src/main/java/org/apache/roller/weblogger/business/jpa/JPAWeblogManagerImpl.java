@@ -543,7 +543,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Use JPA directly because Weblogger's Query API does too much allocation.
      */
-    public List<WeblogTemplate> getPagesByLink(Weblog website, String pagelink)
+    public WeblogTemplate getPageByLink(Weblog website, String pagelink)
     throws WebloggerException {
         
         if (website == null)
@@ -556,7 +556,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         query.setParameter(1, website);
         query.setParameter(2, pagelink);
         try {
-            return (List<WeblogTemplate>)query.getResultList();
+            return (WeblogTemplate) query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -609,7 +609,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     public WeblogTemplateCode getTemplateCodeByType(String templateId, String type) throws WebloggerException{
          if(templateId == null)
-             throw new WebloggerException("Template Id is null");
+             throw new WebloggerException("Template Name is null");
 
         if(type == null){
             throw  new WebloggerException("Type is null");

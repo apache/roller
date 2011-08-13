@@ -112,11 +112,13 @@ public class WeblogTemplateCodeTest extends TestCase{
            //create standard template coce
            WeblogTemplateCode standardTemplateCode = new WeblogTemplateCode(testPage.getId(),"standard");
            standardTemplateCode.setTemplate("standard.template.code");
+           standardTemplateCode.setTemplateLanguage("velocity");
            mgr.saveTemplateCode(standardTemplateCode);
             //TestUtils.endSession(true);
            //create mobile code
            WeblogTemplateCode mobileTemplateCode = new WeblogTemplateCode(testPage.getId(),"mobile");
            mobileTemplateCode.setTemplate("mobile.template.code");
+           mobileTemplateCode.setTemplateLanguage("velocity");
            mgr.saveTemplateCode(mobileTemplateCode);
              TestUtils.endSession(true);
 

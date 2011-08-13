@@ -56,6 +56,7 @@
                 <s:url id="edit" action="templateEdit">
                     <s:param name="weblog" value="actionWeblog.handle" />
                     <s:param name="bean.id" value="#p.id" />
+                    <s:param name="bean.type">standard</s:param>
                 </s:url>
                 <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
             </td>

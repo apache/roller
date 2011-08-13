@@ -179,13 +179,13 @@ public interface WeblogManager {
     /**
      * Get website's page by link.
      */
-    public List<WeblogTemplate> getPagesByLink(Weblog w, String p)
+    public WeblogTemplate getPageByLink(Weblog w, String p)
         throws WebloggerException;
 
     /**
      * Get template code by Type.
      */
-    public WeblogTemplateCode getTemplateCodeByType(String template, String type)
+    public WeblogTemplateCode getTemplateCodeByType(String templateName, String type)
             throws WebloggerException ;
 
     /**

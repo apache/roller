@@ -23,8 +23,12 @@ import java.util.Iterator;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
 
 
 /**
@@ -107,7 +111,7 @@ public class RendererManager {
      * instance and tries to find a Renderer for the content.  If no Renderer
      * can be found then we throw an exception.
      */
-    public static Renderer getRenderer(Template template) 
+    public static Renderer getRenderer(Template template)
             throws RenderingException {
         
         Renderer renderer = null;
@@ -125,6 +129,25 @@ public class RendererManager {
         
         throw new RenderingException("No renderer found for template "+
                 template.getId()+"!");
+    }
+
+    public static ThemeTemplate prepareTemplate(ThemeTemplate page, String type)throws RenderingException{
+        try {
+            WeblogTemplateCode templateCode = page.getTemplateCode(type);
+
+            if(templateCode != null){
+            page.setContents(templateCode.getTemplate());
+            page.setTemplateLanguage(templateCode.getTemplateLanguage());
+            }
+            else{
+                // if there is no template code present we fall back to default template
+                return page;
+            }
+        } catch (WebloggerException e) {
+            throw new RenderingException("Error while loading template code for template :"+page.getId(),e);
+        }
+         return page;
+
     }
     
 }

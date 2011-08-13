@@ -121,7 +121,6 @@ public class CreateWeblog extends UIAction {
                     getBean().getEmailAddress(),
                     getBean().getEmailAddress(),
                     getBean().getTheme(),
-                    getBean().getMobileTheme(),
                     getBean().getLocale(),
                     getBean().getTimeZone());
             
@@ -130,16 +129,9 @@ public class CreateWeblog extends UIAction {
             String[] defs = Utilities.stringToStringArray(def,",");
             wd.setEditorPage(defs[0]);
 
-            //Create Theme associativity objects for theme types.
-            WeblogThemeAssoc themeAssocStandard = new WeblogThemeAssoc(wd,getBean().getTheme() , false ,"standard");
-            WeblogThemeAssoc themeAssocMobile= new WeblogThemeAssoc(wd,getBean().getTheme() , false ,"mobile");
-
-
             try {
                 // add weblog and flush
                 WebloggerFactory.getWeblogger().getWeblogManager().addWeblog(wd);
-                WebloggerFactory.getWeblogger().getWeblogManager().saveThemeAssoc(themeAssocStandard);
-                WebloggerFactory.getWeblogger().getWeblogManager().saveThemeAssoc(themeAssocMobile);
                 WebloggerFactory.getWeblogger().flush();
                 
                 // tell the user their weblog was created
@@ -195,18 +187,6 @@ public class CreateWeblog extends UIAction {
         return themeMgr.getEnabledThemesList();
     }
 
-
-    public List getMobileThemes(){
-       ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-        return themeMgr.getEnabledThemesList("mobile");
-    }
-
-    public List getStandardThemes(){
-            ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-        return themeMgr.getEnabledThemesList("standard");
-    }
-    
-    
     public CreateWeblogBean getBean() {
         return bean;
     }

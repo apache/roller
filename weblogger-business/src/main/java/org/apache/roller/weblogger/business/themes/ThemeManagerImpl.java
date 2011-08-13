@@ -181,6 +181,16 @@ public class ThemeManagerImpl implements ThemeManager {
         MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
         log.warn("Weblog " + website.getHandle() + " does not have a root MediaFile directory");
 
+        theme.setId("custom."+theme.getType());
+        WeblogSharedTheme customTheme = new WeblogSharedTheme(website,theme);
+        WeblogThemeAssoc themeAssoc = roller.getWeblogManager().getThemeAssoc(website,customTheme.getType());
+        themeAssoc.setCustom(true);
+        themeAssoc.setName(customTheme.getName());
+        //save theme assoc
+        roller.getWeblogManager().saveThemeAssoc(themeAssoc);
+
+
+
         Set importedActionTemplates = new HashSet();
         ThemeTemplate themeTemplate = null;
         ThemeTemplate stylesheetTemplate = theme.getStylesheet();
@@ -231,6 +241,10 @@ public class ThemeManagerImpl implements ThemeManager {
 
                 // save it
                 wmgr.savePage(template);
+
+                WeblogTemplateCode templateCode = new WeblogTemplateCode(template.getId(),theme.getType());
+                templateCode.setTemplate(template.getContents());
+                wmgr.saveTemplateCode(templateCode);
             }
         }
 

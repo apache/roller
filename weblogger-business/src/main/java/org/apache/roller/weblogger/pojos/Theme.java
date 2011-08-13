@@ -100,7 +100,7 @@ public interface Theme {
      * Lookup a template by link.
      * Returns null if the template cannot be found.
      */
-    public List<ThemeTemplate> getTemplatesByLink(String link) throws WebloggerException;
+    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException;
     
     
     /**

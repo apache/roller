@@ -89,7 +89,7 @@ public class TemplateEditBean {
     public String getContents() {
         return this.contents;
     }
-    
+
     public void setContents( String contents ) {
         this.contents = contents;
     }
@@ -164,8 +164,6 @@ public class TemplateEditBean {
         this.navbar = dataHolder.isNavbar();
         this.hidden = dataHolder.isHidden();
         this.templateLanguage = dataHolder.getTemplateLanguage();
-        this.type = dataHolder.getType();
-        
         setManualContentType(dataHolder.getOutputContentType());
         if(getManualContentType() != null) {
             setAutoContentType(Boolean.FALSE);
@@ -192,4 +190,11 @@ public class TemplateEditBean {
         return (id.equals(mobileTemplateId));
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }
