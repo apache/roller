@@ -159,8 +159,8 @@
         </table>
     <%-- ================================================================== --%>
     <%-- Template editing area w/resize buttons --%>
-    
-    <br />
+
+
     <s:textarea name="bean.contents" cols="80" rows="30" cssStyle="width:100%" />
     
     <script type="text/javascript"><!--

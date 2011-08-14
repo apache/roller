@@ -17,29 +17,33 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.InitializationException;
-import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.*;
-import org.apache.roller.weblogger.util.RollerMessages;
-
-import javax.activation.FileTypeMap;
-import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.activation.FileTypeMap;
+import javax.activation.MimetypesFileTypeMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.*;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.*;
+import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
  * Base implementation of a ThemeManager.
- * 
- * This particular implementation reads theme data off the filesystem 
+ *
+ * This particular implementation reads theme data off the filesystem
  * and assumes that those themes are not changable at runtime.
  */
 @com.google.inject.Singleton
@@ -63,10 +67,16 @@ public class ThemeManagerImpl implements ThemeManager {
     // the Map contains ... (theme id, Theme)
     private Map themes = null;
 
+    // list of available types for templates
+    private static ArrayList<String> typeList = new ArrayList<String>();
+
     @com.google.inject.Inject
     protected ThemeManagerImpl(Weblogger roller) {
 
         this.roller = roller;
+
+        //set the available types that can be used for templates
+        this.addAvailableTypes();
 
         // get theme directory from config and verify it
         this.themeDir = WebloggerConfig.getProperty("themes.dir");
@@ -88,13 +98,13 @@ public class ThemeManagerImpl implements ThemeManager {
         }
     }
 
-    public void initialize() throws InitializationException {
+     public void initialize() throws InitializationException {
 
         log.debug("Initializing Theme Manager");
 
         if (themeDir != null) {
             // rather than be lazy we are going to load all themes from
-            // the disk preemptively and cache them
+            // the disk preemptive and cache them
             this.themes = loadAllThemesFromDisk();
 
             log.info("Loaded " + this.themes.size() + " themes from disk.");
@@ -177,19 +187,9 @@ public class ThemeManagerImpl implements ThemeManager {
 
         WeblogManager wmgr = roller.getWeblogManager();
         MediaFileManager fileMgr = roller.getMediaFileManager();
-        
+
         MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
         log.warn("Weblog " + website.getHandle() + " does not have a root MediaFile directory");
-
-        theme.setId("custom."+theme.getType());
-        WeblogSharedTheme customTheme = new WeblogSharedTheme(website,theme);
-        WeblogThemeAssoc themeAssoc = roller.getWeblogManager().getThemeAssoc(website,customTheme.getType());
-        themeAssoc.setCustom(true);
-        themeAssoc.setName(customTheme.getName());
-        //save theme assoc
-        roller.getWeblogManager().saveThemeAssoc(themeAssoc);
-
-
 
         Set importedActionTemplates = new HashSet();
         ThemeTemplate themeTemplate = null;
@@ -237,15 +237,29 @@ public class ThemeManagerImpl implements ThemeManager {
                 // NOTE: decorators are deprecated starting in 4.0
                 template.setDecoratorName(null);
                 template.setLastModified(new Date());
-                template.setType(themeTemplate.getType());
 
                 // save it
                 wmgr.savePage(template);
-
-                WeblogTemplateCode templateCode = new WeblogTemplateCode(template.getId(),theme.getType());
-                templateCode.setTemplate(template.getContents());
-                wmgr.saveTemplateCode(templateCode);
             }
+             // creating template codes
+            for (String type : ThemeManagerImpl.getTypesList()) {
+                WeblogTemplateCode templateCode = template.getTemplateCode(type);
+                // if there are no template codes create it
+                if (templateCode == null) {
+                    WeblogTemplateCode themeTemplateCode = themeTemplate.getTemplateCode(type);
+
+                    if(themeTemplateCode== null){
+                        throw new WebloggerException("No templateCode found for template :"+themeTemplate.getId()+
+                                " of type :" +type);
+                    }
+                    templateCode = new WeblogTemplateCode(template.getId(), type);
+                    templateCode.setTemplate(themeTemplateCode.getTemplate());
+                    templateCode.setTemplateLanguage(themeTemplateCode.getTemplateLanguage());
+
+                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(templateCode);
+                }
+            }
+
         }
 
         // now, see if the weblog has left over action templates that
@@ -303,7 +317,7 @@ public class ThemeManagerImpl implements ThemeManager {
                     mdir = fileMgr.getMediaFileRootDirectory(website);
                     justPath = "";
                     justName = resourcePath;
-                    
+
                 } else {
                     justPath = resourcePath.substring(0, resourcePath.lastIndexOf("/"));
                     if (!justPath.startsWith("/")) justPath = "/" + justPath;
@@ -318,7 +332,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
                 MediaFile oldmf = fileMgr.getMediaFileByOriginalPath(website, justPath + "/" + justName);
                 if (oldmf != null) {
-                    fileMgr.removeMediaFile(website, oldmf); 
+                    fileMgr.removeMediaFile(website, oldmf);
                 }
 
                 // save file without file-type, quota checks, etc.
@@ -328,7 +342,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 mf.setWeblog(website);
                 mf.setName(justName);
                 mf.setOriginalPath(justPath + "/" + justName);
-                mf.setContentType(map.getContentType(justName)); 
+                mf.setContentType(map.getContentType(justName));
                 mf.setInputStream(is);
                 mf.setLength(resource.getLength());
 
@@ -425,20 +439,14 @@ public class ThemeManagerImpl implements ThemeManager {
 
     }
 
-    public List getEnabledThemesList(String type){
-             List all_themes = new ArrayList(this.themes.values());
-        List themes = new ArrayList();
-
-        for(int i = 0 ; i<all_themes.size(); i++){
-            Theme theme = (Theme) all_themes.get(i);
-
-           if(type.equals(theme.getType())){
-               themes.add(theme);
-           }
-        }
-        // sort 'em ... default ordering for themes is by name
-        Collections.sort(themes);
-
-        return themes;
+    private void addAvailableTypes(){
+        this.getTypesList().add("standard");
+        this.getTypesList().add("mobile");
     }
+
+    public static ArrayList<String> getTypesList() {
+          return typeList;
+      }
+
+
 }

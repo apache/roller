@@ -413,23 +413,13 @@ public class SharedThemeFromDir extends SharedTheme {
     }
     
     
-    /**
+   /**
      * Set the value for a given template name.
      */
     private void addTemplate(ThemeTemplate template) {
         this.templatesByName.put(template.getName(), template);
-
-          // check if there is an existing template for given link and append if exists.
-        List<ThemeTemplate> templates = new ArrayList<ThemeTemplate>();
-        if (!templatesByLink.containsKey(template.getLink())) {
-            templates.add(template);
-            templatesByLink.put(template.getLink(), templates);
-        } else {
-            templates = (List<ThemeTemplate>) templatesByLink.get(template.getLink());
-            templates.add(template);
-            templatesByLink.put(template.getLink(), templates);
-        }
-        if (!ThemeTemplate.ACTION_CUSTOM.equals(template.getAction())) {
+        this.templatesByLink.put(template.getLink(), template);
+        if(!ThemeTemplate.ACTION_CUSTOM.equals(template.getAction())) {
             this.templatesByAction.put(template.getAction(), template);
         }
     }

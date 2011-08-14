@@ -93,10 +93,4 @@ public interface ThemeManager {
 	 */
 	public boolean reLoadThemeFromDisk(String reloadTheme);
 
-
-    /**
-     *   To return the list of Themes for a given type
-     * @return
-     */
-    public List getEnabledThemesList(String type);
 }

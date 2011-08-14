@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,12 +28,13 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.*;
+import org.apache.roller.weblogger.pojos.Theme;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
-
-import java.util.Collections;
-import java.util.List;
 
 
 /**
@@ -41,19 +44,14 @@ public class ThemeEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(Templates.class);
     
-    // list of available standard themes
+    // list of available themes
     private List themes = Collections.EMPTY_LIST;
-
-    private List mobileThemes = Collections.EMPTY_LIST;
     
     // type of theme desired, either 'shared' or 'custom'
     private String themeType = null;
     
     // the chosen shared theme id
     private String themeId = null;
-
-    //the chosen mobile theme id
-    private String mobileThemeId = null;
     
     // import the selected theme to the action weblog
     private boolean importTheme = false;
@@ -76,8 +74,7 @@ public class ThemeEdit extends UIAction {
     
     public void myPrepare() {
         ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-        setThemes(themeMgr.getEnabledThemesList("standard"));
-        setMobileThemes(themeMgr.getEnabledThemesList("mobile"));
+        setThemes(themeMgr.getEnabledThemesList());
     }
     
     
@@ -88,7 +85,6 @@ public class ThemeEdit extends UIAction {
             setThemeId(null);
         } else {
             setThemeId(getActionWeblog().getTheme().getId());
-          //  setMobileThemeId(getActionWeblog().getMobileTheme().getId());
             setImportThemeId(getActionWeblog().getTheme().getId());
         }
         
@@ -182,17 +178,11 @@ public class ThemeEdit extends UIAction {
             }
             
             if(!hasActionErrors()) try {
-                WeblogThemeAssoc themeAssoc = WebloggerFactory.getWeblogger().getWeblogManager().
-                        getThemeAssoc(getActionWeblog(),"standard");
-                themeAssoc.setName(getThemeId());
-                //TODO remove this setting editor theme
                 weblog.setEditorTheme(getThemeId());
-
                 log.debug("Saving theme "+getThemeId()+" for weblog "+weblog.getHandle());
                 
                 // save updated weblog and flush
                 WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
-                WebloggerFactory.getWeblogger().getWeblogManager().saveThemeAssoc(themeAssoc);
                 WebloggerFactory.getWeblogger().flush();
                 
                 // make sure to flush the page cache so ppl can see the change
@@ -215,58 +205,6 @@ public class ThemeEdit extends UIAction {
         
         return execute();
     }
-    
-    public String saveMobileTheme(){
-        
-           Weblog weblog = getActionWeblog();
-                    // make sure theme is valid and enabled
-            Theme newMobileTheme = null;
-            if(getThemeId() == null) {
-                // TODO: i18n
-                addError("No theme specified");
-                
-            } else {
-                try {
-                    ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-                    newMobileTheme = themeMgr.getTheme(getMobileThemeId());
-                    
-                    if(!newMobileTheme.isEnabled()) {
-                        // TODO: i18n
-                        addError("Theme not enabled");
-                    }
-                    
-                } catch(Exception ex) {
-                    log.warn(ex);
-                    // TODO: i18n
-                    addError("Theme not found");
-                }
-            }
-            if(!hasActionErrors()) try {
-              //  weblog.setMobileThemeName(getMobileThemeId());
-                WeblogThemeAssoc themeAssoc = WebloggerFactory.getWeblogger().getWeblogManager().
-                        getThemeAssoc(getActionWeblog(),"mobile");
-                themeAssoc.setName(getMobileThemeId());
-
-                log.debug("Saving theme "+getMobileThemeId()+" for weblog "+weblog.getHandle());
-                
-                // save updated weblog and flush
-                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
-                WebloggerFactory.getWeblogger().getWeblogManager().saveThemeAssoc(themeAssoc);
-                WebloggerFactory.getWeblogger().flush();
-                
-                // make sure to flush the page cache so ppl can see the change
-                CacheManager.invalidate(weblog);
-                
-                // TODO: i18n
-                addMessage("Successfully set Mobile theme to - "+newMobileTheme.getName());
-                
-            } catch(WebloggerException re) {
-                log.error("Error saving weblog - "+getActionWeblog().getHandle(), re);
-                addError("Error setting theme");
-            }
-            
-        return execute();
-}
     
     
     public boolean isCustomTheme() {
@@ -323,20 +261,5 @@ public class ThemeEdit extends UIAction {
     public void setImportThemeId(String importThemeId) {
         this.importThemeId = importThemeId;
     }
-
-    public List getMobileThemes() {
-        return mobileThemes;
-    }
-
-    public void setMobileThemes(List mobileThemes) {
-        this.mobileThemes = mobileThemes;
-    }
-
-    public String getMobileThemeId() {
-        return mobileThemeId;
-    }
-
-    public void setMobileThemeId(String mobileThemeId) {
-        this.mobileThemeId = mobileThemeId;
-    }
+    
 }
