@@ -1,0 +1,4 @@
+#foreach( $entry in $entries )
+<ul data-role="listview" data-inset="true" data-dividertheme="b">
+    <li><a href=$entry.permalink>$entry.title</a></li>
+#end

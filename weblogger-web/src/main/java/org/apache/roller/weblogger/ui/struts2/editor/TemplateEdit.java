@@ -195,7 +195,7 @@ public class TemplateEdit extends UIAction {
             //save template code
             WeblogTemplateCode templateCode = WebloggerFactory.getWeblogger().getWeblogManager().
                     getTemplateCodeByType(template.getId(),getBean().getType());
-            templateCode.setTemplate(template.getContents());
+            templateCode.setTemplate(getBean().getContents());
 
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(templateCode);
 

@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.struts2.components.If;
 
 
 /**
@@ -136,7 +137,9 @@ public class TemplateEditBean {
     
     
     public void copyTo(WeblogTemplate dataHolder) {
-        
+
+        // change the default content of template if we are changing standard type code
+        if("standard".equals(getType()))
         dataHolder.setContents(getContents());
         
         // the rest of the template properties can only be modified when

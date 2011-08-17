@@ -55,6 +55,12 @@
            <contentsFile>permalink.vm</contentsFile>
            <type>standard</type>
        </templateCode>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>permalink-mobile.vm</contentsFile>
+           <type>mobile</type>
+       </templateCode>
     </template>
     
     <template action="search">
@@ -69,6 +75,12 @@
            <contentsFile>searchresults.vm</contentsFile>
            <type>standard</type>
        </templateCode>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>searchresults-mobile.vm</contentsFile>
+           <type>mobile</type>
+       </templateCode>
     </template>
     
     <template action="custom">
@@ -82,6 +94,12 @@
            <contentType>text/html</contentType>
            <contentsFile>_day.vm</contentsFile>
            <type>standard</type>
+       </templateCode>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>_day-mobile.vm</contentsFile>
+           <type>mobile</type>
        </templateCode>
     </template>
     

@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
@@ -100,7 +101,7 @@ public class SearchServlet extends HttpServlet {
 
         //is a mobile request
 
-        boolean isMobileRequest = MobileDeviceRepository.isMobileDevice(request);
+       String  type = MobileDeviceRepository.getRequestType(request);
         
         // do we need to force a specific locale for the request?
         if(searchRequest.getLocale() == null && !weblog.isShowAllLangs()) {
@@ -204,7 +205,14 @@ public class SearchServlet extends HttpServlet {
 				log.error("ERROR - reloading theme " + ex);
 			}
 		}
-		
+
+        //prepare template for detected type
+        try {
+            page = RendererManager.prepareTemplate(page ,type);
+        } catch (RenderingException e) {
+            log.debug("Error while preparing page template");
+        }
+
         // lookup Renderer we are going to use
         Renderer renderer = null;
         try {
