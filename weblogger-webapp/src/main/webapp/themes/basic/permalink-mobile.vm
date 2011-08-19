@@ -15,6 +15,7 @@
 
     <div data-role="header" data-theme="b">
         <h1>Weblog Post</h1>
+        <a data-rel="back" data-icon="back" data-theme="a">Go back</a>
     </div>
     <!-- /header -->
 
@@ -48,13 +49,11 @@
         <li>#if ($nextLink)<a data-icon="arrow-r" data-theme="b" href="$nextLink">$nextName</a></li>#end
         </ul>
     </div>
-
     <div data-role="content" data-theme="c">
         #set($map = $pager.getEntries())
         #foreach($day in $map.keySet())
             #set($entries = $map.get($day))
         #end
-
     ## show entry
            #foreach( $entry in $entries )
 
@@ -63,18 +62,18 @@
         <p>
 
         <p> #if($model.permalink)
-                $entry.displayContent
-            #else
+            $entry.displayContent
+            <br>
+            <br>
+            Posted at <a href="$url.entry($entry.anchor)">$utils.formatDate($entry.pubTime, "hh:mma MMM dd, yyyy")</a>
+        #else
             $entry.displayContent($url.entry($entry.anchor))
         #end</p></p>
 
     #end
-
     ## show comments and comment form
            #showWeblogEntryComments($model.weblogEntry)
     ##showWeblogEntryCommentForm($model.weblogEntry)
-
-
         </p>
     </div>
     <!-- /content -->

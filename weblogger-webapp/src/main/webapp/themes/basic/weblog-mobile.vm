@@ -16,14 +16,13 @@
     <div data-role="header" data-theme="b">
         <h1>$model.weblog.name </h1>
         <a href=$url.home  data-icon="home" data-theme = "a">Home</a>
-        <a href=$url.home  data-icon="gear" data-theme = "a">Options</a>
+        <a data-rel="back" data-icon="back" data-theme = "a">Go back</a>
     </div>
     <!-- /header -->
 
-    <form id="searchForm" method="get" action="$url.search">
+    <form id="searchForm" method="get" action="search">
         <div data-role="fieldcontain">
-            <label for="search">Search :</label>
-            <input type="search" name="q" id="q" value=""/>
+          <input type="search" name="q" data-inline="true"> <input type="submit" value="Search" data-inline="true">
         </div>
     </form>
     <div data-role="content" data-theme="d">
