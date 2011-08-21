@@ -10,13 +10,27 @@
     <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
 </head>
 <body>
+<script type="text/javascript">
+function setCookie(c_name, value, exdays) {
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+        document.cookie = c_name + "=" + c_value;
+    }
 
-<div data-role="page">
+$('#btnStandard').live('vclick' ,function(e){
+setCookie("roller_user_request_type","standard",30)
+});
+
+
+</script>
+
+<div data-role="page" id ="home">
 
     <div data-role="header" data-theme="b">
         <h1>$model.weblog.name </h1>
         <a href=$url.home  data-icon="home" data-theme = "a">Home</a>
-        <a data-rel="back" data-icon="back" data-theme = "a">Go back</a>
+       <a href="#home" id="btnStandard" data-role="button">View Standard</a>
     </div>
     <!-- /header -->
 

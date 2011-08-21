@@ -895,5 +895,20 @@ Include Javascript code needed for expanding folder macros (undocumented).
 #end
 
 
+#macro(_Jave $type)
+<script type="text/javascript">
+     var type = '$type';
+    function setCookie(c_name, value, exdays) {
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+        document.cookie = c_name + "=" + c_value;
+    }
+    setCookie("roller_user_request_type", type, 30);
+
+</script>
+#end
+
+
 
 

@@ -17,8 +17,6 @@
        <a data-rel="back" data-icon="back" data-theme = "a">back</a>
        <a href=$url.home  data-icon="home" data-theme = "a">Home</a>
     </div>
-
-<h3> no of results found : $model.hits</h3>
 <br>
 <h3>  Search Results for '$model.term' </h3> 
         #set($pager = $model.getWeblogEntriesPager()) 

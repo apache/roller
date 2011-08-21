@@ -18,6 +18,10 @@
 
 package org.apache.roller.weblogger.ui.rendering.mobile;
 
+import org.omg.CORBA.Request;
+import sun.tools.tree.ThisExpression;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 public class MobileDeviceRepository {
@@ -49,6 +53,8 @@ public class MobileDeviceRepository {
             "vx(52|53|60|61|70|80|81|83|85|98)|w3c(\\\\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|xda(\\\\-|2|g)|" +
             "yas\\\\-|your|zeto|zte\\\\-";
 
+    public static final String USER_REQUEST_TYPE ="roller_user_request_type";
+
     /**
      *
      * ToCheck if a request is mobile.
@@ -64,11 +70,27 @@ public class MobileDeviceRepository {
 
     public static String getRequestType(HttpServletRequest request) {
         String type = "standard";
+        String cookie =getCookieValue(request.getCookies(), USER_REQUEST_TYPE,null);
+
+        if(cookie != null){
+            return cookie;
+        }
 
         if (isMobileDevice(request)) {
             type = "mobile";
         }
         return type;
+    }
+
+    private static String getCookieValue(Cookie[] cookies,
+                                         String cookieName,
+                                         String defaultValue) {
+        for (int i = 0; i < cookies.length; i++) {
+            Cookie cookie = cookies[i];
+            if (cookieName.equals(cookie.getName()))
+                return (cookie.getValue());
+        }
+        return (defaultValue);
     }
 
 }
