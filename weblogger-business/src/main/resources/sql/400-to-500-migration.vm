@@ -18,7 +18,7 @@ create table roller_permission (
    objectid        varchar(48),           
    objecttype      varchar(255),          
    pending         $db.BOOLEAN_SQL_TYPE_TRUE,         
-   datecreated     timestamp not null
+   datecreated     $db.TIMESTAMP_SQL_TYPE not null
 );
 
 insert into roller_permission (id,username,actions,objectid,objecttype,pending,datecreated) 
@@ -43,23 +43,23 @@ insert into roller_permission (id,username,actions,objectid,objecttype,pending,d
 #dropNotNullFromColumn("website" "userid" "varchar(48)")
 
 #addColumnNull("website" "creator" "varchar(255)")
-update website as w set 
+update website set 
     lastmodified = lastmodified,
     datecreated = datecreated,
-    creator = (select u.username from rolleruser as u where u.id = w.userid);
+    creator = (select u.username from rolleruser as u where u.id = userid);
 
 #dropNotNullFromColumn("weblogentry" "userid" "varchar(48)")
 #addColumnNull("weblogentry" "creator" "varchar(255)")
-update weblogentry as w set
+update weblogentry set
     pubtime = pubtime,
     updatetime = updatetime, 
-    creator = (select u.username from rolleruser as u where u.id = w.userid);
+    creator = (select u.username from rolleruser as u where u.id = userid);
 
 #dropNotNullFromColumn("roller_weblogentrytag" "userid" "varchar(48)")
 #addColumnNull("roller_weblogentrytag" "creator" "varchar(255)")
-update roller_weblogentrytag as w set 
+update roller_weblogentrytag set 
     time = time,
-    creator = (select u.username from rolleruser as u where u.id = w.userid);
+    creator = (select u.username from rolleruser as u where u.id = userid);
 
 
 -- USER ATTRIBUTE

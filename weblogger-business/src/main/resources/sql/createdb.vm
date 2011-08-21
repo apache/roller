@@ -51,7 +51,7 @@ create table roller_permission (
    objectid        varchar(48),           
    objecttype      varchar(255), 
    pending         $db.BOOLEAN_SQL_TYPE_TRUE,         
-   datecreated     timestamp not null
+   datecreated     $db.TIMESTAMP_SQL_TYPE not null
 );
 
 -- Audit log records time and comment about change

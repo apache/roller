@@ -357,6 +357,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 }
             }
         }
+
+        roller.getMediaFileManager().createRootMediaFileDirectory(newWeblog);
+        
+        // flush so that all data up to this point can be available in db
+        this.strategy.flush();
         
         // add any auto enabled ping targets
         PingTargetManager pingTargetMgr = roller.getPingTargetManager();
@@ -373,8 +378,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 autoPingMgr.saveAutoPing(autoPing);
             }
         }
-
-        roller.getMediaFileManager().createRootMediaFileDirectory(newWeblog);
 
     }
     

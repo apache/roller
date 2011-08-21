@@ -3,7 +3,7 @@
 Special macro to add table column with default null
 **#
 #macro(addColumnNull $table $column $type)
-#if ($db.DBTYPE == "ORACLE")
+#if ($db.DBTYPE == "ORACLE" || $db.DBTYPE == "MSSQL")
     alter table $table add $column $type default null;
 #else
     alter table $table add column $column $type default null;
@@ -26,7 +26,7 @@ Special macro to add table column with not-null restriction and default value
     alter table $table add column $column $type default $default not null; 
 #elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "DB2")
     alter table $table add column $column $type with default $default not null;
-#elseif ($db.DBTYPE == "ORACLE")
+#elseif ($db.DBTYPE == "ORACLE" || $db.DBTYPE == "MSSQL")
     alter table $table add $column $type default $default not null;  
 #end
 #end
@@ -61,7 +61,7 @@ Special macro to drop NOT NULL requirement from a column.
     alter table $table modify $colname $coltype null;
 #elseif ($db.DBTYPE == "POSTGRESQL")
     alter table $table  alter column $colname drop not null;
-#elseif ($db.DBTYPE == "HSQLDB")
+#elseif ($db.DBTYPE == "HSQLDB" || $db.DBTYPE == "MSSQL")
     alter table $table alter column $colname $coltype null;
 #elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "DB2")
     alter table $table alter column $colname null;
@@ -116,4 +116,12 @@ drop table if exists $tableName;
 #end
 
 
-#macro(concat $s1 $s2) #if ($db.DBTYPE != "MYSQL") $s1 || $s2 #else concat($s1, $s2) #end #end
+#macro(concat $s1 $s2) 
+#if ($db.DBTYPE == "MSSQL") 
+	$s1 + $s2 
+#elseif ($db.DBTYPE != "MYSQL")
+	$s1 || $s2 
+#else 
+	concat($s1, $s2) 
+#end 
+#end
