@@ -22,6 +22,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.CharSetUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -360,6 +361,13 @@ public class Register extends UIAction implements ServletRequestAware {
                 addError("error.add.user.passwordEmpty");
                 return;
             }
+        }
+        
+        // User.password does not allow null, so generate one
+        if (getOpenIdConfiguration().equals("only")) {
+            String randomString = RandomStringUtils.randomAlphanumeric(255);
+            getBean().setPasswordText(randomString);
+            getBean().setPasswordConfirm(randomString);
         }
         
         // check that passwords match 

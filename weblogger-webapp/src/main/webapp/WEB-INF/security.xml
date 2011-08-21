@@ -80,6 +80,7 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
         <beans:property name="userDetailsService" ref="rollerUserService"/>
     </beans:bean>
     <beans:bean id="openidAuthenticationProcessingFilter" class="org.apache.roller.weblogger.ui.core.filters.CustomOpenIDAuthenticationProcessingFilter">
+        <beans:property name="claimedIdentityFieldName" value="openid_identifier"/>
         <beans:property name="defaultTargetUrl" value="/roller-ui/menu.rol"/>
         <beans:property name="filterProcessesUrl" value="/roller_j_openid_security_check"/>
         <beans:property name="exceptionMappings">

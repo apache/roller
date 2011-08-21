@@ -18,6 +18,9 @@
 
 package org.apache.roller.weblogger.ui.core.filters;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
@@ -73,5 +76,35 @@ public class CustomOpenIDAuthenticationProcessingFilter
             throw new UsernameNotFoundException("ERROR no user: new openid user");
         }
         return auth;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String lookupRealm(String returnToUrl) {
+
+        String mapping = (String) getRealmMapping().get(returnToUrl);
+
+        if (mapping == null) {
+            try {
+                URL url = new URL(returnToUrl);
+                int port = url.getPort();
+
+                StringBuffer realmBuffer = new StringBuffer(returnToUrl.length())
+                        .append(url.getProtocol())
+                        .append("://")
+                        .append(url.getHost());
+                if (port != -1) {
+                    realmBuffer.append(":").append(port);
+                }
+                realmBuffer.append("/");
+                mapping = realmBuffer.toString();
+            } catch (MalformedURLException e) {
+                log.warn("returnToUrl was not a valid URL: [" + returnToUrl + "]", e);
+            }
+        }
+
+        return mapping;
     }
 }

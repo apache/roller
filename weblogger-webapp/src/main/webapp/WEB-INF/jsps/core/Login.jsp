@@ -40,13 +40,13 @@ if (cmaEnabled) {
     
     <form method="post" id="loginOpenIDForm"       
           action="/roller/roller_j_openid_security_check"      
-          onsubmit="saveUsername(this)">      
+          onsubmit="saveOpenidIdentifier(this)">      
         <!-- action="<c:url value='roller_j_openid_security_check'/>"  -->
         <table width="80%">
             <tr>
                 <td width="20%" align="right"><s:text name="loginPage.openID" /></td>
                 <td width="80%">
-                    <input type="text" name="j_username" id="j_username" class="f_openid_identifier" size="40" maxlength="255" />
+                    <input type="text" name="openid_identifier" id="openid_identifier" class="f_openid_identifier" size="40" maxlength="255" />
                 </td>
             </tr>    
             <tr>
@@ -114,17 +114,46 @@ if (cmaEnabled) {
     </form>
 </s:if>
 
-
 <script type="text/javascript">
 <!--
+<s:if test="openIdConfiguration != 'disabled'">
+function focusToOpenidForm() {
+    return (document.getElementById && document.getElementById("j_username") === null) ||
+        getCookie("favorite_authentication_method") !== "username";
+}
+
+if (document.getElementById) {
+    if (document.getElementById && getCookie("openid_identifier") !== null) {
+        document.getElementById("openid_identifier").value = getCookie("openid_identifier");
+    }
+    if (focusToOpenidForm()) {
+        document.getElementById("openid_identifier").focus();
+    }
+}
+
+function saveOpenidIdentifier(theForm) {
+    var expires = new Date();
+    expires.setTime(expires.getTime() + 24 * 30 * 60 * 60 * 1000); // sets it for approx 30 days.
+    setCookie("openid_identifier",theForm.openid_identifier.value,expires);
+    setCookie("favorite_authentication_method", "openid");
+}
+</s:if>
+
+<s:if test="openIdConfiguration != 'only'">
+function focusToUsernamePasswordForm() {
+    return (document.getElementById && document.getElementById("openid_identifier") === null) ||
+        getCookie("favorite_authentication_method") === "username";
+}
 
 if (document.getElementById) {
     if (getCookie("username") != null) {
         if (document.getElementById) {
             document.getElementById("j_username").value = getCookie("username");
-            document.getElementById("j_password").focus();
+            if (focusToUsernamePasswordForm()) {
+                document.getElementById("j_password").focus();
+            }
         }
-    } else {
+    } else if (focusToUsernamePasswordForm()) {
         document.getElementById("j_username").focus();
     }
 }
@@ -133,6 +162,8 @@ function saveUsername(theForm) {
     var expires = new Date();
     expires.setTime(expires.getTime() + 24 * 30 * 60 * 60 * 1000); // sets it for approx 30 days.
     setCookie("username",theForm.j_username.value,expires);
+    setCookie("favorite_authentication_method", "username");
 }
+</s:if>
 //-->
 </script>

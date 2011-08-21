@@ -101,6 +101,7 @@
         </s:if>
         <s:else>
             <s:hidden name="bean.password" />
+            <s:hidden name="bean.passwordText" />
             <s:hidden name="bean.passwordConfirm" />
         </s:else>
     
