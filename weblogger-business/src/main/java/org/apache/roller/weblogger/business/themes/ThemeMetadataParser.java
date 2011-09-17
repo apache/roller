@@ -18,16 +18,17 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -42,7 +43,7 @@ public class ThemeMetadataParser {
      * Unmarshall the given input stream into our defined
      * set of Java objects.
      **/
-    public ThemeMetadata unmarshall(InputStream instream) 
+    public ThemeMetadata unmarshall(InputStream instream)
         throws ThemeParsingException, IOException, JDOMException {
         
         if(instream == null)
@@ -58,6 +59,7 @@ public class ThemeMetadataParser {
         theme.setId(root.getChildText("id"));
         theme.setName(root.getChildText("name"));
         theme.setAuthor(root.getChildText("author"));
+        theme.setType(root.getChildText("type"));
         
         // if either id or name is null then throw a parsing exception
         if(StringUtils.isEmpty(theme.getId()) || StringUtils.isEmpty(theme.getName())) {
@@ -76,6 +78,7 @@ public class ThemeMetadataParser {
         Element stylesheet = root.getChild("stylesheet");
         if(stylesheet != null) {
             theme.setStylesheet(elementToStylesheet(stylesheet));
+
         }
         
         // now grab the static resources
@@ -93,6 +96,7 @@ public class ThemeMetadataParser {
         while (templatesIter.hasNext()) {
             Element template = (Element) templatesIter.next();
             ThemeMetadataTemplate tmpl = elementToTemplateMetadata(template);
+
             theme.addTemplate(tmpl);
             
             if(WeblogTemplate.ACTION_WEBLOG.equals(tmpl.getAction())) {
@@ -119,9 +123,33 @@ public class ThemeMetadataParser {
         template.setName(element.getChildText("name"));
         template.setDescription(element.getChildText("description"));
         template.setLink(element.getChildText("link"));
-        template.setTemplateLanguage(element.getChildText("templateLanguage"));
-        template.setContentType(element.getChildText("contentType"));
-        template.setContentsFile(element.getChildText("contentsFile"));
+
+        //parsing tempaltecode segment
+        List templateCodeList = element.getChildren("templateCode");
+        Iterator templCodeitr = templateCodeList.iterator();
+
+        while (templCodeitr.hasNext()){
+            Element templateCodeElement = (Element) templCodeitr.next();
+
+            ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
+            templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
+            templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
+            templateCode.setContentType(templateCodeElement.getChildText("contentType"));
+            templateCode.setType(templateCodeElement.getChildText("type"));
+
+            // validating template code
+            if (StringUtils.isEmpty(templateCode.getContentsFile())) {
+                throw new ThemeParsingException("templateCode must contain a 'contentsFile' element");
+        }
+            if(StringUtils.isEmpty(templateCode.getTemplateLang())) {
+            throw new ThemeParsingException("templateCode must contain a 'templateLanguage' element");
+        }
+             if(StringUtils.isEmpty(templateCode.getType())) {
+            throw new ThemeParsingException("templateCode must contain a 'type' element");
+        }
+
+            template.addTemplateCode(templateCode.getType(),templateCode);
+        }
         
         String navbar = element.getChildText("navbar");
         if("true".equalsIgnoreCase(navbar)) {
@@ -140,12 +168,8 @@ public class ThemeMetadataParser {
         if(StringUtils.isEmpty(template.getName())) {
             throw new ThemeParsingException("templates must contain a 'name' element");
         }
-        if(StringUtils.isEmpty(template.getTemplateLanguage())) {
-            throw new ThemeParsingException("templates must contain a 'templateLanguage' element");
-        }
-        if(StringUtils.isEmpty(template.getContentsFile())) {
-            throw new ThemeParsingException("templates must contain a 'contentsFile' element");
-        }
+
+
         
         return template;
     }
@@ -159,8 +183,32 @@ public class ThemeMetadataParser {
         template.setName(element.getChildText("name"));
         template.setDescription(element.getChildText("description"));
         template.setLink(element.getChildText("link"));
-        template.setTemplateLanguage(element.getChildText("templateLanguage"));
-        template.setContentsFile(element.getChildText("contentsFile"));
+
+        // parsing templatecode segment
+         List templateCodeList = element.getChildren("templateCode");
+        Iterator templCodeitr = templateCodeList.iterator();
+
+        while (templCodeitr.hasNext()){
+            Element templateCodeElement = (Element) templCodeitr.next();
+
+            ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
+            templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
+            templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
+            templateCode.setContentType(templateCodeElement.getChildText("contentType"));
+            templateCode.setType(templateCodeElement.getChildText("type"));
+
+            //validating stylesheet template code.
+            if (StringUtils.isEmpty(templateCode.getContentsFile())) {
+                throw new ThemeParsingException("stylesheet must contain a 'contentsFile' element");
+            }
+            if (StringUtils.isEmpty(templateCode.getTemplateLang())) {
+                throw new ThemeParsingException("stylesheet must contain a 'templateLanguage' element");
+            }
+            if (StringUtils.isEmpty(templateCode.getType())) {
+                throw new ThemeParsingException("templateCode must contain a 'type' element");
+            }
+            template.addTemplateCode(templateCode.getType(), templateCode);
+        }
         
         // validate template
         if(StringUtils.isEmpty(template.getName())) {
@@ -169,13 +217,7 @@ public class ThemeMetadataParser {
         if(StringUtils.isEmpty(template.getLink())) {
             throw new ThemeParsingException("stylesheet must contain a 'link' element");
         }
-        if(StringUtils.isEmpty(template.getTemplateLanguage())) {
-            throw new ThemeParsingException("stylesheet must contain a 'templateLanguage' element");
-        }
-        if(StringUtils.isEmpty(template.getContentsFile())) {
-            throw new ThemeParsingException("stylesheet must contain a 'contentsFile' element");
-        }
-        
+
         return template;
     }
     

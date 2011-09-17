@@ -18,10 +18,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,8 +25,14 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -49,6 +51,7 @@ public class Templates extends UIAction {
     // name and action of new template if we are adding a template
     private String newTmplName = null;
     private String newTmplAction = null;
+    private String type = null;
     
     
     public Templates() {
@@ -68,12 +71,12 @@ public class Templates extends UIAction {
         // query for templates list
         try {
             
-            // get current list of templates, minus custom stylesheet
-            List<WeblogTemplate> raw = WebloggerFactory.getWeblogger().getWeblogManager().getPages(getActionWeblog()); 
+             // get current list of templates, minus custom stylesheet
+            List<WeblogTemplate> raw = WebloggerFactory.getWeblogger().getWeblogManager().getPages(getActionWeblog());
             List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
             pages.addAll(raw);
             if(getActionWeblog().getTheme().getStylesheet() != null) {
-                pages.remove(WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(getActionWeblog(), 
+                pages.remove(WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(getActionWeblog(),
                         getActionWeblog().getTheme().getStylesheet().getLink()));
             }
             setTemplates(pages);
@@ -127,6 +130,10 @@ public class Templates extends UIAction {
             newTemplate.setHidden(false);
             newTemplate.setNavbar(false);
             newTemplate.setLastModified( new Date() );
+
+            if(WeblogTemplate.ACTION_CUSTOM.equals(getNewTmplAction())){
+                newTemplate.setLink(getNewTmplName());
+            }
             
             // all templates start out as velocity templates
             newTemplate.setTemplateLanguage("velocity");
@@ -138,7 +145,20 @@ public class Templates extends UIAction {
             
             // save the new Template
             WebloggerFactory.getWeblogger().getWeblogManager().savePage( newTemplate );
-            
+
+            //Create weblog template codes for available types.
+            WeblogTemplateCode standardTemplCode = new WeblogTemplateCode(newTemplate.getId(),"standard");
+            WeblogTemplateCode mobileTemplCode = new WeblogTemplateCode(newTemplate.getId(),"mobile");
+
+            standardTemplCode.setTemplate(newTemplate.getContents());
+            standardTemplCode.setTemplateLanguage("velocity");
+
+            mobileTemplCode.setTemplate(newTemplate.getContents());
+            mobileTemplCode.setTemplateLanguage("velocity");
+
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(standardTemplCode);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(mobileTemplCode);
+
             // if this person happened to create a Weblog template from
             // scratch then make sure and set the defaultPageId
             if(WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
@@ -148,10 +168,9 @@ public class Templates extends UIAction {
             
             // flush results to db
             WebloggerFactory.getWeblogger().flush();
-            
-            // reset form fields
-            setNewTmplName(null);
-            setNewTmplAction(null);
+
+            // add roller generated mobile template
+            //addMobileTemplate();
             
         } catch (WebloggerException ex) {
             log.error("Error adding new template for weblog - "+getActionWeblog().getHandle(), ex);
@@ -161,7 +180,7 @@ public class Templates extends UIAction {
         
         return execute();
     }
-    
+
     
     // validation when adding a new template
     private void myValidate() {
@@ -187,6 +206,8 @@ public class Templates extends UIAction {
         } catch (WebloggerException ex) {
             log.error("Error checking for existing template", ex);
         }
+
+
     }
     
     
@@ -221,5 +242,6 @@ public class Templates extends UIAction {
     public void setNewTmplAction(String newTmplAction) {
         this.newTmplAction = newTmplAction;
     }
-    
+
+
 }

@@ -18,9 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.Locale;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.struts2.components.If;
 
 
 /**
@@ -39,6 +38,13 @@ public class TemplateEditBean {
     private boolean hidden = false;
     private Boolean autoContentType = Boolean.TRUE;
     private String manualContentType = null;
+    private String type = null;
+
+     // template ID of mobile template version
+    private String mobileTemplateId = null;
+
+    // template ID of standard template version
+    private String standardTemplateId = null;
     
     
     public String getId() {
@@ -84,7 +90,7 @@ public class TemplateEditBean {
     public String getContents() {
         return this.contents;
     }
-    
+
     public void setContents( String contents ) {
         this.contents = contents;
     }
@@ -131,7 +137,9 @@ public class TemplateEditBean {
     
     
     public void copyTo(WeblogTemplate dataHolder) {
-        
+
+        // change the default content of template if we are changing standard type code
+        if("standard".equals(getType()))
         dataHolder.setContents(getContents());
         
         // the rest of the template properties can only be modified when
@@ -159,11 +167,37 @@ public class TemplateEditBean {
         this.navbar = dataHolder.isNavbar();
         this.hidden = dataHolder.isHidden();
         this.templateLanguage = dataHolder.getTemplateLanguage();
-        
         setManualContentType(dataHolder.getOutputContentType());
         if(getManualContentType() != null) {
             setAutoContentType(Boolean.FALSE);
         }
     }
 
+    public String getMobileTemplateId() {
+        return mobileTemplateId;
+    }
+
+    public void setMobileTemplateId(String mobileTemplateId) {
+        this.mobileTemplateId = mobileTemplateId;
+    }
+
+    public String getStandardTemplateId() {
+        return standardTemplateId;
+    }
+
+    public void setStandardTemplateId(String standardTemplateId) {
+        this.standardTemplateId = standardTemplateId;
+    }
+
+    public boolean isMobile() {
+        return (id.equals(mobileTemplateId));
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

@@ -18,6 +18,9 @@
 
 package org.apache.roller.weblogger.pojos;
 
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -44,6 +47,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     private String outputContentType = null;
     private String decoratorName = null;
     private ThemeTemplate decorator = null;
+    private String type = "standard";
     
     
     public StaticThemeTemplate(String id, String lang) {
@@ -97,6 +101,18 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     
     public String getOutputContentType() {
         return outputContentType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public WeblogTemplateCode getTemplateCode(String type) throws WebloggerException {
+        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateCodeByType(this.id, type);
+    }
+
+    public void setType(String type){
+          this.type = type;
     }
 
     public void setOutputContentType(String outputContentType) {

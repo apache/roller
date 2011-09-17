@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Search Results for '$model.term' : $model.weblog.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css"/>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
+</head>
+</head>
+<body>
+
+<div data-role="page">
+    <div data-role="header" data-theme="b">
+<h1> Search Results</h1>
+       <a data-rel="back" data-icon="back" data-theme = "a">back</a>
+       <a href=$url.home  data-icon="home" data-theme = "a">Home</a>
+    </div>
+<br>
+<h3>  Search Results for '$model.term' </h3> 
+        #set($pager = $model.getWeblogEntriesPager()) 
+        ## show entries
+    #set($map = $pager.getEntries())
+    #foreach($day in $map.keySet())
+        #set($entries = $map.get($day))   
+    #end
+       #foreach( $entry in $entries )
+<ul data-role="listview" data-inset="true" data-dividertheme="d">
+    <li><a href=$entry.permalink>$entry.title</a></li>
+#end
+
+  </div>
+</div>
+<div data-role="footer" data-theme="b">
+        <h4>Apache Roller Mobile @ 2011</h4>
+    </div>
+
+</body>
+</html>

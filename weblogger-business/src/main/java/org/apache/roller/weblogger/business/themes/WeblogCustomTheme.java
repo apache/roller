@@ -18,16 +18,13 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import java.util.Date;
-import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.ThemeResource;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.*;
+
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -48,7 +45,11 @@ public class WeblogCustomTheme extends WeblogTheme {
     public String getName() {
         return CUSTOM;
     }
-    
+
+    public String getType() {
+        return CUSTOM;
+    }
+
     public String getDescription() {
         return CUSTOM;
     }
@@ -79,7 +80,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if no stylesheet can be found.
      */
     public ThemeTemplate getStylesheet() throws WebloggerException {
-        return getTemplateByLink(this.weblog.getCustomStylesheetPath());
+       return getTemplateByLink(this.weblog.getCustomStylesheetPath());
     }
     
     
@@ -124,8 +125,8 @@ public class WeblogCustomTheme extends WeblogTheme {
     public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
         if(link == null)
             return null;
-        
-        return WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(this.weblog, link);
+
+          return WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(this.weblog, link);
     }
     
     

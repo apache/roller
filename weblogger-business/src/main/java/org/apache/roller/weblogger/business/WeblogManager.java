@@ -22,9 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.*;
 
 
 /**
@@ -44,6 +42,13 @@ public interface WeblogManager {
      * Store a single weblog.
      */
     public void saveWeblog(Weblog data) throws WebloggerException;
+
+    /**
+     * Save new theme associativity for Weblog
+     * @param themeAssoc
+     * @throws WebloggerException
+     */
+    public void saveThemeAssoc(WeblogThemeAssoc themeAssoc) throws WebloggerException;
     
     
     /**
@@ -176,8 +181,18 @@ public interface WeblogManager {
      */
     public WeblogTemplate getPageByLink(Weblog w, String p)
         throws WebloggerException;
-    
-    
+
+    /**
+     * Get template code by Type.
+     */
+    public WeblogTemplateCode getTemplateCodeByType(String templateName, String type)
+            throws WebloggerException ;
+
+    /**
+     * Save template code
+     */
+     public void saveTemplateCode(WeblogTemplateCode templateCode) throws WebloggerException;
+
     /**
      * Get website's pages
      */
@@ -194,4 +209,9 @@ public interface WeblogManager {
      * Release any resources held by manager.
      */
     public void release();
+
+    /**
+     *   get Theme Associativity object for type
+     */
+    public WeblogThemeAssoc getThemeAssoc(Weblog weblog , String type) throws WebloggerException;
 }

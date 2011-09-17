@@ -18,10 +18,15 @@
 
 package org.apache.roller.weblogger.business.themes;
 
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
+
 import java.io.Serializable;
 import java.util.Date;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import java.util.HashMap;
 
 
 /**
@@ -41,8 +46,12 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private boolean hidden = false;
     private boolean navbar = false;
     private String  outputContentType = null;
+    private String type = null;
     
     private SharedTheme myTheme = null;
+
+    //hash map to cache template Code objects parsed
+    private HashMap<String,WeblogTemplateCode> templateCodeHashMap = new HashMap<String, WeblogTemplateCode>();
     
     
     public SharedThemeTemplate() {}
@@ -171,5 +180,20 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     public void setAction(String action) {
         this.action = action;
     }
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public WeblogTemplateCode getTemplateCode(String type) throws WebloggerException {
+        return templateCodeHashMap.get(type);
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void addTemplateCode(String type , WeblogTemplateCode templateCode){
+        this.templateCodeHashMap.put(type ,templateCode);
+    }
 }

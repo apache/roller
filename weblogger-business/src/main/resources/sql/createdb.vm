@@ -91,6 +91,7 @@ create table webpage (
     templatelang    varchar(20) not null,
     decorator       varchar(255) default null,
     outputtype      varchar(48) default null,
+    type            varchar(16) default null,
     #columnNotNullWithDefault('action' 'varchar(16)' 'custom')
 );
 create index wp_name_idx on webpage( name$!db.INDEXSIZE );
@@ -115,8 +116,8 @@ create table website (
     emailfromaddress  varchar(255),
     emailaddress      varchar(255) not null,
     editortheme       varchar(255),
-    locale            varchar(20), 
-    timezone          varchar(50),  
+    locale            varchar(20),
+    timezone          varchar(50),
     defaultplugins    varchar(255),
     isenabled         $db.BOOLEAN_SQL_TYPE_TRUE not null,
     isactive          $db.BOOLEAN_SQL_TYPE_TRUE not null,
@@ -139,6 +140,24 @@ alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
 
 -- This index is not necessary because of handle is already a primary key.
 -- create index ws_handle_idx    on website(handle);
+
+
+create table rol_weblogtheme (
+    id              varchar(48)  not null primary key,
+    weblogid varchar(48) not null,
+    name            varchar(255)  not null,
+    custom          $db.BOOLEAN_SQL_TYPE_FALSE not null,
+    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
+);
+
+create table rol_templatecode (
+    id                 varchar(48)  not null primary key,
+    templateid varchar(48) not null,
+    template     $db.TEXT_SQL_TYPE not null,
+    templatelang varchar(48),
+    contenttype  varchar(48),
+    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
+);
 
 create table folder (
     id               varchar(48) not null primary key,

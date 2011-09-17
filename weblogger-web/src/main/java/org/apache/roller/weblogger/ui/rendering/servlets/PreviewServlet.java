@@ -18,9 +18,21 @@
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.*;
+import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.ui.rendering.Renderer;
+import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.RenderingException;
+import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
+import org.apache.roller.weblogger.util.cache.CachedContent;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,23 +40,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.core.RollerContext;
-import org.apache.roller.weblogger.util.cache.CachedContent;
-import org.apache.roller.weblogger.ui.rendering.Renderer;
-import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -81,13 +79,19 @@ public class PreviewServlet extends HttpServlet {
         Weblog weblog = null;
         
         WeblogPreviewRequest previewRequest = null;
+
+         String type = null;
+
         try {
             previewRequest = new WeblogPreviewRequest(request);
-            
+
+            // type of the page we are going to preview
+            type = previewRequest.getType();
+
             // lookup weblog specified by preview request
             weblog = previewRequest.getWeblog();
-            if(weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: "+
+            if (weblog == null) {
+                throw new WebloggerException("unable to lookup weblog: " +
                         previewRequest.getWeblogHandle());
             }
         } catch (Exception e) {
@@ -174,6 +178,13 @@ public class PreviewServlet extends HttpServlet {
         
         
         log.debug("preview page found, dealing with it");
+
+        // load the correct template using template codes.
+        try {
+            page = RendererManager.prepareTemplate((ThemeTemplate) page, type);
+        } catch (RenderingException e) {
+            log.error("error while preparing template ", e);
+        }
         
         // set the content type
         String pageLink = previewRequest.getWeblogPageName();

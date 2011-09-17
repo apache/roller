@@ -6,6 +6,7 @@
     <id>fauxcoly</id>
     <name>Fauxcoly</name>
     <author>Dave Johnson</author>
+    <type>standard</type>
     
     <!-- theme preview image -->
     <preview-image path="images/fauxcoly-preview.png" />
@@ -15,8 +16,12 @@
         <name>custom.css</name>
         <description>Custom style sheet</description>
 	    <link>custom.css</link>
-        <templateLanguage>velocity</templateLanguage>
-        <contentsFile>custom_css.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>custom_css.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </stylesheet>
 
     <!-- templates -->
@@ -26,9 +31,12 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>weblog.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>weblog.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="permalink">
@@ -37,9 +45,12 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>entry.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>entry.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="tagsIndex">
@@ -48,9 +59,12 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>tags_index.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>tags_index.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="search">
@@ -59,9 +73,12 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>search.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>search.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="custom">
@@ -70,9 +87,12 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>day.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>day.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="custom">
@@ -81,9 +101,12 @@
 	    <link>archives</link>
         <navbar>true</navbar>
         <hidden>false</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>archives.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>archives.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="custom">
@@ -92,9 +115,12 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>std_head.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>std_head.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="custom">
@@ -103,9 +129,12 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>std_header.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>std_header.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="custom">
@@ -114,9 +143,12 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>std_footer.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>std_footer.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="custom">
@@ -125,9 +157,12 @@
 	    <link>style.css</link>
         <navbar>false</navbar>
         <hidden>false</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>style_css.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>style_css.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <template action="custom">
@@ -136,9 +171,12 @@
 	    <link>searchhi.js</link>
         <navbar>false</navbar>
         <hidden>false</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>searchhi.js</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>searchhi.js</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
 
     <resource path="images/faux-columns-950.png" />

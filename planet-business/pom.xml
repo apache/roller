@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0-mobile-dev</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -19,7 +19,7 @@
     </description>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-planet-business</artifactId>
-    <version>5.0.0</version>
+    <version>5.1.0-mobile-dev</version>
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>

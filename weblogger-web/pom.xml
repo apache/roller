@@ -8,14 +8,14 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0-mobile-dev</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <name>Apache Roller Weblogger Web Module</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-web</artifactId>
-    <version>5.0.0</version>
+    <version>5.1.0-mobile-dev</version>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -23,13 +23,13 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-core</artifactId>
-            <version>5.0.0</version>
+            <version>5.1.0-mobile-dev</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-planet-business</artifactId>
-            <version>5.0.0</version>
+            <version>5.1.0-mobile-dev</version>
             <exclusions>
                 <exclusion>
                     <artifactId>geronimo-jms_1.1_spec</artifactId>
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-weblogger-business</artifactId>
-            <version>5.0.0</version>
+            <version>5.1.0-mobile-dev</version>
         </dependency>
 
         <!-- OpenJPA deps -->
@@ -389,7 +389,7 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>test-utils</artifactId>
-            <version>5.0.0</version>
+            <version>5.1.0-mobile-dev</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>

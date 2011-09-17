@@ -18,11 +18,38 @@
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.HitCountQueue;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.referrers.IncomingReferrer;
+import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.StaticThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.ui.rendering.Renderer;
+import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.RenderingException;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
+import org.apache.roller.weblogger.ui.rendering.util.InvalidRequestException;
+import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
+import org.apache.roller.weblogger.util.BlacklistChecker;
+import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.cache.CachedContent;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,35 +57,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.HitCountQueue;
-import org.apache.roller.weblogger.business.referrers.IncomingReferrer;
-import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
-import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.StaticThemeTemplate;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.core.RollerContext;
-import org.apache.roller.weblogger.ui.rendering.util.InvalidRequestException;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.weblogger.util.cache.CachedContent;
-import org.apache.roller.weblogger.ui.rendering.Renderer;
-import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
-import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
-import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
-import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
-import org.apache.roller.weblogger.util.BlacklistChecker;
-import org.apache.roller.weblogger.util.I18nMessages;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Provides access to weblog pages.
@@ -122,6 +125,8 @@ public class PageServlet extends HttpServlet {
 
         log.debug("Entering");
 
+
+
         // do referrer processing, if it's enabled
         // NOTE: this *must* be done first because it triggers a hibernate flush
         // which will close the active session and cause lazy init exceptions otherwise
@@ -136,6 +141,7 @@ public class PageServlet extends HttpServlet {
                 return;
             }
         }
+
 
 
         Weblog weblog = null;
@@ -237,6 +243,14 @@ public class PageServlet extends HttpServlet {
 
         log.debug("Looking for template to use for rendering");
 
+        // Get the type from user agent
+        String type = MobileDeviceRepository.getRequestType(request);
+
+        // for previews we explicitly set the type attribute
+        if(request.getParameter("type") != null){
+            type = request.getParameter("type");
+        }
+
         // figure out what template to use
         ThemeTemplate page = null;
 
@@ -315,6 +329,13 @@ public class PageServlet extends HttpServlet {
         }
 
         log.debug("page found, dealing with it");
+
+        // load the correct template using template codes.
+        try {
+            page = RendererManager.prepareTemplate(page, type);
+        } catch (RenderingException e) {
+            log.error("error while preparing template ", e);
+        }
 
         // validation.  make sure that request input makes sense.
         boolean invalid = false;
@@ -422,7 +443,6 @@ public class PageServlet extends HttpServlet {
             // Load models for pages
             String pageModels = WebloggerConfig.getProperty("rendering.pageModels");
             ModelLoader.loadModels(pageModels, model, initData, true);
-
             // Load special models for site-wide blog
             if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 String siteModels = WebloggerConfig.getProperty("rendering.siteModels");

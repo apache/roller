@@ -18,23 +18,18 @@
 
 package org.apache.roller.weblogger.business.themes;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.pojos.ThemeResource;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import java.util.*;
 
 
 /**
@@ -60,7 +55,7 @@ public class SharedThemeFromDir extends SharedTheme {
     private Map templatesByName = new HashMap();
     
     // we keep templates in a Map for faster lookups by link
-    // the Map contains ... (template link, ThemeTemplate)
+    // the Map contains ... (template link, List<tThemeTemplate>)
     private Map templatesByLink = new HashMap();
     
     // we keep templates in a Map for faster lookups by action
@@ -88,8 +83,8 @@ public class SharedThemeFromDir extends SharedTheme {
     public ThemeResource getPreviewImage() {
         return this.previewImage;
     }
-    
-    
+
+
     /**
      * Get the collection of all templates associated with this Theme.
      */
@@ -129,7 +124,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) {
+     public ThemeTemplate getTemplateByLink(String link) {
         return (ThemeTemplate) this.templatesByLink.get(link);
     }
     
@@ -206,6 +201,7 @@ public class SharedThemeFromDir extends SharedTheme {
         setId(themeMetadata.getId());
         setName(themeMetadata.getName());
         setDescription(themeMetadata.getName());
+        setType(themeMetadata.getType());
         setAuthor(themeMetadata.getAuthor());
         setLastModified(null);
         setEnabled(true);
@@ -217,15 +213,39 @@ public class SharedThemeFromDir extends SharedTheme {
         } else {
             this.previewImage = new SharedThemeResourceFromDir(themeMetadata.getPreviewImage(), previewFile);
         }
-        
+
+        //avaialble types in the Roller
+        List<String> availableTypesList = new ArrayList<String>();
+        availableTypesList.add("standard");
+        availableTypesList.add("mobile");
+
         // load stylesheet if possible
         if(themeMetadata.getStylesheet() != null) {
             
             ThemeMetadataTemplate stylesheetTmpl = themeMetadata.getStylesheet();
-            
+           //getting the template codes for available types
+           ThemeMetadataTemplateCode standardTemplateCode= stylesheetTmpl.getTemplateCodeTable().get("standard");
+           ThemeMetadataTemplateCode mobileTemplateCode= stylesheetTmpl.getTemplateCodeTable().get("mobile");
+
+            //If no template code present for any type
+            if (standardTemplateCode == null && mobileTemplateCode == null) {
+                throw new ThemeInitializationException("Error in getting template codes for template");
+            } else if(mobileTemplateCode == null){
+                //cloning the standard template code if no mobile is present
+               mobileTemplateCode = new ThemeMetadataTemplateCode();
+               mobileTemplateCode.setContentsFile(standardTemplateCode.getContentsFile());
+               mobileTemplateCode.setContentType(standardTemplateCode.getContentType());
+               mobileTemplateCode.setTemplateLang(standardTemplateCode.getTemplateLang());
+               mobileTemplateCode.setType("mobile");
+
+                stylesheetTmpl.addTemplateCode("mobile",mobileTemplateCode);
+            }
+
+
             // construct File object from path
+            // we are getting the file path from standard as the default and load it to initially.
             File templateFile = new File(this.themeDir + File.separator + 
-                    stylesheetTmpl.getContentsFile());
+                    standardTemplateCode.getContentsFile());
             
             // read stylesheet contents
             String contents = loadTemplateFile(templateFile);
@@ -235,6 +255,7 @@ public class SharedThemeFromDir extends SharedTheme {
             } else {
                 
                 // construct ThemeTemplate representing this file
+                // here we set content and template language from standard template code assuming it is the default
                 SharedThemeTemplate theme_template = new SharedThemeTemplate(
                         this,
                         themeMetadata.getId()+":"+stylesheetTmpl.getName(),
@@ -244,14 +265,20 @@ public class SharedThemeFromDir extends SharedTheme {
                         contents,
                         stylesheetTmpl.getLink(),
                         new Date(templateFile.lastModified()),
-                        stylesheetTmpl.getTemplateLanguage(),
+                        standardTemplateCode.getTemplateLang(),
                         false,
                         false);
-                
-                // store it
+
+
+                for (String type : availableTypesList) {
+                    WeblogTemplateCode templateCode = createTemplateCode(theme_template.getId(), stylesheetTmpl.
+                            getTemplateCode(type));
+
+                    theme_template.addTemplateCode(type, templateCode);
+                }
+                  // store it
                 this.stylesheet = theme_template;
-                
-                // add it to templates list
+
                 addTemplate(theme_template);
             }
             
@@ -288,15 +315,35 @@ public class SharedThemeFromDir extends SharedTheme {
         }
         
         // go through templates and read in contents to a ThemeTemplate
-        ThemeTemplate theme_template = null;
+        SharedThemeTemplate theme_template = null;
         ThemeMetadataTemplate templateMetadata = null;
         Iterator templatesIter = themeMetadata.getTemplates().iterator();
         while (templatesIter.hasNext()) {
             templateMetadata = (ThemeMetadataTemplate) templatesIter.next();
+
+             //getting the template codes for available types
+           ThemeMetadataTemplateCode standardTemplateCode= templateMetadata.getTemplateCodeTable().get("standard");
+           ThemeMetadataTemplateCode mobileTemplateCode= templateMetadata.getTemplateCodeTable().get("mobile");
+
+            //If no template code present for any type
+            if(standardTemplateCode ==null && mobileTemplateCode == null){
+                throw  new ThemeInitializationException("Error in getting template codes for template");
+            }
+
+            else if(mobileTemplateCode == null){
+                 //cloning the standard template code if no mobile is present
+               mobileTemplateCode = new ThemeMetadataTemplateCode();
+               mobileTemplateCode.setContentsFile(standardTemplateCode.getContentsFile());
+               mobileTemplateCode.setContentType(standardTemplateCode.getContentType());
+               mobileTemplateCode.setTemplateLang(standardTemplateCode.getTemplateLang());
+               mobileTemplateCode.setType("mobile");
+
+               templateMetadata.addTemplateCode("mobile",mobileTemplateCode);
+            }
             
             // construct File object from path
             File templateFile = new File(this.themeDir + File.separator + 
-                    templateMetadata.getContentsFile());
+                    standardTemplateCode.getContentsFile());
             
             String contents = loadTemplateFile(templateFile);
             if(contents == null) {
@@ -314,9 +361,17 @@ public class SharedThemeFromDir extends SharedTheme {
                     contents,
                     templateMetadata.getLink(),
                     new Date(templateFile.lastModified()),
-                    templateMetadata.getTemplateLanguage(),
+                    standardTemplateCode.getTemplateLang(),
                     templateMetadata.isHidden(),
-                    templateMetadata.isNavbar());
+                    templateMetadata.isNavbar()
+                    );
+
+            for (String type : availableTypesList) {
+                WeblogTemplateCode templateCode = createTemplateCode(theme_template.getId(),
+                        templateMetadata.getTemplateCode(type));
+
+                theme_template.addTemplateCode(type, templateCode);
+            }
 
             // add it to the theme
             addTemplate(theme_template);
@@ -358,7 +413,7 @@ public class SharedThemeFromDir extends SharedTheme {
     }
     
     
-    /**
+   /**
      * Set the value for a given template name.
      */
     private void addTemplate(ThemeTemplate template) {
@@ -378,5 +433,29 @@ public class SharedThemeFromDir extends SharedTheme {
         String normalizedPath = StringUtils.replace(path, "\\", "/");
         this.resources.put(normalizedPath, resource);
     }
-    
+
+    private WeblogTemplateCode createTemplateCode(String templateId, ThemeMetadataTemplateCode templateCodeMetadata){
+        WeblogTemplateCode templateCode = new WeblogTemplateCode();
+
+         // construct File object from path
+            File templateFile = new File(this.themeDir + File.separator +
+                    templateCodeMetadata.getContentsFile());
+
+            // read stylesheet contents
+            String contents = loadTemplateFile(templateFile);
+            if(contents == null) {
+                // if we don't have any contents then load no string
+                contents ="";
+                log.error("Couldn't load stylesheet theme [" + this.getName() + "] template file ["+templateFile+"]");
+            }
+
+            templateCode.setTemplateId(templateId);
+            templateCode.setTemplate(contents);
+            templateCode.setTemplateLanguage(templateCodeMetadata.getTemplateLang());
+            templateCode.setType(templateCodeMetadata.getType());
+            templateCode.setContentType(templateCodeMetadata.getContentType());
+
+        return templateCode;
+    }
+
 }

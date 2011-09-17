@@ -18,24 +18,25 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -351,9 +352,10 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public ThemeTemplate getWeblogPage() {
         
+
         if(weblogPage == null && weblogPageName != null) {
             try {
-                weblogPage = getWeblog().getTheme().getTemplateByLink(weblogPageName);                
+                weblogPage = getWeblog().getTheme().getTemplateByLink(weblogPageName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog page "+weblogPageName, ex);
             }

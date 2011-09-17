@@ -55,6 +55,8 @@ drop table weblogentry;
 drop table weblogcategoryassoc;
 drop table weblogcategory;
 drop table webpage;
+drop table rol_weblogtheme;
+drop table rol_templatecode;
 
 -- core platform tables
 drop table roller_permission;

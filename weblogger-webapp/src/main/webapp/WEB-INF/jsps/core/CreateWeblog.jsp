@@ -22,6 +22,8 @@
 function previewImage(theme) {
     document.preview.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
 }
+
+
 function handlePreview(handle) {
     previewSpan = document.getElementById("handlePreview");
     var n1 = previewSpan.childNodes[0];
@@ -108,6 +110,7 @@ function handlePreview(handle) {
     </td>
     <td class="description"><s:text name="createWebsite.tip.theme" /></td>
 </tr>
+
 </table>
 
 <br />

@@ -34,6 +34,7 @@
 <s:form action="templateEdit!save" id="template">
     <s:hidden name="weblog" />
     <s:hidden name="bean.id"/>
+    <s:hidden name ="bean.type"/>
     
     <%-- ================================================================== --%>
     <%-- Name, link and desription: disabled when page is a required page --%>
@@ -42,7 +43,7 @@
         <tr>
             <td class="label"><s:text name="pageForm.name" />&nbsp;</td>
             <td class="field">
-                <s:if test="template.required">
+                <s:if test="template.required || bean.mobile">
                     <s:textfield name="bean.name" size="50" readonly="true" cssStyle="background: #e5e5e5" />
                 </s:if>
                 <s:else>
@@ -64,6 +65,7 @@
         <!--
         var weblogURL = '<s:property value="actionWeblog.absoluteURL" />';
         var originalLink = '<s:property value="bean.link" />';
+        var type = '<s:property value="bean.type" /> ' ;
         
         // Update page URL when user changes link
         function updatePageURLDisplay() {
@@ -81,7 +83,7 @@
             if (originalLink != document.getElementById('template_bean_link').value) {
                 window.alert("Link changed, not launching page");
             } else {
-                window.open(weblogURL + 'page/' + originalLink, '_blank');
+                window.open(weblogURL + 'page/' + originalLink+'?type='+type, '_blank');
             }
         }
         -->
@@ -99,7 +101,6 @@
                 <td class="description"></td>
             </tr>
         </s:if>
-        
         <tr>
             <td class="label" valign="top" style="padding-top: 4px"><s:text name="pageForm.description" />&nbsp;</td>
             <td class="field">
@@ -114,11 +115,52 @@
         </tr>
         
     </table>
-    
+
+     <s:set name="tabMenu" value="menu"/>
+     <s:set name="type" value="bean.type"/>
+
+    <table class="menuTabTable" cellspacing="0" >
+     <tr>
+          <s:if test="%{#type=='standard'}">
+        <td class="menuTabSelected">
+    </s:if>
+    <s:else>
+        <td class="menuTabUnselected">
+    </s:else>
+
+          <div class="menu-tr">
+           <s:url id="edit" action="templateEdit">
+               <s:param name="weblog" value="actionWeblog.handle" />
+               <s:param name="bean.id" value="template.id" />
+               <s:param name="bean.type">standard</s:param>
+           </s:url>
+	       <div class="menu-tl">&nbsp;&nbsp;<s:a href="%{edit}">Standard</s:a>&nbsp;&nbsp; </div>
+	    </div></td>
+
+
+          <td class="menuTabSeparator"></td>
+        <s:if test="%{#type == 'mobile'}">
+        <td class="menuTabSelected">
+    </s:if>
+    <s:else>
+        <td class="menuTabUnselected">
+    </s:else>
+        <div class="menu-tr">
+
+           <s:url id="edit" action="templateEdit">
+               <s:param name="weblog" value="actionWeblog.handle" />
+               <s:param name="bean.id" value="template.id" />
+                 <s:param name="bean.type">mobile</s:param>
+           </s:url>
+	       <div class="menu-tl">&nbsp;&nbsp;<s:a href="%{edit}">Mobile</s:a>&nbsp;&nbsp; </div>
+	    </div></td>
+
+     </tr>
+        </table>
     <%-- ================================================================== --%>
     <%-- Template editing area w/resize buttons --%>
-    
-    <br />
+
+
     <s:textarea name="bean.contents" cols="80" rows="30" cssStyle="width:100%" />
     
     <script type="text/javascript"><!--

@@ -94,6 +94,7 @@ public class Weblog implements Serializable {
     private String  iconPath         = null;
     private String  about            = null;
     private String  creator          = null;
+
     
     // Associated objects
     private List           permissions = new ArrayList();
@@ -1252,4 +1253,25 @@ public class Weblog implements Serializable {
 
     /** No-op method to please XDoclet */
     public void setEntryCount(int ignored) {}
+
+
+    /**
+     *
+     * @return  mobileTheme
+     */
+
+    public Theme getTheme(String type){
+        WeblogThemeAssoc themeAssoc;
+        Theme theme = null;
+        try {
+            //get Theme Associativity object so we can get the ThemeName for the type given
+            themeAssoc = WebloggerFactory.getWeblogger().getWeblogManager().getThemeAssoc(this ,type);
+            if(themeAssoc != null)
+                // get the Theme from theme manager
+              theme = WebloggerFactory.getWeblogger().getThemeManager().getTheme(themeAssoc.getName());
+        } catch (WebloggerException e) {
+            log.error("Error getting Weblog Theme type -"+type+"for weblog "+getHandle(),e);
+        }
+        return theme;
+    }
 }

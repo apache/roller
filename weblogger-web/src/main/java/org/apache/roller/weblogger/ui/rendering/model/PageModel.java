@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesDayPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesMonthPager;
@@ -54,6 +55,7 @@ public class PageModel implements Model {
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
     private Weblog weblog = null;
+    private String type = null;
     
     
     /**
@@ -106,6 +108,8 @@ public class PageModel implements Model {
         
         // extract weblog object
         weblog = pageRequest.getWeblog();
+
+        this.type = weblogRequest.getType();
     }    
     
     
@@ -121,7 +125,7 @@ public class PageModel implements Model {
      * Get weblog being displayed.
      */
     public WeblogWrapper getWeblog() {
-        return WeblogWrapper.wrap(weblog, urlStrategy);
+        return WeblogWrapper.wrap(weblog, urlStrategy, getType());
     }
     
     
@@ -313,5 +317,12 @@ public class PageModel implements Model {
         }
         return null;
     }
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

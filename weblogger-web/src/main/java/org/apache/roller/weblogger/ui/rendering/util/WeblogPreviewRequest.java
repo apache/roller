@@ -43,6 +43,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     // lightweight attributes
     private String themeName = null;
     private String previewEntry = null;
+    private String type = "standard";
     
     // heavyweight attributes
     private Theme theme = null;
@@ -58,12 +59,17 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         if(request.getParameter("theme") != null) {
             this.themeName = request.getParameter("theme");
         }
+
+        //we may need to know the type of page we are going to previiew
+         if(request.getParameter("type") != null) {
+             this.setType(request.getParameter("type"));
+         }
         
         // we may also have a specific entry to preview
         if(request.getParameter("previewEntry") != null) {
             this.previewEntry = URLUtilities.decode(request.getParameter("previewEntry"));
         }
-        
+
         if(log.isDebugEnabled()) {
             log.debug("theme = "+this.themeName);
         }
@@ -146,5 +152,12 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     public void setWeblogEntry(WeblogEntry weblogEntry) {
         this.weblogEntry = weblogEntry;
     }
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

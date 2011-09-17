@@ -4,6 +4,7 @@
     <id>basic</id>
     <name>Basic</name>
     <author>Roller Weblogger</author>
+    <type>standard</type>
     
     <!-- theme preview image -->
     <preview-image path="basic-preview.png" />
@@ -13,8 +14,12 @@
         <name>basic-custom.css</name>
         <description>Stylesheet for Basic theme</description>
 	<link>basic-custom.css</link>
-        <templateLanguage>velocity</templateLanguage>
-        <contentsFile>basic-custom.css</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>basic-custom.css</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </stylesheet>
     
     <!-- templates -->
@@ -24,9 +29,18 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>weblog.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>weblog.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>weblog-mobile.vm</contentsFile>
+           <type>mobile</type>
+       </templateCode>
     </template>
     
     <template action="permalink">
@@ -35,9 +49,18 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>permalink.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>permalink.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>permalink-mobile.vm</contentsFile>
+           <type>mobile</type>
+       </templateCode>
     </template>
     
     <template action="search">
@@ -46,9 +69,18 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>searchresults.vm</contentsFile>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>searchresults.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>searchresults-mobile.vm</contentsFile>
+           <type>mobile</type>
+       </templateCode>
     </template>
     
     <template action="custom">
@@ -57,9 +89,18 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>_day.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>_day.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>_day-mobile.vm</contentsFile>
+           <type>mobile</type>
+       </templateCode>
     </template>
     
     <template action="custom">
@@ -68,9 +109,12 @@
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/html</contentType>
-        <contentsFile>sidebar.vm</contentsFile>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>sidebar.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
     </template>
     
 </weblogtheme>

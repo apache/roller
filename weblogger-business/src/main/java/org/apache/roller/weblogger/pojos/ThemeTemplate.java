@@ -52,8 +52,12 @@ public interface ThemeTemplate extends Template {
      * The contents or body of the Template.
      */
     public String getContents();
-    
-    
+
+    /**
+     * set content. This will be used by template code objects to store different
+     * types of template contents
+     */
+     public void setContents(String contents);
     /**
      * The url link value for this Template.  If this template is not
      * private this is the url that it can be accessed at.
@@ -84,5 +88,5 @@ public interface ThemeTemplate extends Template {
      * should be applied.
      */
     public ThemeTemplate getDecorator();
-    
+
 }

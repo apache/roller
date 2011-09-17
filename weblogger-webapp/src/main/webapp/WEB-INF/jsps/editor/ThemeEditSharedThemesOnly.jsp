@@ -27,6 +27,11 @@ function fullPreview() {
     selected=document.getElementById('themeEdit_themeId').selectedIndex;
     window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+document.getElementById('themeEdit_themeId').options[selected].value, '_preview', '');
 }
+
+function previewMobileImage(element, theme) {
+    element.src="<s:property value="siteURL" />/themes/" + theme + "/sm-theme-" + theme + ".png";
+}
+
 -->
 </script>
 

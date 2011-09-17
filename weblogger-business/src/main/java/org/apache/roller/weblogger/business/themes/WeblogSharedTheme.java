@@ -18,22 +18,14 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.ThemeResource;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.*;
+
+import java.util.*;
 
 
 /**
@@ -59,7 +51,11 @@ public class WeblogSharedTheme extends WeblogTheme {
     public String getName() {
         return this.theme.getName();
     }
-    
+
+    public String getType() {
+        return this.theme.getType();
+    }
+
     public String getDescription() {
         return this.theme.getDescription();
     }
@@ -119,11 +115,11 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the stylesheet template for this theme.
      * Returns null if no stylesheet can be found.
      */
-    public ThemeTemplate getStylesheet() throws WebloggerException {
+     public ThemeTemplate getStylesheet() throws WebloggerException {
         // stylesheet is handled differently than other templates because with
         // the stylesheet we want to return the weblog custom version if it
         // exists, otherwise we return the shared theme version
-        
+
         // load from theme first to see if we even support a stylesheet
         ThemeTemplate stylesheet = this.theme.getStylesheet();
         if(stylesheet != null) {
@@ -197,29 +193,29 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
-        
+     public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
+
         if(link == null)
             return null;
-        
+
         ThemeTemplate template = null;
-        
+
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
         if(stylesheet != null && link.equals(stylesheet.getLink())) {
             return stylesheet;
         }
-        
+
         // first check if this user has selected a theme
         // if so then return the proper theme template
         template = this.theme.getTemplateByLink(link);
-        
+
         // if we didn't get the Template from a theme then look in the db
         if(template == null) {
             template = WebloggerFactory.getWeblogger()
                     .getWeblogManager().getPageByLink(this.weblog, link);
         }
-        
+
         return template;
     }
     

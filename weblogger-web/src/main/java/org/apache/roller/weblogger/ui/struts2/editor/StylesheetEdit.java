@@ -18,21 +18,18 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
+import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -47,6 +44,9 @@ public class StylesheetEdit extends UIAction {
     
     // the contents of the stylesheet override
     private String contents = null;
+
+    // type of the stylesheet template code in active
+    private String type = "standard";
     
     
     public StylesheetEdit() {
@@ -75,9 +75,9 @@ public class StylesheetEdit extends UIAction {
         if(stylesheet != null) {
             log.debug("custom stylesheet path is - "+stylesheet.getLink());
             try {
-                setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
+                 setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
                         .getPageByLink(getActionWeblog(), stylesheet.getLink()));
-                
+
                 if(getTemplate() == null) {
                     log.debug("custom stylesheet not found, creating it");
                     
@@ -93,7 +93,19 @@ public class StylesheetEdit extends UIAction {
                     stylesheetTmpl.setNavbar(false);
                     stylesheetTmpl.setLastModified(new Date());
                     stylesheetTmpl.setTemplateLanguage(stylesheet.getTemplateLanguage());
-                    
+
+                    // create template codes for available template code Types
+                    WeblogTemplateCode standardTemplateCode = new WeblogTemplateCode(stylesheetTmpl.getId(),"standard");
+                    standardTemplateCode.setTemplate(stylesheetTmpl.getContents());
+                    standardTemplateCode.setTemplateLanguage(stylesheetTmpl.getTemplateLanguage());
+
+                    WeblogTemplateCode mobileTemplateCode = new WeblogTemplateCode(stylesheetTmpl.getId(),"mobile");
+                    mobileTemplateCode.setTemplate(stylesheetTmpl.getContents());
+                    mobileTemplateCode.setTemplateLanguage(stylesheetTmpl.getTemplateLanguage());
+
+                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(standardTemplateCode);
+                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(mobileTemplateCode);
+
                     WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheetTmpl);
                     WebloggerFactory.getWeblogger().flush();
                     
@@ -114,8 +126,20 @@ public class StylesheetEdit extends UIAction {
         if(getTemplate() == null) {
             return ERROR;
         }
-        
-        setContents(getTemplate().getContents());
+        WeblogTemplateCode templateCode = null;
+        try {
+            templateCode = getTemplate().getTemplateCode(getType());
+        } catch (WebloggerException e) {
+            log.error("Error loading Weblog template code for stylesheet", e);
+        }
+         // if there is a template code load that template
+        if(templateCode != null) {
+            setContents(templateCode.getTemplate());
+        }
+        // if not fall back for default template code
+        else{
+           setContents(getTemplate().getContents());
+        }
         
         return INPUT;
     }
@@ -137,10 +161,14 @@ public class StylesheetEdit extends UIAction {
             WeblogTemplate stylesheet = getTemplate();
             
             stylesheet.setLastModified(new Date());
-            stylesheet.setContents(getContents());
+            WeblogTemplateCode templateCode = stylesheet.getTemplateCode(getType());
+            templateCode.setTemplate(getContents());
+
+            //  stylesheet.setContents(getContents());
             
             // save template and flush
             WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheet);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(templateCode);
             WebloggerFactory.getWeblogger().flush();
             
             // notify caches
@@ -183,11 +211,19 @@ public class StylesheetEdit extends UIAction {
             // lookup the theme used by this weblog
             ThemeManager tmgr = WebloggerFactory.getWeblogger().getThemeManager();
             Theme theme = tmgr.getTheme(getActionWeblog().getEditorTheme());
+
+            //get weblogTemplateCode
+            WeblogTemplateCode templateCode = theme.getStylesheet().getTemplateCode(type);
+            stylesheet.setContents(templateCode.getTemplate());
             
             // lookup 
             stylesheet.setLastModified(new Date());
-            stylesheet.setContents(theme.getStylesheet().getContents());
-            
+            //stylesheet.setContents(theme.getStylesheet().getContents());
+
+            //save template code which was persisted in DB
+            WeblogTemplateCode existingTemplateCode = stylesheet.getTemplateCode(getType());
+            existingTemplateCode.setTemplate(templateCode.getTemplate());
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(existingTemplateCode);
             // save template and flush
             WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheet);
             WebloggerFactory.getWeblogger().flush();
@@ -228,5 +264,12 @@ public class StylesheetEdit extends UIAction {
     public void setContents(String contents) {
         this.contents = contents;
     }
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

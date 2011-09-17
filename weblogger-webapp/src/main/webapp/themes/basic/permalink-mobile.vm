@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blog Post</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css"/>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
+</head>
+<body>
+
+<div data-role="page" data-theme="b">
+
+    <div data-role="header" data-theme="b">
+        <h1>Weblog Post</h1>
+        <a data-rel="back" data-icon="back" data-theme="a">Go back</a>
+    </div>
+    <!-- /header -->
+
+## show next/previous paging controls
+    #set($pager = $model.getWeblogEntriesPager())
+    #set($prevLink = false)
+    #set($nextLink = false)
+    #if ($pager.prevLink)
+        #set($prevLink = $pager.prevLink)
+        #set($prevName = $pager.prevName)
+    #elseif ($pager.prevCollectionLink)
+        #set($prevLink = $pager.prevCollectionLink)
+        #set($prevName = $pager.prevCollectionName)
+    #end
+    #if ($pager.nextLink)
+        #set($nextLink = $pager.nextLink)
+        #set($nextName = $pager.nextName)
+    #elseif ($pager.nextCollectionLink)
+        #set($nextLink = $pager.nextCollectionLink)
+        #set($nextName = $pager.nextCollectionName)
+    #end
+    <div data-role="navbar">
+        <ul>
+        <li>#if ($prevLink)<a data-icon="arrow-l" data-theme="b" href="$prevLink">$prevName</a></li>#end
+
+            <li>#if ($prevLink || $nextLink)
+                <a data-icon="home" data-theme="b" href="$pager.getHomeLink()"
+                   class="ui-btn-active">$pager.getHomeName()</a>
+            #end </li>
+
+        <li>#if ($nextLink)<a data-icon="arrow-r" data-theme="b" href="$nextLink">$nextName</a></li>#end
+        </ul>
+    </div>
+    <div data-role="content" data-theme="c">
+        #set($map = $pager.getEntries())
+        #foreach($day in $map.keySet())
+            #set($entries = $map.get($day))
+        #end
+    ## show entry
+           #foreach( $entry in $entries )
+
+        <h3>$entry.title</h3>
+
+        <p>
+
+        <p> #if($model.permalink)
+            $entry.displayContent
+            <br>
+            <br>
+            Posted at <a href="$url.entry($entry.anchor)">$utils.formatDate($entry.pubTime, "hh:mma MMM dd, yyyy")</a>
+        #else
+            $entry.displayContent($url.entry($entry.anchor))
+        #end</p></p>
+
+    #end
+    ## show comments and comment form
+           #showWeblogEntryComments($model.weblogEntry)
+    ##showWeblogEntryCommentForm($model.weblogEntry)
+        </p>
+    </div>
+    <!-- /content -->
+
+    <div data-role="footer" data-theme="b">
+        <h4>Apache Roller @ 2011</h4>
+    </div>
+    <!-- /footer -->
+</div>
+<!-- /page -->
+
+</body>
+</html>
