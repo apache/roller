@@ -11,7 +11,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Apache Roller Core Module</name>
+    <name>Roller Core - Trunk</name>
     <description>
         Core code and resources used in other parts of Roller.
     </description>

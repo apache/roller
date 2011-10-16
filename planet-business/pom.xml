@@ -12,7 +12,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Apache Roller Planet Business Module</name>
+    <name>Roller Planet Business - Trunk</name>
     <description>
         Business logic and persistence for Roller Planet RSS/Atom aggregator,
         also used in Roller Weblogger.

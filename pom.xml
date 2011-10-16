@@ -11,7 +11,7 @@
     <version>5.1.0-mobile-dev</version>
     <packaging>pom</packaging>
 
-    <name>Apache Roller Project</name>
+    <name>Roller Project - Trunk</name>
     <description>
         Roller is an open source blog server built with open source Java
         libraries including Apache OpenJPA, Struts2, Velocity and Commons.
