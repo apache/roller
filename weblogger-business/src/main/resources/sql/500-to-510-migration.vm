@@ -1,0 +1,26 @@
+#** 
+500-to-510-migration.vm: Velocity template that generates vendor-specific database scripts 
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
+
+create table rol_weblogtheme (
+    id              varchar(48)  not null primary key,
+    weblogid varchar(48) not null,
+    name            varchar(255)  not null,
+    custom          $db.BOOLEAN_SQL_TYPE_FALSE not null,
+    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
+);
+
+create table rol_templatecode (
+    id                 varchar(48)  not null primary key,
+    templateid varchar(48) not null,
+    template     $db.TEXT_SQL_TYPE not null,
+    templatelang varchar(48),
+    contenttype  varchar(48),
+    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
+);
+
+#addColumnNull("webpage" "type"  "varchar(16)")
+
+
