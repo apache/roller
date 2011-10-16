@@ -11,10 +11,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Apache Roller Weblogger Web Application</name>
+    <name>Roller Weblogger Web Application</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-webapp</artifactId>
-    <version>5.1.0-mobile-dev</version>
+    <version>5.1.0</version>
     <packaging>war</packaging>
 
     <dependencies>

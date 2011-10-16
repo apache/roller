@@ -8,7 +8,7 @@
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-project</artifactId>
 
-    <version>5.1.0-mobile-dev</version>
+    <version>5.1.0</version>
     <packaging>pom</packaging>
 
     <name>Roller Project - Trunk</name>
