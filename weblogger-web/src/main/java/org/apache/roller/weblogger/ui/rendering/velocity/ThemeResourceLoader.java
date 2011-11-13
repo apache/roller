@@ -65,10 +65,12 @@ public class ThemeResourceLoader extends ResourceLoader {
         if (name == null || name.length() < 1) {
             throw new ResourceNotFoundException("Need to specify a template name!");
         }
-        
+       
+		String deviceType = "standard";
 		if (name.contains("|")) {
 			String[] pair = name.split("\\|");
 			name = pair[0];
+			deviceType = pair[1];
 		}
 
         try {
@@ -81,15 +83,21 @@ public class ThemeResourceLoader extends ResourceLoader {
             ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
             Theme theme = themeMgr.getTheme(split[0]);
             ThemeTemplate template = theme.getTemplateByName(split[1]);
-            
-            if(template == null)
+           
+            if (template == null)
                 throw new ResourceNotFoundException("Template ["+split[1]+
                         "] doesn't seem to be part of theme ["+split[0]+"]");
-            
+          
+			final String contents;
+			if (template.getTemplateCode(deviceType) != null) {
+				contents = template.getTemplateCode(deviceType).getTemplate();	
+			} else {
+				contents = template.getContents(); 
+			}
             logger.debug("Resource found!");
-            
+           
             // return the input stream
-            return new ByteArrayInputStream(template.getContents().getBytes("UTF-8"));
+            return new ByteArrayInputStream(contents.getBytes("UTF-8"));
             
         } catch (UnsupportedEncodingException uex) {
             // We expect UTF-8 in all JRE installation.
