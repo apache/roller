@@ -125,7 +125,7 @@ public class PageModel implements Model {
      * Get weblog being displayed.
      */
     public WeblogWrapper getWeblog() {
-        return WeblogWrapper.wrap(weblog, urlStrategy, getDeviceType().toString());
+        return WeblogWrapper.wrap(weblog, urlStrategy);
     }
     
     
@@ -193,7 +193,16 @@ public class PageModel implements Model {
         return pageRequest.getTags();
     }
     
-    
+
+	/**
+	 * Access to device type, which is either 'mobile' or 'standard'
+	 * @return 
+	 */
+	public String getDeviceType() {
+		return deviceType.toString();
+	}
+
+
     /**
      * A map of entries representing this page. The collection is grouped by 
      * days of entries.  Each value is a list of entry objects keyed by the 
@@ -318,11 +327,4 @@ public class PageModel implements Model {
         return null;
     }
 
-    public DeviceType getDeviceType() {
-        return deviceType;
-    }
-
-    public void setDeviceType(DeviceType type) {
-        this.deviceType = type;
-    }
 }

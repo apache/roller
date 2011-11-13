@@ -71,7 +71,7 @@
     #set($map = $pager.getEntries())
     #foreach($day in $map.keySet())
         #set($entries = $map.get($day))   
-        #parse($dayPage.id)
+        #parse($dayPage.id "|" $model.deviceType)
     #end
 
     #if ($model.permalink)
@@ -186,7 +186,7 @@
 #macro( showEntryText $entry )
     ## updated for roller 3.0
    #if( $entryPage )
-      #parse($entryPage.id)
+      #parse($entryPage.id "|" $model.deviceType)
    #elseif($model.permalink) 
         #if($utils.isNotEmpty($entry.text))
             $entry.transformedText

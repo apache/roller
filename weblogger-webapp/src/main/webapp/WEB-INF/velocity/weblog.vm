@@ -59,7 +59,7 @@ Parse and include page template from weblog.
     #set($pageArg = false)## This is required for such constructs; see Velocity docs and ROL-689
     #set($pageArg = $weblog.getPageByName($pageName))
     #if ($pageArg) 
-       #parse($pageArg.id)
+       #parse($pageArg.id "|" $model.deviceType)
     #end
 #end
 
@@ -137,7 +137,7 @@ Shows weblog entries pager via default day template
     #set($map = $pager.getEntries())
     #foreach($day in $map.keySet())
         #set($entries = $map.get($day))   
-        #parse($dayPage.id)
+        #parse($dayPage.id "|" $model.deviceType)
     #end
 #end
 

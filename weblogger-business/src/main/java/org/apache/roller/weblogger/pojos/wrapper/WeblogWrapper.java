@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -38,38 +37,25 @@ public class WeblogWrapper {
     // url strategy to use for any url building
     private final URLStrategy urlStrategy;
 
-    // type of the request detected at  Page model
-    private String type = "standard";
-    
-    
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogWrapper(Weblog toWrap, URLStrategy strat, String type) {
+    private WeblogWrapper(Weblog toWrap, URLStrategy strat) {
         this.pojo = toWrap;
         this.urlStrategy = strat;
-        this.type = type;
     }
     
     
     // wrap the given pojo if it is not null with detected type
-    public static WeblogWrapper wrap(Weblog toWrap, URLStrategy strat, String type) {
+    public static WeblogWrapper wrap(Weblog toWrap, URLStrategy strat) {
         if(toWrap != null)
-            return new WeblogWrapper(toWrap, strat , type);
+            return new WeblogWrapper(toWrap, strat);
         
         return null;
     }
-      //wrap the given pojo if it is not null without changing type. (i.e using default)
-     public static WeblogWrapper wrap(Weblog toWrap, URLStrategy strat) {
-        if(toWrap != null)
-            return new WeblogWrapper(toWrap, strat , "standard");
 
-        return null;
-    }
-    
-    
+
     public ThemeTemplateWrapper getPageByAction(String action)
             throws WebloggerException {
         ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByAction(action);
-        prepareTemplate(templateToWrap, type);
         return ThemeTemplateWrapper.wrap(templateToWrap);
     }
     
@@ -77,7 +63,6 @@ public class WeblogWrapper {
     public ThemeTemplateWrapper getPageByName(String name)
             throws WebloggerException {
        ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByName(name);
-        prepareTemplate(templateToWrap, type);
         return ThemeTemplateWrapper.wrap(templateToWrap);
     }
     
@@ -85,7 +70,6 @@ public class WeblogWrapper {
     public ThemeTemplateWrapper getPageByLink(String link)
             throws WebloggerException {
         ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByLink(link);
-        prepareTemplate(templateToWrap, type);
         return ThemeTemplateWrapper.wrap(templateToWrap);
     }
     
@@ -472,35 +456,4 @@ public class WeblogWrapper {
     public Weblog getPojo() {
         return this.pojo;
     }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * @param page
-     * @param type
-     * @return
-     *
-     * Prepare template to add the correct template content
-     */
-    private ThemeTemplate prepareTemplate(ThemeTemplate page, String type) throws WebloggerException {
-
-        WeblogTemplateCode templateCode = page.getTemplateCode(type);
-
-        if (templateCode != null) {
-            page.setContents(templateCode.getTemplate());
-            page.setTemplateLanguage(templateCode.getTemplateLanguage());
-            return page;
-        } else {
-            // if there is no template code present we fall back to default template
-            return page;
-        }
-
-    }
-
 }
