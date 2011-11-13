@@ -99,9 +99,15 @@ public class SearchServlet extends HttpServlet {
             return;
         }
 
-        //is a mobile request
+		// Get the deviceType from user agent
+        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
 
-       String  type = MobileDeviceRepository.getRequestType(request);
+        // for previews we explicitly set the deviceType attribute
+        if (request.getParameter("type") != null) {
+            deviceType = request.getParameter("type").equals("standard") 
+				? MobileDeviceRepository.DeviceType.standard
+				: MobileDeviceRepository.DeviceType.mobile;
+        }
         
         // do we need to force a specific locale for the request?
         if(searchRequest.getLocale() == null && !weblog.isShowAllLangs()) {
@@ -206,18 +212,11 @@ public class SearchServlet extends HttpServlet {
 			}
 		}
 
-        //prepare template for detected type
-        try {
-            page = RendererManager.prepareTemplate(page ,type);
-        } catch (RenderingException e) {
-            log.debug("Error while preparing page template");
-        }
-
         // lookup Renderer we are going to use
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer(page);
+            renderer = RendererManager.getRenderer(page, deviceType);
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);

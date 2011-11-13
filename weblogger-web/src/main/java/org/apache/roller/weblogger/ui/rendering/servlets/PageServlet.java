@@ -37,7 +37,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.util.InvalidRequestException;
@@ -243,12 +242,14 @@ public class PageServlet extends HttpServlet {
 
         log.debug("Looking for template to use for rendering");
 
-        // Get the type from user agent
-        String type = MobileDeviceRepository.getRequestType(request);
+        // Get the deviceType from user agent
+        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
 
-        // for previews we explicitly set the type attribute
-        if(request.getParameter("type") != null){
-            type = request.getParameter("type");
+        // for previews we explicitly set the deviceType attribute
+        if (request.getParameter("type") != null) {
+            deviceType = request.getParameter("type").equals("standard") 
+				? MobileDeviceRepository.DeviceType.standard
+				: MobileDeviceRepository.DeviceType.mobile;
         }
 
         // figure out what template to use
@@ -330,13 +331,6 @@ public class PageServlet extends HttpServlet {
 
         log.debug("page found, dealing with it");
 
-        // load the correct template using template codes.
-        try {
-            page = RendererManager.prepareTemplate(page, type);
-        } catch (RenderingException e) {
-            log.error("error while preparing template ", e);
-        }
-
         // validation.  make sure that request input makes sense.
         boolean invalid = false;
         if (pageRequest.getWeblogPageName() != null && page.isHidden()) {
@@ -404,14 +398,14 @@ public class PageServlet extends HttpServlet {
 
 
         // looks like we need to render content
-        // set the content type
+        // set the content deviceType
         String contentType = "text/html; charset=utf-8";
         if (StringUtils.isNotEmpty(page.getOutputContentType())) {
             contentType = page.getOutputContentType() + "; charset=utf-8";
         } else {
             String mimeType = RollerContext.getServletContext().getMimeType(page.getLink());
             if (mimeType != null) {
-                // we found a match ... set the content type
+                // we found a match ... set the content deviceType
                 contentType = mimeType + "; charset=utf-8";
             } else {
                 contentType = "text/html; charset=utf-8";
@@ -469,7 +463,7 @@ public class PageServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer(page);
+            renderer = RendererManager.getRenderer(page, deviceType);
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page " + page.getId(), e);

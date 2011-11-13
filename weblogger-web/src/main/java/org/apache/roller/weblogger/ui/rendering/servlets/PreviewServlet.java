@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
@@ -43,6 +42,7 @@ import javax.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
 
 /**
@@ -80,7 +80,7 @@ public class PreviewServlet extends HttpServlet {
         
         WeblogPreviewRequest previewRequest = null;
 
-         String type = null;
+        String type = null;
 
         try {
             previewRequest = new WeblogPreviewRequest(request);
@@ -101,7 +101,17 @@ public class PreviewServlet extends HttpServlet {
             return;
         }
         
-        Weblog tmpWebsite = weblog;
+        // Get the deviceType from user agent
+        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
+
+        // for previews we explicitly set the deviceType attribute
+        if (request.getParameter("type") != null) {
+            deviceType = request.getParameter("type").equals("standard") 
+				? MobileDeviceRepository.DeviceType.standard
+				: MobileDeviceRepository.DeviceType.mobile;
+        }
+
+		Weblog tmpWebsite = weblog;
         
         if (previewRequest.getThemeName() != null) {
             // only create temporary weblog object if theme name was specified
@@ -178,13 +188,6 @@ public class PreviewServlet extends HttpServlet {
         
         
         log.debug("preview page found, dealing with it");
-
-        // load the correct template using template codes.
-        try {
-            page = RendererManager.prepareTemplate((ThemeTemplate) page, type);
-        } catch (RenderingException e) {
-            log.error("error while preparing template ", e);
-        }
         
         // set the content type
         String pageLink = previewRequest.getWeblogPageName();
@@ -244,7 +247,7 @@ public class PreviewServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer(page);
+            renderer = RendererManager.getRenderer(page, deviceType);
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+page.getId(), e);

@@ -26,7 +26,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -42,36 +41,36 @@ import java.util.List;
  * Action which handles editing for a single WeblogTemplate.
  */
 public class TemplateEdit extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(TemplateEdit.class);
-    
+
     // form bean for collection all template properties
     private TemplateEditBean bean = new TemplateEditBean();
-    
+
     // the template we are working on
     private WeblogTemplate template = null;
 
     private String type = null;
-    
-    
+
+
     public TemplateEdit() {
         this.actionName = "templateEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "pagesForm.title";
     }
-    
-    
+
+
     @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
+
 
     public void myPrepare() {
         try {
             setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getPage(getBean().getId()));
         } catch (WebloggerException ex) {
-            log.error("Error looking up template - "+getBean().getId(), ex);
+            log.error("Error looking up template - " + getBean().getId(), ex);
         }
     }
 
@@ -81,105 +80,53 @@ public class TemplateEdit extends UIAction {
      */
     @SkipValidation
     public String execute() {
-        
-        if(getTemplate() == null) {
-            // TODO: i18n
-            addError("Unable to locate specified template");
-            return LIST;
-        }
-        
-        WeblogTemplate page = getTemplate();
-        getBean().copyFrom(template);
-
-        WeblogTemplateCode templateCode = null;
-
-        // look for the template code
         try {
-           templateCode = WebloggerFactory.getWeblogger().getWeblogManager().
-                   getTemplateCodeByType(template.getId(), getBean().getType());
-        } catch (WebloggerException e) {
-            log.error("Unable to look weblog code for template "+template.getName() +"of type "+getBean().getType());
-        }
-         //set the content for the type.
-        if(templateCode != null){
-            getBean().setContents(templateCode.getTemplate());
+            if (getTemplate() == null) {
+                // TODO: i18n
+                addError("Unable to locate specified template");
+                return LIST;
+            }
+            WeblogTemplate page = getTemplate();
+            getBean().copyFrom(template);
+
+            // empty content-type indicates that page uses auto content-type detection
+            if (StringUtils.isEmpty(page.getOutputContentType())) {
+                getBean().setAutoContentType(Boolean.TRUE);
+            } else {
+                getBean().setAutoContentType(Boolean.FALSE);
+                getBean().setManualContentType(page.getOutputContentType());
+            }
+
+        } catch (WebloggerException ex) {
+           log.error("Error updating page - " + getBean().getId(), ex);
+           // TODO: i18n
+           addError("Error saving template");
         }
 
-        // empty content-type indicates that page uses auto content-type detection
-        if (StringUtils.isEmpty(page.getOutputContentType())) {
-            getBean().setAutoContentType(Boolean.TRUE);
-        } else {
-            getBean().setAutoContentType(Boolean.FALSE);
-            getBean().setManualContentType(page.getOutputContentType());
-        }
-        
         return INPUT;
     }
 
     /**
-     * This is to sync mobile theme and standard theme if name or link changed
-     */
-      private void synchronizeThemes(){
-
-          boolean isModified = false;
-          WeblogTemplate mobileTemplate = null;
-          WeblogTemplate standardTemplate = null;
-          try {
-              mobileTemplate = WebloggerFactory.getWeblogger().getWeblogManager().
-                      getPage(getBean().getMobileTemplateId());
-              standardTemplate = WebloggerFactory.getWeblogger().getWeblogManager().
-                      getPage(getBean().getStandardTemplateId());
-          } catch (WebloggerException e) {
-              log.error("error in looking up theme ", e);
-          }
-
-          if (standardTemplate != null && mobileTemplate != null) {
-              // if standard template has a different tempalte version we are going to change mobile accordingly
-              if (!mobileTemplate.getName().equals(standardTemplate.getName() + ".Mobile")) {
-                  mobileTemplate.setName(standardTemplate.getName() + ".Mobile");
-                  isModified = true;
-              }
-              if (!mobileTemplate.getLink().equals(standardTemplate.getLink())) {
-                  mobileTemplate.setLink(standardTemplate.getLink());
-                  isModified = true;
-              }
-              if (isModified) {
-                  // save template and flush
-                  try {
-                      WebloggerFactory.getWeblogger().getWeblogManager().savePage(mobileTemplate);
-                      WebloggerFactory.getWeblogger().flush();
-                  } catch (WebloggerException e) {
-                      log.error("Error syncing with standard template", e);
-                  }
-                  // notify caches
-                  CacheManager.invalidate(mobileTemplate);
-              }
-
-          }
-
-      }
-    
-    
-    /**
      * Save an existing template.
      */
     public String save() {
-        
-        if(getTemplate() == null) {
+        log.debug("Entering save()");
+
+        if (getTemplate() == null) {
             // TODO: i18n
             addError("Unable to locate specified template");
             return LIST;
         }
-        
+
         // validation
         myValidate();
-        
-        if(!hasActionErrors()) try {
-            
+
+        if (!hasActionErrors()) try {
+
             WeblogTemplate template = getTemplate();
             getBean().copyTo(template);
             template.setLastModified(new Date());
-            
+
             if (getBean().getAutoContentType() == null ||
                     !getBean().getAutoContentType().booleanValue()) {
                 template.setOutputContentType(getBean().getManualContentType());
@@ -187,81 +134,39 @@ public class TemplateEdit extends UIAction {
                 // empty content-type indicates that template uses auto content-type detection
                 template.setOutputContentType(null);
             }
-            
+
             // save template
             WebloggerFactory.getWeblogger().getWeblogManager().savePage(template);
-
-
-            //save template code
-            WeblogTemplateCode templateCode = WebloggerFactory.getWeblogger().getWeblogManager().
-                    getTemplateCodeByType(template.getId(),getBean().getType());
-            templateCode.setTemplate(getBean().getContents());
-
-            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(templateCode);
+            log.debug("Saved template: " + template.getId());
 
             //flush
-             WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.getWeblogger().flush();
 
             // notify caches
             CacheManager.invalidate(template);
 
-           // synchronizeThemes();
-            
+            // synchronizeThemes();
+
             // success message
             addMessage("pageForm.save.success", template.getName());
-            
-        } catch (WebloggerException ex) {
-            log.error("Error updating page - "+getBean().getId(), ex);
+
+        } catch (Exception ex) {
+            log.error("Error updating page - " + getBean().getId(), ex);
             // TODO: i18n
             addError("Error saving template");
         }
-        
+
+        log.debug("Leaving save()");
         return INPUT;
     }
 
-
-    public String loadMobileTheme(){
-         if(getTemplate() == null) {
-            // TODO: i18n
-            addError("Unable to locate specified template");
-            return LIST;
-        }
-
-             WeblogTemplate mobile = null;
-
-        try {
-                mobile = WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(getActionWeblog(),
-                    template.getName()+".mobile");
-        } catch (WebloggerException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-         if(mobile == null){
-            addError("Unable to locate specified template");
-            return LIST;
-         }
-        getBean().copyFrom(mobile);
-
-
-        // empty content-type indicates that page uses auto content-type detection
-        if (StringUtils.isEmpty(mobile.getOutputContentType())) {
-            getBean().setAutoContentType(Boolean.TRUE);
-        } else {
-            getBean().setAutoContentType(Boolean.FALSE);
-            getBean().setManualContentType(mobile.getOutputContentType());
-        }
-
-        return INPUT;
-    }
-
-
-    
     private void myValidate() {
-        
+
         // if name changed make sure there isn't a conflict
-        if(!getTemplate().getName().equals(getBean().getName())) {
+        if (!getTemplate().getName().equals(getBean().getName())) {
             try {
-                if(WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(getActionWeblog(), getBean().getName()) != null) {
+                if (WebloggerFactory.getWeblogger().getWeblogManager()
+                    .getPageByName(getActionWeblog(), getBean().getName()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getName());
                 }
             } catch (WebloggerException ex) {
@@ -269,11 +174,12 @@ public class TemplateEdit extends UIAction {
             }
         }
 
-      // if link changed make sure there isn't a conflict
-        if(!StringUtils.isEmpty(getBean().getLink()) &&
+        // if link changed make sure there isn't a conflict
+        if (!StringUtils.isEmpty(getBean().getLink()) &&
                 !getBean().getLink().equals(getTemplate().getLink())) {
             try {
-                if(WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(getActionWeblog(), getBean().getLink()) != null) {
+                if (WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getPageByLink(getActionWeblog(), getBean().getLink()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getLink());
                 }
             } catch (WebloggerException ex) {
@@ -281,15 +187,14 @@ public class TemplateEdit extends UIAction {
             }
         }
     }
-    
-    
+
     public List getTemplateLanguages() {
-        String langs = WebloggerConfig.getProperty("rendering.templateLanguages","velocity");
+        String langs = WebloggerConfig.getProperty("rendering.templateLanguages", "velocity");
         String[] langsArray = Utilities.stringToStringArray(langs, ",");
         return Arrays.asList(langsArray);
     }
-    
-    
+
+
     public TemplateEditBean getBean() {
         return bean;
     }

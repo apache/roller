@@ -17,11 +17,11 @@
 --%>
 <% response.setContentType("text/html; charset=UTF-8"); %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
-
+<link rel="stylesheet" type="text/css" 
+   href='<s:url value="/roller-ui/yui/tabview/assets/skins/sam/tabview.css"></s:url>'</link>

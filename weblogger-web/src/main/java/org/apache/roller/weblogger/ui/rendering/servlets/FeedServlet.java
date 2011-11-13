@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.model.SearchResultsFeedModel;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
@@ -270,7 +271,7 @@ public class FeedServlet extends HttpServlet {
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate(pageId, "velocity");
-            renderer = RendererManager.getRenderer(template);
+            renderer = RendererManager.getRenderer(template, MobileDeviceRepository.DeviceType.standard);
         } catch(Exception e) {
             // nobody wants to render my content :(
 

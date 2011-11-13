@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
 
@@ -120,7 +121,7 @@ public class RSDServlet extends HttpServlet {
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate("templates/weblog/rsd.vm", "velocity");
-            renderer = RendererManager.getRenderer(template);
+            renderer = RendererManager.getRenderer(template, DeviceType.standard); 
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);

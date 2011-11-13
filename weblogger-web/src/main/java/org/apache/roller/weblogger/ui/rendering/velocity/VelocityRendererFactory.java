@@ -23,38 +23,36 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererFactory;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
 
 /**
  * RendererFactory for Velocity, creates VelocityRenderers.
  */
 public class VelocityRendererFactory implements RendererFactory {
-    
     private static Log log = LogFactory.getLog(VelocityRendererFactory.class);
     
-    
-    public Renderer getRenderer(Template template) {
-        
+    public Renderer getRenderer(Template template, 
+			MobileDeviceRepository.DeviceType deviceType) {
         Renderer renderer = null;
         
         // nothing we can do with null values
-        if(template.getTemplateLanguage() == null || template.getId() == null) {
+        if (template.getTemplateLanguage() == null || template.getId() == null) {
             return null;
         }
         
-        if("velocity".equals(template.getTemplateLanguage())) { 
+        if ("velocity".equals(template.getTemplateLanguage())) { 
             
             // standard velocity template
             try {
-               renderer = new VelocityRenderer(template);
+               renderer = new VelocityRenderer(template, deviceType);
             } catch(Exception ex) {
+				log.error("ERROR creating VelocityRenderer", ex);
                 // some kind of exception so we don't have a renderer
                 // we do catching/logging in VelocityRenderer constructor
                 return null;
             }            
-            
         }
-        
         return renderer;
     }
     

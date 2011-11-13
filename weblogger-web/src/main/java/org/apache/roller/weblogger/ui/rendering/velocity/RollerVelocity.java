@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ParseErrorException;
@@ -90,22 +91,37 @@ public class RollerVelocity {
         return velocityEngine;
     }
     
-    
     /**
      * Convenience static method for looking up a template.
      */
     public static Template getTemplate(String name)
             throws ResourceNotFoundException, ParseErrorException, Exception {
-        return velocityEngine.getTemplate(name);
+        return velocityEngine.getTemplate(name + "|standard");
     }
-    
+
+    /**
+     * Convenience static method for looking up a template.
+     */
+    public static Template getTemplate(String name, 
+			MobileDeviceRepository.DeviceType deviceType)
+            throws ResourceNotFoundException, ParseErrorException, Exception {
+        return velocityEngine.getTemplate(name + "|" + deviceType);
+    }
     
     /**
      * Convenience static method for looking up a template.
      */
     public static Template getTemplate(String name, String encoding)
             throws ResourceNotFoundException, ParseErrorException, Exception {
-        return velocityEngine.getTemplate(name, encoding);
+        return velocityEngine.getTemplate(name + "|standard", encoding);
     }
-    
+	
+    /**
+     * Convenience static method for looking up a template.
+     */
+    public static Template getTemplate(String name, 
+			MobileDeviceRepository.DeviceType deviceType, String encoding)
+            throws ResourceNotFoundException, ParseErrorException, Exception {
+        return velocityEngine.getTemplate(name + "|" + deviceType, encoding);
+    }
 }

@@ -24,18 +24,14 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.Job;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
-import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
@@ -138,8 +134,9 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 // lookup Renderer we are going to use
                 Renderer renderer = null;
-                Template template = new StaticTemplate("templates/feeds/weblog-"+type+"-"+format+".vm", "velocity");
-                renderer = RendererManager.getRenderer(template);
+                Template template = new StaticTemplate(
+					"templates/feeds/weblog-"+type+"-"+format+".vm", "velocity");
+                renderer = RendererManager.getRenderer(template, DeviceType.standard);
                 
                 
                 // render content.  use default size of about 24K for a standard page

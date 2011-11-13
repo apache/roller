@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesDayPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesMonthPager;
@@ -55,7 +55,7 @@ public class PageModel implements Model {
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
     private Weblog weblog = null;
-    private String type = null;
+    private DeviceType deviceType = null;
     
     
     /**
@@ -109,7 +109,7 @@ public class PageModel implements Model {
         // extract weblog object
         weblog = pageRequest.getWeblog();
 
-        this.type = weblogRequest.getType();
+        this.deviceType = weblogRequest.getDeviceType();
     }    
     
     
@@ -125,7 +125,7 @@ public class PageModel implements Model {
      * Get weblog being displayed.
      */
     public WeblogWrapper getWeblog() {
-        return WeblogWrapper.wrap(weblog, urlStrategy, getType());
+        return WeblogWrapper.wrap(weblog, urlStrategy, getDeviceType().toString());
     }
     
     
@@ -318,11 +318,11 @@ public class PageModel implements Model {
         return null;
     }
 
-    public String getType() {
-        return type;
+    public DeviceType getDeviceType() {
+        return deviceType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDeviceType(DeviceType type) {
+        this.deviceType = type;
     }
 }

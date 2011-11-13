@@ -19,9 +19,9 @@
 <%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
 
 <script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.4.2.min.js" />'></script>
-<script type="text/javascript" src='<s:url value="/custom-ui/ZeroClipboard.js" />'></script>
 
 <%-- 
+<script type="text/javascript" src='<s:url value="/custom-ui/ZeroClipboard.js" />'></script>
 <!-- Can't distribute ZeroClipboard with Roller, LGPL violates ASF policy -->
 <!-- (1/2) For ZeroClipboard you would add this: -->
 <style type="text/css">

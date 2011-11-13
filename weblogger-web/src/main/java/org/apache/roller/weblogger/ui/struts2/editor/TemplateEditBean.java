@@ -18,21 +18,27 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.struts2.components.If;
+import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
 
 
 /**
  * Form bean for TemplateEdit action.
  */
 public class TemplateEditBean {
-    
+    private static Log log = LogFactory.getLog(TemplateEdit.class);
+ 
     private String id = null;
     private String name = null;
     private String action = null;
     private String description = null;
     private String link = null;
-    private String contents = null;
+    private String contentsStandard = null;
+    private String contentsMobile = null;
     private String templateLanguage = null;
     private boolean navbar= false;
     private boolean hidden = false;
@@ -87,12 +93,20 @@ public class TemplateEditBean {
         this.link = link;
     }
     
-    public String getContents() {
-        return this.contents;
+    public String getContentsStandard() {
+        return this.contentsStandard;
     }
 
-    public void setContents( String contents ) {
-        this.contents = contents;
+    public void setContentsStandard( String contents ) {
+        this.contentsStandard = contents;
+    }
+    
+     public String getContentsMobile() {
+        return this.contentsMobile;
+    }
+
+    public void setContentsMobile( String contents ) {
+        this.contentsMobile = contents;
     }
     
     public String getTemplateLanguage() {
@@ -136,12 +150,29 @@ public class TemplateEditBean {
     }
     
     
-    public void copyTo(WeblogTemplate dataHolder) {
+    public void copyTo(WeblogTemplate dataHolder) throws WebloggerException {
 
-        // change the default content of template if we are changing standard type code
-        if("standard".equals(getType()))
-        dataHolder.setContents(getContents());
-        
+        if (dataHolder.getTemplateCode("standard") != null) {
+            // if we have a template, then set it
+            WeblogTemplateCode tc = dataHolder.getTemplateCode("standard");
+            tc.setTemplate(contentsStandard);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
+        } else { 
+            // otherwise create it, then set it
+            WeblogTemplateCode tc = new WeblogTemplateCode(dataHolder.getId(), "standard");
+			tc.setTemplate(dataHolder.getContents());
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
+        }
+
+        if (dataHolder.getTemplateCode("mobile") != null) {
+            WeblogTemplateCode tc = dataHolder.getTemplateCode("mobile");
+            tc.setTemplate(contentsMobile);
+        } else {
+            WeblogTemplateCode tc = new WeblogTemplateCode(dataHolder.getId(), "mobile");
+			tc.setTemplate(""); // empty, we've got no default mobile template 
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
+        }
+
         // the rest of the template properties can only be modified when
         // dealing with a CUSTOM weblog template
         if(dataHolder.isCustom()) {
@@ -156,14 +187,23 @@ public class TemplateEditBean {
     }
     
     
-    public void copyFrom(WeblogTemplate dataHolder) {
-        
+    public void copyFrom(WeblogTemplate dataHolder) throws WebloggerException {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
         this.action = dataHolder.getAction();
         this.description = dataHolder.getDescription();
         this.link = dataHolder.getLink();
-        this.contents = dataHolder.getContents();
+
+        if (dataHolder.getTemplateCode("standard") != null) {
+            this.contentsStandard = dataHolder.getTemplateCode("standard").getTemplate();
+        } else {
+            this.contentsStandard = dataHolder.getContents();
+        }
+        if (dataHolder.getTemplateCode("mobile") != null) {
+            this.contentsMobile = dataHolder.getTemplateCode("mobile").getTemplate();
+        }
+		log.debug("Standard: " + this.contentsStandard + " Mobile: " + this.contentsMobile); 
+
         this.navbar = dataHolder.isNavbar();
         this.hidden = dataHolder.isHidden();
         this.templateLanguage = dataHolder.getTemplateLanguage();

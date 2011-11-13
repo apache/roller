@@ -38,7 +38,7 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
  */
 public class WebappResourceLoader extends ResourceLoader {
     
-    private static Log log = LogFactory.getLog(WebappResourceLoader.class);
+    private static Log logger = LogFactory.getLog(WebappResourceLoader.class);
     
     private ServletContext mContext = null;
     
@@ -48,16 +48,16 @@ public class WebappResourceLoader extends ResourceLoader {
      */
     public void init(ExtendedProperties config) {
         
-        log.debug("WebappResourceLoader : initialization starting.");
+        logger.debug("WebappResourceLoader : initialization starting.");
         
         if (mContext == null) {
             mContext = RollerContext.getServletContext();
-            log.debug("Servlet Context = "+mContext.getRealPath("/WEB-INF/velocity/"));
+            logger.debug("Servlet Context = "+mContext.getRealPath("/WEB-INF/velocity/"));
         }
         
-        log.debug(config);
+        logger.debug(config);
         
-        log.debug("WebappResourceLoader : initialization complete.");
+        logger.debug("WebappResourceLoader : initialization complete.");
     }
     
     
@@ -67,25 +67,30 @@ public class WebappResourceLoader extends ResourceLoader {
     public InputStream getResourceStream(String name) 
             throws ResourceNotFoundException {
         
-        log.debug("Looking up resource named ... "+name);
+       	logger.debug("Looking for resource: " + name);
         
         if (name == null || name.length() == 0) {
             throw new ResourceNotFoundException("No template name provided");
         }
         
-        InputStream result = null;
+		if (name.contains("|")) {
+			String[] pair = name.split("\\|");
+			name = pair[0];
+		}
+				
+		InputStream result = null;
         
         try {
-            if(!name.startsWith("/"))
+            if(!name.startsWith("/")) {
                 name = "/WEB-INF/velocity/" + name;
-            
+			}
             result = this.mContext.getResourceAsStream(name);
             
         } catch(Exception e) {
             throw new ResourceNotFoundException(e.getMessage());
         }
         
-        if(result == null) {
+        if (result == null) {
             throw new ResourceNotFoundException("Couldn't find "+name);
         }
         

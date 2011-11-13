@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RenderingException;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
@@ -43,6 +44,7 @@ public class VelocityRenderer implements Renderer {
     
     // the original template we are supposed to render
     private Template renderTemplate = null;
+	private MobileDeviceRepository.DeviceType deviceType = null;
     
     // the velocity templates
     private org.apache.velocity.Template velocityTemplate = null;
@@ -52,16 +54,18 @@ public class VelocityRenderer implements Renderer {
     private Exception parseException = null;
     
     
-    public VelocityRenderer(Template template) throws Exception {
+    public VelocityRenderer(Template template, 
+			MobileDeviceRepository.DeviceType deviceType) throws Exception {
         
         // the Template we are supposed to render
         this.renderTemplate = template;
+		this.deviceType = deviceType;
         
         try {
             // make sure that we can locate the template
             // if we can't then this will throw an exception
-            velocityTemplate = RollerVelocity.getTemplate(template.getId(), "UTF-8");
-            
+            velocityTemplate = RollerVelocity.getTemplate(template.getId(), deviceType, "UTF-8");
+           
             // if this is a ThemeTemplate than look for a decorator too
             if(template instanceof ThemeTemplate) {
                 ThemeTemplate templ = (ThemeTemplate) template;
@@ -86,7 +90,7 @@ public class VelocityRenderer implements Renderer {
             parseException = ex;
             
             // need to lookup error page template
-            velocityTemplate = RollerVelocity.getTemplate("templates/error-page.vm");
+            velocityTemplate = RollerVelocity.getTemplate("templates/error-page.vm", deviceType);
             
         } catch(Exception ex) {
             // some kind of generic/unknown exception, dump it to the logs
@@ -101,6 +105,7 @@ public class VelocityRenderer implements Renderer {
     public void render(Map model, Writer out) throws RenderingException {
         
         try {
+
             if(parseException != null) {
                 
                 Context ctx = new VelocityContext(model);
@@ -120,7 +125,7 @@ public class VelocityRenderer implements Renderer {
             // convert model to Velocity Context
             Context ctx = new VelocityContext(model);
             
-            if(velocityDecorator != null) {
+            if (velocityDecorator != null) {
                 
                 /**
                  * We only allow decorating once, so the process isn't

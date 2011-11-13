@@ -48,7 +48,8 @@ public abstract class ParsedRequest {
     // lightweight attributes
     private String authenticUser = null;
 
-    private String type = "standard";
+    private MobileDeviceRepository.DeviceType deviceType = 
+			MobileDeviceRepository.DeviceType.standard;
     
     // heavyweight attributes
     private User user = null;
@@ -74,8 +75,7 @@ public abstract class ParsedRequest {
             this.authenticUser = prince.getName();
         }
         // set the detected type of the request
-        type = MobileDeviceRepository.getRequestType(request);
-        
+        deviceType = MobileDeviceRepository.getRequestType(request);
     }
     
     
@@ -113,11 +113,11 @@ public abstract class ParsedRequest {
         return (this.authenticUser != null);
     }
 
-    public String getType() {
-        return type;
+    public MobileDeviceRepository.DeviceType getDeviceType() {
+        return deviceType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDeviceType(MobileDeviceRepository.DeviceType type) {
+        this.deviceType = type;
     }
 }

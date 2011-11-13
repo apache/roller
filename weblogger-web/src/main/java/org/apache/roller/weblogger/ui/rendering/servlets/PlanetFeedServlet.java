@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.weblogger.ui.rendering.util.cache.PlanetCache;
 import org.apache.roller.weblogger.ui.rendering.util.PlanetRequest;
@@ -175,7 +176,7 @@ public class PlanetFeedServlet extends HttpServlet {
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate("templates/planet/planetrss.vm", "velocity");
-            renderer = RendererManager.getRenderer(template);
+            renderer = RendererManager.getRenderer(template, DeviceType.mobile);
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for planet rss", e);

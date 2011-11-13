@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering;
 
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
 
 /**
@@ -28,7 +29,6 @@ import org.apache.roller.weblogger.pojos.Template;
  * what Renderer object should be used to render a given resource.
  */
 public interface RendererFactory {
-    
     
     /**
      * Get a Renderer that will handle the given Template.
@@ -40,6 +40,7 @@ public interface RendererFactory {
      * while trying to find a renderer.  It is up to the factory itself to
      * report any relevant exceptions itself.
      */
-    public Renderer getRenderer(Template template);
+    public Renderer getRenderer(Template template, 
+		MobileDeviceRepository.DeviceType deviceType);
     
 }

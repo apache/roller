@@ -48,24 +48,29 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
  */
 public class ThemeResourceLoader extends ResourceLoader {
     
-    private static Log mLogger = 
+    private static Log logger = 
         LogFactory.getFactory().getInstance(ThemeResourceLoader.class);
         
     
     public void init(ExtendedProperties configuration) {
-        mLogger.debug(configuration);
+        logger.debug(configuration);
     }
     
     
     public InputStream getResourceStream( String name )
         throws ResourceNotFoundException {
         
-        mLogger.debug("Looking up resource named ... "+name);
-        
+		logger.debug("Looking for: " + name);
+       
         if (name == null || name.length() < 1) {
             throw new ResourceNotFoundException("Need to specify a template name!");
         }
         
+		if (name.contains("|")) {
+			String[] pair = name.split("\\|");
+			name = pair[0];
+		}
+
         try {
             // parse the name ... theme templates name are <theme>:<template>
             String[] split = name.split(":", 2);
@@ -81,7 +86,7 @@ public class ThemeResourceLoader extends ResourceLoader {
                 throw new ResourceNotFoundException("Template ["+split[1]+
                         "] doesn't seem to be part of theme ["+split[0]+"]");
             
-            mLogger.debug("Resource found!");
+            logger.debug("Resource found!");
             
             // return the input stream
             return new ByteArrayInputStream(template.getContents().getBytes("UTF-8"));
@@ -89,17 +94,17 @@ public class ThemeResourceLoader extends ResourceLoader {
         } catch (UnsupportedEncodingException uex) {
             // We expect UTF-8 in all JRE installation.
             // This rethrows as a Runtime exception after logging.
-            mLogger.error(uex);
+            logger.error(uex);
             throw new RuntimeException(uex);
            
         } catch (ThemeNotFoundException tnfe) {
             String msg = "ThemeResourceLoader Error: " + tnfe.getMessage();
-            mLogger.error(msg, tnfe);
+            logger.error(msg, tnfe);
             throw new ResourceNotFoundException(msg);
             
         } catch (WebloggerException re) {
             String msg = "RollerResourceLoader Error: " + re.getMessage();
-            mLogger.error( msg, re );
+            logger.error( msg, re );
             throw new ResourceNotFoundException(msg);
         }
     }
@@ -114,7 +119,7 @@ public class ThemeResourceLoader extends ResourceLoader {
         long last_mod = 0;
         String name = resource.getName();
         
-        mLogger.debug("Checking last modified time for resource named ... "+name);
+        logger.debug("Checking last modified time for resource named ... "+name);
         
         if (name == null || name.length() < 1)
             return last_mod;
