@@ -225,6 +225,8 @@ public class WeblogPageCache {
             key.append("/user=").append(pageRequest.getAuthenticUser());
         }
         
+        key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
+        
         // we allow for arbitrary query params for custom pages
         if(pageRequest.getWeblogPageName() != null &&
                 pageRequest.getCustomParams().size() > 0) {
