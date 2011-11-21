@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -37,7 +39,8 @@ import java.util.List;
  * This class unmarshalls a theme descriptor into a set of objects.
  */
 public class ThemeMetadataParser {
-    
+   
+    private static Log log = LogFactory.getLog(ThemeMetadataParser.class);
     
     /**
      * Unmarshall the given input stream into our defined
@@ -114,65 +117,81 @@ public class ThemeMetadataParser {
     }
     
     
-    private ThemeMetadataTemplate elementToTemplateMetadata(Element element) 
-            throws ThemeParsingException {
-        
-        ThemeMetadataTemplate template = new ThemeMetadataTemplate();
-        
-        template.setAction(element.getAttributeValue("action"));
-        template.setName(element.getChildText("name"));
-        template.setDescription(element.getChildText("description"));
-        template.setLink(element.getChildText("link"));
+	private ThemeMetadataTemplate elementToTemplateMetadata(Element element)
+			throws ThemeParsingException {
 
-        //parsing tempaltecode segment
-        List templateCodeList = element.getChildren("templateCode");
-        Iterator templCodeitr = templateCodeList.iterator();
+		ThemeMetadataTemplate template = new ThemeMetadataTemplate();
 
-        while (templCodeitr.hasNext()){
-            Element templateCodeElement = (Element) templCodeitr.next();
+		template.setAction(element.getAttributeValue("action"));
+		template.setName(element.getChildText("name"));
+		template.setDescription(element.getChildText("description"));
+		template.setLink(element.getChildText("link"));
+		template.setTemplateLanguage(element.getChildText("templateLanguage"));
+		template.setContentType(element.getChildText("contentType"));
+		template.setContentsFile(element.getChildText("contentsFile"));
 
-            ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
-            templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
-            templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
-            templateCode.setContentType(templateCodeElement.getChildText("contentType"));
-            templateCode.setType(templateCodeElement.getChildText("type"));
+		//parsing tempaltecode segment
+		List templateCodeList = element.getChildren("templateCode");
+		Iterator templCodeitr = templateCodeList.iterator();
 
-            // validating template code
-            if (StringUtils.isEmpty(templateCode.getContentsFile())) {
-                throw new ThemeParsingException("templateCode must contain a 'contentsFile' element");
-        }
-            if(StringUtils.isEmpty(templateCode.getTemplateLang())) {
-            throw new ThemeParsingException("templateCode must contain a 'templateLanguage' element");
-        }
-             if(StringUtils.isEmpty(templateCode.getType())) {
-            throw new ThemeParsingException("templateCode must contain a 'type' element");
-        }
+		boolean roller50format = false;
+		while (templCodeitr.hasNext()) {
+			Element templateCodeElement = (Element) templCodeitr.next();
 
-            template.addTemplateCode(templateCode.getType(),templateCode);
-        }
-        
-        String navbar = element.getChildText("navbar");
-        if("true".equalsIgnoreCase(navbar)) {
-            template.setNavbar(true);
-        }
-        
-        String hidden = element.getChildText("hidden");
-        if("true".equalsIgnoreCase(hidden)) {
-            template.setHidden(true);
-        }
-        
-        // validate template
-        if(StringUtils.isEmpty(template.getAction())) {
-            throw new ThemeParsingException("templates must contain an 'action' attribute");
-        }
-        if(StringUtils.isEmpty(template.getName())) {
-            throw new ThemeParsingException("templates must contain a 'name' element");
-        }
+			ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
+			templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
+			templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
+			templateCode.setContentType(templateCodeElement.getChildText("contentType"));
+			templateCode.setType(templateCodeElement.getChildText("type"));
+
+			// validating template code
+			if (StringUtils.isEmpty(templateCode.getContentsFile())) {
+				throw new ThemeParsingException("templateCode must contain a 'contentsFile' element");
+			}
+			if (StringUtils.isEmpty(templateCode.getTemplateLang())) {
+				throw new ThemeParsingException("templateCode must contain a 'templateLanguage' element");
+			}
+			if (StringUtils.isEmpty(templateCode.getType())) {
+				throw new ThemeParsingException("templateCode must contain a 'type' element");
+			}
+			template.addTemplateCode(templateCode.getType(), templateCode);
+
+			// if theme has type, then it's roller50format
+			roller50format = true;
+		}
+
+		// hack to ensure old format themes still work
+		if (!roller50format) {
+			ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
+			templateCode.setTemplateLang(template.getTemplateLanguage());
+			templateCode.setContentsFile(template.getContentsFile());
+			templateCode.setContentType(template.getContentType());
+			templateCode.setType("standard");
+			template.addTemplateCode("standard", templateCode);
+		}
+
+		String navbar = element.getChildText("navbar");
+		if ("true".equalsIgnoreCase(navbar)) {
+			template.setNavbar(true);
+		}
+
+		String hidden = element.getChildText("hidden");
+		if ("true".equalsIgnoreCase(hidden)) {
+			template.setHidden(true);
+		}
+
+		// validate template
+		if (StringUtils.isEmpty(template.getAction())) {
+			throw new ThemeParsingException("templates must contain an 'action' attribute");
+		}
+		if (StringUtils.isEmpty(template.getName())) {
+			throw new ThemeParsingException("templates must contain a 'name' element");
+		}
 
 
-        
-        return template;
-    }
+
+		return template;
+	}
     
     
     private ThemeMetadataTemplate elementToStylesheet(Element element) 
@@ -188,6 +207,7 @@ public class ThemeMetadataParser {
          List templateCodeList = element.getChildren("templateCode");
         Iterator templCodeitr = templateCodeList.iterator();
 
+		boolean roller50format = false;
         while (templCodeitr.hasNext()){
             Element templateCodeElement = (Element) templCodeitr.next();
 
@@ -205,11 +225,24 @@ public class ThemeMetadataParser {
                 throw new ThemeParsingException("stylesheet must contain a 'templateLanguage' element");
             }
             if (StringUtils.isEmpty(templateCode.getType())) {
-                throw new ThemeParsingException("templateCode must contain a 'type' element");
+				throw new ThemeParsingException("templateCode must contain a 'type' element");
             }
             template.addTemplateCode(templateCode.getType(), templateCode);
+
+			// if theme has type, then it's roller50format
+			roller50format = true;
         }
         
+		// hack to ensure old format themes still work
+   		if (!roller50format) {
+			ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
+			templateCode.setTemplateLang(template.getTemplateLanguage());
+			templateCode.setContentsFile(template.getContentsFile());
+			templateCode.setContentType(template.getContentType());
+			templateCode.setType("standard");
+			template.addTemplateCode("standard", templateCode);
+		}
+
         // validate template
         if(StringUtils.isEmpty(template.getName())) {
             throw new ThemeParsingException("stylesheet must contain a 'name' element");
