@@ -27,7 +27,7 @@ import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
+import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 
 public class WeblogTemplateCodeTest extends TestCase{
     public static Log log = LogFactory.getLog(WeblogPageTest.class);
@@ -35,8 +35,8 @@ public class WeblogTemplateCodeTest extends TestCase{
        User testUser = null;
        Weblog testWeblog = null;
        WeblogTemplate testPage = null;
-       WeblogTemplateCode standardCode = null;
-       WeblogTemplateCode mobileCode = null;
+       WeblogThemeTemplateCode standardCode = null;
+       WeblogThemeTemplateCode mobileCode = null;
 
 
        public WeblogTemplateCodeTest(String name) {
@@ -110,13 +110,13 @@ public class WeblogTemplateCodeTest extends TestCase{
 
 
            //create standard template coce
-           WeblogTemplateCode standardTemplateCode = new WeblogTemplateCode(testPage.getId(),"standard");
+           WeblogThemeTemplateCode standardTemplateCode = new WeblogThemeTemplateCode(testPage.getId(),"standard");
            standardTemplateCode.setTemplate("standard.template.code");
            standardTemplateCode.setTemplateLanguage("velocity");
            mgr.saveTemplateCode(standardTemplateCode);
             //TestUtils.endSession(true);
            //create mobile code
-           WeblogTemplateCode mobileTemplateCode = new WeblogTemplateCode(testPage.getId(),"mobile");
+           WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(testPage.getId(),"mobile");
            mobileTemplateCode.setTemplate("mobile.template.code");
            mobileTemplateCode.setTemplateLanguage("velocity");
            mgr.saveTemplateCode(mobileTemplateCode);

@@ -25,7 +25,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
+import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -147,8 +147,8 @@ public class Templates extends UIAction {
             WebloggerFactory.getWeblogger().getWeblogManager().savePage( newTemplate );
 
             //Create weblog template codes for available types.
-            WeblogTemplateCode standardTemplCode = new WeblogTemplateCode(newTemplate.getId(),"standard");
-            WeblogTemplateCode mobileTemplCode = new WeblogTemplateCode(newTemplate.getId(),"mobile");
+            WeblogThemeTemplateCode standardTemplCode = new WeblogThemeTemplateCode(newTemplate.getId(),"standard");
+            WeblogThemeTemplateCode mobileTemplCode = new WeblogThemeTemplateCode(newTemplate.getId(),"mobile");
 
             standardTemplCode.setTemplate(newTemplate.getContents());
             standardTemplCode.setTemplateLanguage("velocity");

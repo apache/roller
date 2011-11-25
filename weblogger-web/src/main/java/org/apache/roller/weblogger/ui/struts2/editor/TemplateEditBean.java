@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
+import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 
 
 /**
@@ -154,21 +154,21 @@ public class TemplateEditBean {
 
         if (dataHolder.getTemplateCode("standard") != null) {
             // if we have a template, then set it
-            WeblogTemplateCode tc = dataHolder.getTemplateCode("standard");
+            WeblogThemeTemplateCode tc = dataHolder.getTemplateCode("standard");
             tc.setTemplate(contentsStandard);
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
         } else { 
             // otherwise create it, then set it
-            WeblogTemplateCode tc = new WeblogTemplateCode(dataHolder.getId(), "standard");
+            WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(dataHolder.getId(), "standard");
 			tc.setTemplate(dataHolder.getContents());
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
         }
 
         if (dataHolder.getTemplateCode("mobile") != null) {
-            WeblogTemplateCode tc = dataHolder.getTemplateCode("mobile");
+            WeblogThemeTemplateCode tc = dataHolder.getTemplateCode("mobile");
             tc.setTemplate(contentsMobile);
         } else {
-            WeblogTemplateCode tc = new WeblogTemplateCode(dataHolder.getId(), "mobile");
+            WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(dataHolder.getId(), "mobile");
 			tc.setTemplate(""); // empty, we've got no default mobile template 
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
         }

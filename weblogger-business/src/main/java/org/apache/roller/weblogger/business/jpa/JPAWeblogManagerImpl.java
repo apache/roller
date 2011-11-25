@@ -257,7 +257,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         roller.getWeblogManager().saveWeblog(page.getWebsite());
     }
 
-    public void saveTemplateCode(WeblogTemplateCode templateCode) throws WebloggerException {
+    public void saveTemplateCode(WeblogThemeTemplateCode templateCode) throws WebloggerException {
         this.strategy.store(templateCode);
         // update of the template should happen by saving template page.
     }
@@ -610,7 +610,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
     }
 
-    public WeblogTemplateCode getTemplateCodeByType(String templateId, String type) throws WebloggerException{
+    public WeblogThemeTemplateCode getTemplateCodeByType(String templateId, String type) throws WebloggerException{
          if(templateId == null)
              throw new WebloggerException("Template Name is null");
 
@@ -622,7 +622,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         query.setParameter(1, templateId);
         query.setParameter(2, type);
         try {
-            return (WeblogTemplateCode)query.getSingleResult();
+            return (WeblogThemeTemplateCode)query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -736,7 +736,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List codeList = codeQuery.getResultList();
 
         for (Iterator itr = codeList.iterator(); itr.hasNext(); ) {
-            WeblogTemplateCode templateCode = (WeblogTemplateCode) itr.next();
+            WeblogThemeTemplateCode templateCode = (WeblogThemeTemplateCode) itr.next();
             this.strategy.remove(templateCode);
         }
 

@@ -96,11 +96,11 @@ public class StylesheetEdit extends UIAction {
                     stylesheetTmpl.setTemplateLanguage(stylesheet.getTemplateLanguage());
 
                     // create template codes for available template code Types
-                    WeblogTemplateCode standardTemplateCode = new WeblogTemplateCode(stylesheetTmpl.getId(),"standard");
+                    WeblogThemeTemplateCode standardTemplateCode = new WeblogThemeTemplateCode(stylesheetTmpl.getId(),"standard");
                     standardTemplateCode.setTemplate(stylesheetTmpl.getContents());
                     standardTemplateCode.setTemplateLanguage(stylesheetTmpl.getTemplateLanguage());
 
-                    WeblogTemplateCode mobileTemplateCode = new WeblogTemplateCode(stylesheetTmpl.getId(),"mobile");
+                    WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(stylesheetTmpl.getId(),"mobile");
                     mobileTemplateCode.setTemplate(stylesheetTmpl.getContents());
                     mobileTemplateCode.setTemplateLanguage(stylesheetTmpl.getTemplateLanguage());
 
@@ -127,7 +127,7 @@ public class StylesheetEdit extends UIAction {
         if(getTemplate() == null) {
             return ERROR;
         }
-        WeblogTemplateCode templateCode = null;
+        WeblogThemeTemplateCode templateCode = null;
         try {
             templateCode = getTemplate().getTemplateCode(getType());
         } catch (WebloggerException e) {
@@ -162,7 +162,7 @@ public class StylesheetEdit extends UIAction {
             WeblogTemplate stylesheet = getTemplate();
             
             stylesheet.setLastModified(new Date());
-            WeblogTemplateCode templateCode = stylesheet.getTemplateCode(getType());
+            WeblogThemeTemplateCode templateCode = stylesheet.getTemplateCode(getType());
             templateCode.setTemplate(getContents());
 
             //  stylesheet.setContents(getContents());
@@ -222,7 +222,7 @@ public class StylesheetEdit extends UIAction {
             //stylesheet.setContents(theme.getStylesheet().getContents());
 
             //save template code which was persisted in DB
-            WeblogTemplateCode existingTemplateCode = stylesheet.getTemplateCode(getType());
+            WeblogThemeTemplateCode existingTemplateCode = stylesheet.getTemplateCode(getType());
             existingTemplateCode.setTemplate(templateCode.getTemplate());
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(existingTemplateCode);
             // save template and flush

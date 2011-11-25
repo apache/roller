@@ -247,7 +247,7 @@ public class ThemeManagerImpl implements ThemeManager {
             for (String type : ThemeManagerImpl.getTypesList()) {
                 TemplateCode templateCode = template.getTemplateCode(type);
                 if (templateCode != null) {
-                    WeblogTemplateCode weblogTemplateCode = new WeblogTemplateCode(template.getId(), type);
+                    WeblogThemeTemplateCode weblogTemplateCode = new WeblogThemeTemplateCode(template.getId(), type);
 					weblogTemplateCode.setType(type);
                     weblogTemplateCode.setTemplate(templateCode.getTemplate());
 					weblogTemplateCode.setTemplateLanguage(templateCode.getTemplateLanguage());

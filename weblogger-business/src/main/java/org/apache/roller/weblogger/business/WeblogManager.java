@@ -185,13 +185,13 @@ public interface WeblogManager {
     /**
      * Get template code by Type.
      */
-    public WeblogTemplateCode getTemplateCodeByType(String templateName, String type)
+    public WeblogThemeTemplateCode getTemplateCodeByType(String templateName, String type)
             throws WebloggerException ;
 
     /**
      * Save template code
      */
-     public void saveTemplateCode(WeblogTemplateCode templateCode) throws WebloggerException;
+     public void saveTemplateCode(WeblogThemeTemplateCode templateCode) throws WebloggerException;
 
     /**
      * Get website's pages

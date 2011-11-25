@@ -44,7 +44,7 @@ import javax.persistence.Table;
      @NamedQuery(name = "WeblogThemplateCode.getTemplateCodesByTemplateId",
         query = "SELECT c FROM WeblogTemplateCode c WHERE c.templateId = ?1 ")
 })
-public class WeblogTemplateCode implements Serializable, TemplateCode {
+public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 
 
     private static final long serialVersionUID = -1497618963802805151L;
@@ -56,12 +56,12 @@ public class WeblogTemplateCode implements Serializable, TemplateCode {
     private String ContentType = null;
     private String templateLanguage = null;
 
-    public WeblogTemplateCode(String templateId, String type){
+    public WeblogThemeTemplateCode(String templateId, String type){
         this.templateId = templateId;
         this.type = type;
     }
 
-    public WeblogTemplateCode() {
+    public WeblogThemeTemplateCode() {
     }
 
     @Id
@@ -125,8 +125,8 @@ public class WeblogTemplateCode implements Serializable, TemplateCode {
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof WeblogTemplateCode != true) return false;
-        WeblogTemplateCode o = (WeblogTemplateCode)other;
+        if (other instanceof WeblogThemeTemplateCode != true) return false;
+        WeblogThemeTemplateCode o = (WeblogThemeTemplateCode)other;
         return new EqualsBuilder()
             .append(templateId, o.getTemplateId())
             .append(template, o.getTemplate())
