@@ -17,6 +17,7 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
+import org.apache.roller.weblogger.pojos.TemplateCode;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -241,25 +242,19 @@ public class ThemeManagerImpl implements ThemeManager {
                 // save it
                 wmgr.savePage(template);
             }
-             // creating template codes
+
+            // create weblog template code objects and save them 
             for (String type : ThemeManagerImpl.getTypesList()) {
-                WeblogTemplateCode templateCode = template.getTemplateCode(type);
-                // if there are no template codes create it
-                if (templateCode == null) {
-                    WeblogTemplateCode themeTemplateCode = themeTemplate.getTemplateCode(type);
-
-                    if(themeTemplateCode== null){
-                        throw new WebloggerException("No templateCode found for template :"+themeTemplate.getId()+
-                                " of type :" +type);
-                    }
-                    templateCode = new WeblogTemplateCode(template.getId(), type);
-                    templateCode.setTemplate(themeTemplateCode.getTemplate());
-                    templateCode.setTemplateLanguage(themeTemplateCode.getTemplateLanguage());
-
-                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(templateCode);
+                TemplateCode templateCode = template.getTemplateCode(type);
+                if (templateCode != null) {
+                    WeblogTemplateCode weblogTemplateCode = new WeblogTemplateCode(template.getId(), type);
+					weblogTemplateCode.setType(type);
+                    weblogTemplateCode.setTemplate(templateCode.getTemplate());
+					weblogTemplateCode.setTemplateLanguage(templateCode.getTemplateLanguage());
+					weblogTemplateCode.setContentType(templateCode.getContentType());
+                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(weblogTemplateCode);
                 }
             }
-
         }
 
         // now, see if the weblog has left over action templates that

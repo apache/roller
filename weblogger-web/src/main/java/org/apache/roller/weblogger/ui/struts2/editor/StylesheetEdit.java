@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import org.apache.roller.weblogger.pojos.TemplateCode;
 
 
 /**
@@ -213,7 +214,7 @@ public class StylesheetEdit extends UIAction {
             Theme theme = tmgr.getTheme(getActionWeblog().getEditorTheme());
 
             //get weblogTemplateCode
-            WeblogTemplateCode templateCode = theme.getStylesheet().getTemplateCode(type);
+            TemplateCode templateCode = theme.getStylesheet().getTemplateCode(type);
             stylesheet.setContents(templateCode.getTemplate());
             
             // lookup 

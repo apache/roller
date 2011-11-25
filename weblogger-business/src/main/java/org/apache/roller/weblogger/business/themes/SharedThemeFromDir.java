@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.business.themes;
 
+import org.apache.roller.weblogger.pojos.TemplateCode;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -269,7 +270,7 @@ public class SharedThemeFromDir extends SharedTheme {
 
 
 				for (String type : availableTypesList) {
-					WeblogTemplateCode templateCode = createTemplateCode(theme_template.getId(), stylesheetTmpl.getTemplateCode(type));
+					TemplateCode templateCode = createTemplateCode(theme_template.getId(), stylesheetTmpl.getTemplateCode(type));
 
 					theme_template.addTemplateCode(type, templateCode);
 				}
@@ -361,7 +362,7 @@ public class SharedThemeFromDir extends SharedTheme {
 					templateMetadata.isNavbar());
 
 			for (String type : availableTypesList) {
-				WeblogTemplateCode templateCode = createTemplateCode(theme_template.getId(),
+				TemplateCode templateCode = createTemplateCode(theme_template.getId(),
 						templateMetadata.getTemplateCode(type));
 
 				theme_template.addTemplateCode(type, templateCode);
@@ -428,28 +429,28 @@ public class SharedThemeFromDir extends SharedTheme {
         this.resources.put(normalizedPath, resource);
     }
 
-    private WeblogTemplateCode createTemplateCode(String templateId, ThemeMetadataTemplateCode templateCodeMetadata){
-        WeblogTemplateCode templateCode = new WeblogTemplateCode();
+	private TemplateCode createTemplateCode(String templateId, ThemeMetadataTemplateCode templateCodeMetadata) {
+		TemplateCode templateCode = new SharedThemeTemplateCode();
 
-         // construct File object from path
-            File templateFile = new File(this.themeDir + File.separator +
-                    templateCodeMetadata.getContentsFile());
+		// construct File object from path
+		File templateFile = new File(this.themeDir + File.separator
+				+ templateCodeMetadata.getContentsFile());
 
-            // read stylesheet contents
-            String contents = loadTemplateFile(templateFile);
-            if(contents == null) {
-                // if we don't have any contents then load no string
-                contents ="";
-                log.error("Couldn't load stylesheet theme [" + this.getName() + "] template file ["+templateFile+"]");
-            }
+		// read stylesheet contents
+		String contents = loadTemplateFile(templateFile);
+		if (contents == null) {
+			// if we don't have any contents then load no string
+			contents = "";
+			log.error("Couldn't load stylesheet theme [" + this.getName() + "] template file [" + templateFile + "]");
+		}
 
-            templateCode.setTemplateId(templateId);
-            templateCode.setTemplate(contents);
-            templateCode.setTemplateLanguage(templateCodeMetadata.getTemplateLang());
-            templateCode.setType(templateCodeMetadata.getType());
-            templateCode.setContentType(templateCodeMetadata.getContentType());
+		templateCode.setTemplateId(templateId);
+		templateCode.setTemplate(contents);
+		templateCode.setTemplateLanguage(templateCodeMetadata.getTemplateLang());
+		templateCode.setType(templateCodeMetadata.getType());
+		templateCode.setContentType(templateCodeMetadata.getContentType());
 
-        return templateCode;
-    }
+		return templateCode;
+	}
 
 }

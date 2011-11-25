@@ -18,11 +18,9 @@
 
 package org.apache.roller.weblogger.business.themes;
 
+import org.apache.roller.weblogger.pojos.TemplateCode;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -51,7 +49,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private SharedTheme myTheme = null;
 
     //hash map to cache template Code objects parsed
-    private HashMap<String,WeblogTemplateCode> templateCodeHashMap = new HashMap<String, WeblogTemplateCode>();
+    private HashMap<String, TemplateCode> templateCodeHashMap = new HashMap<String, TemplateCode>();
     
     
     public SharedThemeTemplate() {}
@@ -185,7 +183,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         return type;
     }
 
-    public WeblogTemplateCode getTemplateCode(String type) throws WebloggerException {
+    public TemplateCode getTemplateCode(String type) throws WebloggerException {
         return templateCodeHashMap.get(type);
     }
 
@@ -193,7 +191,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.type = type;
     }
 
-    public void addTemplateCode(String type , WeblogTemplateCode templateCode){
+    public void addTemplateCode(String type , TemplateCode templateCode){
         this.templateCodeHashMap.put(type ,templateCode);
     }
 }

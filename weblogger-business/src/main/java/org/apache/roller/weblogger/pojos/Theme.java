@@ -42,11 +42,6 @@ public interface Theme {
     public String getName();
 
     /**
-     * Metadata to identify a theme Type  eg: standard , mobile  etc.
-     */
-     public String getType();
-    
-    /**
      * A description of the Theme.
      */
     public String getDescription();

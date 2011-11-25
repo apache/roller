@@ -28,8 +28,8 @@ import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.TemplateCode;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplateCode;
 
 
 /**
@@ -96,7 +96,7 @@ public class RollerResourceLoader extends ResourceLoader {
                         name + "\" not found");
             }
 			String contents;
-			WeblogTemplateCode templateCode = page.getTemplateCode(deviceType);
+			TemplateCode templateCode = page.getTemplateCode(deviceType);
 			if (templateCode != null) {
 				contents = templateCode.getTemplate(); 
 			} else {

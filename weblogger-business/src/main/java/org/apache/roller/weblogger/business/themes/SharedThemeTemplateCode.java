@@ -16,66 +16,32 @@
 * directory of this distribution.
 */
 
-package org.apache.roller.weblogger.pojos;
+package org.apache.roller.weblogger.business.themes;
 
+import org.apache.roller.weblogger.pojos.TemplateCode;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.roller.util.UUIDGenerator;
-
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 
 /**
  * A pojo that will maintain different template codes for one template
  */
+public class SharedThemeTemplateCode implements Serializable, TemplateCode {
 
-@Entity
-@Table(name = "rol_templatecode")
-@NamedQueries({
-@NamedQuery(name = "WeblogThemplateCode.getTemplateCodeByType",
-        query = "SELECT c FROM WeblogTemplateCode c WHERE c.templateId = ?1 AND c.type =?2"),
-
-     @NamedQuery(name = "WeblogThemplateCode.getTemplateCodesByTemplateId",
-        query = "SELECT c FROM WeblogTemplateCode c WHERE c.templateId = ?1 ")
-})
-public class WeblogTemplateCode implements Serializable, TemplateCode {
-
-
-    private static final long serialVersionUID = -1497618963802805151L;
-    private String id = UUIDGenerator.generateUUID();
     private String templateId = null;
-    //template contents
     private String template = null;
     private String type = null;
     private String ContentType = null;
     private String templateLanguage = null;
 
-    public WeblogTemplateCode(String templateId, String type){
+    public SharedThemeTemplateCode(String templateId, String type){
         this.templateId = templateId;
         this.type = type;
     }
 
-    public WeblogTemplateCode() {
+    public SharedThemeTemplateCode() {
     }
 
-    @Id
-    @Column(nullable = false, updatable = false)
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Basic
-    @Column(nullable = false, updatable = true, insertable = true)
 	@Override
     public String getTemplate() {
         return template;
@@ -86,8 +52,6 @@ public class WeblogTemplateCode implements Serializable, TemplateCode {
         this.template = template;
     }
 
-    @Basic
-    @Column(nullable = false, updatable = true, insertable = true)
 	@Override
     public String getTemplateId() {
         return templateId;
@@ -98,8 +62,6 @@ public class WeblogTemplateCode implements Serializable, TemplateCode {
         this.templateId = templateId;
     }
 
-    @Basic
-    @Column(nullable = false, updatable = true, insertable = true)
 	@Override
     public String getType() {
         return type;
@@ -115,8 +77,7 @@ public class WeblogTemplateCode implements Serializable, TemplateCode {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.templateId);
+        buf.append(this.templateId);
         buf.append(", [ ").append(this.template);
         buf.append("] , ").append(this.type);
         buf.append("}");
@@ -125,8 +86,8 @@ public class WeblogTemplateCode implements Serializable, TemplateCode {
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof WeblogTemplateCode != true) return false;
-        WeblogTemplateCode o = (WeblogTemplateCode)other;
+        if (other instanceof SharedThemeTemplateCode != true) return false;
+        SharedThemeTemplateCode o = (SharedThemeTemplateCode)other;
         return new EqualsBuilder()
             .append(templateId, o.getTemplateId())
             .append(template, o.getTemplate())
@@ -140,8 +101,6 @@ public class WeblogTemplateCode implements Serializable, TemplateCode {
             .toHashCode();
     }
 
-     @Basic
-    @Column(name ="templatelang",unique = false, updatable = true, insertable = true)
 	@Override
     public String getTemplateLanguage() {
         return templateLanguage;
@@ -152,8 +111,6 @@ public class WeblogTemplateCode implements Serializable, TemplateCode {
         this.templateLanguage = templateLanguage;
     }
 
-     @Basic
-    @Column(name= "contenttype", unique = false, updatable = true, insertable = true)
 	@Override
     public String getContentType() {
         return ContentType;
