@@ -38,11 +38,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "rol_templatecode")
 @NamedQueries({
-@NamedQuery(name = "WeblogThemplateCode.getTemplateCodeByType",
-        query = "SELECT c FROM WeblogTemplateCode c WHERE c.templateId = ?1 AND c.type =?2"),
+@NamedQuery(name =            "WeblogThemeTemplateCode.getTemplateCodeByType",
+        query = "SELECT c FROM WeblogThemeTemplateCode c WHERE c.templateId = ?1 AND c.type =?2"),
 
-     @NamedQuery(name = "WeblogThemplateCode.getTemplateCodesByTemplateId",
-        query = "SELECT c FROM WeblogTemplateCode c WHERE c.templateId = ?1 ")
+     @NamedQuery(name =       "WeblogThemeTemplateCode.getTemplateCodesByTemplateId",
+        query = "SELECT c FROM WeblogThemeTemplateCode c WHERE c.templateId = ?1 ")
 })
 public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 

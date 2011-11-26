@@ -618,7 +618,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             throw  new WebloggerException("Type is null");
         }
 
-        Query query = strategy.getNamedQuery("WeblogThemplateCode.getTemplateCodeByType");
+        Query query = strategy.getNamedQuery("WeblogThemeTemplateCode.getTemplateCodeByType");
         query.setParameter(1, templateId);
         query.setParameter(2, type);
         try {
@@ -731,7 +731,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     private void removeTemplateCodeObjs(WeblogTemplate page) throws WebloggerException {
-        Query codeQuery = strategy.getNamedQuery("WeblogThemplateCode.getTemplateCodesByTemplateId");
+        Query codeQuery = strategy.getNamedQuery("WeblogThemeTemplateCode.getTemplateCodesByTemplateId");
         codeQuery.setParameter(1, page.getId());
         List codeList = codeQuery.getResultList();
 
