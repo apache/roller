@@ -37,7 +37,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
@@ -141,8 +140,6 @@ public class PageServlet extends HttpServlet {
             }
         }
 
-
-
         Weblog weblog = null;
         boolean isSiteWide = false;
 
@@ -241,16 +238,6 @@ public class PageServlet extends HttpServlet {
         }
 
         log.debug("Looking for template to use for rendering");
-
-        // Get the deviceType from user agent
-        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
-
-        // for previews we explicitly set the deviceType attribute
-        if (request.getParameter("type") != null) {
-            deviceType = request.getParameter("type").equals("standard") 
-				? MobileDeviceRepository.DeviceType.standard
-				: MobileDeviceRepository.DeviceType.mobile;
-        }
 
         // figure out what template to use
         ThemeTemplate page = null;
@@ -463,7 +450,7 @@ public class PageServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer(page, deviceType);
+            renderer = RendererManager.getRenderer(page, pageRequest.getDeviceType());
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page " + page.getId(), e);

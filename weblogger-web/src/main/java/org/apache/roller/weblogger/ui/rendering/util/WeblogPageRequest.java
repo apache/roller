@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -95,7 +94,6 @@ public class WeblogPageRequest extends WeblogRequest {
             throw new InvalidRequestException("invalid destination for request, "+
                     request.getRequestURL());
         }
-        
         
         /*
          * parse path info
