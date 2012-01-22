@@ -5,7 +5,7 @@ This file exists at the top-level of the Roller source tree.
 Roller is made up of the following Maven projects:
 
   roller-project:         Top level project
-  roller-core:            The Core Roller component
+  roller-core:            Core Roller component
   planet-business:        Planet POJOs and business logic
   planet-web:             Planet webapp (under construction as before)
   weblogger-business:     Weblogger POJOs and business logic
