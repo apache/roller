@@ -408,6 +408,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public List getNextPrevEntries(WeblogEntry current, String catName,
             String locale, int maxEntries, boolean next)
             throws WebloggerException {
+
+		if (current == null) {
+			log.debug("WeblogEntry current cannot be null");			
+			return Collections.emptyList();
+		}
+
         Query query = null;
         List results = null;
         WeblogCategory category = null;
