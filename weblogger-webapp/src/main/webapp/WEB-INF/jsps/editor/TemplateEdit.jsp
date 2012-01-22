@@ -137,7 +137,7 @@
             <td>
                 <s:submit value="%{getText('pageForm.save')}" />
                 <input type="button" value='<s:text name="application.done"/>' 
-                    onclick='window.location=<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>' />
+                    onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'" />
             </td>
             <td align="right">
                 <!-- Add buttons to make this textarea taller or shorter -->
