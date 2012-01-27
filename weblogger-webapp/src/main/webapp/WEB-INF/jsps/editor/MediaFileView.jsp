@@ -447,7 +447,7 @@
                                 <input type="checkbox"
                                        name="selectedMediaFiles"
                                        value="<s:property value="#mediaFile.id"/>"/>
-                                <inut type="hidden" id="mediafileidentity"
+                                <input type="hidden" id="mediafileidentity"
                                        value="<s:property value='#mediaFile.id'/>">
 
                                 <str:truncateNicely lower="40" upper="50">
