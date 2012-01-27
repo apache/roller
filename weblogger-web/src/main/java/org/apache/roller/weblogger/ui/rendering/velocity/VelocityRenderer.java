@@ -90,7 +90,7 @@ public class VelocityRenderer implements Renderer {
             parseException = ex;
             
             // need to lookup error page template
-            velocityTemplate = RollerVelocity.getTemplate("templates/error-page.vm", deviceType);
+            velocityTemplate = RollerVelocity.getTemplate("error-page.vm", deviceType);
             
         } catch(Exception ex) {
             // some kind of generic/unknown exception, dump it to the logs

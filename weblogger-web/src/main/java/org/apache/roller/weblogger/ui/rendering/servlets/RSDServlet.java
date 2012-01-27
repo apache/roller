@@ -120,7 +120,7 @@ public class RSDServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate("templates/weblog/rsd.vm", "velocity");
+            Template template = new StaticTemplate("rsd.vm", "velocity");
             renderer = RendererManager.getRenderer(template, DeviceType.standard); 
         } catch(Exception e) {
             // nobody wants to render my content :(
