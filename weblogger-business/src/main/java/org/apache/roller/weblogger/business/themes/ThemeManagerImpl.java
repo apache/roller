@@ -17,7 +17,6 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.roller.weblogger.pojos.TemplateCode;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -31,14 +30,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.*;
+import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.business.MediaFileManager;
+import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.*;
+import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.pojos.TemplateCode;
+import org.apache.roller.weblogger.pojos.Theme;
+import org.apache.roller.weblogger.pojos.ThemeResource;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
+import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
@@ -245,15 +259,19 @@ public class ThemeManagerImpl implements ThemeManager {
 
             // create weblog template code objects and save them 
             for (String type : ThemeManagerImpl.getTypesList()) {
-                TemplateCode templateCode = template.getTemplateCode(type);
-                if (templateCode != null) {
-                    WeblogThemeTemplateCode weblogTemplateCode = new WeblogThemeTemplateCode(template.getId(), type);
-					weblogTemplateCode.setType(type);
-                    weblogTemplateCode.setTemplate(templateCode.getTemplate());
-					weblogTemplateCode.setTemplateLanguage(templateCode.getTemplateLanguage());
-					weblogTemplateCode.setContentType(templateCode.getContentType());
-                    WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(weblogTemplateCode);
-                }
+            	WeblogThemeTemplateCode weblogTemplateCode = (WeblogThemeTemplateCode) template
+            			.getTemplateCode(type);
+            	if (weblogTemplateCode == null) {
+            		TemplateCode templateCode = themeTemplate.getTemplateCode(type);
+            		if (templateCode != null) {
+            			weblogTemplateCode = new WeblogThemeTemplateCode(template.getId(), type);
+            			weblogTemplateCode.setType(type);
+            			weblogTemplateCode.setTemplate(templateCode.getTemplate());
+            			weblogTemplateCode.setTemplateLanguage(templateCode.getTemplateLanguage());
+            			weblogTemplateCode.setContentType(templateCode.getContentType());
+            			WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(weblogTemplateCode);
+            		}
+            	}
             }
         }
 
