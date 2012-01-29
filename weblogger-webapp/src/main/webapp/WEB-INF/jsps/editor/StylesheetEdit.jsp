@@ -16,6 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'></s:url>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/element/element-min.js'></s:url>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/tabview/tabview-min.js'></s:url>"></script>
 
 <p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
 
@@ -24,71 +27,43 @@
     <s:if test="!customTheme"><s:text name="stylesheetEdit.revertTip" /></s:if>
     <s:if test="$(type == null)"><s:param name="type">standard</s:param></s:if>
 </p>
-                
+
 <s:form action="stylesheetEdit!save">
     <s:hidden name="weblog" />
-    <s:hidden name="type"/>
-    <s:set name="type" value="type"/>
-
-     <table class="menuTabTable" cellspacing="0" >
-     <tr>
-          <s:if test="%{#type=='standard'}">
-        <td class="menuTabSelected">
-    </s:if>
-    <s:else>
-        <td class="menuTabUnselected">
-    </s:else>
-
-          <div class="menu-tr">
-           <s:url id="styleEdit" action="stylesheetEdit">
-               <s:param name="weblog" value="actionWeblog.handle" />
-               <s:param name="type">standard</s:param>
-           </s:url>
-	       <div class="menu-tl">&nbsp;&nbsp;<s:a href="%{styleEdit}">Standard</s:a>&nbsp;&nbsp; </div>
-	    </div></td>
-
-          <td class="menuTabSeparator"></td>
-        <s:if test="%{#type == 'mobile'}">
-        <td class="menuTabSelected">
-    </s:if>
-    <s:else>
-        <td class="menuTabUnselected">
-    </s:else>
-        <div class="menu-tr">
-
-           <s:url id="styleEdit" action="stylesheetEdit">
-                 <s:param name="weblog" value="actionWeblog.handle" />
-                 <s:param name="type">mobile</s:param>
-           </s:url>
-	       <div class="menu-tl">&nbsp;&nbsp;<s:a href="%{styleEdit}">Mobile</s:a>&nbsp;&nbsp; </div>
-	    </div></td>
-
-     </tr>
-        </table>
 
     <%-- ================================================================== --%>
-    <%-- Template editing area w/resize buttons --%>
-    <s:textarea name="contents" cols="80" rows="30" cssStyle="width:100%" />
+    <%-- Tabs for each of the two content areas: Standard and Mobile --%>
+
+    <div id="template-code-tabs" class="yui-navset">
+    <ul class="yui-nav">
+        <li class="selected"><a href="#tabStandard"><em>Standard</em></a></li>
+        <li><a href="#tabMobile"><em>Mobile</em></a></li>
+    </ul>            
+    <div class="yui-content">
+        <div id="tabStandard">
+            <%-- Standard Tab --%> 
+            <s:textarea name="contentsStandard" cols="80" rows="30" cssStyle="width:100%" />
+        </div>
+        <div id="tabMobile">
+            <%-- Standard Tab --%> 
+            <s:textarea name="contentsMobile" cols="80" rows="30" cssStyle="width:100%" />
+        </div>
+    </div>
+    </div>
     
-    <script type="text/javascript"><!--
-        if (getCookie("editorSize1") != null) {
-            document.getElementById('stylesheetEdit_contents').rows = getCookie("editorSize1");
+    <%-- ================================================================== --%>
+    <%-- Save, Close and Resize text area buttons--%>
+
+    <script type="text/javascript">
+    //<!--
+        if (getCookie("templateEditorRows") != null) {
+            document.getElementById('stylesheetEdit_contentsMobile').rows = getCookie("templateEditorRows");
+            document.getElementById('stylesheetEdit_contentsStandard').rows = getCookie("templateEditorRows");
+        } else {
+            document.getElementById('stylesheetEdit_contentsMobile').rows = 20;
+            document.getElementById('stylesheetEdit_contentsStandard').rows = 20;
         }
-        function changeSize(e, num) {
-            a = e.rows + num;
-            if (a > 0) e.rows = a;
-            var expires = new Date();
-            expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
-            setCookie("editorSize",e.rows,expires);
-        }
-        function changeSize1(e, num) {
-            a = e.rows + num;
-            if (a > 0) e.rows = a;
-            var expires = new Date();
-            expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
-            setCookie("editorSize1",e.rows,expires);
-        }
-    // --></script>
+    //--></script>
     <table style="width:100%">
         <tr>
             <td>
@@ -99,12 +74,29 @@
             </td>
             <td align="right">
                 <!-- Add buttons to make this textarea taller or shorter -->
-                <input type="button" name="taller" value=" &darr; " 
-                       onclick="changeSize1(document.getElementById('stylesheetEdit_contents'), 5)" />
-                <input type="button" name="shorter" value=" &uarr; " 
-                       onclick="changeSize1(document.getElementById('stylesheetEdit_contents'), -5)" />
+                <input type="button" name="taller" value=" &darr; " onclick="changeSize1(5)" />
+                <input type="button" name="shorter" value=" &uarr; " onclick="changeSize1(-5)" />
             </td>
         </tr>
     </table>
     
 </s:form>
+
+<script>
+//<!--
+var tabView = new YAHOO.widget.TabView('template-code-tabs');
+
+function changeSize1(num) {
+    var standardElem = document.getElementById('stylesheetEdit_contentsStandard');
+    var mobileElem = document.getElementById('stylesheetEdit_contentsMobile');
+    a = standardElem.rows + num;
+    if (a > 0) {
+        standardElem.rows = a;
+        mobileElem.rows = a;
+    }
+    var expires = new Date();
+    expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
+    setCookie("templateEditorRows", standardElem.rows, expires);
+}
+//-->
+</script>
