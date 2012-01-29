@@ -56,7 +56,6 @@
                 <s:url id="edit" action="templateEdit">
                     <s:param name="weblog" value="actionWeblog.handle" />
                     <s:param name="bean.id" value="#p.id" />
-                    <s:param name="bean.type">standard</s:param>
                 </s:url>
                 <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
             </td>
@@ -83,8 +82,8 @@
     </s:iterator>
     <s:if test="templates.isEmpty">
         <tr class="rollertable_odd">
-            <td style="vertical-align:middle" colspan="3" >
-                no templates defined
+            <td style="vertical-align:middle" colspan="4" >
+                <s:text name="pageForm.notemplates"/>
             </td>
         </tr>
     </s:if>

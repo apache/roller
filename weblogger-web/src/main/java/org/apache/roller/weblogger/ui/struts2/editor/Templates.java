@@ -187,14 +187,14 @@ public class Templates extends UIAction {
         
         // make sure name is non-null and within proper size
         if(StringUtils.isEmpty(getNewTmplName())) {
-            addError("TemplateEdit.error.nameNull");
+            addError("Template.error.nameNull");
         } else if(getNewTmplName().length() > 255) {
-            addError("TemplateEdit.error.nameSize");
+            addError("Template.error.nameSize");
         }
         
         // make sure action is a valid
         if(StringUtils.isEmpty(getNewTmplAction())) {
-            addError("TemplateEdit.error.actionNull");
+            addError("Template.error.actionNull");
         }
         
         // check if template by that name already exists

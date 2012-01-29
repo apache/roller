@@ -44,8 +44,12 @@
 
 <p class="pagetip">
     <s:text name="stylesheetEdit.tip" />
-    <s:if test="!customTheme"><s:text name="stylesheetEdit.revertTip" /></s:if>
-    <s:if test="$(type == null)"><s:param name="type">standard</s:param></s:if>
+    <s:if test="!customTheme">
+        <s:text name="stylesheetEdit.revertTip" />
+        <s:if test="customStylesheet">
+            <br /><br /><s:text name="stylesheetEdit.revertTip1" />
+        </s:if>
+    </s:if>
 </p>
 
 <s:form action="stylesheetEdit!save">

@@ -50,9 +50,6 @@ public class TemplateEdit extends UIAction {
     // the template we are working on
     private WeblogTemplate template = null;
 
-    private String type = null;
-
-
     public TemplateEdit() {
         this.actionName = "templateEdit";
         this.desiredMenu = "editor";
@@ -209,15 +206,5 @@ public class TemplateEdit extends UIAction {
 
     public void setTemplate(WeblogTemplate template) {
         this.template = template;
-
-    }
-
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 }
