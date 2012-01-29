@@ -20,13 +20,14 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -83,15 +84,14 @@ public class TemplateRemove extends UIAction {
     public String remove() {
         
         if(getTemplate() != null) try {
-            if(!getTemplate().isRequired()) {
-                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            if(!getTemplate().isRequired() || !WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
 
                 // notify cache
                 CacheManager.invalidate(getTemplate());
-
+                
                 WebloggerFactory.getWeblogger().getWeblogManager().removePage(getTemplate());
                 WebloggerFactory.getWeblogger().flush();
-                                
+                
                 return SUCCESS;
             } else {
                 // TODO: i18n

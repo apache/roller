@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Theme;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -59,6 +60,8 @@ public class ThemeEdit extends UIAction {
     // the chosen import theme id
     private String importThemeId = null;
     
+	// Do we have a custom stylesheet already
+	private boolean customStylesheet = false;
     
     public ThemeEdit() {
         this.actionName = "themeEdit";
@@ -73,6 +76,28 @@ public class ThemeEdit extends UIAction {
     
     
     public void myPrepare() {
+    	
+    	// See if we have a custom style sheet from a custom theme.
+    	try {
+    		if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())
+    				&& StringUtils.isNotEmpty(getActionWeblog()
+    						.getCustomStylesheetPath())) {
+    			customStylesheet = true;
+    		} else if (!WeblogTheme.CUSTOM.equals(getActionWeblog()
+    				.getEditorTheme())) {
+
+    			ThemeTemplate override =WebloggerFactory.getWeblogger()
+    					.getWeblogManager().getPageByLink(getActionWeblog(), getActionWeblog().getTheme().getStylesheet().getLink());
+
+    			if(override != null) {
+    				customStylesheet = true;
+    			}
+    		}
+    	} catch (WebloggerException ex) {
+    		log.error("Error looking up stylesheet on weblog - "
+    				+ getActionWeblog().getHandle(), ex);
+    	}
+    	
         ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
         setThemes(themeMgr.getEnabledThemesList());
     }
@@ -261,5 +286,24 @@ public class ThemeEdit extends UIAction {
     public void setImportThemeId(String importThemeId) {
         this.importThemeId = importThemeId;
     }
+    
+    /**
+	 * Checks if is custom stylesheet.
+	 * 
+	 * @return true, if checks if is custom stylesheet
+	 */
+	public boolean isCustomStylesheet() {
+		return customStylesheet;
+	}
+
+	/**
+	 * Sets the custom stylesheet.
+	 * 
+	 * @param customStylesheet
+	 *            the custom stylesheet
+	 */
+	public void setCustomStylesheet(boolean customStylesheet) {
+		this.customStylesheet = customStylesheet;
+	}
     
 }

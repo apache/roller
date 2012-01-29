@@ -20,6 +20,26 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/element/element-min.js'></s:url>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/tabview/tabview-min.js'></s:url>"></script>
 
+<script type="text/javascript">
+// <!--
+	function revertStylesheet() {
+		if (window.confirm('<s:text name="stylesheetEdit.confirmRevert"/>')) {
+			document.stylesheetEdit.action = "<s:url action='stylesheetEdit!revert' />";
+			document.stylesheetEdit.submit();
+		}
+	};
+	<s:if test="%{customStylesheet}">
+		function deleteStylesheet() {
+			if (window.confirm('<s:text name="stylesheetEdit.confirmDelete"/>')) {
+				document.stylesheetEdit.action = "<s:url action='stylesheetEdit!delete' />";
+				document.stylesheetEdit.submit();
+			}
+		};
+	</s:if>
+	
+// -->
+</script>
+
 <p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
 
 <p class="pagetip">
@@ -69,7 +89,11 @@
             <td>
                 <s:submit value="%{getText('stylesheetEdit.save')}" />&nbsp;&nbsp;
                 <s:if test="!customTheme">
-                    <s:submit value="%{getText('stylesheetEdit.revert')}" action="stylesheetEdit!revert" />
+                    <s:submit value="%{getText('stylesheetEdit.revert')}" onclick="revertStylesheet();return false;" />
+                </s:if>
+                <%-- Only delete if we have no custom templates ie website.customStylesheetPath=null --%>
+                <s:if test="customStylesheet">
+                    <s:submit value="%{getText('stylesheetEdit.delete')}" onclick="deleteStylesheet();return false;" />
                 </s:if>
             </td>
             <td align="right">

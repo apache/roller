@@ -64,9 +64,9 @@
             <td style="vertical-align:middle"><s:property value="#p.action" /></td>
 
             <td style="vertical-align:middle"><s:property value="#p.description" /></td>
-                        
+
             <td class="center" style="vertical-align:middle">
-                 <s:if test="!#p.required">
+                 <s:if test="!#p.required || !customTheme" >
                      <s:url id="removeUrl" action="templateRemove">
                          <s:param name="weblog" value="actionWeblog.handle"/>
                          <s:param name="removeId" value="#p.id"/>

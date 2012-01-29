@@ -22,14 +22,17 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.TemplateCode;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -52,6 +55,9 @@ public class StylesheetEdit extends UIAction {
 	// the contents of the stylesheet override
 	private String contentsStandard = null;
 	private String contentsMobile = null;
+
+	// Do we have a custom stylesheet already for a custom theme
+	private boolean customStylesheet = false;
 
 	public StylesheetEdit() {
 		this.actionName = "stylesheetEdit";
@@ -124,6 +130,18 @@ public class StylesheetEdit extends UIAction {
 
 					setTemplate(stylesheetTmpl);
 				}
+				
+				if (!WeblogTheme.CUSTOM.equals(getActionWeblog()
+	    				.getEditorTheme())) {
+
+	    			ThemeTemplate override =WebloggerFactory.getWeblogger()
+	    					.getWeblogManager().getPageByLink(getActionWeblog(), getActionWeblog().getTheme().getStylesheet().getLink());
+
+	    			if(override != null) {
+	    				customStylesheet = true;
+	    			}
+				}
+				
 			} catch (WebloggerException ex) {
 				log.error(
 						"Error finding/adding stylesheet tempalate from weblog - "
@@ -313,6 +331,65 @@ public class StylesheetEdit extends UIAction {
 	}
 
 	/**
+	 * set theme to default stylesheet, ie delete it.
+	 */
+	public String delete() {
+
+		if (getTemplate() == null) {
+			log.error("Unable to locate stylesheet template");
+			addError("error.recordnotfound");
+			return ERROR;
+		}
+
+		// make sure we are still using a shared theme so that deleting is
+		// possible
+		if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
+			log.error("Unable to delete stylesheet");
+			addError("stylesheetEdit.error.customTheme");
+		}
+
+		if (!hasActionErrors())
+			try {
+
+				WeblogTemplate stylesheet = getTemplate();
+
+				// Delete template and flush
+				WeblogManager mgr = WebloggerFactory.getWeblogger()
+						.getWeblogManager();
+
+				// Remove template and page codes
+				mgr.removePage(stylesheet);
+
+				Weblog weblog = getActionWeblog();
+
+				// Clear for next custom theme
+				weblog.setCustomStylesheetPath(null);
+
+				// save updated weblog and flush
+				mgr.saveWeblog(weblog);
+
+				// notify caches
+				CacheManager.invalidate(stylesheet);
+
+				// Flush for operation
+				WebloggerFactory.getWeblogger().flush();
+
+				// success message
+				addMessage("stylesheetEdit.default.success",
+						stylesheet.getName());
+
+			} catch (Exception e) {
+				log.error("Error deleting stylesheet template for weblog - "
+						+ getActionWeblog().getHandle(), e);
+
+				return ERROR;
+			}
+
+		return "delete";
+
+	}
+
+	/**
 	 * Checks if is custom theme.
 	 * 
 	 * @return true, if is custom theme
@@ -376,5 +453,24 @@ public class StylesheetEdit extends UIAction {
 	 */
 	public void setContentsMobile(String contents) {
 		this.contentsMobile = contents;
+	}
+
+	/**
+	 * Checks if is custom stylesheet.
+	 * 
+	 * @return true, if checks if is custom stylesheet
+	 */
+	public boolean isCustomStylesheet() {
+		return customStylesheet;
+	}
+
+	/**
+	 * Sets the custom stylesheet.
+	 * 
+	 * @param customStylesheet
+	 *            the custom stylesheet
+	 */
+	public void setCustomStylesheet(boolean customStylesheet) {
+		this.customStylesheet = customStylesheet;
 	}
 }

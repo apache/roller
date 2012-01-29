@@ -18,5 +18,11 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
-
-<div class="notification"><s:text name="stylesheetEdit.noStylesheetOverride" /></div>
+<div class="notification">
+	<s:if test="customStylesheet">
+		<s:text name="stylesheetEdit.default.noStylesheetOverride" />
+	</s:if>
+	<s:else>
+		<s:text name="stylesheetEdit.noStylesheetOverride" />
+	</s:else>
+</div>
