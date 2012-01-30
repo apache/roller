@@ -26,7 +26,6 @@ menu.css: CSS layout and styles for Roller tabbed menu
 div.menu-tl {
     margin: 0px; 
     padding: 0px; 
-    height: 100%;
     width: 100%;
     background: url("../images/menutab-tl.gif") no-repeat top left;   
     background-repeat: no-repeat;
@@ -36,7 +35,6 @@ div.menu-tl {
 div.menu-tr {
     margin: 0px; 
     padding: 0px; 
-    height: 100%;
     width: 100%;
     background: url("../images/menutab-tr.gif") no-repeat top right;    
     background-repeat: no-repeat;
@@ -46,6 +44,10 @@ td div.menu-tr div.menu-tl a {
    display: table-cell;
    vertical-align: middle;
    padding: 3px 5px 0px 5px;
+}
+
+td .menu-tl, td .menu-tr {
+	height: 100%;
 }
 
 /* ----------------------------------------------------------------------
