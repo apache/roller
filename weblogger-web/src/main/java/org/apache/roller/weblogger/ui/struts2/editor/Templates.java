@@ -168,9 +168,6 @@ public class Templates extends UIAction {
             
             // flush results to db
             WebloggerFactory.getWeblogger().flush();
-
-            // add roller generated mobile template
-            //addMobileTemplate();
             
         } catch (WebloggerException ex) {
             log.error("Error adding new template for weblog - "+getActionWeblog().getHandle(), ex);

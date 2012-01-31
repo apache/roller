@@ -142,8 +142,6 @@ public class TemplateEdit extends UIAction {
             // notify caches
             CacheManager.invalidate(template);
 
-            // synchronizeThemes();
-
             // success message
             addMessage("pageForm.save.success", template.getName());
 

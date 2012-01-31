@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -130,18 +129,23 @@ public class StylesheetEdit extends UIAction {
 
 					setTemplate(stylesheetTmpl);
 				}
-				
+
 				if (!WeblogTheme.CUSTOM.equals(getActionWeblog()
-	    				.getEditorTheme())) {
+						.getEditorTheme())) {
 
-	    			ThemeTemplate override =WebloggerFactory.getWeblogger()
-	    					.getWeblogManager().getPageByLink(getActionWeblog(), getActionWeblog().getTheme().getStylesheet().getLink());
+					ThemeTemplate override = WebloggerFactory
+							.getWeblogger()
+							.getWeblogManager()
+							.getPageByLink(
+									getActionWeblog(),
+									getActionWeblog().getTheme()
+											.getStylesheet().getLink());
 
-	    			if(override != null) {
-	    				customStylesheet = true;
-	    			}
+					if (override != null) {
+						customStylesheet = true;
+					}
 				}
-				
+
 			} catch (WebloggerException ex) {
 				log.error(
 						"Error finding/adding stylesheet tempalate from weblog - "
@@ -230,7 +234,7 @@ public class StylesheetEdit extends UIAction {
 							.saveTemplateCode(tc);
 				}
 
-				// TODO do we want to set the contents on the here?
+				// TODO do we still want to set the contents here?
 				stylesheet.setContents(getContentsStandard());
 
 				// save template and flush
@@ -296,7 +300,7 @@ public class StylesheetEdit extends UIAction {
 					WebloggerFactory.getWeblogger().getWeblogManager()
 							.saveTemplateCode(existingTemplateCode);
 
-					// TODO do we want to set the contents on the here?
+					// TODO do we still want to set the contents here?
 					stylesheet.setContents(templateCode.getTemplate());
 				}
 				if (stylesheet.getTemplateCode("mobile") != null) {
