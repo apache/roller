@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -130,8 +131,10 @@ public class StylesheetEdit extends UIAction {
 					setTemplate(stylesheetTmpl);
 				}
 
+				// See if we have a custom style sheet from a custom theme.
 				if (!WeblogTheme.CUSTOM.equals(getActionWeblog()
-						.getEditorTheme())) {
+						.getEditorTheme())
+						&& getActionWeblog().getTheme().getStylesheet() != null) {
 
 					ThemeTemplate override = WebloggerFactory
 							.getWeblogger()
