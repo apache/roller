@@ -90,7 +90,7 @@ Each menu or menu item is governed by four attrbibutes:
                    name="tabbedmenu.website.pages" 
                    globalPerms="login"
                    weblogPerms="admin" 
-                   subactions="templateAdd,templateEdit,templateRemove" />
+                   subactions="templateAdd,templateEdit,templateRemove,templatesRemove" />
                    
     </menu>
     

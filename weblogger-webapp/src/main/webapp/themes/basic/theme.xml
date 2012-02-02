@@ -24,7 +24,7 @@
     
     <!-- templates -->
     <template action="weblog">
-        <name>weblog</name>
+        <name>Weblog</name>
         <description>weblog</description>
 	<link></link>
         <navbar>false</navbar>

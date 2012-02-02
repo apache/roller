@@ -53,7 +53,6 @@ public class Templates extends UIAction {
     private String newTmplAction = null;
     private String type = null;
     
-    
     public Templates() {
         this.actionName = "templates";
         this.desiredMenu = "editor";
@@ -98,6 +97,8 @@ public class Templates extends UIAction {
                         availableActions.remove(tmpPage.getAction());
                     }
                 }
+            } else if (pages.isEmpty()) {
+                availableActions.add(WeblogTemplate.ACTION_WEBLOG);
             }
             setAvailableActions(availableActions);
 
@@ -168,6 +169,10 @@ public class Templates extends UIAction {
             
             // flush results to db
             WebloggerFactory.getWeblogger().flush();
+            
+            // reset form fields
+            setNewTmplName(null);
+            setNewTmplAction(null);
             
         } catch (WebloggerException ex) {
             log.error("Error adding new template for weblog - "+getActionWeblog().getHandle(), ex);
@@ -247,6 +252,5 @@ public class Templates extends UIAction {
     public void setNewTmplAction(String newTmplAction) {
         this.newTmplAction = newTmplAction;
     }
-
 
 }

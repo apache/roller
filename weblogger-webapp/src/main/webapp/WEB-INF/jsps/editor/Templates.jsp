@@ -30,13 +30,17 @@
     <p><s:text name="pagesForm.themesReminder"><s:param value="actionWeblog.editorTheme"/></s:text></p>
 </s:if>
 
+<s:form action="templatesRemove">
+<s:hidden name="weblog" value="%{actionWeblog.handle}" />
+
 <%-- table of pages --%>
 <table class="rollertable">
     <tr>
         <th width="30%"><s:text name="pagesForm.name" /></th>
         <th width="10"><s:text name="pagesForm.action" /></th>
-        <th width="60%"><s:text name="pagesForm.description" /></th>
+        <th width="55%"><s:text name="pagesForm.description" /></th>
         <th width="10"><s:text name="pagesForm.remove" /></th>
+        <th width="5"><input type="checkbox" onclick="toggleFunction(this.checked,'idSelections');"/></th>
     </tr>
     <s:iterator id="p" value="templates" status="rowstatus">
         <s:if test="#rowstatus.odd == true">
@@ -77,14 +81,31 @@
                         title='<s:text name="pagesForm.required"/>' />
                  </s:else>
             </td>
-
+            <td class="center" style="vertical-align:middle">
+                <s:if test="!#p.required || !customTheme" >
+                    <input type="checkbox" name="idSelections" value="<s:property value="#p.id" />" />
+                </s:if>
+                 <s:else>
+                    <input type="checkbox" name="idSelections" value="<s:property value="#p.id" />" disabled="disabled"/>
+                 </s:else>
+            </td>
         </tr>
     </s:iterator>
     <s:if test="templates.isEmpty">
         <tr class="rollertable_odd">
-            <td style="vertical-align:middle" colspan="4" >
+            <td style="vertical-align:middle" colspan="5" >
                 <s:text name="pageForm.notemplates"/>
             </td>
         </tr>
     </s:if>
 </table>
+
+<br/>
+
+<s:if test="!templates.isEmpty">
+	<div class="control">
+		<s:submit value="%{getText('pagesForm.deleteselected')}" />
+	</div>
+</s:if>
+
+</s:form>
