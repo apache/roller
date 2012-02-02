@@ -34,223 +34,254 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * Templates listing page.
  */
 public class Templates extends UIAction {
-    
-    private static Log log = LogFactory.getLog(Templates.class);
-    
-    // list of templates to display
-    private List<WeblogTemplate> templates = Collections.EMPTY_LIST;
-    
-    // list of template action types user is allowed to create
-    private List availableActions = Collections.EMPTY_LIST;
-    
-    // name and action of new template if we are adding a template
-    private String newTmplName = null;
-    private String newTmplAction = null;
-    private String type = null;
-    
-    public Templates() {
-        this.actionName = "templates";
-        this.desiredMenu = "editor";
-        this.pageTitle = "pagesForm.title";
-    }
-    
-    
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
-    }
-    
-    
-    public String execute() {
-        
-        // query for templates list
-        try {
-            
-             // get current list of templates, minus custom stylesheet
-            List<WeblogTemplate> raw = WebloggerFactory.getWeblogger().getWeblogManager().getPages(getActionWeblog());
-            List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
-            pages.addAll(raw);
-            if(getActionWeblog().getTheme().getStylesheet() != null) {
-                pages.remove(WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(getActionWeblog(),
-                        getActionWeblog().getTheme().getStylesheet().getLink()));
-            }
-            setTemplates(pages);
-            
-            // build list of action types that may be added
-            List availableActions = new ArrayList();
-            availableActions.add(WeblogTemplate.ACTION_CUSTOM);
-            
-            if(WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-                // if the weblog is using a custom theme then determine which
-                // action templates are still available to be created
-                availableActions.add(WeblogTemplate.ACTION_PERMALINK);
-                availableActions.add(WeblogTemplate.ACTION_SEARCH);
-                availableActions.add(WeblogTemplate.ACTION_WEBLOG);
-                availableActions.add(WeblogTemplate.ACTION_TAGSINDEX);
-                
-                for(WeblogTemplate tmpPage : getTemplates()) {
-                    if(!WeblogTemplate.ACTION_CUSTOM.equals(tmpPage.getAction())) {
-                        availableActions.remove(tmpPage.getAction());
-                    }
-                }
-            } else if (pages.isEmpty()) {
-                availableActions.add(WeblogTemplate.ACTION_WEBLOG);
-            }
-            setAvailableActions(availableActions);
 
-        } catch (WebloggerException ex) {
-            log.error("Error getting templates for weblog - "+getActionWeblog().getHandle(), ex);
-            // TODO: i18n
-            addError("Error getting template list");
-        }
-        
-        return LIST;
-    }
-    
-    
-    /**
-     * Save a new template.
-     */
-    public String add() {
-        
-        // validation
-        myValidate();
-        
-        if(!hasActionErrors()) try {
-            
-            WeblogTemplate newTemplate = new WeblogTemplate();
-            newTemplate.setWebsite(getActionWeblog());
-            newTemplate.setAction(getNewTmplAction());
-            newTemplate.setName(getNewTmplName());
-            newTemplate.setDescription(newTemplate.getName());
-            newTemplate.setContents(getText("pageForm.newTemplateContent"));
-            newTemplate.setHidden(false);
-            newTemplate.setNavbar(false);
-            newTemplate.setLastModified( new Date() );
+	private static Log log = LogFactory.getLog(Templates.class);
 
-            if(WeblogTemplate.ACTION_CUSTOM.equals(getNewTmplAction())){
-                newTemplate.setLink(getNewTmplName());
-            }
-            
-            // all templates start out as velocity templates
-            newTemplate.setTemplateLanguage("velocity");
-            
-            // for now, all templates just use _decorator
-            if(!"_decorator".equals(newTemplate.getName())) {
-                newTemplate.setDecoratorName("_decorator");
-            }
-            
-            // save the new Template
-            WebloggerFactory.getWeblogger().getWeblogManager().savePage( newTemplate );
+	// list of templates to display
+	private List<WeblogTemplate> templates = Collections.EMPTY_LIST;
 
-            //Create weblog template codes for available types.
-            WeblogThemeTemplateCode standardTemplCode = new WeblogThemeTemplateCode(newTemplate.getId(),"standard");
-            WeblogThemeTemplateCode mobileTemplCode = new WeblogThemeTemplateCode(newTemplate.getId(),"mobile");
+	// list of template action types user is allowed to create
+	private List availableActions = Collections.EMPTY_LIST;
 
-            standardTemplCode.setTemplate(newTemplate.getContents());
-            standardTemplCode.setTemplateLanguage("velocity");
+	// name and action of new template if we are adding a template
+	private String newTmplName = null;
+	private String newTmplAction = null;
+	private String type = null;
 
-            mobileTemplCode.setTemplate(newTemplate.getContents());
-            mobileTemplCode.setTemplateLanguage("velocity");
+	public Templates() {
+		this.actionName = "templates";
+		this.desiredMenu = "editor";
+		this.pageTitle = "pagesForm.title";
+	}
 
-            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(standardTemplCode);
-            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(mobileTemplCode);
+	public List<String> requiredWeblogPermissionActions() {
+		return Collections.singletonList(WeblogPermission.ADMIN);
+	}
 
-            // if this person happened to create a Weblog template from
-            // scratch then make sure and set the defaultPageId
-            if(WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
-                getActionWeblog().setDefaultPageId(newTemplate.getId());
-                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(getActionWeblog());
-            }
-            
-            // flush results to db
-            WebloggerFactory.getWeblogger().flush();
-            
-            // reset form fields
-            setNewTmplName(null);
-            setNewTmplAction(null);
-            
-        } catch (WebloggerException ex) {
-            log.error("Error adding new template for weblog - "+getActionWeblog().getHandle(), ex);
-            // TODO: i18n
-            addError("Error adding new template");
-        }
-        
-        return execute();
-    }
+	public String execute() {
 
-    
-    // validation when adding a new template
-    private void myValidate() {
-        
-        // make sure name is non-null and within proper size
-        if(StringUtils.isEmpty(getNewTmplName())) {
-            addError("Template.error.nameNull");
-        } else if(getNewTmplName().length() > 255) {
-            addError("Template.error.nameSize");
-        }
-        
-        // make sure action is a valid
-        if(StringUtils.isEmpty(getNewTmplAction())) {
-            addError("Template.error.actionNull");
-        }
-        
-        // check if template by that name already exists
-        try {
-            WeblogTemplate existingPage = WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(getActionWeblog(), getNewTmplName());
-            if(existingPage != null) {
-                addError("pagesForm.error.alreadyExists", getNewTmplName());
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error checking for existing template", ex);
-        }
+		// query for templates list
+		try {
 
+			// get current list of templates, minus custom stylesheet
+			List<WeblogTemplate> raw = WebloggerFactory.getWeblogger()
+					.getWeblogManager().getPages(getActionWeblog());
+			List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
+			pages.addAll(raw);
+			// Remove style sheet from list so not to show when theme is
+			// selected in shared theme mode
+			if (getActionWeblog().getTheme().getStylesheet() != null) {
+				pages.remove(WebloggerFactory
+						.getWeblogger()
+						.getWeblogManager()
+						.getPageByLink(
+								getActionWeblog(),
+								getActionWeblog().getTheme().getStylesheet()
+										.getLink()));
+			}
+			setTemplates(pages);
 
-    }
-    
-    /**
-     * Checks if is custom theme.
-     *
-     * @return true, if is custom theme
-     */
-    public boolean isCustomTheme() {
-        return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
-    }
-    
-    public List<WeblogTemplate> getTemplates() {
-        return templates;
-    }
+			// build list of action types that may be added
+			List availableActions = new ArrayList();
+			availableActions.add(WeblogTemplate.ACTION_CUSTOM);
 
-    public void setTemplates(List<WeblogTemplate> templates) {
-        this.templates = templates;
-    }
+			if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
+				// if the weblog is using a custom theme then determine which
+				// action templates are still available to be created
+				availableActions.add(WeblogTemplate.ACTION_PERMALINK);
+				availableActions.add(WeblogTemplate.ACTION_SEARCH);
+				availableActions.add(WeblogTemplate.ACTION_WEBLOG);
+				availableActions.add(WeblogTemplate.ACTION_TAGSINDEX);
 
-    public List getAvailableActions() {
-        return availableActions;
-    }
+				for (WeblogTemplate tmpPage : getTemplates()) {
+					if (!WeblogTemplate.ACTION_CUSTOM.equals(tmpPage
+							.getAction())) {
+						availableActions.remove(tmpPage.getAction());
+					}
+				}
+			} else {
+				// Make sure we have an option for the default web page
+				availableActions.add(WeblogTemplate.ACTION_WEBLOG);
+				setNewTmplAction(WeblogTemplate.ACTION_WEBLOG);
+				for (WeblogTemplate tmpPage : getTemplates()) {
+					if (WeblogTemplate.ACTION_WEBLOG
+							.equals(tmpPage.getAction())) {
+						availableActions.remove(WeblogTemplate.ACTION_WEBLOG);
+						setNewTmplAction(null);
+						break;
+					}
+				}
+			}
+			setAvailableActions(availableActions);
 
-    public void setAvailableActions(List availableActions) {
-        this.availableActions = availableActions;
-    }
-    
-    public String getNewTmplName() {
-        return newTmplName;
-    }
+		} catch (WebloggerException ex) {
+			log.error("Error getting templates for weblog - "
+					+ getActionWeblog().getHandle(), ex);
+			// TODO: i18n
+			addError("Error getting template list");
+		}
 
-    public void setNewTmplName(String newTmplName) {
-        this.newTmplName = newTmplName;
-    }
+		return LIST;
+	}
 
-    public String getNewTmplAction() {
-        return newTmplAction;
-    }
+	/**
+	 * Save a new template.
+	 */
+	public String add() {
 
-    public void setNewTmplAction(String newTmplAction) {
-        this.newTmplAction = newTmplAction;
-    }
+		// validation
+		myValidate();
+
+		if (!hasActionErrors())
+			try {
+
+				WeblogTemplate newTemplate = new WeblogTemplate();
+				newTemplate.setWebsite(getActionWeblog());
+				newTemplate.setAction(getNewTmplAction());
+				newTemplate.setName(getNewTmplName());
+				newTemplate.setDescription(newTemplate.getName());
+				newTemplate.setContents(getText("pageForm.newTemplateContent"));
+				newTemplate.setHidden(false);
+				newTemplate.setNavbar(false);
+				newTemplate.setLastModified(new Date());
+
+				if (WeblogTemplate.ACTION_CUSTOM.equals(getNewTmplAction())) {
+					newTemplate.setLink(getNewTmplName());
+				}
+
+				// Make sure we have always have a Weblog main page. Stops
+				// deleting main page in custom theme mode also.
+				if (WeblogTemplate.ACTION_WEBLOG.equals(getNewTmplAction())) {
+					newTemplate.setName(WeblogTemplate.DEFAULT_PAGE);
+				}
+
+				// all templates start out as velocity templates
+				newTemplate.setTemplateLanguage("velocity");
+
+				// for now, all templates just use _decorator
+				if (!"_decorator".equals(newTemplate.getName())) {
+					newTemplate.setDecoratorName("_decorator");
+				}
+
+				// save the new Template
+				WebloggerFactory.getWeblogger().getWeblogManager()
+						.savePage(newTemplate);
+
+				// Create weblog template codes for available types.
+				WeblogThemeTemplateCode standardTemplCode = new WeblogThemeTemplateCode(
+						newTemplate.getId(), "standard");
+				WeblogThemeTemplateCode mobileTemplCode = new WeblogThemeTemplateCode(
+						newTemplate.getId(), "mobile");
+
+				standardTemplCode.setTemplate(newTemplate.getContents());
+				standardTemplCode.setTemplateLanguage("velocity");
+
+				mobileTemplCode.setTemplate(newTemplate.getContents());
+				mobileTemplCode.setTemplateLanguage("velocity");
+
+				WebloggerFactory.getWeblogger().getWeblogManager()
+						.saveTemplateCode(standardTemplCode);
+				WebloggerFactory.getWeblogger().getWeblogManager()
+						.saveTemplateCode(mobileTemplCode);
+
+				// if this person happened to create a Weblog template from
+				// scratch then make sure and set the defaultPageId. What does
+				// this do????
+				if (WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
+					getActionWeblog().setDefaultPageId(newTemplate.getId());
+					WebloggerFactory.getWeblogger().getWeblogManager()
+							.saveWeblog(getActionWeblog());
+				}
+
+				// flush results to db
+				WebloggerFactory.getWeblogger().flush();
+
+				// reset form fields
+				setNewTmplName(null);
+				setNewTmplAction(null);
+
+			} catch (WebloggerException ex) {
+				log.error("Error adding new template for weblog - "
+						+ getActionWeblog().getHandle(), ex);
+				// TODO: i18n
+				addError("Error adding new template");
+			}
+
+		return execute();
+	}
+
+	// validation when adding a new template
+	private void myValidate() {
+
+		// make sure name is non-null and within proper size
+		if (StringUtils.isEmpty(getNewTmplName())) {
+			addError("Template.error.nameNull");
+		} else if (getNewTmplName().length() > 255) {
+			addError("Template.error.nameSize");
+		}
+
+		// make sure action is a valid
+		if (StringUtils.isEmpty(getNewTmplAction())) {
+			addError("Template.error.actionNull");
+		}
+
+		// check if template by that name already exists
+		try {
+			WeblogTemplate existingPage = WebloggerFactory.getWeblogger()
+					.getWeblogManager()
+					.getPageByName(getActionWeblog(), getNewTmplName());
+			if (existingPage != null) {
+				addError("pagesForm.error.alreadyExists", getNewTmplName());
+			}
+		} catch (WebloggerException ex) {
+			log.error("Error checking for existing template", ex);
+		}
+
+	}
+
+	/**
+	 * Checks if is custom theme.
+	 * 
+	 * @return true, if is custom theme
+	 */
+	public boolean isCustomTheme() {
+		return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
+	}
+
+	public List<WeblogTemplate> getTemplates() {
+		return templates;
+	}
+
+	public void setTemplates(List<WeblogTemplate> templates) {
+		this.templates = templates;
+	}
+
+	public List getAvailableActions() {
+		return availableActions;
+	}
+
+	public void setAvailableActions(List availableActions) {
+		this.availableActions = availableActions;
+	}
+
+	public String getNewTmplName() {
+		return newTmplName;
+	}
+
+	public void setNewTmplName(String newTmplName) {
+		this.newTmplName = newTmplName;
+	}
+
+	public String getNewTmplAction() {
+		return newTmplAction;
+	}
+
+	public void setNewTmplAction(String newTmplAction) {
+		this.newTmplAction = newTmplAction;
+	}
 
 }

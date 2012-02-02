@@ -25,6 +25,11 @@
     <s:text name="pageRemove.youSure"> 
         <s:param value="template.name" />
     </s:text>
+    <br/>
+	<br/>
+	<span class="warning">
+		<s:text name="pageRemoves.youSureWarning" />
+	</span>
 </p>
 
 <p>

@@ -128,12 +128,12 @@ public class TemplatesRemove extends UIAction {
 
 			try {
 
-				WeblogManager mgr = WebloggerFactory.getWeblogger()
-						.getWeblogManager();
-
 				String[] idsToDelete = Utilities.stringToStringArray(getIds(),
 						",");
 				if (idsToDelete != null && idsToDelete.length > 0) {
+
+					WeblogManager mgr = WebloggerFactory.getWeblogger()
+							.getWeblogManager();
 
 					Weblog weblog = getActionWeblog();
 					WeblogTemplate template = null;
@@ -147,14 +147,15 @@ public class TemplatesRemove extends UIAction {
 											.equals(getActionWeblog()
 													.getEditorTheme())) {
 
-								// if weblog template remove custom style sheet also
+								// if weblog template remove custom style sheet
+								// also
 								if (template.getName().equals(
 										WeblogTemplate.DEFAULT_PAGE)) {
 
 									ThemeTemplate stylesheet = getActionWeblog()
 											.getTheme().getStylesheet();
 
-									// Delete style sheet if the same if found
+									// Delete style sheet if the same name
 									if (stylesheet != null
 											&& getActionWeblog().getTheme()
 													.getStylesheet() != null
@@ -175,6 +176,7 @@ public class TemplatesRemove extends UIAction {
 
 									// Clear for next custom theme
 									weblog.setCustomStylesheetPath(null);
+									weblog.setDefaultPageId(null);
 
 								}
 
@@ -186,13 +188,11 @@ public class TemplatesRemove extends UIAction {
 
 					// Save for changes
 					mgr.saveWeblog(weblog);
-					
+
 					WebloggerFactory.getWeblogger().flush();
 
 					// notify caches
 					CacheManager.invalidate(getActionWeblog());
-
-					addMessage("referers.deletedTemplates");
 
 				}
 
