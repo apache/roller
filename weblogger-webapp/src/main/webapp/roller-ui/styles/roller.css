@@ -515,14 +515,14 @@ div.centerTitle {
 }
 div.control {
     width: 100%;
-    height: 2.5em;
+    /*height: 2.5em; Buttons don't line up */
 }
 div.controlToggle {
     width: 100%;
     height: 25px;
 }
 .control input {
-    margin: 0.5em;
+    margin: 0.3em;
 }
 .control select {
     margin: 0.5em;
