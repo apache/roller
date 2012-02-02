@@ -224,7 +224,8 @@ public abstract class UIAction extends ActionSupport
     }
 
     public void setPageTitle(String pageTitle) {
-        this.pageTitle = pageTitle;
+        //this.pageTitle = pageTitle;
+        // no-op as mucks up the page titles on chains etc
     }
     
     
