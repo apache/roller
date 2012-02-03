@@ -22,6 +22,7 @@ import org.apache.roller.weblogger.pojos.TemplateCode;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * A pojo that will maintain different template codes for one template
@@ -33,6 +34,7 @@ public class SharedThemeTemplateCode implements Serializable, TemplateCode {
 	private String type = null;
 	private String ContentType = null;
 	private String templateLanguage = null;
+	private Date lastModified = null;
 
 	public SharedThemeTemplateCode(String templateId, String type) {
 		this.templateId = templateId;
@@ -70,6 +72,25 @@ public class SharedThemeTemplateCode implements Serializable, TemplateCode {
 	// @Override
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	/**
+	 * Gets the last modified. File system date.
+	 * 
+	 * @return the last modified
+	 */
+	public Date getLastModified() {
+		return lastModified;
+	}
+
+	/**
+	 * Sets the last modified. File system date.
+	 * 
+	 * @param lastModified
+	 *            the new last modified
+	 */
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
 	}
 
 	// ------------------------------------------------------- Good citizenship

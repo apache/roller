@@ -273,15 +273,19 @@ public class SharedThemeFromDir extends SharedTheme {
 					TemplateCode templateCode = createTemplateCode(theme_template.getId(), stylesheetTmpl.getTemplateCode(type));
 
 					theme_template.addTemplateCode(type, templateCode);
+					
+					// Set Last Modified
+					Date lstModified = theme_template.getLastModified();
+					if (getLastModified() == null
+							|| lstModified.after(getLastModified())) {
+						setLastModified(lstModified);
+					}
 				}
 				// store it
 				this.stylesheet = theme_template;
 
 				addTemplate(theme_template);
 			}
-
-			// Set Last Modified
-			setLastModified(new Date(templateFile.lastModified()));
 
 		}
 
@@ -362,21 +366,24 @@ public class SharedThemeFromDir extends SharedTheme {
 					templateMetadata.isNavbar());
 
 			for (String type : availableTypesList) {
-				TemplateCode templateCode = createTemplateCode(theme_template.getId(),
+				SharedThemeTemplateCode templateCode = createTemplateCode(theme_template.getId(),
 						templateMetadata.getTemplateCode(type));
 
 				theme_template.addTemplateCode(type, templateCode);
+				
+				// Set Last Modified
+				Date lstModified = templateCode.getLastModified();
+				if (getLastModified() == null
+						|| lstModified.after(getLastModified())) {
+					setLastModified(lstModified);
+				}
 			}
+			
+			theme_template.setLastModified(getLastModified());
 
 			// add it to the theme
 			addTemplate(theme_template);
 
-			// Set Last Modified
-			Date lstModified = new Date(templateFile.lastModified());
-			if (getLastModified() == null
-					|| lstModified.after(getLastModified())) {
-				setLastModified(lstModified);
-			}
 		}
 	}
     
@@ -429,8 +436,8 @@ public class SharedThemeFromDir extends SharedTheme {
         this.resources.put(normalizedPath, resource);
     }
 
-	private TemplateCode createTemplateCode(String templateId, ThemeMetadataTemplateCode templateCodeMetadata) {
-		TemplateCode templateCode = new SharedThemeTemplateCode();
+	private SharedThemeTemplateCode createTemplateCode(String templateId, ThemeMetadataTemplateCode templateCodeMetadata) {
+		SharedThemeTemplateCode templateCode = new SharedThemeTemplateCode();
 
 		// construct File object from path
 		File templateFile = new File(this.themeDir + File.separator
@@ -449,6 +456,7 @@ public class SharedThemeFromDir extends SharedTheme {
 		templateCode.setTemplateLanguage(templateCodeMetadata.getTemplateLang());
 		templateCode.setType(templateCodeMetadata.getType());
 		templateCode.setContentType(templateCodeMetadata.getContentType());
+		templateCode.setLastModified(new Date(templateFile.lastModified()));
 
 		return templateCode;
 	}
