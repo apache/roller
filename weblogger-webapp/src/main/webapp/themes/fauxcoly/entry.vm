@@ -177,8 +177,10 @@
     #showNextPrevEntriesControl($pager)
 </div>
 #showWeblogEntriesPager($pager)
-#showWeblogEntryComments($entry)
-#showWeblogEntryCommentForm($entry)
+#foreach( $entry in $entries )
+    #showWeblogEntryComments($entry)
+    #showWeblogEntryCommentForm($entry)
+#end
 </div>
 
 </div>
@@ -202,23 +204,23 @@
       <tr>
         <td><img src="$url.resource('icons/delicious.gif')"
                alt="del.icio.us" height="16" width="16" />
-            <a href="http://del.icio.us/post?url=$absBaseURL$entry.permaLink"
+            <a href="http://del.icio.us/post?url=$url.absoluteSite$model.weblogEntry.permaLink"
                title="bookmark it in del.icio.us">Bookmark it</a></td>
 
         <td><img src="$url.resource('icons/digman.gif')"
                 alt="submit to dig digg.com" height="14" width="16" />
-            <a href="http://www.digg.com/submit?url=$absBaseURL$entry.permaLink&amp;phase=2" title="submit it to digg">
+            <a href="http://www.digg.com/submit?url=$url.absoluteSite$model.weblogEntry.permaLink&amp;phase=2" title="submit it to digg">
                 Digg it</a></td>
       </tr>
       <tr>
         <td><img src="$url.resource('icons/slashdot-13x13.png')"
                 alt="slashdot" border="0" />
-            <a href="http://slashdot.org/bookmark.pl?url=$absBaseURL$entry.permaLink" title="submit it to slashdot">
+            <a href="http://slashdot.org/bookmark.pl?url=$url.absoluteSite$model.weblogEntry.permaLink" title="submit it to slashdot">
                 Slashdot it</a></td>
 
         <td><img src="$url.resource('icons/technorati-16x15.png')" title="See who links to it"
                 border="0" alt="technorati" height="15" width="16" />
-            <a href='http://technorati.com/search/$utilities.encode("$absBaseURL$entry.permaLink")'>
+            <a href='http://technorati.com/search/$utils.encode("$url.absoluteSite$model.weblogEntry.permaLink")'>
                 See who links to it</a>
         </td>
       </tr>

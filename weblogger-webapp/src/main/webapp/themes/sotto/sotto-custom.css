@@ -93,7 +93,7 @@ ul.rFeeds li {
 }
 th.hCalendarDayNameRow {
     text-align : center;
-    font-size : small;
+    /*font-size : small;*/
     font-weight : bold;
 }
 td.hCalendarDayCurrent {
@@ -890,7 +890,7 @@ img.smiley
 }
 
 table.hCalendarTable {
-    font-size: 1em;
+    font-size: 12px;
 }
 
 .thead, .hCalendarDayNameRow

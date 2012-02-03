@@ -21,6 +21,7 @@
     <head>
         <title><s:property value="pageTitle" /></title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="shortcut icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon" />
         <tiles:insertAttribute name="head" />
     </head>
     <body class=" yui-skin-sam">

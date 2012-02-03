@@ -1,6 +1,6 @@
 
          <h1 id="banner">
-            $model.weblog.name
+            <a href="$url.home">$model.weblog.name</a>
             <span class="tagline"><em>$model.weblog.description</em></span>
          </h1>
 

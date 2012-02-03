@@ -27,11 +27,13 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/dragdrop/dragdrop-min.js' />"></script>
 
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.4.2.min.js" />"></script>
-
-
+<!-- Combo-handled YUI JS files: TODO add to roller-ui/yui or remove??
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0r4/build/autocomplete/assets/skins/sam/autocomplete.css"> 
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.8.0r4/build/animation/animation-min.js&2.8.0r4/build/connection/connection-min.js&2.8.0r4/build/datasource/datasource-min.js&2.8.0r4/build/autocomplete/autocomplete-min.js"></script>
+-->
 <style>
 #tagAutoCompleteWrapper {
-    width:25em; /* set width here or else widget will expand to fit its container */
+    width:40em; /* set width here or else widget will expand to fit its container */
     padding-bottom:2em;
 }
 </style>
@@ -136,8 +138,10 @@ function fullPreviewMode() {
                 <label for="title"><s:text name="weblogEdit.tags" /></label>
             </td>
             <td>
-                <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
-                <div id="tagAutoCompleteContainer"></div>
+                <div id="tagAutoCompleteWrapper">
+                    <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
+                    <div id="tagAutoCompleteContainer"></div>
+                </div>
             </td>
         </tr> 
         
@@ -287,7 +291,6 @@ function fullPreviewMode() {
     
 </s:form>
 
-
 <script type="text/javascript">
 YAHOO.example.RemoteCustomRequest = function() {
     // Use an XHRDataSource
@@ -316,5 +319,17 @@ YAHOO.example.RemoteCustomRequest = function() {
         oAC: oAC
     };
 }();
+//Get cookie to determine state of control
+if (getCookie('control-miscControl') != null) {
+    if(getCookie('control-miscControl') == 'true'){
+        toggle('miscControl');
+        togglePlusMinus('imiscControl');
+    }
+}
+if (getCookie('control-pluginControl') != null) {
+    if(getCookie('control-pluginControl') == 'true'){
+        toggle('pluginControl');
+        togglePlusMinus('ipluginControl');
+    }
+}
 </script>
-    

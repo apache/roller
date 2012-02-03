@@ -73,10 +73,10 @@
                 <td class="field">
                     <s:textfield name="bean.link" size="50" onkeyup="updatePageURLDisplay()" />
                     <br />
-                    <s:property value="actionWeblog.absoluteURL" />page/<span id="linkPreview" style="color:red">
-                        <s:property value="bean.link" /></span>
-                    <s:if test="template.link != null">[<a id="launchLink" onClick="launchPage()">
-                        <s:text name="pageForm.launch" /></a>]</s:if>
+                    <s:property value="actionWeblog.absoluteURL" />page/<span id="linkPreview" style="color:red"><s:property value="bean.link" /></span>
+                    <s:if test="template.link != null">
+                        [<a id="launchLink" onClick="launchPage()"><s:text name="pageForm.launch" /></a>]
+                    </s:if>
                 </td>
                 <td class="description"></td>
             </tr>
@@ -287,6 +287,13 @@ function changeSize1(num) {
     expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
     setCookie("templateEditorRows", standardElem.rows, expires);
 }
+//Get cookie to determine state of control
+if (getCookie('control-advancedControl') != null) {
+    if(getCookie('control-advancedControl') == 'true'){
+        toggle('advancedControl');
+        togglePlusMinus('iadvancedControl');
+    }
+}
 </script>
-        
+
  

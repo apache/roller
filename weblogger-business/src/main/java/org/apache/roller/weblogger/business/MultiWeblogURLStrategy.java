@@ -384,7 +384,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         
         // is this for a specific weblog or site-wide?
         if (weblog != null) {
-            url.append("/weblog/");
+            url.append("weblog/");
             url.append(weblog.getHandle());
             url.append("/");
         }
