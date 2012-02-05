@@ -213,6 +213,19 @@
 </s:form>
 
 <script type="text/javascript">
+//Get cookie to determine state of control
+if (getCookie('control-miscControl') != null) {
+    if(getCookie('control-miscControl') == 'true'){
+        toggle('miscControl');
+        togglePlusMinus('imiscControl');
+    }
+}
+if (getCookie('control-pluginControl') != null) {
+    if(getCookie('control-pluginControl') == 'true'){
+        toggle('pluginControl');
+        togglePlusMinus('ipluginControl');
+    }
+}
 YAHOO.example.RemoteCustomRequest = function() {
     // Use an XHRDataSource
     var oDS = new YAHOO.util.XHRDataSource('<s:property value="jsonAutocompleteUrl" />');
@@ -240,17 +253,4 @@ YAHOO.example.RemoteCustomRequest = function() {
         oAC: oAC
     };
 }();
-//Get cookie to determine state of control
-if (getCookie('control-miscControl') != null) {
-    if(getCookie('control-miscControl') == 'true'){
-        toggle('miscControl');
-        togglePlusMinus('imiscControl');
-    }
-}
-if (getCookie('control-pluginControl') != null) {
-    if(getCookie('control-pluginControl') == 'true'){
-        toggle('pluginControl');
-        togglePlusMinus('ipluginControl');
-    }
-}
 </script>
