@@ -494,6 +494,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         try {
             cmgr.deleteFile(weblog, mediaFile.getId());
+            // Now thumbnail
+            cmgr.deleteFile(weblog, mediaFile.getId() + "_sm");
         } catch (FileNotFoundException e) {
             log.debug("File to be deleted already unavailable in the file store");
         }
