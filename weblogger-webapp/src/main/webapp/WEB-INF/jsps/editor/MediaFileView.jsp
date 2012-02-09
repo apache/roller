@@ -131,7 +131,8 @@
     function onEditSuccess() {
         $("#mediaFileEditor").attr('src','about:blank');
         YAHOO.mediaFileEditor.lightbox.hide();
-        window.location.reload();
+        //window.location.reload(true); Endless refresh loops in FF
+        window.parent.location = window.parent.location.href;
     }
 
     function onEditCancelled() {
