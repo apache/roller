@@ -2,27 +2,24 @@
 <html>
 <head>
     <title>$model.weblog.name</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css"/>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
 </head>
 <body>
+
 <script type="text/javascript">
 function setCookie(c_name, value, exdays) {
         var exdate = new Date();
         exdate.setDate(exdate.getDate() + exdays);
-        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString() + "; path=/");
         document.cookie = c_name + "=" + c_value;
     }
-
-$('#btnStandard').live('vclick' ,function(e){
-setCookie("roller_user_request_type","standard",30)
+setCookie("roller_user_request_type","mobile",30);
+$('#btnStandard').live('vclick' ,function(e) {
+    window.location.href="?deviceType=standard";
 });
-
-
 </script>
 
 <div data-role="page" id ="home">
@@ -31,27 +28,25 @@ setCookie("roller_user_request_type","standard",30)
         <h1>$model.weblog.name </h1>
         <a href=$url.home  data-icon="home" data-theme = "a">Home</a>
        <a href="#home" id="btnStandard" data-role="button">View Standard</a>
-    </div>
-    <!-- /header -->
+    </div> <!-- /header -->
 
     <form id="searchForm" method="get" action="search">
         <div data-role="fieldcontain">
           <input type="search" name="q" data-inline="true"> <input type="submit" value="Search" data-inline="true">
         </div>
     </form>
+
     <div data-role="content" data-theme="d">
         #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
-  #set($pager = $model.getWeblogEntriesPager()) 
-  #showWeblogEntriesPager($pager)
-    </div>
-    <!-- /content -->
+        #set($pager = $model.getWeblogEntriesPager()) 
+        #showWeblogEntriesPager($pager)
+    </div> <!-- /content -->
 
     <div data-role="footer" data-theme="b">
         <h4>Apache Roller Mobile @ 2011</h4>
-    </div>
-    <!-- /footer -->
-</div>
-<!-- /page -->
+    </div> <!-- /footer -->
+
+</div> <!-- /page -->
 
 </body>
 </html>

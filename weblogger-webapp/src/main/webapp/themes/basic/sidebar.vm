@@ -1,5 +1,9 @@
 ## sidebar contents
 
+    <div class="mobile">
+    <a href="/roller?deviceType=mobile" alt="View Mobile Weblog">View Mobile Weblog</a>
+    </div>
+
     <h2>Calendar</h2>
     <div class="sidebar">
     #showWeblogEntryCalendar($model.weblog "nil")

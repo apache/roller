@@ -263,3 +263,10 @@ div.dayTitle {
     width: 20%;
     float: right;
 }
+.mobile{
+	width:250px;
+	height: 51px;
+	background: url($url.resource("images/forward_mobile.png")) top left no-repeat;
+	padding-top:17px;
+	padding-left:60px;
+}
