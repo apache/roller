@@ -4,6 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+    
+	<repositories>
+	    <repository>
+			<id>com.atlassian</id>
+			<name>Atlassian Repository</name>
+			<url>http://maven.atlassian.com/public</url>
+		</repository>
+	</repositories>
 
     <parent>
         <groupId>org.apache.roller</groupId>
@@ -410,6 +418,30 @@
             <artifactId>derbyclient</artifactId>
             <scope>test</scope>
         </dependency>
+        
+		<dependency>
+			<groupId>com.atlassian.crowd</groupId>
+			<artifactId>crowd-integration-client-rest</artifactId>
+			<version>2.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.4</version>
+		</dependency>
 
     </dependencies>
 
