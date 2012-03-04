@@ -36,271 +36,285 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
-
 /**
- * List bookmarks and folders and allow for moving them around and deleting them.
+ * List bookmarks and folders and allow for moving them around and deleting
+ * them.
  */
 public class Bookmarks extends UIAction {
-    
-    private static Log log = LogFactory.getLog(Bookmarks.class);
-    
-    // the id of folder being viewed
-    private String folderId = null;
-    
-    // the folder being viewed
-    private WeblogBookmarkFolder folder = null;
-    
-    // the list of folders to move/delete
-    private String[] selectedFolders = null;
-    
-    // the list of bookmarks to move/delete
-    private String[] selectedBookmarks = null;
-    
-    // the target folder to move items to
-    private String targetFolderId = null;
-    
-    // all folders from the action weblog
-    private Set allFolders = Collections.EMPTY_SET;
-    
-    // path of folders representing selected folders hierarchy
-    private List folderPath = Collections.EMPTY_LIST;
-    
-    
-    public Bookmarks() {
-        this.actionName = "bookmarks";
-        this.desiredMenu = "editor";
-        this.pageTitle = "bookmarksForm.rootTitle";
-    }
-    
-    
-    // admin perms required
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
-    }
-    
-    
-    public void myPrepare() {
-        try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            if(!StringUtils.isEmpty(getFolderId()) && 
-                    !"/".equals(getFolderId())) {
-                setFolder(bmgr.getFolder(getFolderId()));
-            } else {
-                setFolder(bmgr.getRootFolder(getActionWeblog()));
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up folder", ex);
-        }
-    }
-    
-    
-    /**
-     * Present the bookmarks and subfolders available in the folder specified
-     * by the request.
-     */
-    public String execute() {
-        
-        // build list of folders for display
-        TreeSet allFolders = new TreeSet(new FolderPathComparator());
-        
-        try {
-            // Build list of all folders, except for current one, sorted by path.
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            List<WeblogBookmarkFolder> folders = bmgr.getAllFolders(getActionWeblog());
-            for(WeblogBookmarkFolder fd : folders) {
-                if (!fd.getId().equals(getFolderId())) {
-                    allFolders.add(fd);
-                }
-            }
-            
-            // build folder path
-            WeblogBookmarkFolder parent = getFolder().getParent();
-            if(parent != null) {
-                List folderPath = new LinkedList();
-                folderPath.add(0, getFolder());
-                while (parent != null) {
-                    folderPath.add(0, parent);
-                    parent = parent.getParent();
-                }
-                setFolderPath(folderPath);
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error building folders list", ex);
-            // TODO: i18n
-            addError("Error building folders list");
-        }
-        
-        if (allFolders.size() > 0) {
-            setAllFolders(allFolders);
-        }
 
-        return LIST;
-    }
-    
-    
-    /**
-     * Delete folders and bookmarks.
-     */
-    public String delete() {
-        
-        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
-        log.debug("Deleting selected folders and bookmarks.");
-        
-        try {
-            String folders[] = getSelectedFolders();
-            if (null != folders) {
-                log.debug("Processing delete of "+folders.length+" folders.");
-                for (int i = 0; i < folders.length; i++) {
-                    log.debug("Deleting folder - "+folders[i]);
-                    WeblogBookmarkFolder fd = bmgr.getFolder(folders[i]);
-                    bmgr.removeFolder(fd); // removes child folders and bookmarks too
-                }
-            }
-            
-            WeblogBookmark bookmark = null;
-            String bookmarks[] = getSelectedBookmarks();
-            if (null != bookmarks) {
-                log.debug("Processing delete of "+bookmarks.length+" bookmarks.");
-                for (int j = 0; j < bookmarks.length; j++) {
-                    log.debug("Deleting bookmark - "+bookmarks[j]);
-                    bookmark = bmgr.getBookmark(bookmarks[j]);
-                    bmgr.removeBookmark(bookmark);
-                }
-            }
-            
-            // flush changes
-            WebloggerFactory.getWeblogger().flush();
-            
-            // notify caches
-            CacheManager.invalidate(getActionWeblog());
-            
-        } catch (WebloggerException ex) {
-            log.error("Error doing folder/bookmark deletes", ex);
-            // TODO: i18n
-            addError("Error doing folder/bookmark deletes");
-        }
-        
-        return execute();
-    }
-    
-    
-    /**
-     * Move folders and bookmarks to a new folder.
-     */
-    public String move() {
-        
-        try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            
-            log.debug("Moving folders and bookmarks to folder - "+getTargetFolderId());
-            
-            // Move folders to new parent folder.
-            String folders[] = getSelectedFolders();
-            WeblogBookmarkFolder parent = bmgr.getFolder(getTargetFolderId());
-            if (null != folders) {
-                for (int i = 0; i < folders.length; i++) {
-                    WeblogBookmarkFolder fd = bmgr.getFolder(folders[i]);
-                    
-                    // Don't move folder into itself.
-                    if (!fd.getId().equals(parent.getId()) && 
-                            !parent.descendentOf(fd)) {
-                        bmgr.moveFolder(fd, parent);
-                    } else {
-                        addMessage("bookmarksForm.warn.notMoving", fd.getName());
-                    }
-                }
-            }
-            
-            // Move bookmarks to new parent folder.
-            String bookmarks[] = getSelectedBookmarks();
-            if (null != bookmarks) {
-                for (int j = 0; j < bookmarks.length; j++) {
-                    // maybe we should be using folder.addBookmark()?
-                    WeblogBookmark bd = bmgr.getBookmark(bookmarks[j]);
-                    bd.setFolder(parent);
-                    bmgr.saveBookmark(bd);
-                }
-            }
-            
-            // flush changes
-            WebloggerFactory.getWeblogger().flush();
-            
-            // notify caches
-            CacheManager.invalidate(getActionWeblog());
-            
-        } catch (WebloggerException e) {
-            log.error("Error doing folder/bookmark move", e);
-            addError("bookmarksForm.error.move");
-        }
-        
-        return execute();
-    }
-    
-    
-    private static final class FolderPathComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            WeblogBookmarkFolder f1 = (WeblogBookmarkFolder)o1;
-            WeblogBookmarkFolder f2 = (WeblogBookmarkFolder)o2;
-            return f1.getPath().compareTo(f2.getPath());
-        }
-    }
-    
+	private static Log log = LogFactory.getLog(Bookmarks.class);
 
-    public String getFolderId() {
-        return folderId;
-    }
+	// the id of folder being viewed
+	private String folderId = null;
 
-    public void setFolderId(String folderId) {
-        this.folderId = folderId;
-    }
+	// the folder being viewed
+	private WeblogBookmarkFolder folder = null;
 
-    public String[] getSelectedFolders() {
-        return selectedFolders;
-    }
+	// the list of folders to move/delete
+	private String[] selectedFolders = null;
 
-    public void setSelectedFolders(String[] folders) {
-        this.selectedFolders = folders;
-    }
+	// the list of bookmarks to move/delete
+	private String[] selectedBookmarks = null;
 
-    public String[] getSelectedBookmarks() {
-        return selectedBookmarks;
-    }
+	// the target folder to move items to
+	private String targetFolderId = null;
 
-    public void setSelectedBookmarks(String[] bookmarks) {
-        this.selectedBookmarks = bookmarks;
-    }
+	// all folders from the action weblog
+	private Set allFolders = Collections.EMPTY_SET;
 
-    public String getTargetFolderId() {
-        return targetFolderId;
-    }
+	// path of folders representing selected folders hierarchy
+	private List folderPath = Collections.EMPTY_LIST;
 
-    public void setTargetFolderId(String targetFolderId) {
-        this.targetFolderId = targetFolderId;
-    }
+	public Bookmarks() {
+		this.actionName = "bookmarks";
+		this.desiredMenu = "editor";
+		this.pageTitle = "bookmarksForm.rootTitle";
+	}
 
-    public Set getAllFolders() {
-        return allFolders;
-    }
+	// admin perms required
+	public List<String> requiredWeblogPermissionActions() {
+		return Collections.singletonList(WeblogPermission.ADMIN);
+	}
 
-    public void setAllFolders(Set allFolders) {
-        this.allFolders = allFolders;
-    }
+	public void myPrepare() {
+		try {
+			BookmarkManager bmgr = WebloggerFactory.getWeblogger()
+					.getBookmarkManager();
+			if (!StringUtils.isEmpty(getFolderId())
+					&& !"/".equals(getFolderId())) {
+				setFolder(bmgr.getFolder(getFolderId()));
+			} else {
+				setFolder(bmgr.getRootFolder(getActionWeblog()));
+			}
+		} catch (WebloggerException ex) {
+			log.error("Error looking up folder", ex);
+		}
+	}
 
-    public WeblogBookmarkFolder getFolder() {
-        return folder;
-    }
+	/**
+	 * Present the bookmarks and subfolders available in the folder specified by
+	 * the request.
+	 */
+	public String execute() {
 
-    public void setFolder(WeblogBookmarkFolder folder) {
-        this.folder = folder;
-    }
+		// build list of folders for display
+		TreeSet allFolders = new TreeSet(new FolderPathComparator());
 
-    public List getFolderPath() {
-        return folderPath;
-    }
+		try {
+			// Build list of all folders, except for current one, sorted by
+			// path.
+			BookmarkManager bmgr = WebloggerFactory.getWeblogger()
+					.getBookmarkManager();
+			List<WeblogBookmarkFolder> folders = bmgr
+					.getAllFolders(getActionWeblog());
+			for (WeblogBookmarkFolder fd : folders) {
+				if (getFolderId() == null && fd.getParent() == null) {
+					// Root folder so do not show the root /
+				} else if (!fd.getId().equals(getFolderId())) {
+					allFolders.add(fd);
+				}
+			}
 
-    public void setFolderPath(List folderPath) {
-        this.folderPath = folderPath;
-    }
-    
+			// build folder path
+			WeblogBookmarkFolder parent = getFolder().getParent();
+			if (parent != null) {
+				List folderPath = new LinkedList();
+				folderPath.add(0, getFolder());
+				while (parent != null) {
+					folderPath.add(0, parent);
+					parent = parent.getParent();
+				}
+				setFolderPath(folderPath);
+			}
+		} catch (WebloggerException ex) {
+			log.error("Error building folders list", ex);
+			// TODO: i18n
+			addError("Error building folders list");
+		}
+
+		if (allFolders.size() > 0) {
+			setAllFolders(allFolders);
+		}
+
+		return LIST;
+	}
+
+	/**
+	 * Delete folders and bookmarks.
+	 */
+	public String delete() {
+
+		BookmarkManager bmgr = WebloggerFactory.getWeblogger()
+				.getBookmarkManager();
+
+		log.debug("Deleting selected folders and bookmarks.");
+
+		try {
+			String folders[] = getSelectedFolders();
+			if (null != folders && folders.length > 0) {
+				if (log.isDebugEnabled())
+					log.debug("Processing delete of " + folders.length
+							+ " folders.");
+				for (int i = 0; i < folders.length; i++) {
+					if (log.isDebugEnabled())
+						log.debug("Deleting folder - " + folders[i]);
+					WeblogBookmarkFolder fd = bmgr.getFolder(folders[i]);
+					if (fd != null) {
+						bmgr.removeFolder(fd); // removes child folders and
+						// bookmarks too
+					}
+				}
+			}
+
+			WeblogBookmark bookmark = null;
+			String bookmarks[] = getSelectedBookmarks();
+			if (null != bookmarks && bookmarks.length > 0) {
+				if (log.isDebugEnabled())
+					log.debug("Processing delete of " + bookmarks.length
+							+ " bookmarks.");
+				for (int j = 0; j < bookmarks.length; j++) {
+					if (log.isDebugEnabled())
+						log.debug("Deleting bookmark - " + bookmarks[j]);
+					bookmark = bmgr.getBookmark(bookmarks[j]);
+					if (bookmark != null) {
+						bmgr.removeBookmark(bookmark);
+					}
+
+				}
+			}
+
+			// flush changes
+			WebloggerFactory.getWeblogger().flush();
+
+			// notify caches
+			CacheManager.invalidate(getActionWeblog());
+
+		} catch (WebloggerException ex) {
+			log.error("Error doing folder/bookmark deletes", ex);
+			// TODO: i18n
+			addError("Error doing folder/bookmark deletes");
+		}
+
+		return execute();
+	}
+
+	/**
+	 * Move folders and bookmarks to a new folder.
+	 */
+	public String move() {
+
+		try {
+			BookmarkManager bmgr = WebloggerFactory.getWeblogger()
+					.getBookmarkManager();
+
+			if (log.isDebugEnabled())
+				log.debug("Moving folders and bookmarks to folder - "
+						+ getTargetFolderId());
+
+			// Move folders to new parent folder.
+			String folders[] = getSelectedFolders();
+			WeblogBookmarkFolder parent = bmgr.getFolder(getTargetFolderId());
+			if (null != folders && folders.length > 0) {
+				for (int i = 0; i < folders.length; i++) {
+					WeblogBookmarkFolder fd = bmgr.getFolder(folders[i]);
+
+					// Don't move folder into itself.
+					if (!fd.getId().equals(parent.getId())
+							&& !parent.descendentOf(fd)) {
+						bmgr.moveFolder(fd, parent);
+					} else {
+						addMessage("bookmarksForm.warn.notMoving", fd.getName());
+					}
+				}
+			}
+
+			// Move bookmarks to new parent folder.
+			String bookmarks[] = getSelectedBookmarks();
+			if (null != bookmarks && bookmarks.length > 0) {
+				for (int j = 0; j < bookmarks.length; j++) {
+					// maybe we should be using folder.addBookmark()?
+					WeblogBookmark bd = bmgr.getBookmark(bookmarks[j]);
+					bd.setFolder(parent);
+					bmgr.saveBookmark(bd);
+				}
+			}
+
+			// flush changes
+			WebloggerFactory.getWeblogger().flush();
+
+			// notify caches
+			CacheManager.invalidate(getActionWeblog());
+
+		} catch (WebloggerException e) {
+			log.error("Error doing folder/bookmark move", e);
+			addError("bookmarksForm.error.move");
+		}
+
+		return execute();
+	}
+
+	private static final class FolderPathComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			WeblogBookmarkFolder f1 = (WeblogBookmarkFolder) o1;
+			WeblogBookmarkFolder f2 = (WeblogBookmarkFolder) o2;
+			return f1.getPath().compareTo(f2.getPath());
+		}
+	}
+
+	public String getFolderId() {
+		return folderId;
+	}
+
+	public void setFolderId(String folderId) {
+		this.folderId = folderId;
+	}
+
+	public String[] getSelectedFolders() {
+		return selectedFolders;
+	}
+
+	public void setSelectedFolders(String[] folders) {
+		this.selectedFolders = folders;
+	}
+
+	public String[] getSelectedBookmarks() {
+		return selectedBookmarks;
+	}
+
+	public void setSelectedBookmarks(String[] bookmarks) {
+		this.selectedBookmarks = bookmarks;
+	}
+
+	public String getTargetFolderId() {
+		return targetFolderId;
+	}
+
+	public void setTargetFolderId(String targetFolderId) {
+		this.targetFolderId = targetFolderId;
+	}
+
+	public Set getAllFolders() {
+		return allFolders;
+	}
+
+	public void setAllFolders(Set allFolders) {
+		this.allFolders = allFolders;
+	}
+
+	public WeblogBookmarkFolder getFolder() {
+		return folder;
+	}
+
+	public void setFolder(WeblogBookmarkFolder folder) {
+		this.folder = folder;
+	}
+
+	public List getFolderPath() {
+		return folderPath;
+	}
+
+	public void setFolderPath(List folderPath) {
+		this.folderPath = folderPath;
+	}
+
 }

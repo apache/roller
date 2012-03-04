@@ -116,6 +116,9 @@ public class BookmarkAdd extends UIAction {
             // TODO: i18n
             addMessage("bookmark added");
             
+            // Set for next action
+            getBean().setId(newBookmark.getId());
+            
             return SUCCESS;
             
         } catch(Exception ex) {

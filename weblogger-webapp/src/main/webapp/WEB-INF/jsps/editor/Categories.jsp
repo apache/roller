@@ -19,17 +19,8 @@
 
 <%-- JavaScript for categories table --%> 
 <script type="text/javascript">
-<!-- 
-function setChecked(val) 
-{
-    len = document.categories.elements.length;
-    var i=0;
-    for( i=0 ; i<len ; i++) 
-    {
-        document.categories.elements[i].checked=val;
-    }
-}
-function onMove() 
+// <!-- 
+function onMove()
 {
     if ( confirm("<s:text name='categoriesForm.move.confirm' />") ) 
     {
@@ -71,32 +62,30 @@ function onMove()
     <s:hidden name="weblog" />
     <s:hidden name="categoryId" /> 
     
-    <%-- Select-all button --%>
-    <input type="button" value="<s:text name='categoriesForm.checkAll' />" onclick="setChecked(1)" /></input>
+    <s:if test="!allCategories.isEmpty">
     
-    <%-- Select-none button --%>
-    <input type="button" value="<s:text name='categoriesForm.checkNone' />" onclick="setChecked(0)" /></input>
+        <%-- Move-selected button --%>
+        <s:submit value="%{getText('categoriesForm.move')}" onclick="onMove();return false;" />
     
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <%-- Move-to combo-box --%>
+        <s:select name="targetCategoryId" list="allCategories" listKey="id" listValue="path" />
     
-    <%-- Move-selected button --%>
-    <s:submit value="%{getText('categoriesForm.move')}" onclick="onMove()" />
+        <br /><br />
     
-    <%-- Move-to combo-box --%>
-    <s:select name="targetCategoryId" list="allCategories" listKey="id" listValue="path" />
-    
-    <p />
+    </s:if>
     
     <table class="rollertable">
         
         <tr class="rollertable">
-            <th class="rollertable" width="5%">&nbsp;</td>
-            <th class="rollertable" width="5%">&nbsp;</td>
-            <th class="rollertable" width="30%"><s:text name="categoriesForm.name" /></td>
-            <th class="rollertable" width="45%"><s:text name="categoriesForm.description" /></td>
-            <th class="rollertable" width="5%"><s:text name="categoriesForm.edit" /></td>
-            <th class="rollertable" width="5%"><s:text name="categoriesForm.remove" /></td>
+            <th class="rollertable" width="5%"><input type="checkbox" name="control" onclick="toggleFunctionAll(this.checked);"/></th>
+            <th class="rollertable" width="5%">&nbsp;</th>
+            <th class="rollertable" width="30%"><s:text name="categoriesForm.name" /></th>
+            <th class="rollertable" width="45%"><s:text name="categoriesForm.description" /></th>
+            <th class="rollertable" width="5%"><s:text name="categoriesForm.edit" /></th>
+            <th class="rollertable" width="5%"><s:text name="categoriesForm.remove" /></th>
         </tr>
+        
+        <s:if test="AllCategories != null && !AllCategories.isEmpty">
         
         <%-- Categories --%>
         <s:iterator id="category" value="category.weblogCategories" status="rowstatus">
@@ -107,7 +96,7 @@ function onMove()
                 <tr class="rollertable_even">
             </s:else>
             
-                <td class="rollertable">
+                <td class="rollertable center" style="vertical-align:middle">
                     <input type="checkbox" name="selectedCategories" value="<s:property value="#category.id"/>" />
                 </td>
                 
@@ -143,6 +132,13 @@ function onMove()
                 
             </tr>
         </s:iterator>
+        
+        </s:if>
+        <s:else>
+            <tr>
+                <td style="vertical-align:middle" colspan="6"><s:text name="categoriesForm.noresults" /></td>
+            </tr>
+        </s:else>
         
     </table>
     

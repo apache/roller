@@ -19,16 +19,7 @@
 
 <%-- JavaScript for bookmarks table --%> 
 <script type="text/javascript">
-<!-- 
-function setChecked(val) 
-{
-    len = document.bookmarks.elements.length;
-    var i=0;
-    for( i=0 ; i<len ; i++) 
-    {
-        document.bookmarks.elements[i].checked=val;
-    }
-}
+// <!-- 
 function onDelete() 
 {
     if ( confirm("<s:text name='bookmarksForm.delete.confirm' />") ) 
@@ -45,7 +36,7 @@ function onMove()
         document.bookmarks.submit();
     }
 }
-//-->
+// -->
 </script>
 
 <s:if test="folderPath.isEmpty">
@@ -79,29 +70,21 @@ function onMove()
     <s:hidden name="weblog" />
     <s:hidden name="folderId" /> 
     
-    <%-- Select-all button --%>
-    <input type="button" value="<s:text name="bookmarksForm.checkAll"/>" onclick="setChecked(1)" />
-    
-    <%-- Select-none button --%>
-    <input type="button" value="<s:text name="bookmarksForm.checkNone"/>" onclick="setChecked(0)" />
-    
-    <%-- Delete-selected button --%>
-    <input type="button" value="<s:text name="bookmarksForm.delete"/>" onclick="onDelete()" /> 
-    
-    <s:if test="!allFolders.isEmpty">
+    <s:if test="!allFolders.isEmpty && ( folder.folders.size > 0 || folder.bookmarks.size > 0)">
+        
         <%-- Move-selected button --%>
-        <s:submit type="button" action="bookmarks!move" key="bookmarksForm.move" onclick="onMove()" />
+        <s:submit type="button" action="bookmarks!move" key="bookmarksForm.move" onclick="onMove();return false;" />
         
         <%-- Move-to combo-box --%>
         <s:select name="targetFolderId" list="allFolders" listKey="id" listValue="path" />
-    </s:if>
-    
-    <p />
-    
-    <table class="rollertable">
         
+        <br /><br />
+        
+    </s:if>
+    <table class="rollertable">
+    
         <tr class="rHeaderTr">
-            <th class="rollertable" width="5%">&nbsp;</th>
+            <th class="rollertable" width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"/></th>
             <th class="rollertable" width="5%">&nbsp;</th>
             <th class="rollertable" width="30%"><s:text name="bookmarksForm.name" /></th>
             <th class="rollertable" width="45%"><s:text name="bookmarksForm.description" /></th>
@@ -109,6 +92,8 @@ function onMove()
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.edit" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.visitLink" /></th>
         </tr>
+        
+        <s:if test="folder.folders.size > 0 || folder.bookmarks.size > 0">
         
         <%-- Folders --%>
         <s:iterator id="folder" value="folder.folders" status="rowstatus">
@@ -119,7 +104,7 @@ function onMove()
                 <tr class="rollertable_even">
             </s:else>
                 
-                <td class="rollertable">
+                <td class="rollertable center" style="vertical-align:middle">
                     <input type="checkbox" name="selectedFolders" value="<s:property value="#folder.id"/>" />
                 </td>
                 
@@ -161,7 +146,7 @@ function onMove()
                 <tr class="rollertable_even">
             </s:else>
                 
-                <td class="rollertable">
+                <td class="rollertable center" style="vertical-align:middle">
                     <input type="checkbox" name="selectedBookmarks" value="<s:property value="#bookmark.id"/>" />
                 </td>
                 
@@ -200,6 +185,19 @@ function onMove()
             </tr>
         </s:iterator>
         
+        </s:if>
+        <s:else>
+            <tr>
+                <td style="vertical-align:middle" colspan="7"><s:text name="bookmarksForm.noresults" /></td>
+            </tr>
+        </s:else>
     </table>
     
+    <s:if test="folder.folders.size > 0 || folder.bookmarks.size > 0">
+        <div class="control">
+            <%-- Delete-selected button --%>
+            <input type="button" value="<s:text name="bookmarksForm.delete"/>" onclick="onDelete()" /> 
+        </div>
+    </s:if>
+
 </s:form>

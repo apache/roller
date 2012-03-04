@@ -180,11 +180,23 @@ function isblank(s) {
 window.defaultStatus=document.title;
 
 // Toggle check boxes
+function toggleFunctionAll(toggle) {
+	var inputs = document.getElementsByTagName('input');
+	for(var i = 0; i < inputs.length ; i++) {
+		if(inputs[i].name != "control" && inputs[i].type == 'checkbox' && inputs[i].disabled == false ) {
+			if (inputs[i].checked == true){
+				inputs[i].checked = !inputs[i].checked;
+			} else{
+				inputs[i].checked = toggle;
+			}
+		}
+	}
+}
 function toggleFunction(toggle,name) {;
 	var inputs = document.getElementsByName(name);
 	for(var i = 0; i < inputs.length ; i++) {
 		if(inputs[i].type == 'checkbox' && inputs[i].disabled == false) {
-			if (inputs[i].checked==true){
+			if (inputs[i].checked == true){
 				inputs[i].checked = !inputs[i].checked;
 			} else{
 				inputs[i].checked = toggle;

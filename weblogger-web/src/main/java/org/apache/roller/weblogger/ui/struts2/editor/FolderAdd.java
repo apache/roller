@@ -120,6 +120,9 @@ public class FolderAdd extends UIAction {
             // TODO: i18n
             addMessage("folder added");
             
+            // Set for next action
+            getBean().setId(newFolder.getId());
+            
             return SUCCESS;
             
         } catch(Exception ex) {
