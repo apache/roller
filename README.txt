@@ -23,7 +23,7 @@ Building this version of Roller requires Apache Maven 3.
   - To build and run Roller on Eclipse: https://cwiki.apache.org/confluence/x/EM4
 
 ---------------------------
-BUILDING FOR TOMCAT
+BUILDING FOR APACHE TOMCAT
 
 The normal Roller build creates a product suitable for use on Tomcat 6 or later,
 which includes OpenJPA bytecode enhancement, OpenJPA and other Java EE jars.
