@@ -28,6 +28,7 @@
 </p>     
 
 <s:form action="bookmarksImport!save" method="POST" enctype="multipart/form-data">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:file name="opmlFile" />
     <br />

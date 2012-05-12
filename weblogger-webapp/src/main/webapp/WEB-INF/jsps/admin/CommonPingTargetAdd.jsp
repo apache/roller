@@ -22,6 +22,7 @@
 </p>
 
 <s:form action="commonPingTargetAdd!save" >
+	<s:hidden name="salt" />
 
     <div class="formrow">
        <label for="name" class="formrow"><s:text name="pingTarget.name" /></label>

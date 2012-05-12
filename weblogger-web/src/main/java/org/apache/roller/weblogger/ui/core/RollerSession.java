@@ -55,8 +55,7 @@ public class RollerSession
     public static final String ROLLER_SESSION = "org.apache.roller.weblogger.rollersession";
     public static final String ERROR_MESSAGE   = "rollererror_message";
     public static final String STATUS_MESSAGE  = "rollerstatus_message";
-    
-    
+   
     /**
      * Get RollerSession from request (and add user if not already present).
      */

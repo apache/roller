@@ -20,6 +20,7 @@
 <p class="subtitle"><s:text name="userAdmin.subtitle.createNewUser" /></p>
 
 <s:form action="createUser!save">
+	<s:hidden name="salt" />
     
     <table class="formtable">
         <tr>

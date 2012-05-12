@@ -20,6 +20,7 @@
 <p class="subtitle"><s:text name="yourProfile.description" /></p>
 
 <s:form action="profile!save">
+	<s:hidden name="salt" />
     
     <table class="formtable">
         

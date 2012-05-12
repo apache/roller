@@ -69,6 +69,7 @@
 </p>
 
 <s:form id="entry" action="entryAddWithMediaFile">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="enclosureUrl" id="enclosureUrl" />
     <input type="hidden" name="type" value="weblog" />

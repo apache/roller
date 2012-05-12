@@ -26,6 +26,7 @@
 </p>
 
 <s:form action="categoryEdit!save">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
     

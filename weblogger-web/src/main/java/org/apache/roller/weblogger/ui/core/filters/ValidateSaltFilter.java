@@ -21,24 +21,26 @@ package org.apache.roller.weblogger.ui.core.filters;
 import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.roller.weblogger.util.LRUCache2;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
  
 public class ValidateSaltFilter implements Filter  {
- 
+    private static Log log = LogFactory.getLog(ValidateSaltFilter.class);
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
         HttpServletRequest httpReq = (HttpServletRequest) request;
  
-        String salt = (String) httpReq.getParameter("salt");
-		LRUCache2 saltCache = (LRUCache2)
-            httpReq.getSession().getAttribute("saltCache");
-
-        if (saltCache != null && salt != null && saltCache.get(salt) != null){
-            chain.doFilter(request, response);
-        } else {
-            throw new ServletException("Security Violation");
-        }
+		if (httpReq.getMethod().equals("POST")) {
+        	String salt = (String) httpReq.getParameter("salt");
+			SaltCache saltCache = SaltCache.getInstance();
+			if (salt == null || saltCache.get(salt) == null || saltCache.get(salt).equals(false)) {
+            	throw new ServletException("Security Violation");
+			}
+		}
+        chain.doFilter(request, response);
     }
  
     @Override

@@ -41,6 +41,7 @@ function confirmSubDelete(subUrl) {
 
 
 <s:form action="planetSubscriptions!save">
+	<s:hidden name="salt" />
     <s:hidden name="groupHandle" />
     
     <div class="formrow">

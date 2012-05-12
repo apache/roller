@@ -29,6 +29,7 @@
 <p><s:text name="commentManagement.sidebarDescription" /></p>
     
  <s:form action="comments!query" id="commentsQuery">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     
     <div class="sideformrow">

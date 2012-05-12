@@ -29,6 +29,7 @@ function submitPage(frm) {
 </script>
 
 <s:form id="entry" action=" " onsubmit="editorCleanup()" method="POST">
+	<s:hidden name="salt" />
 
     <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">
 

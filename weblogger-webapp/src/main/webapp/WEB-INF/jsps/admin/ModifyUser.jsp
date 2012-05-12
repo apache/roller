@@ -24,6 +24,7 @@
 </p>
 
 <s:form action="modifyUser!save">
+	<s:hidden name="salt" />
     <s:hidden name="bean.id" />
     
     <table class="formtable">

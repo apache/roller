@@ -21,6 +21,7 @@
 <p><s:text name="configForm.prompt" /></p>
 
 <s:form action="globalConfig!save">
+	<s:hidden name="salt" />
 
     <table class="formtableNoDesc">
     

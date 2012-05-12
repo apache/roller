@@ -30,6 +30,7 @@
 <h2><s:text name="weblogExport.entries" /></h2>
 <p class="pagetip" style="width:50%"><s:text name="weblogExport.entries.tip" /></p>
 <s:form name="entriesExport" action="weblogExport!exportEntries" method="POST">
+	<s:hidden name="salt" />
     <table cellpadding="0" cellspacing="5" border="0">
         <tr>
             <td valign="baseline" align="right"><s:text name="weblogExport.baseUrl"/></td>
@@ -51,6 +52,7 @@
 <h2><s:text name="weblogExport.resources" /></h2>
 <p class="pagetip" style="width:50%"><s:text name="weblogExport.resources.tip" /></p>
 <s:form name="resourcesExport" action="weblogExport!exportResources" method="POST">
+	<s:hidden name="salt" />
     <table cellpadding="0" cellspacing="5" border="0">
         <tr>
             <td valign="baseline">

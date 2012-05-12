@@ -32,6 +32,7 @@
 </s:else>
                 
 <s:form action="templateEdit!save" id="template">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id"/>
     

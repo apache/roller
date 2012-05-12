@@ -27,7 +27,8 @@
 <p><s:text name="userAdmin.prompt.searchUser" /></p>
 
 <s:form action="modifyUser" method="GET">
-    
+   	<s:hidden name="salt" />
+ 
     <span style="margin:4px"><s:text name="inviteMember.userName" /></span>
     <input name="userName" id="userName" size="30" maxlength="30" 
            onfocus="onUserNameFocus(null)" onkeyup="onUserNameChange(null)" 

@@ -24,6 +24,7 @@
 </p>
 
 <s:form action="customPingTargetAdd!save" >
+	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     
     <div class="formrow">

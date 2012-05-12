@@ -37,6 +37,7 @@ function fullPreview() {
 </p>
 
 <s:form action="themeEdit!save">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="themeType" value="shared" />
     

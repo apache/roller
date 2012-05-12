@@ -26,7 +26,8 @@
                 <hr size="1" noshade="noshade" />
                 
                 <s:form action="templates!add">
-                    <s:hidden name="weblog" />
+					<s:hidden name="salt" />
+					<s:hidden name="weblog" />
                     
                     <table cellpadding="0" cellspacing="6">
                         <tr>

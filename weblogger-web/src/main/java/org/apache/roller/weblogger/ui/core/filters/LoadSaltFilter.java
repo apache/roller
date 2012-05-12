@@ -23,21 +23,19 @@ import java.security.SecureRandom;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.roller.weblogger.util.LRUCache2;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
  
 public class LoadSaltFilter implements Filter {
- 
+    private static Log log = LogFactory.getLog(LoadSaltFilter.class);
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
         HttpServletRequest httpReq = (HttpServletRequest) request;
 
-		LRUCache2 saltCache = (LRUCache2)
-            httpReq.getSession().getAttribute("saltCache");
-        if (saltCache == null){
-            saltCache = new LRUCache2(10000,3000); 
-            httpReq.getSession().setAttribute("saltCache", saltCache);
-        }
+		SaltCache saltCache = SaltCache.getInstance();
         String salt = RandomStringUtils.random(20, 0, 0, true, true, null, new SecureRandom());
         saltCache.put(salt, Boolean.TRUE);
         httpReq.setAttribute("salt", salt);

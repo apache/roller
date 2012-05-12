@@ -29,6 +29,7 @@
                 <p><s:text name="weblogEntryQuery.sidebarDescription" /></p>
 
                 <s:form action="entries">
+					<s:hidden name="salt" />
                     <s:hidden name="weblog" />
                     <s:hidden name="bean.count" />
                     <s:hidden name="bean.offset" />

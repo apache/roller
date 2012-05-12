@@ -23,6 +23,7 @@
 <p><s:text name="planetConfig.prompt" /></a>
 
 <s:form action="planetConfig!save">
+	<s:hidden name="salt" />
 
     <table class="formtableNoDesc">
     

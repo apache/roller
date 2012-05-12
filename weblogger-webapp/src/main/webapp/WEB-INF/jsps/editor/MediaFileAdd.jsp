@@ -68,6 +68,7 @@
 </p>
 
 <s:form id="entry" action="mediaFileAdd!save" method="POST" enctype="multipart/form-data">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
 
     <%-- ================================================================== --%>
