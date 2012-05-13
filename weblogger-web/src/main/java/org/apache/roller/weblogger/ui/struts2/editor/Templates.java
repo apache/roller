@@ -106,7 +106,9 @@ public class Templates extends UIAction {
 			} else {
 				// Make sure we have an option for the default web page
 				availableActions.add(WeblogTemplate.ACTION_WEBLOG);
-				setNewTmplAction(WeblogTemplate.ACTION_WEBLOG);
+				if (StringUtils.isEmpty(getNewTmplAction())) {
+					setNewTmplAction(WeblogTemplate.ACTION_WEBLOG);
+				}
 				for (WeblogTemplate tmpPage : getTemplates()) {
 					if (WeblogTemplate.ACTION_WEBLOG
 							.equals(tmpPage.getAction())) {
