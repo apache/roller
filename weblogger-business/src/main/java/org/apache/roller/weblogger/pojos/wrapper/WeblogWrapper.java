@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 
 /**
@@ -117,7 +118,7 @@ public class WeblogWrapper {
     
     
     public String getDescription() {
-        return this.pojo.getDescription();
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getDescription());
     }
     
     
@@ -297,7 +298,7 @@ public class WeblogWrapper {
     
     
     public String getAbout() {
-        return this.pojo.getAbout();
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getAbout());
     }
     
     

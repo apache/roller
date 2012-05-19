@@ -29,8 +29,10 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
 
 /**
- * For thwarting XSRF attacks. If you're running distributed, 
- * then you must use a distributed cache, e.g. memcached
+ * Cache for XSRF salt values. This cache is part of XSRF protection wherein 
+ * each HTTP POST must be accompanied by a valid salt value, i.e. one generated 
+ * by Roller. If you're running distributed, then you must use a distributed 
+ * cache, e.g. memcached
  */
 public class SaltCache {
     private static Log log = LogFactory.getLog(SaltCache.class);

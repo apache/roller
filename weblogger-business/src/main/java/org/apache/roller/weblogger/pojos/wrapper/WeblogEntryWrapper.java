@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 
 /**
@@ -99,12 +100,12 @@ public class WeblogEntryWrapper {
     
     
     public String getTitle() {
-        return this.pojo.getTitle();
-    }
-    
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getTitle());
+	}
+
     
     public String getSummary() {
-        return this.pojo.getSummary();
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getSummary());
     }
     
     /**
@@ -113,7 +114,7 @@ public class WeblogEntryWrapper {
      * Simply returns the same value that the pojo would have returned.
      */
     public String getText() {
-        return this.pojo.getText();
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getText());
     }
     
     

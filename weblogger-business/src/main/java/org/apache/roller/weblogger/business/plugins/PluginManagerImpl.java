@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 
 /**
@@ -85,11 +86,12 @@ public class PluginManagerImpl implements PluginManager {
         return ret;
     }
     
-    
     public String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str) {
+
         String ret = str;
         WeblogEntry copy = new WeblogEntry(entry);
         List entryPlugins = copy.getPluginsList();
+
         if (entryPlugins != null && !entryPlugins.isEmpty()) {
             Iterator iter = entryPlugins.iterator();
             while (iter.hasNext()) {
@@ -102,7 +104,8 @@ public class PluginManagerImpl implements PluginManager {
                 }
             }
         }
-        return ret;
+
+        return HTMLSanitizer.conditionallySanitize(ret);
     }
     
     
