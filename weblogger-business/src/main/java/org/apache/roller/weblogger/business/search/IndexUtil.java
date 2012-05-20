@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LengthFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.Term;
@@ -50,30 +49,20 @@ public class IndexUtil {
 			return null;
 
 		Analyzer analyer = IndexManagerImpl.getAnalyzer();
+
 		TokenStream tokens = analyer
 				.tokenStream(field, new StringReader(input));
 
-		Term term = null;
-
-		// LengthFilter(EnablePositionIncrements ..) If true, this TokenFilter
-		// will preserve positions of the incoming tokens (ie, accumulate and
-		// set position increments of the removed tokens). Generally, true is
-		// best as it does not lose information (positions of the original
-		// tokens) during indexing. When set, when a token is stopped (omitted),
-		// the position increment of the following token is incremented.
-
-		// Min length 1 characters
-		tokens = new LengthFilter(true, tokens, 1, Integer.MAX_VALUE);
-
 		CharTermAttribute termAtt = (CharTermAttribute) tokens
 				.addAttribute(CharTermAttribute.class);
+
+		Term term = null;
 
 		try {
 
 			tokens.reset();
 
 			if (tokens.incrementToken()) {
-				// System.out.println("token: " + tokens);
 				String termt = termAtt.toString();
 				term = new Term(field, termt);
 			}
