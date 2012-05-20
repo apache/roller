@@ -22,152 +22,209 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.util.Version;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.apache.lucene.search.TopFieldDocs;
 import org.apache.roller.weblogger.business.search.FieldConstants;
-import org.apache.roller.weblogger.business.search.IndexUtil;
 import org.apache.roller.weblogger.business.search.IndexManager;
-
+import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.apache.roller.weblogger.business.search.IndexUtil;
 
 /**
  * An operation that searches the index.
+ * 
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class SearchOperation extends ReadFromIndexOperation {
 
-    //~ Static fields/initializers =============================================
-    
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(SearchOperation.class);
-    
-    private static String[] SEARCH_FIELDS = new String[] {
-        FieldConstants.CONTENT,
-        FieldConstants.TITLE,
-        FieldConstants.C_CONTENT,
-        FieldConstants.CATEGORY
-    };
+	// ~ Static fields/initializers
+	// =============================================
 
-    private static BooleanClause.Occur[] SEARCH_FLAGS = new BooleanClause.Occur[] {
-        BooleanClause.Occur.SHOULD,
-        BooleanClause.Occur.SHOULD,
-        BooleanClause.Occur.SHOULD, 
-        BooleanClause.Occur.SHOULD
-    };
+	private static Log mLogger = LogFactory.getFactory().getInstance(
+			SearchOperation.class);
 
-    private static Sort SORTER = new Sort( new SortField(
-            FieldConstants.PUBLISHED, SortField.STRING, true) );
-    
-    //~ Instance fields ========================================================
-    
-    private String term;
-    private String websiteHandle;
-    private String category;
-    private Hits searchresults;
-    private String parseError;
-    
-    //~ Constructors ===========================================================
-    
-    /**
-     * Create a new operation that searches the index.
-     */
-    public SearchOperation(IndexManager mgr) {
-        // TODO: finish moving  IndexManager to backend, so this cast is not needed
-        super((IndexManagerImpl)mgr);
-    }
-    
-    //~ Methods ================================================================
-    
-    public void setTerm(String term) {
-        this.term = term;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Runnable#run()
-     */
-    public void doRun() {
-        searchresults = null;
-        
-        IndexSearcher searcher = null;
-        
-        try {
-            IndexReader reader = manager.getSharedIndexReader();
-            searcher = new IndexSearcher(reader);
+	private static String[] SEARCH_FIELDS = new String[] {
+			FieldConstants.CONTENT, FieldConstants.TITLE,
+			FieldConstants.C_CONTENT, FieldConstants.CATEGORY };
 
-            Query query = MultiFieldQueryParser.parse(term,
-                SEARCH_FIELDS, SEARCH_FLAGS,
-                new StandardAnalyzer(Version.LUCENE_CURRENT));
-            
-            Term tUsername =
-                IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, websiteHandle);
-            
-            if (tUsername != null) {
-                BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, BooleanClause.Occur.MUST);
-                bQuery.add(new TermQuery(tUsername), BooleanClause.Occur.MUST);
-                query = bQuery;
-            }
-            
-            Term tCategory =
-                IndexUtil.getTerm(FieldConstants.CATEGORY, category);
-            
-            if (tCategory != null) {
-                BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, BooleanClause.Occur.MUST);
-                bQuery.add(new TermQuery(tCategory), BooleanClause.Occur.MUST);
-                query = bQuery;
-            }
-            searchresults = searcher.search(query, null/*Filter*/, SORTER);
+	// private static BooleanClause.Occur[] SEARCH_FLAGS = new
+	// BooleanClause.Occur[] {
+	// BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD,
+	// BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD };
 
-        } catch (IOException e) {
-            mLogger.error("Error searching index", e);
-            parseError = e.getMessage();
+	private static Sort SORTER = new Sort(new SortField(
+			FieldConstants.PUBLISHED, SortField.STRING, true));
 
-        } catch (ParseException e) {
-            // who cares?
-            parseError = e.getMessage();
-        }
-        // don't need to close the reader, since we didn't do any writing!
-    }
-    
-    public Hits getResults() {
-        return searchresults;
-    }
-    
-    public int getResultsCount() {
-        if (searchresults == null) return -1;
-        
-        return searchresults.length();
-    }
-    
-    public String getParseError() {
-        return parseError;
-    }
-    
-    /**
-     * @param string
-     */
-    public void setWebsiteHandle(String websiteHandle) {
-        this.websiteHandle = websiteHandle;
-    }
-    
-    /**
-     * @param parameter
-     */
-    public void setCategory(String category) {
-        this.category = category;
-    }
-    
+	// ~ Instance fields
+	// ========================================================
+
+	private IndexSearcher searcher;
+	private TopFieldDocs searchresults;
+
+	private String term;
+	private String websiteHandle;
+	private String category;
+	private String parseError;
+
+	private int nMax = 500; // Limit documents.
+
+	// ~ Constructors
+	// ===========================================================
+
+	/**
+	 * Create a new operation that searches the index.
+	 */
+	public SearchOperation(IndexManager mgr) {
+		// TODO: finish moving IndexManager to backend, so this cast is not
+		// needed
+		super((IndexManagerImpl) mgr);
+	}
+
+	// ~ Methods
+	// ================================================================
+
+	public void setTerm(String term) {
+		this.term = term;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
+	public void doRun() {
+		searchresults = null;
+
+		searcher = null;
+
+		try {
+			IndexReader reader = manager.getSharedIndexReader();
+			searcher = new IndexSearcher(reader);
+
+			// Query query = MultiFieldQueryParser.parse(
+			// FieldConstants.LUCENE_VERSION, term, SEARCH_FIELDS,
+			// SEARCH_FLAGS, IndexManagerImpl.getAnalyzer());
+
+			MultiFieldQueryParser multiParser = new MultiFieldQueryParser(
+					FieldConstants.LUCENE_VERSION, SEARCH_FIELDS,
+					IndexManagerImpl.getAnalyzer());
+
+			// Make it an AND by default. Comment this out for an or (default)
+			multiParser.setDefaultOperator(MultiFieldQueryParser.Operator.AND);
+
+			// Create a query object out of our term
+			Query query = multiParser.parse(term);
+
+			Term tUsername = IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE,
+					websiteHandle);
+
+			if (tUsername != null) {
+				BooleanQuery bQuery = new BooleanQuery();
+				bQuery.add(query, BooleanClause.Occur.MUST);
+				bQuery.add(new TermQuery(tUsername), BooleanClause.Occur.MUST);
+				query = bQuery;
+			}
+
+			Term tCategory = IndexUtil.getTerm(FieldConstants.CATEGORY,
+					category);
+
+			if (tCategory != null) {
+				BooleanQuery bQuery = new BooleanQuery();
+				bQuery.add(query, BooleanClause.Occur.MUST);
+				bQuery.add(new TermQuery(tCategory), BooleanClause.Occur.MUST);
+				query = bQuery;
+			}
+
+			searchresults = searcher.search(query, null/* Filter */, nMax,
+					SORTER);
+
+		} catch (IOException e) {
+			mLogger.error("Error searching index", e);
+			parseError = e.getMessage();
+
+		} catch (ParseException e) {
+			// who cares?
+			parseError = e.getMessage();
+		}
+		// don't need to close the reader, since we didn't do any writing!
+	}
+
+	/**
+	 * Gets the searcher.
+	 * 
+	 * @return the searcher
+	 */
+	public IndexSearcher getSearcher() {
+		return searcher;
+	}
+
+	/**
+	 * Sets the searcher.
+	 * 
+	 * @param searcher
+	 *            the new searcher
+	 */
+	public void setSearcher(IndexSearcher searcher) {
+		this.searcher = searcher;
+	}
+
+	/**
+	 * Gets the results.
+	 * 
+	 * @return the results
+	 */
+	public TopFieldDocs getResults() {
+		return searchresults;
+	}
+
+	/**
+	 * Gets the results count.
+	 * 
+	 * @return the results count
+	 */
+	public int getResultsCount() {
+		if (searchresults == null)
+			return -1;
+
+		return searchresults.totalHits;
+	}
+
+	/**
+	 * Gets the parses the error.
+	 * 
+	 * @return the parses the error
+	 */
+	public String getParseError() {
+		return parseError;
+	}
+
+	/**
+	 * Sets the website handle.
+	 * 
+	 * @param websiteHandle
+	 *            the new website handle
+	 */
+	public void setWebsiteHandle(String websiteHandle) {
+		this.websiteHandle = websiteHandle;
+	}
+
+	/**
+	 * Sets the category.
+	 * 
+	 * @param category
+	 *            the new category
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 }

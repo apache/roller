@@ -26,9 +26,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
@@ -45,331 +47,370 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
-
 /**
- * Lucene implementation of IndexManager. This is the central entry point 
- * into the Lucene searching API.
+ * Lucene implementation of IndexManager. This is the central entry point into
+ * the Lucene searching API.
+ * 
  * @author Mindaugas Idzelis (min@idzelis.com)
  * @author mraible (formatting and making indexDir configurable)
  */
 @com.google.inject.Singleton
 public class IndexManagerImpl implements IndexManager {
-    //~ Static fields/initializers
-    // =============================================
-    
-    private IndexReader reader;
-    private final Weblogger roller;
-    
-    static Log mLogger = LogFactory.getFactory().getInstance(
-            IndexManagerImpl.class);
-    
-    //~ Instance fields
-    // ========================================================
-    
-    private boolean searchEnabled = true;
-    
-    File indexConsistencyMarker;
-    
-    private boolean useRAMIndex = false;
-    
-    private RAMDirectory fRAMindex;
-    
-    private String indexDir = null;
-    
-    private boolean inconsistentAtStartup = false;
-    
-    private ReadWriteLock rwl = new ReentrantReadWriteLock();
-    
-    //~ Constructors
-    // ===========================================================
-    
-    /**
-     * Creates a new lucene index manager. This should only be created once.
-     * Creating the index manager more than once will definately result in
-     * errors. The preferred way of getting an index is through the
-     * RollerContext.
-     *
-     * @param indexDir -
-     *            the path to the index directory
-     */
-    @com.google.inject.Inject
-    protected IndexManagerImpl(Weblogger roller) {
-        this.roller = roller;
+	// ~ Static fields/initializers
+	// =============================================
 
-        // check config to see if the internal search is enabled
-        String enabled = WebloggerConfig.getProperty("search.enabled");
-        if("false".equalsIgnoreCase(enabled))
-            this.searchEnabled = false;
-        
-        // we also need to know what our index directory is
-        // Note: system property expansion is now handled by WebloggerConfig
-        String searchIndexDir = WebloggerConfig.getProperty("search.index.dir");
-        this.indexDir = searchIndexDir.replace('/', File.separatorChar);
-        
-        // a little debugging
-        mLogger.info("search enabled: " + this.searchEnabled);
-        mLogger.info("index dir: " + this.indexDir);
-        
-        String test = indexDir + File.separator + ".index-inconsistent";
-        indexConsistencyMarker = new File(test);
-    }
-    
-    
-    /**
-     * @inheritDoc
-     */
-    public void initialize() throws InitializationException {
-        
-        // only initialize the index if search is enabled
-        if (this.searchEnabled) {
-            
-            // 1. If inconsistency marker exists.
-            //     Delete index
-            // 2. if we're using RAM index
-            //     load ram index wrapper around index
-            //
-            if (indexConsistencyMarker.exists()) {
-                getFSDirectory(true);
-                inconsistentAtStartup = true;
-                mLogger.debug("Index inconsistent: marker exists");
-            } else {
-                try {
-                    File makeIndexDir = new File(indexDir);
-                    if (!makeIndexDir.exists()) {
-                        makeIndexDir.mkdirs();
-                        inconsistentAtStartup = true;
-                        mLogger.debug("Index inconsistent: new");
-                    }
-                    indexConsistencyMarker.createNewFile();
-                } catch (IOException e) {
-                    mLogger.error(e);
-                }
-            }
-            
-            if (indexExists()) {
-                if (useRAMIndex) {
-                    Directory filesystem = getFSDirectory(false);                    
-                    try {
-                        fRAMindex = new RAMDirectory(filesystem);
-                    } catch (IOException e) {
-                        mLogger.error("Error creating in-memory index", e);
-                    }
-                }
-            } else {
-                mLogger.debug("Creating index");
-                inconsistentAtStartup = true;
-                if (useRAMIndex) {
-                    fRAMindex = new RAMDirectory();
-                    createIndex(fRAMindex);
-                } else {
-                    createIndex(getFSDirectory(true));
-                }
-            }
-            
-            if (isInconsistentAtStartup()) {
-                mLogger.info(
-                    "Index was inconsistent. Rebuilding index in the background...");
-                try {
-                    rebuildWebsiteIndex();
-                } catch (WebloggerException e) {
-                    mLogger.error("ERROR: scheduling re-index operation");
-                }
-            } else {
-                mLogger.info("Index initialized and ready for use.");
-            }
-        }
-        
-    }
-    
-    
-    //~ Methods
-    // ================================================================
-    
-    public void rebuildWebsiteIndex() throws WebloggerException {
-        scheduleIndexOperation(
-                new RebuildWebsiteIndexOperation(roller, this, null));
-    }
-    
-    public void rebuildWebsiteIndex(Weblog website) throws WebloggerException {
-        scheduleIndexOperation(
-                new RebuildWebsiteIndexOperation(roller, this, website));
-    }
-    
-    public void removeWebsiteIndex(Weblog website) throws WebloggerException {
-        scheduleIndexOperation(
-                new RemoveWebsiteIndexOperation(roller, this, website));
-    }
-    
-    public void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
-        AddEntryOperation addEntry = new AddEntryOperation(roller, this, entry);
-        scheduleIndexOperation(addEntry);
-    }
-    
-    public void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException {
-        ReIndexEntryOperation reindex = new ReIndexEntryOperation(roller, this, entry);
-        scheduleIndexOperation(reindex);
-    }
-    
-    public void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
-        RemoveEntryOperation removeOp = new RemoveEntryOperation(roller, this, entry);
-        executeIndexOperationNow(removeOp);
-    }
-    
-    public ReadWriteLock getReadWriteLock() {
-        return rwl;
-    }
-    
-    public boolean isInconsistentAtStartup() {
-        return inconsistentAtStartup;
-    }
-    
-    /**
-     * This is the analyzer that will be used to tokenize comment text.
-     *
-     * @return Analyzer to be used in manipulating the database.
-     */
-    public static final Analyzer getAnalyzer() {
-        return new StandardAnalyzer();
-    }
-    
-    private void scheduleIndexOperation(final IndexOperation op) {
-        try {
-            // only if search is enabled
-            if(this.searchEnabled) {
-                mLogger.debug("Starting scheduled index operation: "+op.getClass().getName());
-                roller.getThreadManager().executeInBackground(op);
-            }
-        } catch (InterruptedException e) {
-            mLogger.error("Error executing operation", e);
-        }
-    }
-    
-    /**
-     * @param search
-     */
-    public void executeIndexOperationNow(final IndexOperation op) {
-        try {
-            // only if search is enabled
-            if(this.searchEnabled) {
-                mLogger.debug("Executing index operation now: "+op.getClass().getName());
-                roller.getThreadManager().executeInForeground(op);
-            }
-        } catch (InterruptedException e) {
-            mLogger.error("Error executing operation", e);
-        }
-    }
-    
-    public synchronized void resetSharedReader() {
-        reader = null;
-    }
-    public synchronized IndexReader getSharedIndexReader() {
-        if (reader == null) {
-            try {
-                reader = IndexReader.open(getIndexDirectory());
-            } catch (IOException e) {
-            }
-        }
-        return reader;
-    }
-    
-    /**
-     * Get the directory that is used by the lucene index. This method will
-     * return null if there is no index at the directory location. If we are
-     * using a RAM index, the directory will be a ram directory.
-     *
-     * @return Directory The directory containing the index, or null if error.
-     */
-    public Directory getIndexDirectory() {
-        if (useRAMIndex) {
-            return fRAMindex;
-        } else {
-            return getFSDirectory(false);
-        }
-    }
-    
-    private boolean indexExists() {
-        return IndexReader.indexExists(indexDir);
-    }
-    
-    Directory getFSDirectory(boolean delete) {
-        Directory directory = null;
-        
-        try {
-            directory = FSDirectory.getDirectory(indexDir, delete);
-        } catch (IOException e) {
-            mLogger.error("Problem accessing index directory", e);
-        }
-        
-        return directory;
-    }
-    
-    private void createIndex(Directory dir) {
-        IndexWriter writer = null;
-        
-        try {
-            writer = new IndexWriter(dir, IndexManagerImpl.getAnalyzer(), true);
-        } catch (IOException e) {
-            mLogger.error("Error creating index", e);
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException e) {
-            }
-        }
-    }
-    
-    private IndexOperation getSaveIndexOperation() {
-        return new WriteToIndexOperation(this) {
-            public void doRun() {
-                Directory dir = getIndexDirectory();
-                Directory fsdir = getFSDirectory(true);
-                
-                IndexWriter writer = null;
-                
-                try {
-                    writer = new IndexWriter(fsdir, IndexManagerImpl
-                            .getAnalyzer(), true);
-                    
-                    writer.addIndexes(new Directory[] { dir });
-                    indexConsistencyMarker.delete();
-                } catch (IOException e) {
-                    mLogger.error("Problem saving index to disk", e);
-                    
-                    // Delete the directory, since there was a problem saving
-                    // the RAM contents
-                    getFSDirectory(true);
-                } finally {
-                    try {
-                        if (writer != null)
-                            writer.close();
-                    } catch (IOException e1) {
-                        mLogger.warn("Unable to close IndexWriter.");
-                    }
-                }
-                
-            }
-        };
-    }
-    
-    public void release() {
-        // no-op
-    }
-    
-    public void shutdown() {
-        if (useRAMIndex) {
-            scheduleIndexOperation(getSaveIndexOperation());
-        } else {
-            indexConsistencyMarker.delete();
-        }
-        
-        try {
-            if (reader != null)
-                reader.close();
-        } catch (IOException e) {
-            // won't happen, since it was
-        }
-    }
+	private IndexReader reader;
+	private final Weblogger roller;
+
+	static Log mLogger = LogFactory.getFactory().getInstance(
+			IndexManagerImpl.class);
+
+	// ~ Instance fields
+	// ========================================================
+
+	private boolean searchEnabled = true;
+
+	File indexConsistencyMarker;
+
+	private boolean useRAMIndex = false;
+
+	private RAMDirectory fRAMindex;
+
+	private String indexDir = null;
+
+	private boolean inconsistentAtStartup = false;
+
+	private ReadWriteLock rwl = new ReentrantReadWriteLock();
+
+	// ~ Constructors
+	// ===========================================================
+
+	/**
+	 * Creates a new lucene index manager. This should only be created once.
+	 * Creating the index manager more than once will definately result in
+	 * errors. The preferred way of getting an index is through the
+	 * RollerContext.
+	 * 
+	 * @param indexDir
+	 *            - the path to the index directory
+	 */
+	@com.google.inject.Inject
+	protected IndexManagerImpl(Weblogger roller) {
+		this.roller = roller;
+
+		// check config to see if the internal search is enabled
+		String enabled = WebloggerConfig.getProperty("search.enabled");
+		if ("false".equalsIgnoreCase(enabled))
+			this.searchEnabled = false;
+
+		// we also need to know what our index directory is
+		// Note: system property expansion is now handled by WebloggerConfig
+		String searchIndexDir = WebloggerConfig.getProperty("search.index.dir");
+		this.indexDir = searchIndexDir.replace('/', File.separatorChar);
+
+		// a little debugging
+		mLogger.info("search enabled: " + this.searchEnabled);
+		mLogger.info("index dir: " + this.indexDir);
+
+		String test = indexDir + File.separator + ".index-inconsistent";
+		indexConsistencyMarker = new File(test);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public void initialize() throws InitializationException {
+
+		// only initialize the index if search is enabled
+		if (this.searchEnabled) {
+
+			// 1. If inconsistency marker exists.
+			// Delete index
+			// 2. if we're using RAM index
+			// load ram index wrapper around index
+			//
+			if (indexConsistencyMarker.exists()) {
+				getFSDirectory(true);
+				inconsistentAtStartup = true;
+				mLogger.debug("Index inconsistent: marker exists");
+			} else {
+				try {
+					File makeIndexDir = new File(indexDir);
+					if (!makeIndexDir.exists()) {
+						makeIndexDir.mkdirs();
+						inconsistentAtStartup = true;
+						mLogger.debug("Index inconsistent: new");
+					}
+					indexConsistencyMarker.createNewFile();
+				} catch (IOException e) {
+					mLogger.error(e);
+				}
+			}
+
+			if (indexExists()) {
+				if (useRAMIndex) {
+					Directory filesystem = getFSDirectory(false);
+					try {
+						fRAMindex = new RAMDirectory(filesystem);
+					} catch (IOException e) {
+						mLogger.error("Error creating in-memory index", e);
+					}
+				}
+			} else {
+				mLogger.debug("Creating index");
+				inconsistentAtStartup = true;
+				if (useRAMIndex) {
+					fRAMindex = new RAMDirectory();
+					createIndex(fRAMindex);
+				} else {
+					createIndex(getFSDirectory(true));
+				}
+			}
+
+			if (isInconsistentAtStartup()) {
+				mLogger.info("Index was inconsistent. Rebuilding index in the background...");
+				try {
+					rebuildWebsiteIndex();
+				} catch (WebloggerException e) {
+					mLogger.error("ERROR: scheduling re-index operation");
+				}
+			} else {
+				mLogger.info("Index initialized and ready for use.");
+			}
+		}
+
+	}
+
+	// ~ Methods
+	// ================================================================
+
+	public void rebuildWebsiteIndex() throws WebloggerException {
+		scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this,
+				null));
+	}
+
+	public void rebuildWebsiteIndex(Weblog website) throws WebloggerException {
+		scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this,
+				website));
+	}
+
+	public void removeWebsiteIndex(Weblog website) throws WebloggerException {
+		scheduleIndexOperation(new RemoveWebsiteIndexOperation(roller, this,
+				website));
+	}
+
+	public void addEntryIndexOperation(WeblogEntry entry)
+			throws WebloggerException {
+		AddEntryOperation addEntry = new AddEntryOperation(roller, this, entry);
+		scheduleIndexOperation(addEntry);
+	}
+
+	public void addEntryReIndexOperation(WeblogEntry entry)
+			throws WebloggerException {
+		ReIndexEntryOperation reindex = new ReIndexEntryOperation(roller, this,
+				entry);
+		scheduleIndexOperation(reindex);
+	}
+
+	public void removeEntryIndexOperation(WeblogEntry entry)
+			throws WebloggerException {
+		RemoveEntryOperation removeOp = new RemoveEntryOperation(roller, this,
+				entry);
+		executeIndexOperationNow(removeOp);
+	}
+
+	public ReadWriteLock getReadWriteLock() {
+		return rwl;
+	}
+
+	public boolean isInconsistentAtStartup() {
+		return inconsistentAtStartup;
+	}
+
+	/**
+	 * This is the analyzer that will be used to tokenize comment text.
+	 * 
+	 * @return Analyzer to be used in manipulating the database.
+	 */
+	public static final Analyzer getAnalyzer() {
+		return new StandardAnalyzer(FieldConstants.LUCENE_VERSION);
+	}
+
+	private void scheduleIndexOperation(final IndexOperation op) {
+		try {
+			// only if search is enabled
+			if (this.searchEnabled) {
+				mLogger.debug("Starting scheduled index operation: "
+						+ op.getClass().getName());
+				roller.getThreadManager().executeInBackground(op);
+			}
+		} catch (InterruptedException e) {
+			mLogger.error("Error executing operation", e);
+		}
+	}
+
+	/**
+	 * @param search
+	 */
+	public void executeIndexOperationNow(final IndexOperation op) {
+		try {
+			// only if search is enabled
+			if (this.searchEnabled) {
+				mLogger.debug("Executing index operation now: "
+						+ op.getClass().getName());
+				roller.getThreadManager().executeInForeground(op);
+			}
+		} catch (InterruptedException e) {
+			mLogger.error("Error executing operation", e);
+		}
+	}
+
+	public synchronized void resetSharedReader() {
+		reader = null;
+	}
+
+	public synchronized IndexReader getSharedIndexReader() {
+		if (reader == null) {
+			try {
+				reader = IndexReader.open(getIndexDirectory());
+			} catch (IOException e) {
+			}
+		}
+		return reader;
+	}
+
+	/**
+	 * Get the directory that is used by the lucene index. This method will
+	 * return null if there is no index at the directory location. If we are
+	 * using a RAM index, the directory will be a ram directory.
+	 * 
+	 * @return Directory The directory containing the index, or null if error.
+	 */
+	public Directory getIndexDirectory() {
+		if (useRAMIndex) {
+			return fRAMindex;
+		} else {
+			return getFSDirectory(false);
+		}
+	}
+
+	private boolean indexExists() {
+		try {
+			return IndexReader.indexExists(getIndexDirectory());
+		} catch (IOException e) {
+			mLogger.error("Problem accessing index directory", e);
+		}
+		return false;
+	}
+
+	private Directory getFSDirectory(boolean delete) {
+		
+		Directory directory = null;
+
+		try {
+
+			directory = FSDirectory.open(new File(indexDir));
+
+			if (delete && directory != null) {
+				String[] files = directory.listAll(); // clear old files
+				for (int i = 0; i < files.length; i++) {
+					File file = new File(indexDir, files[i]);
+					if (!file.delete())
+						throw new IOException("couldn't delete " + files[i]);
+				}
+			}
+
+		} catch (IOException e) {
+			mLogger.error("Problem accessing index directory", e);
+		}
+
+		return directory;
+
+	}
+
+	private void createIndex(Directory dir) {
+		IndexWriter writer = null;
+
+		try {
+
+			IndexWriterConfig config = new IndexWriterConfig(
+					FieldConstants.LUCENE_VERSION, new LimitTokenCountAnalyzer(
+							IndexManagerImpl.getAnalyzer(),
+							IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL));
+
+			writer = new IndexWriter(dir, config);
+
+		} catch (IOException e) {
+			mLogger.error("Error creating index", e);
+		} finally {
+			try {
+				if (writer != null) {
+					writer.close();
+				}
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	private IndexOperation getSaveIndexOperation() {
+		return new WriteToIndexOperation(this) {
+			public void doRun() {
+				Directory dir = getIndexDirectory();
+				Directory fsdir = getFSDirectory(true);
+
+				IndexWriter writer = null;
+
+				try {
+					IndexWriterConfig config = new IndexWriterConfig(
+							FieldConstants.LUCENE_VERSION,
+							new LimitTokenCountAnalyzer(
+									IndexManagerImpl.getAnalyzer(),
+									IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL));
+
+					writer = new IndexWriter(fsdir, config);
+
+					writer.addIndexes(new Directory[] { dir });
+
+					writer.commit();
+
+					indexConsistencyMarker.delete();
+					
+				} catch (IOException e) {
+					mLogger.error("Problem saving index to disk", e);
+
+					// Delete the directory, since there was a problem saving
+					// the RAM contents
+					getFSDirectory(true);
+				} finally {
+					try {
+						if (writer != null)
+							writer.close();
+					} catch (IOException e1) {
+						mLogger.warn("Unable to close IndexWriter.");
+					}
+				}
+
+			}
+		};
+	}
+
+	public void release() {
+		// no-op
+	}
+
+	public void shutdown() {
+		if (useRAMIndex) {
+			scheduleIndexOperation(getSaveIndexOperation());
+		} else {
+			indexConsistencyMarker.delete();
+		}
+
+		try {
+			if (reader != null)
+				reader.close();
+		} catch (IOException e) {
+			// won't happen, since it was
+		}
+	}
 
 }

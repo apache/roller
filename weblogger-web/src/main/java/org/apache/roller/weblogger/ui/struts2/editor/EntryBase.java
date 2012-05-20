@@ -36,178 +36,182 @@ import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
-
 /**
  * A collection of base functionality used by entry actions.
  */
 public abstract class EntryBase extends UIAction {
-   
-    private static Log log = LogFactory.getLog(EntryBase.class);
-    
-    
-    /**
-     * Trigger reindexing of modified entry.
-     */
-    protected void reindexEntry(WeblogEntry entry) {
-        IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
-        
-        // if published, index the entry
-        if (entry.isPublished()) {
-            try {
-                manager.addEntryReIndexOperation(entry);
-            } catch (WebloggerException ex) {
-                log.warn("Trouble triggering entry indexing", ex);
-            }
-        }
-    }
-    
-    
-    /**
-     * Get recent weblog entries using request parameters to determine
-     * username, date, and category name parameters.
-     * @return List of WeblogEntryData objects.
-     * @throws WebloggerException
-     */
-    public List<WeblogEntry> getRecentPublishedEntries() {
-        List<WeblogEntry> entries = Collections.EMPTY_LIST;
-        try {
-            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
-                    
-                    getActionWeblog(), // userName
-                    null,
-                    null,              // startDate
-                    null,              // endDate
-                    null,              // catName
-                    null,WeblogEntry.PUBLISHED, // status
-                    null,              // text
-                    null,              // sortby (null for pubTime)
-                    null,
-                    null,
-                    0, 20);
-        } catch (WebloggerException ex) {
-            log.error("Error getting entries list", ex);
-        }
-        return entries;
-    }
-    
-    
-    /**
-     * Get recent weblog entries using request parameters to determine
-     * username, date, and category name parameters.
-     * @return List of WeblogEntryData objects.
-     * @throws WebloggerException
-     */
-    public List<WeblogEntry> getRecentScheduledEntries() {
-        List<WeblogEntry> entries = Collections.EMPTY_LIST;
-        try {
-            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
-                    
-                    getActionWeblog(), // userName
-                    null,
-                    null,              // startDate
-                    null,              // endDate
-                    null,              // catName
-                    null,WeblogEntry.SCHEDULED, // status
-                    null,              // text
-                    null,              // sortby (null for pubTime)
-                    null,
-                    null,
-                    0, 20);
-        } catch (WebloggerException ex) {
-            log.error("Error getting entries list", ex);
-        }
-        return entries;
-    }
-    
-    /**
-     * Get recent weblog entries using request parameters to determine
-     * username, date, and category name parameters.
-     * @return List of WeblogEntryData objects.
-     * @throws WebloggerException
-     */
-    public List<WeblogEntry> getRecentDraftEntries() {
-        List<WeblogEntry> entries = Collections.EMPTY_LIST;
-        try {
-            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
-                    
-                    getActionWeblog(),
-                    null,
-                    null,              // startDate
-                    null,              // endDate
-                    null,              // catName
-                    null,WeblogEntry.DRAFT, // status
-                    null,              // text
-                    "updateTime",      // sortby
-                    null,
-                    null,
-                    0, 20);  // maxEntries
-        } catch (WebloggerException ex) {
-            log.error("Error getting entries list", ex);
-        }
-        return entries;
-    }
-    
-    /**
-     * Get recent weblog entries using request parameters to determine
-     * username, date, and category name parameters.
-     * @return List of WeblogEntryData objects.
-     * @throws WebloggerException
-     */
-    public List<WeblogEntry> getRecentPendingEntries() {
-        List<WeblogEntry> entries = Collections.EMPTY_LIST;
-        try {
-            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
-                    
-                    getActionWeblog(),
-                    null,
-                    null,              // startDate
-                    null,              // endDate
-                    null,              // catName
-                    null,WeblogEntry.PENDING, // status
-                    null,              // text
-                    "updateTime",      // sortby
-                    null,
-                    null,
-                    0, 20);
-        } catch (WebloggerException ex) {
-            log.error("Error getting entries list", ex);
-        }
-        return entries;
-    }
-    
-    
-    public List<WeblogEntryPlugin> getEntryPlugins() {
-        List<WeblogEntryPlugin> availablePlugins = Collections.EMPTY_LIST;
-        try {
-            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
-            Map<String, WeblogEntryPlugin> plugins = ppmgr.getWeblogEntryPlugins(getActionWeblog());
-            
-            if(plugins.size() > 0) {
-                availablePlugins = new ArrayList();
-                for(WeblogEntryPlugin plugin : plugins.values()) {
-                    availablePlugins.add(plugin);
-                }
-            }
-        } catch (Exception ex) {
-            log.error("Error getting plugins list", ex);
-        }
-        return availablePlugins;
-    }
-    
-    
-    public WeblogEntryEditor getEditor() {
-        UIPluginManager pmgr = RollerContext.getUIPluginManager();
-        return pmgr.getWeblogEntryEditor(getActionWeblog().getEditorPage());
-    }
-    
-    
-    public boolean isUserAnAuthor() {
-        return getActionWeblog().hasUserPermission(getAuthenticatedUser(),WeblogPermission.POST);
-    }
-    
-    
-    public String getJsonAutocompleteUrl() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogTagsJsonURL(getActionWeblog(), false, 0);
-    }
-    
+
+	private static Log log = LogFactory.getLog(EntryBase.class);
+
+	/**
+	 * Trigger reindexing of modified entry.
+	 * 
+	 * @param entry
+	 *            the entry
+	 */
+	protected void reindexEntry(WeblogEntry entry) {
+		IndexManager manager = WebloggerFactory.getWeblogger()
+				.getIndexManager();
+		try {
+			manager.addEntryReIndexOperation(entry);
+		} catch (WebloggerException ex) {
+			log.warn("Trouble triggering entry indexing", ex);
+		}
+	}
+
+	/**
+	 * Trigger reindexing of modified entry.
+	 */
+	protected void removeEntryIndex(WeblogEntry entry) {
+		IndexManager manager = WebloggerFactory.getWeblogger()
+				.getIndexManager();
+		try {
+			manager.removeEntryIndexOperation(entry);
+		} catch (WebloggerException ex) {
+			log.warn("Trouble triggering entry indexing", ex);
+		}
+
+	}
+
+	/**
+	 * Get recent weblog entries using request parameters to determine username,
+	 * date, and category name parameters.
+	 * 
+	 * @return List of WeblogEntryData objects.
+	 * @throws WebloggerException
+	 */
+	public List<WeblogEntry> getRecentPublishedEntries() {
+		List<WeblogEntry> entries = Collections.EMPTY_LIST;
+		try {
+			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
+					.getWeblogEntries(
+
+					getActionWeblog(), // userName
+							null, null, // startDate
+							null, // endDate
+							null, // catName
+							null, WeblogEntry.PUBLISHED, // status
+							null, // text
+							null, // sortby (null for pubTime)
+							null, null, 0, 20);
+		} catch (WebloggerException ex) {
+			log.error("Error getting entries list", ex);
+		}
+		return entries;
+	}
+
+	/**
+	 * Get recent weblog entries using request parameters to determine username,
+	 * date, and category name parameters.
+	 * 
+	 * @return List of WeblogEntryData objects.
+	 * @throws WebloggerException
+	 */
+	public List<WeblogEntry> getRecentScheduledEntries() {
+		List<WeblogEntry> entries = Collections.EMPTY_LIST;
+		try {
+			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
+					.getWeblogEntries(
+
+					getActionWeblog(), // userName
+							null, null, // startDate
+							null, // endDate
+							null, // catName
+							null, WeblogEntry.SCHEDULED, // status
+							null, // text
+							null, // sortby (null for pubTime)
+							null, null, 0, 20);
+		} catch (WebloggerException ex) {
+			log.error("Error getting entries list", ex);
+		}
+		return entries;
+	}
+
+	/**
+	 * Get recent weblog entries using request parameters to determine username,
+	 * date, and category name parameters.
+	 * 
+	 * @return List of WeblogEntryData objects.
+	 * @throws WebloggerException
+	 */
+	public List<WeblogEntry> getRecentDraftEntries() {
+		List<WeblogEntry> entries = Collections.EMPTY_LIST;
+		try {
+			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
+					.getWeblogEntries(
+
+					getActionWeblog(), null, null, // startDate
+							null, // endDate
+							null, // catName
+							null, WeblogEntry.DRAFT, // status
+							null, // text
+							"updateTime", // sortby
+							null, null, 0, 20); // maxEntries
+		} catch (WebloggerException ex) {
+			log.error("Error getting entries list", ex);
+		}
+		return entries;
+	}
+
+	/**
+	 * Get recent weblog entries using request parameters to determine username,
+	 * date, and category name parameters.
+	 * 
+	 * @return List of WeblogEntryData objects.
+	 * @throws WebloggerException
+	 */
+	public List<WeblogEntry> getRecentPendingEntries() {
+		List<WeblogEntry> entries = Collections.EMPTY_LIST;
+		try {
+			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
+					.getWeblogEntries(
+
+					getActionWeblog(), null, null, // startDate
+							null, // endDate
+							null, // catName
+							null, WeblogEntry.PENDING, // status
+							null, // text
+							"updateTime", // sortby
+							null, null, 0, 20);
+		} catch (WebloggerException ex) {
+			log.error("Error getting entries list", ex);
+		}
+		return entries;
+	}
+
+	public List<WeblogEntryPlugin> getEntryPlugins() {
+		List<WeblogEntryPlugin> availablePlugins = Collections.EMPTY_LIST;
+		try {
+			PluginManager ppmgr = WebloggerFactory.getWeblogger()
+					.getPluginManager();
+			Map<String, WeblogEntryPlugin> plugins = ppmgr
+					.getWeblogEntryPlugins(getActionWeblog());
+
+			if (plugins.size() > 0) {
+				availablePlugins = new ArrayList();
+				for (WeblogEntryPlugin plugin : plugins.values()) {
+					availablePlugins.add(plugin);
+				}
+			}
+		} catch (Exception ex) {
+			log.error("Error getting plugins list", ex);
+		}
+		return availablePlugins;
+	}
+
+	public WeblogEntryEditor getEditor() {
+		UIPluginManager pmgr = RollerContext.getUIPluginManager();
+		return pmgr.getWeblogEntryEditor(getActionWeblog().getEditorPage());
+	}
+
+	public boolean isUserAnAuthor() {
+		return getActionWeblog().hasUserPermission(getAuthenticatedUser(),
+				WeblogPermission.POST);
+	}
+
+	public String getJsonAutocompleteUrl() {
+		return WebloggerFactory.getWeblogger().getUrlStrategy()
+				.getWeblogTagsJsonURL(getActionWeblog(), false, 0);
+	}
+
 }

@@ -18,44 +18,71 @@
 /* Created on Jul 20, 2003 */
 package org.apache.roller.weblogger.business.search;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Token;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.index.Term;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-
 import java.io.IOException;
 import java.io.StringReader;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.LengthFilter;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.index.Term;
+
 /**
  * Class containing helper methods.
+ * 
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class IndexUtil {
-    
-    /**
-     * Create a lucene term from the first token of the input string.
-     *
-     * @param field The lucene document field to create a term with
-     * @param input The input you wish to convert into a term
-     * @return Lucene search term
-     */
-    public static final Term getTerm(String field, String input) {
-        if (input==null || field==null) return null;
-        Analyzer analyer = IndexManagerImpl.getAnalyzer();
-        TokenStream tokens = analyer.tokenStream(field,
-                new StringReader(input));
-        
-        Token token = null;
-        Term term = null;
-        try {
-            token = tokens.next();
-        } catch (IOException e) {}
-        if (token!=null) {
-            String termt = token.termText();
-            term = new Term(field,termt);
-        }
-        return term;
-    }
-    
+
+	/**
+	 * Create a lucene term from the first token of the input string.
+	 * 
+	 * @param field
+	 *            The lucene document field to create a term with
+	 * @param input
+	 *            The input you wish to convert into a term
+	 * 
+	 * @return Lucene search term
+	 */
+	public static final Term getTerm(String field, String input) {
+
+		if (input == null || field == null)
+			return null;
+
+		Analyzer analyer = IndexManagerImpl.getAnalyzer();
+		TokenStream tokens = analyer
+				.tokenStream(field, new StringReader(input));
+
+		Term term = null;
+
+		// LengthFilter(EnablePositionIncrements ..) If true, this TokenFilter
+		// will preserve positions of the incoming tokens (ie, accumulate and
+		// set position increments of the removed tokens). Generally, true is
+		// best as it does not lose information (positions of the original
+		// tokens) during indexing. When set, when a token is stopped (omitted),
+		// the position increment of the following token is incremented.
+
+		// Min length 3 characters
+		tokens = new LengthFilter(true, tokens, 3, Integer.MAX_VALUE);
+
+		CharTermAttribute termAtt = (CharTermAttribute) tokens
+				.addAttribute(CharTermAttribute.class);
+
+		try {
+
+			tokens.reset();
+
+			if (tokens.incrementToken()) {
+				// System.out.println("token: " + tokens);
+				String termt = termAtt.toString();
+				term = new Term(field, termt);
+			}
+
+		} catch (IOException e) {
+			// ignored
+		}
+
+		return term;
+	}
+
 }
