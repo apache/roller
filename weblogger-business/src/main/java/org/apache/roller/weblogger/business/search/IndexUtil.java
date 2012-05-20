@@ -62,8 +62,8 @@ public class IndexUtil {
 		// tokens) during indexing. When set, when a token is stopped (omitted),
 		// the position increment of the following token is incremented.
 
-		// Min length 3 characters
-		tokens = new LengthFilter(true, tokens, 3, Integer.MAX_VALUE);
+		// Min length 1 characters
+		tokens = new LengthFilter(true, tokens, 1, Integer.MAX_VALUE);
 
 		CharTermAttribute termAtt = (CharTermAttribute) tokens
 				.addAttribute(CharTermAttribute.class);
