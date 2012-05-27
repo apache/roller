@@ -163,6 +163,8 @@
 	<filter-mapping>
 		<filter-name>LoadSaltFilter</filter-name>
 		<url-pattern>/roller-ui/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
 	<filter-mapping>
