@@ -23,6 +23,10 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 
 /**
@@ -36,15 +40,34 @@ public class ValidateSaltFilter implements Filter  {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-        HttpServletRequest httpReq = (HttpServletRequest) request;
- 
-		if (httpReq.getMethod().equals("POST")) {
-        	String salt = (String) httpReq.getParameter("salt");
-			SaltCache saltCache = SaltCache.getInstance();
-			if (salt == null || saltCache.get(salt) == null || saltCache.get(salt).equals(false)) {
-            	throw new ServletException("Security Violation");
+
+		try {
+			HttpServletRequest httpReq = (HttpServletRequest) request;
+			final User authenticUser;
+			UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+			if (httpReq.getUserPrincipal() != null) {
+				try {
+					authenticUser = umgr.getUserByUserName(httpReq.getUserPrincipal().getName(), Boolean.TRUE);
+				} catch (WebloggerException ex) {
+					log.error("ERROR checking user rile", ex);
+					throw new ServletException("Security Violation");
+				}
+			} else {
+				authenticUser = null;
 			}
+
+			if (httpReq.getMethod().equals("POST") && authenticUser != null) {
+				String salt = (String) httpReq.getParameter("salt");
+				SaltCache saltCache = SaltCache.getInstance();
+				if (salt == null || saltCache.get(salt) == null || !saltCache.get(salt).equals(authenticUser.getId())) {
+					throw new ServletException("Security Violation");
+				}
+			}
+		
+		} catch (Exception e) {
+			log.error("Error validating salt", e);
 		}
+
         chain.doFilter(request, response);
     }
  

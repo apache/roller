@@ -25,6 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 
 /**
@@ -37,12 +41,33 @@ public class LoadSaltFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-        HttpServletRequest httpReq = (HttpServletRequest) request;
 
-		SaltCache saltCache = SaltCache.getInstance();
-        String salt = RandomStringUtils.random(20, 0, 0, true, true, null, new SecureRandom());
-        saltCache.put(salt, Boolean.TRUE);
-        httpReq.setAttribute("salt", salt);
+		try {
+
+			HttpServletRequest httpReq = (HttpServletRequest) request;
+			final User authenticUser;
+			UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+			if (httpReq.getUserPrincipal() != null) {
+				try {
+					authenticUser = umgr.getUserByUserName(httpReq.getUserPrincipal().getName(), Boolean.TRUE);
+				} catch (WebloggerException ex) {
+					log.error("ERROR checking user rile", ex);
+					throw new ServletException("Security Violation");
+				}
+			} else {
+				authenticUser = null;
+			}
+
+			if (authenticUser != null) {
+				SaltCache saltCache = SaltCache.getInstance();
+				String salt = RandomStringUtils.random(20, 0, 0, true, true, null, new SecureRandom());
+				saltCache.put(salt, authenticUser.getId());
+				httpReq.setAttribute("salt", salt);
+			}
+
+		} catch (Exception e) {
+			log.error("Error loading salt", e);
+		}
 
         chain.doFilter(request, response);
     }
