@@ -33,11 +33,13 @@
 
 <div class="control">
     <s:form action="commonPingTargets!delete">
+		<s:hidden name="salt" />
         <s:hidden name="pingTargetId" />
         <s:submit value="%{getText('pingTarget.removeOK')}" />
     </s:form>
     &nbsp;
     <s:form action="commonPingTargets">
+		<s:hidden name="salt" />
         <s:submit value="%{getText('pingTarget.cancel')}" />
     </s:form>
 </div>

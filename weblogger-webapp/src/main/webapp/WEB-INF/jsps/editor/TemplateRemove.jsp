@@ -42,6 +42,8 @@
     <tr>
         <td>
             <s:form action="templateRemove!remove">
+				<s:hidden name="salt" />
+
                 <s:hidden name="removeId" />
                 <s:hidden name="weblog" value="%{actionWeblog.handle}" />
                 

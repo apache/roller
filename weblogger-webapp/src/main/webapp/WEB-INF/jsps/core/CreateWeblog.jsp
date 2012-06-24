@@ -42,6 +42,7 @@ function handlePreview(handle) {
 <br /> 
 
 <s:form action="createWeblog!save">
+<s:hidden name="salt" />
 
 <table class="formtable">
 

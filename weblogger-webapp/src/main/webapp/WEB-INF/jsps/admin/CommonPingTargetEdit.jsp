@@ -22,6 +22,7 @@
 </p>
 
 <s:form action="commonPingTargetEdit!save" >
+	<s:hidden name="salt" />
     <s:hidden name="bean.id" />
     
     <div class="formrow">

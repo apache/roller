@@ -5,7 +5,7 @@
 
 <!-- Configure a log -->
 
-    <New id="ServerLog" class="java.io.PrintStream">
+<!--    <New id="ServerLog" class="java.io.PrintStream">
         <Arg>
             <New class="org.mortbay.util.RolloverFileOutputStream">
                 <Arg>${project.build.directory}/yyyy_mm_dd.stderrout.log</Arg>
@@ -19,9 +19,9 @@
                 <Get id="ServerLogName" name="datedFilename"/>
             </New>
         </Arg>
-    </New>
+    </New>-->
 
-    <Call class="org.mortbay.log.Log" name="info">
+<!--    <Call class="org.mortbay.log.Log" name="info">
         <Arg>Redirecting stderr/stdout to 
             <Ref id="ServerLogName"/>
         </Arg>
@@ -35,6 +35,6 @@
         <Arg>
             <Ref id="ServerLog"/>
         </Arg>
-    </Call>
+    </Call>-->
 
 </Configure>

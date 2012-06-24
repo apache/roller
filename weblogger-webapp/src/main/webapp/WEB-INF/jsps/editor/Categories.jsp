@@ -59,6 +59,7 @@ function onMove()
 
 <%-- Form is a table of categories each with checkbox --%>
 <s:form action="categories!move">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="categoryId" /> 
     

@@ -75,6 +75,7 @@ $("#d_clip_button").ready(function() {
 </p>
 
 <s:form id="entry" action="mediaFileEdit!save" method="POST" enctype="multipart/form-data">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="mediaFileId" id="mediaFileId" />
     <s:hidden name="bean.permalink" />

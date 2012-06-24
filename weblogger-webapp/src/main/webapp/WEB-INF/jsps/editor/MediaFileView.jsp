@@ -182,6 +182,7 @@
 
 
 <s:form id="createPostForm" action='entryAddWithMediaFile'>
+	<s:hidden name="salt" />
     <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />' />
     <input type="hidden" name="selectedImage" id="selectedImage" />
     <input type="hidden" name="type" id="type" />
@@ -287,6 +288,7 @@
 <s:if test="childFiles || childDirectories || (pager && pager.items.size() > 0)">
 
   <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="directoryId" />
     <s:hidden name="newDirectoryName" />

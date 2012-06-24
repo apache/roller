@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.pojos.wrapper;
 import java.util.Date;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 
 /**
@@ -59,12 +60,12 @@ public class UserWrapper {
     
     
     public String getScreenName() {
-        return this.pojo.getScreenName();
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getScreenName());
     }
     
     
     public String getFullName() {
-        return this.pojo.getFullName();
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getFullName());
     }
     
     

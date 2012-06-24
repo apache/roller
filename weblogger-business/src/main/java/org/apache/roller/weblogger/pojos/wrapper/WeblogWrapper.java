@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.*;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 import java.util.*;
 
@@ -109,7 +110,7 @@ public class WeblogWrapper {
     
     
     public String getDescription() {
-        return this.pojo.getDescription();
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getDescription());
     }
     
     
@@ -289,7 +290,7 @@ public class WeblogWrapper {
     
     
     public String getAbout() {
-        return this.pojo.getAbout();
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getAbout());
     }
     
     

@@ -23,6 +23,7 @@
 </h3>
 
 <s:form action="categoryRemove!remove">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="removeId" />
     

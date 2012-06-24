@@ -90,6 +90,8 @@ function handleCommentResponse() {
 <%-- ============================================================= --%>
 
 <s:form action="globalCommentManagement!update">
+	<s:hidden name="salt" />
+
     <s:hidden name="bean.ids" />
     <s:hidden name="bean.offset" />
     <s:hidden name="bean.count" />

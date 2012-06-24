@@ -20,6 +20,7 @@
 <p class="subtitle"><s:text name="maintenance.subtitle" /></p>
     
 <s:form action="maintenance">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
 
     <s:text name="maintenance.prompt.flush" /><br /><br />

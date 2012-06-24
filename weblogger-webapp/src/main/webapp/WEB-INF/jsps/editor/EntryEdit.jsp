@@ -53,6 +53,7 @@ function fullPreviewMode() {
 </p>
 
 <s:form id="entry" action="entryEdit!save" onsubmit="editorCleanup()">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
     <s:hidden name="bean.commentCount" />

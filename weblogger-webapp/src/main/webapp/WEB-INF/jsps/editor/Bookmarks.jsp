@@ -67,6 +67,7 @@ function onMove()
 
 <%-- Form is a table of folders followed by bookmarks, each with checkbox --%>
 <s:form action="bookmarks!delete">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="folderId" /> 
     

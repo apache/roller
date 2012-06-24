@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -34,6 +35,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.util.menu.Menu;
 import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
+import org.apache.struts2.interceptor.RequestAware;
 
 
 /**
@@ -45,8 +47,8 @@ import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
  * which point to a success in a resource bundle, so we automatically call
  * getText(key) on the param passed into setError() and setSuccess().
  */
-public abstract class UIAction extends ActionSupport 
-        implements UIActionPreparable, UISecurityEnforced {
+public abstract class UIAction extends ActionSupport
+        implements UIActionPreparable, UISecurityEnforced, RequestAware {
     
     // a result that sends the user to an access denied warning
     public static final String DENIED = "access-denied";
@@ -71,12 +73,20 @@ public abstract class UIAction extends ActionSupport
     
     // page title
     protected String pageTitle = null;
-    
+
+    protected String salt = null;
     
     public void myPrepare() {
         // no-op
     }
-    
+	
+	public void setRequest(Map<String, Object> map) {
+		this.salt = (String) map.get("salt");
+	}
+
+	public String getSalt() {
+		return salt;
+	}
     
     // default action permissions, user is required
     public boolean isUserRequired() {

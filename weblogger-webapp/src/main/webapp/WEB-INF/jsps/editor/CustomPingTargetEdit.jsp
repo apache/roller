@@ -24,6 +24,7 @@
 </p>
 
 <s:form action="customPingTargetEdit!save" >
+	<s:hidden name="salt" />
     <s:hidden name="bean.id" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     

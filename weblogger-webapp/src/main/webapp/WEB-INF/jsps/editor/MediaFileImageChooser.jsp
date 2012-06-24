@@ -97,7 +97,7 @@
 <s:if test="childFiles || childDirectories || (pager && pager.items.size() > 0)">
 
 <s:form id="mediaFileChooserForm" name="mediaFileChooserForm" action="mediaFileView">
-
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="directoryId" />
     <input type="hidden" name="mediaFileId" value="" />

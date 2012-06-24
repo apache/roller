@@ -60,6 +60,7 @@
 <%-- ============================================================= --%>
 
     <s:form action="comments!update">
+		<s:hidden name="salt" />
         <s:hidden name="weblog" />
         <s:hidden name="bean.ids" />
         <s:hidden name="bean.entryId" />

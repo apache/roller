@@ -20,6 +20,7 @@
 <p><s:text name="userRegister.prompt" /></p>
 
 <s:form action="register!save" >
+	<s:hidden name="salt" />
     <s:hidden name="bean.id" />
     <s:hidden name="bean.enabled" />
 

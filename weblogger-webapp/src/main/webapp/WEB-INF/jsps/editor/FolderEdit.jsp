@@ -24,6 +24,7 @@
 </p>
 
 <s:form action="folderEdit!save">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
     

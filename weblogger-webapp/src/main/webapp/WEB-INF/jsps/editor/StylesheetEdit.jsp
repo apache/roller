@@ -53,6 +53,7 @@
 </p>
 
 <s:form action="stylesheetEdit!save">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
 
     <%-- ================================================================== --%>

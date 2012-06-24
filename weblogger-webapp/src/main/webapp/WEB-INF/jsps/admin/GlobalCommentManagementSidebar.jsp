@@ -29,6 +29,7 @@
 <p><s:text name="commentManagement.sidebarDescription" /></p>
     
  <s:form action="globalCommentManagement!query" id="comments">
+	<s:hidden name="salt" />
         
     <div class="sideformrow">
         <label for="searchString" class="sideformrow"><s:text name="commentManagement.searchString" />:</label>   

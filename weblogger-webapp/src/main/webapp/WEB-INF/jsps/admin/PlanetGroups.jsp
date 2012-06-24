@@ -29,6 +29,7 @@
 </p>
 
 <s:form action="planetGroups!save">
+	<s:hidden name="salt" />
     <s:hidden name="bean.id" />
     
     <div class="formrow">

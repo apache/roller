@@ -24,7 +24,7 @@
 </p>  
    
 <s:form action="weblogConfig!save">
-
+	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     <s:hidden name="bean.defaultCategoryId" />
 
@@ -265,6 +265,7 @@
 
 
 <s:form action="weblogRemove">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     
     <h2><s:text name="websiteSettings.removeWebsiteHeading" /></h2>

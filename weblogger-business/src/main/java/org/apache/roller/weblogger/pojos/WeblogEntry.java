@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -54,6 +53,8 @@ import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -1172,8 +1173,8 @@ public class WeblogEntry implements Serializable {
                     }
                 }
             }
-        }        
-        return ret;
+        } 
+        return HTMLSanitizer.conditionallySanitize(ret);
     }
     
     
@@ -1220,7 +1221,7 @@ public class WeblogEntry implements Serializable {
             }
         }
         
-        return displayContent;
+        return HTMLSanitizer.conditionallySanitize(displayContent);
     }
     
     

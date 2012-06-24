@@ -45,6 +45,7 @@
 </p>
 
 <s:form id="entry" action="entryAdd!save" onsubmit="editorCleanup()">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
 
     <%-- ================================================================== --%>

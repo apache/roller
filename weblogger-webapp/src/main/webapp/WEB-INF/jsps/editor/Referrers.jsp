@@ -28,6 +28,7 @@
 </p>
 
 <s:form action="referrers!remove">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     
     <%-- Table of referers, with check box for each --%>
@@ -63,6 +64,7 @@
 <h1><s:text name="referers.hitCounters" /></h1>
 <p><s:text name="referers.hits" />: <s:property value="dayHits"/></p>
 <s:form action="referrers!reset">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:submit value="%{getText('referers.reset')}" />
 </s:form>

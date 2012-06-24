@@ -59,6 +59,7 @@ function toggleImportThemeDisplay() {
 </p>
 
 <s:form action="themeEdit!save">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" />
 
     <table width="100%" cellpadding="0" cellspacing="0">

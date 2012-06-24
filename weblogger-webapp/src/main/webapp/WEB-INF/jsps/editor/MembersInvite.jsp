@@ -27,6 +27,7 @@
 <p><s:text name="inviteMember.prompt" /></p>
 
 <s:form action="invite!save">
+	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     
     <div class="formrow">
