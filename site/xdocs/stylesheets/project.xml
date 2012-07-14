@@ -27,8 +27,8 @@ limitations under the License.
 </projects>
 
 <projects><title>Get Involved</title>
-    <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">Mailing-lists</a></li>
-    <li><a href="http://opensource.atlassian.com/projects/roller">Bug tracker</a></li>
+    <li><a href="https://cwiki.apache.org/confluence/display/ROLLER/How+to+ask+for+help">Mailing-lists</a></li>
+    <li><a href="https://issues.apache.org/jira/browse/ROL">Bug tracker</a></li>
 </projects>
 
 <projects><title>Downloads</title>
@@ -37,18 +37,13 @@ limitations under the License.
     <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">Roller Install Guide</a> </li>
 </projects>
 
-<menu><title>Related Sites</title>
-  <li><a href="http://rollerweblogger.org/project">Roller project blog</a></li>
-</menu>
-
 <menu><title href="http://projects.apache.org/">Related Projects</title>
   <li><a href="http://struts.apache.org"></a>Apache Struts</li>
   <li><a href="http://velocity.apache.org"></a>Apache Velocity</li>
-  <li><a href="http://jakarta.apache.org"></a>Apache Jakarta</li>
-  <li><a href="http://db.apache.org"></a>Apache Derby</li>
-  <li><a href="http://incubator.apache.org/abdera"></a>Apache Abdera (incubating)</li>
-  <li><a href="http://rome.dev.java.net"></a>Java.Net ROME</li>
-  <li><a href="http://blogapps.dev.java.net"></a>Java.Net Blogapps</li>
+  <li><a href="http://tomcat.apache.org"></a>Apache Tomcat</li>
+  <li><a href="http://db.apache.org/derby/"></a>Apache Derby</li>
+  <li><a href="http://abdera.apache.org/"></a>Apache Abdera</li>
+  <li><a href="https://rometools.jira.com/wiki/display/ROME/Home"></a>ROME Tools</li>
 </menu>
 
 </body>

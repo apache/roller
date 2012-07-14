@@ -300,18 +300,12 @@ href="$title.getAttributeValue("href")">$menu.getChildText("title")</a></div>
     <td valign="top" nowrap="nowrap" class="navright">
      #makeProject()
 
-     <div class="menuheader">Search apache.org</div>
-     <form action="http://search.apache.org/" method="post">
-    <p><input type="text" name="query" size="10" />
-    <input type="submit" value="Go" /></p>
-</form>
-
     </td>     
    </tr>
    <!-- FOOTER -->
    <tr><td colspan="3"><hr noshade="noshade" size="1"/></td></tr>
    <tr><td colspan="3" class="footer">
-         Copyright &#169; 1999-2006, The Apache Software Foundation<br />
+         Copyright &#169; 1999-2012, The Apache Software Foundation<br />
 Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
        </td>
    </tr>
