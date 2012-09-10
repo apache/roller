@@ -31,10 +31,14 @@
 </s:if>
 
 <s:form action="templatesRemove">
+<s:hidden name="salt" />
 <s:hidden name="weblog" value="%{actionWeblog.handle}" />
 
 <%-- table of pages --%>
 <table class="rollertable">
+
+<s:if test="!templates.isEmpty">
+
     <tr>
         <th width="30%"><s:text name="pagesForm.name" /></th>
         <th width="10"><s:text name="pagesForm.action" /></th>
@@ -91,13 +95,15 @@
             </td>
         </tr>
     </s:iterator>
-    <s:if test="templates.isEmpty">
-        <tr class="rollertable_odd">
-            <td style="vertical-align:middle" colspan="5" >
-                <s:text name="pageForm.notemplates"/>
-            </td>
-        </tr>
-    </s:if>
+    
+</s:if>
+<s:else>
+    <tr class="rollertable_odd">
+        <td style="vertical-align:middle" colspan="5" >
+            <s:text name="pageForm.notemplates"/>
+        </td>
+    </tr>
+</s:else>
 </table>
 
 <br/>

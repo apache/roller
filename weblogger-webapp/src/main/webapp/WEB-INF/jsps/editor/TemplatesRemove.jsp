@@ -31,6 +31,7 @@
 </p>
 
 <s:form action="templatesRemove">
+	<s:hidden name="salt" />
 	<s:hidden name="ids" />
 	<s:hidden name="weblog" value="%{actionWeblog.handle}" />
 	
