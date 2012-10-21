@@ -22,5 +22,4 @@ create table rol_templatecode (
 );
 
 #addColumnNull("webpage" "type"  "varchar(16)")
-
-
+#addColumnNull("weblogentry" "search_description"  "varchar(255)")

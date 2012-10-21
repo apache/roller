@@ -238,7 +238,8 @@ create table weblogentry (
     status          varchar(20) not null,
     summary         $db.TEXT_SQL_TYPE default null, 
     content_type    varchar(48) default null, 
-    content_src     varchar(255) default null
+    content_src     varchar(255) default null,
+    search_description varchar(255) default null
 );
 create index we_websiteid_idx on weblogentry( websiteid );
 create index we_categoryid_idx on weblogentry( categoryid );

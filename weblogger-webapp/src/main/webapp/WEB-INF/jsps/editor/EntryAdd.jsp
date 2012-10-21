@@ -193,7 +193,17 @@
         </s:if>
         <br />
 
-        <s:text name="weblogEdit.enclosureURL" />: <s:textfield name="bean.enclosureURL" size="40" maxlength="255" />
+		<table>
+			<tr>
+				<td> <s:text name="weblogEdit.searchDescription" />: </td>
+				<td> <s:textfield name="bean.searchDescription" size="60" maxlength="255" /> </td>
+			</tr>
+        	<tr>
+				<td> <s:text name="weblogEdit.enclosureURL" />: </td>
+				<td> <s:textfield name="bean.enclosureURL" size="40" maxlength="255" /> </td>
+			</tr>
+		</table>
+
     </div>
 
 

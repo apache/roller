@@ -93,6 +93,9 @@
             <basic name="text">
                 <column name="text" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <basic name="searchDescription">
+                <column name="search_description" insertable="true" updatable="true" unique="false"/>
+            </basic>
             <basic name="contentType">
                 <column name="content_type" insertable="true" updatable="true" unique="false"/>
             </basic>

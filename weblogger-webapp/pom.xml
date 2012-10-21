@@ -23,6 +23,12 @@
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-weblogger-web</artifactId>
             <version>5.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>servlet-api</artifactId>
+                    <groupId>javax.servlet</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>

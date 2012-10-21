@@ -64,6 +64,7 @@ public class EntryBean {
     private boolean rightToLeft = false;
     private boolean pinnedToMain = false;
     private String enclosureURL = null;
+    private String searchDescription = null;
     private int commentCount = 0;
     
     
@@ -220,6 +221,13 @@ public class EntryBean {
         this.enclosureURL = trackbackUrl;
     }
     
+    public String getSearchDescription() {
+        return searchDescription;
+    }
+    
+    public void setSearchDescription(String searchDescription) {
+        this.searchDescription = searchDescription;
+    }
     
     // a convenient way to get the final pubtime of the entry
     public Timestamp getPubTime(Locale locale, TimeZone timezone) {
@@ -281,6 +289,7 @@ public class EntryBean {
         entry.setSummary(getSummary());
         entry.setText(getText());
         entry.setTagsAsString(getTagsAsString());
+        entry.setSearchDescription(getSearchDescription());
         
         // figure out the category selected
         if (getCategoryId() != null) {
@@ -328,6 +337,7 @@ public class EntryBean {
         setText(entry.getText());
         setCategoryId(entry.getCategory().getId());
         setTagsAsString(entry.getTagsAsString());
+        setSearchDescription(entry.getSearchDescription());
         
         // set comment count, ignoreSpam=false, approvedOnly=false
         setCommentCount(entry.getComments(false, false).size());
@@ -390,8 +400,9 @@ public class EntryBean {
         buf.append("hours = ").append(getHours()).append("\n");
         buf.append("minutes = ").append(getMinutes()).append("\n");
         buf.append("seconds = ").append(getSeconds()).append("\n");
-        buf.append("txt size = ").append(getText()).append("\n");
-        buf.append("summary size = ").append(getSummary()).append("\n");
+        buf.append("text = ").append(getText()).append("\n");
+        buf.append("summary = ").append(getSummary()).append("\n");
+        buf.append("search description = ").append(getSearchDescription()).append("\n");
         buf.append("comments = ").append(getAllowComments()).append("\n");
         buf.append("commentDays = ").append(getCommentDays()).append("\n");
         buf.append("plugins = ").append(getPlugins()).append("\n");

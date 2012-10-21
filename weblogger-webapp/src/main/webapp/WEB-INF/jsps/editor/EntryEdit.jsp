@@ -243,12 +243,23 @@ function fullPreviewMode() {
             <br />
         </s:if>
         <br />
-        
-        <s:text name="weblogEdit.enclosureURL" />: <s:textfield name="bean.enclosureURL" size="40" maxlength="255" />
-        <s:if test="bean.enclosureURL != null">
-            <s:text name="weblogEdit.enclosureType" />: <s:property value='entry.findEntryAttribute("att_mediacast_type")' />
-            <s:text name="weblogEdit.enclosureLength" />: <s:property value='entry.findEntryAttribute("att_mediacast_length")' />
-        </s:if>
+       
+		<table>
+			<tr>
+				<td><s:text name="weblogEdit.searchDescription" />:</td>
+				<td><s:textfield name="bean.searchDescription" size="60" maxlength="255" /> </td>
+			</tr>
+			<tr>
+				<td><s:text name="weblogEdit.enclosureURL" />: </td>
+				<td><s:textfield name="bean.enclosureURL" size="40" maxlength="255" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><s:if test="bean.enclosureURL != null">
+					<s:text name="weblogEdit.enclosureType" />: <s:property value='entry.findEntryAttribute("att_mediacast_type")' />
+					<s:text name="weblogEdit.enclosureLength" />: <s:property value='entry.findEntryAttribute("att_mediacast_length")' />
+				</s:if></td>
+		</table>
     </div>
     
     

@@ -95,6 +95,7 @@ public class WeblogEntry implements Serializable {
     private String    status        = DRAFT;
     private String    locale        = null;
     private String    creatorUserName = null;      
+    private String    searchDescription = null;      
 
     // Associated objects
     private Weblog        website  = null;
@@ -155,6 +156,8 @@ public class WeblogEntry implements Serializable {
         this.setTitle(other.getTitle());
         this.setLink(other.getLink());
         this.setText(other.getText());
+        this.setSummary(other.getSummary());
+        this.setSearchDescription(other.getSearchDescription());
         this.setAnchor(other.getAnchor());
         this.setPubTime(other.getPubTime());
         this.setUpdateTime(other.getUpdateTime());
@@ -312,6 +315,24 @@ public class WeblogEntry implements Serializable {
         this.summary = summary;
     }
     
+    /**
+     * Get search description for weblog entry.
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="search_description" non-null="false" unique="false"
+     */
+    public String getSearchDescription() {
+        return searchDescription;
+    }
+    
+    /**
+     * Set search description for weblog entry
+     * @ejb:persistent-field
+     */
+    public void setSearchDescription(String searchDescription) {
+        this.searchDescription = searchDescription;
+    }
+
     /**
      * Get content text for weblog entry (maps to RSS content:encoded and Atom content).
      * @roller.wrapPojoMethod type="simple"
