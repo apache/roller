@@ -480,7 +480,7 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
             <ul class="rCategory">
         #else
             #if ($model.weblogCategory && $model.weblogCategory.path == $categoryObject.path)
-                <li class="selected">categoryObject.name</li>
+                <li class="selected">$categoryObject.name</li>
             #else
                 <li><a href="$url.category($categoryObject.path)">$categoryObject.name</a></li>
             #end
