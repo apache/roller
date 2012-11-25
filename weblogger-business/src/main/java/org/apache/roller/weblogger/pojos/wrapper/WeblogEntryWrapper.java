@@ -357,7 +357,10 @@ public class WeblogEntryWrapper {
     public String getDisplayContent() {
         return this.pojo.getDisplayContent();
     }
-    
+
+	public String getSearchDescription() {
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getSearchDescription());
+	}
     
     /**
      * this is a special method to access the original pojo.
