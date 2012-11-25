@@ -30,8 +30,8 @@ limitations under the License.
         <a href="downloads.html">downloads</a>, 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">user documentation</a>, 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">install guide</a>, 
-        <a href="https://cwiki.apache.org/confluence/display/ROLLER/How+to+ask+for+help">mailing-lists</a>,
-        <a href="https://issues.apache.org/jira/browse/ROL">bug tracker</a>,
+        <a href="https://cwiki.apache.org/confluence/display/ROLLER/How+to+ask+for+help">mailing lists</a>,
+        <a href="https://issues.apache.org/jira/browse/ROL">issue tracker</a>,
         <a href="http://cwiki.apache.org/confluence/display/ROLLER">wiki</a> and the 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+FAQ">FAQ</a>. 
     </p>
@@ -76,6 +76,19 @@ limitations under the License.
     read our <a href="http://www.apache.org/foundation/sponsorship.html">sponsorship page</a>.
 </p>
 </section>
+
+<section><title>About Roller</title>
+    <p>
+        Roller is a Project of the
+        <a href="http://apache.org/foundation">Apache Software Foundation</a>
+        (ASF), formed by a resolution of the
+        <a href="http://apache.org/foundation/board/">ASF Board of Directors</a>. 
+        As an ASF Project, Roller is subject to the
+        <a href="http://apache.org/foundation/bylaws.html">ASF Bylaws</a>
+        and the direction of the ASF Board.
+    </p>
+</section>
+
 
 </body>
 </document>
