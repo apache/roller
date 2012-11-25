@@ -33,7 +33,7 @@
             <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 GROUP BY w.name, w.total ORDER BY w.total DESC</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregate.getPopularTagsByWebsiteNull&amp;StartDate">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL AND w.lastUsed &gt;= ?2 GROUP BY w.name, w.total ORDER BY w.total DESC</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL AND w.lastUsed &gt;= ?1 GROUP BY w.name, w.total ORDER BY w.total DESC</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregate.getPopularTagsByWebsiteNull">
             <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL GROUP BY w.name, w.total ORDER BY w.total DESC</query>
