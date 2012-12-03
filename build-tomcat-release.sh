@@ -2,13 +2,13 @@
 mvn clean
 mvn install
 
-pushd weblogger-war-assembly
+cd weblogger-war-assembly
 mvn clean
 mvn -Dtomcat=true install
-popd
+cd ..
 
-pushd weblogger-assembly
+cd weblogger-assembly
 mvn clean
 mvn -Dtomcat=true install
-popd
+cd ..
 

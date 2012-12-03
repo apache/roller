@@ -2,12 +2,12 @@
 mvn clean
 mvn -Djavaee=true install
 
-pushd weblogger-war-assembly
+cd weblogger-war-assembly
 mvn clean
 mvn -Djavaee=true install
-popd
+cd ..
 
-pushd weblogger-assembly
+cd weblogger-assembly
 mvn clean
 mvn -Djavaee=true install
-popd
+cd ..
