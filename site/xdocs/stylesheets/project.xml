@@ -37,14 +37,5 @@ limitations under the License.
     <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">Roller Install Guide</a> </li>
 </projects>
 
-<menu><title href="http://projects.apache.org/">Related Projects</title>
-  <li><a href="http://struts.apache.org"></a>Apache Struts</li>
-  <li><a href="http://velocity.apache.org"></a>Apache Velocity</li>
-  <li><a href="http://tomcat.apache.org"></a>Apache Tomcat</li>
-  <li><a href="http://db.apache.org/derby/"></a>Apache Derby</li>
-  <li><a href="http://abdera.apache.org/"></a>Apache Abdera</li>
-  <li><a href="https://rometools.jira.com/wiki/display/ROME/Home"></a>ROME Tools</li>
-</menu>
-
 </body>
 </project>

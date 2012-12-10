@@ -25,7 +25,7 @@ limitations under the License.
         Apache Roller is a full-featured, multi-user and group-blog 
         server suitable for blog sites large and small. This is the project's 
         homepage, which provides a brief overview of the software and project as 
-        well as links to 
+        well as 
         <a href="http://rollerweblogger.org/project">project news</a>, 
         <a href="downloads.html">downloads</a>, 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">user documentation</a>, 
@@ -40,8 +40,8 @@ limitations under the License.
     <p>
         Roller is a Java web application that should be able to run on any Java EE
         server and any relational database. Currently, Roller is best supported on 
-        Tomcat and MySQL -- but users have reported success running Roller on 
-        Glassfish, Websphere, JBoss, Resin, Geronimo, Derby, PostgresSQL, 
+        <a href="http://tomcat.apache.org/">Tomcat</a> and <a href="http://www.mysql.com/">MySQL</a> -- but users have reported success running Roller on 
+        Glassfish, Websphere, JBoss, Resin, Geronimo, Derby, PostgreSQL, 
         Oracle, etc.)
     </p>
     <p>Here are some of Roller's key features:</p>
@@ -49,7 +49,7 @@ limitations under the License.
         <li>Multi-user blogging: can support tens of thousands of users and blogs</li>
         <li>Group blogging with three permisson levels (editor, author and limited)</li>
         <li>Support for comment moderation and comment spam prevention measures</li>
-        <li>Bloggers have complete control over blog layout/style via templates</li>
+        <li>Bloggers have complete control over blog layout/style via <a href="http://velocity.apache.org">Apache Velocity</a>-driven templates</li>
         <li>Built-in search engine indexes weblog entry content</li>
         <li>Pluggable cache and rendering system</li>
         <li>Support for blog clients that support MetaWeblog API</li>
@@ -59,33 +59,29 @@ limitations under the License.
 
 <section><title>Project Status</title>
 <p>
-    Roller is a stable and production-ready blog
-    server in its third major revision. It powers internal and external
-    employee blogs at Oracle, IBM and other companies as well as the JRoller.com
-    Java blogging community. Roller graduated from the Apache Incubator in March
-    2007 and is now an official Apache project.
-</p>
-</section>
-
-<section><title>Thanks to our sponsors</title>
-<p>
-    The Apache Software Foundation could not exist without the continued
-    generous support from the community. We would like to take this opportunity
-    to <a href="http://www.apache.org/foundation/thanks.html">thank our Sponsors</a>
-    If you are interested in sponsoring the ASF, please
-    read our <a href="http://www.apache.org/foundation/sponsorship.html">sponsorship page</a>.
+    Roller is a stable and production-ready blog server in its third major revision. It powers internal and external
+    employee blogs at <a href="https://blogs.oracle.com/">Oracle</a>, 
+    <a href="https://www.ibm.com/developerworks/mydeveloperworks/blogs/?lang=en">IBM</a> and other companies as well as with <a href="http://blogs.apache.org/">Apache</a> and DZone's <a href="http://www.jroller.com/">JRoller.com</a> Java blogging community.
 </p>
 </section>
 
 <section><title>About Roller</title>
     <p>
-        Roller is a Project of the
+        Apache Roller is a Project of the
         <a href="http://apache.org/foundation">Apache Software Foundation</a>
         (ASF), formed by a resolution of the
-        <a href="http://apache.org/foundation/board/">ASF Board of Directors</a>. 
+        <a href="http://apache.org/foundation/board/">ASF Board of Directors</a> 
+        and graduating from the Apache Incubator in March 2007.  
         As an ASF Project, Roller is subject to the
         <a href="http://apache.org/foundation/bylaws.html">ASF Bylaws</a>
         and the direction of the ASF Board.
+    </p>
+    <p>
+        The Apache Software Foundation could not exist without the continued
+        generous support from the community. We would like to take this opportunity
+        to <a href="http://www.apache.org/foundation/thanks.html">thank our Sponsors</a>.
+        If you are interested in sponsoring the ASF, please
+        read our <a href="http://www.apache.org/foundation/sponsorship.html">sponsorship page</a>.
     </p>
 </section>
 
