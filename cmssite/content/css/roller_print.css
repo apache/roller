@@ -1,0 +1,12 @@
+.applicationlogo,.companylogo,.titlebox,.userbox,.searchbox,.breadcrumbs,.pageactions,.quicklinks,#actionsTop,#actionsBottom,#favorites,#addattachment,#findhelp,a.editsection,a.hashlink,.collapsebox .collapseOpen,.collapsebox .collapseClose,.table-filter .filterrow,.tabmenu{display:none;}
+#attachments,#addcomment,#pagecontent,#editcontent,#previewcontent,#diffcontent,#infocontent,#findquery,#userPrefs,#pagecontent .tabmenu{display:block;visibility:visible;}
+tt,pre{overflow:visible;}
+a{text-decoration:none;}
+html>body #previewcontent,html>body #info,html>body #pagecontent,html>body #attach,html>body #findcontent{overflow:visible;}
+* html #previewcontent,* html #info,* html #pagecontent,* html #attach,* html #findcontent{overflow-x:visible;}
+.pagename,#header,#footer,#page{width:100%!important;margin:0!important;padding:0!important;float:none!important;clear:both!important;position:static!important;overflow:visible!important;}
+.pagename{font-size:250%;margin-bottom:1.5em;padding-bottom:.5em;border-bottom:3px solid #555;color:#555;}
+.hidetab{display:block;}
+.tabs{border:none;}
+a.slimbox{display:none;}
+.commentbox{float:none;}
