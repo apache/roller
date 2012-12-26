@@ -3,25 +3,10 @@ Title: Apache Roller
 ## Welcome!
 
 Apache Roller is a full-featured, multi-user and group-blog 
-server suitable for blog sites large and small. This is the project's 
-homepage, which provides a brief overview of the software and project as 
-well as 
-<a href="http://rollerweblogger.org/project">project news</a>, 
-<a href="downloads.html">downloads</a>, 
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">user documentation</a>, 
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">install guide</a>, 
-<a href="https://cwiki.apache.org/confluence/display/ROLLER/How+to+ask+for+help">mailing lists</a>,
-<a href="https://issues.apache.org/jira/browse/ROL">issue tracker</a>,
-<a href="http://cwiki.apache.org/confluence/display/ROLLER">wiki</a> and the 
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+FAQ">FAQ</a>. 
-
-## Overview
-
-Roller is a Java web application that should be able to run on any Java EE
-server and any relational database. Currently, Roller is best supported on 
+server suitable for blog sites large and small.  It runs as a Java web application that should be able to run on any Java EE server and relational database. Currently, Roller is best supported on 
 <a href="http://tomcat.apache.org/">Tomcat</a> and <a href="http://www.mysql.com/">MySQL</a> -- but users have reported success running Roller on 
-Glassfish, Websphere, JBoss, Resin, Geronimo, Derby, PostgreSQL, 
-Oracle, etc.)
+Glassfish, Websphere, JBoss, Resin, Geronimo, Derby, PostgreSQL, and Oracle.
+
 
 Here are some of Roller's key features:
 
