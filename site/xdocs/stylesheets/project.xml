@@ -29,12 +29,12 @@ limitations under the License.
 <projects><title>Get Involved</title>
     <li><a href="https://cwiki.apache.org/confluence/display/ROLLER/How+to+ask+for+help">Mailing lists</a></li>
     <li><a href="https://issues.apache.org/jira/browse/ROL">Issue tracker</a></li>
+    <li><a href="http://svn.apache.org/viewvc/roller/">Browse source</a></li>
 </projects>
 
 <projects><title>Downloads</title>
     <li><a href="downloads.html">Downloads</a></li>
-    <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">Roller User Guide</a></li>
-    <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">Roller Install Guide</a> </li>
+    <li><a href="http://roller.apache.org/download.cgi#roller50">Documentation</a></li>
 </projects>
 
 </body>

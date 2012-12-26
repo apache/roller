@@ -116,8 +116,10 @@ limitations under the License.
             </ul>
         </li>
     </ul>
-</section>
 
+    <p>Previous releases of Apache Roller (including documentation) are available in the <a href="http://archive.apache.org/dist/roller/">Apache Archives</a>.</p>
+
+</section>
 
 <section><title>Verify the integrity of the files</title>
 
