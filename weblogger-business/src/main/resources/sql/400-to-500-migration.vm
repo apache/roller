@@ -11,6 +11,9 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 -- actions:    comma separated list of actions permitted by permission
 -- objectid:   for now this will always store weblogid
 -- objectType: for now this will always be 'Weblog'
+-- Note: if getting error that roller_permission.id column is not wide enough 
+-- due to concatenation of w.id and u.username below, may be able to rely on
+-- w.id alone *if* no single blog is shared by multiple users. 
 create table roller_permission (
    id              varchar(48) not null primary key,
    username        varchar(255) not null,
