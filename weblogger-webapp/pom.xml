@@ -7,14 +7,14 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.0.1</version>
+        <version>5.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <name>Apache Roller Weblogger Web Application</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-webapp</artifactId>
-    <version>5.0.1</version>
+    <version>5.0.2-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <dependencies>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-weblogger-web</artifactId>
-            <version>5.0.1</version>
+            <version>5.0.2-SNAPSHOT</version>
         </dependency>
         
         <dependency>
@@ -100,19 +100,13 @@
                     <dependency>
                         <groupId>org.apache.roller</groupId>
                         <artifactId>test-utils</artifactId>
-                        <version>5.0.1</version>
+                        <version>5.0.2-SNAPSHOT</version>
                     </dependency>
                     <dependency>
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
                         <version>1.2.12</version>
                     </dependency>
-                    <dependency>
-                        <groupId>org.apache.roller</groupId>
-                        <artifactId>test-utils</artifactId>
-                        <version>5.0.1</version>
-                    </dependency>
-                    
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>

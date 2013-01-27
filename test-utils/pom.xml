@@ -7,21 +7,21 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.0.1</version>
+        <version>5.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <name>Apache Roller Test Utilities</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>test-utils</artifactId>
-    <version>5.0.1</version>
+    <version>5.0.2-SNAPSHOT</version>
 
     <dependencies>
 
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-core</artifactId>
-            <version>5.0.1</version>
+            <version>5.0.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
