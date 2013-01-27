@@ -7,7 +7,7 @@
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-project</artifactId>
 
-    <version>5.1.0</version>
+    <version>5.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Roller Project - Trunk</name>
@@ -26,7 +26,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <roller.version>5.1.0</roller.version>
+        <roller.version>5.1.0-SNAPSHOT</roller.version>
         <!-- avoid CLOB/BLOB error in all later versions of Derby -->
         <derby.version>10.1.3.1</derby.version>
     </properties>
@@ -99,11 +99,6 @@
         </repository>
 
         <repository>
-            <id>guice</id>
-            <url>http://guice-maven.googlecode.com/svn/trunk/</url>
-        </repository>
-
-        <repository>
             <id>oss.sonatype.org</id>
             <url>http://oss.sonatype.org/content/groups/public</url>
         </repository>
@@ -172,7 +167,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.google.code.guice</groupId>
+                <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
                 <version>2.0</version>
             </dependency>
