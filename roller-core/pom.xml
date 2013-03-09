@@ -17,7 +17,6 @@
     </description>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-core</artifactId>
-    <version>5.0.2-SNAPSHOT</version>
 
     <dependencies>
 
