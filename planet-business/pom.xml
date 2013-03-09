@@ -19,7 +19,6 @@
     </description>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-planet-business</artifactId>
-    <version>5.1.0-SNAPSHOT</version>
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>

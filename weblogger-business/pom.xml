@@ -17,7 +17,6 @@
     </description>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-business</artifactId>
-    <version>5.1.0-SNAPSHOT</version>
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
@@ -33,13 +32,13 @@
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-core</artifactId>
-            <version>5.1.0-SNAPSHOT</version>
+            <version>${roller.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.roller</groupId>
             <artifactId>roller-planet-business</artifactId>
-            <version>5.1.0-SNAPSHOT</version>
+            <version>${roller.version}</version>
         </dependency>
 
         <!-- OpenJPA deps -->
