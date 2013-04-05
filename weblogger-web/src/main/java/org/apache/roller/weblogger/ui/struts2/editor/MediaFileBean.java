@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileTag;
@@ -111,11 +112,15 @@ public class MediaFileBean {
         dataHolder.setDescription(this.description);
         dataHolder.setCopyrightText(this.copyrightText);
 
-        Set<MediaFileTag> tagsSet = new HashSet<MediaFileTag>();
-        for (String tag : this.tags.split(" ")) {
-            tagsSet.add(new MediaFileTag(tag, dataHolder));
-        }
-        dataHolder.setTags(tagsSet);
+		if (StringUtils.isNotEmpty(tags)) {
+			Set<MediaFileTag> tagsSet = new HashSet<MediaFileTag>();
+			for (String tag : this.tags.split(" ")) {
+				tagsSet.add(new MediaFileTag(tag, dataHolder));
+			}
+			dataHolder.setTags(tagsSet);
+		} else {
+			dataHolder.setTags(null);
+		}
         dataHolder.setSharedForGallery(this.isSharedForGallery);
         dataHolder.setOriginalPath(this.originalPath);
     }
@@ -132,13 +137,17 @@ public class MediaFileBean {
 
         Set<MediaFileTag> tags = dataHolder.getTags();
         if (tags != null && !tags.isEmpty()) {
-            StringBuffer tagDisplayBuffer = new StringBuffer();
+            StringBuilder tagDisplayBuilder = new StringBuilder();
             for (MediaFileTag tag : dataHolder.getTags()) {
-                tagDisplayBuffer.append(tag.getName());
-                tagDisplayBuffer.append(" ");
+            	if (StringUtils.isNotEmpty(tag.getName())) {
+            		tagDisplayBuilder.append(tag.getName());
+                    tagDisplayBuilder.append(" ");
+				}
             }
-            tagDisplayBuffer.deleteCharAt(tagDisplayBuffer.length() - 1);
-            this.setTags(tagDisplayBuffer.toString());
+			if (tagDisplayBuilder.length() > 0) {
+				tagDisplayBuilder.deleteCharAt(tagDisplayBuilder.length() - 1);
+			}
+            this.setTags(tagDisplayBuilder.toString());
         }
 
         this.setSharedForGallery(dataHolder.isSharedForGallery());
