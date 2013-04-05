@@ -231,21 +231,21 @@
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-core</artifactId>
-                <version>2.2.3.1</version>
+                <version>2.3.8</version>
                 <scope>compile</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-tiles-plugin</artifactId>
-                <version>2.2.3.1</version>
+                <version>2.3.8</version>
                 <scope>compile</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-spring-plugin</artifactId>
-                <version>2.2.3.1</version>
+                <version>2.3.8</version>
             </dependency>
 
             <!-- <dependency>
