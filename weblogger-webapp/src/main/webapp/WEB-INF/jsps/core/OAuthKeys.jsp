@@ -67,6 +67,6 @@
     <p style="margin-left:2em"><b><s:text name="oauthKeys.accessTokenURL" /></b>:
         <s:property value="accessTokenURL" /></p>
 
+<br />
 
-
-
+<input type="button" value="<s:text name="userSettings.button.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />

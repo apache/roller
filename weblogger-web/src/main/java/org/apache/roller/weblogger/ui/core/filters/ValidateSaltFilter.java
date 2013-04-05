@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 public class ValidateSaltFilter implements Filter  {
     private static Log log = LogFactory.getLog(ValidateSaltFilter.class);
 
-    @Override
+    //@Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
         HttpServletRequest httpReq = (HttpServletRequest) request;
@@ -48,11 +48,11 @@ public class ValidateSaltFilter implements Filter  {
         chain.doFilter(request, response);
     }
  
-    @Override
+    //@Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
  
-    @Override
+    //@Override
     public void destroy() {
     }
 }
