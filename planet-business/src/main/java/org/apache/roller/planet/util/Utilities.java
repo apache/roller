@@ -38,7 +38,7 @@ public class Utilities {
     //------------------------------------------------------------------------
     /** Strip jsessionid off of a URL */
     public static String stripJsessionId( String url ) {
-        // Strip off jsessionid found in referer URL
+        // Strip off jsessionid found in referrer URL
         int startPos = url.indexOf(";jsessionid=");
         if ( startPos != -1 ) {
             int endPos = url.indexOf("?",startPos);
