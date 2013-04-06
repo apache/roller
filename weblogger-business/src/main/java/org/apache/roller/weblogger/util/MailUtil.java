@@ -55,7 +55,7 @@ import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 
 
 /**
- * A utility class for helping with sending emails.
+ * A utility class for helping with sending email. 
  */
 public class MailUtil {
     
