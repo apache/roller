@@ -204,9 +204,9 @@
     <listener>
         <listener-class>org.apache.roller.weblogger.ui.core.RollerContext</listener-class>
     </listener>
-
+    
     <listener>
-        <listener-class>org.apache.tiles.web.startup.TilesListener</listener-class>
+        <listener-class>org.apache.struts2.tiles.StrutsTilesListener</listener-class>
     </listener>
 
 
