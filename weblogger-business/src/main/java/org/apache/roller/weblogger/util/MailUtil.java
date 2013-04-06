@@ -294,35 +294,35 @@ public class MailUtil {
         // build list of email addresses to send notification to
         Set subscribers = new TreeSet();
         
-		// If we are to notify subscribers, then...
-		if (notifySubscribers) {
-			log.debug("Sending notification email to all subscribers");
+        // If we are to notify subscribers, then...
+        if (notifySubscribers) {
+            log.debug("Sending notification email to all subscribers");
 
-			// Get all the subscribers to this comment thread
-			List comments = entry.getComments(true, true);
-			for (Iterator it = comments.iterator(); it.hasNext();) {
-				WeblogEntryComment comment = (WeblogEntryComment) it.next();
-				if (!StringUtils.isEmpty(comment.getEmail())) {
-					// If user has commented twice,
-					// count the most recent notify setting
-					if (commentObject.getApproved()) {
-						if (comment.getNotify().booleanValue()) {
-							// only add those with valid email
-							if (comment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
-								log.info("Add to subscribers list : " + comment.getEmail());
-								subscribers.add(comment.getEmail());
-							}
-						} else {
-							// remove user who doesn't want to be notified
-							log.info("Remove from subscribers list : " + comment.getEmail());
-							subscribers.remove(comment.getEmail());
-						}
-					}
-				}
-			}
-		} else {
-			log.debug("Sending notification email only to weblog owner");
-		}
+            // Get all the subscribers to this comment thread
+            List comments = entry.getComments(true, true);
+            for (Iterator it = comments.iterator(); it.hasNext();) {
+                WeblogEntryComment comment = (WeblogEntryComment) it.next();
+                if (!StringUtils.isEmpty(comment.getEmail())) {
+                    // If user has commented twice,
+                    // count the most recent notify setting
+                    if (commentObject.getApproved()) {
+                        if (comment.getNotify().booleanValue()) {
+                            // only add those with valid email
+                            if (comment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
+                                log.info("Add to subscribers list : " + comment.getEmail());
+                                subscribers.add(comment.getEmail());
+                            }
+                        } else {
+                            // remove user who doesn't want to be notified
+                            log.info("Remove from subscribers list : " + comment.getEmail());
+                            subscribers.remove(comment.getEmail());
+                        }
+                    }
+                }
+            }
+        } else {
+            log.debug("Sending notification email only to weblog owner");
+        }
         
         // Form array of commenter addrs
         String[] commenterAddrs = (String[])subscribers.toArray(new String[0]);
@@ -362,7 +362,7 @@ public class MailUtil {
         
         // Build link back to comment
         String commentURL = WebloggerFactory.getWeblogger()
-			.getUrlStrategy().getWeblogCommentsURL(weblog, null, entry.getAnchor(), true);
+            .getUrlStrategy().getWeblogCommentsURL(weblog, null, entry.getAnchor(), true);
         
         if (escapeHtml) {
             msg.append(commentURL);
@@ -383,7 +383,7 @@ public class MailUtil {
             RollerMessage rollerMessage = (RollerMessage)it.next();
             ownermsg.append((escapeHtml) ? "" : "<li>");
             ownermsg.append(MessageFormat.format(resources.getString(
-				rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
+                rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
             ownermsg.append((escapeHtml) ? "\n\n" : "</li>");
         }
         if (messages.getMessageCount() > 0) {
@@ -401,7 +401,7 @@ public class MailUtil {
             RollerMessage rollerMessage = (RollerMessage)it.next();
             ownermsg.append((escapeHtml) ? "" : "<li>");
             ownermsg.append(MessageFormat.format(resources.getString(
-				rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
+                rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
             ownermsg.append((escapeHtml) ? "\n\n" : "</li>");
         }
         if (messages.getErrorCount() > 0) {
@@ -550,7 +550,7 @@ public class MailUtil {
         msg.append(resources.getString("email.comment.commentApproved"));
         msg.append("\n\n");
         msg.append(WebloggerFactory.getWeblogger().getUrlStrategy()
-			.getWeblogCommentsURL(weblog, null, entry.getAnchor(), true));
+            .getWeblogCommentsURL(weblog, null, entry.getAnchor(), true));
         
         // send message to author of approved comment
         try {
@@ -672,7 +672,7 @@ public class MailUtil {
                     remainingAddresses=ex.getValidUnsentAddresses();
                 }
             } while (remainingAddresses!=null && remainingAddresses.length>0 
-					&& remainingAddresses.length!=nAddresses);
+                    && remainingAddresses.length!=nAddresses);
             
         } finally {
             transport.close();
