@@ -30,7 +30,7 @@
             #set($commentCount = $entry.commentCount)
             #if($entry.commentsStillAllowed || $commentCount > 0)
                 #set($link = "$url.comments($entry.anchor)" )
-                <a href="$link" class="commentslink">$text.get("macro.weblog.comments")[$commentCount]</a>
+                <a href="$link" class="commentslink">$text.get("macro.weblog.comments"),[$commentCount])</a>
             #end
 
             #if ($utils.isUserAuthorizedToAuthor($entry.website))
