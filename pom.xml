@@ -10,7 +10,7 @@
     <version>5.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Roller Project - Trunk</name>
+    <name>roller-project</name>
     <description>
         Roller is an open source blog server built with open source Java
         libraries including Apache OpenJPA, Struts2, Velocity and Commons.
@@ -32,12 +32,7 @@
     </properties>
 
     <modules>
-        <module>roller-core</module>
         <module>test-utils</module>
-        <module>planet-business</module>
-        <!--module>planet-web</module-->
-        <module>weblogger-business</module>
-        <module>weblogger-web</module>
         <module>weblogger-webapp</module>
     </modules>
 

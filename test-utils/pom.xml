@@ -11,7 +11,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Roller Test Utilities - Trunk</name>
+    <name>roller-test-utils</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>test-utils</artifactId>
 
