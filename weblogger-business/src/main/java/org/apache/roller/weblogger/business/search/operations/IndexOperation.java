@@ -48,174 +48,174 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public abstract class IndexOperation implements Runnable {
 
-	private static Log mLogger = LogFactory.getFactory().getInstance(
-			IndexOperation.class);
+    private static Log mLogger = LogFactory.getFactory().getInstance(
+            IndexOperation.class);
 
-	// ~ Instance fields
-	// ========================================================
-	protected IndexManagerImpl manager;
-	private IndexWriter writer;
+    // ~ Instance fields
+    // ========================================================
+    protected IndexManagerImpl manager;
+    private IndexWriter writer;
 
-	// ~ Constructors
-	// ===========================================================
-	public IndexOperation(IndexManagerImpl manager) {
-		this.manager = manager;
-	}
+    // ~ Constructors
+    // ===========================================================
+    public IndexOperation(IndexManagerImpl manager) {
+        this.manager = manager;
+    }
 
-	// ~ Methods
-	// ================================================================
-	protected Document getDocument(WeblogEntry data) {
+    // ~ Methods
+    // ================================================================
+    protected Document getDocument(WeblogEntry data) {
 
-		// Actual comment content is indexed only if search.index.comments
-		// is true or absent from the (static) configuration properties.
-		// If false in the configuration, comments are treated as if empty.
-		boolean indexComments = WebloggerConfig.getBooleanProperty(
-				"search.index.comments", true);
+        // Actual comment content is indexed only if search.index.comments
+        // is true or absent from the (static) configuration properties.
+        // If false in the configuration, comments are treated as if empty.
+        boolean indexComments = WebloggerConfig.getBooleanProperty(
+                "search.index.comments", true);
 
-		String commentContent = "";
-		String commentEmail = "";
-		String commentName = "";
-		if (indexComments) {
-			List comments = data.getComments();
-			if (comments != null) {
-				StringBuilder commentEmailBld = new StringBuilder();
-				StringBuilder commentContentBld = new StringBuilder();
-				StringBuilder commentNameBld = new StringBuilder();
-				for (Iterator cItr = comments.iterator(); cItr.hasNext();) {
-					WeblogEntryComment comment = (WeblogEntryComment) cItr
-							.next();
-					if (comment.getContent() != null) {
-						commentContentBld.append(comment.getContent());
-						commentContentBld.append(",");
-					}
-					if (comment.getEmail() != null) {
-						commentEmailBld.append(comment.getEmail());
-						commentEmailBld.append(",");
-					}
-					if (comment.getName() != null) {
-						commentNameBld.append(comment.getName());
-						commentNameBld.append(",");
-					}
-				}
-				commentEmail = commentEmailBld.toString();
-				commentContent = commentContentBld.toString();
-				commentName = commentNameBld.toString();
-			}
-		}
+        String commentContent = "";
+        String commentEmail = "";
+        String commentName = "";
+        if (indexComments) {
+            List comments = data.getComments();
+            if (comments != null) {
+                StringBuilder commentEmailBld = new StringBuilder();
+                StringBuilder commentContentBld = new StringBuilder();
+                StringBuilder commentNameBld = new StringBuilder();
+                for (Iterator cItr = comments.iterator(); cItr.hasNext();) {
+                    WeblogEntryComment comment = (WeblogEntryComment) cItr
+                            .next();
+                    if (comment.getContent() != null) {
+                        commentContentBld.append(comment.getContent());
+                        commentContentBld.append(",");
+                    }
+                    if (comment.getEmail() != null) {
+                        commentEmailBld.append(comment.getEmail());
+                        commentEmailBld.append(",");
+                    }
+                    if (comment.getName() != null) {
+                        commentNameBld.append(comment.getName());
+                        commentNameBld.append(",");
+                    }
+                }
+                commentEmail = commentEmailBld.toString();
+                commentContent = commentContentBld.toString();
+                commentName = commentNameBld.toString();
+            }
+        }
 
-		Document doc = new Document();
+        Document doc = new Document();
 
-		// keyword
-		doc.add(new Field(FieldConstants.ID, data.getId(), Field.Store.YES,
-				Field.Index.NOT_ANALYZED));
+        // keyword
+        doc.add(new Field(FieldConstants.ID, data.getId(), Field.Store.YES,
+                Field.Index.NOT_ANALYZED));
 
-		// keyword
-		doc.add(new Field(FieldConstants.WEBSITE_HANDLE, data.getWebsite()
-				.getHandle(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        // keyword
+        doc.add(new Field(FieldConstants.WEBSITE_HANDLE, data.getWebsite()
+                .getHandle(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
-		// unindexed
-		doc.add(new Field(FieldConstants.ANCHOR, data.getAnchor(),
-				Field.Store.YES, Field.Index.NO));
+        // unindexed
+        doc.add(new Field(FieldConstants.ANCHOR, data.getAnchor(),
+                Field.Store.YES, Field.Index.NO));
 
-		// text
-		doc.add(new Field(FieldConstants.USERNAME, data.getCreator()
-				.getUserName(), Field.Store.YES, Field.Index.ANALYZED));
+        // text
+        doc.add(new Field(FieldConstants.USERNAME, data.getCreator()
+                .getUserName(), Field.Store.YES, Field.Index.ANALYZED));
 
-		// text
-		doc.add(new Field(FieldConstants.TITLE, data.getTitle(),
-				Field.Store.YES, Field.Index.ANALYZED));
+        // text
+        doc.add(new Field(FieldConstants.TITLE, data.getTitle(),
+                Field.Store.YES, Field.Index.ANALYZED));
 
-		// index the entry text, but don't store it - moved to end of block
-		// unstored
-		doc.add(new Field(FieldConstants.CONTENT, data.getText(),
-				Field.Store.NO, Field.Index.ANALYZED));
+        // index the entry text, but don't store it - moved to end of block
+        // unstored
+        doc.add(new Field(FieldConstants.CONTENT, data.getText(),
+                Field.Store.NO, Field.Index.ANALYZED));
 
-		// store an abbreviated version of the entry text, but don't index
-		// unindexed
-		doc.add(new Field(FieldConstants.CONTENT_STORED, Utilities
-				.truncateNicely(Utilities.removeHTML(data.getText()), 240, 260,
-						"..."), Field.Store.YES, Field.Index.NO));
+        // store an abbreviated version of the entry text, but don't index
+        // unindexed
+        doc.add(new Field(FieldConstants.CONTENT_STORED, Utilities
+                .truncateNicely(Utilities.removeHTML(data.getText()), 240, 260,
+                        "..."), Field.Store.YES, Field.Index.NO));
 
-		// keyword
-		doc.add(new Field(FieldConstants.UPDATED, data.getUpdateTime()
-				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        // keyword
+        doc.add(new Field(FieldConstants.UPDATED, data.getUpdateTime()
+                .toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
-		// keyword
-		doc.add(new Field(FieldConstants.PUBLISHED, data.getPubTime()
-				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        // keyword
+        doc.add(new Field(FieldConstants.PUBLISHED, data.getPubTime()
+                .toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
-		// index Comments
-		// unstored
-		doc.add(new Field(FieldConstants.C_CONTENT, commentContent,
-				Field.Store.NO, Field.Index.ANALYZED));
-		// unstored
-		doc.add(new Field(FieldConstants.C_EMAIL, commentEmail, Field.Store.NO,
-				Field.Index.ANALYZED));
-		// unstored
-		doc.add(new Field(FieldConstants.C_NAME, commentName, Field.Store.NO,
-				Field.Index.ANALYZED));
+        // index Comments
+        // unstored
+        doc.add(new Field(FieldConstants.C_CONTENT, commentContent,
+                Field.Store.NO, Field.Index.ANALYZED));
+        // unstored
+        doc.add(new Field(FieldConstants.C_EMAIL, commentEmail, Field.Store.NO,
+                Field.Index.ANALYZED));
+        // unstored
+        doc.add(new Field(FieldConstants.C_NAME, commentName, Field.Store.NO,
+                Field.Index.ANALYZED));
 
-		// unstored
-		doc.add(new Field(FieldConstants.CONSTANT, FieldConstants.CONSTANT_V,
-				Field.Store.NO, Field.Index.ANALYZED));
+        // unstored
+        doc.add(new Field(FieldConstants.CONSTANT, FieldConstants.CONSTANT_V,
+                Field.Store.NO, Field.Index.ANALYZED));
 
-		// index Category
-		WeblogCategory categorydata = data.getCategory();
-		Field category = (categorydata == null)
-		// unstored
-		? new Field(FieldConstants.CATEGORY, "", Field.Store.NO,
-				Field.Index.ANALYZED)
-		// text
-				: new Field(FieldConstants.CATEGORY, categorydata.getName(),
-						Field.Store.YES, Field.Index.ANALYZED);
-		doc.add(category);
+        // index Category
+        WeblogCategory categorydata = data.getCategory();
+        Field category = (categorydata == null)
+        // unstored
+        ? new Field(FieldConstants.CATEGORY, "", Field.Store.NO,
+                Field.Index.ANALYZED)
+        // text
+                : new Field(FieldConstants.CATEGORY, categorydata.getName(),
+                        Field.Store.YES, Field.Index.ANALYZED);
+        doc.add(category);
 
-		return doc;
-	}
+        return doc;
+    }
 
-	/**
-	 * Begin writing.
-	 *
-	 * @return the index writer
-	 */
-	protected IndexWriter beginWriting() {
-		try {
+    /**
+     * Begin writing.
+     * 
+     * @return the index writer
+     */
+    protected IndexWriter beginWriting() {
+        try {
 
-			// Limit to 1000 tokens.
-			LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(
-					IndexManagerImpl.getAnalyzer(), 1000);
+            // Limit to 1000 tokens.
+            LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(
+                    IndexManagerImpl.getAnalyzer(), 1000);
 
-			IndexWriterConfig config = new IndexWriterConfig(
-					FieldConstants.LUCENE_VERSION, analyzer);
+            IndexWriterConfig config = new IndexWriterConfig(
+                    FieldConstants.LUCENE_VERSION, analyzer);
 
-			writer = new IndexWriter(manager.getIndexDirectory(), config);
+            writer = new IndexWriter(manager.getIndexDirectory(), config);
 
-		} catch (IOException e) {
-			mLogger.error("ERROR creating writer", e);
-		}
+        } catch (IOException e) {
+            mLogger.error("ERROR creating writer", e);
+        }
 
-		return writer;
-	}
+        return writer;
+    }
 
-	/**
-	 * End writing.
-	 */
-	protected void endWriting() {
-		if (writer != null) {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				mLogger.error("ERROR closing writer", e);
-			}
-		}
-	}
+    /**
+     * End writing.
+     */
+    protected void endWriting() {
+        if (writer != null) {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                mLogger.error("ERROR closing writer", e);
+            }
+        }
+    }
 
-	/**
-	 * @see java.lang.Runnable#run()
-	 */
-	public void run() {
-		doRun();
-	}
+    /**
+     * @see java.lang.Runnable#run()
+     */
+    public void run() {
+        doRun();
+    }
 
-	protected abstract void doRun();
+    protected abstract void doRun();
 }

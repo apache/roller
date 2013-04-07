@@ -27,24 +27,24 @@ import org.apache.lucene.util.Version;
  */
 public final class FieldConstants {
 
-	// Set what version we are on
-	public static final Version LUCENE_VERSION = Version.LUCENE_36;
+    // Set what version we are on
+    public static final Version LUCENE_VERSION = Version.LUCENE_36;
 
-	public static final String ANCHOR = "anchor";
-	public static final String UPDATED = "updated";
-	public static final String ID = "id";
-	public static final String USERNAME = "username";
-	public static final String CATEGORY = "cat";
-	public static final String TITLE = "title";
-	public static final String PUBLISHED = "published";
-	public static final String CONTENT = "content";
-	public static final String CONTENT_STORED = "content_stored";
-	public static final String C_CONTENT = "comment";
-	public static final String C_EMAIL = "email";
-	public static final String C_NAME = "name";
-	public static final String CONSTANT = "constant";
-	public static final String CONSTANT_V = "v"; // must be lowercase, or match
-													// the transform rules of
-													// the analyzer
-	public static final String WEBSITE_HANDLE = "handle";
+    public static final String ANCHOR = "anchor";
+    public static final String UPDATED = "updated";
+    public static final String ID = "id";
+    public static final String USERNAME = "username";
+    public static final String CATEGORY = "cat";
+    public static final String TITLE = "title";
+    public static final String PUBLISHED = "published";
+    public static final String CONTENT = "content";
+    public static final String CONTENT_STORED = "content_stored";
+    public static final String C_CONTENT = "comment";
+    public static final String C_EMAIL = "email";
+    public static final String C_NAME = "name";
+    public static final String CONSTANT = "constant";
+    public static final String CONSTANT_V = "v"; // must be lowercase, or match
+                                                 // the transform rules of
+                                                 // the analyzer
+    public static final String WEBSITE_HANDLE = "handle";
 }

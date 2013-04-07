@@ -33,45 +33,45 @@ import org.apache.lucene.index.Term;
  */
 public class IndexUtil {
 
-	/**
-	 * Create a lucene term from the first token of the input string.
-	 * 
-	 * @param field
-	 *            The lucene document field to create a term with
-	 * @param input
-	 *            The input you wish to convert into a term
-	 * 
-	 * @return Lucene search term
-	 */
-	public static final Term getTerm(String field, String input) {
+    /**
+     * Create a lucene term from the first token of the input string.
+     * 
+     * @param field
+     *            The lucene document field to create a term with
+     * @param input
+     *            The input you wish to convert into a term
+     * 
+     * @return Lucene search term
+     */
+    public static final Term getTerm(String field, String input) {
 
-		if (input == null || field == null)
-			return null;
+        if (input == null || field == null)
+            return null;
 
-		Analyzer analyer = IndexManagerImpl.getAnalyzer();
+        Analyzer analyer = IndexManagerImpl.getAnalyzer();
 
-		TokenStream tokens = analyer
-				.tokenStream(field, new StringReader(input));
+        TokenStream tokens = analyer
+                .tokenStream(field, new StringReader(input));
 
-		CharTermAttribute termAtt = (CharTermAttribute) tokens
-				.addAttribute(CharTermAttribute.class);
+        CharTermAttribute termAtt = (CharTermAttribute) tokens
+                .addAttribute(CharTermAttribute.class);
 
-		Term term = null;
+        Term term = null;
 
-		try {
+        try {
 
-			tokens.reset();
+            tokens.reset();
 
-			if (tokens.incrementToken()) {
-				String termt = termAtt.toString();
-				term = new Term(field, termt);
-			}
+            if (tokens.incrementToken()) {
+                String termt = termAtt.toString();
+                term = new Term(field, termt);
+            }
 
-		} catch (IOException e) {
-			// ignored
-		}
+        } catch (IOException e) {
+            // ignored
+        }
 
-		return term;
-	}
+        return term;
+    }
 
 }
