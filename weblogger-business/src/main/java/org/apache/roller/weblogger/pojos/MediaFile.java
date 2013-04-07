@@ -18,62 +18,90 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Represents a media file
- *
+ * 
  */
-public class MediaFile {
+public class MediaFile implements Serializable {
 
-    private static Log log =
-            LogFactory.getFactory().getInstance(MediaFile.class);
+    private static final long serialVersionUID = -6704258422169734004L;
 
-    private String id;
+    private static Log log = LogFactory.getFactory().getInstance(
+            MediaFile.class);
 
-    private String      name;
-    private String      description;
-    private String      copyrightText;
-    private Boolean     isSharedForGallery = Boolean.FALSE;
-    private long        length;
-    private int         width = -1;
-    private int         height = -1;
-    private int         thumbnailHeight = -1;
-    private int         thumbnailWidth = -1;
-    private String      contentType;
-    private String      originalPath;
-    private Timestamp   dateUploaded = new Timestamp(System.currentTimeMillis());
-    private Timestamp   lastUpdated = new Timestamp(System.currentTimeMillis());
-    private String      creatorUserName;
-    private Weblog      weblog;
+    private String id = UUIDGenerator.generateUUID();
+
+    private String name;
+    private String description;
+    private String copyrightText;
+    private Boolean isSharedForGallery = Boolean.FALSE;
+    private long length;
+    private int width = -1;
+    private int height = -1;
+    private int thumbnailHeight = -1;
+    private int thumbnailWidth = -1;
+    private String contentType;
+    private String originalPath;
+    private Timestamp dateUploaded = new Timestamp(System.currentTimeMillis());
+    private Timestamp lastUpdated = new Timestamp(System.currentTimeMillis());
+    private String creatorUserName;
+    private Weblog weblog;
 
     private InputStream is;
 
     private MediaFileDirectory directory;
-    private Set<MediaFileTag>  tags;
 
     private FileContent content;
     private FileContent thumbnail;
 
-    
     // TODO: anchor to be populated
-    private String      anchor;
+    // private String anchor;
 
+    private Set<MediaFileTag> tagSet = new HashSet<MediaFileTag>();
+    private Set<String> removedTags = new HashSet<String>();
+    private Set<String> addedTags = new HashSet<String>();
 
     public MediaFile() {
-        this.id = UUIDGenerator.generateUUID();
+    }
+
+    /**
+     * Database surrogate key.
+     * 
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @param id
+     *            the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
      * Name for the media file
-     *
+     * 
      */
     public String getName() {
         return name;
@@ -85,7 +113,7 @@ public class MediaFile {
 
     /**
      * Description for media file
-     *
+     * 
      */
     public String getDescription() {
         return description;
@@ -97,7 +125,7 @@ public class MediaFile {
 
     /**
      * Copyright text for media file
-     *
+     * 
      */
     public String getCopyrightText() {
         return copyrightText;
@@ -109,7 +137,7 @@ public class MediaFile {
 
     /**
      * Is media file shared for gallery
-     *
+     * 
      */
     public Boolean isSharedForGallery() {
         return isSharedForGallery;
@@ -121,7 +149,7 @@ public class MediaFile {
 
     /**
      * Size of the media file
-     *
+     * 
      */
     public long getLength() {
         return length;
@@ -149,7 +177,7 @@ public class MediaFile {
 
     /**
      * Last updated timestamp
-     *
+     * 
      */
     public Timestamp getLastUpdated() {
         return lastUpdated;
@@ -169,19 +197,120 @@ public class MediaFile {
 
     /**
      * Set of tags for this media file
-     *
      */
     public Set<MediaFileTag> getTags() {
-        return tags;
+        return tagSet;
     }
 
-    public void setTags(Set<MediaFileTag> tags) {
-        this.tags = tags;
+    private void setTags(Set<MediaFileTag> tagSet) throws WebloggerException {
+        this.tagSet = tagSet;
+        this.removedTags = new HashSet<String>();
+        this.addedTags = new HashSet<String>();
+    }
+
+    /**
+     * Roller lowercases all tags based on locale because there's not a 1:1
+     * mapping between uppercase/lowercase characters across all languages.
+     * 
+     * @param name
+     * @throws WebloggerException
+     */
+    public void addTag(String name) throws WebloggerException {
+        Locale localeObject = getWeblog() != null ? getWeblog()
+                .getLocaleInstance() : Locale.getDefault();
+        name = Utilities.normalizeTag(name, localeObject);
+        if (name.length() == 0)
+            return;
+
+        for (Iterator it = getTags().iterator(); it.hasNext();) {
+            MediaFileTag tag = (MediaFileTag) it.next();
+            if (tag.getName().equals(name))
+                return;
+        }
+
+        MediaFileTag tag = new MediaFileTag();
+        tag.setName(name);
+        tag.setMediaFile(this);
+
+        tagSet.add(tag);
+
+        addedTags.add(name);
+    }
+
+    public void onRemoveTag(String name) throws WebloggerException {
+        removedTags.add(name);
+    }
+
+    public Set getAddedTags() {
+        return addedTags;
+    }
+
+    public Set getRemovedTags() {
+        return removedTags;
+    }
+
+    public void updateTags(List<String> updatedTags) throws WebloggerException {
+
+        if (updatedTags == null) {
+            return;
+        }
+
+        HashSet newTags = new HashSet(updatedTags.size());
+        Locale localeObject = getWeblog() != null ? getWeblog()
+                .getLocaleInstance() : Locale.getDefault();
+
+        for (Iterator<String> it = updatedTags.iterator(); it.hasNext();) {
+            String name = it.next();
+            newTags.add(Utilities.normalizeTag(name, localeObject));
+        }
+
+        HashSet removeTags = new HashSet();
+
+        // remove old ones no longer passed.
+        for (Iterator it = getTags().iterator(); it.hasNext();) {
+            MediaFileTag tag = (MediaFileTag) it.next();
+            if (!newTags.contains(tag.getName())) {
+                removeTags.add(tag.getName());
+            } else {
+                newTags.remove(tag.getName());
+            }
+        }
+
+        MediaFileManager mediaManager = WebloggerFactory.getWeblogger()
+                .getMediaFileManager();
+        for (Iterator it = removeTags.iterator(); it.hasNext();) {
+            mediaManager.removeMediaFileTag((String) it.next(), this);
+        }
+
+        for (Iterator it = newTags.iterator(); it.hasNext();) {
+            addTag((String) it.next());
+        }
+    }
+
+    public String getTagsAsString() {
+        StringBuffer sb = new StringBuffer();
+        for (Iterator it = getTags().iterator(); it.hasNext();) {
+            sb.append(((MediaFileTag) it.next()).getName()).append(" ");
+        }
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        return sb.toString();
+    }
+
+    public void setTagsAsString(String tags) throws WebloggerException {
+        if (tags == null) {
+            tagSet.clear();
+            return;
+        }
+
+        updateTags(Utilities.splitStringAsTags(tags));
     }
 
     /**
      * Content type of the media file
-     *
+     * 
      */
     public String getContentType() {
         return contentType;
@@ -191,21 +320,13 @@ public class MediaFile {
         this.contentType = contentType;
     }
 
-    /**
-     * Database surrogate key.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getId() {
-        return id;
-    }
-
     public String getPath() {
         return directory.getPath();
     }
 
     /**
      * Returns input stream for the underlying file in the file system.
+     * 
      * @return
      */
     public InputStream getInputStream() {
@@ -227,31 +348,31 @@ public class MediaFile {
 
     /**
      * Indicates whether this is an image file.
-     *
+     * 
      */
     public boolean isImageFile() {
         if (this.contentType == null) {
             return false;
         }
-        return (this.contentType.toLowerCase().startsWith(
-                MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
+        return (this.contentType.toLowerCase().startsWith(MediaFileType.IMAGE
+                .getContentTypePrefix().toLowerCase()));
     }
 
     /**
      * Returns permalink URL for this media file resource.
      */
     public String getPermalink() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileURL(
-                this.weblog, this.getId(), true);
+        return WebloggerFactory.getWeblogger().getUrlStrategy()
+                .getMediaFileURL(this.weblog, this.getId(), true);
     }
 
     /**
-     * Returns thumbnail URL for this media file resource.
-     * Resulting URL will be a 404 if media file is not an image.
+     * Returns thumbnail URL for this media file resource. Resulting URL will be
+     * a 404 if media file is not an image.
      */
     public String getThumbnailURL() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileThumbnailURL(
-                this.weblog, this.getId(), true);
+        return WebloggerFactory.getWeblogger().getUrlStrategy()
+                .getMediaFileThumbnailURL(this.weblog, this.getId(), true);
     }
 
     public String getCreatorUserName() {
@@ -264,15 +385,19 @@ public class MediaFile {
 
     public User getCreator() {
         try {
-            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
+            return WebloggerFactory.getWeblogger().getUserManager()
+                    .getUserByUserName(getCreatorUserName());
         } catch (Exception e) {
-            log.error("ERROR fetching user object for username: " + getCreatorUserName(), e);
+            log.error("ERROR fetching user object for username: "
+                    + getCreatorUserName(), e);
         }
         return null;
     }
 
     /**
-     * For old migrated files and theme resource files, orignal path of file can never change.
+     * For old migrated files and theme resource files, orignal path of file can
+     * never change.
+     * 
      * @return the originalPath
      */
     public String getOriginalPath() {
@@ -280,8 +405,11 @@ public class MediaFile {
     }
 
     /**
-     * For old migrated files and theme resource files, orignal path of file can never change.
-     * @param originalPath the originalPath to set
+     * For old migrated files and theme resource files, orignal path of file can
+     * never change.
+     * 
+     * @param originalPath
+     *            the originalPath to set
      */
     public void setOriginalPath(String originalPath) {
         this.originalPath = originalPath;
@@ -295,7 +423,8 @@ public class MediaFile {
     }
 
     /**
-     * @param weblog the weblog to set
+     * @param weblog
+     *            the weblog to set
      */
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
@@ -309,7 +438,8 @@ public class MediaFile {
     }
 
     /**
-     * @param width the width to set
+     * @param width
+     *            the width to set
      */
     public void setWidth(int width) {
         this.width = width;
@@ -323,14 +453,17 @@ public class MediaFile {
     }
 
     /**
-     * @param height the height to set
+     * @param height
+     *            the height to set
      */
     public void setHeight(int height) {
         this.height = height;
     }
 
     /**
-     * Returns input stream for the underlying thumbnail file in the file system.
+     * Returns input stream for the underlying thumbnail file in the file
+     * system.
+     * 
      * @return
      */
     public InputStream getThumbnailInputStream() {
@@ -371,13 +504,13 @@ public class MediaFile {
 
         if (getWidth() > getHeight()) {
             if (getWidth() > MediaFileManager.MAX_WIDTH) {
-                newHeight = (int)((float)getHeight() * ((float)MediaFileManager.MAX_WIDTH / (float)getWidth()));
+                newHeight = (int) ((float) getHeight() * ((float) MediaFileManager.MAX_WIDTH / (float) getWidth()));
                 newWidth = MediaFileManager.MAX_WIDTH;
             }
 
         } else {
             if (getHeight() > MediaFileManager.MAX_HEIGHT) {
-                newWidth = (int)((float)getWidth() * ((float)MediaFileManager.MAX_HEIGHT / (float)getHeight()));
+                newWidth = (int) ((float) getWidth() * ((float) MediaFileManager.MAX_HEIGHT / (float) getHeight()));
                 newHeight = MediaFileManager.MAX_HEIGHT;
             }
         }
@@ -385,10 +518,27 @@ public class MediaFile {
         thumbnailWidth = newWidth;
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
+    // ------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return "MediaFile [name=" + name + ", directory=" + directory
+                + ", weblog=" + weblog + "]";
     }
+
+    public boolean equals(Object other) {
+        if (other == this)
+            return true;
+        if (other instanceof MediaFile != true)
+            return false;
+        MediaFile o = (MediaFile) other;
+        return new EqualsBuilder().append(getName(), o.getName())
+                .append(getDirectory(), o.getDirectory())
+                .append(getWeblog(), o.getWeblog()).isEquals();
+    }
+
+    public int hashCode() {
+        return new HashCodeBuilder().append(getName()).append(getDirectory())
+                .append(getWeblog()).toHashCode();
+    }
+
 }

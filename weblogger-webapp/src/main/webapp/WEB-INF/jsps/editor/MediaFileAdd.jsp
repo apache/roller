@@ -108,7 +108,7 @@
                 <label for="status"><s:text name="mediaFileAdd.tags" /></label>
             </td>
             <td>
-                <s:textfield name="bean.tags" size="50" maxlength="255" />
+                <s:textfield name="bean.tagsAsString" size="50" maxlength="255" />
             </td>
        </tr>
 
