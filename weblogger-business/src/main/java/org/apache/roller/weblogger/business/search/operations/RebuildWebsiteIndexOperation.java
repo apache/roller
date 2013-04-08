@@ -82,7 +82,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
         if (this.website != null) {
-            mLogger.debug("Reindexining weblog " + website.getHandle());
+            mLogger.debug("Reindexing weblog " + website.getHandle());
             try {
                 this.website = roller.getWeblogManager().getWeblog(
                         this.website.getId());

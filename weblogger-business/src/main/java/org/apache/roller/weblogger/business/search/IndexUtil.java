@@ -21,6 +21,8 @@ package org.apache.roller.weblogger.business.search;
 import java.io.IOException;
 import java.io.StringReader;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -32,6 +34,8 @@ import org.apache.lucene.index.Term;
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class IndexUtil {
+
+    private static Log log = LogFactory.getLog(IndexUtil.class);
 
     /**
      * Create a lucene term from the first token of the input string.
@@ -48,17 +52,16 @@ public class IndexUtil {
         if (input == null || field == null)
             return null;
 
-        Analyzer analyer = IndexManagerImpl.getAnalyzer();
-
-        TokenStream tokens = analyer
-                .tokenStream(field, new StringReader(input));
-
-        CharTermAttribute termAtt = (CharTermAttribute) tokens
-                .addAttribute(CharTermAttribute.class);
-
+        Analyzer analyser = IndexManagerImpl.getAnalyzer();
         Term term = null;
 
         try {
+
+            TokenStream tokens = analyser.tokenStream(field, new StringReader(
+                    input));
+
+            CharTermAttribute termAtt = (CharTermAttribute) tokens
+                    .addAttribute(CharTermAttribute.class);
 
             tokens.reset();
 
@@ -68,7 +71,7 @@ public class IndexUtil {
             }
 
         } catch (IOException e) {
-            // ignored
+            log.error("ERROR creating term", e);
         }
 
         return term;

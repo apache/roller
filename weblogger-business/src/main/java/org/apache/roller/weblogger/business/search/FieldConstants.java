@@ -28,7 +28,7 @@ import org.apache.lucene.util.Version;
 public final class FieldConstants {
 
     // Set what version we are on
-    public static final Version LUCENE_VERSION = Version.LUCENE_36;
+    public static final Version LUCENE_VERSION = Version.LUCENE_42;
 
     public static final String ANCHOR = "anchor";
     public static final String UPDATED = "updated";

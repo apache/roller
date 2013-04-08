@@ -24,8 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
-import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -62,7 +61,7 @@ public class SearchOperation extends ReadFromIndexOperation {
     // BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD };
 
     private static Sort SORTER = new Sort(new SortField(
-            FieldConstants.PUBLISHED, SortField.STRING, true));
+            FieldConstants.PUBLISHED, SortField.Type.STRING, true));
 
     // ~ Instance fields
     // ========================================================
@@ -151,7 +150,7 @@ public class SearchOperation extends ReadFromIndexOperation {
             mLogger.error("Error searching index", e);
             parseError = e.getMessage();
 
-        } catch (ParseException e) {
+        } catch (Exception e) {
             // who cares?
             parseError = e.getMessage();
         }

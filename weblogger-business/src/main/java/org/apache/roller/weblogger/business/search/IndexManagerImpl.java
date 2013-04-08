@@ -20,22 +20,25 @@ package org.apache.roller.weblogger.business.search;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LimitTokenCountAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.*;
+import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
 import org.apache.roller.weblogger.business.search.operations.ReIndexEntryOperation;
@@ -43,9 +46,9 @@ import org.apache.roller.weblogger.business.search.operations.RebuildWebsiteInde
 import org.apache.roller.weblogger.business.search.operations.RemoveEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.RemoveWebsiteIndexOperation;
 import org.apache.roller.weblogger.business.search.operations.WriteToIndexOperation;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 /**
  * Lucene implementation of IndexManager. This is the central entry point into
@@ -151,7 +154,8 @@ public class IndexManagerImpl implements IndexManager {
                 if (useRAMIndex) {
                     Directory filesystem = getFSDirectory(false);
                     try {
-                        fRAMindex = new RAMDirectory(filesystem);
+                        fRAMindex = new RAMDirectory(filesystem,
+                                new IOContext());
                     } catch (IOException e) {
                         mLogger.error("Error creating in-memory index", e);
                     }
@@ -272,7 +276,8 @@ public class IndexManagerImpl implements IndexManager {
     public synchronized IndexReader getSharedIndexReader() {
         if (reader == null) {
             try {
-                reader = IndexReader.open(getIndexDirectory());
+                //reader = IndexReader.open(getIndexDirectory());
+                reader = DirectoryReader.open(getIndexDirectory());
             } catch (IOException e) {
             }
         }
@@ -296,8 +301,9 @@ public class IndexManagerImpl implements IndexManager {
 
     private boolean indexExists() {
         try {
-            return IndexReader.indexExists(getIndexDirectory());
-        } catch (IOException e) {
+            //return IndexReader.indexExists(getIndexDirectory());
+            return DirectoryReader.indexExists(getIndexDirectory());
+        } catch (Exception e) {
             mLogger.error("Problem accessing index directory", e);
         }
         return false;
