@@ -35,7 +35,6 @@
         <module>roller-core</module>
         <module>test-utils</module>
         <module>planet-business</module>
-        <!--module>planet-web</module-->
         <module>weblogger-business</module>
         <module>weblogger-web</module>
         <module>weblogger-webapp</module>
