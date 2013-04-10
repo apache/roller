@@ -317,12 +317,8 @@ public class MediaFileTest extends TestCase {
         mediaFile.setContentType("image/jpeg");
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
 
-        MediaFileTag tag1 = new MediaFileTag("tst4work", mediaFile);
-        MediaFileTag tag2 = new MediaFileTag("tst4home", mediaFile);
-        Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
-        tags.add(tag1);
-        tags.add(tag2);
-        mediaFile.setTags(tags);
+        // Add tags
+        mediaFile.setTagsAsString("tst4work tst4home");
 
         mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
         String id = mediaFile.getId();
@@ -392,12 +388,8 @@ public class MediaFileTest extends TestCase {
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
 
-        MediaFileTag tag1 = new MediaFileTag("work", mediaFile);
-        MediaFileTag tag2 = new MediaFileTag("home", mediaFile);
-        Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
-        tags.add(tag1);
-        tags.add(tag2);
-        mediaFile.setTags(tags);
+        // Add tags
+        mediaFile.setTagsAsString("work home");
 
         mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
         TestUtils.endSession(true);
@@ -448,11 +440,9 @@ public class MediaFileTest extends TestCase {
 	            rootDirectory.getMediaFiles().add(mf);
 	
 	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
-
-	            MediaFileTag tag = new MediaFileTag("work", mf);
-	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
-	            tags.add(tag);
-	            mf.setTags(tags);
+	            
+	            // Add tags
+	            mf.setTagsAsString("work");
 	            mfMgr.updateMediaFile(testWeblog, mf);
 	            
 	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
@@ -482,10 +472,8 @@ public class MediaFileTest extends TestCase {
 	
 	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
 
-	            MediaFileTag tag = new MediaFileTag("home", mf);
-	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
-	            tags.add(tag);
-	            mf.setTags(tags);
+	            // Add tags
+	            mf.setTagsAsString("home");
 	            mfMgr.updateMediaFile(testWeblog, mf);
 	
 	            TestUtils.endSession(true);
@@ -514,10 +502,8 @@ public class MediaFileTest extends TestCase {
 	
 	            mfMgr.createMediaFile(testWeblog, mf, new RollerMessages());
 
-	            MediaFileTag tag = new MediaFileTag("home", mf);
-	            Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
-	            tags.add(tag);
-	            mf.setTags(tags);
+	            // Add tags
+	            mf.setTagsAsString("home");
 	            mfMgr.updateMediaFile(testWeblog, mf);
 	
 	            TestUtils.endSession(true);
@@ -835,12 +821,8 @@ public class MediaFileTest extends TestCase {
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
 
-        MediaFileTag tag1 = new MediaFileTag("tst5work", mediaFile);
-        MediaFileTag tag2 = new MediaFileTag("tst5home", mediaFile);
-        Set<MediaFileTag> tags = new HashSet<MediaFileTag>();
-        tags.add(tag1);
-        tags.add(tag2);
-        mediaFile.setTags(tags);
+        // Add tags
+        mediaFile.setTagsAsString("tst5work tst5home");
 
         mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
         String id = mediaFile.getId();
