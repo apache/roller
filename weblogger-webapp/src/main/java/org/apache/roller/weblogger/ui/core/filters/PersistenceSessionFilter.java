@@ -31,7 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.planet.business.PlanetFactory;
 
 
 /**
@@ -65,8 +64,8 @@ public class PersistenceSessionFilter implements Filter {
                 
                 // if planet is enabled then release planet backend as well
                 if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
-                    if (PlanetFactory.isBootstrapped()) {
-                        PlanetFactory.getPlanet().release();
+                    if (WebloggerFactory.isBootstrapped()) {
+                        WebloggerFactory.getWeblogger().release();
                     }
                 }
             }

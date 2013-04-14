@@ -29,7 +29,7 @@ public interface Manager {
     /**
      * Initialize the Manager.  Called once after instantiation.
      */
-    public void initialize() throws InitializationException;
+    public void initialize() throws Exception;
     
     
     /**

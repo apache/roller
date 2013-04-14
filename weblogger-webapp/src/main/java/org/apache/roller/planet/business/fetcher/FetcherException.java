@@ -20,13 +20,13 @@ package org.apache.roller.planet.business.fetcher;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import org.apache.roller.planet.PlanetException;
+import org.apache.roller.RollerException;
 
 
 /**
  * Exception generated from FeedFetcher.
  */
-public class FetcherException extends PlanetException {
+public class FetcherException extends RollerException {
     
     public FetcherException(String msg) {
         super(msg);

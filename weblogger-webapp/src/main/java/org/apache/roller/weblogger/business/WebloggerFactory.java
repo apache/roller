@@ -33,6 +33,10 @@ public final class WebloggerFactory {
     
     // our configured weblogger provider
     private static WebloggerProvider webloggerProvider = null;
+
+	public static Object getweblogger() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
     
     
     // non-instantiable

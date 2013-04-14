@@ -19,19 +19,18 @@
 package org.apache.roller.planet.business.updater;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.fetcher.FetcherException;
-import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 
 /**
@@ -66,7 +65,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         try {
             // fetch the latest version of the subscription
             log.debug("Getting fetcher");
-            FeedFetcher fetcher = PlanetFactory.getPlanet().getFeedFetcher();
+            FeedFetcher fetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
             log.debug("Using fetcher class: " + fetcher.getClass().getName());
             updatedSub = fetcher.fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
             
@@ -98,7 +97,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         Set<SubscriptionEntry> newEntries = updatedSub.getEntries();
         log.debug("newEntries.size() = " + newEntries.size());
         if (newEntries.size() > 0) try {
-            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
             
             // clear out old entries
             pmgr.deleteEntries(sub);
@@ -109,12 +108,12 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
             
             // save and flush
             pmgr.saveSubscription(sub);
-            PlanetFactory.getPlanet().flush();
+            WebloggerFactory.getWeblogger().flush();
 
             log.debug("Added entries");
             entries += newEntries.size();            
 
-        } catch(PlanetException ex) {
+        } catch(RollerException ex) {
             throw new UpdaterException("Error persisting updated subscription", ex);
         }
         
@@ -138,9 +137,9 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         try {
             // update all subscriptions in the system
-            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
             updateSubscriptions(pmgr.getSubscriptions());
-        } catch (PlanetException ex) {
+        } catch (RollerException ex) {
             throw new UpdaterException("Error getting subscriptions list", ex);
         }
         
@@ -176,55 +175,51 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     // convenience method which handles updating any arbitrary collection of subs
     private void updateSubscriptions(Collection<Subscription> subscriptions) {
         
-        PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-        
-        Iterator subs = subscriptions.iterator();
-        while (subs.hasNext()) {
-            Subscription sub = (Subscription)subs.next();
-            
-            try {
-                // reattach sub.  sub gets detached as we iterate
-                sub = pmgr.getSubscriptionById(sub.getId());
-            } catch (PlanetException ex) {
-                log.warn("Subscription went missing while doing update: "+ex.getMessage());
-            }
-            
-            // this updates and saves
-            try {
-                updateSubscription(sub);
-            } catch(UpdaterException ex) {
-                // do a little work to get at the source of the problem
-                Throwable cause = ex;
-                if(ex.getRootCause() != null) {
-                    cause = ex.getRootCause();
-                }
-                if(cause.getCause() != null) {
-                    cause = cause.getCause();
-                }
-                
-                if (log.isDebugEnabled()) {
-                    log.debug("Error updating subscription - "+sub.getFeedURL(), cause);
-                } else {
-                    log.warn("Error updating subscription - "+sub.getFeedURL()
-                        + " turn on debug logging for more info");
-                }
-                
-            } catch(Exception ex) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Error updating subscription - "+sub.getFeedURL(), ex);
-                } else {
-                    log.warn("Error updating subscription - "+sub.getFeedURL()
-                        + " turn on debug logging for more info");
-                }
-            }
-        }
+        PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+		for (Subscription sub : subscriptions) {
+			try {
+				// reattach sub.  sub gets detached as we iterate
+				sub = pmgr.getSubscriptionById(sub.getId());
+			} catch (RollerException ex) {
+				log.warn("Subscription went missing while doing update: "+ex.getMessage());
+			}
+			
+			// this updates and saves
+			try {
+				updateSubscription(sub);
+			} catch(UpdaterException ex) {
+				// do a little work to get at the source of the problem
+				Throwable cause = ex;
+				if(ex.getRootCause() != null) {
+					cause = ex.getRootCause();
+				}
+				if(cause.getCause() != null) {
+					cause = cause.getCause();
+				}
+				
+				if (log.isDebugEnabled()) {
+					log.debug("Error updating subscription - "+sub.getFeedURL(), cause);
+				} else {
+					log.warn("Error updating subscription - "+sub.getFeedURL()
+						+ " turn on debug logging for more info");
+				}
+				
+			} catch(Exception ex) {
+				if (log.isDebugEnabled()) {
+					log.warn("Error updating subscription - "+sub.getFeedURL(), ex);
+				} else {
+					log.warn("Error updating subscription - "+sub.getFeedURL()
+						+ " turn on debug logging for more info");
+				}
+			}
+		}
     }
     
     
     // upate proxy settings for jvm based on planet configuration
     private void updateProxySettings() {
-        String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyhost");
-        int proxyPort = PlanetRuntimeConfig.getIntProperty("site.proxyport");
+        String proxyHost = WebloggerRuntimeConfig.getProperty("site.proxyhost");
+        int proxyPort = WebloggerRuntimeConfig.getIntProperty("site.proxyport");
         if (proxyHost != null && proxyPort > 0) {
             System.setProperty("proxySet", "true");
             System.setProperty("http.proxyHost", proxyHost);

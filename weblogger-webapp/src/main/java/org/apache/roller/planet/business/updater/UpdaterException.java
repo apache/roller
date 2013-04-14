@@ -18,13 +18,13 @@
 
 package org.apache.roller.planet.business.updater;
 
-import org.apache.roller.planet.PlanetException;
+import org.apache.roller.RollerException;
 
 
 /**
  * Exception generated from FeedUpdater.
  */
-public class UpdaterException extends PlanetException {
+public class UpdaterException extends RollerException {
     
     public UpdaterException(String msg) {
         super(msg);

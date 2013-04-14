@@ -19,13 +19,13 @@
 package org.apache.roller.planet.business;
 
 import java.util.Map;
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
 /**
@@ -48,7 +48,7 @@ public class PropertiesTest extends TestCase {
     public void testProperiesCRUD() throws Exception {
         
         // remember, the properties table is initialized during Roller startup
-        PropertiesManager mgr = PlanetFactory.getPlanet().getPropertiesManager();
+        PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
         TestUtils.endSession(true);
         
         RuntimeConfigProperty prop = null;

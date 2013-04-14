@@ -21,12 +21,10 @@ package org.apache.roller.weblogger.planet.business;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -49,7 +47,6 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
         
         // setup weblogger
         TestUtils.setupWeblogger();
-        TestUtils.setupPlanet();
         
         try {
             //testUser = TestUtils.setupUser("webloggerFetcherTestUser");
@@ -78,7 +75,7 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
     
     public void testFetchSubscription() throws Exception {
         try {
-            FeedFetcher feedFetcher = PlanetFactory.getPlanet().getFeedFetcher();
+            FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
 
             // first fetch non-conditionally so we know we should get a Sub
             Subscription sub = feedFetcher.fetchSubscription(feed_url);

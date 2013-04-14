@@ -22,12 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.business.Planet;
-import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
  * Simple planet model for use static planet generation, designed
@@ -38,13 +38,13 @@ public class StaticPlanetModel {
     PlanetManager planetManager = null;
     
     
-    public StaticPlanetModel() throws PlanetException {
-        Planet planet = PlanetFactory.getPlanet();
-        planetManager = planet.getPlanetManager();
+    public StaticPlanetModel() throws RollerException {
+        Weblogger planet = WebloggerFactory.getWeblogger();
+        planetManager = planet.getWebloggerManager();
     }
         
     // TODO: replace this with something equivalent
-//    public PlanetConfigData getConfiguration() throws PlanetException {
+//    public PlanetConfigData getConfiguration() throws RollerException {
 //        return planetManager.getConfiguration();
 //    }
        
@@ -69,28 +69,28 @@ public class StaticPlanetModel {
     }
        
     // removed now that groups must be part of a planet, this method no longer makes sense
-//    public List getGroups() throws PlanetException {
+//    public List getGroups() throws RollerException {
 //        return planetManager.getGroups();
 //    }
     
     // removed now that groups must be part of a planet, this method no longer makes sense
-//    public PlanetGroup getGroup(String handle) throws PlanetException {
+//    public PlanetGroup getGroup(String handle) throws RollerException {
 //        return planetManager.getGroup(handle);
 //    }
     
     
     public List getAggregation(
-            PlanetGroup group, int maxEntries) throws PlanetException {
+            PlanetGroup group, int maxEntries) throws RollerException {
         return planetManager.getEntries(group, 0, maxEntries);
     }
     
     
-    public Iterator getAllSubscriptions() throws PlanetException {
+    public Iterator getAllSubscriptions() throws RollerException {
         return planetManager.getSubscriptions().iterator();
     }
     
     
-    public int getSubscriptionCount() throws PlanetException {
+    public int getSubscriptionCount() throws RollerException {
         return planetManager.getSubscriptionCount();
     } 
 }

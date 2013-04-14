@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -52,7 +53,7 @@ public class GroupFunctionalTests extends TestCase {
     
     public void testGroupLookups() throws Exception {
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         
         // lookup group by id
         PlanetGroup group = mgr.getGroupById(testGroup1.getId());
@@ -66,7 +67,7 @@ public class GroupFunctionalTests extends TestCase {
         assertEquals("groupFuncTest1", group.getHandle());
         
         // lookup all groups in planet
-        Planet planet = mgr.getPlanetById(testPlanet.getId());
+        Planet planet = mgr.getWebloggerById(testPlanet.getId());
         Set groups = planet.getGroups();
         assertNotNull(groups);
         assertEquals(2, groups.size());

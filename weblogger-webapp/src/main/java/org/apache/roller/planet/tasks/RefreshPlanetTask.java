@@ -20,10 +20,10 @@ package org.apache.roller.planet.tasks;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.planet.business.updater.FeedUpdater;
 import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 
 
 /**
@@ -44,7 +44,7 @@ public class RefreshPlanetTask extends PlanetTask {
             log.info("Refreshing Planet entries");
             FeedUpdater updater = new SingleThreadedFeedUpdater();
             updater.updateSubscriptions();
-            PlanetFactory.getPlanet().release();
+            WebloggerFactory.getWeblogger().release();
             
         } catch (Exception e) {
             log.error("ERROR refreshing planet", e);
@@ -58,8 +58,8 @@ public class RefreshPlanetTask extends PlanetTask {
         task.initialize();
         
         // need to prepare and bootstrap Planet as well
-        PlanetStartup.prepare();
-        PlanetFactory.bootstrap();
+        WebloggerStartup.prepare();
+        WebloggerFactory.bootstrap();
         
         task.run();
     }

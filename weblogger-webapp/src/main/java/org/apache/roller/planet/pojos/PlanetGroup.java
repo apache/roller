@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -159,7 +159,7 @@ public class PlanetGroup implements Serializable, Comparable {
     /**
      * @hibernate.many-to-one column="planet_id" cascade="none" non-null="false"
      */
-    public Planet getPlanet() {
+    public Planet getWeblogger() {
         return planet;
     }
     
@@ -186,7 +186,7 @@ public class PlanetGroup implements Serializable, Comparable {
      * Return a list of the most recent 10 entries from this group.
      */
     public List getRecentEntries() {
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         try {
             return mgr.getEntries(this, 0, 10);
         } catch(Exception e) {

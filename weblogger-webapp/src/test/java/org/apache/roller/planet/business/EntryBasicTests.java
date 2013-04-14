@@ -16,11 +16,11 @@
 
 package org.apache.roller.planet.business;
 
-import java.util.Date;
 import junit.framework.TestCase;
 import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -46,7 +46,7 @@ public class EntryBasicTests extends TestCase {
     
     public void testEntryCRUD() throws Exception {
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
         
         SubscriptionEntry testEntry = new SubscriptionEntry();

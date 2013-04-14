@@ -16,12 +16,12 @@
 
 package org.apache.roller.planet.business;
 
-import java.util.List;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -37,12 +37,12 @@ public class PlanetBasicTests extends TestCase {
         // setup planet
         TestUtils.setupPlanet();
 
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         
         Planet testPlanet = new Planet("testPlanet", "testPlanet", "testPlanet");
         Planet planet = null;
         
-        planet = mgr.getPlanet("testPlanet");
+        planet = mgr.getWeblogger("testPlanet");
         assertNull(planet);
         
         // add
@@ -51,7 +51,7 @@ public class PlanetBasicTests extends TestCase {
         
         // verify
         planet = null;
-        planet = mgr.getPlanetById(testPlanet.getId());
+        planet = mgr.getWebloggerById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("testPlanet", planet.getHandle());
         
@@ -62,7 +62,7 @@ public class PlanetBasicTests extends TestCase {
         
         // verify
         planet = null;
-        planet = mgr.getPlanetById(testPlanet.getId());
+        planet = mgr.getWebloggerById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("foo", planet.getTitle());
         
@@ -72,7 +72,7 @@ public class PlanetBasicTests extends TestCase {
         
         // verify
         planet = null;
-        planet = mgr.getPlanet(testPlanet.getId());
+        planet = mgr.getWeblogger(testPlanet.getId());
         assertNull(planet);
     }
     

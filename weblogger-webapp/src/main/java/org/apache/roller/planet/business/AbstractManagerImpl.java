@@ -25,7 +25,7 @@ package org.apache.roller.planet.business;
  */
 public abstract class AbstractManagerImpl implements Manager {
     
-    public void initialize() throws InitializationException {
+    public void initialize() throws Exception {
         // no-op
     }
     

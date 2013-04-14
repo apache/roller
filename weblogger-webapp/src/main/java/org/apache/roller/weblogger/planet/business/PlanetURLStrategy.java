@@ -19,9 +19,8 @@
 package org.apache.roller.weblogger.planet.business;
 
 import org.apache.roller.planet.business.MultiPlanetURLStrategy;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.config.PlanetRuntimeConfig;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 
@@ -39,9 +38,9 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
         
         StringBuffer url = new StringBuffer();
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
-        url.append(PlanetRuntimeConfig.getProperty("site.absoluteurl"));
+        url.append(WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
         
         return url.toString();
     }

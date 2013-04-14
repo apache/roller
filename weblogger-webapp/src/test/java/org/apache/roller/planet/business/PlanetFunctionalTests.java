@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -52,23 +53,23 @@ public class PlanetFunctionalTests extends TestCase {
      */
     public void testPlanetLookups() throws Exception {
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         
         Planet planet = null;
         
         // by id
-        planet = mgr.getPlanetById(testPlanet.getId());
+        planet = mgr.getWebloggerById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("planetFuncTest", planet.getHandle());
         
         // by handle
         planet = null;
-        planet = mgr.getPlanet("planetFuncTest");
+        planet = mgr.getWeblogger("planetFuncTest");
         assertNotNull(planet);
         assertEquals("planetFuncTest", planet.getHandle());
         
         // all planets
-        List planets = mgr.getPlanets();
+        List planets = mgr.getWebloggers();
         assertNotNull(planets);
         assertEquals(1, planets.size());
     }

@@ -18,6 +18,7 @@
 
 package org.apache.roller.planet.business.updater;
 
+import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 

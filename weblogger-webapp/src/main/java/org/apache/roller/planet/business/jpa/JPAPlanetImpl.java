@@ -20,14 +20,15 @@ package org.apache.roller.planet.business.jpa;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.PlanetException;
+import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.business.InitializationException;
-import org.apache.roller.planet.business.PropertiesManager;
+import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 /**
  * Implements Planet, the entry point interface for the Roller-Planet business 
@@ -58,7 +59,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
             PlanetManager     planetManager, 
             PropertiesManager propertiesManager,
             URLStrategy       urlStrategy,
-            FeedFetcher       feedFetcher) throws PlanetException {
+            FeedFetcher       feedFetcher) throws RollerException {
         
         this.strategy = strategy;
         this.propertiesManager = propertiesManager;
@@ -69,18 +70,18 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     
 
     @Override
-    public void initialize() throws InitializationException {
+    public void initialize() throws Exception {
         
         log.info("Initializing Roller Planet business tier");
         
         getPropertiesManager().initialize();
-        getPlanetManager().initialize();
+        getWebloggerManager().initialize();
         
         // we always need to do a flush after initialization because it's
         // possible that some changes need to be persisted
         try {
             flush();
-        } catch(PlanetException ex) {
+        } catch(RollerException ex) {
             throw new InitializationException("Error flushing after initialization", ex);
         }
         
@@ -88,8 +89,8 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     }
     
     
-    public void flush() throws PlanetException {
-        this.strategy.flush();
+    public void flush() throws RollerException {
+		this.strategy.flush();
     }
 
     
@@ -108,7 +109,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     /**
      * @see org.apache.roller.business.Roller#getBookmarkManager()
      */
-    public PlanetManager getPlanetManager() {
+    public PlanetManager getWebloggerManager() {
         return planetManager;
     }
 

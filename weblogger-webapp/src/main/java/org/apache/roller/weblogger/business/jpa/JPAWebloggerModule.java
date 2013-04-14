@@ -22,6 +22,13 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import net.oauth.OAuthValidator;
 import net.oauth.SimpleOAuthValidator;
+import org.apache.roller.planet.business.MultiPlanetURLStrategy;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
+import org.apache.roller.planet.business.fetcher.RomeFeedFetcher;
+import org.apache.roller.planet.business.jpa.JPAPlanetImpl;
+import org.apache.roller.planet.business.jpa.JPAPlanetManagerImpl;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.FileContentManagerImpl;
@@ -59,7 +66,6 @@ public class JPAWebloggerModule implements Module {
         binder.bind(Weblogger.class).to(JPAWebloggerImpl.class);
         
         binder.bind(JPAPersistenceStrategy.class);       
-        binder.bind(org.apache.roller.weblogger.planet.business.jpa.JPARollerPlanetPersistenceStrategy.class);
         
         binder.bind(AutoPingManager.class).to(     JPAAutoPingManagerImpl.class);   
         binder.bind(BookmarkManager.class).to(     JPABookmarkManagerImpl.class);  
@@ -83,6 +89,13 @@ public class JPAWebloggerModule implements Module {
         binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);
         
         binder.bind(URLStrategy.class).to(         MultiWeblogURLStrategy.class);
+
+		binder.bind(Planet.class).to(JPAPlanetImpl.class);
+        
+        binder.bind(PlanetManager.class).to(     JPAPlanetManagerImpl.class);   
+        binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);   
+        //binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
+        binder.bind(FeedFetcher.class).to(       RomeFeedFetcher.class);
     }
     
 }

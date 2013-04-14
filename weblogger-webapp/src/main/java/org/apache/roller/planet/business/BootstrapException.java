@@ -18,13 +18,13 @@
 
 package org.apache.roller.planet.business;
 
-import org.apache.roller.planet.PlanetException;
+import org.apache.roller.RollerException;
 
 
 /**
  * Exception generated from Weblogger bootstrapping process.
  */
-public class BootstrapException extends PlanetException {
+public class BootstrapException extends RollerException {
     
     public BootstrapException(String msg) {
         super(msg);

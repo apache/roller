@@ -23,9 +23,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
@@ -64,8 +64,8 @@ public class PlanetGroups extends PlanetUIAction {
     @Override
     public void myPrepare() {
         
-        if(getPlanet() != null && getBean().getId() != null) try {
-            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+        if(getWeblogger() != null && getBean().getId() != null) try {
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
             setGroup(pmgr.getGroupById(getBean().getId()));
         } catch(Exception ex) {
             log.error("Error looking up planet group - "+getBean().getId(), ex);
@@ -100,7 +100,7 @@ public class PlanetGroups extends PlanetUIAction {
             if(group == null) {
                 log.debug("Adding New Group");
                 group = new PlanetGroup();
-                group.setPlanet(getPlanet());
+                group.setPlanet(getWeblogger());
             } else {
                 log.debug("Updating Existing Group");
             }
@@ -109,9 +109,9 @@ public class PlanetGroups extends PlanetUIAction {
             getBean().copyTo(group);
             
             // save and flush
-            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
             pmgr.saveGroup(group);
-            PlanetFactory.getPlanet().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             addMessage("planetGroups.success.saved");
             
@@ -132,9 +132,9 @@ public class PlanetGroups extends PlanetUIAction {
         
         if(getGroup() != null) {
             try {
-                PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
                 pmgr.deleteGroup(getGroup());
-                PlanetFactory.getPlanet().flush();
+                WebloggerFactory.getWeblogger().flush();
                 
                 addMessage("planetSubscription.success.deleted");
             } catch(Exception ex) {
@@ -173,7 +173,7 @@ public class PlanetGroups extends PlanetUIAction {
         
         List<PlanetGroup> displayGroups = new ArrayList();
         
-        Iterator allgroups = getPlanet().getGroups().iterator();
+        Iterator allgroups = getWeblogger().getGroups().iterator();
         while (allgroups.hasNext()) {
             PlanetGroup agroup = (PlanetGroup) allgroups.next();
             

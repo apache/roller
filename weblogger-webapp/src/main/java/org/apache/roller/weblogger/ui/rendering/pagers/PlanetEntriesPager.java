@@ -25,13 +25,13 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -93,8 +93,8 @@ public class PlanetEntriesPager extends AbstractPager {
             
             List results = new ArrayList();
             try {
-                PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-                Planet planet = planetManager.getPlanet("default");
+                PlanetManager planetManager = WebloggerFactory.getWeblogger().getWebloggerManager();
+                Planet planet = planetManager.getWeblogger("default");
                 
                 List entries = null;
                 if (feedURL != null) {

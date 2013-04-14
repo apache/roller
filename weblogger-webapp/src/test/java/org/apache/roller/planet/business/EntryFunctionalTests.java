@@ -25,6 +25,7 @@ import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -64,8 +65,8 @@ public class EntryFunctionalTests extends TestCase {
         testGroup1.getSubscriptions().add(testSub2);
         testSub2.getGroups().add(testGroup1);
         
-        PlanetFactory.getPlanet().getPlanetManager().saveGroup(testGroup1);
-        PlanetFactory.getPlanet().flush();
+        WebloggerFactory.getWeblogger().getWebloggerManager().saveGroup(testGroup1);
+        WebloggerFactory.getWeblogger().flush();
         
         log.info("EXITED");
     }
@@ -85,7 +86,7 @@ public class EntryFunctionalTests extends TestCase {
     
     public void testEntryLookups() throws Exception {
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         
         // by id
         SubscriptionEntry entry = mgr.getEntryById(testEntry1.getId());
@@ -110,7 +111,7 @@ public class EntryFunctionalTests extends TestCase {
     
     public void testDeleteEntries() throws Exception {
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         Subscription sub = mgr.getSubscriptionById(testSub2.getId());
         
         // make sure entries are there

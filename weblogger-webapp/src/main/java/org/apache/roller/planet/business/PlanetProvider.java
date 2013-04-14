@@ -33,6 +33,6 @@ public interface PlanetProvider {
     /**
      * Get a Planet instance.
      */
-    public Planet getPlanet();
+    public Planet getWeblogger();
     
 }

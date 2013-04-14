@@ -41,9 +41,9 @@ import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -242,7 +242,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
     // get a feed fetcher cache, if possible
     private FeedFetcherCache getRomeFetcherCache() {
         
-        String cacheDirPath = PlanetConfig.getProperty("cache.dir");
+        String cacheDirPath = WebloggerConfig.getProperty("cache.dir");
         
         // can't continue without cache dir
         if (cacheDirPath == null) {

@@ -18,11 +18,9 @@
 
 package org.apache.roller.planet.business;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import org.apache.roller.planet.PlanetException;
+import org.apache.roller.RollerException;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
@@ -35,123 +33,123 @@ import org.apache.roller.planet.pojos.Subscription;
 public interface PlanetManager extends Manager {
     
     
-    public void savePlanet(Planet planet) throws PlanetException;
+    public void savePlanet(Planet planet) throws RollerException;
     
     
-    public void deletePlanet(Planet planet) throws PlanetException;
+    public void deletePlanet(Planet planet) throws RollerException;
     
     
-    public Planet getPlanet(String handle) throws PlanetException;
+    public Planet getWeblogger(String handle) throws RollerException;
     
     
-    public Planet getPlanetById(String id) throws PlanetException;
+    public Planet getWebloggerById(String id) throws RollerException;
     
     
-    public List getPlanets() throws PlanetException;
+    public List getWebloggers() throws RollerException;
     
     
     /**
      * Save new or update existing a group
      */
-    public void saveGroup(PlanetGroup sub) throws PlanetException;
+    public void saveGroup(PlanetGroup sub) throws RollerException;
     
     
     /** 
      * Delete group and any subscriptions that are orphaned. 
      */
-    public void deleteGroup(PlanetGroup group) throws PlanetException;
+    public void deleteGroup(PlanetGroup group) throws RollerException;
     
     
-    public PlanetGroup getGroup(Planet planet, String handle) throws PlanetException;
+    public PlanetGroup getGroup(Planet planet, String handle) throws RollerException;
     
     
     /**
      * Get group by ID rather than handle.
      */
-    public PlanetGroup getGroupById(String id) throws PlanetException;
+    public PlanetGroup getGroupById(String id) throws RollerException;
     
     
     /**
      * Save or update a subscription
      */
-    public void saveSubscription(Subscription sub) throws PlanetException;
+    public void saveSubscription(Subscription sub) throws RollerException;
     
     
     /** 
      * Delete subscription, remove it from groups, cache, etc. 
      */
-    public void deleteSubscription(Subscription group) throws PlanetException;
+    public void deleteSubscription(Subscription group) throws RollerException;
     
     
     /**
      * Get subscription by feedUrl.
      */
-    public Subscription getSubscription(String feedUrl) throws PlanetException;
+    public Subscription getSubscription(String feedUrl) throws RollerException;
     
     
     /**
      * Get subscription by ID rather than feedUrl.
      */
-    public Subscription getSubscriptionById(String id) throws PlanetException;
+    public Subscription getSubscriptionById(String id) throws RollerException;
     
     
     /**
      * Get all subscriptions.
      */
-    public List getSubscriptions() throws PlanetException;
+    public List getSubscriptions() throws RollerException;
     
     
     /**
      * Get total number of subscriptions.
      */
-    public int getSubscriptionCount() throws PlanetException;
+    public int getSubscriptionCount() throws RollerException;
     
     
     /**
      * Get top X subscriptions.
      */
-    public List getTopSubscriptions(int offset, int len) throws PlanetException;
+    public List getTopSubscriptions(int offset, int len) throws RollerException;
     
     
     /**
      * Get top X subscriptions, restricted by group.
      */
     public List getTopSubscriptions(PlanetGroup group, int offset, int len) 
-        throws PlanetException;
+        throws RollerException;
     
     
     /**
      * Save new or update existing entry
      */
-    public void saveEntry(SubscriptionEntry entry) throws PlanetException;
+    public void saveEntry(SubscriptionEntry entry) throws RollerException;
     
     
     /** 
      * Delete entry. 
      */
-    public void deleteEntry(SubscriptionEntry entry) throws PlanetException;
+    public void deleteEntry(SubscriptionEntry entry) throws RollerException;
     
     
     /**
      * Delete all entries for a subscription.
      *
      * @param subscription The subscription to delete entries from.
-     * @throws PlanetException If there is a problem doing the delete.
+     * @throws RollerException If there is a problem doing the delete.
      */
-    public void deleteEntries(Subscription sub) throws PlanetException;
+    public void deleteEntries(Subscription sub) throws RollerException;
     
     
     /**
      * Lookup an entry by id.
      */
-    public SubscriptionEntry getEntryById(String id) throws PlanetException;
+    public SubscriptionEntry getEntryById(String id) throws RollerException;
     
     
     /**
      * Get entries in a single feed as list of SubscriptionEntry objects.
      */
     public List getEntries(Subscription sub, int offset, int len) 
-        throws PlanetException;
+        throws RollerException;
     
     
     /**
@@ -162,7 +160,7 @@ public interface PlanetManager extends Manager {
      * @param len Maximum number of results to return (for paging)
      */
     public List getEntries(PlanetGroup group, int offset, int len) 
-        throws PlanetException;
+        throws RollerException;
     
     
     /**
@@ -179,6 +177,6 @@ public interface PlanetManager extends Manager {
                            Date startDate, 
                            Date endDate,
                            int offset, 
-                           int len) throws PlanetException;
+                           int len) throws RollerException;
     
 }

@@ -18,8 +18,9 @@
 
 package org.apache.roller.planet.business;
 
-import org.apache.roller.planet.PlanetException;
+import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
+import org.apache.roller.weblogger.business.PropertiesManager;
 
 
 /**
@@ -30,7 +31,7 @@ public interface Planet {
     /**
      * Get PlanetManager associated with this Roller instance.
      */
-    public PlanetManager getPlanetManager();
+    public PlanetManager getWebloggerManager();
     
     
     /**
@@ -54,13 +55,13 @@ public interface Planet {
     /**
      * Flush object states.
      */
-    public void flush() throws PlanetException;
+    public void flush() throws RollerException;
     
     
     /**
      * Initialize any resources necessary for this instance of Roller.
      */
-    public void initialize() throws InitializationException;
+    public void initialize() throws Exception;
     
 
     /**

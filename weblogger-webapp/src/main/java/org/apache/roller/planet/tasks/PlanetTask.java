@@ -18,11 +18,6 @@
 
 package org.apache.roller.planet.tasks;
 
-import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.business.URLStrategy;
-import org.apache.roller.planet.config.PlanetConfig;
-
 
 /**
  * An abstract class representing a scheduled task in Roller Planet.

@@ -26,7 +26,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
@@ -85,7 +84,7 @@ public class PlanetModel implements Model {
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
         
-        planetUrlStrategy = PlanetFactory.getPlanet().getURLStrategy();
+        planetUrlStrategy = WebloggerFactory.getWeblogger().getURLStrategy();
         
         // extract weblog object
         weblog = weblogRequest.getWeblog();
@@ -185,8 +184,8 @@ public class PlanetModel implements Model {
     public List getRankedSubscriptions(String groupHandle, int sinceDays, int length) {
         List list = new ArrayList();
         try {
-            PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-            Planet defaultPlanet = planetManager.getPlanet(DEFAULT_PLANET_HANDLE);
+            PlanetManager planetManager = WebloggerFactory.getWeblogger().getWebloggerManager();
+            Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);
             PlanetGroup planetGroup = planetManager.getGroup(defaultPlanet, groupHandle);
             List subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
             for (Iterator it = subs.iterator(); it.hasNext();) {
@@ -208,8 +207,8 @@ public class PlanetModel implements Model {
     public List<PlanetGroup> getGroups() {
         List list = new ArrayList<PlanetGroup>();
         try {
-            PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-            Planet defaultPlanet = planetManager.getPlanet(DEFAULT_PLANET_HANDLE);
+            PlanetManager planetManager = WebloggerFactory.getWeblogger().getWebloggerManager();
+            Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);
             Set<PlanetGroup> groups = (Set<PlanetGroup>)defaultPlanet.getGroups();
             for (PlanetGroup group : groups) {
                 // TODO needs pojo wrapping from planet
@@ -230,8 +229,8 @@ public class PlanetModel implements Model {
     public PlanetGroup getGroup(String groupHandle) {
         PlanetGroup group = null;
         try {
-            PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-            Planet defaultPlanet = planetManager.getPlanet(DEFAULT_PLANET_HANDLE);            
+            PlanetManager planetManager = WebloggerFactory.getWeblogger().getWebloggerManager();
+            Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);            
             // TODO needs pojo wrapping from planet
             group = planetManager.getGroup(defaultPlanet, groupHandle);            
         } catch (Exception e) {
@@ -241,17 +240,17 @@ public class PlanetModel implements Model {
     }
     
     
-    public String getPlanetURL() {
+    public String getWebloggerURL() {
         return planetUrlStrategy.getPlanetURL("ignored");
     }
 
     
-    public String getPlanetGroupURL(String group, int pageNum) {
+    public String getWebloggerGroupURL(String group, int pageNum) {
         return planetUrlStrategy.getPlanetGroupURL("ignored", group, pageNum);
     }
     
     
-    public String getPlanetFeedURL(String group, String format) {
+    public String getWebloggerFeedURL(String group, String format) {
         return planetUrlStrategy.getPlanetGroupFeedURL("ignored", group, format);
     }
 }

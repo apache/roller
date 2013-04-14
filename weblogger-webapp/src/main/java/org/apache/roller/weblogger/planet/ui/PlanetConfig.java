@@ -25,13 +25,13 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.business.PropertiesManager;
-import org.apache.roller.planet.config.PlanetRuntimeConfig;
-import org.apache.roller.planet.config.runtime.ConfigDef;
-import org.apache.roller.planet.config.runtime.RuntimeConfigDefs;
-import org.apache.roller.planet.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.config.runtime.ConfigDef;
+import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.struts2.interceptor.ParameterAware;
 
 
@@ -76,14 +76,14 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
     public void myPrepare() {
         try {
             // just grab our properties map
-            PropertiesManager pMgr = PlanetFactory.getPlanet().getPropertiesManager();
+            PropertiesManager pMgr = WebloggerFactory.getWeblogger().getPropertiesManager();
             setProperties(pMgr.getProperties());
         } catch (RollerException ex) {
             log.error("Error loading planet properties");
         }
         
         // set config def used to draw the view
-        RuntimeConfigDefs defs = PlanetRuntimeConfig.getRuntimeConfigDefs();
+        RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
         List<ConfigDef> configDefs = defs.getConfigDefs();
         for(ConfigDef configDef : configDefs) {
             if("global-properties".equals(configDef.getName())) {
@@ -140,9 +140,9 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
             }
             
             // save it
-            PropertiesManager pMgr = PlanetFactory.getPlanet().getPropertiesManager();
+            PropertiesManager pMgr = WebloggerFactory.getWeblogger().getPropertiesManager();
             pMgr.saveProperties(this.properties);
-            PlanetFactory.getPlanet().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             addMessage("ConfigForm.message.saveSucceeded");
             

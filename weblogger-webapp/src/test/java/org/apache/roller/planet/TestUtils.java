@@ -18,13 +18,14 @@
 
 package org.apache.roller.planet;
 
-import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -35,17 +36,14 @@ public final class TestUtils {
     
     public static void setupPlanet() throws Exception {
         
-        if(!PlanetFactory.isBootstrapped()) {
-            
-            // do core services preparation
-            PlanetStartup.prepare();
+        if(!WebloggerFactory.isBootstrapped()) {
             
             // do application bootstrapping and init
-            PlanetFactory.bootstrap();
+            WebloggerFactory.bootstrap();
             
             // always initialize the properties manager and flush
-            PlanetFactory.getPlanet().getPropertiesManager().initialize();
-            PlanetFactory.getPlanet().flush();
+            WebloggerFactory.getWeblogger().getPropertiesManager().initialize();
+            WebloggerFactory.getWeblogger().flush();
         }
     }
     
@@ -53,7 +51,7 @@ public final class TestUtils {
     public static void shutdownPlanet() throws Exception {
         
         // trigger shutdown
-        PlanetFactory.getPlanet().shutdown();
+        WebloggerFactory.getWeblogger().shutdown();
     }
     
     
@@ -68,10 +66,10 @@ public final class TestUtils {
     public static void endSession(boolean flush) throws Exception {
         
         if(flush) {
-            PlanetFactory.getPlanet().flush();
+            WebloggerFactory.getWeblogger().flush();
         }
         
-        PlanetFactory.getPlanet().release();
+        WebloggerFactory.getWeblogger().release();
     }
     
     
@@ -83,17 +81,17 @@ public final class TestUtils {
         Planet testPlanet = new Planet(handle, handle, handle);
         
         // store
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         mgr.savePlanet(testPlanet);
         
         // flush
-        PlanetFactory.getPlanet().flush();
+        WebloggerFactory.getWeblogger().flush();
         
         // query to make sure we return the persisted object
-        Planet planet = mgr.getPlanet(handle);
+        Planet planet = mgr.getWeblogger(handle);
         
         if(planet == null)
-            throw new PlanetException("error inserting new planet");
+            throw new WebloggerException("error inserting new planet");
         
         return planet;
     }
@@ -105,14 +103,14 @@ public final class TestUtils {
     public static void teardownPlanet(String id) throws Exception {
         
         // lookup
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        Planet planet = mgr.getPlanetById(id);
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        Planet planet = mgr.getWebloggerById(id);
         
         // remove
         mgr.deletePlanet(planet);
         
         // flush
-        PlanetFactory.getPlanet().flush();
+        WebloggerFactory.getWeblogger().flush();
     }
     
     
@@ -122,10 +120,10 @@ public final class TestUtils {
     public static PlanetGroup setupGroup(Planet planet, String handle) 
             throws Exception {
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         
         // make sure we are using a persistent object
-        Planet testPlanet = mgr.getPlanetById(planet.getId());
+        Planet testPlanet = mgr.getWebloggerById(planet.getId());
         
         // store
         PlanetGroup testGroup = new PlanetGroup(testPlanet, handle, handle, handle);
@@ -133,13 +131,13 @@ public final class TestUtils {
         mgr.saveGroup(testGroup);
         
         // flush
-        PlanetFactory.getPlanet().flush();
+        WebloggerFactory.getWeblogger().flush();
         
         // query to make sure we return the persisted object
         PlanetGroup group = mgr.getGroupById(testGroup.getId());
         
         if(group == null)
-            throw new PlanetException("error inserting new group");
+            throw new WebloggerException("error inserting new group");
         
         return group;
     }
@@ -151,15 +149,15 @@ public final class TestUtils {
     public static void teardownGroup(String id) throws Exception {
         
         // lookup
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         PlanetGroup group = mgr.getGroupById(id);
         
         // remove
         mgr.deleteGroup(group);
-        group.getPlanet().getGroups().remove(group);
+        group.getWeblogger().getGroups().remove(group);
         
         // flush
-        PlanetFactory.getPlanet().flush();
+        WebloggerFactory.getWeblogger().flush();
     }
     
     
@@ -169,7 +167,7 @@ public final class TestUtils {
     public static Subscription setupSubscription(String feedUrl) 
             throws Exception {
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         
         // store
         Subscription testSub = new Subscription();
@@ -178,13 +176,13 @@ public final class TestUtils {
         mgr.saveSubscription(testSub);
         
         // flush
-        PlanetFactory.getPlanet().flush();
+        WebloggerFactory.getWeblogger().flush();
         
         // query to make sure we return the persisted object
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
         
         if(sub == null)
-            throw new PlanetException("error inserting new subscription");
+            throw new WebloggerException("error inserting new subscription");
         
         return sub;
     }
@@ -196,14 +194,14 @@ public final class TestUtils {
     public static void teardownSubscription(String id) throws Exception {
         
         // lookup
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         Subscription sub = mgr.getSubscriptionById(id);
         
         // remove
         mgr.deleteSubscription(sub);
         
         // flush
-        PlanetFactory.getPlanet().flush();
+        WebloggerFactory.getWeblogger().flush();
     }
     
     
@@ -213,7 +211,7 @@ public final class TestUtils {
     public static SubscriptionEntry setupEntry(Subscription sub, String title) 
             throws Exception {
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         
         // make sure we are using a persistent object
         Subscription testSub = mgr.getSubscriptionById(sub.getId());
@@ -228,13 +226,13 @@ public final class TestUtils {
         mgr.saveEntry(testEntry);
         
         // flush
-        PlanetFactory.getPlanet().flush();
+        WebloggerFactory.getWeblogger().flush();
         
         // query to make sure we return the persisted object
         SubscriptionEntry entry = mgr.getEntryById(testEntry.getId());
         
         if(entry == null)
-            throw new PlanetException("error inserting new entry");
+            throw new WebloggerException("error inserting new entry");
         
         return entry;
     }
@@ -246,7 +244,7 @@ public final class TestUtils {
     public static void teardownEntry(String id) throws Exception {
         
         // lookup
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         SubscriptionEntry entry = mgr.getEntryById(id);
         
         // remove
@@ -254,7 +252,7 @@ public final class TestUtils {
         entry.getSubscription().getEntries().remove(entry);
         
         // flush
-        PlanetFactory.getPlanet().flush();
+        WebloggerFactory.getWeblogger().flush();
     }
     
     public void testNothing() {

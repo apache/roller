@@ -23,7 +23,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
 import com.sun.syndication.fetcher.impl.DiskFeedInfoCache;
-import org.apache.roller.planet.config.PlanetConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.planet.ui.PlanetConfig;
 
 
 /**
@@ -40,7 +41,7 @@ public class DiskFeedInfoCacheTest extends TestCase {
         SyndFeedInfo info = new SyndFeedInfo();
         info.setUrl(url);
         
-        String testPlanetCache = PlanetConfig.getProperty("cache.dir");
+        String testPlanetCache = WebloggerConfig.getProperty("cache.dir");
         assertNotNull("testPlanetCache not null", testPlanetCache);
         assertTrue("testPlanetCache not zero length", testPlanetCache.trim().length() > 0);
         
@@ -48,7 +49,7 @@ public class DiskFeedInfoCacheTest extends TestCase {
         if (!cacheDir.exists()) cacheDir.mkdirs();
         
         DiskFeedInfoCache cache =
-                new DiskFeedInfoCache(PlanetConfig.getProperty("cache.dir"));
+                new DiskFeedInfoCache(WebloggerConfig.getProperty("cache.dir"));
         cache.setFeedInfo(info.getUrl(), info);
         
         SyndFeedInfo info2 = cache.getFeedInfo(url);

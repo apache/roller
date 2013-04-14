@@ -23,10 +23,6 @@
 
 package org.apache.roller.weblogger;
 
-import org.apache.roller.planet.business.GuicePlanetProvider;
-import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.business.PlanetProvider;
-import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
@@ -35,7 +31,6 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -73,25 +68,6 @@ public final class TestUtils {
         // trigger shutdown
         WebloggerFactory.getWeblogger().shutdown();
     }
-    
-    
-    public static void setupPlanet() throws Exception {
-        
-        if(!PlanetFactory.isBootstrapped()) {
-            // do core services preparation
-            PlanetStartup.prepare();
-            
-            // do application bootstrapping
-            String guiceModule = WebloggerConfig.getProperty("planet.aggregator.guice.module");
-            PlanetProvider provider = new GuicePlanetProvider(guiceModule);
-            PlanetFactory.bootstrap(provider);
-            
-            // always initialize the properties manager and flush
-            PlanetFactory.getPlanet().getPropertiesManager().initialize();
-            PlanetFactory.getPlanet().flush();
-        }
-    }
-    
     
     /**
      * Convenience method that simulates the end of a typical session.

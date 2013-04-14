@@ -18,9 +18,9 @@ package org.apache.roller.weblogger.planet.ui;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -37,11 +37,11 @@ public abstract class PlanetUIAction extends UIAction {
     private Planet planet = null;
     
     
-    public Planet getPlanet() {
+    public Planet getWeblogger() {
         if(planet == null) {
             try {
-                PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-                planet = pmgr.getPlanet(DEFAULT_PLANET_HANDLE);
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+                planet = pmgr.getWeblogger(DEFAULT_PLANET_HANDLE);
             } catch(Exception ex) {
                 log.error("Error loading weblogger planet - "+DEFAULT_PLANET_HANDLE, ex);
             }

@@ -30,10 +30,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
@@ -76,7 +75,7 @@ public class PlanetFeedServlet extends HttpServlet {
 
         log.debug("Entering");
 
-        PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager planet = WebloggerFactory.getWeblogger().getPlanetManager();
 
         PlanetRequest planetRequest = null;
         try {
@@ -127,17 +126,17 @@ public class PlanetFeedServlet extends HttpServlet {
         try {
             // populate the rendering model
             if (request.getParameter("group") != null) {
-                Planet planetObject = planet.getPlanet("default");
+                Planet planetObject = planet.getWeblogger("default");
                 model.put("group", planet.getGroup(planetObject, request.getParameter("group")));
             }
             model.put("planet", planet);
             model.put("date", new Date());
             model.put("utils", new UtilitiesModel());
-            model.put("siteName", PlanetRuntimeConfig.getProperty("site.name"));
-            model.put("siteDescription", PlanetRuntimeConfig.getProperty("site.description"));
+            model.put("siteName", WebloggerRuntimeConfig.getProperty("site.name"));
+            model.put("siteDescription", WebloggerRuntimeConfig.getProperty("site.description"));
             model.put("lastModified", lastModified);
-            if (StringUtils.isNotEmpty(PlanetRuntimeConfig.getProperty("site.absoluteurl"))) {
-                model.put("absoluteSite", PlanetRuntimeConfig.getProperty("site.absoluteurl"));
+            if (StringUtils.isNotEmpty(WebloggerRuntimeConfig.getProperty("site.absoluteurl"))) {
+                model.put("absoluteSite", WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
             } else {
                 model.put("absoluteSite", WebloggerRuntimeConfig.getAbsoluteContextURL());
             }

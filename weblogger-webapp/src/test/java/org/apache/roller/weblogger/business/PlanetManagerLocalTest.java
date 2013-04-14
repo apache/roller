@@ -24,7 +24,6 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
@@ -58,7 +57,6 @@ public class PlanetManagerLocalTest extends TestCase {
         
         try {
             TestUtils.setupWeblogger();
-            TestUtils.setupPlanet();
 
             testUser = TestUtils.setupUser("entryTestUser");
             testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
@@ -128,14 +126,14 @@ public class PlanetManagerLocalTest extends TestCase {
     
     public void testRefreshEntries() {
         try {      
-            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
+            PlanetManager planet = WebloggerFactory.getWeblogger().getWebloggerManager();
             
             // run sync task to fill aggregator with websites created by super
             SyncWebsitesTask syncTask = new SyncWebsitesTask();
             syncTask.init();
             syncTask.runTask();
             
-            Planet planetObject = planet.getPlanetById("zzz_default_planet_zzz");
+            Planet planetObject = planet.getWebloggerById("zzz_default_planet_zzz");
             assertNotNull(planetObject);
             PlanetGroup group = planet.getGroup(planetObject, "all");
             assertEquals(1, group.getSubscriptions().size());
@@ -143,7 +141,7 @@ public class PlanetManagerLocalTest extends TestCase {
             RefreshRollerPlanetTask refreshTask = new RefreshRollerPlanetTask();
             refreshTask.runTask();
             
-            planetObject = planet.getPlanet("default");
+            planetObject = planet.getWeblogger("default");
             group = planet.getGroup(planetObject, "all");
             List agg = planet.getEntries(group, 0, -1);
             assertEquals(3, agg.size());

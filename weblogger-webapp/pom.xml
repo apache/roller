@@ -696,23 +696,25 @@
                         </configuration>
                     </execution>
 
+
                     <execution>
-                        <id>copy-test-config</id>
-                        <phase>validate</phase>
+                        <id>copy-dbscripts-resources</id>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/</outputDirectory>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <outputDirectory>${basedir}/target/dbscripts</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/test/resources</directory>
-                                    <filtering>true</filtering>
+                                    <directory>${basedir}/src/main/resources/sql</directory>
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>
-
+                   
                     <execution>
                         <id>copy-resources</id>
                         <phase>process-resources</phase>
@@ -733,24 +735,6 @@
                         </configuration>
                     </execution>
 
-                    <execution>
-                        <id>copy-dbscripts-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                            <outputDirectory>${project.build.directory}/dbscripts</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources/sql</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    
                 </executions>
                 
                 <configuration>
@@ -759,57 +743,13 @@
 
             </plugin>
 
-            <!-- <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-
-                    <execution>
-                        <id>copy-test-properties</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/testsetup</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/resources</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>copy-test-config</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/resources</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-
-                </executions>
-                <configuration>
-                    <includeEmptyDirs>true</includeEmptyDirs>
-                </configuration>
-            </plugin> -->
-
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
 
                     <!-- Ensure tests will run even if 'openjpa' profile not active -->
                     <forkMode>once</forkMode>
-                    <argLine>-javaagent:"${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.1/openjpa-2.0.1.jar"</argLine>
+                    <argLine>-javaagent:"${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar"</argLine>
                     
                     <systemProperties>
                         <property>
@@ -822,7 +762,7 @@
                         </property>
                         <property>
                             <name>project.build.directory</name>
-                            <value>${project.build.directory}</value>
+                            <value>${basedir}/target</value>
                         </property>
                     </systemProperties>
                     <excludes>
@@ -872,10 +812,10 @@
                                          classpathref="maven.compile.classpath"/>
                                 <texen
                                     controlTemplate  ="control.vm"
-                                    contextProperties="${basedir}/target/dbscripts/dbscripts.properties"
-                                    templatePath     ="${basedir}/target/dbscripts"
+                                    contextProperties="${basedir}/src/main/resources/sql/dbscripts.properties"
+                                    templatePath     ="${basedir}/src/main/resources/sql"
                                     outputDirectory  ="${basedir}/target/dbscripts"
-                                    outputFile="README.txt"/>
+                                    outputFile       ="README.txt"/>
                             </tasks>
                         </configuration>
                     </execution>

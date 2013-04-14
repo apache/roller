@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.business;
 
+import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAOAuthManagerImpl;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
@@ -190,5 +192,13 @@ public interface Weblogger {
      * Get username that built Weblogger
      */
     public String getBuildUser();
+
+	public PlanetManager getWebloggerManager();
+
+	public FeedFetcher getFeedFetcher();
+
+	public PlanetManager getPlanetManager();
+
+	public org.apache.roller.planet.business.URLStrategy getURLStrategy();
     
 }

@@ -22,10 +22,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import org.apache.roller.planet.config.PlanetRuntimeConfig;
-
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 /**
  *
@@ -44,9 +43,9 @@ public class MultiPlanetURLStrategy implements URLStrategy {
         
         StringBuffer url = new StringBuffer();
         
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
-        url.append(PlanetRuntimeConfig.getProperty("site.absoluteurl"));
+        url.append(WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
         url.append("/").append(planet).append("/");
         
         return url.toString();

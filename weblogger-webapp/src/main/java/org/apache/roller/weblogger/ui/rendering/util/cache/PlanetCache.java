@@ -157,7 +157,7 @@ public class PlanetCache {
         if(lastModified == null) {
             
             // TODO: ROLLER40 last updated for planet
-            lastModified = null; // PlanetFactory.getPlanet().getPlanetManager().getLastUpdated();
+            lastModified = null; // WebloggerFactory.getWeblogger().getWebloggerManager().getLastUpdated();
             
             if (lastModified == null) {
                 lastModified = new Date();

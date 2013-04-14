@@ -25,11 +25,11 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.config.PlanetConfig;
-import org.apache.roller.planet.business.Planet;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.util.Utilities;
+import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 //import org.apache.roller.util.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -51,8 +51,8 @@ public class GeneratePlanetTask extends PlanetTask {
     
     public void run() {
         try {            
-            Planet planet = PlanetFactory.getPlanet();
-            PlanetManager planetManager = planet.getPlanetManager();
+            Weblogger weblogger = WebloggerFactory.getWeblogger();
+            PlanetManager planetManager = weblogger.getWebloggerManager();
                         
             // Ignore values from database
             //String mainPage = planetManager.getConfiguration().getMainPage();
@@ -61,11 +61,11 @@ public class GeneratePlanetTask extends PlanetTask {
             
             // Use values from PlanetConfig instead
             String mainPage =    
-                PlanetConfig.getProperty("planet.aggregator.mainPage");
+                WebloggerConfig.getProperty("planet.aggregator.mainPage");
             String templateDir = 
-                PlanetConfig.getProperty("planet.aggregator.template.dir"); 
+                WebloggerConfig.getProperty("planet.aggregator.template.dir"); 
             String outputDir =   
-                PlanetConfig.getProperty("planet.aggregator.output.dir");
+                WebloggerConfig.getProperty("planet.aggregator.output.dir");
             
             log.info("Calling Velocity Texen to generate Planet files");
             log.info("   Control file       ["+mainPage+"]");

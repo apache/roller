@@ -24,11 +24,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 
 
@@ -70,7 +70,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
     @Override
     public void myPrepare() {
         
-        PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
         
         // lookup group we are operating on, if none specified then use default
         if (getGroupHandle() == null) {
@@ -78,7 +78,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
         }
         
         try {
-            setGroup(pmgr.getGroup(getPlanet(), getGroupHandle()));
+            setGroup(pmgr.getGroup(getWeblogger(), getGroupHandle()));
         } catch (RollerException ex) {
             log.error("Error looking up planet group - "+getGroupHandle(), ex);
         }
@@ -101,7 +101,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
         myValidate();
         
         if(!hasActionErrors()) try {
-            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
             
             // check if this subscription already exists before adding it
             Subscription sub = pmgr.getSubscription(getSubUrl());
@@ -109,7 +109,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
                 log.debug("Adding New Subscription - "+getSubUrl());
                 
                 // sub doesn't exist yet, so we need to fetch it
-                FeedFetcher fetcher = PlanetFactory.getPlanet().getFeedFetcher();
+                FeedFetcher fetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
                 sub = fetcher.fetchSubscription(getSubUrl());
                 
                 // save new sub
@@ -127,7 +127,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
             pmgr.saveGroup(group);
             
             // flush changes
-            PlanetFactory.getPlanet().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // clear field after success
             setSubUrl(null);
@@ -150,14 +150,14 @@ public class PlanetSubscriptions extends PlanetUIAction {
         
         if(getSubUrl() != null) try {
             
-            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
             
             // remove subscription
             Subscription sub = pmgr.getSubscription(getSubUrl());
             getGroup().getSubscriptions().remove(sub);
             sub.getGroups().remove(getGroup());
             pmgr.saveGroup(getGroup());
-            PlanetFactory.getPlanet().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // clear field after success
             setSubUrl(null);
