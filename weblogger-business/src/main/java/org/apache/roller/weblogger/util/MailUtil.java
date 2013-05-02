@@ -337,14 +337,15 @@ public class MailUtil {
         boolean escapeHtml = !WebloggerRuntimeConfig.getBooleanProperty("users.comments.htmlenabled");
         
         // first the commenter message
-        
         if (!escapeHtml) {
             msg.append("<html><body style=\"background: white; ");
             msg.append(" color: black; font-size: 12px\">");
         }
         
         if (!StringUtils.isEmpty(commentObject.getName())) {
-            msg.append(commentObject.getName() + " "
+            String emailAddress = StringUtils.isBlank(commentObject.getEmail()) ? " " :
+                    " (" + commentObject.getEmail() + ") ";
+            msg.append(commentObject.getName() + emailAddress
                     + resources.getString("email.comment.wrote")+": ");
         } else {
             msg.append(resources.getString("email.comment.anonymous")+": ");
