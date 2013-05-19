@@ -44,7 +44,7 @@
 
     <tr>
         <td class="label"><s:text name="websiteSettings.websiteDescription" /></td>
-        <td class="field"><s:textfield name="bean.description" size="40"/></td>
+        <td class="field"><s:textfield name="bean.description" size="40" maxlength="255"/></td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
