@@ -86,7 +86,7 @@ public class HTMLSanitizer {
 
 	public static String conditionallySanitize(String ret) {
 		// if XSS is enabled then sanitize HTML
-		if (xssEnabled) {
+		if (xssEnabled && ret != null) {
 			ret = HTMLSanitizer.sanitize(ret);
 		}
 		return ret;
