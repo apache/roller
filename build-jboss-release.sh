@@ -1,6 +1,5 @@
 # How to build the JBoss release of Roller
-# Builds differ primarily by JARs bundled in the WAR, 
-# see weblogger-war-assembly/src/main/assembly/*.xml for JAR diffs
+# See build-tomcat-release.sh for differences between release builds
 mvn clean
 mvn -Djavaee=true -Djboss=true install
 

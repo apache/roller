@@ -46,18 +46,18 @@
             <source>../LICENSE.txt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss</outputDirectory>
         </file> 
-        <file> 
+        <!--file>
             <source>../weblogger-docs/installguide/generated/roller-install-guide.pdf</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss/docs</outputDirectory>
-        </file> 
+        </file>
         <file> 
             <source>../weblogger-docs/userguide/generated/roller-user-guide.pdf</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss/docs</outputDirectory>
-        </file> 
+        </file>
         <file> 
             <source>../weblogger-docs/templateguide/generated/roller-template-guide.pdf</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss/docs</outputDirectory>
-        </file> 
+        </file-->
     </files>
 
 </assembly>
