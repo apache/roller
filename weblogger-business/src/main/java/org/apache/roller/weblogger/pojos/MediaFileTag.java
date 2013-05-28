@@ -71,8 +71,8 @@ public class MediaFileTag implements Serializable {
     // ------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return "MediaFileTag [id=" + id + ", name=" + name + ", mediaFile="
-                + mediaFile + "]";
+        return "MediaFileTag [id=" + getId() + ", name=" + getName() + ", mediaFile="
+                + getMediaFile() + "]";
     }
 
     public boolean equals(Object other) {

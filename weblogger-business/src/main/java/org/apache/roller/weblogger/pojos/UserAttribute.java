@@ -99,10 +99,10 @@ public class UserAttribute implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.userName);
-        buf.append(", ").append(this.attrName);
-        buf.append(", ").append(this.attrValue);
+        buf.append(getId());
+        buf.append(", ").append(getUserName());
+        buf.append(", ").append(getName());
+        buf.append(", ").append(getValue());
         buf.append("}");
         return buf.toString();
     }

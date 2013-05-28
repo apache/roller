@@ -175,7 +175,7 @@ public class WeblogEntry implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
+        buf.append(getId());
         buf.append(", ").append(this.getAnchor());
         buf.append(", ").append(this.getTitle());
         buf.append(", ").append(this.getPubTime());
@@ -781,7 +781,7 @@ public class WeblogEntry implements Serializable {
         if (!WebloggerRuntimeConfig.getBooleanProperty("users.comments.enabled")) {
             return false;
         }
-        if (website.getAllowComments() != null && !website.getAllowComments().booleanValue()) {
+        if (getWebsite().getAllowComments() != null && !getWebsite().getAllowComments().booleanValue()) {
             return false;
         }
         if (getAllowComments() != null && !getAllowComments().booleanValue()) {
@@ -926,7 +926,7 @@ public class WeblogEntry implements Serializable {
      * Returns absolute entry permalink.
      */
     public String getPermalink() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWebsite(), null, anchor, true);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWebsite(), null, getAnchor(), true);
     }
     
     /**
@@ -937,7 +937,7 @@ public class WeblogEntry implements Serializable {
     public String getPermaLink() {
         String lAnchor = this.getAnchor();        
         try {
-            lAnchor = URLEncoder.encode(anchor, "UTF-8");
+            lAnchor = URLEncoder.encode(getAnchor(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // go with the "no encoding" version
         }        
@@ -970,7 +970,7 @@ public class WeblogEntry implements Serializable {
      */
     public String getDisplayTitle() {
         if ( getTitle()==null || getTitle().trim().equals("") ) {
-            return StringUtils.left(Utilities.removeHTML(text),255);
+            return StringUtils.left(Utilities.removeHTML(getText()),255);
         }
         return Utilities.removeHTML(getTitle());
     }
@@ -990,7 +990,7 @@ public class WeblogEntry implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getRss09xDescription(int maxLength) {
-        String ret = StringEscapeUtils.escapeHtml(text);
+        String ret = StringEscapeUtils.escapeHtml(getText());
         if (maxLength != -1 && ret.length() > maxLength) {
             ret = ret.substring(0,maxLength-3)+"...";
         }
@@ -1072,15 +1072,15 @@ public class WeblogEntry implements Serializable {
      * @return
      */
     public List getPluginsList() {
-        if (plugins != null) {
-            return Arrays.asList( StringUtils.split(plugins, ",") );
+        if (getPlugins() != null) {
+            return Arrays.asList( StringUtils.split(getPlugins(), ",") );
         }
         return new ArrayList();
     }    
     
     /** Convenience method for checking status */
     public boolean isDraft() {
-        return status.equals(DRAFT);
+        return getStatus().equals(DRAFT);
     }
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
     public void setDraft(boolean value) {
@@ -1088,7 +1088,7 @@ public class WeblogEntry implements Serializable {
     
     /** Convenience method for checking status */
     public boolean isPending() {
-        return status.equals(PENDING);
+        return getStatus().equals(PENDING);
     }
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
     public void setPending(boolean value) {
@@ -1096,7 +1096,7 @@ public class WeblogEntry implements Serializable {
     
     /** Convenience method for checking status */
     public boolean isPublished() {
-        return status.equals(PUBLISHED);
+        return getStatus().equals(PUBLISHED);
     }
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
     public void setPublished(boolean value) {
@@ -1107,7 +1107,7 @@ public class WeblogEntry implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getTransformedText() {
-        return render(text);
+        return render(getText());
     }
     /**
      * No-op to please XDoclet.
@@ -1121,7 +1121,7 @@ public class WeblogEntry implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getTransformedSummary() {
-        return render(summary);
+        return render(getSummary());
     }
     /**
      * No-op to please XDoclet.
@@ -1171,7 +1171,7 @@ public class WeblogEntry implements Serializable {
     private String render(String str) {
         String ret = str;
         mLogger.debug("Applying page plugins to string");
-        Map plugins = this.website.getInitializedPlugins();
+        Map plugins = getWebsite().getInitializedPlugins();
         if (str != null && plugins != null) {
             List entryPlugins = getPluginsList();
             

@@ -155,7 +155,7 @@ public class AutoPing implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
+        buf.append(getId());
         buf.append("}");
         return buf.toString();
     }

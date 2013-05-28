@@ -133,12 +133,12 @@ public class Weblog implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.handle);
-        buf.append(", ").append(this.name);
-        buf.append(", ").append(this.emailAddress);
-        buf.append(", ").append(this.locale);
-        buf.append(", ").append(this.timeZone);
+        buf.append(getId());
+        buf.append(", ").append(getHandle());
+        buf.append(", ").append(getName());
+        buf.append(", ").append(getEmailAddress());
+        buf.append(", ").append(getLocale());
+        buf.append(", ").append(getTimeZone());
         buf.append("}");
         return buf.toString();
     }
@@ -637,14 +637,14 @@ public class Weblog implements Serializable {
      * @return TimeZone
      */
     public TimeZone getTimeZoneInstance() {
-        if (timeZone == null) {
+        if (getTimeZone() == null) {
             if (TimeZone.getDefault() != null) {
                 this.setTimeZone( TimeZone.getDefault().getID() );
             } else {
                 this.setTimeZone("America/New_York");
             }
         }
-        return TimeZone.getTimeZone(timeZone);
+        return TimeZone.getTimeZone(getTimeZone());
     }
     
     

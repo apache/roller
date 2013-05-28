@@ -280,12 +280,12 @@ public class User implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.userName);
-        buf.append(", ").append(this.fullName);
-        buf.append(", ").append(this.emailAddress);
-        buf.append(", ").append(this.dateCreated);
-        buf.append(", ").append(this.enabled);
+        buf.append(getId());
+        buf.append(", ").append(getUserName());
+        buf.append(", ").append(getFullName());
+        buf.append(", ").append(getEmailAddress());
+        buf.append(", ").append(getDateCreated());
+        buf.append(", ").append(getEnabled());
         buf.append("}");
         return buf.toString();
     }

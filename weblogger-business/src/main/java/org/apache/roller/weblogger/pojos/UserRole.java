@@ -77,9 +77,9 @@ public class UserRole implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.userName);
-        buf.append(", ").append(this.role);
+        buf.append(getId());
+        buf.append(", ").append(getUserName());
+        buf.append(", ").append(getRole());
         buf.append("}");
         return buf.toString();
     }

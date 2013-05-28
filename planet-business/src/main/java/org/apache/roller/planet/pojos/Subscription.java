@@ -77,11 +77,11 @@ public class Subscription implements Serializable, Comparable {
         StringBuffer buf = new StringBuffer();
         
         buf.append("{");
-        buf.append(feedUrl).append(", ");
-        buf.append(siteUrl).append(", ");
-        buf.append(title).append(", ");
-        buf.append(author).append(", ");
-        buf.append(lastUpdated);
+        buf.append(getFeedURL()).append(", ");
+        buf.append(getSiteURL()).append(", ");
+        buf.append(getTitle()).append(", ");
+        buf.append(getAuthor()).append(", ");
+        buf.append(getLastUpdated());
         buf.append("}");
         
         return buf.toString();
@@ -205,7 +205,7 @@ public class Subscription implements Serializable, Comparable {
     
     // for backwards compatability?
     public String getName() {
-        return title;
+        return getTitle();
     }
     
     // for backwards compatability?

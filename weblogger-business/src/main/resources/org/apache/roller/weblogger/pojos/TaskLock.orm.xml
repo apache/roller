@@ -50,7 +50,7 @@
             </basic>
             
             <transient name="leaseExpiration"/>
-                        
+
         </attributes>
     </entity>
 </entity-mappings>

@@ -41,8 +41,8 @@ public class WeblogHitCount implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.dailyHits);
+        buf.append(getId());
+        buf.append(", ").append(getDailyHits());
         buf.append("}");
         return buf.toString();
     }

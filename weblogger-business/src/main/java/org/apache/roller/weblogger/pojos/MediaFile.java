@@ -172,7 +172,7 @@ public class MediaFile implements Serializable {
     }
 
     public long getLastModified() {
-        return lastUpdated.getTime();
+        return getLastUpdated().getTime();
     }
 
     /**
@@ -321,7 +321,7 @@ public class MediaFile implements Serializable {
     }
 
     public String getPath() {
-        return directory.getPath();
+        return getDirectory().getPath();
     }
 
     /**
@@ -351,10 +351,10 @@ public class MediaFile implements Serializable {
      * 
      */
     public boolean isImageFile() {
-        if (this.contentType == null) {
+        if (getContentType() == null) {
             return false;
         }
-        return (this.contentType.toLowerCase().startsWith(MediaFileType.IMAGE
+        return (getContentType().toLowerCase().startsWith(MediaFileType.IMAGE
                 .getContentTypePrefix().toLowerCase()));
     }
 
@@ -363,7 +363,7 @@ public class MediaFile implements Serializable {
      */
     public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy()
-                .getMediaFileURL(this.weblog, this.getId(), true);
+                .getMediaFileURL(getWeblog(), this.getId(), true);
     }
 
     /**
@@ -372,7 +372,7 @@ public class MediaFile implements Serializable {
      */
     public String getThumbnailURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy()
-                .getMediaFileThumbnailURL(this.weblog, this.getId(), true);
+                .getMediaFileThumbnailURL(getWeblog(), this.getId(), true);
     }
 
     public String getCreatorUserName() {
@@ -521,8 +521,8 @@ public class MediaFile implements Serializable {
     // ------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return "MediaFile [name=" + name + ", directory=" + directory
-                + ", weblog=" + weblog + "]";
+        return "MediaFile [name=" + getName() + ", directory=" + getDirectory()
+                + ", weblog=" + getWeblog() + "]";
     }
 
     public boolean equals(Object other) {

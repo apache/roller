@@ -6,7 +6,7 @@ mvn install
 
 cd weblogger-war-assembly
 mvn clean
-mvn -Dtomcat=true install
+mvn -Dtomcat=true install 
 cd ..
 
 cd weblogger-assembly

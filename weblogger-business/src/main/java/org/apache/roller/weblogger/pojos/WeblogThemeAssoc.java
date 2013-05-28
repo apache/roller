@@ -112,7 +112,7 @@ public class WeblogThemeAssoc implements Serializable{
      public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
+        buf.append(getId());
         buf.append("}");
         return buf.toString();
     }

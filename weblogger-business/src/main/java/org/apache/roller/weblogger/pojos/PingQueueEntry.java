@@ -162,7 +162,9 @@ public class PingQueueEntry implements Serializable {
      * @return the new value.
      */
     public int incrementAttempts() {
-        return ++attempts;
+        int newAttempts = getAttempts() + 1;
+        setAttempts(newAttempts);
+        return newAttempts;
     }
 
     //------------------------------------------------------- Good citizenship
@@ -170,9 +172,9 @@ public class PingQueueEntry implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.entryTime);
-        buf.append(", ").append(this.attempts);
+        buf.append(getId());
+        buf.append(", ").append(getEntryTime());
+        buf.append(", ").append(getAttempts());
         buf.append("}");
         return buf.toString();
     }

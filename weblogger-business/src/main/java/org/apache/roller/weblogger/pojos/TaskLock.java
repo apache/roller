@@ -76,7 +76,7 @@ public class TaskLock implements Serializable {
         // calculate lease expiration time
         Calendar cal = Calendar.getInstance();
         cal.setTime(leaseAcquisitionTime);
-        cal.add(Calendar.MINUTE, timeLeased);
+        cal.add(Calendar.MINUTE, getTimeLeased());
         
         return cal.getTime();
     }
@@ -87,10 +87,10 @@ public class TaskLock implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.name);
-        buf.append(", ").append(this.timeAquired);
-        buf.append(", ").append(this.timeLeased);
+        buf.append(getId());
+        buf.append(", ").append(getName());
+        buf.append(", ").append(getTimeAquired());
+        buf.append(", ").append(getTimeLeased());
         buf.append("}");
         return buf.toString();
     }

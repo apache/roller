@@ -71,14 +71,14 @@ public class SubscriptionEntry implements Serializable, Comparable {
         if(this == other) return true;
         if(!(other instanceof SubscriptionEntry)) return false;        
         final SubscriptionEntry that = (SubscriptionEntry) other;
-        return this.permalink.equals(that.getPermalink());
+        return getPermalink().equals(that.getPermalink());
     }
     
     /**
      * Generate hash code based on permalink.
      */
     public int hashCode() {
-        return this.permalink.hashCode();
+        return getPermalink().hashCode();
     }
     
     
@@ -205,8 +205,8 @@ public class SubscriptionEntry implements Serializable, Comparable {
      */
     public List getCategories() {
         List list = new ArrayList();
-        if (categoriesString != null) {
-            String[] catArray = Utilities.stringToStringArray(categoriesString,",");
+        if (getCategoriesString() != null) {
+            String[] catArray = Utilities.stringToStringArray(getCategoriesString(),",");
             for (int i=0; i<catArray.length; i++) {
                 Category cat = new Category();
                 cat.setName(catArray[i]);
@@ -248,10 +248,10 @@ public class SubscriptionEntry implements Serializable, Comparable {
      */
     public Author getCreator() {
         Author user = null;
-        if (author != null) {
+        if (getAuthor() != null) {
             user = new Author();
-            user.setFullName(author);
-            user.setUserName(author);
+            user.setFullName(getAuthor());
+            user.setUserName(getAuthor());
         }
         return user;
     } 
@@ -270,7 +270,7 @@ public class SubscriptionEntry implements Serializable, Comparable {
      * @roller.wrapPojoMethod type="pojo"
      */
     public Subscription getWebsite() {
-        return this.subscription;        
+        return getSubscription();
     }
     public void setWebsite() {
         // noop
@@ -280,7 +280,7 @@ public class SubscriptionEntry implements Serializable, Comparable {
      * Return text as content, to maintain compatibility with PlanetTool templates.
      */
     public String getContent() {
-        return text;
+        return getText();
     }
     public void setContent(String ignored) {
         // no-op

@@ -91,7 +91,7 @@ public class RuntimeConfigProperty implements Serializable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        return (this.name + "=" + this.value);
+        return (getName() + "=" + getValue());
     }
     
     public boolean equals(Object other) {
