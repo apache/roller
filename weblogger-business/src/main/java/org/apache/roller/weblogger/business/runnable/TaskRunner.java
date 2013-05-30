@@ -68,7 +68,6 @@ public class TaskRunner {
  
 java \
     -Dplanet.custom.config=planet-custom.properties \
-    -Dcatalina.base=. \
     -cp ./build/webapp/WEB-INF/lib/roller-business.jar \
     org.apache.roller.weblogger.business.runnable.TaskRunner \
     ~/roller_trunk/sandbox/planetroller/build/webapp \

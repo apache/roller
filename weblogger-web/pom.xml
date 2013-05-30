@@ -60,6 +60,7 @@
         </dependency>
 
         <!-- OpenJPA deps -->
+
         <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
@@ -81,25 +82,23 @@
             <scope>test</scope>
         </dependency>
 
-<!-- EclipseLink deps (for sometimes testing purposes)
+<!-- EclipseLink deps (for sometimes testing purposes) -->
+<!--
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
-            <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jta_1.1_spec</artifactId>
-            <version>1.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jpa_2.0_spec</artifactId>
-            <version>1.1</version>
             <scope>provided</scope>
-        </dependency
+        </dependency>
 -->
 
 <!-- Hibernate deps (for sometimes testing purposes)
@@ -129,7 +128,7 @@
 
         <!-- needed by Struts, except on JBoss -->
         <dependency>
-            <groupId>javassist</groupId>
+            <groupId>jboss</groupId>
             <artifactId>javassist</artifactId>
             <version>3.0</version>
         </dependency>
@@ -531,13 +530,9 @@
 
                     <!-- Ensure tests will run even if 'openjpa' profile not active -->
                     <forkMode>once</forkMode>
-                    <argLine>-javaagent:"${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.1/openjpa-2.0.1.jar"</argLine>
-                    
+                    <argLine>-javaagent:"${user.home}/.m2/repository/org/apache/openjpa/openjpa/${openjpa.version}/openjpa-${openjpa.version}.jar"</argLine>
+
                     <systemProperties>
-                        <property>
-                            <name>catalina.base</name>
-                            <value>${project.build.testOutputDirectory}</value>
-                        </property>
                         <property>
                             <name>context.realpath</name>
                             <value>${project.basedir}/src/main/webapp</value>

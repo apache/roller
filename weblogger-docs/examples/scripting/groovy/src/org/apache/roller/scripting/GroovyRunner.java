@@ -86,9 +86,7 @@ ${GROOVY_HOME}/lib/commons-cli-1.0.jar:\
 ${WEBAPP_DIR}/WEB-INF/lib/roller-business.jar
 echo ${RGPATH}
 
-# Hack: setting catalina.base=. allows us to save log in ./logs
 java \
 -Droller.custom.config=roller-custom.properties \
--Dcatalina.base=. \
 -cp ${RGPATH} org.apache.roller.scripting.GroovyRunner $WEBAPP_DIR $JARS_DIR $1
 */

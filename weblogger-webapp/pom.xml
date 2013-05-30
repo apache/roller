@@ -189,13 +189,9 @@
 
                     <!-- Ensure tests will run even if 'openjpa' profile not active -->
                     <forkMode>once</forkMode>
-                    <argLine>-javaagent:"${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.1/openjpa-2.0.1.jar"</argLine>
+                    <argLine>-javaagent:"${user.home}/.m2/repository/org/apache/openjpa/openjpa/${openjpa.version}/openjpa-${openjpa.version}.jar"</argLine>
                     
                     <systemProperties>
-                        <property>
-                            <name>catalina.base</name>
-                            <value>${project.build.testOutputDirectory}</value>
-                        </property>
                         <property>
                             <name>context.realpath</name>
                             <value>${project.basedir}/src/main/webapp</value>

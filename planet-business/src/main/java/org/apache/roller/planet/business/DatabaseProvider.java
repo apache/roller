@@ -82,8 +82,9 @@ public class DatabaseProvider  {
      */ 
     public DatabaseProvider() throws StartupException {
         
-        String connectionTypeString = 
-                PlanetConfig.getProperty("database.configurationType"); 
+        String connectionTypeString =
+                PlanetConfig.getProperty("database.configurationType");
+
         if ("jdbc".equals(connectionTypeString)) {
             type = ConfigurationType.JDBC_PROPERTIES;
         }
@@ -104,7 +105,7 @@ public class DatabaseProvider  {
             try {
                 Class.forName(getJdbcDriverClass());
             } catch (ClassNotFoundException ex) {
-                String errorMsg = 
+                String errorMsg =
                      "ERROR: cannot load JDBC driver class [" + getJdbcDriverClass()+ "]. "
                     +"Likely problem: JDBC driver jar missing from server classpath.";
                 errorMessage(errorMsg);
