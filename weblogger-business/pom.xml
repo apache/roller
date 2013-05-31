@@ -58,19 +58,20 @@
             </exclusions>
         </dependency>
 
-<!-- EclipseLink deps (for sometimes testing purposes) -->
+<!-- EclipseLink deps (for sometimes testing purposes)
 
-<!--
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jta_1.1_spec</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jpa_2.0_spec</artifactId>
@@ -78,17 +79,16 @@
         </dependency>
 -->
 
-<!-- Hibernate deps (for sometimes testing purposes) -->
-<!--
+<!-- Hibernate deps (for sometimes testing purposes)
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>3.5.1-Final</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>1.5.6</version>
             <scope>runtime</scope>
         </dependency>
 -->

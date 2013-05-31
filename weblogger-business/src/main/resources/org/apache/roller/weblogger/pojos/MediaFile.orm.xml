@@ -78,6 +78,8 @@
             <transient name="thumbnailInputStream"/>
             <transient name="thumbnailHeight"/>
             <transient name="thumbnailWidth"/>
+            <transient name="addedTags"/>
+            <transient name="removedTags"/>
         </attributes>
     </entity>
 </entity-mappings>

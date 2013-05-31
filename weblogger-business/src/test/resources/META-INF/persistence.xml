@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
   <persistence-unit name="RollerPU" transaction-type="RESOURCE_LOCAL">
-      <!-- Activate below & comment out non-jta-data-source if using EclipseLink-->
-      <!--properties>
-          <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver" />
-          <property name="javax.persistence.jdbc.url"
-                    value="jdbc:derby://localhost:3221/rollerdb" />
-          <property name="javax.persistence.jdbc.user" value="APP" />
-          <property name="javax.persistence.jdbc.password" value="APP" />
-          <property name="eclipselink.target-database" value="Derby"/>
-      </properties-->
-    <non-jta-data-source>${datasourceName}</non-jta-data-source>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogBookmark.orm.xml          </mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryComment.orm.xml      </mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryAttribute.orm.xml    </mapping-file>
@@ -40,5 +30,13 @@
     <class>org.apache.roller.weblogger.pojos.AutoPing</class>
     <class>org.apache.roller.weblogger.pojos.WeblogThemeAssoc</class>
     <class>org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode</class>
+    <properties>
+        <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver" />
+        <property name="javax.persistence.jdbc.url"
+                  value="jdbc:derby://localhost:3221/rollerdb" />
+        <property name="javax.persistence.jdbc.user" value="APP" />
+        <property name="javax.persistence.jdbc.password" value="APP" />
+        <property name="eclipselink.target-database" value="Derby"/>
+    </properties>
   </persistence-unit>
 </persistence>
