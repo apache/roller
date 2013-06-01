@@ -121,7 +121,7 @@ public class SearchOperation extends ReadFromIndexOperation {
             multiParser.setDefaultOperator(MultiFieldQueryParser.Operator.AND);
 
             // Create a query object out of our term
-            Query query = multiParser.parse(MultiFieldQueryParser.escape(term));
+            Query query = multiParser.parse(term);
 
             Term tUsername = IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE,
                     websiteHandle);
