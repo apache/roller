@@ -63,15 +63,15 @@ public class ApplicationResourcesTest extends TestCase
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		//suite.addTest(new ApplicationResourcesTest("testSystemProperties"));
-		suite.addTest(
-			new ApplicationResourcesTest("testApplicationResources_nl"));
-		suite.addTest(
-			new ApplicationResourcesTest("testApplicationResources_zh_cn"));
-		suite.addTest(
-			new ApplicationResourcesTest("testApplicationResources_zh_tw"));
-		suite.addTest(
-			new ApplicationResourcesTest("testApplicationResources_vi"));
+//		suite.addTest(new ApplicationResourcesTest("testSystemProperties"));
+//		suite.addTest(
+//			new ApplicationResourcesTest("testApplicationResources_nl"));
+//		suite.addTest(
+//			new ApplicationResourcesTest("testApplicationResources_zh_cn"));
+//		suite.addTest(
+//			new ApplicationResourcesTest("testApplicationResources_zh_tw"));
+//		suite.addTest(
+//			new ApplicationResourcesTest("testApplicationResources_vi"));
 		return suite;
 	}
 	

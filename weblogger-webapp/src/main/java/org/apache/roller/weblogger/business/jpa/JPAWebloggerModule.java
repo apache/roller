@@ -27,7 +27,6 @@ import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PlanetURLStrategy;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.business.fetcher.RomeFeedFetcher;
 import org.apache.roller.planet.business.jpa.JPAPlanetImpl;
 import org.apache.roller.planet.business.jpa.JPAPlanetManagerImpl;
 import org.apache.roller.weblogger.business.BookmarkManager;
@@ -55,6 +54,7 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.themes.ThemeManagerImpl;
+import org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher;
 
 
 /**
@@ -93,7 +93,7 @@ public class JPAWebloggerModule implements Module {
         binder.bind(PlanetURLStrategy.class).to(   MultiPlanetURLStrategy.class);
 		binder.bind(Planet.class).to(              JPAPlanetImpl.class);
         binder.bind(PlanetManager.class).to(       JPAPlanetManagerImpl.class);   
-        binder.bind(FeedFetcher.class).to(         RomeFeedFetcher.class);
+        binder.bind(FeedFetcher.class).to(         WebloggerRomeFeedFetcher.class);
     }
     
 }

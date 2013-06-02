@@ -24,7 +24,6 @@ import junit.framework.TestSuite;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
 import com.sun.syndication.fetcher.impl.DiskFeedInfoCache;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.planet.ui.PlanetConfig;
 
 
 /**
