@@ -17,7 +17,7 @@
 package org.apache.roller.planet.business;
 
 import junit.framework.TestCase;
-import org.apache.roller.planet.TestUtils;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
@@ -38,7 +38,7 @@ public class SubscriptionFunctionalTests extends TestCase {
     
     protected void setUp() throws Exception {
         // setup planet
-        TestUtils.setupPlanet();
+        TestUtils.setupWeblogger();
 
         testPlanet = TestUtils.setupPlanet("subFuncTest");
         testGroup1 = TestUtils.setupGroup(testPlanet, "subFuncTest1");

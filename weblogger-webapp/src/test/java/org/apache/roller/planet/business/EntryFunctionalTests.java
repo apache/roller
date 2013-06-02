@@ -20,11 +20,11 @@ import java.util.Date;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
@@ -46,7 +46,7 @@ public class EntryFunctionalTests extends TestCase {
     
     protected void setUp() throws Exception {
         // setup planet
-        TestUtils.setupPlanet();
+        TestUtils.setupWeblogger();
 
         log.info("ENTERED");
         

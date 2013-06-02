@@ -20,7 +20,7 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.TestUtils;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -37,7 +37,7 @@ public class PlanetFunctionalTests extends TestCase {
     
     protected void setUp() throws Exception {
         // setup planet
-        TestUtils.setupPlanet();
+        TestUtils.setupWeblogger();
 
         testPlanet = TestUtils.setupPlanet("planetFuncTest");
     }

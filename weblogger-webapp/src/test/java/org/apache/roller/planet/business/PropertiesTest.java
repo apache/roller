@@ -22,7 +22,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.TestUtils;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -38,7 +38,7 @@ public class PropertiesTest extends TestCase {
     
     public void setUp() throws Exception {
         // setup planet
-        TestUtils.setupPlanet();
+        TestUtils.setupWeblogger();
 
     }
     

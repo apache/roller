@@ -17,9 +17,9 @@
 package org.apache.roller.planet.business;
 
 import junit.framework.TestCase;
-import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
@@ -33,7 +33,7 @@ public class EntryBasicTests extends TestCase {
     
     protected void setUp() throws Exception {
         // setup planet
-        TestUtils.setupPlanet();
+        TestUtils.setupWeblogger();
         
         testSub = TestUtils.setupSubscription("entryBasicTest");
     }

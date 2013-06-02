@@ -17,7 +17,7 @@
 package org.apache.roller.planet.business;
 
 import junit.framework.TestCase;
-import org.apache.roller.planet.TestUtils;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -31,7 +31,7 @@ public class SubscriptionBasicTests extends TestCase {
     public void testSubscriptionCRUD() throws Exception {
         
         // setup planet
-        TestUtils.setupPlanet();
+        TestUtils.setupWeblogger();
 
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
