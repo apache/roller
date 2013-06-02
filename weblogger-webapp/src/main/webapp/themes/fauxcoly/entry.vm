@@ -177,8 +177,10 @@
     #showNextPrevEntriesControl($pager)
 </div>
 #showWeblogEntriesPager($pager)
-#showWeblogEntryComments($entry)
-#showWeblogEntryCommentForm($entry)
+#if ($model.weblogEntry.permalink)
+    #showWeblogEntryComments($model.weblogEntry)
+    #showWeblogEntryCommentForm($model.weblogEntry)
+#end
 </div>
 
 </div>
