@@ -193,12 +193,9 @@ public interface Weblogger {
      */
     public String getBuildUser();
 
-	public PlanetManager getWebloggerManager();
-
 	public FeedFetcher getFeedFetcher();
 
 	public PlanetManager getPlanetManager();
 
-	public org.apache.roller.planet.business.URLStrategy getURLStrategy();
-    
+	public org.apache.roller.planet.business.PlanetURLStrategy getPlanetURLStrategy();
 }

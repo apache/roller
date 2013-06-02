@@ -46,7 +46,7 @@ public class GroupBasicTests extends TestCase {
     
     public void testGroupCRUD() throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         PlanetGroup testGroup = new PlanetGroup();
         testGroup.setDescription("test_group_desc");

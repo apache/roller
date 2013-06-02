@@ -46,7 +46,7 @@ public class EntryBasicTests extends TestCase {
     
     public void testEntryCRUD() throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
         
         SubscriptionEntry testEntry = new SubscriptionEntry();

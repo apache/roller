@@ -19,6 +19,9 @@ package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.PlanetURLStrategy;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileContentManager;
@@ -78,6 +81,9 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         WeblogManager        weblogManager,
         WeblogEntryManager   weblogEntryManager,
         OAuthManager         oauthManager,
+		FeedFetcher          feedFetcher,
+        PlanetManager        planetManager,
+        PlanetURLStrategy    planetUrlStrategy,
         URLStrategy          urlStrategy) throws WebloggerException {
         
         super(
@@ -98,6 +104,9 @@ public class JPAWebloggerImpl extends WebloggerImpl {
             weblogManager,
             weblogEntryManager,
             oauthManager,
+            feedFetcher,
+            planetManager,
+            planetUrlStrategy,
             urlStrategy);
         
         this.strategy = strategy;
@@ -123,4 +132,5 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         // then let parent do its thing
         super.shutdown();
     }
+
 }

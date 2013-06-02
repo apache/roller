@@ -186,7 +186,7 @@ public class PlanetGroup implements Serializable, Comparable {
      * Return a list of the most recent 10 entries from this group.
      */
     public List getRecentEntries() {
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         try {
             return mgr.getEntries(this, 0, 10);
         } catch(Exception e) {

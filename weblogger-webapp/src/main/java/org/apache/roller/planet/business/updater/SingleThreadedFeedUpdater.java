@@ -97,7 +97,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         Set<SubscriptionEntry> newEntries = updatedSub.getEntries();
         log.debug("newEntries.size() = " + newEntries.size());
         if (newEntries.size() > 0) try {
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // clear out old entries
             pmgr.deleteEntries(sub);
@@ -137,7 +137,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         try {
             // update all subscriptions in the system
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             updateSubscriptions(pmgr.getSubscriptions());
         } catch (RollerException ex) {
             throw new UpdaterException("Error getting subscriptions list", ex);
@@ -175,7 +175,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     // convenience method which handles updating any arbitrary collection of subs
     private void updateSubscriptions(Collection<Subscription> subscriptions) {
         
-        PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
 		for (Subscription sub : subscriptions) {
 			try {
 				// reattach sub.  sub gets detached as we iterate

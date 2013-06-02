@@ -70,7 +70,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
     @Override
     public void myPrepare() {
         
-        PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         // lookup group we are operating on, if none specified then use default
         if (getGroupHandle() == null) {
@@ -78,7 +78,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
         }
         
         try {
-            setGroup(pmgr.getGroup(getWeblogger(), getGroupHandle()));
+            setGroup(pmgr.getGroup(getPlanet(), getGroupHandle()));
         } catch (RollerException ex) {
             log.error("Error looking up planet group - "+getGroupHandle(), ex);
         }
@@ -101,7 +101,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
         myValidate();
         
         if(!hasActionErrors()) try {
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // check if this subscription already exists before adding it
             Subscription sub = pmgr.getSubscription(getSubUrl());
@@ -150,7 +150,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
         
         if(getSubUrl() != null) try {
             
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // remove subscription
             Subscription sub = pmgr.getSubscription(getSubUrl());

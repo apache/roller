@@ -93,7 +93,7 @@ public class PlanetEntriesPager extends AbstractPager {
             
             List results = new ArrayList();
             try {
-                PlanetManager planetManager = WebloggerFactory.getWeblogger().getWebloggerManager();
+                PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
                 Planet planet = planetManager.getWeblogger("default");
                 
                 List entries = null;

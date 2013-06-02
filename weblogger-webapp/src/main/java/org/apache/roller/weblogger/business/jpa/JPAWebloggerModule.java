@@ -25,6 +25,7 @@ import net.oauth.SimpleOAuthValidator;
 import org.apache.roller.planet.business.MultiPlanetURLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.PlanetURLStrategy;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.fetcher.RomeFeedFetcher;
 import org.apache.roller.planet.business.jpa.JPAPlanetImpl;
@@ -89,13 +90,10 @@ public class JPAWebloggerModule implements Module {
         binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);
         
         binder.bind(URLStrategy.class).to(         MultiWeblogURLStrategy.class);
-
-		binder.bind(Planet.class).to(JPAPlanetImpl.class);
-        
-        binder.bind(PlanetManager.class).to(     JPAPlanetManagerImpl.class);   
-        binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);   
-        //binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
-        binder.bind(FeedFetcher.class).to(       RomeFeedFetcher.class);
+        binder.bind(PlanetURLStrategy.class).to(   MultiPlanetURLStrategy.class);
+		binder.bind(Planet.class).to(              JPAPlanetImpl.class);
+        binder.bind(PlanetManager.class).to(       JPAPlanetManagerImpl.class);   
+        binder.bind(FeedFetcher.class).to(         RomeFeedFetcher.class);
     }
     
 }

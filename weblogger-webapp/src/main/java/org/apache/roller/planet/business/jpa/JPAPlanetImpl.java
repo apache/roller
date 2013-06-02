@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.AbstractManagerImpl;
-import org.apache.roller.planet.business.URLStrategy;
+import org.apache.roller.planet.business.PlanetURLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
@@ -47,7 +47,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     private final PropertiesManager propertiesManager;
     
     // url strategy
-    private final URLStrategy urlStrategy;
+    private final PlanetURLStrategy urlStrategy;
     
     // feed fetcher
     private final FeedFetcher feedFetcher;
@@ -58,7 +58,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
             JPAPersistenceStrategy strategy, 
             PlanetManager     planetManager, 
             PropertiesManager propertiesManager,
-            URLStrategy       urlStrategy,
+            PlanetURLStrategy       urlStrategy,
             FeedFetcher       feedFetcher) throws RollerException {
         
         this.strategy = strategy;
@@ -122,7 +122,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     }
     
     
-    public URLStrategy getURLStrategy() {
+    public PlanetURLStrategy getURLStrategy() {
         return this.urlStrategy;
     }
     

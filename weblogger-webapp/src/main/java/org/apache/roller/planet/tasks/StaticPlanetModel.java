@@ -40,7 +40,7 @@ public class StaticPlanetModel {
     
     public StaticPlanetModel() throws RollerException {
         Weblogger planet = WebloggerFactory.getWeblogger();
-        planetManager = planet.getWebloggerManager();
+        planetManager = planet.getPlanetManager();
     }
         
     // TODO: replace this with something equivalent

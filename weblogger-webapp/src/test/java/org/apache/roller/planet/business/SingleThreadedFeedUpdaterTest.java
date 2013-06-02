@@ -43,7 +43,7 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
         TestUtils.setupPlanet();
         
         // add test subscription
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         testSub = new Subscription();
         testSub.setTitle(feed_url);
         testSub.setFeedURL(feed_url);
@@ -59,7 +59,7 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
     
     public void testUpdateSubscription() throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
         
         // update the subscription

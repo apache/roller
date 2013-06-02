@@ -126,7 +126,7 @@ public class PlanetManagerLocalTest extends TestCase {
     
     public void testRefreshEntries() {
         try {      
-            PlanetManager planet = WebloggerFactory.getWeblogger().getWebloggerManager();
+            PlanetManager planet = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // run sync task to fill aggregator with websites created by super
             SyncWebsitesTask syncTask = new SyncWebsitesTask();

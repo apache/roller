@@ -33,7 +33,7 @@ public class SubscriptionBasicTests extends TestCase {
         // setup planet
         TestUtils.setupPlanet();
 
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         Subscription testSub = new Subscription();
         testSub.setFeedURL("test_title");

@@ -43,7 +43,7 @@ public interface Planet {
     /**
      * Get the configured URLStrategy.
      */
-    public URLStrategy getURLStrategy();
+    public PlanetURLStrategy getURLStrategy();
     
     
     /**

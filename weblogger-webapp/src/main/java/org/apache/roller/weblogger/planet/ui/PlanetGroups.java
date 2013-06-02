@@ -64,8 +64,8 @@ public class PlanetGroups extends PlanetUIAction {
     @Override
     public void myPrepare() {
         
-        if(getWeblogger() != null && getBean().getId() != null) try {
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        if(getPlanet() != null && getBean().getId() != null) try {
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             setGroup(pmgr.getGroupById(getBean().getId()));
         } catch(Exception ex) {
             log.error("Error looking up planet group - "+getBean().getId(), ex);
@@ -100,7 +100,7 @@ public class PlanetGroups extends PlanetUIAction {
             if(group == null) {
                 log.debug("Adding New Group");
                 group = new PlanetGroup();
-                group.setPlanet(getWeblogger());
+                group.setPlanet(getPlanet());
             } else {
                 log.debug("Updating Existing Group");
             }
@@ -109,7 +109,7 @@ public class PlanetGroups extends PlanetUIAction {
             getBean().copyTo(group);
             
             // save and flush
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             pmgr.saveGroup(group);
             WebloggerFactory.getWeblogger().flush();
             
@@ -132,7 +132,7 @@ public class PlanetGroups extends PlanetUIAction {
         
         if(getGroup() != null) {
             try {
-                PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
                 pmgr.deleteGroup(getGroup());
                 WebloggerFactory.getWeblogger().flush();
                 
@@ -173,7 +173,7 @@ public class PlanetGroups extends PlanetUIAction {
         
         List<PlanetGroup> displayGroups = new ArrayList();
         
-        Iterator allgroups = getWeblogger().getGroups().iterator();
+        Iterator allgroups = getPlanet().getGroups().iterator();
         while (allgroups.hasNext()) {
             PlanetGroup agroup = (PlanetGroup) allgroups.next();
             

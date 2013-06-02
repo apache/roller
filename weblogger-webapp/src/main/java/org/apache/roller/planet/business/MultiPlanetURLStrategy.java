@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 /**
  *
  */
-public class MultiPlanetURLStrategy implements URLStrategy {
+public class MultiPlanetURLStrategy implements PlanetURLStrategy {
     
     
     /**

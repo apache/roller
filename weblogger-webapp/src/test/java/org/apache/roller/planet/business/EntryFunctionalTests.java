@@ -65,7 +65,7 @@ public class EntryFunctionalTests extends TestCase {
         testGroup1.getSubscriptions().add(testSub2);
         testSub2.getGroups().add(testGroup1);
         
-        WebloggerFactory.getWeblogger().getWebloggerManager().saveGroup(testGroup1);
+        WebloggerFactory.getWeblogger().getPlanetManager().saveGroup(testGroup1);
         WebloggerFactory.getWeblogger().flush();
         
         log.info("EXITED");
@@ -86,7 +86,7 @@ public class EntryFunctionalTests extends TestCase {
     
     public void testEntryLookups() throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         // by id
         SubscriptionEntry entry = mgr.getEntryById(testEntry1.getId());
@@ -111,7 +111,7 @@ public class EntryFunctionalTests extends TestCase {
     
     public void testDeleteEntries() throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(testSub2.getId());
         
         // make sure entries are there

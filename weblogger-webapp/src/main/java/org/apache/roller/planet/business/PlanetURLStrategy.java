@@ -27,7 +27,7 @@ import java.util.Map;
  * Implementations of this interface provide methods which can be used to form
  * all of the public urls used by Roller Planet.
  */
-public interface URLStrategy {
+public interface PlanetURLStrategy {
     
     /**
      * Get root url for a given planet.

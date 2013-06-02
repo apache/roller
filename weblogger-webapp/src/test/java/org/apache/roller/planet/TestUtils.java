@@ -81,7 +81,7 @@ public final class TestUtils {
         Planet testPlanet = new Planet(handle, handle, handle);
         
         // store
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         mgr.savePlanet(testPlanet);
         
         // flush
@@ -103,7 +103,7 @@ public final class TestUtils {
     public static void teardownPlanet(String id) throws Exception {
         
         // lookup
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         Planet planet = mgr.getWebloggerById(id);
         
         // remove
@@ -120,7 +120,7 @@ public final class TestUtils {
     public static PlanetGroup setupGroup(Planet planet, String handle) 
             throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         // make sure we are using a persistent object
         Planet testPlanet = mgr.getWebloggerById(planet.getId());
@@ -149,7 +149,7 @@ public final class TestUtils {
     public static void teardownGroup(String id) throws Exception {
         
         // lookup
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         PlanetGroup group = mgr.getGroupById(id);
         
         // remove
@@ -167,7 +167,7 @@ public final class TestUtils {
     public static Subscription setupSubscription(String feedUrl) 
             throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         // store
         Subscription testSub = new Subscription();
@@ -194,7 +194,7 @@ public final class TestUtils {
     public static void teardownSubscription(String id) throws Exception {
         
         // lookup
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(id);
         
         // remove
@@ -211,7 +211,7 @@ public final class TestUtils {
     public static SubscriptionEntry setupEntry(Subscription sub, String title) 
             throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         // make sure we are using a persistent object
         Subscription testSub = mgr.getSubscriptionById(sub.getId());
@@ -244,7 +244,7 @@ public final class TestUtils {
     public static void teardownEntry(String id) throws Exception {
         
         // lookup
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         SubscriptionEntry entry = mgr.getEntryById(id);
         
         // remove

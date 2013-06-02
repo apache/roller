@@ -37,7 +37,7 @@ public class PlanetBasicTests extends TestCase {
         // setup planet
         TestUtils.setupPlanet();
 
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         Planet testPlanet = new Planet("testPlanet", "testPlanet", "testPlanet");
         Planet planet = null;

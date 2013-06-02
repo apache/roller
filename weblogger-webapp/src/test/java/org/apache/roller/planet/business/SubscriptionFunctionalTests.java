@@ -59,7 +59,7 @@ public class SubscriptionFunctionalTests extends TestCase {
     
     public void testSubscriptionLookups() throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         // by id
         Subscription sub = mgr.getSubscriptionById(testSub1.getId());
@@ -79,7 +79,7 @@ public class SubscriptionFunctionalTests extends TestCase {
     
     public void testSubscriptionGroupCRUD() throws Exception {
         
-        PlanetManager planet = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager planet = WebloggerFactory.getWeblogger().getPlanetManager();
         
         // retrieve subscriptions and add to group
         Subscription sub1 = planet.getSubscriptionById(testSub1.getId());

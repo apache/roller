@@ -53,7 +53,7 @@ public class GroupFunctionalTests extends TestCase {
     
     public void testGroupLookups() throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         // lookup group by id
         PlanetGroup group = mgr.getGroupById(testGroup1.getId());

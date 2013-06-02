@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
@@ -64,9 +66,12 @@ public abstract class WebloggerImpl implements Weblogger {
     private final WeblogManager        weblogManager;
     private final WeblogEntryManager   weblogEntryManager;
     private final OAuthManager         oauthManager;
+    private final FeedFetcher          feedFetcher;
+    private final PlanetManager        planetManager;
     
     // url strategy
     private final URLStrategy          urlStrategy;
+    private final org.apache.roller.planet.business.PlanetURLStrategy planetUrlStrategy;
     
     // some simple attributes
     private final String version;
@@ -93,6 +98,9 @@ public abstract class WebloggerImpl implements Weblogger {
         WeblogManager        weblogManager,
         WeblogEntryManager   weblogEntryManager,
         OAuthManager         oauthManager,
+        FeedFetcher          feedFetcher,
+        PlanetManager        planetManager,
+        org.apache.roller.planet.business.PlanetURLStrategy planetUrlStrategy,
         URLStrategy          urlStrategy) throws WebloggerException { 
                 
         this.autoPingManager     = autoPingManager;
@@ -113,7 +121,10 @@ public abstract class WebloggerImpl implements Weblogger {
         this.weblogEntryManager  = weblogEntryManager;
         this.oauthManager        = oauthManager;
         this.urlStrategy         = urlStrategy;
-        
+        this.feedFetcher         = feedFetcher;
+        this.planetManager       = planetManager;
+        this.planetUrlStrategy   = planetUrlStrategy;
+
         Properties props = new Properties();
         try {
             props.load(getClass().getResourceAsStream("/roller-version.properties"));
@@ -302,8 +313,19 @@ public abstract class WebloggerImpl implements Weblogger {
     public URLStrategy getUrlStrategy() {
         return urlStrategy;
     }
-    
-    
+	
+    public FeedFetcher getFeedFetcher() {
+        return feedFetcher;
+    }
+
+    public PlanetManager getPlanetManager() {
+        return planetManager;
+    }
+
+	public org.apache.roller.planet.business.PlanetURLStrategy getPlanetURLStrategy() {
+		return planetUrlStrategy;
+	}
+
     /**
      * @inheritDoc
      */

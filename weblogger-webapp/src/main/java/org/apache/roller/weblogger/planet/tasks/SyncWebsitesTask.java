@@ -137,7 +137,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
         log.info("Syncing local weblogs with planet subscriptions list");
         
         try {
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // first, make sure there is an "all" pmgr group
             Planet planetObject = pmgr.getWebloggerById("zzz_default_planet_zzz");

@@ -53,7 +53,7 @@ public class PlanetFunctionalTests extends TestCase {
      */
     public void testPlanetLookups() throws Exception {
         
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getWebloggerManager();
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
         Planet planet = null;
         
