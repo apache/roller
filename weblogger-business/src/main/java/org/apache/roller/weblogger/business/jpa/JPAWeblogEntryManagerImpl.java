@@ -414,6 +414,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 			return Collections.emptyList();
 		}
 
+        // no next entry if WeblogEntry not yet published (draft view)
+        if (next && (current.getPubTime() == null)) {
+            return Collections.emptyList();
+        }
+
         Query query = null;
         List results = null;
         WeblogCategory category = null;
@@ -439,8 +444,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             params.add(size++, current.getPubTime());
             whereClause.append(" AND e.pubTime > ?" + size);
         } else {
-            params.add(size++, current.getPubTime());
-            whereClause.append(" AND e.pubTime < ?" + size);
+            // pub time null if current article not yet published, in Draft view
+            if (current.getPubTime() != null) {
+                params.add(size++, current.getPubTime());
+                whereClause.append(" AND e.pubTime < ?" + size);
+            }
         }
         
         if (catName != null && !catName.trim().equals("/")) {
