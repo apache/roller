@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults> 
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="WeblogPermission"
+            class="org.apache.roller.weblogger.pojos.WeblogPermission">
+        <discriminator-value>Weblog</discriminator-value>
+        
+        <named-query name="WeblogPermission.getAll">
+            <query>SELECT p FROM WeblogPermission p</query>
+        </named-query>
+        
+        <named-query name="WeblogPermission.getByUserName">
+            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1 AND p.pending &lt;&gt; TRUE</query>
+        </named-query>
+        
+        <named-query name="WeblogPermission.getByWeblogId">
+            <query>SELECT p FROM WeblogPermission p WHERE p.objectId = ?1 AND p.pending &lt;&gt; TRUE</query>
+        </named-query>
+        
+        <named-query name="WeblogPermission.getByUserName&amp;WeblogId">
+            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1 AND p.objectId = ?2</query>
+        </named-query>
+        
+        <named-query name="WeblogPermission.getByUserName&amp;WeblogId&amp;NotPending">
+            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1 AND p.objectId = ?2 AND p.pending &lt;&gt; true</query>
+        </named-query>
+        
+        <named-query name="WeblogPermission.getByUserName&amp;Pending">
+            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1 AND p.pending = TRUE</query>
+        </named-query>
+        
+        <named-query name="WeblogPermission.getByWeblogId&amp;Pending">
+            <query>SELECT p FROM WeblogPermission p WHERE p.objectId = ?1 AND p.pending = true</query>
+        </named-query>
+        
+        <attributes>
+            <transient name="user"/>
+            <transient name="weblog"/>
+        </attributes>
+    </entity>
+</entity-mappings>

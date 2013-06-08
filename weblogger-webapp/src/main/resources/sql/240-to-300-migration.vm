@@ -1,0 +1,32 @@
+#** 
+240-to-300-migration.vm: Velocity template that generates vendor-specific database scripts 
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
+
+-- Roller 3.0 schema changes
+
+-- add new column which holds the list of custom models for a weblog
+#addColumnNull("website" "pagemodels" "varchar(512)")
+
+-- add new columns which hold the multi-lang settings for a weblog
+#addColumnNotNull("website" "enablemultilang" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
+#addColumnNotNull("website" "showalllangs" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_TRUE)
+
+-- add new column which holds the hidden status for a page, default is false
+#addColumnNotNull("webpage" "hidden" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
+
+-- add new column which holds the hidden status for a page, default is false
+#addColumnNotNull("webpage" "navbar" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
+update webpage set navbar=$db.BOOLEAN_TRUE;
+update webpage set navbar=$db.BOOLEAN_FALSE where name like '\_%';
+
+-- add new column which holds the template language used for a page
+-- then set template language to velocity for all templates
+#addColumnNull("webpage" "templatelang" "varchar(20)")
+update webpage set templatelang = 'velocity';
+
+-- add new column which holds the decorator for a page
+-- then set value to _decorator for all templates except decorators
+#addColumnNull("webpage" "decorator" "varchar(255)")
+update webpage set decorator = '_decorator' where name <> '_decorator';

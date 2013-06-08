@@ -31,7 +31,7 @@
   #if($group)
      #set($entries = $planet.getEntries($group, 0, $entryCount))
   #else
-     #set($all = $planet.getGroup($planet.getPlanet("default"), "all"))
+     #set($all = $planet.getGroup($planet.getWeblogger("default"), "all"))
      #set($entries = $planet.getEntries($all, 0, $entryCount))
   #end
   #foreach( $entry in $entries )

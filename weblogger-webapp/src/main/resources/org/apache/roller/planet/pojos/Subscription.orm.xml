@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.planet.pojos</package>
+    <entity metadata-complete="true" name="Subscription"
+            class="org.apache.roller.planet.pojos.Subscription">
+        <table name="rag_subscription"/>
+        <named-query name="Subscription.getAll">
+            <query>SELECT p FROM Subscription p</query>
+        </named-query>
+        <named-query name="Subscription.getAllOrderByFeedURL">
+            <query>SELECT p FROM Subscription p ORDER BY p.feedURL DESC</query>
+        </named-query>
+        <named-query name="Subscription.getAllOrderByInboundBlogsDesc">
+            <query>SELECT p FROM Subscription p ORDER BY p.inboundblogs DESC</query>
+        </named-query>
+        <named-query name="Subscription.getByGroupOrderByInboundBlogsDesc">
+            <query>SELECT p FROM Subscription p JOIN p.groups g WHERE g.handle = ?1 ORDER
+                BY p.inboundblogs DESC
+            </query>
+        </named-query>
+        <named-query name="Subscription.getByFeedURL">
+            <query>SELECT p FROM Subscription p WHERE p.feedURL = ?1</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="feedURL">
+                <column name="feed_url" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="lastUpdated">
+                <column name="last_updated" insertable="true" updatable="true" unique="false"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+            <basic name="siteURL">
+                <column name="site_url" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="title">
+                <column name="title" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="author">
+                <column name="author" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="inboundlinks">
+                <column name="inbound_links" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="inboundblogs">
+                <column name="inbound_blogs" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <one-to-many name="entries" mapped-by="subscription" target-entity="org.apache.roller.planet.pojos.SubscriptionEntry" fetch="LAZY">
+                <cascade>
+                    <cascade-all />
+                </cascade>
+            </one-to-many>
+            <many-to-many name="groups"
+                          target-entity="org.apache.roller.planet.pojos.PlanetGroup">
+                <join-table name="rag_group_subscription">
+                    <join-column name="subscription_id"/>
+                    <inverse-join-column name="group_id"/>
+                </join-table>
+            </many-to-many>
+            <transient name="name"/>
+            <transient name="URL"/>
+        </attributes>
+    </entity>
+</entity-mappings>

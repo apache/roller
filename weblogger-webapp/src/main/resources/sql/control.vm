@@ -1,0 +1,22 @@
+README.txt
+
+Follow the installation guide for instructions on setting up your database.
+
+## parse macros file to include it for use
+#parse("macros.vm")
+
+#** Loop through all databases and generate scripts for each one **#
+#set( $dbs = $strings.split($databases, " ") )
+#foreach ( $database in $dbs )
+
+    #set( $db = $properties.load("/${database}.properties") )
+
+    #** Loop through templates and generate sql scripts **#
+    #set( $tmpls = $strings.split($templates, " ") )
+    #foreach ( $template in $tmpls ) 
+        #set($in = "${template}.vm")
+        #set($out = "${database}/${template}.sql")
+        $generator.parse($in, $out) 
+    #end
+
+#end

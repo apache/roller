@@ -11,30 +11,544 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Roller Weblogger Web Application - Trunk</name>
+    <name>roller-webapp</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-webapp</artifactId>
     <packaging>war</packaging>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <openjpa.version>2.2.2</openjpa.version>
+        <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
+        <testMediaDir>  ${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
+        <testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
+        <testThemesDir> ${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
+        <testIndexDir>  ${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
+        <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
+    </properties>
+
+	<repositories>
+
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>oauth</id>
+            <url>http://oauth.googlecode.com/svn/code/maven</url>
+        </repository>
+
+        <repository>
+            <id>oss.sonatype.org</id>
+            <url>http://oss.sonatype.org/content/groups/public</url>
+        </repository>
+
+        <!-- EclipseLink repo
+        <repository>
+            <id>EclipseLink Repo</id>
+            <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
+             <snapshots>
+                <enabled>true</enabled>
+             </snapshots>
+        </repository> -->
+        
+        <!-- JBoss Hibernate JPA repo
+        <repository>
+            <id>JBoss Repo</id>
+            <url>http://repository.jboss.com/maven2</url>
+        </repository>  -->
+
+        <!-- for jstl-1.2 for now.. -->
+        <repository>
+            <id>java.net</id>
+            <url>http://download.java.net/maven/2/</url>
+        </repository>
+
+	    <repository>
+			<id>com.atlassian</id>
+			<name>Atlassian Repository</name>
+			<url>http://maven.atlassian.com/public</url>
+		</repository>
+	</repositories>
 
     <dependencies>
 
         <dependency>
             <groupId>org.apache.roller</groupId>
-            <artifactId>roller-weblogger-web</artifactId>
+            <artifactId>test-utils</artifactId>
             <version>${roller.version}</version>
+        </dependency>
+
+        <!-- OpenJPA deps -->
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <version>${openjpa.version}</version>
+            <scope>compile</scope>
             <exclusions>
+                <exclusion>
+                    <groupId>commons-pool</groupId>
+                    <artifactId>commons-pool</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+<!-- EclipseLink deps (for sometimes testing purposes)
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jta_1.1_spec</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_2.0_spec</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency
+-->
+
+<!-- Hibernate deps (for sometimes testing purposes)
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.5.1-Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.5.6</version>
+            <scope>runtime</scope>
+        </dependency> -->
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+            <version>4.11</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <scope>compile</scope>
+            <version>3.6.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.texen</groupId>
+            <artifactId>texen</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlrpc</groupId>
+            <artifactId>xmlrpc-common</artifactId>
+            <version>3.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlrpc</groupId>
+            <artifactId>xmlrpc-client</artifactId>
+            <version>3.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlrpc</groupId>
+            <artifactId>xmlrpc-server</artifactId>
+            <version>3.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ws.commons.util</groupId>
+            <artifactId>ws-commons-util</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth</artifactId>
+            <scope>compile</scope>
+            <version>20100601</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth-provider</artifactId>
+            <scope>compile</scope>
+            <version>20100601</version>
+        </dependency>
+
+		<!-- web -->
+
+
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-core</artifactId>
+            <version>2.3.12</version>
+        </dependency>
+
+        <!-- needed by Struts, except on JBoss -->
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+        <dependency>
+            <version>2.3.12</version>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-spring-plugin</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-tiles-plugin</artifactId>
+            <version>2.3.12</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging-api</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-jsp</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-api</artifactId>
+            <version>2.0.6</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging-api</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>net.java.dev.rome</groupId>
+            <artifactId>rome-propono</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xmlrpc-common</artifactId>
+                    <groupId>xmlrpc</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xmlrpc-client</artifactId>
+                    <groupId>xmlrpc</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ws-commons-util</artifactId>
+                    <groupId>ws-commons-util</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>activation</artifactId>
+                    <groupId>javax.activation</groupId>
+                </exclusion>
                 <exclusion>
                     <artifactId>servlet-api</artifactId>
                     <groupId>javax.servlet</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
+        <!-- spring deps -->
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>2.5.6.SEC03</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>aopalliance</groupId>
+                    <artifactId>aopalliance</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+       <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>2.5.6.SEC03</version>
+       </dependency>
+
+       <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-dao</artifactId>
+            <version>2.0.7</version>
+       </dependency>
+       
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>2.0.7.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-openid</artifactId>
+            <version>2.0.7.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openid4java</groupId>
+                    <artifactId>openid4java</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>2.0.7.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-acl</artifactId>
+            <version>2.0.7.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+         <!-- OpenID deps -->
+
+        <dependency>
+            <groupId>org.openxri</groupId>
+            <artifactId>openxri-client</artifactId>
+            <version>1.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jug</groupId>
+                    <artifactId>jug</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openxri</groupId>
+            <artifactId>openxri-syntax</artifactId>
+            <version>1.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.ibm.icu</groupId>
+                    <artifactId>icu4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openid4java</groupId>
+            <artifactId>openid4java-consumer</artifactId>
+            <version>0.9.6</version>
+            <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.guice</groupId>
+                    <artifactId>guice</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xml-security</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.9.1</version>
+        </dependency>
+
+        <!-- Java EE deps -->
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+            <!-- <scope>provided</scope> -->
+        </dependency>
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>activation</artifactId>
+                    <groupId>javax.activation</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.1</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jetty</artifactId>
-            <version>6.1.26</version>
+            <version>6.1.10</version>
             <scope>provided</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>com.atlassian.crowd</groupId>
+			<artifactId>crowd-integration-client-rest</artifactId>
+			<version>2.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+		</dependency>
+
+        <dependency>
+            <groupId>net.java.dev.rome</groupId>
+            <artifactId>rome</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.java.dev.rome</groupId>
+            <artifactId>rome-fetcher</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- test deps -->
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <version>${derby.version}</version>
+            <artifactId>derby</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbynet</artifactId>
+            <version>${derby.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>${derby.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.3.1</version>
+            <type>jar</type>
         </dependency>
         
     </dependencies>
@@ -43,15 +557,67 @@
 
         <finalName>roller</finalName>
 
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.0.2</version>
+                    <configuration>
+                        <source>1.5</source>
+                        <target>1.5</target>
+                        <fork>true</fork>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.4.3</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.4.1</version>
+                </plugin>
+
+                <!-- Allow for standalone Tomcat deployment 
+                     using mvn tomcat7:redeploy (See
+                     http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
+                     for necessary config info)
+                -->
+                <plugin>
+                    <groupId>org.apache.tomcat.maven</groupId>
+                    <artifactId>tomcat7-maven-plugin</artifactId>
+                    <version>2.1</version>
+                    <configuration>
+                        <server>myTomcat</server>
+                        <path>/${project.build.finalName}</path>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+
+		</pluginManagement>
+
         <plugins>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
-                <configuration>
+<!--                <configuration>
                     <archiveClasses>true</archiveClasses>
-                </configuration>
+                </configuration>-->
             </plugin>
 
             <plugin>
@@ -66,7 +632,7 @@
                 <configuration>
                     <contextPath>roller</contextPath>
                     <jettyConfig>${project.build.directory}/test-classes/jetty.xml</jettyConfig>
-                    <build.plugins.plugin.version></build.plugins.plugin.version>
+                    <classesDirectory>${project.build.directory}/classes</classesDirectory>
                     <systemProperties>
 
                         <systemProperty>
@@ -80,28 +646,13 @@
                         </systemProperty>
 
                         <systemProperty>
-                            <name>jetty.home</name>
-                            <value>${basedir}/src/test/resources</value>
-                        </systemProperty>
-
-                        <systemProperty>
-                            <name>jetty.logs</name>
-                            <value>${basedir}/src/test/resources</value>
-                        </systemProperty>
-
-                        <systemProperty>
                             <name>derby.port</name>
                             <value>3223</value>
                         </systemProperty>
 
                         <systemProperty>
                             <name>roller.custom.config</name>
-                            <value>${project.build.directory}/test-classes/roller-custom.properties</value>
-                        </systemProperty>
-
-                        <systemProperty>
-                            <name>planet.custom.config</name>
-                            <value>${project.build.directory}/test-classes/planet-custom.properties</value>
+                            <value>${project.build.directory}/test-classes/roller-jettyrun.properties</value>
                         </systemProperty>
 
                     </systemProperties>
@@ -139,21 +690,23 @@
                 </dependencies>
             </plugin>
 
-            <!-- <plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                
                 <executions>
 
                     <execution>
-                        <id>copy-test-properties</id>
+                        <id>copy-main-resources</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/testsetup</outputDirectory>
+                            <outputDirectory>${basedir}/target/classes</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/test/resources</directory>
+                                    <directory>src/main/resources</directory>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
@@ -161,27 +714,50 @@
                     </execution>
 
                     <execution>
-                        <id>copy-test-config</id>
-                        <phase>validate</phase>
+                        <id>copy-dbscripts-resources</id>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/</outputDirectory>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <outputDirectory>${basedir}/target/dbscripts</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/test/resources</directory>
-                                    <filtering>true</filtering>
+                                    <directory>${basedir}/src/main/resources/sql</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                   
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/roller/WEB-INF/classes/dbscripts</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>target/dbscripts</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*.sql</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>
 
                 </executions>
+                
                 <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
                 </configuration>
-            </plugin> -->
+
+            </plugin>
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -198,7 +774,7 @@
                         </property>
                         <property>
                             <name>project.build.directory</name>
-                            <value>${project.build.directory}</value>
+                            <value>${basedir}/target</value>
                         </property>
                     </systemProperties>
                     <excludes>
@@ -236,6 +812,27 @@
                 <executions>
 
                     <execution>
+                        <id>gen-db-scripts</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <taskdef name="texen"
+                                         classname="org.apache.velocity.texen.ant.TexenTask"
+                                         classpathref="maven.compile.classpath"/>
+                                <texen
+                                    controlTemplate  ="control.vm"
+                                    contextProperties="${basedir}/src/main/resources/sql/dbscripts.properties"
+                                    templatePath     ="${basedir}/src/main/resources/sql"
+                                    outputDirectory  ="${basedir}/target/dbscripts"
+                                    outputFile       ="README.txt"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>startdb</id>
                         <phase>process-test-resources</phase>
                         <goals>
@@ -244,12 +841,12 @@
                         <configuration>
                             <tasks>
                                 <!-- Derby only for unit testing: skip when maven.text.skip is set -->
-                                <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
+                                <delete dir="${basedir}/target/derby-system" verbose="true" failonerror="false" />
                                 <taskdef name="startdb" classname="org.apache.roller.weblogger.ant.StartDerbyTask"
                                          classpathref="maven.test.classpath"/>
-                                <startdb databaseDir="${project.build.directory}/derby-system"
+                                <startdb databaseDir="${basedir}/target/derby-system"
                                          port="3223"
-                                         databaseScriptsDir="${project.build.directory}/roller/WEB-INF/classes/dbscripts"
+                                         databaseScriptsDir="${basedir}/target/dbscripts"
                                          skip="${maven.test.skip}" >
                                 </startdb>
                             </tasks>
@@ -267,12 +864,12 @@
                                 <!-- Derby only for unit testing: skip when maven.text.skip is set -->
                                 <taskdef name="stopdb" classname="org.apache.roller.weblogger.ant.StopDerbyTask"
                                          classpathref="maven.test.classpath"/>
-                                <stopdb databaseDir="${project.build.directory}/derby-system"
+                                <stopdb databaseDir="${basedir}/target/derby-system"
                                         port="3223"
-                                        databaseScriptsDir="${project.build.directory}/roller/WEB-INF/classes/dbscripts"
+                                        databaseScriptsDir="${basedir}/target/dbscripts"
                                         skip="${maven.test.skip}" >
                                 </stopdb>
-                                <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
+                                <delete dir="${basedir}/target/derby-system" verbose="true" failonerror="false" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -281,47 +878,136 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4.1</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.0-beta-3</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
-                        <phase>process-resources</phase>
+                        <phase>validate</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>create</goal>
                         </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/roller/WEB-INF/classes/dbscripts</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>../weblogger-business/target/dbscripts</directory>
-                                    <filtering>false</filtering>
-                                    <includes>
-                                        <include>**/*.sql</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <doUpdate>false</doUpdate>
+                    <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
+                </configuration>
             </plugin>
-            
+
         </plugins>
 
         <testResources>
             <testResource>
-                <directory>src/test/resources</directory>
+                <directory>${project.basedir}/../weblogger-webapp/src/main/webapp/</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>themes/**</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>${project.basedir}/src/test/resources</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>**/**</include>
+                </includes>
             </testResource>
         </testResources>
 
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>org/**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/sql/**</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <!-- ensure version and persistence files get substitions -->
+                <directory>${project.basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>roller-version.properties</include>
+                    <include>META-INF/**</include>
+                </includes>
             </resource>
         </resources>
 
     </build>
+
+    <profiles>
+        
+        <profile>
+            <id>jboss</id>
+            <!-- building for JBoss, turn on 'java:/' prefix on datasource JNDI name -->
+            <activation>
+                <property><name>jboss</name></property>
+            </activation> 
+            <properties>
+                <datasourceName>java:/RollerDS</datasourceName>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>notjboss</id>
+            <!-- not building for JBoss, don't use 'java:/' prefix on datasource JNDI name -->
+            <activation>
+                <property><name>!jboss</name></property>
+            </activation> 
+            <properties>
+                <datasourceName>jdbc/rollerdb</datasourceName>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>openjpa</id>
+            <!-- building for Tomcat, so add OpenJPA bytecode enhancement -->
+            <activation>
+                <property>
+                    <name>!javaee</name>
+                </property>
+            </activation> 
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa</artifactId>
+                    <scope>compile</scope>
+					<version>${openjpa.version}</version>
+                </dependency>
+            </dependencies>
+            <properties>
+                <jpaProviderClass>org.apache.openjpa.persistence.PersistenceProviderImpl</jpaProviderClass>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>openjpa-enhance</id>
+                                <phase>process-classes</phase>
+                                <configuration>
+                                    <tasks>
+                                        <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask"
+                                                 classpathref="maven.compile.classpath"/>
+                                        <openjpac enforcePropertyRestrictions="false">
+                                            <classpath refid="maven.compile.classpath"/>
+                                        </openjpac>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>  
 
 </project>

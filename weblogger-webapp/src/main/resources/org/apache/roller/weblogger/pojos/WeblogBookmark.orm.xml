@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="WeblogBookmark"
+            class="org.apache.roller.weblogger.pojos.WeblogBookmark">
+        <table name="bookmark"/>
+        <named-query name="BoomarkData.getByFolder">
+            <query>SELECT b FROM WeblogBookmark b WHERE b.folder = ?1</query>
+        </named-query>
+        <named-query name="BoomarkData.getByFolder.pathLike&amp;Folder.website">
+            <query>SELECT b FROM WeblogBookmark b WHERE b.folder.path LIKE ?1 AND b.folder.website = ?2</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="name">
+                <column name="name" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="description">
+                <column name="description" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="url">
+                <column name="url" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="weight">
+                <column name="weight" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="priority">
+                <column name="priority" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="image">
+                <column name="image" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="feedUrl">
+                <column name="feedurl" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="folder" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder">
+                <join-column name="folderid" insertable="true" updatable="true" />
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                    <cascade-refresh />
+                </cascade>
+            </many-to-one>            
+            <transient name="website"/>
+        </attributes>
+    </entity>
+</entity-mappings>

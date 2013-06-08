@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.planet.pojos</package>
+    <entity metadata-complete="true" name="RuntimeConfigProperty"
+            class="org.apache.roller.planet.pojos.RuntimeConfigProperty">
+        <table name="rag_properties"/>
+        <named-query name="RuntimeConfigProperty.getAll">
+            <query>SELECT r FROM RuntimeConfigProperty r</query>
+        </named-query>
+        <attributes>
+            <id name="name">
+                <column name="name"/>
+            </id>
+            <basic name="value">
+                <column name="value" insertable="true" updatable="true" unique="false"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

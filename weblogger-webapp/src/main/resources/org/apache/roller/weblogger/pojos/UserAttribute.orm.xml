@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="UserAttribute" class="org.apache.roller.weblogger.pojos.UserAttribute">
+        <table name="roller_userattribute"/>
+        
+        <named-query name="UserAttribute.getByUserName">
+            <query>SELECT r FROM UserAttribute r WHERE r.userName = ?1</query>
+        </named-query>
+        
+        <named-query name="UserAttribute.getByAttrNameAndAttrValue">
+            <query>SELECT r FROM UserAttribute r WHERE r.name = ?1 AND r.value = ?2</query>
+        </named-query>
+        
+        <named-query name="UserAttribute.getByUserNameAndAttrName">
+            <query>SELECT r FROM UserAttribute r WHERE r.userName = ?1 AND r.name = ?2</query>
+        </named-query>                
+        
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="userName">
+                <column name="username" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="name">
+                <column name="attrname" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="value">
+                <column name="attrvalue" insertable="true" updatable="true" unique="true"/>
+            </basic>
+        </attributes>
+        
+    </entity>
+</entity-mappings>

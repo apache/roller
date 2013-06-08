@@ -1,0 +1,11 @@
+#** 
+230-to-240-migration.vm: Velocity template that generates vendor-specific database scripts 
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
+
+-- Roller 2.4 schema changes
+
+#addColumnNotNull("pingtarget" "autoenabled" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
+
+#addColumnNull("website" "lastmodified" $db.TIMESTAMP_SQL_TYPE)
