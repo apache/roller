@@ -769,10 +769,6 @@
                     
                     <systemProperties>
                         <property>
-                            <name>catalina.base</name>
-                            <value>${project.build.testOutputDirectory}</value>
-                        </property>
-                        <property>
                             <name>context.realpath</name>
                             <value>${project.basedir}/src/main/webapp</value>
                         </property>
