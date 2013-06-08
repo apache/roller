@@ -147,7 +147,7 @@ $("#d_clip_button").ready(function() {
                 <label for="tags"><s:text name="mediaFileEdit.tags" /></label>
             </td>
             <td>
-                <s:textfield name="bean.tags" size="30" maxlength="100" tabindex="3" />
+                <s:textfield name="bean.tagsAsString" size="30" maxlength="100" tabindex="3" />
             </td>
        </tr>
 

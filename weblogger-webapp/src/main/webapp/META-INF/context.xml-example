@@ -1,24 +1,39 @@
 <!-- 
 Example Tomcat Context Configuration file for Roller
 
-If you'd like to use Tomcat provided datasource and mail sessions then:
+Documented in Chapter 7.1-7.2 of Roller Installation Guide
+If you'd like to use Tomcat provided datasource and/or mail sessions then:
+- Uncomment the appropriate database / mail blocks below
 - Set database.connetionType=jndi property in roller-custom.properties
 - Set mail.connetionType=jndi property in roller-custom.properties
-- Set the correct values for docBase, driverClassName, url, username, 
-  password and mail.smtp.host in the text below.
-- Rename this file to context.xml and deploy Roller directory to Tomcat.
+- Set the correct values for the database and mail server
+- Rename this file to context.xml and deploy Roller WAR to Tomcat.
 -->
-<Context path="/roller" 
-    docBase="/user/local/apache-roller-4.0/webapp/roller" debug="0">
+<Context path="/roller" debug="0">
 
-  <Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource"
+  <!--Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource"
     driverClassName="com.mysql.jdbc.Driver"
     url="jdbc:mysql://localhost:3306/rollerdb?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;mysqlEncoding=utf8"
     username="scott"
     password="tiger"
-    maxActive="20" maxIdle="3" removeAbandoned="true" maxWait="3000" />
+    maxActive="20" maxIdle="3" removeAbandoned="true" maxWait="3000" /-->
 
-  <Resource name="mail/Session" auth="Container" type="javax.mail.Session"
-     mail.smtp.host="smtp-server.example.com" />
+  <!-- Below sample is for the GMail SMTP server, modify as appropriate
+       for the SMTP server and account you're using.  Properties defined here:
+       https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
+  -->
+  <!--Resource name="mail/Session" auth="Container" type="javax.mail.Session" 
+            mail.transport.protocol="smtp"
+            mail.smtp.host="smtp.gmail.com"
+            mail.smtp.port="465"
+            mail.smtp.auth="true"
+            mail.smtp.user="blah.blah@gmail.com" 
+            password="yourgmailpassword" 
+            mail.smtp.starttls.enable="true"
+            mail.smtp.socketFactory.class="javax.net.ssl.SSLSocketFactory"
+            mail.smtp.socketFactory.port="465"
+            mail.smtp.socketFactory.fallback="false"
+            mail.debug="false"
+  /-->
 
 </Context>
