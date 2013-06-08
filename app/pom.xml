@@ -11,7 +11,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>roller-webapp</name>
+    <name>Roller app</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-weblogger-webapp</artifactId>
     <packaging>war</packaging>
