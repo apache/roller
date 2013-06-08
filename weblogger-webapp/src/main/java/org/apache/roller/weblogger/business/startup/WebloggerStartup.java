@@ -177,10 +177,10 @@ public final class WebloggerStartup {
             mailProvider = new MailProvider();
         } catch(StartupException ex) {
             if (log.isDebugEnabled()) {
-                log.debug("Failed to setup mail provider, continuing anways.\n"
+                log.debug("Failed to setup mail provider, continuing anyways.\n"
                     + "Reason: " + ex.getMessage(), ex);
             } else {
-                log.warn("Failed to setup mail provider, continuing anways.\n"
+                log.warn("Failed to setup mail provider, continuing anyways.\n"
                     + "Reason: " + ex.getMessage());
             }
         }
