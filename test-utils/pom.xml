@@ -11,9 +11,18 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Roller Test Utilities - Trunk</name>
+    <name>roller-test-utils</name>
     <groupId>org.apache.roller</groupId>
     <artifactId>test-utils</artifactId>
+
+    <properties>
+        <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
+        <testMediaDir>  ${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
+        <testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
+        <testThemesDir> ${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
+        <testIndexDir>  ${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
+        <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
+    </properties>
 
     <dependencies>
 
@@ -26,36 +35,48 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.11</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
+            <version>1.7.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
+            <version>${derby.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
+            <version>${derby.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbynet</artifactId>
+            <version>${derby.version}</version>
             <scope>compile</scope>
         </dependency>
 
