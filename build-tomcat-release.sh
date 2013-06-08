@@ -4,12 +4,12 @@
 mvn clean
 mvn install
 
-cd weblogger-war-assembly
+cd assembly-war
 mvn clean
 mvn -Dtomcat=true install 
 cd ..
 
-cd weblogger-assembly
+cd assembly-release
 mvn clean
 mvn -Dtomcat=true install
 cd ..

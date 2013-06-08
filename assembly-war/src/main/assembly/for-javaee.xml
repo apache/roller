@@ -31,7 +31,7 @@
     <fileSets>  
         <fileSet>
             <outputDirectory></outputDirectory>
-            <directory>../weblogger-webapp/target/roller</directory>
+            <directory>../webapp/target/roller</directory>
             <excludes>
                 <!-- don't include all those Jave EE jars that Tomcat needs -->
                 <exclude>**/openjpa**</exclude>

@@ -31,7 +31,7 @@
 
     <files> 
         <file> 
-            <source>../weblogger-war-assembly/target/roller-${artifact.version}-jboss.war</source>
+            <source>../assembly-war/target/roller-${artifact.version}-jboss.war</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}-jboss/webapp</outputDirectory>
         </file> 
         <file> 

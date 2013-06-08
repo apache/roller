@@ -3,12 +3,12 @@
 mvn clean
 mvn -Djavaee=true install
 
-cd weblogger-war-assembly
+cd assembly-war
 mvn clean
 mvn -Djavaee=true install
 cd ..
 
-cd weblogger-assembly
+cd assembly-release
 mvn clean
 mvn -Djavaee=true install
 cd ..
