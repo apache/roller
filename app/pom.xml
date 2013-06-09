@@ -13,7 +13,7 @@
 
     <name>Roller app</name>
     <groupId>org.apache.roller</groupId>
-    <artifactId>roller-weblogger-webapp</artifactId>
+    <artifactId>roller-webapp</artifactId>
     <packaging>war</packaging>
 
 
