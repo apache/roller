@@ -28,7 +28,7 @@
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
     </properties>
 
-	<repositories>
+    <repositories>
 
         <repository>
             <id>central</id>
@@ -71,12 +71,12 @@
             <url>http://download.java.net/maven/2/</url>
         </repository>
 
-	    <repository>
-			<id>com.atlassian</id>
-			<name>Atlassian Repository</name>
-			<url>http://maven.atlassian.com/public</url>
-		</repository>
-	</repositories>
+        <repository>
+            <id>com.atlassian</id>
+            <name>Atlassian Repository</name>
+            <url>http://maven.atlassian.com/public</url>
+        </repository>
+    </repositories>
 
     <dependencies>
 
@@ -104,28 +104,28 @@
             </exclusions>
         </dependency>
 
-<!-- EclipseLink deps (for sometimes testing purposes)
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.0.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.1_spec</artifactId>
-            <version>1.1.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.0_spec</artifactId>
-            <version>1.1</version>
-            <scope>provided</scope>
-        </dependency
--->
+        <!-- EclipseLink deps (for sometimes testing purposes)
+                <dependency>
+                    <groupId>org.eclipse.persistence</groupId>
+                    <artifactId>eclipselink</artifactId>
+                    <version>2.0.0</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    <version>1.1.1</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jpa_2.0_spec</artifactId>
+                    <version>1.1</version>
+                    <scope>provided</scope>
+                </dependency
+        -->
 
-<!-- Hibernate deps (for sometimes testing purposes)
+        <!-- Hibernate deps (for sometimes testing purposes)
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
@@ -232,7 +232,7 @@
             <version>20100601</version>
         </dependency>
 
-		<!-- web -->
+        <!-- web -->
 
 
         <dependency>
@@ -341,17 +341,17 @@
             </exclusions>
         </dependency>
 
-       <dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>2.5.6.SEC03</version>
-       </dependency>
+        </dependency>
 
-       <dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-dao</artifactId>
             <version>2.0.7</version>
-       </dependency>
+        </dependency>
        
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -395,7 +395,7 @@
             <version>1.2</version>
         </dependency>
 
-         <!-- OpenID deps -->
+        <!-- OpenID deps -->
 
         <dependency>
             <groupId>org.openxri</groupId>
@@ -496,17 +496,17 @@
             <scope>provided</scope>
         </dependency>
 
-		<dependency>
-			<groupId>com.atlassian.crowd</groupId>
-			<artifactId>crowd-integration-client-rest</artifactId>
-			<version>2.4.0</version>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-integration-client-rest</artifactId>
+            <version>2.4.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
-		</dependency>
+        </dependency>
 
         <dependency>
             <groupId>net.java.dev.rome</groupId>
@@ -607,7 +607,7 @@
 
             </plugins>
 
-		</pluginManagement>
+        </pluginManagement>
 
         <plugins>
 
@@ -616,7 +616,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
                 <configuration>
-                    <archiveClasses>true</archiveClasses>
+                    <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
 
@@ -975,7 +975,7 @@
                     <groupId>org.apache.openjpa</groupId>
                     <artifactId>openjpa</artifactId>
                     <scope>compile</scope>
-					<version>${openjpa.version}</version>
+                    <version>${openjpa.version}</version>
                 </dependency>
             </dependencies>
             <properties>
