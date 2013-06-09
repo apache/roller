@@ -27,12 +27,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.apache.roller</groupId>
-            <artifactId>roller-core</artifactId>
-            <version>${roller.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
