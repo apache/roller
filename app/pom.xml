@@ -525,10 +525,6 @@
                     <groupId>com.google.code.guice</groupId>
                     <artifactId>guice</artifactId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>httpclient</artifactId>
-                    <groupId>org.apache.httpcomponents</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
 
@@ -1046,7 +1042,7 @@
 
         <testResources>
             <testResource>
-                <directory>${project.basedir}/../weblogger-webapp/src/main/webapp/</directory>
+                <directory>${project.basedir}/../app/src/main/webapp/</directory>
                 <filtering>false</filtering>
                 <includes>
                     <include>themes/**</include>
