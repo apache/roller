@@ -58,11 +58,13 @@ public class MobileDeviceRepository {
 	 * @return   boolean
 	 */
 	public static boolean isMobileDevice(HttpServletRequest request) {
-
-		String userAgent = request.getHeader("User-Agent").toLowerCase();
-		return (userAgent.matches(possibleDevices1) || userAgent.substring(0, 4).matches(possibleDevices2));
-
-	}
+        String userAgent = request.getHeader("User-Agent");
+        if (userAgent != null) {
+            userAgent = request.getHeader("User-Agent").toLowerCase();
+            return (userAgent.matches(possibleDevices1) || userAgent.substring(0, 4).matches(possibleDevices2));
+        }
+        return false;
+    }
 
 	public static DeviceType getRequestType(HttpServletRequest request) {
 		DeviceType type = DeviceType.standard;
