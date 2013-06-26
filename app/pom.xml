@@ -764,21 +764,6 @@
                     <systemProperties>
 
                         <systemProperty>
-                            <name>derby.dir</name>
-                            <value>${project.build.directory}/work/derby-system</value>
-                        </systemProperty>
-
-                        <systemProperty>
-                            <name>config.dir</name>
-                            <value>${basedir}/src/test/resources</value>
-                        </systemProperty>
-
-                        <systemProperty>
-                            <name>derby.port</name>
-                            <value>3223</value>
-                        </systemProperty>
-
-                        <systemProperty>
                             <name>roller.custom.config</name>
                             <value>${project.build.directory}/test-classes/roller-jettyrun.properties</value>
                         </systemProperty>
@@ -968,7 +953,7 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <!-- Derby only for unit testing: skip when maven.text.skip is set -->
+                                <!-- Derby only for unit testing and jetty:run dev testing: skipped when maven.text.skip is set -->
                                 <delete dir="${basedir}/target/derby-system" verbose="true" failonerror="false" />
                                 <taskdef name="startdb" classname="org.apache.roller.weblogger.ant.StartDerbyTask"
                                          classpathref="maven.test.classpath"/>

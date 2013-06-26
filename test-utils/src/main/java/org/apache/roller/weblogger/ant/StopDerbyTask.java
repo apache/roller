@@ -43,7 +43,7 @@ public class StopDerbyTask extends Task {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 
                 String driverURL =
-                    "jdbc:derby://localhost:" + port + "/rollerdb";
+                    "jdbc:derby://localhost:" + port + "/memory:rollerdb";
                 Connection conn =
                     DriverManager.getConnection(driverURL,"APP", "APP");
 

@@ -59,7 +59,7 @@ public class StartDerbyTask extends Task {
 
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 Connection conn = DriverManager.getConnection(
-                    "jdbc:derby://localhost:" + port + "/rollerdb;create=true","APP", "APP");
+                    "jdbc:derby://localhost:" + port + "/memory:rollerdb;create=true","APP", "APP");
 
                 //Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
                 //Connection conn = DriverManager.getConnection(
