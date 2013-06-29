@@ -650,7 +650,7 @@ public final class TestUtils {
         
         // remove
         mgr.deleteGroup(group);
-        group.getWeblogger().getGroups().remove(group);
+        group.getPlanet().getGroups().remove(group);
         
         // flush
         WebloggerFactory.getWeblogger().flush();

@@ -65,7 +65,7 @@ public class GroupBasicTests extends TestCase {
         group = mgr.getGroupById(testGroup.getId());
         assertNotNull(group);
         assertEquals("test_handle", group.getHandle());
-        assertEquals(testPlanet.getId(), group.getWeblogger().getId());
+        assertEquals(testPlanet.getId(), group.getPlanet().getId());
         
         // modify
         group.setTitle("foo");

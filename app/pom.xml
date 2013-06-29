@@ -110,18 +110,6 @@
                     <version>2.5.0</version>
                     <scope>test</scope>
                 </dependency>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jta_1.1_spec</artifactId>
-                    <version>1.1.1</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jpa_2.0_spec</artifactId>
-                    <version>1.1</version>
-                    <scope>provided</scope>
-                </dependency
         -->
 
         <!-- Hibernate deps (for sometimes testing purposes)
@@ -333,6 +321,20 @@
                     <groupId>commons-logging</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>net.java.dev.rome</groupId>
+            <artifactId>rome</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.java.dev.rome</groupId>
+            <artifactId>rome-fetcher</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -593,20 +595,6 @@
                     <groupId>commons-codec</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>net.java.dev.rome</groupId>
-            <artifactId>rome</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.java.dev.rome</groupId>
-            <artifactId>rome-fetcher</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
 
         <!-- test deps -->

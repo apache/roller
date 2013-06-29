@@ -86,7 +86,8 @@ public class JPAPersistenceStrategy {
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
                 if (       key.startsWith("javax.persistence.") 
-                        || key.startsWith("openjpa.") 
+                        || key.startsWith("openjpa.")
+                        || key.startsWith("eclipselink.")
                         || key.startsWith("hibernate.")) {
                     String value = WebloggerConfig.getProperty(key);
                     logger.info(key + ": " + value);
@@ -106,7 +107,7 @@ public class JPAPersistenceStrategy {
 
             try {
                 this.emf = Persistence.createEntityManagerFactory("RollerPU", emfProps);
-                
+
             } catch (Throwable pe) {
                 logger.error("ERROR: creating entity manager", pe);
                 throw new WebloggerException(pe);

@@ -159,7 +159,7 @@ public class PlanetGroup implements Serializable, Comparable {
     /**
      * @hibernate.many-to-one column="planet_id" cascade="none" non-null="false"
      */
-    public Planet getWeblogger() {
+    public Planet getPlanet() {
         return planet;
     }
     
