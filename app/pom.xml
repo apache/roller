@@ -103,15 +103,25 @@
             </exclusions>
         </dependency>
 
-        <!-- EclipseLink deps (for sometimes testing purposes)
-                <dependency>
-                    <groupId>org.eclipse.persistence</groupId>
-                    <artifactId>eclipselink</artifactId>
-                    <version>2.5.0</version>
-                    <scope>test</scope>
-                </dependency>
-        -->
+        <!-- To run JUnit tests using EclipseLink JPA instead of OpenJPA:
+         1.) Uncomment this dependency and comment-out the adjacent hibernate
+             and OpenJPA ones
+         2.) Comment-out the OpenJPA "-javaagent" line in the Surefire plugin
+             below and comment-out the OpenJPA profile in order to prevent
+             the OpenJPA bytecode enhancement
+         3.) In src/main/resources/META-INF/persistence.xml, comment-out the
+             <non-jta-data-source> element, as EclipseLink tries to do a
+             JNDI connection instead of relying on the jdbc properties if
+             the former is available.
+         As of 6/30/2013, running mvn clean install with EclipseLink JPA
+         returns 30 failures and 14 errors.
 
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+-->
         <!-- Hibernate deps (for sometimes testing purposes)
         <dependency>
             <groupId>org.hibernate</groupId>

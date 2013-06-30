@@ -22,8 +22,7 @@
             <query>SELECT p FROM Subscription p ORDER BY p.inboundblogs DESC</query>
         </named-query>
         <named-query name="Subscription.getByGroupOrderByInboundBlogsDesc">
-            <query>SELECT p FROM Subscription p JOIN p.groups g WHERE g.handle = ?1 ORDER
-                BY p.inboundblogs DESC
+            <query>SELECT p FROM Subscription p JOIN p.groups g WHERE g.handle = ?1 ORDER BY p.inboundblogs DESC
             </query>
         </named-query>
         <named-query name="Subscription.getByFeedURL">
