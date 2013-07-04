@@ -34,7 +34,7 @@ public class LinkbackExtractorTest extends TestCase {
     public LinkbackExtractorTest(String arg0) {
         super(arg0);
     }
-    
+
     public static void main(String[] args) {
     }
     
@@ -55,24 +55,23 @@ public class LinkbackExtractorTest extends TestCase {
     public void testLinkbackExtractor() throws Exception {
         String[][] testrefs = new String[][]
         {
+            // Second URL contains a link to the first
             {
-                "http://www.rollerweblogger.org/page/roller",
-                        "http://staff.develop.com/halloway/weblog/2003/01/23.html"
+                "http://www.atomenabled.org",
+                        "http://rollerweblogger.org/roller/entry/wip_feed_based_integration"
             },
             {
-                "http://postneo.com/",
-                        "http://www.rollerweblogger.org/page/roller/20030125"
+                "http://rollermobile.blogspot.com/",
+                        "http://rollerweblogger.org/project/date/20110523"
             }
         };
-        
-        for ( int i=0; i<testrefs.length; i++ ) {
-            String refurl = testrefs[i][0];
-            String requrl = testrefs[i][1];
-            LinkbackExtractor le = new LinkbackExtractor(refurl,requrl);
-            System.out.println(le.getTitle());
-            System.out.println(le.getPermalink());
-            System.out.println(le.getExcerpt());
-        }
+
+        LinkbackExtractor le = new LinkbackExtractor(testrefs[0][0],testrefs[0][1]);
+        assertEquals("AtomEnabled.org", le.getTitle());
+        le = new LinkbackExtractor(testrefs[1][0],testrefs[1][1]);
+        assertEquals("Apache Roller Mobile Platform", le.getTitle());
+
+        // todo: le.getPermalink() and le.getExcerpt() working
     }
     
     public static Test suite() {

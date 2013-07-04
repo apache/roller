@@ -108,7 +108,7 @@ public class TaskLock implements Serializable {
     
     @Override
     public int hashCode() {
-        // our natrual key, or business key, is our name
+        // our natural key, or business key, is our name
         return this.getName().hashCode();
     }
     

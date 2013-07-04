@@ -22,8 +22,11 @@ import java.io.Serializable;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+
 
 /**
  * Permission for one specific weblog
@@ -87,14 +90,6 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
         return null;
     }
 
-    public boolean equals(Object arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int hashCode() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public boolean implies(Permission perm) {
         if (perm instanceof WeblogPermission) {
             WeblogPermission rperm = (WeblogPermission)perm;
@@ -128,6 +123,25 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
             sb.append(" ").append(action).append(" ");
         }
         return sb.toString();
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof WeblogPermission != true) return false;
+        WeblogPermission o = (WeblogPermission)other;
+        return new EqualsBuilder()
+                .append(getUserName(), o.getUserName())
+                .append(getObjectId(), o.getObjectId())
+                .append(getActions(), o.getActions())
+                .isEquals();
+    }
+
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(getUserName())
+                .append(getObjectId())
+                .append(getActions())
+                .toHashCode();
     }
 }
 

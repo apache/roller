@@ -75,7 +75,7 @@ public class MediaFileTest extends TestCase {
         Weblog testWeblog = null;
 
         // TODO: Setup code, to be moved to setUp method.
-        System.out.println("Before setting up weblogger");
+        log.info("Before setting up weblogger");
         // setup weblogger
         try {
             testUser = TestUtils.setupUser("mediaFileTestUser8");
@@ -172,7 +172,7 @@ public class MediaFileTest extends TestCase {
         Weblog testWeblog = null;
 
         // TODO: Setup code, to be moved to setUp method.
-        System.out.println("Before setting up weblogger");
+        log.info("Before setting up weblogger");
         // setup weblogger
         try {
             testUser = TestUtils.setupUser("mediaFileTestUser");
@@ -658,23 +658,23 @@ public class MediaFileTest extends TestCase {
 	        //TestUtils.endSession(true);
 	
 	        for (int i = 0; i < 15; i++) {
-		        rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());	
-		        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-	            MediaFile mediaFile = new MediaFile();
-	            mediaFile.setName("test_file<index>.jpg".replace("<index>", i + ""));
-	            mediaFile.setDescription("This is a test image");
-	            mediaFile.setCopyrightText("test copyright text");
-	            mediaFile.setSharedForGallery(true);
-	            mediaFile.setLength(2000);
-	            mediaFile.setWeblog(testWeblog);
-	            mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
-	            mediaFile.setContentType("image/jpeg");
-	            mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
-	            rootDirectory.getMediaFiles().add(mediaFile);
-	            mediaFile.setDirectory(rootDirectory);
-	            assertNotNull(mediaFile.getId());
-	            assertNotNull(mediaFile.getId().length() > 0);
-		        TestUtils.endSession(true);
+                rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
+                testWeblog = TestUtils.getManagedWebsite(testWeblog);
+                MediaFile mediaFile = new MediaFile();
+                mediaFile.setName("test_file<index>.jpg".replace("<index>", i + ""));
+                mediaFile.setDescription("This is a test image");
+                mediaFile.setCopyrightText("test copyright text");
+                mediaFile.setSharedForGallery(true);
+                mediaFile.setLength(2000);
+                mediaFile.setWeblog(testWeblog);
+                mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
+                mediaFile.setContentType("image/jpeg");
+                mediaFile.setDirectory(rootDirectory);
+                mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+                rootDirectory.getMediaFiles().add(mediaFile);
+                assertNotNull(mediaFile.getId());
+                assertNotNull(mediaFile.getId().length() > 0);
+                TestUtils.endSession(true);
 	        }
 	        
 	        testWeblog = TestUtils.getManagedWebsite(testWeblog);

@@ -113,8 +113,9 @@
              <non-jta-data-source> element, as EclipseLink tries to do a
              JNDI connection instead of relying on the jdbc properties if
              the former is available.
-         As of 6/30/2013, running mvn clean install with EclipseLink JPA
-         returns 30 failures and 14 errors.
+         4.) In src/test/resources/roller-custom.properties, uncomment any
+             eclipselink.* properties (JPA stack logging, etc.) desired
+         As of 4 July 2013, no JUnit failures with EclipseLink 2.5.0
 
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
@@ -122,18 +123,24 @@
             <version>2.5.0</version>
         </dependency>
 -->
-        <!-- Hibernate deps (for sometimes testing purposes)
+
+        <!-- To run JUnit tests using Hibernate, follow above instructions
+             given for EclipseLink with appropriate modifications.
+             As of 4 July 2013, no JUnit failures with Hibernate 4.2.1-Final
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.2.1-Final</version>
+            <version>4.2.1.Final</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.6.1</version>
             <scope>runtime</scope>
-        </dependency> -->
+        </dependency>
+-->
 
         <dependency>
             <groupId>log4j</groupId>
@@ -876,7 +883,7 @@
 
                     <!-- Ensure tests will run even if 'openjpa' profile not active -->
                     <forkMode>once</forkMode>
-                    <argLine>-javaagent:"${user.home}/.m2/repository/org/apache/openjpa/openjpa/${openjpa.version}/openjpa-${openjpa.version}.jar"</argLine>
+                    <!--argLine>-javaagent:"${user.home}/.m2/repository/org/apache/openjpa/openjpa/${openjpa.version}/openjpa-${openjpa.version}.jar"</argLine-->
                     
                     <systemProperties>
                         <property>
