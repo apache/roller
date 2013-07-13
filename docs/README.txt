@@ -1,11 +1,8 @@
+In this directory you'll find Roller docs in ODF format, various examples and test plans.
 
-In this directory you'll find:
-
-    userguide/      - User guide in Libre/Open Office 2.0 ODT 
-    installguide/   - User guide in Libre/Open Office 2.0 ODT 
-    examples/       - example configuration and script files
-    testing/        - Test plans (under development)
-   
-Libre/Open Office offers Export-to-PDF and -to-HTML options if desired.
-PDF is provided with each production release.
-
+    roller-install-guide.odt  - How to install Roller 
+    roller-user-guide.odt     - How to use Roller 
+    roller-template-guide.odt - How to create Roller templates and themes 
+    roller-dev-guide.odt      - Incomplete developer guide 
+    examples/                 - example configuration and script files
+    testing/                  - Test plans (under development)
