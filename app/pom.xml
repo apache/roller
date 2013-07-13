@@ -19,7 +19,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <openjpa.version>2.2.2</openjpa.version>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
         <testMediaDir>  ${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
         <testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
@@ -77,11 +76,30 @@
             </exclusions>
         </dependency>
 
-        <!-- OpenJPA deps -->
+        <!-- Eclipselink JPA is the default JPA implementation used by
+             Roller, comment out this dependency and uncomment OpenJPA's
+             or Hibernate's if you wish to test or deploy with those.
+
+             Logging, other special configuration during JUnit tests can be
+             placed in the src/test/resources/roller-custom.properties
+             file.
+         -->
         <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
+        <!-- To test with OpenJPA instead of EclipseLink, will need to add static
+             enhancement of the generated JPA classes to this pom.xml.  Check the
+             Roller source code repository for a copy of this pom.xml prior to
+             July 2013 for the necessary configuration (it will be in a
+             profile with ID "openjpa") -->
+
+        <!--dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
-            <version>${openjpa.version}</version>
+            <version>2.2.2</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -101,27 +119,13 @@
                     <groupId>asm</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency-->
 
-        <!-- To run JUnit tests using EclipseLink JPA instead of OpenJPA:
-         1.) Uncomment this dependency and comment-out the adjacent hibernate
-             and OpenJPA ones
-         2.) In src/test/resources/roller-custom.properties, uncomment any
-             eclipselink.* properties (JPA stack logging, etc.) desired
-         As of 4 July 2013, no JUnit failures with EclipseLink 2.5.0
 
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.5.0</version>
-        </dependency>
--->
+        <!-- Alternative testing with Hibernate (used by default
+             with JBoss -->
 
-        <!-- To run JUnit tests using Hibernate, follow above instructions
-             given for EclipseLink with appropriate modifications.
-             As of 4 July 2013, no JUnit failures with Hibernate 4.2.1-Final
-
-        <dependency>
+        <!--dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>4.2.1.Final</version>
@@ -132,8 +136,8 @@
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.6.1</version>
             <scope>runtime</scope>
-        </dependency>
--->
+        </dependency-->
+
 
         <dependency>
             <groupId>log4j</groupId>
@@ -1046,55 +1050,5 @@
         </resources>
 
     </build>
-
-    <profiles>
-
-        <!-- building for Tomcat, so add OpenJPA bytecode enhancement -->
-        <profile>
-            <id>openjpa</id>
-            <activation>
-                <property>
-                    <name>!javaee</name>
-                </property>
-            </activation> 
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.openjpa</groupId>
-                    <artifactId>openjpa</artifactId>
-                    <scope>compile</scope>
-                    <version>${openjpa.version}</version>
-                </dependency>
-            </dependencies>
-            <properties>
-                <jpaProviderClass>org.apache.openjpa.persistence.PersistenceProviderImpl</jpaProviderClass>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>openjpa-enhance</id>
-                                <phase>process-classes</phase>
-                                <configuration>
-                                    <tasks>
-                                        <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask"
-                                                 classpathref="maven.compile.classpath"/>
-                                        <openjpac enforcePropertyRestrictions="false">
-                                            <classpath refid="maven.compile.classpath"/>
-                                        </openjpac>
-                                    </tasks>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-    </profiles>  
 
 </project>
