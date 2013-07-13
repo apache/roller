@@ -96,8 +96,7 @@ public class JPAPersistenceStrategy {
             }
 
             if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-                emfProps.setProperty("javax.persistence.nonJtaDataSource", dbProvider.getJndiName());
-
+                emfProps.setProperty("javax.persistence.nonJtaDataSource", dbProvider.getFullJndiName());
             } else {
                 emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
                 emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());

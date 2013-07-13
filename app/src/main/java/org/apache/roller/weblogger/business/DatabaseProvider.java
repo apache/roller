@@ -120,7 +120,7 @@ public class DatabaseProvider  {
             
         // Else attempt to locate JNDI datasource
         } else { 
-            String name = (getJndiName().indexOf(":") == -1 ? "java:comp/env/" + getJndiName() : getJndiName());
+            String name = getFullJndiName();
             successMessage("-- Using JNDI datasource name: " + name);
             try {
                 InitialContext ic = new InitialContext();

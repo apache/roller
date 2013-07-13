@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
   <persistence-unit name="RollerPU" transaction-type="RESOURCE_LOCAL">
-    <non-jta-data-source>${datasourceName}</non-jta-data-source>
+    <!-- DB configuration done in roller-custom.properties (see Install guide)
+         Avoiding DB configuration here to allow the same persistence.xml to be used between
+         testing and prod (which have different DB configuration)
+    -->
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogBookmark.orm.xml          </mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryComment.orm.xml      </mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryAttribute.orm.xml    </mapping-file>

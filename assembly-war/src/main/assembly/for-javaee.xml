@@ -31,14 +31,14 @@
     <fileSets>  
         <fileSet>
             <outputDirectory></outputDirectory>
-            <directory>../webapp/target/roller</directory>
+            <directory>../app/target/roller</directory>
             <excludes>
                 <!-- don't include all those Jave EE jars that Tomcat needs -->
                 <exclude>**/openjpa**</exclude>
                 <exclude>**/geronimo**</exclude>
 
                 <!-- don't include Jetty config, needed for build time only -->
-                <exclude>**/jetty-env**</exclude>                
+                <exclude>**/jetty-env.xml</exclude>
             </excludes>
         </fileSet>
     </fileSets>

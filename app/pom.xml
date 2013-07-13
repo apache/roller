@@ -106,14 +106,7 @@
         <!-- To run JUnit tests using EclipseLink JPA instead of OpenJPA:
          1.) Uncomment this dependency and comment-out the adjacent hibernate
              and OpenJPA ones
-         2.) Comment-out the OpenJPA "-javaagent" line in the Surefire plugin
-             below and comment-out the OpenJPA profile in order to prevent
-             the OpenJPA bytecode enhancement
-         3.) In src/main/resources/META-INF/persistence.xml, comment-out the
-             <non-jta-data-source> element, as EclipseLink tries to do a
-             JNDI connection instead of relying on the jdbc properties if
-             the former is available.
-         4.) In src/test/resources/roller-custom.properties, uncomment any
+         2.) In src/test/resources/roller-custom.properties, uncomment any
              eclipselink.* properties (JPA stack logging, etc.) desired
          As of 4 July 2013, no JUnit failures with EclipseLink 2.5.0
 
@@ -881,10 +874,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
 
-                    <!-- Ensure tests will run even if 'openjpa' profile not active -->
                     <forkMode>once</forkMode>
-                    <!--argLine>-javaagent:"${user.home}/.m2/repository/org/apache/openjpa/openjpa/${openjpa.version}/openjpa-${openjpa.version}.jar"</argLine-->
-                    
+
                     <systemProperties>
                         <property>
                             <name>context.realpath</name>
@@ -1057,32 +1048,10 @@
     </build>
 
     <profiles>
-        
-        <profile>
-            <id>jboss</id>
-            <!-- building for JBoss, turn on 'java:/' prefix on datasource JNDI name -->
-            <activation>
-                <property><name>jboss</name></property>
-            </activation> 
-            <properties>
-                <datasourceName>java:/RollerDS</datasourceName>
-            </properties>
-        </profile>
 
-        <profile>
-            <id>notjboss</id>
-            <!-- not building for JBoss, don't use 'java:/' prefix on datasource JNDI name -->
-            <activation>
-                <property><name>!jboss</name></property>
-            </activation> 
-            <properties>
-                <datasourceName>jdbc/rollerdb</datasourceName>
-            </properties>
-        </profile>
-
+        <!-- building for Tomcat, so add OpenJPA bytecode enhancement -->
         <profile>
             <id>openjpa</id>
-            <!-- building for Tomcat, so add OpenJPA bytecode enhancement -->
             <activation>
                 <property>
                     <name>!javaee</name>
