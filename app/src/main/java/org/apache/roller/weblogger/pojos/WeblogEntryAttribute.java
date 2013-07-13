@@ -79,9 +79,9 @@ public class WeblogEntryAttribute implements Comparable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.name);
-        buf.append(", ").append(this.value);
+        buf.append(getId());
+        buf.append(", ").append(getName());
+        buf.append(", ").append(getValue());
         buf.append("}");
         return buf.toString();
     }

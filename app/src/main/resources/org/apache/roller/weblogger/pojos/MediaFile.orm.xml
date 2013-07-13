@@ -61,7 +61,7 @@
             <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="weblogid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <one-to-many name="tags" mapped-by="mediaFile" target-entity="org.apache.roller.weblogger.pojos.MediaFileTag">
+            <one-to-many name="tags" mapped-by="mediaFile" target-entity="org.apache.roller.weblogger.pojos.MediaFileTag" fetch="LAZY">
                 <cascade>
                     <cascade-persist /> <!-- Added so entry added by addTag() gets persisted -->
                     <cascade-remove />
@@ -73,6 +73,7 @@
             <transient name="path"/>
             <transient name="creator"/>
             <transient name="imageFile"/>
+            <transient name="tagsAsString"/>
             <transient name="inputStream"/>
             <transient name="thumbnailInputStream"/>
             <transient name="thumbnailHeight"/>

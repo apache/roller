@@ -91,8 +91,8 @@ public class WeblogCategory implements Serializable, Comparable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.path);
+        buf.append(getId());
+        buf.append(", ").append(getPath());
         buf.append("}");
         return buf.toString();
     }
@@ -307,7 +307,7 @@ public class WeblogCategory implements Serializable, Comparable {
             return false;
         } else {
             // if our path starts with our parents path then we are a descendent
-            return this.path.startsWith(ancestor.getPath());
+            return getPath().startsWith(ancestor.getPath());
         }
     }
     

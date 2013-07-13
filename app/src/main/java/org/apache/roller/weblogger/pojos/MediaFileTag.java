@@ -18,47 +18,76 @@
 
 package org.apache.roller.weblogger.pojos;
 
+import java.io.Serializable;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Represents the tag for media files.
- *
+ * 
  */
-public class MediaFileTag {
-	
-	private String id = UUIDGenerator.generateUUID();
-	String name;
-	MediaFile mediaFile;
-	
-	public MediaFileTag() {
-	}
+public class MediaFileTag implements Serializable {
 
-	public MediaFileTag(String name, MediaFile mediaFile) {
-		this.name = name;
-		this.mediaFile = mediaFile;
-	}
+    private static final long serialVersionUID = -1349427373511141841L;
 
-	public String getId() {
-		return id;
-	}
+    private String id = UUIDGenerator.generateUUID();
+    private String name;
+    private MediaFile mediaFile;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public MediaFileTag() {
+    }
 
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
+    public MediaFileTag(String name, MediaFile mediaFile) {
+        this.name = name;
+        this.mediaFile = mediaFile;
+    }
 
-	public MediaFile getMediaFile() {
-		return mediaFile;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setMediaFile(MediaFile mediaFile) {
-		this.mediaFile = mediaFile;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public MediaFile getMediaFile() {
+        return mediaFile;
+    }
+
+    public void setMediaFile(MediaFile mediaFile) {
+        this.mediaFile = mediaFile;
+    }
+
+    // ------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return "MediaFileTag [id=" + getId() + ", name=" + getName() + ", mediaFile="
+                + getMediaFile() + "]";
+    }
+
+    public boolean equals(Object other) {
+        if (other == this)
+            return true;
+        if (other instanceof MediaFileTag != true)
+            return false;
+        MediaFileTag o = (MediaFileTag) other;
+        return new EqualsBuilder().append(getName(), o.getName())
+                .append(getMediaFile(), o.getMediaFile()).isEquals();
+    }
+
+    public int hashCode() {
+        return new HashCodeBuilder().append(getName()).append(getMediaFile())
+                .toHashCode();
+    }
+
 }

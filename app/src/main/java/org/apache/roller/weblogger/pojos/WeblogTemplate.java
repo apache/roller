@@ -75,12 +75,12 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     
     
     public ThemeTemplate getDecorator() {
-        if(decoratorName != null && !id.equals(decoratorName)) {
+        if(getDecoratorName() != null && !getId().equals(getDecoratorName())) {
             try {
-                return weblog.getTheme().getTemplateByName(decoratorName);
+                return weblog.getTheme().getTemplateByName(getDecoratorName());
             } catch (WebloggerException ex) {
-                log.error("Error getting decorator["+decoratorName+"] "+
-                        "for template "+id);
+                log.error("Error getting decorator["+getDecoratorName()+"] "+
+                        "for template "+getId());
             }
         }
         return null;
@@ -221,7 +221,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         * eventually, the required flag should probably be stored in the db
         * and possibly applicable to any template.
         */
-        return (requiredTemplates.contains(this.name) || "Weblog".equals(this.link));
+        return (requiredTemplates.contains(getName()) || "Weblog".equals(getLink()));
     }
     
     
@@ -234,7 +234,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     }
 
     public WeblogThemeTemplateCode getTemplateCode(String type) throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateCodeByType(this.id, type);
+        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateCodeByType(getId(), type);
     }
 
       public String getType() {
@@ -251,11 +251,11 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.name);
-        buf.append(", ").append(this.link);
-        buf.append(", ").append(this.decoratorName);
-        buf.append(", ").append(this.templateLanguage);
+        buf.append(getId());
+        buf.append(", ").append(getName());
+        buf.append(", ").append(getLink());
+        buf.append(", ").append(getDecoratorName());
+        buf.append(", ").append(getTemplateLanguage());
         buf.append("}");
         return buf.toString();
     }
@@ -265,7 +265,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         if (other instanceof WeblogTemplate != true) return false;
         WeblogTemplate o = (WeblogTemplate)other;
         return new EqualsBuilder()
-            .append(name, o.getName()) 
+            .append(getName(), o.getName())
             .append(getWebsite(), o.getWebsite()) 
             .isEquals();
     }

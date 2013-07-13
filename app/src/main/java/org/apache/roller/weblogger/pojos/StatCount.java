@@ -104,8 +104,8 @@ public class StatCount {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.weblogHandle);
-        buf.append(", ").append(this.count);
+        buf.append(getWeblogHandle());
+        buf.append(", ").append(getCount());
         buf.append("}");
         return buf.toString();
     }

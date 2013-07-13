@@ -148,10 +148,10 @@ public class WeblogReferrer implements Serializable {
     }
     
     public void setRefererUrl(String refererUrl) {
-        this.refererUrl = refererUrl;
-        if (this.refererUrl != null && this.refererUrl.length() > 255) {
-            this.refererUrl = this.refererUrl.substring(0, 255);
+        if (refererUrl != null && refererUrl.length() > 255) {
+            refererUrl = refererUrl.substring(0, 255);
         }
+        this.refererUrl = refererUrl;
     }
     
     /**
@@ -345,11 +345,11 @@ public class WeblogReferrer implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.requestUrl);
-        buf.append(", ").append(this.refererUrl);
-        buf.append(", ").append(this.dayHits);
-        buf.append(", ").append(this.totalHits);
+        buf.append(getId());
+        buf.append(", ").append(getRequestUrl());
+        buf.append(", ").append(getRefererUrl());
+        buf.append(", ").append(getDayHits());
+        buf.append(", ").append(getTotalHits());
         buf.append("}");
         return buf.toString();
     }

@@ -140,9 +140,9 @@ public class WeblogEntryTag implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.name);
-        buf.append(", ").append(this.time);
+        buf.append(getId());
+        buf.append(", ").append(getName());
+        buf.append(", ").append(getTime());
         buf.append("}");
         return buf.toString();
     }

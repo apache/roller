@@ -277,7 +277,7 @@ public class WeblogEntryComment implements Serializable {
      * Indicates that weblog owner considers this comment to be spam.
      */
     public Boolean getSpam() {
-        return new Boolean(SPAM.equals(this.status));
+        return new Boolean(SPAM.equals(getStatus()));
     }
     
     
@@ -285,7 +285,7 @@ public class WeblogEntryComment implements Serializable {
      * True if comment has is pending moderator approval.
      */
     public Boolean getPending() {
-        return new Boolean(PENDING.equals(this.status));
+        return new Boolean(PENDING.equals(getStatus()));
     }
     
     
@@ -293,7 +293,7 @@ public class WeblogEntryComment implements Serializable {
      * Indicates that comment has been approved for display on weblog.
      */
     public Boolean getApproved() {
-        return new Boolean(APPROVED.equals(this.status));
+        return new Boolean(APPROVED.equals(getStatus()));
     }
     
     
@@ -301,8 +301,8 @@ public class WeblogEntryComment implements Serializable {
      * Timestamp to be used to formulate comment permlink.
      */
     public String getTimestamp() {
-        if (postTime != null) {
-            return Long.toString(postTime.getTime());
+        if (getPostTime() != null) {
+            return Long.toString(getPostTime().getTime());
         }
         return null;
     }
@@ -312,10 +312,10 @@ public class WeblogEntryComment implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.name);
-        buf.append(", ").append(this.email);
-        buf.append(", ").append(this.postTime);
+        buf.append(getId());
+        buf.append(", ").append(getName());
+        buf.append(", ").append(getEmail());
+        buf.append(", ").append(getPostTime());
         buf.append("}");
         return buf.toString();
     }

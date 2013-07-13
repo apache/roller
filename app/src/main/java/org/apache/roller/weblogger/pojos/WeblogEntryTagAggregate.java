@@ -108,10 +108,10 @@ public class WeblogEntryTagAggregate implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.name);
-        buf.append(", ").append(this.total);
-        buf.append(", ").append(this.lastUsed);
+        buf.append(getId());
+        buf.append(", ").append(getName());
+        buf.append(", ").append(getTotal());
+        buf.append(", ").append(getLastUsed());
         buf.append("}");
         return buf.toString();
     }

@@ -111,10 +111,10 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("{");
-		buf.append(this.id);
-		buf.append(", ").append(this.templateId);
-		buf.append(", [ ").append(this.template);
-		buf.append("] , ").append(this.type);
+		buf.append(getId());
+		buf.append(", ").append(getTemplateId());
+		buf.append(", [ ").append(getTemplate());
+		buf.append("] , ").append(getType());
 		buf.append("}");
 		return buf.toString();
 	}
@@ -125,8 +125,8 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 		if (other instanceof WeblogThemeTemplateCode != true)
 			return false;
 		WeblogThemeTemplateCode o = (WeblogThemeTemplateCode) other;
-		return new EqualsBuilder().append(templateId, o.getTemplateId())
-				.append(template, o.getTemplate()).isEquals();
+		return new EqualsBuilder().append(getTemplateId(), o.getTemplateId())
+				.append(getTemplate(), o.getTemplate()).isEquals();
 	}
 
 	public int hashCode() {

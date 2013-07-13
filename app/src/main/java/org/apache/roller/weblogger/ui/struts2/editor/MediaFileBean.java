@@ -17,34 +17,29 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileTag;
 
 /**
  * Bean for managing media file.
  */
 public class MediaFileBean {
 
-    private String  id;
-    private String  name;
-    private String  description;
-    private String  contentType;
-    private String  copyrightText;
-    private String  tags;
-    private String  directoryId;
+    private String id;
+    private String name;
+    private String description;
+    private String contentType;
+    private String copyrightText;
+    private String tagsAsString;
+    private String directoryId;
     private boolean isSharedForGallery;
-    private String  permalink;
-    private String  thumbnailURL;
+    private String permalink;
+    private String thumbnailURL;
     private boolean isImage;
-    private int     width;
-    private int     height;
-    private long    length;
-    private String  originalPath;
+    private int width;
+    private int height;
+    private long length;
+    private String originalPath;
 
     public String getName() {
         return name;
@@ -70,12 +65,12 @@ public class MediaFileBean {
         this.copyrightText = copyrightText;
     }
 
-    public String getTags() {
-        return tags;
+    public String getTagsAsString() {
+        return this.tagsAsString;
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public void setTagsAsString(String tagsAsString) {
+        this.tagsAsString = tagsAsString;
     }
 
     public String getDirectoryId() {
@@ -111,22 +106,13 @@ public class MediaFileBean {
         dataHolder.setName(this.name);
         dataHolder.setDescription(this.description);
         dataHolder.setCopyrightText(this.copyrightText);
-
-		if (StringUtils.isNotEmpty(tags)) {
-			Set<MediaFileTag> tagsSet = new HashSet<MediaFileTag>();
-			for (String tag : this.tags.split(" ")) {
-				tagsSet.add(new MediaFileTag(tag, dataHolder));
-			}
-			dataHolder.setTags(tagsSet);
-		} else {
-			dataHolder.setTags(null);
-		}
+        dataHolder.setTagsAsString(this.tagsAsString);
         dataHolder.setSharedForGallery(this.isSharedForGallery);
         dataHolder.setOriginalPath(this.originalPath);
     }
 
     /**
-     * Populates this bean from a media file object. 
+     * Populates this bean from a media file object.
      * 
      */
     public void copyFrom(MediaFile dataHolder) {
@@ -134,22 +120,7 @@ public class MediaFileBean {
         this.setName(dataHolder.getName());
         this.setDescription(dataHolder.getDescription());
         this.setCopyrightText(dataHolder.getCopyrightText());
-
-        Set<MediaFileTag> tags = dataHolder.getTags();
-        if (tags != null && !tags.isEmpty()) {
-            StringBuilder tagDisplayBuilder = new StringBuilder();
-            for (MediaFileTag tag : dataHolder.getTags()) {
-            	if (StringUtils.isNotEmpty(tag.getName())) {
-            		tagDisplayBuilder.append(tag.getName());
-                    tagDisplayBuilder.append(" ");
-				}
-            }
-			if (tagDisplayBuilder.length() > 0) {
-				tagDisplayBuilder.deleteCharAt(tagDisplayBuilder.length() - 1);
-			}
-            this.setTags(tagDisplayBuilder.toString());
-        }
-
+        this.setTagsAsString(dataHolder.getTagsAsString());
         this.setSharedForGallery(dataHolder.isSharedForGallery());
         this.setDirectoryId(dataHolder.getDirectory().getId());
         this.setPermalink(dataHolder.getPermalink());
@@ -170,7 +141,8 @@ public class MediaFileBean {
     }
 
     /**
-     * @param permalink the permalink to set
+     * @param permalink
+     *            the permalink to set
      */
     public void setPermalink(String permalink) {
         this.permalink = permalink;
@@ -184,7 +156,8 @@ public class MediaFileBean {
     }
 
     /**
-     * @param isImage the isImage to set
+     * @param isImage
+     *            the isImage to set
      */
     public void setIsImage(boolean isImage) {
         this.isImage = isImage;
@@ -198,7 +171,8 @@ public class MediaFileBean {
     }
 
     /**
-     * @param thumbnailURL the thumbnailURL to set
+     * @param thumbnailURL
+     *            the thumbnailURL to set
      */
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
@@ -212,7 +186,8 @@ public class MediaFileBean {
     }
 
     /**
-     * @param width the width to set
+     * @param width
+     *            the width to set
      */
     public void setWidth(int width) {
         this.width = width;
@@ -226,7 +201,8 @@ public class MediaFileBean {
     }
 
     /**
-     * @param height the height to set
+     * @param height
+     *            the height to set
      */
     public void setHeight(int height) {
         this.height = height;
@@ -240,7 +216,8 @@ public class MediaFileBean {
     }
 
     /**
-     * @param length the length to set
+     * @param length
+     *            the length to set
      */
     public void setLength(long length) {
         this.length = length;
@@ -254,7 +231,8 @@ public class MediaFileBean {
     }
 
     /**
-     * @param contentType the contentType to set
+     * @param contentType
+     *            the contentType to set
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
@@ -268,7 +246,8 @@ public class MediaFileBean {
     }
 
     /**
-     * @param originalPath the originalPath to set
+     * @param originalPath
+     *            the originalPath to set
      */
     public void setOriginalPath(String originalPath) {
         this.originalPath = originalPath;

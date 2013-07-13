@@ -209,8 +209,8 @@ public class PlanetGroup implements Serializable, Comparable {
     
     
     private String[] getCategoryRestrictionAsArray() {
-        if (catArray == null && categoryRestriction != null) {
-            StringTokenizer toker = new StringTokenizer(categoryRestriction,",");
+        if (catArray == null && getCategoryRestriction() != null) {
+            StringTokenizer toker = new StringTokenizer(getCategoryRestriction(),",");
             catArray = new String[toker.countTokens()];
             int i = 0;
             

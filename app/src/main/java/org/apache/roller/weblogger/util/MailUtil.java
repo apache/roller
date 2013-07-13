@@ -344,7 +344,9 @@ public class MailUtil {
         }
         
         if (!StringUtils.isEmpty(commentObject.getName())) {
-            msg.append(commentObject.getName() + " "
+            String emailAddress = StringUtils.isBlank(commentObject.getEmail()) ? " " :
+                    " (" + commentObject.getEmail() + ") ";
+            msg.append(commentObject.getName() + emailAddress
                     + resources.getString("email.comment.wrote")+": ");
         } else {
             msg.append(resources.getString("email.comment.anonymous")+": ");

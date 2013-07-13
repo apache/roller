@@ -244,8 +244,8 @@ public class WeblogBookmark implements Serializable, Comparable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.url);
+        buf.append(getId());
+        buf.append(", ").append(getUrl());
         buf.append("}");
         return buf.toString();
     }
@@ -278,7 +278,7 @@ public class WeblogBookmark implements Serializable, Comparable {
     private BookmarkComparator bookmarkComparator = new BookmarkComparator();
     
     public Weblog getWebsite() {
-        return this.folder.getWebsite();
+        return getFolder().getWebsite();
     }
     
 }
