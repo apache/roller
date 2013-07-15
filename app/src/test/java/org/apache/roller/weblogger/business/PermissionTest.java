@@ -318,7 +318,10 @@ public class PermissionTest extends TestCase {
         WeblogPermission perm2 = 
             new WeblogPermission(testWeblog, testUser, WeblogPermission.POST);
         assertTrue(umgr.checkPermission(perm, testUser));
-        
+
+        // cleanup the extra test user
+        TestUtils.teardownUser(adminUser.getUserName());
+        TestUtils.endSession(true);
         log.info("END");
     }
 }
