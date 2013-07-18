@@ -18,7 +18,6 @@
 
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
         <testMediaDir>  ${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
         <testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
@@ -49,12 +48,6 @@
             <url>http://oss.sonatype.org/content/groups/public</url>
         </repository>
 
-        <!-- for jstl-1.2 for now.. -->
-        <repository>
-            <id>java.net</id>
-            <url>http://download.java.net/maven/2/</url>
-        </repository>
-
         <repository>
             <id>com.atlassian</id>
             <name>Atlassian Repository</name>
@@ -68,17 +61,11 @@
             <groupId>org.apache.roller</groupId>
             <artifactId>test-utils</artifactId>
             <version>${roller.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-lang</artifactId>
-                    <groupId>commons-lang</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Eclipselink JPA is the default JPA implementation used by
-             Roller, comment out this dependency and uncomment OpenJPA's
-             or Hibernate's if you wish to test or deploy with those.
+             Roller, comment out this dependency and uncomment Hibernate's
+             to use that stack instead.
 
              Logging, other special configuration during JUnit tests can be
              placed in the src/test/resources/roller-custom.properties
@@ -89,38 +76,6 @@
             <artifactId>eclipselink</artifactId>
             <version>2.5.0</version>
         </dependency>
-
-        <!-- To test with OpenJPA instead of EclipseLink, will need to add static
-             enhancement of the generated JPA classes to this pom.xml.  Check the
-             Roller source code repository for a copy of this pom.xml prior to
-             July 2013 for the necessary configuration (it will be in a
-             profile with ID "openjpa") -->
-
-        <!--dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa</artifactId>
-            <version>2.2.2</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-pool</groupId>
-                    <artifactId>commons-pool</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-lang</artifactId>
-                    <groupId>commons-lang</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>asm</artifactId>
-                    <groupId>asm</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency-->
-
 
         <!-- Alternative testing with Hibernate (used by default
              with JBoss -->
@@ -138,6 +93,10 @@
             <scope>runtime</scope>
         </dependency-->
 
+        <!-- To test with OpenJPA instead of EclipseLink, will need to add OpenJPA
+             dependencies and static bytecode enhancement of the generated JPA classes
+             to this pom.xml.  Check the Roller source code repository for a copy of
+             this pom.xml prior to July 2013 for the necessary OpenJPA configuration -->
 
         <dependency>
             <groupId>log4j</groupId>
@@ -152,22 +111,9 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-            <version>4.11</version>
         </dependency>
 
         <dependency>
@@ -181,28 +127,6 @@
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.7</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-lang</artifactId>
-                    <groupId>commons-lang</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.texen</groupId>
-            <artifactId>texen</artifactId>
-            <version>1.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>velocity</artifactId>
-                    <groupId>velocity</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-lang</artifactId>
-                    <groupId>commons-lang</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -252,8 +176,8 @@
         <!-- web -->
 
         <dependency>
-	    <artifactId>servlet-api</artifactId>
-	    <groupId>javax.servlet</groupId>
+	        <artifactId>servlet-api</artifactId>
+	        <groupId>javax.servlet</groupId>
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
@@ -262,12 +186,6 @@
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
             <version>2.3.14</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>asm</artifactId>
-                    <groupId>asm</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- needed by Struts, except on JBoss -->
@@ -306,6 +224,8 @@
             <artifactId>struts2-tiles-plugin</artifactId>
             <version>2.3.14</version>
             <exclusions>
+                <!-- Excluding commons-logging-api as it's a subset of
+                     already-supplied commons-logging -->
                 <exclusion>
                     <artifactId>commons-logging-api</artifactId>
                     <groupId>commons-logging</groupId>
@@ -317,12 +237,6 @@
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
             <version>2.0.6</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-beanutils</artifactId>
-                    <groupId>commons-beanutils</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -330,6 +244,8 @@
             <artifactId>tiles-api</artifactId>
             <version>2.0.6</version>
             <exclusions>
+                <!-- Excluding commons-logging-api as it's a subset of
+                     already-supplied commons-logging -->
                 <exclusion>
                     <artifactId>commons-logging-api</artifactId>
                     <groupId>commons-logging</groupId>
@@ -373,22 +289,6 @@
                     <artifactId>activation</artifactId>
                     <groupId>javax.activation</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>servlet-api</artifactId>
-                    <groupId>javax.servlet</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-beanutils</artifactId>
-                    <groupId>commons-beanutils</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-lang</artifactId>
-                    <groupId>commons-lang</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
 
@@ -422,12 +322,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
             <version>2.0.7.RELEASE</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -470,12 +364,6 @@
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap</artifactId>
             <version>1.2</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-lang</artifactId>
-                    <groupId>commons-lang</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- OpenID deps -->
@@ -541,18 +429,6 @@
             <version>1.3.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.9.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>xml-apis</artifactId>
-                    <groupId>xml-apis</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- Java EE deps -->
 
         <dependency>
@@ -603,10 +479,6 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
 
@@ -618,14 +490,12 @@
             <artifactId>derby</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbynet</artifactId>
             <version>${derby.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
@@ -637,23 +507,11 @@
             <artifactId>commons-validator</artifactId>
             <version>1.3.1</version>
             <type>jar</type>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-beanutils</artifactId>
-                    <groupId>commons-beanutils</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -661,24 +519,14 @@
             <version>1.7.0</version>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>3.3</version>
-        </dependency>
-        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.5</version>
         </dependency>
         <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-            <version>1.3.04</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
