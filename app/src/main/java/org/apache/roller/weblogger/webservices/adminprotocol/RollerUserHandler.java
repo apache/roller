@@ -17,14 +17,12 @@
  */
 package org.apache.roller.weblogger.webservices.adminprotocol;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
-import org.jdom.JDOMException;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;

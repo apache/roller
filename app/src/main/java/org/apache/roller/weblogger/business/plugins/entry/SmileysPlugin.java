@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.plugins.entry;
 
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

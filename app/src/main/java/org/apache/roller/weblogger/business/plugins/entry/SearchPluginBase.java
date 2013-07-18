@@ -27,7 +27,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.FieldPosition;
 import java.text.MessageFormat;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

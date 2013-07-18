@@ -24,9 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
-import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.runnable.ScheduledEntriesTask;
 
 
 /**

@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.business.plugins.entry;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;

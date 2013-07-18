@@ -18,15 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.util.DateUtil;
 
 
 /**

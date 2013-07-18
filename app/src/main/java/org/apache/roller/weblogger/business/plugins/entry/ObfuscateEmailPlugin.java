@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business.plugins.entry;
 
-import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

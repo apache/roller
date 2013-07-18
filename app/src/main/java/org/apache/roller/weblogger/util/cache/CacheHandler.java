@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.util.cache;
 
-import java.util.Map;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;

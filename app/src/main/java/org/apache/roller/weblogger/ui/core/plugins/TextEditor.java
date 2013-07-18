@@ -18,10 +18,6 @@
 
 package org.apache.roller.weblogger.ui.core.plugins;
 
-import java.util.Locale;
-import org.apache.roller.weblogger.util.I18nMessages;
-
-
 /**
  * The default text editor.  Basically just plain html textareas.
  */

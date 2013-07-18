@@ -18,10 +18,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity.deprecated;
 
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;

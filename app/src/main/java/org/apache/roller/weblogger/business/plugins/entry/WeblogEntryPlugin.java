@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business.plugins.entry;
 
-import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;

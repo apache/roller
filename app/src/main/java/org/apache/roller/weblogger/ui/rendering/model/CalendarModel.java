@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.Locale;
 import java.util.Map;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;

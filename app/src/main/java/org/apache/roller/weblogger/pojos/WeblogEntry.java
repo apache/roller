@@ -53,7 +53,6 @@ import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.Utilities;
 

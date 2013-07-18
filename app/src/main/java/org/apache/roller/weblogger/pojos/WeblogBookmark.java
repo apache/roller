@@ -18,8 +18,6 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import org.apache.roller.weblogger.business.BookmarkManager;
-
 import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;

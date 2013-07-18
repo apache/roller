@@ -18,7 +18,6 @@
 
 package org.apache.roller.planet.business.updater;
 
-import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 
@@ -42,8 +41,8 @@ public interface FeedUpdater {
      * the data from the subscriptions source after fetching an updated version 
      * of the subscription.
      *
-     * @param subscription The PlanetSubscription to be updated.
-     * @throws FetcherException If there is an error updating the subscription.
+     * @param sub The PlanetSubscription to be updated.
+     * @throws org.apache.roller.planet.business.fetcher.FetcherException If there is an error updating the subscription.
      */
     public void updateSubscription(Subscription sub) throws UpdaterException;
     

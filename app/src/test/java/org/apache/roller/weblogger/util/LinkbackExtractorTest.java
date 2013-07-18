@@ -57,8 +57,8 @@ public class LinkbackExtractorTest extends TestCase {
         {
             // Second URL contains a link to the first
             {
-                "http://www.atomenabled.org",
-                        "http://rollerweblogger.org/roller/entry/wip_feed_based_integration"
+                "http://cassandra.apache.org/",
+                        "http://rollerweblogger.org/roller/entry/composite_keys_in_cassandra"
             },
             {
                 "http://rollermobile.blogspot.com/",
@@ -67,7 +67,7 @@ public class LinkbackExtractorTest extends TestCase {
         };
 
         LinkbackExtractor le = new LinkbackExtractor(testrefs[0][0],testrefs[0][1]);
-        assertEquals("AtomEnabled.org", le.getTitle());
+        assertEquals("The Apache Cassandra Project", le.getTitle());
         le = new LinkbackExtractor(testrefs[1][0],testrefs[1][1]);
         assertEquals("Apache Roller Mobile Platform", le.getTitle());
 

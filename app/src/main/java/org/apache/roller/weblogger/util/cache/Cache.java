@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.util.cache;
 
 import java.util.Map;
-import java.util.Set;
 
 
 /**

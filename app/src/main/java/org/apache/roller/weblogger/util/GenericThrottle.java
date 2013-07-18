@@ -80,7 +80,7 @@ public class GenericThrottle {
      * then returns a boolean value indicating if the hit has pushed the client
      * over the threshold.
      *
-     * @retuns true if client is abusive, false otherwise
+     * @return true if client is abusive, false otherwise
      */
     public boolean processHit(String clientId) {
         
@@ -120,8 +120,7 @@ public class GenericThrottle {
             // first timer
             ClientInfo newClient = new ClientInfo();
             newClient.hits = 1;
-            newClient.id = clientId;
-            
+
             ExpiringCacheEntry newEntry = new ExpiringCacheEntry(newClient, this.interval);
             this.clientHistoryCache.put(clientId, newEntry);
         }
@@ -169,7 +168,6 @@ public class GenericThrottle {
     // just something to keep a few properties in
     private class ClientInfo {
         
-        public String id = null;
         public int hits = 0;
         public java.util.Date start = new java.util.Date();
         

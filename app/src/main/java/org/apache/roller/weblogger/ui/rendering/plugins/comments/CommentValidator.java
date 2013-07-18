@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
-import javax.servlet.http.HttpServletRequest;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
 

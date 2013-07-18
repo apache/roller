@@ -25,9 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jdom.Document;
-import org.jdom.output.XMLOutputter;
-import org.jdom.output.Format;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
 
 /**

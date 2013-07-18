@@ -18,12 +18,9 @@ package org.apache.roller.planet.util.rome;
 
 import java.util.Date;
 
-import com.sun.syndication.feed.WireFeed;
 import com.sun.syndication.feed.module.DCModule;
-import com.sun.syndication.feed.rss.Channel;
 import com.sun.syndication.feed.rss.Item;
 import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.impl.ConverterForRSS20;
 
 /**
