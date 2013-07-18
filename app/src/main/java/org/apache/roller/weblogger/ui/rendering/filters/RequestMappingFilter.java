@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.RequestMapper;
 
 /**
- * Provides generalized request mapping capablilites.
+ * Provides generalized request mapping capabilities.
  *
  * Incoming requests can be inspected by a series of RequestMappers and can
  * potentially be re-routed to different places within the application.

@@ -61,13 +61,6 @@ public class PersistenceSessionFilter implements Filter {
             if (WebloggerFactory.isBootstrapped()) {
                 log.debug("Releasing Roller Session");
                 WebloggerFactory.getWeblogger().release();
-                
-                // if planet is enabled then release planet backend as well
-                if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
-                    if (WebloggerFactory.isBootstrapped()) {
-                        WebloggerFactory.getWeblogger().release();
-                    }
-                }
             }
             
         }

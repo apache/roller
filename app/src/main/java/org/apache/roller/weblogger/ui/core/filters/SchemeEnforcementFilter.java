@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 
 /**
  * The SchemeEnforcementFilter is provided for Roller sites that enable secure
- * logins and want to ensure that only login urls are used under https.
+ * logins and want to ensure that login urls are used only under https.
  * 
  * @author Allen Gilliland
  * 

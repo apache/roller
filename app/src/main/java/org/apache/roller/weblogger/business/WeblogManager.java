@@ -39,46 +39,46 @@ public interface WeblogManager {
      * creates categories and other objects required for new website.
      * @param newWebsite New website to be created, must have creator.
      */
-    public void addWeblog(Weblog newWebsite) throws WebloggerException;
+    void addWeblog(Weblog newWebsite) throws WebloggerException;
     
     
     /**
      * Store a single weblog.
      */
-    public void saveWeblog(Weblog data) throws WebloggerException;
+    void saveWeblog(Weblog data) throws WebloggerException;
 
     /**
      * Save new theme associativity for Weblog
      * @param themeAssoc
      * @throws WebloggerException
      */
-    public void saveThemeAssoc(WeblogThemeAssoc themeAssoc) throws WebloggerException;
+    void saveThemeAssoc(WeblogThemeAssoc themeAssoc) throws WebloggerException;
     
     
     /**
      * Remove website object.
      */
-    public void removeWeblog(Weblog website) throws WebloggerException;
+    void removeWeblog(Weblog website) throws WebloggerException;
     
     
     /**
      * Get website object by name.
      */
-    public Weblog getWeblog(String id) throws WebloggerException;
+    Weblog getWeblog(String id) throws WebloggerException;
     
     
     /**
      * Get website specified by handle (or null if enabled website not found).
      * @param handle  Handle of website
      */
-    public Weblog getWeblogByHandle(String handle) throws WebloggerException;
+    Weblog getWeblogByHandle(String handle) throws WebloggerException;
     
     
     /**
      * Get website specified by handle with option to return only enabled websites.
      * @param handle  Handle of website
      */
-    public Weblog getWeblogByHandle(String handle, Boolean enabled)
+    Weblog getWeblogByHandle(String handle, Boolean enabled)
         throws WebloggerException;
     
     
@@ -92,7 +92,7 @@ public interface WeblogManager {
      * @param length    Maximum number of results to return (for paging)
      * @return List of WebsiteData objects.
      */
-    public List getWeblogs(
+    List getWeblogs(
             Boolean  enabled,
             Boolean  active,
             Date     startDate,
@@ -108,7 +108,7 @@ public interface WeblogManager {
      * @param enabledOnly Include only enabled weblogs?
      * @return List of WebsiteData objects.
      */
-    public List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException;
+    List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException;
     
     
     /**
@@ -117,7 +117,7 @@ public interface WeblogManager {
      * @param enabledOnly Include only enabled users?
      * @return List of WebsiteData objects.
      */
-    public List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
+    List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
     
     
     /**
@@ -128,7 +128,7 @@ public interface WeblogManager {
      * @param len       Maximum number of results to return (for paging)
      * @return List of WebsiteData objects.
      */
-    public List getMostCommentedWeblogs(
+    List getMostCommentedWeblogs(
             Date startDate,
             Date endDate,
             int  offset,
@@ -141,81 +141,81 @@ public interface WeblogManager {
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.
      */
-    public Map getWeblogHandleLetterMap() throws WebloggerException;
+    Map getWeblogHandleLetterMap() throws WebloggerException;
     
     
     /** 
      * Get collection of weblogs whose handles begin with specified letter 
      */
-    public List getWeblogsByLetter(char letter, int offset, int length) 
+    List getWeblogsByLetter(char letter, int offset, int length)
         throws WebloggerException;
     
         /**
      * Store page.
      */
-    public void savePage(WeblogTemplate data) throws WebloggerException;
+    void savePage(WeblogTemplate data) throws WebloggerException;
     
     
     /**
      * Remove page.
      */
-    public void removePage(WeblogTemplate page) throws WebloggerException;
+    void removePage(WeblogTemplate page) throws WebloggerException;
     
     
     /**
      * Get page by id.
      */
-    public WeblogTemplate getPage(String id) throws WebloggerException;
+    WeblogTemplate getPage(String id) throws WebloggerException;
     
     
     /**
      * Get user's page by action.
      */
-    public WeblogTemplate getPageByAction(Weblog w, String a) throws WebloggerException;
+    WeblogTemplate getPageByAction(Weblog w, String a) throws WebloggerException;
     
     
     /**
      * Get user's page by name.
      */
-    public WeblogTemplate getPageByName(Weblog w, String p) throws WebloggerException;
+    WeblogTemplate getPageByName(Weblog w, String p) throws WebloggerException;
     
     
     /**
      * Get website's page by link.
      */
-    public WeblogTemplate getPageByLink(Weblog w, String p)
+    WeblogTemplate getPageByLink(Weblog w, String p)
         throws WebloggerException;
 
     /**
      * Get template code by Type.
      */
-    public WeblogThemeTemplateCode getTemplateCodeByType(String templateName, String type)
+    WeblogThemeTemplateCode getTemplateCodeByType(String templateName, String type)
             throws WebloggerException ;
 
     /**
      * Save template code
      */
-     public void saveTemplateCode(WeblogThemeTemplateCode templateCode) throws WebloggerException;
+     void saveTemplateCode(WeblogThemeTemplateCode templateCode) throws WebloggerException;
 
     /**
      * Get website's pages
      */
-    public List getPages(Weblog w) throws WebloggerException;
+    List getPages(Weblog w) throws WebloggerException;
    
     
     /**
      * Get count of active weblogs
      */    
-    public long getWeblogCount() throws WebloggerException;
+    long getWeblogCount() throws WebloggerException;
     
     
     /**
      * Release any resources held by manager.
      */
-    public void release();
+    void release();
 
     /**
      *   get Theme Associativity object for type
      */
-    public WeblogThemeAssoc getThemeAssoc(Weblog weblog , String type) throws WebloggerException;
+    WeblogThemeAssoc getThemeAssoc(Weblog weblog , String type) throws WebloggerException;
 }

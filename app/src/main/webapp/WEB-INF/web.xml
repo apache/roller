@@ -26,11 +26,6 @@
     </filter>
 
     <filter>
-        <filter-name>DebugFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.core.filters.DebugFilter</filter-class>
-    </filter>
-
-    <filter>
         <filter-name>PersistenceSessionFilter</filter-name>
         <filter-class>org.apache.roller.weblogger.ui.core.filters.PersistenceSessionFilter</filter-class>
     </filter>
@@ -39,15 +34,6 @@
         <filter-name>BootstrapFilter</filter-name>
         <filter-class>org.apache.roller.weblogger.ui.core.filters.BootstrapFilter</filter-class>
     </filter>
-
-    <!--
-    Most app servers support compression, if yours doesn't then use this one,
-    but don't forget to uncomment the mapping below too.
-    <filter>
-        <filter-name>CompressionFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.core.filters.CompressionFilter</filter-class>
-    </filter>
-    -->
 
     <filter>
         <filter-name>RequestMappingFilter</filter-name>
@@ -84,15 +70,15 @@
 		<filter-class>org.apache.roller.weblogger.ui.core.filters.ValidateSaltFilter</filter-class>
 	</filter>
 
+    <!-- Development purposes only, not activated in a filter-mapping by default -->
+    <filter>
+        <filter-name>DebugFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.DebugFilter</filter-class>
+    </filter>
+
     <!-- ******************************************
          Filter mappings - order IS important here.
          ****************************************** -->
-
-    <!--
-     NOTE: Wherever "dispatcher" elements are specified in the filter mappings, they are
-     required for Servlet API 2.4 containers, such as Tomcat 5+ and Resin 3+, but should be
-     commented out for Servlet API 2.3 containers, like Tomcat 4.x and Resin 2.x.
-    -->
 
     <!-- This filter ensures that the request encoding is set to UTF-8 before any
      other processing forces request parsing using a default encoding.
@@ -109,10 +95,6 @@
     <filter-mapping>
         <filter-name>IPBanFilter</filter-name>
         <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>IPBanFilter</filter-name>
         <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
@@ -172,21 +154,6 @@
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
-    <!--
-    Most app servers support compression, if yours doesn't then use this one,
-    but don't forget to uncomment the filter definition above too.
-    <filter-mapping>
-        <filter-name>CompressionFilter</filter-name>
-        <url-pattern>/roller-ui/rendering/page/*</url-pattern>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>CompressionFilter</filter-name>
-        <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    -->
-
     <!-- Struts2 -->
     <filter-mapping>
         <filter-name>struts2</filter-name>
@@ -194,7 +161,6 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-
 
     <!-- Context Listeners -->
     <listener>

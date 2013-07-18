@@ -54,8 +54,8 @@ public class DebugFilter implements Filter {
         
         // some info about the request and response
         log.info("Response Object:");
-        log.info("   isCommited = "+response.isCommitted());
-        log.info("   bufferSize = "+response.getBufferSize());
+        log.info("   isCommitted = "+response.isCommitted());
+        log.info("   bufferSize  = "+response.getBufferSize());
         log.info("");
         
         chain.doFilter(request, response);
@@ -64,8 +64,8 @@ public class DebugFilter implements Filter {
         
         // some info about the request and response
         log.info("Response Object:");
-        log.info("   isCommited = "+response.isCommitted());
-        log.info("   bufferSize = "+response.getBufferSize());
+        log.info("   isCommitted = "+response.isCommitted());
+        log.info("   bufferSize  = "+response.getBufferSize());
         log.info("");
     }
     
