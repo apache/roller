@@ -453,65 +453,20 @@
         <url-pattern>/roller-services/opensearch/*</url-pattern>
     </servlet-mapping>
 
-
     <!-- Redirect Support for pre-3.0 urls -->
     <servlet-mapping>
         <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/language/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/comments/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/resources/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/rsd/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/flavor/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/rss/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/atom/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/page/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/search/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/xmlrpc/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/editor/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/admin/*</url-pattern>
     </servlet-mapping>
 
@@ -519,13 +474,8 @@
     <servlet-mapping>
         <servlet-name>StrutsRedirectServlet</servlet-name>
         <url-pattern>/roller-ui/yourWebsites.do</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>StrutsRedirectServlet</servlet-name>
         <url-pattern>/roller-ui/authoring/commentManagement.do</url-pattern>
     </servlet-mapping>
-
 
     <session-config>
         <session-timeout>30</session-timeout>
@@ -551,7 +501,6 @@
         <error-code>404</error-code>
         <location>/roller-ui/errors/404.jsp</location>
     </error-page>
-
 
     <!-- jndi resources -->
     <resource-ref>

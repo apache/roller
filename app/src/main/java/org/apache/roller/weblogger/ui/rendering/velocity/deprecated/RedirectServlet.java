@@ -71,7 +71,7 @@ public class RedirectServlet extends HttpServlet {
      * Handle GET requests.
      *
      * All we are doing is calculating the new url for the given resource and
-     * sending a 301 redirect to it's new location.
+     * sending a 301 redirect to its new location.
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
