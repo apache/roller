@@ -29,5 +29,5 @@ public interface ThemeResource extends Resource {
      *
      * @return True if the resource is a directory, False otherwise.
      */
-    public boolean isDirectory();
+    boolean isDirectory();
 }

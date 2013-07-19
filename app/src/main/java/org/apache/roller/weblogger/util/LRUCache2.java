@@ -126,7 +126,7 @@ public class LRUCache2
     }
     public interface Environment
     {
-        public long getCurrentTimeInMillis();
+        long getCurrentTimeInMillis();
     }
     public static class DefaultEnvironment implements Environment
     {

@@ -46,7 +46,7 @@ public interface UserManager {
      * @param newUser User object to be added.
      * @throws WebloggerException If there is a problem.
      */
-    public void addUser(User newUser) throws WebloggerException;
+    void addUser(User newUser) throws WebloggerException;
     
     
     /**
@@ -55,7 +55,7 @@ public interface UserManager {
      * @param user User to be saved.
      * @throws WebloggerException If there is a problem.
      */
-    public void saveUser(User user) throws WebloggerException;
+    void saveUser(User user) throws WebloggerException;
     
     
     /**
@@ -64,13 +64,13 @@ public interface UserManager {
      * @param user User to be removed.
      * @throws WebloggerException If there is a problem.
      */
-    public void removeUser(User user) throws WebloggerException;
+    void removeUser(User user) throws WebloggerException;
     
     
     /**
      * Get count of enabled users
      */    
-    public long getUserCount() throws WebloggerException; 
+    long getUserCount() throws WebloggerException;
     
     
     /**
@@ -79,7 +79,7 @@ public interface UserManager {
      * @return
      * @throws WebloggerException
      */
-    public User getUserByActivationCode(String activationCode) 
+    User getUserByActivationCode(String activationCode)
             throws WebloggerException;
     
           
@@ -96,7 +96,7 @@ public interface UserManager {
      * @return UsUserhe user, or null if not found or is disabled.
      * @throws WebloggerException If there is a problem.
      */
-    public User getUserByUserName(String userName) throws WebloggerException;
+    User getUserByUserName(String userName) throws WebloggerException;
     
     /**
      * Lookup a user by UserName with the given enabled status.
@@ -105,7 +105,7 @@ public interface UserManager {
      * @return The user, or null if not found or doesn't match the proper enabled status.
      * @throws WebloggerException If there is a problem.
      */
-    public User getUserByUserName(String userName, Boolean enabled)
+    User getUserByUserName(String userName, Boolean enabled)
         throws WebloggerException;
     
 
@@ -125,7 +125,7 @@ public interface UserManager {
      * @return List A list of UserDatUsers which match the criteria.
      * @throws WebloggerException If there is a problem.
      */
-    public List getUsers(
+    List getUsers(
             Boolean enabled,
             Date    startDate,
             Date    endDate,
@@ -142,7 +142,7 @@ public interface UserManager {
      * @param enabled    True for only enalbed, false for disabled, null for all
      * @return List of (up to length) users that match startsWith string
      */
-    public List getUsersStartingWith(String startsWith,
+    List getUsersStartingWith(String startsWith,
             Boolean enabled, int offset, int length) throws WebloggerException;
     
     
@@ -151,13 +151,13 @@ public interface UserManager {
      * containing integers reflecting the number of users whose
      * names start with each letter.
      */
-    public Map getUserNameLetterMap() throws WebloggerException;
+    Map getUserNameLetterMap() throws WebloggerException;
     
     
     /** 
      * Get collection of users whose names begin with specified letter 
      */
-    public List getUsersByLetter(char letter, int offset, int length) 
+    List getUsersByLetter(char letter, int offset, int length)
         throws WebloggerException;
     
         
@@ -172,7 +172,7 @@ public interface UserManager {
      * @return UsUserhe user, or null if not found or is disabled.
      * @throws WebloggerException If there is a problem
      */
-    public User getUserByAttribute(String name, String value) throws WebloggerException;
+    User getUserByAttribute(String name, String value) throws WebloggerException;
     
     /**
      * Lookup a user by User attribute
@@ -183,7 +183,7 @@ public interface UserManager {
      * @return The user, or null if not found or is disabled.
      * @throws WebloggerException If there is a problem
      */
-    public User getUserByAttribute(String name, String value, Boolean enabled) throws WebloggerException;
+    User getUserByAttribute(String name, String value, Boolean enabled) throws WebloggerException;
     
     
     /**
@@ -192,7 +192,7 @@ public interface UserManager {
      * @param attribute Atribute name
      * @return List of user attributes
      */
-    public UserAttribute getUserAttribute(String userName, String attribute) throws WebloggerException;
+    UserAttribute getUserAttribute(String userName, String attribute) throws WebloggerException;
     
     
     /**
@@ -202,7 +202,7 @@ public interface UserManager {
      * @param value Atribute value
      * @throws org.apache.roller.weblogger.WebloggerException
      */
-    public void setUserAttribute(String userName, String attribute, String value) throws WebloggerException;
+    void setUserAttribute(String userName, String attribute, String value) throws WebloggerException;
     
     
     /**
@@ -211,7 +211,7 @@ public interface UserManager {
      * @return List of attributes.
      * @throws org.apache.roller.weblogger.WebloggerException
      */
-    public List<UserAttribute> getUserAttributes(String userName) throws WebloggerException;
+    List<UserAttribute> getUserAttributes(String userName) throws WebloggerException;
     
     
     //-------------------------------------------------------- permissions CRUD
@@ -220,7 +220,7 @@ public interface UserManager {
     /**
      * Return true if user has permission specified.
      */
-    public boolean checkPermission(RollerPermission perm, User user) 
+    boolean checkPermission(RollerPermission perm, User user)
             throws WebloggerException;
     
     
@@ -231,7 +231,7 @@ public interface UserManager {
      * @param user    User to grant permissions to
      * @param actions Actions to be granted
      */
-    public void grantWeblogPermission(Weblog weblog, User user, List<String> actions)
+    void grantWeblogPermission(Weblog weblog, User user, List<String> actions)
             throws WebloggerException;
 
     
@@ -242,7 +242,7 @@ public interface UserManager {
      * @param user    User to grant permissions to
      * @param actions Actions to be granted
      */
-    public void grantWeblogPermissionPending(Weblog weblog, User user, List<String> actions)
+    void grantWeblogPermissionPending(Weblog weblog, User user, List<String> actions)
             throws WebloggerException;
 
     
@@ -253,7 +253,7 @@ public interface UserManager {
      * @param user    User to grant permissions to
      * @param actions Actions to be granted
      */
-    public void confirmWeblogPermission(Weblog weblog, User user)
+    void confirmWeblogPermission(Weblog weblog, User user)
             throws WebloggerException;
 
     
@@ -264,7 +264,7 @@ public interface UserManager {
      * @param user    User to grant permissions to
      * @param actions Actions to be granted
      */
-    public void declineWeblogPermission(Weblog weblog, User user)
+    void declineWeblogPermission(Weblog weblog, User user)
             throws WebloggerException;
 
     
@@ -275,42 +275,42 @@ public interface UserManager {
      * @param user    User to grant permissions to
      * @param actions Actions to be granted
      */
-    public void revokeWeblogPermission(Weblog weblog, User user, List<String> actions)
+    void revokeWeblogPermission(Weblog weblog, User user, List<String> actions)
             throws WebloggerException;
 
     
     /**
      * Get all of user's weblog permissions.
      */
-    public List<WeblogPermission> getWeblogPermissions(User user) 
+    List<WeblogPermission> getWeblogPermissions(User user)
             throws WebloggerException;
     
     
     /**
      * Get all of user's pending weblog permissions.
      */
-    public List<WeblogPermission> getWeblogPermissionsPending(User user) 
+    List<WeblogPermission> getWeblogPermissionsPending(User user)
             throws WebloggerException;
     
     
     /**
      * Get all permissions associated with a weblog.
      */
-    public List<WeblogPermission> getWeblogPermissions(Weblog weblog) 
+    List<WeblogPermission> getWeblogPermissions(Weblog weblog)
             throws WebloggerException;
     
     
     /**
      * Get all pending permissions associated with a weblog.
      */
-    public List<WeblogPermission> getWeblogPermissionsPending(Weblog weblog) 
+    List<WeblogPermission> getWeblogPermissionsPending(Weblog weblog)
             throws WebloggerException;
     
     
     /**
      * Get user's permission within a weblog or null if none.
      */
-    public WeblogPermission getWeblogPermission(Weblog weblog, User user) 
+    WeblogPermission getWeblogPermission(Weblog weblog, User user)
             throws WebloggerException;        
     
     
@@ -320,20 +320,20 @@ public interface UserManager {
     /**
      * Grant role to user.
      */
-    public void grantRole(String roleName, User user) throws WebloggerException;
+    void grantRole(String roleName, User user) throws WebloggerException;
     
     
     /**
      * Revoke role from user.
      */
-    public void revokeRole(String roleName, User user) throws WebloggerException;
+    void revokeRole(String roleName, User user) throws WebloggerException;
 
         
     /**
      * Returns true if user has role specified, should be used only for testing.
      * @deprecated User checkPermission() instead.
      */
-    public boolean hasRole(String roleName, User user) throws WebloggerException;
+    boolean hasRole(String roleName, User user) throws WebloggerException;
     
     
     /**
@@ -341,13 +341,13 @@ public interface UserManager {
      * Get all roles associated with user.
      * @deprecated User checkPermission() instead.
      */
-    public List<String> getRoles(User user) throws WebloggerException;
+    List<String> getRoles(User user) throws WebloggerException;
 
     
     /**
      * Release any resources held by manager.
      */
-    public void release();   
+    void release();
 }
 
 

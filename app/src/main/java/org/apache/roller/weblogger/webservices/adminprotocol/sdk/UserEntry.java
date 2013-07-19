@@ -36,17 +36,17 @@ import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry.Types;
  */
 public class UserEntry extends Entry {
     /** XML tags that define a user entry. */
-    static interface Tags {
-        public static final String USER = "user";
-        public static final String NAME = "name";
-        public static final String SCREEN_NAME = "screen-name";
-        public static final String FULL_NAME = "full-name";
-        public static final String PASSWORD = "password";
-        public static final String EMAIL_ADDRESS = "email-address";
-        public static final String LOCALE = "locale";
-        public static final String TIMEZONE = "timezone";
-        public static final String DATE_CREATED = "date-created";
-        public static final String ENABLED = "enabled";
+    interface Tags {
+        String USER = "user";
+        String NAME = "name";
+        String SCREEN_NAME = "screen-name";
+        String FULL_NAME = "full-name";
+        String PASSWORD = "password";
+        String EMAIL_ADDRESS = "email-address";
+        String LOCALE = "locale";
+        String TIMEZONE = "timezone";
+        String DATE_CREATED = "date-created";
+        String ENABLED = "enabled";
     }
     
     private String name;

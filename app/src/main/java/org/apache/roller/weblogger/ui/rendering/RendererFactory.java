@@ -40,7 +40,7 @@ public interface RendererFactory {
      * while trying to find a renderer.  It is up to the factory itself to
      * report any relevant exceptions itself.
      */
-    public Renderer getRenderer(Template template, 
+    Renderer getRenderer(Template template,
 		MobileDeviceRepository.DeviceType deviceType);
     
 }

@@ -21,6 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface AutoProvision {
 
-  public boolean execute(HttpServletRequest request);
+  boolean execute(HttpServletRequest request);
   
 }

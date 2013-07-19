@@ -30,6 +30,6 @@ import java.util.Map;
  */
 public interface CacheFactory {
     
-    public Cache constructCache(Map properties);
+    Cache constructCache(Map properties);
     
 }
