@@ -101,13 +101,7 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
+            <version>1.2.17</version>
         </dependency>
 
         <dependency>
@@ -184,21 +178,8 @@
 
         <dependency>
             <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-core</artifactId>
-            <version>2.3.14</version>
-        </dependency>
-
-        <!-- needed by Struts, except on JBoss -->
-        <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
             <artifactId>struts2-spring-plugin</artifactId>
-            <version>2.3.14</version>
+            <version>2.3.15.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -213,8 +194,8 @@
                     <artifactId>spring-context</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>spring-web</artifactId>
                     <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -222,35 +203,7 @@
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-tiles-plugin</artifactId>
-            <version>2.3.14</version>
-            <exclusions>
-                <!-- Excluding commons-logging-api as it's a subset of
-                     already-supplied commons-logging -->
-                <exclusion>
-                    <artifactId>commons-logging-api</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-jsp</artifactId>
-            <version>2.0.6</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-api</artifactId>
-            <version>2.0.6</version>
-            <exclusions>
-                <!-- Excluding commons-logging-api as it's a subset of
-                     already-supplied commons-logging -->
-                <exclusion>
-                    <artifactId>commons-logging-api</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
+            <version>2.3.15.1</version>
         </dependency>
 
         <dependency>
@@ -274,20 +227,20 @@
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
+                    <groupId>xmlrpc</groupId>
                     <artifactId>xmlrpc-common</artifactId>
-                    <groupId>xmlrpc</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>xmlrpc</groupId>
                     <artifactId>xmlrpc-client</artifactId>
-                    <groupId>xmlrpc</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>ws-commons-util</artifactId>
                     <groupId>ws-commons-util</groupId>
+                    <artifactId>ws-commons-util</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>activation</artifactId>
                     <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -371,8 +324,13 @@
         <dependency>
             <groupId>org.openxri</groupId>
             <artifactId>openxri-client</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
             <exclusions>
+                <exclusion>
+                    <artifactId>xml-apis</artifactId>
+                    <groupId>xml-apis</groupId>
+                </exclusion>
+                <!-- unsure if following exclusions are necessary -->
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-jcl</artifactId>
@@ -380,22 +338,6 @@
                 <exclusion>
                     <groupId>jug</groupId>
                     <artifactId>jug</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>xml-apis</artifactId>
-                    <groupId>xml-apis</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openxri</groupId>
-            <artifactId>openxri-syntax</artifactId>
-            <version>1.2.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jcl</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>com.ibm.icu</groupId>
@@ -482,6 +424,28 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.4.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.8</version>
+        </dependency>
+
         <!-- test deps -->
 
         <dependency>
@@ -501,27 +465,6 @@
             <artifactId>derbyclient</artifactId>
             <version>${derby.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-validator</groupId>
-            <artifactId>commons-validator</artifactId>
-            <version>1.3.1</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>1.7.0</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.5</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -873,7 +816,7 @@
                 </excludes>
             </resource>
             <resource>
-                <!-- ensure version and persistence files get substitions -->
+                <!-- ensure version and persistence files get substitutions -->
                 <directory>${project.basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>

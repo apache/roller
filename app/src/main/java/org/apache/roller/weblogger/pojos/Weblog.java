@@ -849,11 +849,6 @@ public class Weblog implements Serializable {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, false);
     }
 
-    public void setURL(String url) {
-        // noop
-    }
-    
-    
     /**
      * @roller.wrapPojoMethod type="simple"
      */
@@ -1057,7 +1052,7 @@ public class Weblog implements Serializable {
     
     /**
      * Get up to 100 most recent published entries in weblog.
-     * @param cat Category path or null for no category restriction
+     * @param tag Blog entry tag to query by
      * @param length Max entries to return (1-100)
      * @return List of weblog entry objects.
      *

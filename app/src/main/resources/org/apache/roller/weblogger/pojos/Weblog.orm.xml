@@ -213,7 +213,6 @@
 			<transient name="commentModerationRequired"/>
 			<transient name="todaysHits"/>
 			<transient name="todaysReferrers"/>
-			<transient name="uRL"/>
 			<transient name="URL"/>
 			<transient name="userCount"/>
 			<transient name="entryCount"/>
