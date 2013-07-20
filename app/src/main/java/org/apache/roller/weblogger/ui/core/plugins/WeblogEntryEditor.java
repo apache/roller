@@ -35,7 +35,7 @@ public interface WeblogEntryEditor {
      *
      * @return The unique identifier for this WeblogEntryEditor.
      */
-    public String getId();
+    String getId();
     
     
     /**
@@ -48,7 +48,7 @@ public interface WeblogEntryEditor {
      *
      * @return The display name of this WeblogEntryEditor.
      */
-    public String getName();
+    String getName();
     
     
     /**
@@ -58,6 +58,6 @@ public interface WeblogEntryEditor {
      *
      * @return The location of the jsp for this editor.
      */
-    public String getJspPage();
+    String getJspPage();
 
 }

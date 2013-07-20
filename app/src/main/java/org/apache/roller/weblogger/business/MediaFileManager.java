@@ -39,145 +39,145 @@ public interface MediaFileManager {
     /**
      * Initialization; deal with upgrade migrations, etc.
      */
-    public void initialize();
+    void initialize();
 
     /**
      * Release all resources associated with Roller session.
      */
-    public void release();
+    void release();
 
     /**
      * Create a media file
      */
-    public void createMediaFile(Weblog weblog, MediaFile mediaFile,
+    void createMediaFile(Weblog weblog, MediaFile mediaFile,
             RollerMessages errors) throws WebloggerException;
 
     /**
      * Update metadata for a media file
      */
-    public void updateMediaFile(Weblog weblog, MediaFile mediaFile)
+    void updateMediaFile(Weblog weblog, MediaFile mediaFile)
             throws WebloggerException;
 
     /**
      * Update metadata for a media file and content.
      */
-    public void updateMediaFile(Weblog website, MediaFile mf, InputStream fis)
+    void updateMediaFile(Weblog website, MediaFile mf, InputStream fis)
             throws WebloggerException;
 
     /**
      * Get media file metadata by file id
      */
-    public MediaFile getMediaFile(String id) throws WebloggerException;
+    MediaFile getMediaFile(String id) throws WebloggerException;
 
     /**
      * Get media file metadata optionally including the actual content
      */
-    public MediaFile getMediaFile(String id, boolean includeContent)
+    MediaFile getMediaFile(String id, boolean includeContent)
             throws WebloggerException;
 
     /**
      * Delete a media file
      */
-    public void removeMediaFile(Weblog weblog, MediaFile mediaFile)
+    void removeMediaFile(Weblog weblog, MediaFile mediaFile)
             throws WebloggerException;
 
     /**
      * Search for media files based on the filter criteria
      */
-    public List<MediaFile> searchMediaFiles(Weblog weblog,
+    List<MediaFile> searchMediaFiles(Weblog weblog,
             MediaFileFilter filter) throws WebloggerException;
 
     /**
      * Create root directory for media files in a weblog.
      */
-    public MediaFileDirectory createRootMediaFileDirectory(Weblog weblog)
+    MediaFileDirectory createRootMediaFileDirectory(Weblog weblog)
             throws WebloggerException;
 
     /**
      * Create a media file directory with the given name
      */
-    public MediaFileDirectory createMediaFileDirectory(
+    MediaFileDirectory createMediaFileDirectory(
             MediaFileDirectory parentDirectory, String newDirName)
             throws WebloggerException;
 
     /**
      * Create a media file directory
      */
-    public void createMediaFileDirectory(MediaFileDirectory directory)
+    void createMediaFileDirectory(MediaFileDirectory directory)
             throws WebloggerException;
 
     /**
      * Create a media file directory given its path
      */
-    public MediaFileDirectory createMediaFileDirectoryByPath(Weblog weblog,
+    MediaFileDirectory createMediaFileDirectoryByPath(Weblog weblog,
             String path) throws WebloggerException;
 
     /**
      * Get media file directory by id
      */
-    public MediaFileDirectory getMediaFileDirectory(String id)
+    MediaFileDirectory getMediaFileDirectory(String id)
             throws WebloggerException;
 
     /**
      * Get media file directory by its path
      */
-    public MediaFileDirectory getMediaFileDirectoryByPath(Weblog weblog,
+    MediaFileDirectory getMediaFileDirectoryByPath(Weblog weblog,
             String path) throws WebloggerException;
 
     /**
      * Get media file by path.
      */
-    public MediaFile getMediaFileByPath(Weblog weblog, String path)
+    MediaFile getMediaFileByPath(Weblog weblog, String path)
             throws WebloggerException;
 
     /**
      * Get media file by the original path by which it was stored. Required for
      * support of old upload file URLs and for theme resources. {@inheritDoc}
      */
-    public MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
+    MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
             throws WebloggerException;
 
     /**
      * Get the list of media file directories for the given weblog.
      */
-    public List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog)
+    List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog)
             throws WebloggerException;
 
     /**
      * Get the root directory for media files for the given weblog.
      */
-    public MediaFileDirectory getMediaFileRootDirectory(Weblog weblog)
+    MediaFileDirectory getMediaFileRootDirectory(Weblog weblog)
             throws WebloggerException;
 
     /**
      * Move a set of media files to a new directory.
      */
-    public void moveMediaFiles(Collection<MediaFile> mediaFiles,
+    void moveMediaFiles(Collection<MediaFile> mediaFiles,
             MediaFileDirectory directory) throws WebloggerException;
 
     /**
      * Move one media file to a new directory.
      */
-    public void moveMediaFile(MediaFile mediaFile, MediaFileDirectory directory)
+    void moveMediaFile(MediaFile mediaFile, MediaFileDirectory directory)
             throws WebloggerException;
 
     /**
      * Move a set of media files to a new directory.
      */
-    public void moveMediaFileDirectories(
+    void moveMediaFileDirectories(
             Collection<MediaFileDirectory> mediaFilesDir,
             MediaFileDirectory directory) throws WebloggerException;
 
     /**
      * Move one media file to a new directory.
      */
-    public void moveMediaFileDirectory(MediaFileDirectory mediaFileDir,
+    void moveMediaFileDirectory(MediaFileDirectory mediaFileDir,
             MediaFileDirectory directory) throws WebloggerException;
 
     /**
      * Return recently added media files that are public.
      */
-    public List<MediaFile> fetchRecentPublicMediaFiles(int length)
+    List<MediaFile> fetchRecentPublicMediaFiles(int length)
             throws WebloggerException;
 
     /**
@@ -185,15 +185,14 @@ public interface MediaFileManager {
      * 
      * @param website
      */
-    public void removeAllFiles(Weblog website) throws WebloggerException;
+    void removeAllFiles(Weblog website) throws WebloggerException;
 
     /**
      * Remove media file directory
      * 
-     * @param weblog
      * @param mediaFileDir
      */
-    public void removeMediaFileDirectory(MediaFileDirectory mediaFileDir)
+    void removeMediaFileDirectory(MediaFileDirectory mediaFileDir)
             throws WebloggerException;
 
     /**
@@ -202,7 +201,7 @@ public interface MediaFileManager {
      * @param name
      *            Name of tag to be removed
      */
-    public void removeMediaFileTag(String name, MediaFile entry)
+    void removeMediaFileTag(String name, MediaFile entry)
             throws WebloggerException;
 
 }

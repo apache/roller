@@ -29,18 +29,18 @@ public interface Manager {
     /**
      * Initialize the Manager.  Called once after instantiation.
      */
-    public void initialize() throws Exception;
+    void initialize() throws Exception;
     
     
     /**
      * Release all resources associated with session.
      */
-    public void release();
+    void release();
     
     
     /**
      * Cleanup for application shutdown.
      */
-    public void shutdown();
+    void shutdown();
     
 }

@@ -33,7 +33,7 @@ public interface CommentAuthenticator {
      *
      * @param request comment form request object
      */
-    public String getHtml(HttpServletRequest request);
+    String getHtml(HttpServletRequest request);
     
     
     /**
@@ -43,6 +43,6 @@ public interface CommentAuthenticator {
      * @param request comment posting request object
      * @return true if authentication passed, false otherwise
      */
-    public boolean authenticate(HttpServletRequest request);
+    boolean authenticate(HttpServletRequest request);
     
 }

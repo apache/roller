@@ -1,6 +1,6 @@
 /*
 * Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
+* contributor license agreements.  The ASF licenses this file to You
 * under the Apache License, Version 2.0 (the "License"); you may not
 * use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -30,24 +30,24 @@ import org.jdom.Element;
  */
 public abstract class EntrySet extends Entry {
     /** Entry set types. */
-    public static interface Types {
+    public interface Types {
         /*
          * Set of user entries. 
          * A user entry describes a user of the weblog server.
          */
-        public static final String USERS = "users";
+        String USERS = "users";
         /** 
          * Set of weblog entries. 
          * Note that this is not a set of entries in a weblog, but rather,
          * a set of entries that describe the weblog itself.
          */
-        public static final String WEBLOGS = "weblogs";
+        String WEBLOGS = "weblogs";
         /** 
          * Set of member entries.
          * A member entry describes a user's membership to and 
          * permission with a particular weblog.
          */
-        public static final String MEMBERS = "members";
+        String MEMBERS = "members";
          /**
           * Set of workspace entries.
           * This type, along with WORKSPACE and COLLECTION, define
@@ -57,9 +57,9 @@ public abstract class EntrySet extends Entry {
           * A service is a set of workspaces, and a workspace is a set of 
           * collections.
           */
-        public static final String SERVICE = "service";        
+        String SERVICE = "service";
         /** Set of collection entries. */
-        public static final String WORKSPACE = "workspace";           
+        String WORKSPACE = "workspace";
     }
     
     private List entries = null;

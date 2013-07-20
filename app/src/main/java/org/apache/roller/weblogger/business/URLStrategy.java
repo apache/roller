@@ -35,26 +35,26 @@ public interface URLStrategy {
      * Get a version of this url strategy meant for use in previewing and set
      * it to preview a given theme.
      */
-    public URLStrategy getPreviewURLStrategy(String previewTheme);
+    URLStrategy getPreviewURLStrategy(String previewTheme);
     
     
     /**
      * Url to login page.
      */
-    public String getLoginURL(boolean absolute);
+    String getLoginURL(boolean absolute);
     
     
     /**
      * Url to logout page.
      */
-    public String getLogoutURL(boolean absolute);
+    String getLogoutURL(boolean absolute);
     
     
     /**
      * Get a url to a UI action in a given namespace, optionally specifying
      * a weblogHandle parameter if that is needed by the action.
      */
-    public String getActionURL(String action,
+    String getActionURL(String action,
                                             String namespace,
                                             String weblogHandle,
                                             Map<String, String> parameters,
@@ -64,14 +64,14 @@ public interface URLStrategy {
     /**
      * Get a url to add a new weblog entry.
      */
-    public String getEntryAddURL(String weblogHandle,
+    String getEntryAddURL(String weblogHandle,
                                               boolean absolute);
     
     
     /**
      * Get a url to edit a specific weblog entry.
      */
-    public String getEntryEditURL(String weblogHandle,
+    String getEntryEditURL(String weblogHandle,
                                                String entryId,
                                                boolean absolute);
     
@@ -79,44 +79,44 @@ public interface URLStrategy {
     /**
      * Get a url to weblog config page.
      */
-    public String getWeblogConfigURL(String weblogHandle,
+    String getWeblogConfigURL(String weblogHandle,
                                                   boolean absolute);
     
     
     /**
      * URL for OpenSearch descriptor file for site.
      */
-    public String getOpenSearchSiteURL();
+    String getOpenSearchSiteURL();
     
 
     /**
      * URL for OpenSearch descriptor file for weblog.
      */
-    public String getOpenSearchWeblogURL(String weblogHandle);
+    String getOpenSearchWeblogURL(String weblogHandle);
 
     
     /**
      * Get OpenSearch compatible search URL template for weblog search feed.
      */
-    public String getWeblogSearchFeedURLTemplate(Weblog weblog);
+    String getWeblogSearchFeedURLTemplate(Weblog weblog);
 
     
     /**
      * Get OpenSearch compatible search URL template for weblog search page.
      */
-    public String getWeblogSearchPageURLTemplate(Weblog weblog);
+    String getWeblogSearchPageURLTemplate(Weblog weblog);
 
     
-    public String getXmlrpcURL(boolean absolute);
+    String getXmlrpcURL(boolean absolute);
     
     
-    public String getAtomProtocolURL(boolean absolute);
+    String getAtomProtocolURL(boolean absolute);
     
     
     /**
      * Get root url for a given weblog.  Optionally for a certain locale.
      */
-    public String getWeblogURL(Weblog weblog,
+    String getWeblogURL(Weblog weblog,
                                             String locale,
                                             boolean absolute);
     
@@ -124,7 +124,7 @@ public interface URLStrategy {
     /**
      * Get url for a single weblog entry on a given weblog.
      */
-    public String getWeblogEntryURL(Weblog weblog,
+    String getWeblogEntryURL(Weblog weblog,
                                                  String locale,
                                                  String entryAnchor,
                                                  boolean absolute);
@@ -133,7 +133,7 @@ public interface URLStrategy {
     /**
      * Get url for a single weblog entry comments on a given weblog.
      */
-    public String getWeblogCommentsURL(Weblog weblog,
+    String getWeblogCommentsURL(Weblog weblog,
                                                     String locale,
                                                     String entryAnchor,
                                                     boolean absolute);
@@ -142,7 +142,7 @@ public interface URLStrategy {
     /**
      * Get url for a single weblog entry comment on a given weblog.
      */
-    public String getWeblogCommentURL(Weblog weblog,
+    String getWeblogCommentURL(Weblog weblog,
                                                    String locale,
                                                    String entryAnchor,
                                                    String timeStamp,
@@ -152,20 +152,20 @@ public interface URLStrategy {
     /**
      * Get url for a single mediafile on a given weblog.
      */
-    public String getMediaFileURL(Weblog weblog, String fileAnchor,
+    String getMediaFileURL(Weblog weblog, String fileAnchor,
                                                  boolean absolute);
 
     /**
      * Get url for a single mediafile thumbnail on a given weblog.
      */
-    public String getMediaFileThumbnailURL(Weblog weblog,
+    String getMediaFileThumbnailURL(Weblog weblog,
                                                 String fileAnchor,
                                                 boolean absolute);
 
     /**
      * Get url for a collection of entries on a given weblog.
      */
-    public String getWeblogCollectionURL(Weblog weblog,
+    String getWeblogCollectionURL(Weblog weblog,
                                                       String locale,
                                                       String category,
                                                       String dateString,
@@ -177,7 +177,7 @@ public interface URLStrategy {
     /**
      * Get url for a custom page on a given weblog.
      */
-    public String getWeblogPageURL(Weblog weblog,
+    String getWeblogPageURL(Weblog weblog,
                                                 String locale,
                                                 String pageLink,
                                                 String entryAnchor,
@@ -191,7 +191,7 @@ public interface URLStrategy {
     /**
      * Get url for a feed on a given weblog.
      */
-    public String getWeblogFeedURL(Weblog weblog,
+    String getWeblogFeedURL(Weblog weblog,
                                                 String locale,
                                                 String type,
                                                 String format,
@@ -205,7 +205,7 @@ public interface URLStrategy {
     /**
      * Get url to search endpoint on a given weblog.
      */
-    public String getWeblogSearchURL(Weblog weblog,
+    String getWeblogSearchURL(Weblog weblog,
                                                   String locale,
                                                   String query,
                                                   String category,
@@ -216,7 +216,7 @@ public interface URLStrategy {
     /**
      * Get url to a resource on a given weblog.
      */
-    public String getWeblogResourceURL(Weblog weblog,
+    String getWeblogResourceURL(Weblog weblog,
                                                     String filePath,
                                                     boolean absolute);
     
@@ -224,21 +224,21 @@ public interface URLStrategy {
     /**
      * Get url to rsd file on a given weblog.
      */
-    public String getWeblogRsdURL(Weblog weblog, boolean absolute);
+    String getWeblogRsdURL(Weblog weblog, boolean absolute);
     
     
     /**
      * Get url to JSON tags service url, optionally for a given weblog.
      */
-    public String getWeblogTagsJsonURL(Weblog weblog, boolean absolute, int pageNum);
+    String getWeblogTagsJsonURL(Weblog weblog, boolean absolute, int pageNum);
 
 
     /* Get URL for obtaining OAuth Request Token */
-    public String getOAuthRequestTokenURL();
+    String getOAuthRequestTokenURL();
 
     /* Get URL authorizing an OAuth Request Token */
-    public String getOAuthAuthorizationURL();
+    String getOAuthAuthorizationURL();
 
     /* Get URL for obtaining OAuth Access Token */
-    public String getOAuthAccessTokenURL();
+    String getOAuthAccessTokenURL();
 }

@@ -31,7 +31,7 @@ public interface UIPluginManager {
      *
      * @return List of all configure WeblogEntryEditor objects.
      */
-    public List getWeblogEntryEditors();
+    List getWeblogEntryEditors();
     
     
     /**
@@ -42,6 +42,6 @@ public interface UIPluginManager {
      * @return The WeblogEntry editor desired, or the default editor if the
      *      desired editor could not be found.
      */
-    public WeblogEntryEditor getWeblogEntryEditor(String id);
+    WeblogEntryEditor getWeblogEntryEditor(String id);
     
 }

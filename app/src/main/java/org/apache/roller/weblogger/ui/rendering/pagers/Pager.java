@@ -27,36 +27,36 @@ public interface Pager {
     /**
      * Link value for returning to pager home
      */
-    public String getHomeLink();
+    String getHomeLink();
 
     /**
      * Name of pager home.
      */
-    public String getHomeName();
+    String getHomeName();
 
     /**
      * Link value for next page in current collection view
      */
-    public String getNextLink();
+    String getNextLink();
 
     /**
      * Name for next page in current collection view
      */
-    public String getNextName();
+    String getNextName();
 
     /**
      * Link value for prev page in current collection view
      */
-    public String getPrevLink();
+    String getPrevLink();
 
     /**
      * Link value for prev page in current collection view
      */
-    public String getPrevName();
+    String getPrevName();
     
     /**
      * Get current list of items available from the pager.
      */
-    public List getItems();
+    List getItems();
     
 }

@@ -39,7 +39,7 @@ public interface UISecurityEnforced {
      *
      * @return boolean True if authenticated user is required, false otherwise.
      */
-    public boolean isUserRequired();
+    boolean isUserRequired();
     
     
     /**
@@ -49,17 +49,17 @@ public interface UISecurityEnforced {
      *
      * @return boolean True if action weblog is required, false otherwise.
      */
-    public boolean isWeblogRequired();
+    boolean isWeblogRequired();
     
     
     /**
      * List of global permission actions required to access resource.
      */
-    public List<String> requiredWeblogPermissionActions();
+    List<String> requiredWeblogPermissionActions();
     
     
     /** 
      * List of weblog permissions required to access action if applicable.
      */
-    public List<String> requiredGlobalPermissionActions();
+    List<String> requiredGlobalPermissionActions();
 }

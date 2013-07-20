@@ -27,12 +27,12 @@ public interface CommentValidator {
     /**
      * Plain text name of validator for display purposes.
      */
-    public String getName();
+    String getName();
 
     /**
      * @param comment Comment to be validated
      * @param messages Messages object to which errors will added
      * @return Number indicating confidence that comment is valid (100 meaning 100%)
      */
-    public int validate(WeblogEntryComment comment, RollerMessages messages);   
+    int validate(WeblogEntryComment comment, RollerMessages messages);
 }

@@ -19,7 +19,11 @@ package org.apache.roller.planet.util.rome;
 import com.sun.syndication.feed.module.Module;
 
 public interface ContentModule extends Module {
-    public static final String URI = "http://purl.org/rss/1.0/modules/content/";
-    public String getEncoded();
-    public void setEncoded(String encoded);
+
+    String URI = "http://purl.org/rss/1.0/modules/content/";
+
+    String getEncoded();
+
+    void setEncoded(String encoded);
+
 }

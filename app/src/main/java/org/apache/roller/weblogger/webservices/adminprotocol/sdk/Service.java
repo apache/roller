@@ -52,7 +52,7 @@ public class Service extends EntrySet {
         populate(d);
     }
     
-    public Service(InputStream stream) throws JDOMException, IOException, UnexpectedRootElementException {               
+    public Service(InputStream stream) throws JDOMException, IOException, UnexpectedRootElementException {
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
         populate(d);        
@@ -92,8 +92,8 @@ public class Service extends EntrySet {
     /** This class describes a service workspace. */    
     public static class Workspace extends EntrySet {   
         
-        private static interface Attributes {
-            public static final String TITLE = "title";
+        private interface Attributes {
+            String TITLE = "title";
         }
         
         private String title = null;
@@ -146,12 +146,12 @@ public class Service extends EntrySet {
         /** This class describes a workspace collection. */
         public static class Collection extends Entry {
             
-            private static interface Tags {
-                public static final String MEMBER_TYPE = "member-type";
+            private interface Tags {
+                String MEMBER_TYPE = "member-type";
             }
             
-            private static interface Attributes {
-                public static final String TITLE = "title";
+            private interface Attributes {
+                String TITLE = "title";
             }
             
             private String title;

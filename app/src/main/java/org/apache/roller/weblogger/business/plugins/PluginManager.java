@@ -34,7 +34,7 @@ public interface PluginManager {
     /**
      * Returns true if plugins are present
      */
-    public boolean hasPagePlugins();
+    boolean hasPagePlugins();
     
     
     /**
@@ -43,7 +43,7 @@ public interface PluginManager {
      *
      * @param website        Website being processed
      */
-    public Map getWeblogEntryPlugins(Weblog website);
+    Map getWeblogEntryPlugins(Weblog website);
     
     
     /**
@@ -52,11 +52,10 @@ public interface PluginManager {
      * the original entry object.
      *
      * @param entry       Original weblog entry
-     * @param plugins     Map of plugins to apply
      * @param str         String to which to apply plugins
      * @return        the transformed text
      */
-    public String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str);
+    String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str);
     
     
     /**
@@ -67,7 +66,7 @@ public interface PluginManager {
      *
      * Should return an empty list if no plugins are configured.
      */
-    public List<WeblogEntryCommentPlugin> getCommentPlugins();
+    List<WeblogEntryCommentPlugin> getCommentPlugins();
     
     
     /**
@@ -77,12 +76,12 @@ public interface PluginManager {
      * @param text The text to apply the plugins to.
      * @return String The transformed comment text.
      */
-    public String applyCommentPlugins(WeblogEntryComment comment, String text);
+    String applyCommentPlugins(WeblogEntryComment comment, String text);
     
     
     /**
      * Release all resources associated with Roller session.
      */
-    public void release();
+    void release();
     
 }

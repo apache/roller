@@ -44,7 +44,7 @@ public interface FeedUpdater {
      * @param sub The PlanetSubscription to be updated.
      * @throws org.apache.roller.planet.business.fetcher.FetcherException If there is an error updating the subscription.
      */
-    public void updateSubscription(Subscription sub) throws UpdaterException;
+    void updateSubscription(Subscription sub) throws UpdaterException;
     
     
     /**
@@ -52,7 +52,7 @@ public interface FeedUpdater {
      *
      * @throws UpdaterException If there is an error during the update and the operation cannot continue.
      */
-    public void updateSubscriptions() throws UpdaterException;
+    void updateSubscriptions() throws UpdaterException;
     
     
     /**
@@ -60,6 +60,6 @@ public interface FeedUpdater {
      *
      * @throws UpdaterException If there is an error during the update and the operation cannot continue.
      */
-    public void updateSubscriptions(PlanetGroup group) throws UpdaterException;
+    void updateSubscriptions(PlanetGroup group) throws UpdaterException;
     
 }

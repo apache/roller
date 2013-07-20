@@ -28,14 +28,14 @@ import org.springframework.security.userdetails.UserDetails;
  */
 public interface RollerUserDetails extends UserDetails {
 
-  public String getTimeZone();
+    String getTimeZone();
   
-  public String getLocale();
+    String getLocale();
   
-  public String getScreenName();
+    String getScreenName();
 
-  public String getFullName();
+    String getFullName();
 
-  public String getEmailAddress();
+    String getEmailAddress();
   
 }

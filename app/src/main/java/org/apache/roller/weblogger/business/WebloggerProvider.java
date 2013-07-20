@@ -27,12 +27,12 @@ public interface WebloggerProvider {
     /**
      * Trigger bootstrapping.
      */
-    public void bootstrap() throws BootstrapException;
+    void bootstrap() throws BootstrapException;
     
     
     /**
      * Get a Weblogger instance.
      */
-    public Weblogger getWeblogger();
+    Weblogger getWeblogger();
     
 }

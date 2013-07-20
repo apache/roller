@@ -36,7 +36,7 @@ public interface ReferrerQueueManager {
      * This method may contain additional logic on how to deal with referrers.
      * It may process them immediately or it may store them for later processing.
      */
-    public void processReferrer(IncomingReferrer ref);
+    void processReferrer(IncomingReferrer ref);
     
     
     /**
@@ -44,7 +44,7 @@ public interface ReferrerQueueManager {
      *
      * It is almost always preferable to call processReferrer() instead.
      */
-    public void enqueue(IncomingReferrer ref);
+    void enqueue(IncomingReferrer ref);
     
     
     /**
@@ -52,12 +52,12 @@ public interface ReferrerQueueManager {
      *
      * Returns null if there is nothing in the queue.
      */
-    public IncomingReferrer dequeue();
+    IncomingReferrer dequeue();
     
     
     /**
      * Called when the system is being shutdown.
      */
-    public void shutdown();
+    void shutdown();
     
 }

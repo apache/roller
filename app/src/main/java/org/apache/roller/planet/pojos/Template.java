@@ -14,8 +14,8 @@ package org.apache.roller.planet.pojos;
  */
 public interface Template {
     
-    public String getId();
+    String getId();
     
-    public String getTemplateLanguage();
+    String getTemplateLanguage();
     
 }

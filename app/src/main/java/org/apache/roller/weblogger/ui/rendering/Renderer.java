@@ -34,6 +34,6 @@ public interface Renderer {
      *
      * Throws an exception if there is a problem during rendering.
      */
-    public void render(Map model, Writer writer) throws RenderingException;
+    void render(Map model, Writer writer) throws RenderingException;
     
 }

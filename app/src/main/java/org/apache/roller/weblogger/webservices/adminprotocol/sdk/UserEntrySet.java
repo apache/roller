@@ -40,8 +40,8 @@ import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types;
  */
 public class UserEntrySet extends EntrySet {
     /** XML tags that describe a set of user entries. */
-    private static interface Tags {
-        public static final String USERS = "users";
+    private interface Tags {
+        String USERS = "users";
     }       
         
     /** Construct based on an array of Roller UserData objects. */

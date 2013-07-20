@@ -30,12 +30,12 @@ public interface Model {
     /**
      * Name to be used when referring to this model.
      */
-    public String getModelName();
+    String getModelName();
     
     
     /**
      * Initialize.
      */
-    public void init(Map params) throws WebloggerException;
+    void init(Map params) throws WebloggerException;
     
 }

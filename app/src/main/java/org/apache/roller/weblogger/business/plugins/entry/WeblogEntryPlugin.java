@@ -34,22 +34,21 @@ public interface WeblogEntryPlugin {
     /**
      * Returns the display name of this Plugin.
      */
-    public String getName();
+    String getName();
     
     
     /**
      * Briefly describes the function of the Plugin.  May contain HTML.
      */
-    public String getDescription();
+    String getDescription();
     
     
     /**
      * Give plugin a chance to initialize and add objects the rendering model.
      *
      * @param weblog     Weblog being processed
-     * @param model      Rendering model where objects can be placed
      */
-    public void init(Weblog weblog) throws WebloggerException;
+    void init(Weblog weblog) throws WebloggerException;
     
     
     /**
@@ -59,6 +58,6 @@ public interface WeblogEntryPlugin {
      * @param str         String to which plugin should be applied.
      * @return            Results of applying plugin to entry.
      */
-    public String render(WeblogEntry entry, String str);
+    String render(WeblogEntry entry, String str);
     
 }

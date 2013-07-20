@@ -39,8 +39,8 @@ import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types;
  * @author jtb
  */
 public class WeblogEntrySet extends EntrySet {
-    static interface Tags {
-        public static final String WEBLOGS = "weblogs";
+    interface Tags {
+        String WEBLOGS = "weblogs";
     }      
     
     public WeblogEntrySet(String urlPrefix) {
@@ -51,7 +51,7 @@ public class WeblogEntrySet extends EntrySet {
         populate(d, urlPrefix);
     }
     
-    public WeblogEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {               
+    public WeblogEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
 

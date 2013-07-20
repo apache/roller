@@ -46,7 +46,7 @@ public interface FeedFetcher {
      * @return Subscription The fetched subscription.
      * @throws FetcherException If there is an error fetching the subscription.
      */
-    public Subscription fetchSubscription(String feedURL) throws FetcherException;
+    Subscription fetchSubscription(String feedURL) throws FetcherException;
     
     
     /**
@@ -67,6 +67,6 @@ public interface FeedFetcher {
      * @return Subscription The fetched subscription.
      * @throws FetcherException If there is an error fetching the subscription.
      */
-    public Subscription fetchSubscription(String feedURL, Date lastModified) throws FetcherException;
+    Subscription fetchSubscription(String feedURL, Date lastModified) throws FetcherException;
 
 }

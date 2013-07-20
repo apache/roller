@@ -38,7 +38,7 @@ public interface PingQueueManager {
      *
      * @param autoPing auto ping configuration for the ping request to be queued.
      */
-    public void addQueueEntry(AutoPing autoPing) throws WebloggerException;
+    void addQueueEntry(AutoPing autoPing) throws WebloggerException;
     
     
     /**
@@ -47,7 +47,7 @@ public interface PingQueueManager {
      * @param pingQueueEntry update the given queue entry
      * @throws WebloggerException
      */
-    public void saveQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException;
+    void saveQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException;
     
     
     /**
@@ -56,7 +56,7 @@ public interface PingQueueManager {
      * @param pingQueueEntry the entry to be removed.
      * @throws WebloggerException
      */
-    public void removeQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException;
+    void removeQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException;
     
     
     /**
@@ -66,21 +66,21 @@ public interface PingQueueManager {
      * @return the queue entry with the specified id.
      * @throws WebloggerException
      */
-    public PingQueueEntry getQueueEntry(String id) throws WebloggerException;
+    PingQueueEntry getQueueEntry(String id) throws WebloggerException;
     
     
     /**
      * Get all of the queue entries.
      * 
-     * @return the queue as a <code>List</code> of {@link PPingQueueEntry objects.
+     * @return the queue as a <code>List</code> of {@link PingQueueEntry objects.
      * @throws WebloggerException
      */
-    public List getAllQueueEntries() throws WebloggerException;
+    List getAllQueueEntries() throws WebloggerException;
     
     
     /**
      * Release all resources associated with Roller session.
      */
-    public void release();
+    void release();
     
 }

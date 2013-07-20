@@ -31,28 +31,28 @@ public interface WeblogEntryCommentPlugin {
     /**
      * A unique identifier for the plugin.
      */
-    public String getId();
+    String getId();
     
     
     /**
      * Returns the display name of this Plugin.
      */
-    public String getName();
+    String getName();
     
     
     /**
      * Briefly describes the function of the Plugin.  May contain HTML.
      */
-    public String getDescription();
+    String getDescription();
     
     
     /**
      * Apply plugin to the specified text.
      *
-     * @param entry       Entry being rendered.
+     * @param comment     Comment being rendered.
      * @param str         String to which plugin should be applied.
      * @return            Results of applying plugin to string.
      */
-    public String render(final WeblogEntryComment comment, String str);
+    String render(final WeblogEntryComment comment, String str);
     
 }

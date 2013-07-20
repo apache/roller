@@ -42,159 +42,159 @@ public interface Weblogger {
      * 
      * Get UserManager associated with this Weblogger instance.
      */
-    public UserManager getUserManager();
+    UserManager getUserManager();
     
     
     /**
      * 
      * Get BookmarkManager associated with this Weblogger instance.
      */
-    public BookmarkManager getBookmarkManager();
+    BookmarkManager getBookmarkManager();
     
     
     /**
      *
      * Get OAuthManager associated with this Weblogger instance.
      */
-    public OAuthManager getOAuthManager();
+    OAuthManager getOAuthManager();
 
 
     /**
      * 
      * Get WeblogManager associated with this Weblogger instance.
      */
-    public WeblogManager getWeblogManager();
+    WeblogManager getWeblogManager();
     
     /**
      * 
      * Get WeblogManager associated with this Weblogger instance.
      */
-    public WeblogEntryManager getWeblogEntryManager();
+    WeblogEntryManager getWeblogEntryManager();
     
     
     /**
      * 
      * Get RefererManager associated with this Weblogger instance.
      */
-    public RefererManager getRefererManager();
+    RefererManager getRefererManager();
     
     
     /**
      * Get ReferrerQueueManager.
      */
-    public ReferrerQueueManager getReferrerQueueManager();
+    ReferrerQueueManager getReferrerQueueManager();
     
     
     /**
      * Get the AutoPingManager associated with this Weblogger instance.
      */
-    public AutoPingManager getAutopingManager();
+    AutoPingManager getAutopingManager();
     
     
     /**
      * Get the PingTargetManager associated with this Weblogger instance.
      */
-    public PingTargetManager getPingTargetManager();
+    PingTargetManager getPingTargetManager();
     
     
     /**
      * Get the PingQueueManager associated with this Weblogger instance.
      */
-    public PingQueueManager getPingQueueManager();
+    PingQueueManager getPingQueueManager();
     
     
     /**
      * 
      * Get PropertiesManager associated with this Weblogger instance.
      */
-    public PropertiesManager getPropertiesManager();   
+    PropertiesManager getPropertiesManager();
     
     
     /**
      * Get ThreadManager associated with this Weblogger instance.
      */
-    public ThreadManager getThreadManager();
+    ThreadManager getThreadManager();
     
     
     /**
      * Get IndexManager associated with this Weblogger instance.
      */
-    public IndexManager getIndexManager();
+    IndexManager getIndexManager();
     
     
     /**
      * Get ThemeManager associated with this Weblogger instance.
      */
-    public ThemeManager getThemeManager();
+    ThemeManager getThemeManager();
     
     
     /**
      * Get PluginManager associated with this Weblogger instance.
      */
-    public PluginManager getPluginManager();
+    PluginManager getPluginManager();
     
     /**
      * Get MediaFileManager associated with this Weblogger instance.
      */
-    public MediaFileManager getMediaFileManager();
+    MediaFileManager getMediaFileManager();
     
     /**
      * Get FileContentManager associated with this Weblogger instance.
      */
-    public FileContentManager getFileContentManager();
+    FileContentManager getFileContentManager();
 
     /**
      * Get the URLStrategy used to build all urls in the system.
      */
-    public URLStrategy getUrlStrategy();
+    URLStrategy getUrlStrategy();
     
     /**
      * Flush object states.
      */
-    public void flush() throws WebloggerException;
+    void flush() throws WebloggerException;
     
     
     /**
      * Release all resources associated with Weblogger session.
      */
-    public void release();
+    void release();
     
     
     /**
      * Initialize any resources necessary for this instance of Weblogger.
      */
-    public void initialize() throws InitializationException;
+    void initialize() throws InitializationException;
     
     
     /**
      * Release all resources necessary for this instance of Weblogger.
      */
-    public void shutdown();
+    void shutdown();
     
     
     /**
      * Weblogger version
      */
-    public String getVersion();    
+    String getVersion();
     
     /**
      * Weblogger source code management revision
      */
-    public String getRevision();
+    String getRevision();
     
     /**
      * Weblogger build time
      */
-    public String getBuildTime();
+    String getBuildTime();
         
     /**
      * Get username that built Weblogger
      */
-    public String getBuildUser();
+    String getBuildUser();
 
-	public FeedFetcher getFeedFetcher();
+	FeedFetcher getFeedFetcher();
 
-	public PlanetManager getPlanetManager();
+	PlanetManager getPlanetManager();
 
-	public org.apache.roller.planet.business.PlanetURLStrategy getPlanetURLStrategy();
+	org.apache.roller.planet.business.PlanetURLStrategy getPlanetURLStrategy();
 }

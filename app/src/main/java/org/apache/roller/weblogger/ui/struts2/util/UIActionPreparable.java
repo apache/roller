@@ -38,6 +38,6 @@ package org.apache.roller.weblogger.ui.struts2.util;
  */
 public interface UIActionPreparable {
     
-    public void myPrepare();
+    void myPrepare();
     
 }
