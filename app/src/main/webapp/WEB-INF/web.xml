@@ -262,18 +262,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>RedirectServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.velocity.deprecated.RedirectServlet</servlet-class>
-        <load-on-startup>9</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>StrutsRedirectServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.struts2.util.StrutsRedirectServlet</servlet-class>
-        <load-on-startup>9</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>AtomServlet</servlet-name>
         <servlet-class>com.sun.syndication.propono.atom.server.AtomServlet</servlet-class>
     </servlet>
