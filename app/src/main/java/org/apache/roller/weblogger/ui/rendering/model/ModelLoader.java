@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.weblogger.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -40,25 +39,7 @@ public class ModelLoader {
     
     private static Log log = LogFactory.getLog(ModelLoader.class);
     
-    
-    /**
-     * Load old page models, but only if they are enabled.
-     */
-    public static void loadOldModels(
-            Map model,
-            HttpServletRequest  request,
-            HttpServletResponse response,
-            PageContext pageContext,
-            WeblogPageRequest pageRequest,
-            URLStrategy urlStrategy) throws WebloggerException {
-        
-        // Only load old models if it's enabled     
-        if (WebloggerConfig.getBooleanProperty("rendering.legacyModels.enabled")) { 
-            ContextLoader.setupContext(model, request, response, pageContext, pageRequest, urlStrategy);            
-        }
-    }
-    
-    
+
     /**
      * Load set of custom models set for the given weblog.
      *

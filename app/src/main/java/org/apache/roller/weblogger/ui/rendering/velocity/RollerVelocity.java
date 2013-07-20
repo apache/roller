@@ -57,16 +57,7 @@ public class RollerVelocity {
                     RollerContext.getServletContext().getResourceAsStream(VELOCITY_CONFIG);
             
             velocityProps.load(instream);
-            
-            // need to dynamically add old macro libraries if they are enabled
-            if(WebloggerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
-                String macroLibraries = (String) velocityProps.get("velocimacro.library");
-                String oldLibraries = WebloggerConfig.getProperty("velocity.oldMacroLibraries");
-                
-                // set the new value
-                velocityProps.setProperty("velocimacro.library", oldLibraries+","+macroLibraries);
-            }
-            
+           
             log.debug("Velocity engine props = "+velocityProps);
             
             // construct the VelocityEngine

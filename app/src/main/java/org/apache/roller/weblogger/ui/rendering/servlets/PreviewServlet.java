@@ -235,9 +235,6 @@ public class PreviewServlet extends HttpServlet {
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
             
-            // ick, gotta load pre-3.0 model stuff as well :(
-            ModelLoader.loadOldModels(model, request, response, pageContext, previewRequest, WebloggerFactory.getWeblogger().getUrlStrategy().getPreviewURLStrategy(previewRequest.getThemeName()));
-            
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
             

@@ -178,9 +178,6 @@ public class SearchServlet extends HttpServlet {
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
             
-            // ick, gotta load pre-3.0 model stuff as well :(
-            ModelLoader.loadOldModels(model, request, response, pageContext, pageRequest, WebloggerFactory.getWeblogger().getUrlStrategy());
-            
             // manually add search model again to support pre-3.0 weblogs
             Model searchModel = new SearchResultsModel();
             searchModel.init(initData);

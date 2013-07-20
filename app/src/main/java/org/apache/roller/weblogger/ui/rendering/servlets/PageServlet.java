@@ -467,10 +467,6 @@ public class PageServlet extends HttpServlet {
 			// Load weblog custom models
 			ModelLoader.loadCustomModels(weblog, model, initData);
 
-			// ick, gotta load pre-3.0 model stuff as well :(
-			ModelLoader.loadOldModels(model, request, response, pageContext,
-					pageRequest, WebloggerFactory.getWeblogger()
-							.getUrlStrategy());
 		} catch (WebloggerException ex) {
 			log.error("Error loading model objects for page", ex);
 

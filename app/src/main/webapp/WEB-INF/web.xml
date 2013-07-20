@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5" 
+<web-app version="2.5"
     xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
@@ -147,7 +147,7 @@
 		<url-pattern>/roller-ui/*</url-pattern>
 	</filter-mapping>
 
-    <!-- Request mapping.  this is what allows the urls to work -->
+    <!-- Request mapping, this is what allows the urls to work -->
     <filter-mapping>
         <filter-name>RequestMappingFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -451,30 +451,6 @@
     <servlet-mapping>
         <servlet-name>OpenSearchServlet</servlet-name>
         <url-pattern>/roller-services/opensearch/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- Redirect Support for pre-3.0 urls -->
-    <servlet-mapping>
-        <servlet-name>RedirectServlet</servlet-name>
-        <url-pattern>/language/*</url-pattern>
-        <url-pattern>/comments/*</url-pattern>
-        <url-pattern>/resources/*</url-pattern>
-        <url-pattern>/rsd/*</url-pattern>
-        <url-pattern>/flavor/*</url-pattern>
-        <url-pattern>/rss/*</url-pattern>
-        <url-pattern>/atom/*</url-pattern>
-        <url-pattern>/page/*</url-pattern>
-        <url-pattern>/search/*</url-pattern>
-        <url-pattern>/xmlrpc/*</url-pattern>
-        <url-pattern>/editor/*</url-pattern>
-        <url-pattern>/admin/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- Redirect support for some old struts1 urls -->
-    <servlet-mapping>
-        <servlet-name>StrutsRedirectServlet</servlet-name>
-        <url-pattern>/roller-ui/yourWebsites.do</url-pattern>
-        <url-pattern>/roller-ui/authoring/commentManagement.do</url-pattern>
     </servlet-mapping>
 
     <session-config>
