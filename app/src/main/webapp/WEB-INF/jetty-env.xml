@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
-<Configure id='wac' class="org.mortbay.jetty.webapp.WebAppContext">
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+<Configure id='wac' class="org.eclipse.jetty.webapp.WebAppContext">
     
     <!-- Dummy values to allow Jetty to run via Maven build process -->
     
-    <New id="ds" class="org.mortbay.jetty.plus.naming.Resource">
+    <New id="ds" class="org.eclipse.jetty.plus.jndi.Resource">
         <Arg>
             <Ref id="wac"/>
         </Arg>
@@ -17,13 +17,13 @@
         </Arg> 
     </New>
     
-    <New id="mail" class="org.mortbay.jetty.plus.naming.Resource">
+    <New id="mail" class="org.eclipse.jetty.plus.jndi.Resource">
         <Arg>
             <Ref id="wac"/>
         </Arg>
         <Arg>mail/Session</Arg>
         <Arg>
-            <New class="org.mortbay.naming.factories.MailSessionReference">
+            <New class="org.eclipse.jetty.jndi.factories.MailSessionReference">
                 <Set name="properties">
                     <New class="java.util.Properties">
                         <Put name="mail.smtp.host">mail</Put>
