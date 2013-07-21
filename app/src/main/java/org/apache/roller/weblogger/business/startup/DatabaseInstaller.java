@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business.startup;
 
-import org.apache.roller.util.SQLScriptRunner;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
