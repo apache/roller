@@ -15,16 +15,16 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.weblogger.ant;
+package org.apache.roller.derby.ant;
+
+import org.apache.derby.drda.NetworkServerControl;
+import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-
-import org.apache.derby.drda.NetworkServerControl;
-import org.apache.roller.util.SQLScriptRunner;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 /**
  * Ant Task to stop Derby

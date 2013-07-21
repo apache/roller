@@ -33,7 +33,6 @@
     </properties>
 
     <modules>
-        <module>test-utils</module>
         <module>app</module>
     </modules>
 

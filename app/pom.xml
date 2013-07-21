@@ -430,9 +430,16 @@
         <!-- test deps -->
 
         <dependency>
-            <groupId>org.apache.roller</groupId>
-            <artifactId>test-utils</artifactId>
-            <version>${roller.version}</version>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbynet</artifactId>
+            <version>${derby.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.9.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -440,6 +447,7 @@
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
             <version>${derby.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -452,27 +460,6 @@
     <build>
 
         <finalName>roller</finalName>
-
-        <pluginManagement>
-            <plugins>
-                <!-- Allow for standalone Tomcat deployment
-                     using mvn tomcat7:redeploy (See
-                     http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
-                     for necessary config info)
-                -->
-                <plugin>
-                    <groupId>org.apache.tomcat.maven</groupId>
-                    <artifactId>tomcat7-maven-plugin</artifactId>
-                    <version>2.1</version>
-                    <configuration>
-                        <server>myTomcat</server>
-                        <path>/${project.build.finalName}</path>
-                    </configuration>
-                </plugin>
-
-            </plugins>
-
-        </pluginManagement>
 
         <plugins>
 
@@ -503,7 +490,7 @@
                     </systemProperties>
                 </configuration>
                 <dependencies>
-                    <!-- Dependencies not needed during testing but when using mvn jetty:run -->
+                    <!-- Dependencies not needed during mvn test when using mvn jetty:run -->
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>
@@ -515,6 +502,21 @@
                         <version>${derby.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <!-- Allow for standalone Tomcat deployment
+                 using mvn tomcat7:redeploy (See
+                 http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
+                 for necessary config info)
+            -->
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <server>myTomcat</server>
+                    <path>/${project.build.finalName}</path>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -638,7 +640,7 @@
 
                     <execution>
                         <id>startdb</id>
-                        <phase>process-test-resources</phase>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
@@ -646,7 +648,7 @@
                             <target>
                                 <!-- Derby only for unit testing and jetty:run dev testing: skipped when maven.text.skip is set -->
                                 <delete dir="${basedir}/target/derby-system" verbose="true" failonerror="false" />
-                                <taskdef name="startdb" classname="org.apache.roller.weblogger.ant.StartDerbyTask"
+                                <taskdef name="startdb" classname="org.apache.roller.derby.ant.StartDerbyTask"
                                          classpathref="maven.test.classpath"/>
                                 <startdb databaseDir="${basedir}/target/derby-system"
                                          port="3223"
@@ -666,7 +668,7 @@
                         <configuration>
                             <target>
                                 <!-- Derby only for unit testing: skip when maven.test.skip is set -->
-                                <taskdef name="stopdb" classname="org.apache.roller.weblogger.ant.StopDerbyTask"
+                                <taskdef name="stopdb" classname="org.apache.roller.derby.ant.StopDerbyTask"
                                          classpathref="maven.test.classpath"/>
                                 <stopdb databaseDir="${basedir}/target/derby-system"
                                         port="3223"
