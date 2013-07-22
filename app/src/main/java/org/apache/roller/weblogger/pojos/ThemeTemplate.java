@@ -26,15 +26,15 @@ package org.apache.roller.weblogger.pojos;
  */
 public interface ThemeTemplate extends Template {
     
-    public static final String ACTION_WEBLOG = "weblog";
-    public static final String ACTION_PERMALINK = "permalink";
-    public static final String ACTION_SEARCH = "search";
-    public static final String ACTION_TAGSINDEX = "tagsIndex";
-    public static final String ACTION_CUSTOM = "custom";
+    String ACTION_WEBLOG = "weblog";
+    String ACTION_PERMALINK = "permalink";
+    String ACTION_SEARCH = "search";
+    String ACTION_TAGSINDEX = "tagsIndex";
+    String ACTION_CUSTOM = "custom";
     
     // the full list of supported special actions, which purposely does not
     // contain an entry for the 'custom' action
-    public static final String[] ACTIONS = {
+    String[] ACTIONS = {
         ACTION_WEBLOG, 
         ACTION_PERMALINK, 
         ACTION_SEARCH, 
@@ -45,48 +45,49 @@ public interface ThemeTemplate extends Template {
     /**
      * The action this template is defined for.
      */
-    public String getAction();
+    String getAction();
     
     
     /**
      * The contents or body of the Template.
      */
-    public String getContents();
+    String getContents();
 
     /**
      * set content. This will be used by template code objects to store different
      * types of template contents
      */
-     public void setContents(String contents);
+    void setContents(String contents);
+
     /**
      * The url link value for this Template.  If this template is not
      * private this is the url that it can be accessed at.
      */
-    public String getLink();
+    String getLink();
     
     
     /**
      * Is the Template hidden?  A hidden template cannot be accessed directly.
      */
-    public boolean isHidden();
+    boolean isHidden();
     
     
     /**
      * Is the Template to be included in the navbar?
      */
-    public boolean isNavbar();
+    boolean isNavbar();
     
     
     /**
      * The name of the decorator template to apply.
      */
-    public String getDecoratorName();
+    String getDecoratorName();
     
     
     /**
      * The decorator Template to apply.  This returns null if no decorator
      * should be applied.
      */
-    public ThemeTemplate getDecorator();
+    ThemeTemplate getDecorator();
 
 }

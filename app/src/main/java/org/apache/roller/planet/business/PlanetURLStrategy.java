@@ -35,7 +35,7 @@ public interface PlanetURLStrategy {
      * @param planetHandle The 'handle' of the planet being referenced.
      * @returns The url to the planet.
      */
-    public String getPlanetURL(String planetHandle);
+    String getPlanetURL(String planetHandle);
     
     
     /**
@@ -46,7 +46,7 @@ public interface PlanetURLStrategy {
      * @param pageNum The page number.
      * @returns The url to the planet group.
      */
-    public String getPlanetGroupURL(String planetHandle, String groupHandle, int pageNum);
+    String getPlanetGroupURL(String planetHandle, String groupHandle, int pageNum);
     
     
     /**
@@ -57,7 +57,7 @@ public interface PlanetURLStrategy {
      * @param format The feed format being requested.
      * @returns The url to the feed.
      */
-    public String getPlanetGroupFeedURL(String planetHandle, String groupHandle, String format);
+    String getPlanetGroupFeedURL(String planetHandle, String groupHandle, String format);
     
     
     /**
@@ -67,24 +67,24 @@ public interface PlanetURLStrategy {
      * @param groupHandle The 'hadle' of the planet group being referenced.
      * @returns The url to the feed.
      */
-    public String getPlanetGroupOpmlURL(String planetHandle, String groupHandle);
+    String getPlanetGroupOpmlURL(String planetHandle, String groupHandle);
     
     
     /**
      * Compose a map of key=value params into a query string.
      */
-    public String getQueryString(Map params);
+    String getQueryString(Map params);
     
     
     /**
      * URL encode a string.
      */
-    public String encode(String str);
+    String encode(String str);
     
     
     /**
      * URL decode a string.
      */
-    public String decode(String str);
+    String decode(String str);
     
 }

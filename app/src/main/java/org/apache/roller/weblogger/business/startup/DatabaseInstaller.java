@@ -1203,7 +1203,7 @@ public class DatabaseInstaller {
         String[] types = {"TABLE"};
         ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
         while (rs.next()) {
-            if (tableName.toLowerCase().equals(rs.getString("TABLE_NAME").toLowerCase())) {
+            if (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME").toLowerCase())) {
                 return true;
             }
         }

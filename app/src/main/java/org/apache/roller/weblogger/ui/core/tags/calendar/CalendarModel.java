@@ -25,21 +25,21 @@ import java.util.Date;
  * then use the computeUrl method to get the URLs it needs.
  */
 public interface CalendarModel {
-    public Calendar getCalendar();
+    Calendar getCalendar();
     
-    public void setDay( String month ) throws Exception;
+    void setDay( String month ) throws Exception;
     
-    public Date getDay();
+    Date getDay();
     
-    public Date getNextMonth();
+    Date getNextMonth();
 
-    public Date getPrevMonth();
+    Date getPrevMonth();
     
-    public String computePrevMonthUrl();
+    String computePrevMonthUrl();
     
-    public String computeTodayMonthUrl();
+    String computeTodayMonthUrl();
     
-    public String computeNextMonthUrl();
+    String computeNextMonthUrl();
 
     /**
      * Get the earliest month in which there could possibly be data.  For a weblog this
@@ -56,7 +56,7 @@ public interface CalendarModel {
      * @param valid    Always return a URL, never return null
      * @return         URL for day, or null if no weblog entry on that day
      */
-    public String computeUrl( java.util.Date day, boolean monthURL, boolean valid );
+    String computeUrl( java.util.Date day, boolean monthURL, boolean valid );
     
     /**
      * Get calendar cell content or null if none.
@@ -65,6 +65,6 @@ public interface CalendarModel {
      * @param valid Always return a URL, never return null
      * @return Calendar cell content or null if none.
      */
-    public String getContent( java.util.Date day );
+    String getContent( java.util.Date day );
 }
 

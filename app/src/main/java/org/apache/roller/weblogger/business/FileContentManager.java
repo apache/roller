@@ -40,7 +40,7 @@ public interface FileContentManager {
      * @throws FileNotFoundException If path does not exist.
      * @throws FilePathException If path is invalid, or can't be read.
      */
-    public FileContent getFileContent(Weblog weblog, String fileId)
+    FileContent getFileContent(Weblog weblog, String fileId)
             throws FileNotFoundException, FilePathException;
 
     /**
@@ -54,7 +54,7 @@ public interface FileContentManager {
      * @throws FilePathException If path is invalid, is not a directory, or can't be read.
      * @throws FileIOException If there is an unexpected error during the save.
      */
-    public void saveFileContent(Weblog weblog,
+    void saveFileContent(Weblog weblog,
             String fileId,
             InputStream is)
             throws FileNotFoundException, FilePathException, FileIOException;
@@ -69,7 +69,7 @@ public interface FileContentManager {
      * @throws FilePathException If path is invalid, or can't be read.
      * @throws FileIOException If there is an unexpected error during the delete.
      */
-    public void deleteFile(Weblog weblog, String fileId)
+    void deleteFile(Weblog weblog, String fileId)
             throws FileNotFoundException, FilePathException, FileIOException;
 
     /**
@@ -80,7 +80,7 @@ public interface FileContentManager {
      * @param weblog The weblog to delete all files from.
      * @throws FileIOException If there is an unexpected error during the delete.
      */
-    public void deleteAllFiles(Weblog weblog)
+    void deleteAllFiles(Weblog weblog)
             throws FileIOException;
 
     /** 
@@ -89,7 +89,7 @@ public interface FileContentManager {
      * @param weblog The weblog we are working on.
      * @return True if weblog is over set quota, False otherwise.
      */
-    public boolean overQuota(Weblog weblog);
+    boolean overQuota(Weblog weblog);
 
     /**
      * Determine if file can be saved given current WebloggerConfig settings.
@@ -101,7 +101,7 @@ public interface FileContentManager {
      * @param messages output parameter for adding messages.
      * @return true if the file can be saved, false otherwise. 
      */
-    public boolean canSave(Weblog weblog,
+    boolean canSave(Weblog weblog,
             String fileName,
             String contentType,
             long size,
@@ -110,6 +110,6 @@ public interface FileContentManager {
     /**
      * Release all resources associated with Roller session.
      */
-    public void release();
+    void release();
 
 }

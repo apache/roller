@@ -36,16 +36,16 @@ import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry.Types;
 public class MemberEntry extends Entry {
     /** Member permissions */
     public interface Permissions {
-        public static final String ADMIN = "ADMIN";
-        public static final String AUTHOR = "AUTHOR";
-        public static final String LIMITED = "LIMITED";
+        String ADMIN = "ADMIN";
+        String AUTHOR = "AUTHOR";
+        String LIMITED = "LIMITED";
     }
     
-    static interface Tags {
-        public static final String MEMBER = "member";
-        public static final String NAME = "name";
-        public static final String HANDLE = "handle";
-        public static final String PERMISSION = "permission";
+    interface Tags {
+        String MEMBER = "member";
+        String NAME = "name";
+        String HANDLE = "handle";
+        String PERMISSION = "permission";
     }
     
     private String name;

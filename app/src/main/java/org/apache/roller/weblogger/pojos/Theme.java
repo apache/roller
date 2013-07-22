@@ -33,75 +33,75 @@ public interface Theme {
     /**
      * A unique identifier for this Theme.
      */
-    public String getId();
+    String getId();
     
     
     /**
      * A common or display name for this Theme.
      */
-    public String getName();
+    String getName();
 
     /**
      * A description of the Theme.
      */
-    public String getDescription();
+    String getDescription();
     
     
     /**
      * The last modification date of the Theme.
      */
-    public Date getLastModified();
+    Date getLastModified();
     
     
     /**
      * Is the Theme enable for use?
      */
-    public boolean isEnabled();
+    boolean isEnabled();
     
     
     /**
      * Get the list of all templates associated with this Theme.
      */
-    public List getTemplates() throws WebloggerException;
+    List getTemplates() throws WebloggerException;
     
     
     /**
      * Lookup the stylesheet template for the Theme.
      */
-    public ThemeTemplate getStylesheet() throws WebloggerException;
+    ThemeTemplate getStylesheet() throws WebloggerException;
     
     
     /**
      * Lookup the default template for the Theme.
      */
-    public ThemeTemplate getDefaultTemplate() throws WebloggerException;
+    ThemeTemplate getDefaultTemplate() throws WebloggerException;
     
     
     /**
      * Lookup a template by action.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByAction(String action) throws WebloggerException;
+    ThemeTemplate getTemplateByAction(String action) throws WebloggerException;
     
     
     /**
      * Lookup a template by name.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByName(String name) throws WebloggerException;
+    ThemeTemplate getTemplateByName(String name) throws WebloggerException;
     
     
     /**
      * Lookup a template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException;
+    ThemeTemplate getTemplateByLink(String link) throws WebloggerException;
     
     
     /**
      * Lookup a resource by path.
      * Returns null if the resource cannot be found.
      */
-    public ThemeResource getResource(String path);
+    ThemeResource getResource(String path);
     
 }

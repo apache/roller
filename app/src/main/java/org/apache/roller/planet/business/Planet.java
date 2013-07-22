@@ -31,49 +31,49 @@ public interface Planet {
     /**
      * Get PlanetManager associated with this Roller instance.
      */
-    public PlanetManager getWebloggerManager();
+     PlanetManager getWebloggerManager();
     
     
     /**
      * Get PropertiesManager.
      */
-    public PropertiesManager getPropertiesManager();
+    PropertiesManager getPropertiesManager();
     
     
     /**
      * Get the configured URLStrategy.
      */
-    public PlanetURLStrategy getURLStrategy();
+    PlanetURLStrategy getURLStrategy();
     
     
     /**
      * Get the configured FeedFetcher.
      */
-    public FeedFetcher getFeedFetcher();
+    FeedFetcher getFeedFetcher();
     
         
     /**
      * Flush object states.
      */
-    public void flush() throws RollerException;
+    void flush() throws RollerException;
     
     
     /**
      * Initialize any resources necessary for this instance of Roller.
      */
-    public void initialize() throws Exception;
+    void initialize() throws Exception;
     
 
     /**
      * Release any resources associated with a session.
      */
-    public void release();
+    void release();
     
     
     /**
      * Shutdown the application.
      */
-    public void shutdown();
+    void shutdown();
     
 }
 

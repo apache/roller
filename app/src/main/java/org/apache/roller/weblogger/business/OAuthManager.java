@@ -36,42 +36,42 @@ public interface OAuthManager {
     /**
      * Get validator to be used to OAuth validate messages.
      */
-    public OAuthServiceProvider getServiceProvider();
+    OAuthServiceProvider getServiceProvider();
 
     /**
      * Get validator to be used to OAuth validate messages.
      */
-    public OAuthValidator getValidator();
+    OAuthValidator getValidator();
 
     /**
      * Get the site-wide consumer.
      */
-    public OAuthConsumer getConsumer()
+    OAuthConsumer getConsumer()
             throws WebloggerException;
 
     /**
      * Get consumer corresponding to request.
      */
-    public OAuthConsumer getConsumerByUsername(String username)
+    OAuthConsumer getConsumerByUsername(String username)
             throws WebloggerException;
 
     /**
      * Get consumer corresponding to request.
      */
-    public OAuthConsumer getConsumer(
+    OAuthConsumer getConsumer(
             OAuthMessage requestMessage)
             throws IOException, OAuthProblemException;
 
     /**
      * Add a site-wide consumer provided a key, there can only be one.
      */
-    public OAuthConsumer addConsumer(String consumerKey)
+    OAuthConsumer addConsumer(String consumerKey)
             throws OAuthException, WebloggerException;
 
     /**
      * Store a new consumer for specified user, each user can have only one.
      */
-    public OAuthConsumer addConsumer(String username, String consumerKey)
+    OAuthConsumer addConsumer(String username, String consumerKey)
             throws OAuthException;
 
     /**
@@ -84,13 +84,13 @@ public interface OAuthManager {
      * @throws OAuthProblemException If provided token is bad
      * @throws java.io.IOException on IO error
      */
-    public OAuthAccessor getAccessor(OAuthMessage requestMessage)
+    OAuthAccessor getAccessor(OAuthMessage requestMessage)
             throws IOException, OAuthProblemException;
 
     /**
      * Set the access token 
      */
-    public void markAsAuthorized(OAuthAccessor accessor, String userId)
+    void markAsAuthorized(OAuthAccessor accessor, String userId)
             throws OAuthException;    
 
     /**
@@ -98,7 +98,7 @@ public interface OAuthManager {
      * 
      * @throws OAuthException
      */
-    public void generateRequestToken(
+    void generateRequestToken(
             OAuthAccessor accessor)
             throws OAuthException;
     
@@ -107,6 +107,6 @@ public interface OAuthManager {
      * 
      * @throws OAuthException
      */
-    public void generateAccessToken(OAuthAccessor accessor)
+    void generateAccessToken(OAuthAccessor accessor)
             throws OAuthException;
 }

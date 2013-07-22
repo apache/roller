@@ -47,7 +47,7 @@ import org.apache.roller.weblogger.pojos.User;
  */
 public class UserDataServlet extends HttpServlet {
     
-    private final int MAX_LENGTH = 50;
+    private static final int MAX_LENGTH = 50;
     
     public void doGet(HttpServletRequest request, 
                       HttpServletResponse response)

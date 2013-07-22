@@ -34,33 +34,33 @@ public abstract class Entry {
     protected static final Namespace NAMESPACE = Namespace.getNamespace("http://purl.org/apache/roller/rap#");
     
     /** Entry types. */
-    public static interface Types {
+    public interface Types {
         /** 
          * User entry.
          * A user entry is contained within a user entry set.
          */
-        public static final String USER = "user";
+        String USER = "user";
         /**
          * Weblog entry.
          * A weblog entry is contained within a weblog entry set.
          */
-        public static final String WEBLOG = "weblog";
+        String WEBLOG = "weblog";
         /**
          * Member entry.
          * A member entry is contained within a member entry set.
          */
-        public static final String MEMBER = "member";
+        String MEMBER = "member";
         /**
          * Collection entry.
          * A collection entry is contained within a workspace, which is
          * contained within a service.
          */
-        public static final String COLLECTION = "collection";
+        String COLLECTION = "collection";
     }
     
     /** XML attributes common to all entry types. */
-    protected static interface Attributes {
-        public static final String HREF = "href";
+    protected interface Attributes {
+        String HREF = "href";
     }
     
     private String href = null;

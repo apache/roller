@@ -34,44 +34,44 @@ public interface Template {
     /**
      * The unique identifier for this Template.
      */
-    public String getId();
+    String getId();
     
     
     /**
      * A simple name for this Template.
      */
-    public String getName();
+    String getName();
     
     
     /**
      * A description of the contents of this Template.
      */
-    public String getDescription();
+    String getDescription();
     
     
     /**
      * The last time the template was modified.
      */
-    public Date getLastModified();
+    Date getLastModified();
     
     
     /**
      * The templating language used by this template.
      */
 
-    public String getTemplateLanguage();
+    String getTemplateLanguage();
 
     /**
      * Set the template language.This is used by template code object to assign
      * correct template language for different template content types
      */
-    public  void setTemplateLanguage(String templateLanguage);
+    void setTemplateLanguage(String templateLanguage);
     
     
     /**
      * Content-type of output or null if none defined.
      */
-    public String getOutputContentType();
+    String getOutputContentType();
 
     /**
      *
@@ -81,12 +81,12 @@ public interface Template {
 
     @Deprecated
     //Moved to templateCode
-    public String getType();
+    String getType();
 
     /**
      *
      * get the Template code object for the given type.
      */
-    public TemplateCode getTemplateCode(String type) throws WebloggerException;
+    TemplateCode getTemplateCode(String type) throws WebloggerException;
     
 }

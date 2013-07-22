@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.pojos.TaskLock;
  */
 public interface ThreadManager {
     
-    public static final long MIN_RATE_INTERVAL_MINS = 1;
+    long MIN_RATE_INTERVAL_MINS = 1;
     
     
     /**
@@ -36,7 +36,7 @@ public interface ThreadManager {
      *
      * @throws InitializationException If there is a problem during initialization.
      */
-    public void initialize() throws InitializationException;
+    void initialize() throws InitializationException;
     
     
     /**
@@ -44,14 +44,14 @@ public interface ThreadManager {
      * @param runnable
      * @throws java.lang.InterruptedException
      */
-    public void executeInBackground(Runnable runnable)
+    void executeInBackground(Runnable runnable)
         throws InterruptedException;
     
     
     /**
      * Execute runnable in foreground (synchronously).
      */
-    public void executeInForeground(Runnable runnable)
+    void executeInForeground(Runnable runnable)
         throws InterruptedException;
     
     
@@ -62,7 +62,7 @@ public interface ThreadManager {
      * @return The TaskLock for the task, or null if not found.
      * @throws WebloggerException If there is an error looking up the TaskLock.
      */
-    public TaskLock getTaskLockByName(String name) throws WebloggerException;
+    TaskLock getTaskLockByName(String name) throws WebloggerException;
 
     
     /**
@@ -71,7 +71,7 @@ public interface ThreadManager {
      * @param tasklock The TaskLock to save.
      * @throws WebloggerException If there is an error saving the TaskLock.
      */
-    public void saveTaskLock(TaskLock tasklock) throws WebloggerException;
+    void saveTaskLock(TaskLock tasklock) throws WebloggerException;
 
 
     /**
@@ -80,7 +80,7 @@ public interface ThreadManager {
      * @param task The RollerTask to register the lease for.
      * @return boolean True if lease was registered, False otherwise.
      */
-    public boolean registerLease(RollerTask task);
+    boolean registerLease(RollerTask task);
     
     
     /**
@@ -89,18 +89,18 @@ public interface ThreadManager {
      * @param task The RollerTask to unregister the lease for.
      * @return boolean True if lease was unregistered (or was not leased), False otherwise.
      */
-    public boolean unregisterLease(RollerTask task);
+    boolean unregisterLease(RollerTask task);
     
     
     /**
      * Shutdown.
      */
-    public void shutdown();
+    void shutdown();
     
     
     /**
      * Release all resources associated with Roller session.
      */
-    public void release();
+    void release();
     
 }

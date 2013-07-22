@@ -38,7 +38,7 @@ public interface PingTargetManager {
      * @param pingTarget ping target data object.
      * @throws WebloggerException
      */
-    public void savePingTarget(PingTarget pingTarget) throws WebloggerException;
+    void savePingTarget(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
@@ -47,13 +47,13 @@ public interface PingTargetManager {
      * @param id id of the ping target to be removed
      * @throws WebloggerException
      */
-    public void removePingTarget(PingTarget pingTarget) throws WebloggerException;
+    void removePingTarget(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
      * Remove all custom targets (regardless of website).
      */
-    public void removeAllCustomPingTargets() throws WebloggerException;
+    void removeAllCustomPingTargets() throws WebloggerException;
     
     
     /**
@@ -63,7 +63,7 @@ public interface PingTargetManager {
      * @return the ping target whose id is specified.
      * @throws WebloggerException
      */
-    public PingTarget getPingTarget(String id) throws WebloggerException;
+    PingTarget getPingTarget(String id) throws WebloggerException;
     
     
     /**
@@ -72,7 +72,7 @@ public interface PingTargetManager {
      * @return the list of common ping targets as a <code>List</code> of {@link PPingTarget objects
      * @throws WebloggerException
      */
-    public List getCommonPingTargets() throws WebloggerException;
+    List getCommonPingTargets() throws WebloggerException;
     
     
     /**
@@ -82,7 +82,7 @@ public interface PingTargetManager {
      * @return the list of custom ping targets for the given website as a <code>List</code> of {@link PiPingTarget         objects
      * @throws WebloggerException
      */
-    public List getCustomPingTargets(Weblog website) throws WebloggerException;
+    List getCustomPingTargets(Weblog website) throws WebloggerException;
     
     
     /**
@@ -95,7 +95,7 @@ public interface PingTargetManager {
      * @return true if the name is unique in the appropriate set (custom or common) ping targets.
      * @throws WebloggerException
      */
-    public boolean isNameUnique(PingTarget pingTarget) throws WebloggerException;
+    boolean isNameUnique(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
@@ -106,7 +106,7 @@ public interface PingTargetManager {
      * @return true if the <code>pingUrl</code> property of the ping target is a well-formed url.
      * @throws WebloggerException
      */
-    public boolean isUrlWellFormed(PingTarget pingTarget) throws WebloggerException;
+    boolean isUrlWellFormed(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
@@ -119,12 +119,12 @@ public interface PingTargetManager {
      *         ping target is a valid IP address or a hostname that can be resolved on the server.
      * @throws WebloggerException
      */
-    public boolean isHostnameKnown(PingTarget pingTarget) throws WebloggerException;
+    boolean isHostnameKnown(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
      * Release all resources associated with Roller session.
      */
-    public void release();
+    void release();
     
 }

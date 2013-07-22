@@ -39,19 +39,19 @@ import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry.Types;
  * This class describes a weblog entry.
  */
 public class WeblogEntry extends Entry {
-    static interface Tags {
-        public static final String WEBLOG = "weblog";
-        public static final String HANDLE = "handle";
-        public static final String NAME = "name";
-        public static final String DESCRIPTION = "description";
-        public static final String LOCALE = "locale";
-        public static final String TIMEZONE = "timezone";
-        public static final String DATE_CREATED = "date-created";
-        public static final String CREATING_USER = "creating-user";
-        public static final String EMAIL_ADDRESS = "email-address";
-        public static final String APP_ENTRIES_URL = "app-entries-url";
-        public static final String APP_RESOURCES_URL = "app-resources-url";
-        public static final String ENABLED = "enabled";
+    interface Tags {
+        String WEBLOG = "weblog";
+        String HANDLE = "handle";
+        String NAME = "name";
+        String DESCRIPTION = "description";
+        String LOCALE = "locale";
+        String TIMEZONE = "timezone";
+        String DATE_CREATED = "date-created";
+        String CREATING_USER = "creating-user";
+        String EMAIL_ADDRESS = "email-address";
+        String APP_ENTRIES_URL = "app-entries-url";
+        String APP_RESOURCES_URL = "app-resources-url";
+        String ENABLED = "enabled";
     }
     
     private String handle;

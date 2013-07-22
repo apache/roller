@@ -33,57 +33,57 @@ public interface WeblogEntriesPager {
      * The collection is grouped by days of entries.  Each value is a list of
      * entry objects keyed by the date they were published.
      */
-    public Map getEntries();
+    Map getEntries();
         
     /**
      * Link value for returning to pager home
      */
-    public String getHomeLink();
+    String getHomeLink();
 
     /**
      * Name of pager home.
      */
-    public String getHomeName();
+    String getHomeName();
 
     /**
      * Link value for next page in current collection view
      */
-    public String getNextLink();
+    String getNextLink();
 
     /**
      * Name for next page in current collection view
      */
-    public String getNextName();
+    String getNextName();
 
     /**
      * Link value for prev page in current collection view
      */
-    public String getPrevLink();
+    String getPrevLink();
 
     /**
      * Link value for prev page in current collection view
      */
-    public String getPrevName();
+    String getPrevName();
     
         /**
      * Link value for next collection view
      */
-    public String getNextCollectionLink();
+    String getNextCollectionLink();
     
     /**
      * Name for next collection view
      */
-    public String getNextCollectionName();  
+    String getNextCollectionName();
     
     /**
      * Link value for prev collection view
      */
-    public String getPrevCollectionLink(); 
+    String getPrevCollectionLink();
     
     /**
      * Name for prev collection view
      */
-    public String getPrevCollectionName(); 
+    String getPrevCollectionName();
     
 }
 

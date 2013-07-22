@@ -41,7 +41,7 @@ public interface BookmarkManager {
      * @param folder The folder to be saved.
      * @throws WebloggerException If there is a problem.
      */
-    public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException;
+    void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException;
     
     
     /**
@@ -52,7 +52,7 @@ public interface BookmarkManager {
      * @param folder The folder to be removed.
      * @throws WebloggerException If there is a problem.
      */
-    public void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException;
+    void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException;
     
     
     /**
@@ -60,7 +60,7 @@ public interface BookmarkManager {
      *
      * This moves the src folder itself and all children and associated bookmarks.
      */
-    public void moveFolder(WeblogBookmarkFolder src,
+    void moveFolder(WeblogBookmarkFolder src,
 
     WeblogBookmarkFolder dest
 )
@@ -74,7 +74,7 @@ public interface BookmarkManager {
      * @return FolderData The folder, or null if not found.
      * @throws WebloggerException If there is a problem.
      */
-    public WeblogBookmarkFolder getFolder(String id) throws WebloggerException;
+    WeblogBookmarkFolder getFolder(String id) throws WebloggerException;
     
     
     /** 
@@ -84,7 +84,7 @@ public interface BookmarkManager {
      * @return List The list of FolderData objects from the weblog.
      * @throws WebloggerException If there is a problem.
      */
-    public List getAllFolders(Weblog weblog) throws WebloggerException;
+    List getAllFolders(Weblog weblog) throws WebloggerException;
     
     
     /** 
@@ -95,7 +95,7 @@ public interface BookmarkManager {
      * @return FolderData The root folder, or null if not found.
      * @throws WebloggerException If there is a problem.
      */
-    public WeblogBookmarkFolder getRootFolder(Weblog weblog) throws WebloggerException;
+    WeblogBookmarkFolder getRootFolder(Weblog weblog) throws WebloggerException;
     
     
     /** 
@@ -106,7 +106,7 @@ public interface BookmarkManager {
      * @return FolderData The folder from the given path, or null if not found.
      * @throws WebloggerException If there is a problem.
      */
-    public WeblogBookmarkFolder getFolder(Weblog weblog, String path)
+    WeblogBookmarkFolder getFolder(Weblog weblog, String path)
             throws WebloggerException;
     
     
@@ -116,7 +116,7 @@ public interface BookmarkManager {
      * @param bookmark The bookmark to be saved.
      * @throws WebloggerException If there is a problem.
      */
-    public void saveBookmark(WeblogBookmark bookmark) throws WebloggerException;
+    void saveBookmark(WeblogBookmark bookmark) throws WebloggerException;
     
     
     /**
@@ -125,7 +125,7 @@ public interface BookmarkManager {
      * @param bookmark The bookmark to be removed.
      * @throws WebloggerException If there is a problem.
      */
-    public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException;
+    void removeBookmark(WeblogBookmark bookmark) throws WebloggerException;
     
     
     /** 
@@ -135,7 +135,7 @@ public interface BookmarkManager {
      * @return BookmarkData The bookmark, or null if not found.
      * @throws WebloggerException If there is a problem.
      */
-    public WeblogBookmark getBookmark(String id) throws WebloggerException;
+    WeblogBookmark getBookmark(String id) throws WebloggerException;
     
     
     /** 
@@ -146,7 +146,7 @@ public interface BookmarkManager {
      * @return List The list of bookmarks found.
      * @throws WebloggerException If there is a problem.
      */
-    public List getBookmarks(WeblogBookmarkFolder folder, boolean recurse)
+    List getBookmarks(WeblogBookmarkFolder folder, boolean recurse)
             throws WebloggerException;
     
     
@@ -157,13 +157,13 @@ public interface BookmarkManager {
      * @param folder The NEW folder name to import the OPML into.
      * @param opml OPML data to be imported.
      */
-    public void importBookmarks(Weblog weblog, String folder, String opml)
+    void importBookmarks(Weblog weblog, String folder, String opml)
             throws WebloggerException;
     
     
     /**
      * Release all resources associated with Roller session.
      */
-    public void release();
+    void release();
     
 }

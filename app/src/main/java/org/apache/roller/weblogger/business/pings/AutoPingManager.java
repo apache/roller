@@ -39,7 +39,7 @@ public interface AutoPingManager {
      * @param autoPing the auto ping configuration
      * @throws WebloggerException
      */
-    public void saveAutoPing(AutoPing autoPing) throws WebloggerException;
+    void saveAutoPing(AutoPing autoPing) throws WebloggerException;
     
     
     /**
@@ -48,7 +48,7 @@ public interface AutoPingManager {
      * @param autoPing the auto ping configuration to remove
      * @throws WebloggerException
      */
-    public void removeAutoPing(AutoPing autoPing) throws WebloggerException;
+    void removeAutoPing(AutoPing autoPing) throws WebloggerException;
     
     
     /**
@@ -59,7 +59,7 @@ public interface AutoPingManager {
      * @param website    the website
      * @throws WebloggerException
      */
-    public void removeAutoPing(PingTarget pingTarget, Weblog website) throws WebloggerException;
+    void removeAutoPing(PingTarget pingTarget, Weblog website) throws WebloggerException;
     
     
     /**
@@ -68,7 +68,7 @@ public interface AutoPingManager {
      * @param autopings a <code>Collection</code> of <code>AAutoPing/code> objects
      * @throws WebloggerException
      */
-    public void removeAutoPings(Collection autopings) throws WebloggerException;
+    void removeAutoPings(Collection autopings) throws WebloggerException;
     
     
     /**
@@ -76,7 +76,7 @@ public interface AutoPingManager {
      *
      * @throws WebloggerException
      */
-    public void removeAllAutoPings() throws WebloggerException;
+    void removeAllAutoPings() throws WebloggerException;
     
     
     /**
@@ -86,7 +86,7 @@ public interface AutoPingManager {
      * @return the auto ping configuration with specified id or null if not found
      * @throws WebloggerException
      */
-    public AutoPing getAutoPing(String id) throws WebloggerException;
+    AutoPing getAutoPing(String id) throws WebloggerException;
     
     
     /**
@@ -95,7 +95,7 @@ public interface AutoPingManager {
      * @param website
      * @return a list of auto ping configurations for the given website as <code>AuAutoPingcode> objects.
      */
-    public List getAutoPingsByWebsite(Weblog website) throws WebloggerException;
+    List getAutoPingsByWebsite(Weblog website) throws WebloggerException;
     
     
     /**
@@ -104,7 +104,7 @@ public interface AutoPingManager {
      * @param pingTarget
      * @return a list of auto ping configurations for the given target as <code>AuAutoPingcode> objects.
      */
-    public List getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
+    List getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
@@ -113,7 +113,7 @@ public interface AutoPingManager {
      * @param changedWeblogEntry the entry that has been created or changed
      * @return a list of the ping configurations that should be applied due to this change
      */
-    public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
+    List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
     
     
     /**
@@ -123,7 +123,7 @@ public interface AutoPingManager {
      *
      * @param changedWeblogEntry the entry that has been created or changed
      */
-    public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
+    void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
     
     
     /**
@@ -134,7 +134,7 @@ public interface AutoPingManager {
      *         will be empty if there are no restrictions (meaning that the auto ping configuration applies to changes
      *         in any category of the website).
      */
-    public List getCategoryRestrictions(AutoPing autoPing) throws WebloggerException;
+    List getCategoryRestrictions(AutoPing autoPing) throws WebloggerException;
     
     
     /**
@@ -144,13 +144,13 @@ public interface AutoPingManager {
      * @param autoPing      auto ping configuration to change
      * @param newCategories a collection of <code>WeblogCategoryData</code> objects for the new category restrictions
      */
-    public void setCategoryRestrictions(AutoPing autoPing,
+    void setCategoryRestrictions(AutoPing autoPing,
             Collection newCategories);
     
     
     /**
      * Release all resources associated with Roller session.
      */
-    public void release();
+    void release();
     
 }
