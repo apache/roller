@@ -5,15 +5,7 @@ This file exists at the top-level of the Roller source tree.
 Roller is made up of the following Maven projects:
 
   roller-project:         Top level project
-  roller-core:            Core Roller component
-  planet-business:        Planet POJOs and business logic
-  planet-web:             Planet webapp (under construction as before)
-  weblogger-business:     Weblogger POJOs and business logic
-  weblogger-web:          Roller Weblogger Web Classes, Servlets, Filters, etc.
-  weblogger-webapp:       Roller Weblogger webapp, JSP pages, Velocity templates
-  weblogger-war-assembly: Assembly that builds the Roller WAR
-  weblogger-assembly:     Assembly that builds Roller distro
-  test-utils:             Test utils (e.g. start/stop Derby task)
+  app:                    Roller Weblogger webapp, JSP pages, Velocity templates
 
 To pull the latest trunk sources you need a Subversion client:
   svn co https://svn.apache.org/repos/asf/roller/trunk roller_trunk
