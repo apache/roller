@@ -45,7 +45,7 @@ public final class MediacastUtil {
     /**
      * Validate a Mediacast resource.
      */
-    public static final MediacastResource lookupResource(String url) 
+    public static MediacastResource lookupResource(String url)
             throws MediacastException {
         
         if(url == null || url.trim().length() ==0) {

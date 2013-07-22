@@ -33,7 +33,7 @@ public class Utilities {
     /** The <code>Log</code> instance for this class. */
     private static Log mLogger = LogFactory.getLog(Utilities.class);
     
-    public final static String TAG_SPLIT_CHARS = " ,\n\r\f\t";
+    public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
       
     //------------------------------------------------------------------------
     /** Strip jsessionid off of a URL */

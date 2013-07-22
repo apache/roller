@@ -33,8 +33,8 @@ import org.apache.roller.weblogger.util.RollerMessages;
  */
 public interface MediaFileManager {
 
-    public int MAX_WIDTH = 120;
-    public int MAX_HEIGHT = 120;
+    int MAX_WIDTH = 120;
+    int MAX_HEIGHT = 120;
 
     /**
      * Initialization; deal with upgrade migrations, etc.

@@ -41,7 +41,7 @@ public class Utilities {
     /** The <code>Log</code> instance for this class. */
     private static Log mLogger = LogFactory.getLog(Utilities.class);
     
-    public final static String TAG_SPLIT_CHARS = " ,\n\r\f\t";
+    public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
       
     private static Pattern mLinkPattern =
             Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);    

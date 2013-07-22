@@ -31,14 +31,14 @@ import java.util.Map;
  */
 public final class URLUtilities {
     
-    // non-intantiable
+    // non-instantiable
     private URLUtilities() {}
     
     
     /**
      * Compose a map of key=value params into a query string.
      */
-    public static final String getQueryString(Map params) {
+    public static String getQueryString(Map params) {
         
         if(params == null) {
             return null;
@@ -68,7 +68,7 @@ public final class URLUtilities {
     /**
      * URL encode a string using UTF-8.
      */
-    public static final String encode(String str) {
+    public static String encode(String str) {
         String encodedStr = str;
         try {
             encodedStr = URLEncoder.encode(str, "UTF-8");
@@ -82,7 +82,7 @@ public final class URLUtilities {
     /**
      * URL decode a string using UTF-8.
      */
-    public static final String decode(String str) {
+    public static String decode(String str) {
         String decodedStr = str;
         try {
             decodedStr = URLDecoder.decode(str, "UTF-8");
@@ -93,7 +93,7 @@ public final class URLUtilities {
     }
     
     
-    public static final String getEncodedTagsString(List tags) {
+    public static String getEncodedTagsString(List tags) {
         StringBuffer tagsString = new StringBuffer();
         if(tags != null && tags.size() > 0) {
             String tag = null;
@@ -115,9 +115,9 @@ public final class URLUtilities {
     
         
     /**
-     * URL encode a path string using UTF-8. The path seprator '/' will not be encoded
+     * URL encode a path string using UTF-8. The path separator '/' will not be encoded
      */
-    public static final String encodePath(String path) {
+    public static String encodePath(String path) {
         int i = path.indexOf('/');
         StringBuffer sb = new StringBuffer();
         while (i != -1) {

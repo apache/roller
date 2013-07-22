@@ -32,7 +32,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types;
+
 
 /**
  * This class describes a set of member entries. 

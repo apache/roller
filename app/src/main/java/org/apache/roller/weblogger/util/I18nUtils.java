@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public final class I18nUtils {
     
-    public static final Locale toLocale(String locale) {
+    public static Locale toLocale(String locale) {
         if (locale != null) {
             String[] localeStr = StringUtils.split(locale,"_");
             if (localeStr.length == 1) {

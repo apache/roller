@@ -36,7 +36,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
  * 
  * @author bayard@generationjava.com
  */
-abstract public class StringTagSupport extends BodyTagSupport {
+public abstract class StringTagSupport extends BodyTagSupport {
 
 
 
@@ -125,7 +125,7 @@ abstract public class StringTagSupport extends BodyTagSupport {
         return (EVAL_PAGE);
     }
 
-    /** 
+    /**
      * Perform an operation on the passed String.
      * The object returned by this operation (if not null) will be
      * associated to PageContext attribute represented by this.var.
@@ -134,9 +134,9 @@ abstract public class StringTagSupport extends BodyTagSupport {
      *
      * @return Object result of operation upon passed String
      */
-  public Object evaluateString(String str) throws JspException {
-    return null;
-  }
+    public Object evaluateString(String str) throws JspException {
+        return null;
+    }
   
     /** 
      * Perform a transformation on the passed in String.
@@ -145,7 +145,7 @@ abstract public class StringTagSupport extends BodyTagSupport {
      *
      * @return String result of operation upon passed in String
      */
-    abstract public String changeString(String str) throws JspException;
+    public abstract String changeString(String str) throws JspException;
 
     /**
      * Initialise any properties to default values.

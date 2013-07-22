@@ -40,22 +40,22 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public interface CacheHandler {
     
-    public void invalidate(WeblogEntry entry);
+    void invalidate(WeblogEntry entry);
     
-    public void invalidate(Weblog website);
+    void invalidate(Weblog website);
     
-    public void invalidate(WeblogBookmark bookmark);
+    void invalidate(WeblogBookmark bookmark);
     
-    public void invalidate(WeblogBookmarkFolder folder);
+    void invalidate(WeblogBookmarkFolder folder);
 
-    public void invalidate(WeblogEntryComment comment);
+    void invalidate(WeblogEntryComment comment);
 
-    public void invalidate(WeblogReferrer referer);
+    void invalidate(WeblogReferrer referer);
 
-    public void invalidate(User user);
+    void invalidate(User user);
 
-    public void invalidate(WeblogCategory category);
+    void invalidate(WeblogCategory category);
 
-    public void invalidate(WeblogTemplate template);
+    void invalidate(WeblogTemplate template);
     
 }

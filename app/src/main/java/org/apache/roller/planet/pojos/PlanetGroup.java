@@ -33,8 +33,8 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * @hibernate.class lazy="true" table="rag_group"
  */
 public class PlanetGroup implements Serializable, Comparable {
-    
-    transient private String[] catArray = null;
+
+    private transient String[] catArray = null;
     
     // attributes
     private String id = UUIDGenerator.generateUUID();

@@ -417,11 +417,9 @@ public class Blacklist {
                 }
             }
             finally {
-                if (matches) {
+                if (matches && mLogger.isDebugEnabled()) {
                     // Log the matched rule in debug mode
-                    if (mLogger.isDebugEnabled()) {
-                        mLogger.debug("matched:" + rule + ":");
-                    }
+                    mLogger.debug("matched:" + rule + ":");
                 }
             }
         }

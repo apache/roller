@@ -59,7 +59,7 @@ public final class WebloggerFactory {
      * @return Weblogger An instance of Weblogger.
      * @throws IllegalStateException If the app has not been properly bootstrapped yet.
      */
-    public static final Weblogger getWeblogger() {
+    public static Weblogger getWeblogger() {
         if (webloggerProvider == null) {
             throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
         }
@@ -78,7 +78,7 @@ public final class WebloggerFactory {
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws BootstrapException If an error happens during the bootstrap process.
      */
-    public static final void bootstrap() throws BootstrapException {
+    public static void bootstrap() throws BootstrapException {
         
         // if the app hasn't been properly started so far then bail
         if (!WebloggerStartup.isPrepared()) {
@@ -115,7 +115,7 @@ public final class WebloggerFactory {
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws BootstrapException If an error happens during the bootstrap process.
      */
-    public static final void bootstrap(WebloggerProvider provider) 
+    public static void bootstrap(WebloggerProvider provider)
             throws BootstrapException {
         
         // if the app hasn't been properly started so far then bail

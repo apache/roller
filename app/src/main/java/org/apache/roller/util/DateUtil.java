@@ -318,13 +318,15 @@ public abstract class DateUtil {
         // false if either value is null
         if (startDate == null || endDate == null) { return false; }
         
-        if (equalOK) {
+        if (equalOK && startDate.equals(endDate)) {
             // true if they are equal
-            if (startDate.equals(endDate)) { return true; }
+            return true;
         }
         
         // true if endDate after startDate
-        if (endDate.after(startDate)) { return true; }
+        if (endDate.after(startDate)) {
+            return true;
+        }
         
         return false;
     }
@@ -351,7 +353,7 @@ public abstract class DateUtil {
     
     /** 
      * Returns a "friendly" date format.
-     * @param mimimalFormat Should the date format allow single digits.
+     * @param minimalFormat Should the date format allow single digits.
      **/
     public static SimpleDateFormat friendlyDateFormat(boolean minimalFormat) {
         if (minimalFormat) {

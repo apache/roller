@@ -30,14 +30,14 @@ import org.apache.commons.lang.StringUtils;
  * @author bayard@generationjava.com
  * @version 0.4 20010812
  */
-final public class StringW {
+public final class StringW {
 
     /**
      * Quote a string so that it may be used in a regular expression 
      * without any parts of the string being considered as a 
      * part of the regular expression's control characters.
      */
-    static public String quoteRegularExpression(String str) {
+    public static String quoteRegularExpression(String str) {
         // replace ? + * / . ^ $ as long as they're not in character 
         // class. so must be done by hand
         char[] chrs = str.toCharArray();
@@ -67,7 +67,7 @@ final public class StringW {
      * use newlines as the delimiter. If a word is over 80 characters long 
      * use a - sign to split it.
      */
-    static public String wordWrap(String str) {
+    public static String wordWrap(String str) {
         return wordWrap(str, 80, "\n", "-", true);
     }
     /**
@@ -75,7 +75,7 @@ final public class StringW {
      * use newlines as the delimiter. If a word is over the width in lenght 
      * use a - sign to split it.
      */
-    static public String wordWrap(String str, int width) {
+    public static String wordWrap(String str, int width) {
         return wordWrap(str, width, "\n", "-", true);
     }
     /**
@@ -88,7 +88,7 @@ final public class StringW {
      *
      * @return String that has been word wrapped (with the delim inside width boundaries)
      */
-  static public String wordWrap(String str, int width, String delim, String split ) {
+  public static String wordWrap(String str, int width, String delim, String split ) {
     return wordWrap(str, width, delim, split, true);
   }
   
@@ -103,7 +103,7 @@ final public class StringW {
      *
      * @return String that has been word wrapped
      */
-    static public String wordWrap(String str, int width, String delim,
+    public static String wordWrap(String str, int width, String delim,
                                   String split, boolean delimInside) {
         int sz = str.length();
 

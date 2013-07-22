@@ -118,33 +118,29 @@ public class MenuHelper {
                 includeTab = ! getBooleanProperty(configTab.getDisabledProperty());
             }
             
-            if (includeTab) {
-                // user roles check
-                if (configTab.getGlobalPermissionActions() != null
-                        && !configTab.getGlobalPermissionActions().isEmpty()) {
-                    try {
-                        GlobalPermission perm = 
-                            new GlobalPermission(configTab.getGlobalPermissionActions());
-                        if (!umgr.checkPermission(perm, user)) {
-                            includeTab = false;
-                        }
-                    } catch (WebloggerException ex) {
-                        log.debug("ERROR: fetching user roles", ex);
+            // user roles check
+            if (includeTab && configTab.getGlobalPermissionActions() != null
+                    && !configTab.getGlobalPermissionActions().isEmpty()) {
+                try {
+                    GlobalPermission perm =
+                        new GlobalPermission(configTab.getGlobalPermissionActions());
+                    if (!umgr.checkPermission(perm, user)) {
                         includeTab = false;
                     }
+                } catch (WebloggerException ex) {
+                    log.debug("ERROR: fetching user roles", ex);
+                    includeTab = false;
                 }
             }
-            
-            if (includeTab) {
-                // weblog permissions check
-                if (configTab.getWeblogPermissionActions() != null 
-                        && !configTab.getWeblogPermissionActions().isEmpty()) {
-                    WeblogPermission perm = 
-                        new WeblogPermission(weblog, configTab.getWeblogPermissionActions());
-                    includeTab = umgr.checkPermission(perm, user);
-                }
+
+            // weblog permissions check
+            if (includeTab && configTab.getWeblogPermissionActions() != null
+                    && !configTab.getWeblogPermissionActions().isEmpty()) {
+                WeblogPermission perm =
+                    new WeblogPermission(weblog, configTab.getWeblogPermissionActions());
+                includeTab = umgr.checkPermission(perm, user);
             }
-            
+
             if (includeTab) {
                 log.debug("tab allowed - "+configTab.getName());
                 
@@ -162,33 +158,30 @@ public class MenuHelper {
                     log.debug("config tab item = "+configTabItem.getName());
                     
                     boolean includeItem = true;
+
                     if (configTabItem.getEnabledProperty() != null) {
                         includeItem = getBooleanProperty(configTabItem.getEnabledProperty());
                     } else if (configTabItem.getDisabledProperty() != null) {
                         includeItem = ! getBooleanProperty(configTabItem.getDisabledProperty());
                     }
                     
-                    if (includeItem) {
-                        // user roles check
-                        if (configTabItem.getGlobalPermissionActions() != null
-                                && !configTabItem.getGlobalPermissionActions().isEmpty()) {
-                            GlobalPermission perm = 
-                                new GlobalPermission(configTabItem.getGlobalPermissionActions());
-                            if (!umgr.checkPermission(perm, user)) {
-                                includeItem = false;
-                            }
+                    // user roles check
+                    if (includeItem && configTabItem.getGlobalPermissionActions() != null
+                            && !configTabItem.getGlobalPermissionActions().isEmpty()) {
+                        GlobalPermission perm =
+                            new GlobalPermission(configTabItem.getGlobalPermissionActions());
+                        if (!umgr.checkPermission(perm, user)) {
+                            includeItem = false;
                         }
                     }
-                    
-                    if (includeItem) {
-                        // weblog permissions check
-                        if (configTabItem.getWeblogPermissionActions() != null
-                                && !configTabItem.getWeblogPermissionActions().isEmpty()) {
-                            WeblogPermission perm = new WeblogPermission(weblog, configTabItem.getWeblogPermissionActions());
-                            includeItem = umgr.checkPermission(perm, user);
-                        }
+
+                    // weblog permissions check
+                    if (includeItem && configTabItem.getWeblogPermissionActions() != null
+                            && !configTabItem.getWeblogPermissionActions().isEmpty()) {
+                        WeblogPermission perm = new WeblogPermission(weblog, configTabItem.getWeblogPermissionActions());
+                        includeItem = umgr.checkPermission(perm, user);
                     }
-                    
+
                     if (includeItem) {
                         log.debug("tab item allowed - "+configTabItem.getName());
                         
