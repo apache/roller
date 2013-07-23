@@ -655,9 +655,9 @@ public class MediaFileTest extends TestCase {
                 mediaFile.setWeblog(testWeblog);
                 mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
                 mediaFile.setContentType("image/jpeg");
+                mediaFile.setDirectory(rootDirectory);
                 mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
                 rootDirectory.getMediaFiles().add(mediaFile);
-                mediaFile.setDirectory(rootDirectory);
                 assertNotNull(mediaFile.getId());
                 assertNotNull(mediaFile.getId().length() > 0);
                 TestUtils.endSession(true);
@@ -741,8 +741,8 @@ public class MediaFileTest extends TestCase {
             mediaFile.setWeblog(testWeblog);
             mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
             mediaFile.setContentType(contentTypes[i]);
-            rootDirectory.getMediaFiles().add(mediaFile);
             mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+            rootDirectory.getMediaFiles().add(mediaFile);
             assertNotNull(mediaFile.getId());
             assertNotNull(mediaFile.getId().length() > 0);
         }
@@ -819,12 +819,12 @@ public class MediaFileTest extends TestCase {
         mediaFile.setWeblog(testWeblog);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        rootDirectory.getMediaFiles().add(mediaFile);
 
         // Add tags
         mediaFile.setTagsAsString("tst5work tst5home");
 
         mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        rootDirectory.getMediaFiles().add(mediaFile);
         String id = mediaFile.getId();
         TestUtils.endSession(true);
         assertNotNull(id);
@@ -895,8 +895,8 @@ public class MediaFileTest extends TestCase {
         mediaFile.setLength(4000);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
-        rootDirectory.getMediaFiles().add(mediaFile);
         mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+        rootDirectory.getMediaFiles().add(mediaFile);
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setDirectory(rootDirectory);
@@ -908,8 +908,8 @@ public class MediaFileTest extends TestCase {
         mediaFile2.setLength(4000);
         mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
-        rootDirectory.getMediaFiles().add(mediaFile2);
         mfMgr.createMediaFile(testWeblog, mediaFile2, new RollerMessages());
+        rootDirectory.getMediaFiles().add(mediaFile2);
 
         TestUtils.endSession(true);
 
@@ -974,7 +974,6 @@ public class MediaFileTest extends TestCase {
 
             MediaFile mediaFile = new MediaFile();
             mediaFile.setDirectory(rootDirectory);
-            rootDirectory.getMediaFiles().add(mediaFile);
             mediaFile.setWeblog(testWeblog);
             mediaFile.setName("test7_1.jpg");
             mediaFile.setDescription("This is a test image 7.1");
@@ -984,10 +983,10 @@ public class MediaFileTest extends TestCase {
             mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
             mediaFile.setContentType("image/jpeg");
             mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+            rootDirectory.getMediaFiles().add(mediaFile);
 
             MediaFile mediaFile2 = new MediaFile();
             mediaFile2.setDirectory(rootDirectory);
-            rootDirectory.getMediaFiles().add(mediaFile2);
             mediaFile2.setWeblog(testWeblog);
             mediaFile2.setName("test7_2.jpg");
             mediaFile2.setDescription("This is a test image 7.2");
@@ -997,6 +996,7 @@ public class MediaFileTest extends TestCase {
             mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
             mediaFile2.setContentType("image/jpeg");
             mfMgr.createMediaFile(testWeblog, mediaFile2, new RollerMessages());
+            rootDirectory.getMediaFiles().add(mediaFile2);
 
             TestUtils.endSession(true);
 
