@@ -72,7 +72,10 @@
         </dependency>
 
         <!-- Alternative testing with Hibernate (used by default
-             with JBoss -->
+             with JBoss
+             Important: set hibernate.transaction.factory_class=org.hibernate.transaction.JDBCTransactionFactory
+             in your roller-custom.properties if using Hibernate with Tomcat
+        -->
 
         <!--dependency>
             <groupId>org.hibernate</groupId>
