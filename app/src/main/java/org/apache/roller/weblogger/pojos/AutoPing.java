@@ -19,14 +19,6 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
@@ -42,27 +34,6 @@ import org.apache.roller.util.UUIDGenerator;
  * changes.
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-@Entity
-@Table(name="autoping")
-@NamedQueries({
-    @NamedQuery(name="AutoPing.getAll",
-        query="SELECT a FROM AutoPing a"),
-
-    @NamedQuery(name="AutoPing.getByPingTarget",
-        query="SELECT a FROM AutoPing a WHERE a.pingTarget = ?1"),
-
-    @NamedQuery(name="AutoPing.getByWebsite",
-        query="SELECT a FROM AutoPing a WHERE a.website = ?1"),
-
-    @NamedQuery(name="AutoPing.removeByPingTarget",
-        query="DELETE FROM AutoPing a WHERE a.pingTarget = ?1"),
-
-    @NamedQuery(name="AutoPing.removeByPingTarget&Website",
-        query="DELETE FROM AutoPing a WHERE a.pingTarget = ?1 AND a.website = ?2"),
-
-    @NamedQuery(name="AutoPing.removeAll",
-        query="DELETE FROM AutoPing a")
-})
 public class AutoPing implements Serializable {
 
     private String id = UUIDGenerator.generateUUID();
@@ -94,8 +65,6 @@ public class AutoPing implements Serializable {
      * Get the unique id (primary key) of this object.
      * @return the unique id of this object. 
      */
-    @Id
-    @Column(nullable=false,updatable=false)
     public String getId() {
         return id;
     }
@@ -115,8 +84,6 @@ public class AutoPing implements Serializable {
      * to the ping target specified by this object.
      * @return the website.
      */
-    @ManyToOne
-    @JoinColumn(name="websiteid",insertable=true,nullable=true,updatable=true)
     public Weblog getWebsite() {
         return website;
     }
@@ -135,8 +102,6 @@ public class AutoPing implements Serializable {
      * corresponding website changes.
      * @return the target to be pinged.
      */
-    @ManyToOne
-    @JoinColumn(name="pingtargetid",insertable=true,nullable=true,updatable=true)
     public PingTarget getPingTarget() {
         return pingTarget;
     }

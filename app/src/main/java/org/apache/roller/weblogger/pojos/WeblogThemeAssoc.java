@@ -22,24 +22,11 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 /**
  * pojo that will keep the Associativity of Themes for a weblog
  */
-
-@Entity
-@Table(name="rol_weblogtheme")
-@NamedQueries({
-        @NamedQuery(name = "WeblogThemeAssoc.getThemeAssocByType" ,
-                query = "SELECT a FROM WeblogThemeAssoc a WHERE a.weblog = ?1 AND a.type =?2"
-        ),
-        @NamedQuery(name = "WeblogThemeAssoc.getThemeAssocsByWeblog" ,
-                query = "SELECT a FROM WeblogThemeAssoc a WHERE a.weblog = ?1"
-        )
-}
-)
 public class WeblogThemeAssoc implements Serializable{
 
 
@@ -63,8 +50,7 @@ public class WeblogThemeAssoc implements Serializable{
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
-    @Id
-    @Column(nullable=false,updatable=false)
+
     public String getId() {
         return id;
     }
@@ -72,8 +58,7 @@ public class WeblogThemeAssoc implements Serializable{
     public void setId(String id) {
         this.id = id;
     }
-     @ManyToOne
-    @JoinColumn(name="weblogid",nullable=false,updatable=true, insertable=true)
+
     public Weblog getWeblog() {
         return weblog;
     }
@@ -81,8 +66,7 @@ public class WeblogThemeAssoc implements Serializable{
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
-     @Basic
-     @Column(nullable = false,updatable = true,insertable = true)
+
     public String getName() {
         return name;
     }
@@ -90,8 +74,7 @@ public class WeblogThemeAssoc implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-      @Basic
-     @Column(nullable = false,updatable = true,insertable = true)
+
     public boolean isCustom() {
         return isCustom;
     }
@@ -99,8 +82,7 @@ public class WeblogThemeAssoc implements Serializable{
     public void setCustom(boolean custom) {
         isCustom = custom;
     }
-    @Basic
-     @Column(nullable = false,updatable = true,insertable = true)
+
     public String getType() {
         return type;
     }
@@ -109,7 +91,7 @@ public class WeblogThemeAssoc implements Serializable{
         this.type = type;
     }
 
-     public String toString() {
+    public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
         buf.append(getId());

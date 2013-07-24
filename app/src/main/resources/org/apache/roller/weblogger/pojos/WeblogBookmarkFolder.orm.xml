@@ -2,14 +2,9 @@
 <entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
-    <description>Persistence Metadata for Roller</description>
-    <persistence-unit-metadata>
-        <persistence-unit-defaults>
-            <access>PROPERTY</access>
-        </persistence-unit-defaults>
-    </persistence-unit-metadata>
     <package>org.apache.roller.weblogger.pojos</package>
-    <entity metadata-complete="true" name="WeblogBookmarkFolder" class="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder">
+    <entity metadata-complete="true" name="WeblogBookmarkFolder" class="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"
+            access="PROPERTY">
         <table name="folder"/>
         <named-query name="WeblogBookmarkFolder.getByWebsite">
             <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.website = ?1</query>

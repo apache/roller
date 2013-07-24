@@ -199,7 +199,7 @@ public class PlanetGroup implements Serializable, Comparable {
      * Returns true if entry is qualified for inclusion in this group.
      */
     public boolean qualified(SubscriptionEntry entry) {
-        String[] cats = getCategoryRestrictionAsArray();
+        String[] cats = createCategoryRestrictionAsArray();
         if (cats == null || cats.length == 0) return true;
         for (int i=0; i<cats.length; i++) {
             if (entry.inCategory(cats[i])) return true;
@@ -208,7 +208,7 @@ public class PlanetGroup implements Serializable, Comparable {
     }
     
     
-    private String[] getCategoryRestrictionAsArray() {
+    private String[] createCategoryRestrictionAsArray() {
         if (catArray == null && getCategoryRestriction() != null) {
             StringTokenizer toker = new StringTokenizer(getCategoryRestriction(),",");
             catArray = new String[toker.countTokens()];

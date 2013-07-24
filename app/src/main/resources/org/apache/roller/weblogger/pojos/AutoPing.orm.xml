@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="AutoPing"
+            class="org.apache.roller.weblogger.pojos.AutoPing" access="PROPERTY">
+        <table name="autoping"/>
+        <named-query name="AutoPing.getAll">
+            <query>SELECT a FROM AutoPing a</query>
+        </named-query>
+        <named-query name="AutoPing.getByPingTarget">
+            <query>SELECT a FROM AutoPing a WHERE a.pingTarget = ?1</query>
+        </named-query>
+        <named-query name="AutoPing.getByWebsite">
+            <query>SELECT a FROM AutoPing a WHERE a.website = ?1</query>
+        </named-query>
+        <named-query name="AutoPing.removeByPingTarget">
+            <query>DELETE FROM AutoPing a WHERE a.pingTarget = ?1</query>
+        </named-query>
+        <named-query name="AutoPing.removeByPingTarget&amp;Website">
+            <query>DELETE FROM AutoPing a WHERE a.pingTarget = ?1 AND a.website = ?2</query>
+        </named-query>
+        <named-query name="AutoPing.removeAll">
+            <query>DELETE FROM AutoPing a</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <many-to-one name="pingTarget" target-entity="org.apache.roller.weblogger.pojos.PingTarget">
+                <join-column name="pingtargetid" insertable="true" updatable="true" nullable="true"/>
+            </many-to-one>
+            <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+                <join-column name="websiteid" insertable="true" updatable="true" nullable="true"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+</entity-mappings>

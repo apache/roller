@@ -23,24 +23,10 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 
 /**
  * A pojo that will maintain different template codes for one template
  */
-
-@Entity
-@Table(name = "rol_templatecode")
-@NamedQueries({
-		@NamedQuery(name = "WeblogThemeTemplateCode.getTemplateCodeByType", query = "SELECT c FROM WeblogThemeTemplateCode c WHERE c.templateId = ?1 AND c.type =?2"),
-
-		@NamedQuery(name = "WeblogThemeTemplateCode.getTemplateCodesByTemplateId", query = "SELECT c FROM WeblogThemeTemplateCode c WHERE c.templateId = ?1 ") })
 public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 
 	private static final long serialVersionUID = -1497618963802805151L;
@@ -49,7 +35,7 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 	// template contents
 	private String template = null;
 	private String type = null;
-	private String ContentType = null;
+	private String contentType = null;
 	private String templateLanguage = null;
 
 	public WeblogThemeTemplateCode(String templateId, String type) {
@@ -60,8 +46,6 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 	public WeblogThemeTemplateCode() {
 	}
 
-	@Id
-	@Column(nullable = false, updatable = false)
 	public String getId() {
 		return id;
 	}
@@ -70,8 +54,6 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 		this.id = id;
 	}
 
-	@Basic
-	@Column(nullable = false, updatable = true, insertable = true)
 	// @Override
 	public String getTemplate() {
 		return template;
@@ -82,8 +64,6 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 		this.template = template;
 	}
 
-	@Basic
-	@Column(nullable = false, updatable = true, insertable = true)
 	// @Override
 	public String getTemplateId() {
 		return templateId;
@@ -94,8 +74,6 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 		this.templateId = templateId;
 	}
 
-	@Basic
-	@Column(nullable = false, updatable = true, insertable = true)
 	// @Override
 	public String getType() {
 		return type;
@@ -134,8 +112,6 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 				.append(getTemplate()).toHashCode();
 	}
 
-	@Basic
-	@Column(name = "templatelang", unique = false, updatable = true, insertable = true)
 	// @Override
 	public String getTemplateLanguage() {
 		return templateLanguage;
@@ -146,15 +122,13 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 		this.templateLanguage = templateLanguage;
 	}
 
-	@Basic
-	@Column(name = "contenttype", unique = false, updatable = true, insertable = true)
 	// @Override
 	public String getContentType() {
-		return ContentType;
+		return contentType;
 	}
 
 	// @Override
 	public void setContentType(String contentType) {
-		ContentType = contentType;
+		this.contentType = contentType;
 	}
 }

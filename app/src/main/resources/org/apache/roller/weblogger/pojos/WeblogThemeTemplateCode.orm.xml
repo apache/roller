@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="WeblogThemeTemplateCode"
+            class="org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode" access="PROPERTY">
+        <table name="rol_templatecode"/>
+        <named-query name="WeblogThemeTemplateCode.getTemplateCodeByType">
+            <query>SELECT c FROM WeblogThemeTemplateCode c WHERE c.templateId = ?1 AND c.type =?2</query>
+        </named-query>
+        <named-query name="WeblogThemeTemplateCode.getTemplateCodesByTemplateId">
+            <query>SELECT c FROM WeblogThemeTemplateCode c WHERE c.templateId = ?1</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="template">
+                <column name="template" insertable="true" updatable="true" nullable="false"/>
+            </basic>
+            <basic name="templateId">
+                <column name="templateId" insertable="true" updatable="true" nullable="false"/>
+            </basic>
+            <basic name="type">
+                <column name="type" insertable="true" updatable="true" nullable="false"/>
+            </basic>
+            <basic name="templateLanguage">
+                <column name="templatelang" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="contentType">
+                <column name="contenttype" insertable="true" updatable="true" unique="false"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

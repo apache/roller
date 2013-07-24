@@ -75,12 +75,21 @@
              with JBoss
              Important: set hibernate.transaction.factory_class=org.hibernate.transaction.JDBCTransactionFactory
              in your roller-custom.properties if using Hibernate with Tomcat
+
+             org.javassist:javassist:3.15.0 cannot replace differently named javassist:javassist:3.11.0
+             always provided by struts2-spring-plugin so filtering it out; already provided by JBoss anyway
         -->
 
         <!--dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>4.2.1.Final</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -144,8 +153,8 @@
             <version>1.0.2</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>xml-apis</artifactId>
                     <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -383,8 +392,8 @@
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
-                    <artifactId>activation</artifactId>
                     <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
