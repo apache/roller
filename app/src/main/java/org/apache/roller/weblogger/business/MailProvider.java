@@ -73,12 +73,14 @@ public class MailProvider {
         
         // init and connect now so we fail early
         if (type == ConfigurationType.JNDI_NAME) {            
-            String name = "java:comp/env/" + jndiName;
+            if (jndiName != null && !jndiName.startsWith("java:")) {
+                jndiName = "java:comp/env/" + jndiName;
+            }
             try {
                 Context ctx = (Context) new InitialContext();
-                session = (Session) ctx.lookup(name);
+                session = (Session) ctx.lookup(jndiName);
             } catch (NamingException ex) {
-                throw new StartupException("ERROR looking up mail-session with JNDI name: " + name);
+                throw new StartupException("ERROR looking up mail-session with JNDI name: " + jndiName);
             }
         } else {
             Properties props = new Properties();
