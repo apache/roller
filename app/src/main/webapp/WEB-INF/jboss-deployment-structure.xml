@@ -4,6 +4,14 @@
     <dependencies>
       <module name="org.apache.roller.configuration"/>
     </dependencies>
+    <!--These exclusions enable the application-level logging
+        configured in the roller-custom.properties file. JBoss
+        server logging (e.g., standalone/log/server.log) remains
+        unaffected. -->
+    <exclusions>
+        <module name="org.log4j"/>  
+        <module name="org.apache.commons.logging"/>
+    </exclusions>
   </deployment>
 </jboss-deployment-structure>
 
