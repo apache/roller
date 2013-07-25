@@ -159,6 +159,7 @@ public class SearchServlet extends HttpServlet {
             WeblogPageRequest pageRequest = new WeblogPageRequest();
             pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
             pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
+            pageRequest.setLocale(searchRequest.getLocale());
             initData.put("parsedRequest", pageRequest);
             initData.put("searchRequest", searchRequest);
             

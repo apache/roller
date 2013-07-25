@@ -367,7 +367,10 @@ public class WeblogRequestMapper implements RequestMapper {
                 forwardUrl.append(SEARCH_SERVLET);
                 forwardUrl.append("/");
                 forwardUrl.append(handle);
-                
+                if(locale != null) {
+                    forwardUrl.append("/");
+                    forwardUrl.append(locale);
+                }
                 // requests handled by RSDServlet
             } else if(context.equals("rsd")) {
                 
