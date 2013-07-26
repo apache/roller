@@ -53,211 +53,228 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
-
 /**
  * Handles search queries for weblogs.
  */
-public class SearchServlet extends HttpServlet {    
+public class SearchServlet extends HttpServlet {
     private static Log log = LogFactory.getLog(SearchServlet.class);
-    
+
     // Development theme reloading
-	Boolean themeReload = false;
-    
+    Boolean themeReload = false;
+
     /**
      * Init method for this servlet
      */
     public void init(ServletConfig servletConfig) throws ServletException {
-        
+
         super.init(servletConfig);
-        
+
         log.info("Initializing SearchServlet");
+
+        // Development theme reloading
+        themeReload = WebloggerConfig.getBooleanProperty("themes.reload.mode");
     }
-    
-    
+
     /**
      * Handle GET requests for weblog pages.
      */
-    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         log.debug("Entering");
-        
+
         Weblog weblog = null;
         WeblogSearchRequest searchRequest = null;
-        
+
         // first off lets parse the incoming request and validate it
         try {
             searchRequest = new WeblogSearchRequest(request);
-            
+
             // now make sure the specified weblog really exists
-            weblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getWeblogByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
-            
-        } catch(Exception e) {
+            weblog = WebloggerFactory
+                    .getWeblogger()
+                    .getWeblogManager()
+                    .getWeblogByHandle(searchRequest.getWeblogHandle(),
+                            Boolean.TRUE);
+
+        } catch (Exception e) {
             // invalid search request format or weblog doesn't exist
             log.debug("error creating weblog search request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-		// Get the deviceType from user agent
-        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
+        // Get the deviceType from user agent
+        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository
+                .getRequestType(request);
 
         // for previews we explicitly set the deviceType attribute
         if (request.getParameter("type") != null) {
-            deviceType = request.getParameter("type").equals("standard") 
-				? MobileDeviceRepository.DeviceType.standard
-				: MobileDeviceRepository.DeviceType.mobile;
+            deviceType = request.getParameter("type").equals("standard") ? MobileDeviceRepository.DeviceType.standard
+                    : MobileDeviceRepository.DeviceType.mobile;
         }
-        
+
         // do we need to force a specific locale for the request?
-        if(searchRequest.getLocale() == null && !weblog.isShowAllLangs()) {
+        if (searchRequest.getLocale() == null && !weblog.isShowAllLangs()) {
             searchRequest.setLocale(weblog.getLocale());
         }
-        
+
         // lookup template to use for rendering
         ThemeTemplate page = null;
         try {
 
             // try looking for a specific search page
-            page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ACTION_SEARCH);
+            page = weblog.getTheme().getTemplateByAction(
+                    ThemeTemplate.ACTION_SEARCH);
 
             // if not found then fall back on default page
-            if(page == null) {
+            if (page == null) {
                 page = weblog.getTheme().getDefaultTemplate();
             }
-            
+
             // if still null then that's a problem
-            if(page == null) {
-                throw new WebloggerException("Could not lookup default page "+
-                        "for weblog "+weblog.getHandle());
+            if (page == null) {
+                throw new WebloggerException("Could not lookup default page "
+                        + "for weblog " + weblog.getHandle());
             }
-        } catch(Exception e) {
-            log.error("Error getting default page for weblog "+
-                    weblog.getHandle(), e);
+        } catch (Exception e) {
+            log.error(
+                    "Error getting default page for weblog "
+                            + weblog.getHandle(), e);
         }
-        
+
         // set the content type
         response.setContentType("text/html; charset=utf-8");
-        
+
         // looks like we need to render content
         Map model = new HashMap();
         try {
-            PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", false, 8192, true);
-            
+            PageContext pageContext = JspFactory.getDefaultFactory()
+                    .getPageContext(this, request, response, "", false, 8192,
+                            true);
+
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
             initData.put("pageContext", pageContext);
-            
+
             // this is a little hacky, but nothing we can do about it
             // we need the 'weblogRequest' to be a pageRequest so other models
             // are properly loaded, which means that searchRequest needs its
-            // own custom initData property aside from the standard weblogRequest.
-            // possible better approach is make searchRequest extend pageRequest.
+            // own custom initData property aside from the standard
+            // weblogRequest.
+            // possible better approach is make searchRequest extend
+            // pageRequest.
             WeblogPageRequest pageRequest = new WeblogPageRequest();
             pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
-            pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
+            pageRequest.setWeblogCategoryName(searchRequest
+                    .getWeblogCategoryName());
             pageRequest.setLocale(searchRequest.getLocale());
             initData.put("parsedRequest", pageRequest);
             initData.put("searchRequest", searchRequest);
-            
+
             // define url strategy
-            initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());
-            
+            initData.put("urlStrategy", WebloggerFactory.getWeblogger()
+                    .getUrlStrategy());
+
             // Load models for pages
-            String searchModels = WebloggerConfig.getProperty("rendering.searchModels");
+            String searchModels = WebloggerConfig
+                    .getProperty("rendering.searchModels");
             ModelLoader.loadModels(searchModels, model, initData, true);
-            
+
             // Load special models for site-wide blog
-            if(WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-                String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
+            if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+                String siteModels = WebloggerConfig
+                        .getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
 
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
-            
+
             // manually add search model again to support pre-3.0 weblogs
             Model searchModel = new SearchResultsModel();
             searchModel.init(initData);
             model.put("searchResults", searchModel);
-            
+
         } catch (WebloggerException ex) {
             log.error("Error loading model objects for page", ex);
-            
-            if(!response.isCommitted()) response.reset();
+
+            if (!response.isCommitted())
+                response.reset();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
 
         // Development only. Reload if theme has been modified
         if (themeReload
-        		&& !weblog.getEditorTheme().equals(
-        				WeblogTemplate.ACTION_CUSTOM)
-        				&& (searchRequest.getPathInfo() == null || searchRequest
-        				.getPathInfo() != null
-        				&& !searchRequest.getPathInfo().endsWith(".css"))) {
-			
-			try {
-				ThemeManager manager = WebloggerFactory.getWeblogger().getThemeManager();
-				boolean reloaded = manager.reLoadThemeFromDisk(weblog.getEditorTheme());
-				if (reloaded) {
-					if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
-						SiteWideCache.getInstance().clear();
-					} else {
-						WeblogPageCache.getInstance().clear();
-					}
-					I18nMessages.reloadBundle(weblog.getLocaleInstance()); 
-				}
+                && !weblog.getEditorTheme()
+                        .equals(WeblogTemplate.ACTION_CUSTOM)
+                && (searchRequest.getPathInfo() == null || searchRequest
+                        .getPathInfo() != null)) {
 
-			} catch (Exception ex) {
-				log.error("ERROR - reloading theme " + ex);
-			}
-		}
+            try {
+                ThemeManager manager = WebloggerFactory.getWeblogger()
+                        .getThemeManager();
+                boolean reloaded = manager.reLoadThemeFromDisk(weblog
+                        .getEditorTheme());
+                if (reloaded) {
+                    if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest
+                            .getWeblogHandle())) {
+                        SiteWideCache.getInstance().clear();
+                    } else {
+                        WeblogPageCache.getInstance().clear();
+                    }
+                    I18nMessages.reloadBundle(weblog.getLocaleInstance());
+                }
+
+            } catch (Exception ex) {
+                log.error("ERROR - reloading theme " + ex);
+            }
+        }
 
         // lookup Renderer we are going to use
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
             renderer = RendererManager.getRenderer(page, deviceType);
-        } catch(Exception e) {
+        } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);
-            
-            if(!response.isCommitted()) response.reset();
+
+            if (!response.isCommitted())
+                response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // render content
         CachedContent rendererOutput = new CachedContent(4096);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());
-            
+
             // flush rendered output and close
             rendererOutput.flush();
             rendererOutput.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             // bummer, error during rendering
             log.error("Error during rendering for rsd template", e);
-            
-            if(!response.isCommitted()) response.reset();
+
+            if (!response.isCommitted())
+                response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
         // post rendering process
-        
+
         // flush rendered content to response
         log.debug("Flushing response output");
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
-        
+
         log.debug("Exiting");
     }
-    
+
 }

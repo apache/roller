@@ -70,7 +70,7 @@
            </select>
            <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
         </form>
-        $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${website.handle}] )
+        $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${model.weblog.handle}] )
 
 #if ($model.hits > 0)
    #showNextPrevSearchControl($pager)
