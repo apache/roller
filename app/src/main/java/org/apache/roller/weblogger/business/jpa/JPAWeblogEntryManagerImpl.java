@@ -627,10 +627,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append(" AND e.locale like ?").append(size);
         }
         
-        if (text != null) {
+        if (StringUtils.isNotEmpty(text)) {
             params.add(size++, '%' + text + '%');
             queryString.append(" AND ( e.text LIKE ?").append(size);
-            queryString.append("    OR e.summary LIKE ? ").append(size);
+            queryString.append("    OR e.summary LIKE ?").append(size);
             queryString.append("    OR e.title LIKE ?").append(size);
             queryString.append(") ");
         }
