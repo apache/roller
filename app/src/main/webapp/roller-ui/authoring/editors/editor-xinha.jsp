@@ -138,7 +138,7 @@
 <%-- ********************************************************************* --%>
 <%-- Text editors --%>
 
-<p class="toplabel"
+<p class="toplabel">
     <span style="font-weight:normal;float:right;">
         <a href="#" onClick="onClickAddImage();">Add Image</a>&nbsp;
     </span>
