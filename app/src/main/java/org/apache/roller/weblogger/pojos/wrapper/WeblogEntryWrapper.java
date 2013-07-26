@@ -23,12 +23,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
+import org.apache.roller.weblogger.pojos.WeblogEntryTagComparator;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 
@@ -207,7 +210,9 @@ public class WeblogEntryWrapper {
     
     
     public List getTags() {
-        Set initialCollection = this.pojo.getTags();
+        // Sort by name
+        Set<WeblogEntryTag> initialCollection = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
+        initialCollection.addAll(this.pojo.getTags());
         
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover

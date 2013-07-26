@@ -38,22 +38,21 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringEscapeUtils;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.util.DateUtil;
-import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.util.UUIDGenerator;
-import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
+import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -103,7 +102,7 @@ public class WeblogEntry implements Serializable {
     // Collection of name/value entry attributes
     private Set attSet = new TreeSet();
     
-    private Set tagSet = new HashSet();
+    private Set tagSet = new HashSet(); 
     private Set removedTags = new HashSet();
     private Set addedTags = new HashSet();
     
@@ -654,12 +653,13 @@ public class WeblogEntry implements Serializable {
      * @hibernate.collection-key column="entryid"
      * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogEntryTag"
      */
-     public Set getTags()
+     public Set<WeblogEntryTag> getTags()
      {
          return tagSet;
      }
      
-     private void setTags(Set tagSet) throws WebloggerException
+     @SuppressWarnings("unused")
+    private void setTags(Set<WeblogEntryTag> tagSet) throws WebloggerException
      {
          this.tagSet = tagSet;
          this.removedTags = new HashSet();
@@ -748,7 +748,10 @@ public class WeblogEntry implements Serializable {
      */
     public String getTagsAsString() {
         StringBuffer sb = new StringBuffer();
-        for (Iterator it = getTags().iterator(); it.hasNext();) {
+        // Sort by name
+        Set<WeblogEntryTag> tmp = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
+        tmp.addAll(getTags());
+        for (Iterator it = tmp.iterator(); it.hasNext();) {
             sb.append(((WeblogEntryTag) it.next()).getName()).append(" ");
         }
         if (sb.length() > 0) {
@@ -759,7 +762,7 @@ public class WeblogEntry implements Serializable {
     }
 
     public void setTagsAsString(String tags) throws WebloggerException {
-        if (tags == null) {
+        if (StringUtils.isEmpty(tags)) {
             tagSet.clear();
             return;
         }

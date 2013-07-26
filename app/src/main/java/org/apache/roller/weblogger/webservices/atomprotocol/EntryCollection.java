@@ -29,12 +29,16 @@ import com.sun.syndication.propono.atom.server.AtomException;
 import com.sun.syndication.propono.atom.server.AtomNotAuthorizedException;
 import com.sun.syndication.propono.atom.server.AtomNotFoundException;
 import com.sun.syndication.propono.atom.server.AtomRequest;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +53,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
+import org.apache.roller.weblogger.pojos.WeblogEntryTagComparator;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -342,7 +347,9 @@ public class EntryCollection {
         categories.add(atomCat);
         
         // Add Atom categories for each Weblogger tag with null scheme
-        for (Iterator tagit = entry.getTags().iterator(); tagit.hasNext();) {
+        Set<WeblogEntryTag> tmp = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
+        tmp.addAll(entry.getTags());
+        for (Iterator tagit = tmp.iterator(); tagit.hasNext();) {
             WeblogEntryTag tag = (WeblogEntryTag) tagit.next();
             Category newcat = new Category();
             newcat.setTerm(tag.getName());
