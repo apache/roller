@@ -126,7 +126,6 @@ public class WeblogConfig extends UIAction {
         
         if(!hasActionErrors()) try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             
             Weblog weblog = getActionWeblog();
             
