@@ -40,8 +40,8 @@ import org.jdom.input.SAXBuilder;
  * @author jtb
  */
 public class MemberEntrySet extends EntrySet {
-    static interface Tags {
-        public static final String MEMBERS = "members";
+    interface Tags {
+        String MEMBERS = "members";
     }       
         
     public MemberEntrySet(String urlPrefix) {

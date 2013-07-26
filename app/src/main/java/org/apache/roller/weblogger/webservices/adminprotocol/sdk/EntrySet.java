@@ -19,6 +19,8 @@ package org.apache.roller.weblogger.webservices.adminprotocol.sdk;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -81,8 +83,9 @@ public abstract class EntrySet extends Entry {
     public boolean isEmpty() {
         return entries == null || entries.size() == 0;
     }
-    
+
     /** This object as a JDOM Document */
+
     public Document toDocument() {
         Element e = new Element(getType(), NAMESPACE);
         Document doc = new Document(e);
@@ -111,10 +114,13 @@ public abstract class EntrySet extends Entry {
         if (!areEqual(getType(), other.getType())) {
             return false;
         }        
-        if (!areEqual(getEntries(), other.getEntries())) {
-            return false;
-        }
-        
-        return true;
-    }    
+        return areEqual(getEntries(), other.getEntries());
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getHref())
+                .append(getType()).append(entries).toHashCode();
+    }
+
 }
