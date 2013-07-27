@@ -48,17 +48,17 @@ public class IndexUtil {
         if (input == null || field == null)
             return null;
 
-        Analyzer analyer = IndexManagerImpl.getAnalyzer();
-
-        TokenStream tokens = analyer
-                .tokenStream(field, new StringReader(input));
-
-        CharTermAttribute termAtt = (CharTermAttribute) tokens
-                .addAttribute(CharTermAttribute.class);
+        Analyzer analyzer = IndexManagerImpl.getAnalyzer();
 
         Term term = null;
 
         try {
+
+            TokenStream tokens = analyzer
+                    .tokenStream(field, new StringReader(input));
+
+            CharTermAttribute termAtt = (CharTermAttribute) tokens
+                    .addAttribute(CharTermAttribute.class);
 
             tokens.reset();
 
