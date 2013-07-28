@@ -655,6 +655,7 @@
                         </configuration>
                     </execution>
 
+                    <!-- Derby only for unit testing and jetty:run dev testing: skipped when maven.test.skip is set -->
                     <execution>
                         <id>startdb</id>
                         <phase>test-compile</phase>
@@ -662,20 +663,19 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <target>
-                                <!-- Derby only for unit testing and jetty:run dev testing: skipped when maven.text.skip is set -->
+                            <target unless="${maven.test.skip}">
                                 <delete dir="${basedir}/target/derby-system" verbose="true" failonerror="false" />
                                 <taskdef name="startdb" classname="org.apache.roller.derby.ant.StartDerbyTask"
                                          classpathref="maven.test.classpath"/>
                                 <startdb databaseDir="${basedir}/target/derby-system"
                                          port="3223"
-                                         databaseScriptsDir="${basedir}/target/dbscripts"
-                                         skip="${maven.test.skip}" >
+                                         databaseScriptsDir="${basedir}/target/dbscripts" >
                                 </startdb>
                             </target>
                         </configuration>
                     </execution>
 
+                    <!-- Derby only for unit testing: skipped when maven.test.skip is set -->
                     <execution>
                         <id>stopdb</id>
                         <phase>package</phase>
@@ -683,14 +683,12 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <target>
-                                <!-- Derby only for unit testing: skip when maven.test.skip is set -->
+                            <target unless="${maven.test.skip}">
                                 <taskdef name="stopdb" classname="org.apache.roller.derby.ant.StopDerbyTask"
                                          classpathref="maven.test.classpath"/>
                                 <stopdb databaseDir="${basedir}/target/derby-system"
                                         port="3223"
-                                        databaseScriptsDir="${basedir}/target/dbscripts"
-                                        skip="${maven.test.skip}" >
+                                        databaseScriptsDir="${basedir}/target/dbscripts" >
                                 </stopdb>
                                 <delete dir="${basedir}/target/derby-system" verbose="true" failonerror="false" />
                             </target>
