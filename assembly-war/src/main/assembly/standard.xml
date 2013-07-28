@@ -17,26 +17,18 @@
  * under the License.
 -->
 
-<!--
-   WARNING: to produce a Java EE compatible build you MUST first build Roller 
-   Weblogger using the -Djavaee=true option, e.g. mvn -Djavaee=true install
--->
 <assembly>
-    <id>javaee</id>
+    <id>standard</id>
     <formats>
         <format>war</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     
-    <fileSets>  
+    <fileSets>
         <fileSet>
             <outputDirectory></outputDirectory>
-            <directory>../app/target/roller</directory>
+            <directory>../app/target/roller/</directory>
             <excludes>
-                <!-- don't include all those Jave EE jars that Tomcat needs -->
-                <exclude>**/openjpa**</exclude>
-                <exclude>**/geronimo**</exclude>
-
                 <!-- don't include Jetty config, needed for build time only -->
                 <exclude>**/jetty-env.xml</exclude>
             </excludes>

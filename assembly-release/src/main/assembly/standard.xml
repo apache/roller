@@ -18,12 +18,8 @@
  * under the License.
 -->
 
-<!--
-   WARNING: to produce a Tomcat compatible build you MUST first build Roller 
-   Weblogger AND NOT USING the -Djavaee=true option, e.g. mvn install
--->
 <assembly>
-    <id>for-tomcat</id>
+    <id>standard</id>
     <formats>
         <format>zip</format>
         <format>tar.gz</format>
@@ -32,32 +28,32 @@
 
     <files> 
         <file> 
-            <source>../assembly-war/target/roller-war-${artifact.version}-tomcat.war</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat/webapp</outputDirectory>
+            <source>../assembly-war/target/roller-war-${artifact.version}-standard.war</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard/webapp</outputDirectory>
         </file> 
         <file> 
             <source>../README.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard</outputDirectory>
         </file> 
         <file> 
             <source>../NOTICE.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard</outputDirectory>
         </file> 
         <file> 
             <source>../LICENSE.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard</outputDirectory>
         </file> 
         <!--file>
             <source>../weblogger-docs/installguide/generated/roller-install-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard/docs</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/userguide/generated/roller-user-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard/docs</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/templateguide/generated/roller-template-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-tomcat/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard/docs</outputDirectory>
         </file-->
     </files>
 

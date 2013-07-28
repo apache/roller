@@ -14,69 +14,27 @@ Building this version of Roller requires Apache Maven 3.
   - How to build Roller: https://cwiki.apache.org/confluence/x/EM4
   - To build and run Roller on Eclipse: https://cwiki.apache.org/confluence/x/EM4
 
----------------------------
-BUILDING FOR APACHE TOMCAT
+----------------------------------------------------------
+BUILDING FOR APACHE TOMCAT and JAVA EE 6 (e.g., GlassFish)
 
-The normal Roller build creates a product suitable for use on Tomcat 6 or later,
-which includes OpenJPA bytecode enhancement, OpenJPA and other Java EE jars.
+The normal Roller build creates a product generically suitable for use several
+application containers, however see the Roller Install guide for application server
+specific configuration information.
 
 After pulling the source tree and changing directory to its top level, as
 indicated above, the following command will build and run all unit tests:
 
-   mvn clean
-   mvn install
+   mvn clean install
 
 After doing that, you should find the newly built Roller webapp, suitable
-for use with Tomcat in weblogger-web/target/roller. 
+for use in weblogger-web/target/roller. 
 
-To build Roller release files, you do this:
+To build Roller release files run "sh build-release.sh".  If using Windows, use the 
+commands within this script.
 
-   cd weblogger-war-assembly
-   mvn -Dtomcat=true install
-   cd ..
+After that, you'll find Roller distribution files in assembly-release/target. 
 
-   cd weblogger-assembly
-   mvn -Dtomcat=true install
-   cd ..
-
-After that, you'll find Roller distribution files in weblogger-assembly/target. 
-The Tomcat specific release files will have 'for-tomcat' in their names.
-
-See the script build-tomcat-release.sh to see the sequence of commands used
-to create Roller releases for Tomcat.
-
-
----------------------------
-BUILDING FOR JAVA EE 6
-
-The Tomcat build includes extra things that are not needed on a full Java EE
-application server. In fact, the Tomcat release won't work on some Java EE 
-servers. If we leave those extra things out, Roller can run on most Java EE 
-servers.
-
-If you add a 'javaee' flag to the Roller build invocation, you can create 
-Roller release files that will work on a Java EE 6 app server.
-
-    mvn clean
-    mvn -Djavaee=true install
-
-    cd weblogger-war-assembly
-    mvn -Djavaee=true install
-    cd ..
-
-    cd weblogger-assembly
-    mvn -Djavaee=true install
-    cd ..
-
-When that finishes, you will find Roller distribution files in 
-weblogger-assembly/target. The Java EE specific release files will have 
-'for-javaee' in their names.
-      
-See the script build-javaee-release.sh to see the sequence of commands used
-to create Roller releases for Java EE.
-
-
----------------------------
+----------------------------------------------------------
 BUILDING FOR JBOSS 6
 
 JBoss 6 is a Java EE server, but due to differences in JNDI naming, it needs

@@ -17,10 +17,6 @@
  * under the License.
 -->
 
-<!--
-  WARNING: to produce a JBoss compatible build you MUST first build Roller 
-  Weblogger using the -Djavaee=true option, e.g. mvn -Djavaee=true install
--->
 <assembly>
     <id>for-jboss</id>
     <formats>
