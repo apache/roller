@@ -53,6 +53,12 @@ NOTES:
 
 3) There must be at least a space between <A> </A> for IE5.5 to see the 
    anchor tag correctly. Do not do <A></A> with no space.
+   
+Roller Modifications
+====================
+
+Add a clear href on the ui to clear selected field.  (Search for clear)
+
 */ 
 
 // getAnchorPosition(anchorname)
@@ -1382,7 +1388,7 @@ function CP_getCalendar() {
 		else {
 			result += '		<A CLASS="'+this.cssPrefix+'cpTodayText" HREF="javascript:'+windowref+this.returnFunction+'(\''+now.getFullYear()+'\',\''+(now.getMonth()+1)+'\',\''+now.getDate()+'\');'+windowref+'CP_hideCalendar(\''+this.index+'\');">'+this.todayText+'</A>\n';
 			}
-		result += '		<BR><A CLASS="'+this.cssPrefix+'cpTodayText" HREF="javascript:document.'+window.CP_targetInput.form.name+'.'+window.CP_targetInput.name+'.value=\'\';'+windowref+'CP_hideCalendar(\''+this.index+'\');">Clear</A>\n';
+		result += '		<BR><A CLASS="'+this.cssPrefix+'cpTodayText" HREF="javascript:document.'+window.CP_targetInput.form.name+'.elements[\''+window.CP_targetInput.name+'\'].value=\'\';'+windowref+'CP_hideCalendar(\''+this.index+'\');">Clear</A>\n';
 		result += '	</TD></TR></TABLE></CENTER></TD></TR></TABLE>\n';
 	}
 
