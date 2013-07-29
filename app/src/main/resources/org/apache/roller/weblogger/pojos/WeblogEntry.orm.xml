@@ -145,6 +145,7 @@
                 </cascade>
             </one-to-many>
             <one-to-many name="tags" mapped-by="weblogEntry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntryTag" fetch="LAZY">
+                <order-by>name</order-by>
                 <cascade>
                     <cascade-persist /> <!-- Added so entry added by addTag() gets persisted -->
                     <cascade-remove />
