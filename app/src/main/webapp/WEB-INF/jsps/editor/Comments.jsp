@@ -355,9 +355,10 @@
 
     function saveComment(id) {
         var content = $("#comment-" + id).children()[0].value;
+        var salt = $("#comments_salt").val();
         $.ajax({
             type: "POST",
-            url: '<%= request.getContextPath()%>/roller-ui/authoring/commentdata?id=' + id,
+            url: '<%= request.getContextPath()%>/roller-ui/authoring/commentdata?id=' + id +'&salt='+salt,
             data: content,
             dataType: "text",
             processData: "false",

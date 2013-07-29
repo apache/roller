@@ -359,12 +359,19 @@ td.pendingentry, tr.pendingentry {
 td.draftentry, tr.draftentry {
     background: #ffffcc;
 }
+td.scheduledentry, tr.scheduledentry {
+    background: #EEEEE0;
+}
 .draftEntryBox {
     background: #ffffcc;
     border: 1px gray solid;
 }
 .pendingEntryBox {
     background: #ffcccc;
+    border: 1px gray solid;
+}
+.scheduledEntryBox {
+    background: #EEEEE0;
     border: 1px gray solid;
 }
 

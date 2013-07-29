@@ -104,6 +104,13 @@ function fullPreviewMode() {
                         <s:date name="entry.updateTime" />)
                     </span>
                 </s:elseif>
+                <s:elseif test="bean.scheduled">
+                    <span style="color:orange; font-weight:bold">
+                        <s:text name="weblogEdit.scheduled" />
+                        (<s:text name="weblogEdit.updateTime" />
+                        <s:date name="entry.updateTime" />)
+                    </span>
+                </s:elseif>
                 <s:hidden name="bean.status" />
             </td>
         </tr>

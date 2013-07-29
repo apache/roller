@@ -38,11 +38,13 @@
             <s:param value="pager.items.size()" />
         </s:text>
     </div>
-    <div style="float:right;">
-        <s:date name="firstEntry.pubTime" format="MM/dd/yy hh:mm a" />
-        --- 
-        <s:date name="lastEntry.pubTime" format="MM/dd/yy hh:mm a" />
-    </div>
+    <s:if test="pager.items.size() > 0">
+        <div style="float:right;">
+            <s:date name="firstEntry.pubTime" format="MM/dd/yy hh:mm a" />
+            --- 
+            <s:date name="lastEntry.pubTime" format="MM/dd/yy hh:mm a" />
+        </div>
+    </s:if>
     <br />
     
     
@@ -92,7 +94,9 @@
     <s:text name="weblogEntryQuery.draft" />&nbsp;&nbsp;
     <span class="pendingEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <s:text name="weblogEntryQuery.pending" />&nbsp;&nbsp;
-</p>      
+    <span class="scheduledEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <s:text name="weblogEntryQuery.scheduled" />&nbsp;&nbsp;
+</p>
 
 <table class="rollertable" width="100%">
 
@@ -116,12 +120,15 @@
 </tr>
 
 <s:iterator id="post" value="pager.items">
-    <%-- <td> with style if comment is spam or pending --%>               
+    <%-- <td> with style if comment is spam or pending --%>
     <s:if test="#post.status == 'DRAFT'">
         <tr class="draftentry"> 
     </s:if>
     <s:elseif test="#post.status == 'PENDING'">
         <tr class="pendingentry"> 
+    </s:elseif>
+    <s:elseif test="#post.status == 'SCHEDULED'">
+        <tr class="scheduledentry"> 
     </s:elseif>
     <s:else>
         <tr>

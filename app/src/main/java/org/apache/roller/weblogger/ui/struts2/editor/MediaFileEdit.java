@@ -19,6 +19,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,9 +47,8 @@ public class MediaFileEdit extends MediaFileBase {
     // content types for upload file
     private String uploadedFileContentType = null;
 
-    // filename for uploaded file 
+    // filename for uploaded file
     private String uploadedFileName = null;
-
 
     public MediaFileEdit() {
         this.actionName = "mediaFileEdit";
@@ -62,7 +62,8 @@ public class MediaFileEdit extends MediaFileBase {
     public void myPrepare() {
         refreshAllDirectories();
         try {
-            MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+            MediaFileManager mgr = WebloggerFactory.getWeblogger()
+                    .getMediaFileManager();
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
             }
@@ -76,8 +77,10 @@ public class MediaFileEdit extends MediaFileBase {
      * Validates media file metadata to be updated.
      */
     public void myValidate() {
-        MediaFile fileWithSameName = getDirectory().getMediaFile(getBean().getName());
-        if (fileWithSameName != null && !fileWithSameName.getId().equals(getMediaFileId())) {
+        MediaFile fileWithSameName = getDirectory().getMediaFile(
+                getBean().getName());
+        if (fileWithSameName != null
+                && !fileWithSameName.getId().equals(getMediaFileId())) {
             addError("MediaFile.error.duplicateName", getBean().getName());
         }
     }
@@ -89,7 +92,8 @@ public class MediaFileEdit extends MediaFileBase {
      */
     @SkipValidation
     public String execute() {
-        MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+        MediaFileManager manager = WebloggerFactory.getWeblogger()
+                .getMediaFileManager();
         try {
             MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
             this.bean.copyFrom(mediaFile);
@@ -114,7 +118,8 @@ public class MediaFileEdit extends MediaFileBase {
     public String save() {
         myValidate();
         if (!hasActionErrors()) {
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            MediaFileManager manager = WebloggerFactory.getWeblogger()
+                    .getMediaFileManager();
             try {
                 MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
                 bean.copyTo(mediaFile);
@@ -122,10 +127,19 @@ public class MediaFileEdit extends MediaFileBase {
                 if (uploadedFile != null) {
                     mediaFile.setLength(this.uploadedFile.length());
                     mediaFile.setContentType(this.uploadedFileContentType);
-                    manager.updateMediaFile(getActionWeblog(),
-                        mediaFile, new FileInputStream(this.uploadedFile));
+                    manager.updateMediaFile(getActionWeblog(), mediaFile,
+                            new FileInputStream(this.uploadedFile));
                 } else {
-                   manager.updateMediaFile(getActionWeblog(), mediaFile);
+                    manager.updateMediaFile(getActionWeblog(), mediaFile);
+                }
+
+                // Move file
+                if (!getBean().getDirectoryId().equals(
+                        mediaFile.getDirectory().getId())) {
+                    log.debug("Processing move of " + mediaFile.getId());
+                    setSelectedMediaFiles(new String[] { mediaFile.getId() });
+                    setSelectedDirectory(getBean().getDirectoryId());
+                    doMoveSelected();
                 }
 
                 WebloggerFactory.getWeblogger().flush();
@@ -170,7 +184,8 @@ public class MediaFileEdit extends MediaFileBase {
     }
 
     /**
-     * @param uploadedFile the uploadedFile to set
+     * @param uploadedFile
+     *            the uploadedFile to set
      */
     public void setUploadedFile(File uploadedFile) {
         this.uploadedFile = uploadedFile;
@@ -184,7 +199,8 @@ public class MediaFileEdit extends MediaFileBase {
     }
 
     /**
-     * @param uploadedFileContentType the uploadedFileContentType to set
+     * @param uploadedFileContentType
+     *            the uploadedFileContentType to set
      */
     public void setUploadedFileContentType(String uploadedFileContentType) {
         this.uploadedFileContentType = uploadedFileContentType;
@@ -198,7 +214,8 @@ public class MediaFileEdit extends MediaFileBase {
     }
 
     /**
-     * @param uploadedFileName the uploadedFileName to set
+     * @param uploadedFileName
+     *            the uploadedFileName to set
      */
     public void setUploadedFileName(String uploadedFileName) {
         this.uploadedFileName = uploadedFileName;
