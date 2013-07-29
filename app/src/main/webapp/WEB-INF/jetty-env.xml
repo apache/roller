@@ -6,7 +6,7 @@
     
     <New id="ds" class="org.eclipse.jetty.plus.jndi.Resource">
         <Arg>
-            <Ref id="wac"/>
+            <Ref id="wac_ds"/>
         </Arg>
         <Arg>jdbc/rollerdb</Arg>
         <Arg>
@@ -19,7 +19,7 @@
     
     <New id="mail" class="org.eclipse.jetty.plus.jndi.Resource">
         <Arg>
-            <Ref id="wac"/>
+            <Ref id="wac_mail"/>
         </Arg>
         <Arg>mail/Session</Arg>
         <Arg>
