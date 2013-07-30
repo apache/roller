@@ -121,6 +121,10 @@ public class SearchResultsModel extends PageModel {
 			search.setCategory(searchRequest.getWeblogCategoryName());
 		}
 
+		if (searchRequest.getLocale() != null) {
+			search.setLocale(searchRequest.getLocale());
+		}
+
 		// execute search
 		indexMgr.executeIndexOperationNow(search);
 

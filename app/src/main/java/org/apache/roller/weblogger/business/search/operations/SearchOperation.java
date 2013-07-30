@@ -54,7 +54,7 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     private static String[] SEARCH_FIELDS = new String[] {
             FieldConstants.CONTENT, FieldConstants.TITLE,
-            FieldConstants.C_CONTENT, FieldConstants.CATEGORY };
+            FieldConstants.C_CONTENT, FieldConstants.CATEGORY, FieldConstants.LOCALE };
 
     // private static BooleanClause.Occur[] SEARCH_FLAGS = new
     // BooleanClause.Occur[] {
@@ -73,6 +73,7 @@ public class SearchOperation extends ReadFromIndexOperation {
     private String term;
     private String websiteHandle;
     private String category;
+    private String locale;
     private String parseError;
 
     private int nMax = 500; // Limit documents.
@@ -141,6 +142,16 @@ public class SearchOperation extends ReadFromIndexOperation {
                 BooleanQuery bQuery = new BooleanQuery();
                 bQuery.add(query, BooleanClause.Occur.MUST);
                 bQuery.add(new TermQuery(tCategory), BooleanClause.Occur.MUST);
+                query = bQuery;
+            }
+
+            Term tLocale = IndexUtil.getTerm(FieldConstants.LOCALE,
+                    locale);
+
+            if (tLocale != null) {
+                BooleanQuery bQuery = new BooleanQuery();
+                bQuery.add(query, BooleanClause.Occur.MUST);
+                bQuery.add(new TermQuery(tLocale), BooleanClause.Occur.MUST);
                 query = bQuery;
             }
 
@@ -225,6 +236,16 @@ public class SearchOperation extends ReadFromIndexOperation {
      */
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    /**
+     * Sets the locale.
+     * 
+     * @param locale
+     *            the new locale
+     */
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 
 }

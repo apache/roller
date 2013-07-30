@@ -53,6 +53,7 @@ searchhi = {
 
   googleSearchHighlight: function() {
     var ref = document.referrer;
+    if (ref.indexOf(searchhi_config.ignore_site) == 0) return;
     if (ref.indexOf('?') == -1) return;
     var qs = ref.substr(ref.indexOf('?')+1);
     var qsa = qs.split('&');

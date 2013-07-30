@@ -125,6 +125,10 @@ public abstract class IndexOperation implements Runnable {
         doc.add(new Field(FieldConstants.TITLE, data.getTitle(),
                 Field.Store.YES, Field.Index.ANALYZED));
 
+        // text
+        doc.add(new Field(FieldConstants.LOCALE, data.getLocale(),
+                Field.Store.YES, Field.Index.ANALYZED));
+
         // index the entry text, but don't store it - moved to end of block
         // unstored
         doc.add(new Field(FieldConstants.CONTENT, data.getText(),

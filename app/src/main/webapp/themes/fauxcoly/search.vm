@@ -8,15 +8,18 @@
     <style type="text/css">
     span.searchword { background-color:yellow; }
     </style>
+    <script type="text/javascript" >
+    //<![CDATA[
+        searchhi_config = {ignore_site : '$url.absoluteSite'};
+    //]]>
+    </script>
     <script type="application/x-javascript" src="$url.page('searchhi.js')"></script>
     <script type="text/javascript" >
-    <![CDATA[
+    //<![CDATA[
     function loadSearchHighlight() {
-        SearchHighlight();
-        searchhi_string = '$model.term';
-        if( location.hash.length > 1 ) location.hash = location.hash;
+        searchhi.highlightWord(document.getElementById("search_results"), '$model.term');
     }
-    ]]>
+    //]]>
     </script>
     #end
     <link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
@@ -73,11 +76,13 @@
         $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${model.weblog.handle}] )
 
 #if ($model.hits > 0)
-   #showNextPrevSearchControl($pager)
-   #set($pager = $model.getWeblogEntriesPager())
-   #showWeblogEntriesPager($pager)
-   <div id="nextprev">
-       #showNextPrevEntriesControl($pager)
+   <div id="search_results">
+       #showNextPrevSearchControl($pager)
+       #set($pager = $model.getWeblogEntriesPager())
+       #showWeblogEntriesPager($pager)
+       <div id="nextprev">
+           #showNextPrevEntriesControl($pager)
+       </div>
    </div>
 #else
    <br />

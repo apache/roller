@@ -47,4 +47,5 @@ public final class FieldConstants {
                                                  // the transform rules of
                                                  // the analyzer
     public static final String WEBSITE_HANDLE = "handle";
+    public static final String LOCALE = "locale";
 }
