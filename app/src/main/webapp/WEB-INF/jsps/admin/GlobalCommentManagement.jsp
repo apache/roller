@@ -253,72 +253,75 @@ function handleCommentResponse() {
     </s:else>
     
     <%-- comment details table in table --%>
-    <table style="border:none; padding:0px; margin:0px">                         
+    <table class="innertable" >
         <tr>
-            <td style="border: none; padding:0px;">
-            <s:text name="commentManagement.entryTitled" /></td>
-            <td class="details" style="border: none; padding:0px;">  
-                <a href='<s:property value="#comment.weblogEntry.permalink" />'>
-                <s:property value="#comment.weblogEntry.title" /></a>
+            <td class="viewbody">
+                <div class="viewdetails bot">
+                    <div class="details">
+                        <s:text name="commentManagement.entryTitled" />&nbsp;:&nbsp;
+                        <a href='<s:property value="#comment.weblogEntry.permalink" />'><s:property value="#comment.weblogEntry.title" /></a>
+                    </div>
+                    <div class="details">
+                        <s:text name="commentManagement.commentBy" />&nbsp;:&nbsp;
+                        <s:if test="#comment.email != null && #comment.name != null">
+                            <s:text name="commentManagement.commentByBoth" >
+                                <s:param><s:property value="#comment.name" /></s:param>
+                                <s:param><s:property value="#comment.email" /></s:param>
+                                <s:param><s:property value="#comment.email" /></s:param>
+                                <s:param><s:property value="#comment.remoteHost" /></s:param>
+                            </s:text>
+                        </s:if>
+                        <s:elseif test="#comment.email == null && #comment.name == null">
+                            <s:text name="commentManagement.commentByIP" >
+                                <s:param><s:property value="#comment.remoteHost" /></s:param>
+                            </s:text>
+                        </s:elseif>
+                        <s:else>
+                            <s:text name="commentManagement.commentByName" >
+                                <s:param><s:property value="#comment.name" /></s:param>
+                                <s:param><s:property value="#comment.remoteHost" /></s:param>
+                            </s:text>
+                        </s:else>
+                    </div>
+                    <s:if test="#comment.url != null && !#comment.url.equals('')">
+                        <div class="details">
+                            <s:text name="commentManagement.commentByURL" />&nbsp;:&nbsp;
+                            <a href='<s:property value="#comment.url" />'>
+                            <str:truncateNicely upper="60" appendToEnd="..."><s:property value="#comment.url" /></str:truncateNicely></a>
+                        </div>
+                    </s:if>
+                    <div class="details">
+                        <s:text name="commentManagement.postTime" />&nbsp;:&nbsp;
+                        <s:property value="#comment.postTime" />
+                    </div>
+                </div>
+                <div class="viewdetails bot">
+                    <div class="details">
+                        <%-- comment content --%>
+                        <s:if test="#comment.content.length() > 1000">
+                            <div class="bot" id="comment-<s:property value="#comment.id"/>">
+                                <str:wordWrap width="72">
+                                    <str:truncateNicely upper="1000" appendToEnd="...">
+                                        <s:property value="#comment.content" escape="true" />
+                                    </str:truncateNicely>
+                                </str:wordWrap>
+                            </div>
+                            <div id="link-<s:property value="#comment.id"/>">
+                                <a onclick='readMoreComment("<s:property value="#comment.id"/>")'>
+                                    <s:text name="commentManagement.readmore" />
+                                </a>
+                            </div>
+                        </s:if>
+                        <s:else>
+                            <str:wordWrap>
+                                <s:property value="#comment.content" escape="true" />
+                            </str:wordWrap>
+                        </s:else>
+                    </div>
+                </div>
             </td>
-        </tr>  
-        
-        <tr>
-            <td style="border: none; padding:0px;">
-            <s:text name="commentManagement.commentBy" /></td>
-            <td class="details" style="border: none; padding:0px;">
-                <s:if test="#comment.email != null && #comment.name != null">
-                    <s:text name="commentManagement.commentByBoth" >
-                        <s:param><s:property value="#comment.name" /></s:param>
-                        <s:param><s:property value="#comment.email" /></s:param>
-                        <s:param><s:property value="#comment.email" /></s:param>
-                        <s:param><s:property value="#comment.remoteHost" /></s:param>
-                    </s:text>
-                </s:if>
-                <s:elseif test="#comment.email == null && #comment.name == null">
-                    <s:text name="commentManagement.commentByIP" >
-                        <s:param><s:property value="#comment.remoteHost" /></s:param>
-                    </s:text>
-                </s:elseif>
-                <s:else>
-                    <s:text name="commentManagement.commentByName" >
-                        <s:param><s:property value="#comment.name" /></s:param>
-                        <s:param><s:property value="#comment.remoteHost" /></s:param>
-                    </s:text>
-                </s:else>
-                
-                <s:if test="#comment.url != null">
-                    <br /><a href='<s:property value="#comment.url" />'>
-                    <str:truncateNicely upper="60" appendToEnd="..."><s:property value="#comment.url" /></str:truncateNicely></a>
-                </s:if>
-            </td>
-        </tr>                                
-        <tr>
-            <td style="border: none; padding:0px;">
-            <s:text name="commentManagement.postTime" /></td>
-            <td class="details" style="border: none; padding:0px;">
-            <s:property value="#comment.postTime" /></td>
-        </tr>                                       
+        </tr>
     </table> <%-- end comment details table in table --%>
-                
-    <%-- comment content --%>
-    <br />
-    <span class="details">
-        
-    <s:if test="#comment.content.length() > 1000">
-        <pre><div id="comment-<s:property value="#comment.id"/>"><str:wordWrap width="72"><str:truncateNicely upper="1000" appendToEnd="..."><s:property value="#comment.content" escape="true" /></str:truncateNicely></str:wordWrap></div></pre>                                    
-        <div id="link-<s:property value="#comment.id"/>">
-            <a onclick='readMoreComment("<s:property value="#comment.id"/>")'>
-                <s:text name="commentManagement.readmore" />
-            </a>
-        </div>
-    </s:if>
-    <s:else>
-        <pre><str:wordWrap><s:property value="#comment.content" escape="true" /></str:wordWrap></pre>   
-    </s:else>
-        
-    </span>
-    
     </td>
 </tr>
 </s:iterator>
