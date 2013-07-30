@@ -172,7 +172,7 @@ function onChange() {
         if (emailAddress) disabled = false;
 
     } else if (openIdConfig == 'disabled') {
-        if (emailAddress && userName && passwordText && passwordConfirm && emailAddress) disabled = false;
+        if (emailAddress && userName && passwordText && passwordConfirm) disabled = false;
         
     } else if (openIdConfig == 'only') {
         if (emailAddress && openIdUrl) disabled = false;

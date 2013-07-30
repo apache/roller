@@ -66,11 +66,11 @@
              placed in the src/test/resources/roller-custom.properties
              file.
          -->
-        <dependency>
+        <!--dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
             <version>2.5.0</version>
-        </dependency>
+        </dependency-->
 
         <!-- Alternative testing with Hibernate (used by default
              with JBoss
@@ -81,7 +81,7 @@
              always provided by struts2-spring-plugin so filtering it out; already provided by JBoss anyway
         -->
 
-        <!--dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>4.2.1.Final</version>
@@ -98,7 +98,7 @@
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.6.1</version>
             <scope>runtime</scope>
-        </dependency-->
+        </dependency>
 
         <!-- To test with OpenJPA instead of EclipseLink, will need to add OpenJPA
              dependencies and static bytecode enhancement of the generated JPA classes
