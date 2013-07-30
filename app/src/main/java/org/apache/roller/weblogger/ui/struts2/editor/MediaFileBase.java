@@ -112,6 +112,7 @@ public class MediaFileBase extends UIAction {
                 for (int index = 0; index < dirIds.length; index++) {
                     log.debug("Deleting media file directory - " + dirIds[index]);
                     MediaFileDirectory mediaFileDir = manager.getMediaFileDirectory(dirIds[index]);
+                    mediaFileDir.getParent().removeChildDirectory(mediaFileDir);
                     manager.removeMediaFileDirectory(mediaFileDir);
                 }
             }

@@ -235,6 +235,15 @@ public class MediaFileDirectory {
         return newDirectory;
     }
 
+    /**
+     * Removes a directory from this MediaFileDirectory's child list
+     *
+     * @param mfd Media directory to remove
+     */
+    public void removeChildDirectory(MediaFileDirectory mfd) {
+        this.getChildDirectories().remove(mfd);
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {

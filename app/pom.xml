@@ -80,7 +80,6 @@
              org.javassist:javassist:3.15.0 cannot replace differently named javassist:javassist:3.11.0
              always provided by struts2-spring-plugin so filtering it out; already provided by JBoss anyway
         -->
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
