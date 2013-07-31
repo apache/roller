@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 /**
@@ -33,18 +34,15 @@ public class MediaFileDirectory {
     String description;
     Weblog weblog;
     String path;
-    MediaFileDirectory      parent;
+    MediaFileDirectory parent;
     Set<MediaFileDirectory> childDirectories = new HashSet<MediaFileDirectory>();
-    Set<MediaFile>          mediaFiles = new HashSet<MediaFile>();
+    Set<MediaFile> mediaFiles = new HashSet<MediaFile>();
 
     public MediaFileDirectory() {
     }
 
-    public MediaFileDirectory(
-            MediaFileDirectory parent,
-            String name,
-            String desc,
-            Weblog weblog) {
+    public MediaFileDirectory(MediaFileDirectory parent, String name,
+            String desc, Weblog weblog) {
 
         this.id = UUIDGenerator.generateUUID();
         this.name = name;
@@ -69,15 +67,23 @@ public class MediaFileDirectory {
 
     /**
      * Database surrogate key.
-     *
+     * 
      */
     public String getId() {
         return id;
     }
 
     /**
+     * @param id
+     *            the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
      * A short name for this folder.
-     *
+     * 
      */
     public String getName() {
         return name;
@@ -89,7 +95,7 @@ public class MediaFileDirectory {
 
     /**
      * A full description for this folder.
-     *
+     * 
      */
     public String getDescription() {
         return description;
@@ -101,7 +107,7 @@ public class MediaFileDirectory {
 
     /**
      * Return parent folder, or null if folder is root of hierarchy.
-     *
+     * 
      */
     public MediaFileDirectory getParent() {
         return parent;
@@ -113,7 +119,7 @@ public class MediaFileDirectory {
 
     /**
      * Get the weblog which owns this folder.
-     *
+     * 
      */
     public Weblog getWeblog() {
         return weblog;
@@ -125,7 +131,7 @@ public class MediaFileDirectory {
 
     /**
      * The full path to this folder in the hierarchy.
-     *
+     * 
      */
     public String getPath() {
         return path;
@@ -149,7 +155,7 @@ public class MediaFileDirectory {
 
     /**
      * Get child folders of this folder.
-     *
+     * 
      */
     public Set<MediaFileDirectory> getChildDirectories() {
         return this.childDirectories;
@@ -162,7 +168,8 @@ public class MediaFileDirectory {
     /**
      * Indicates whether this directory contains the specified file.
      * 
-     * @param name file name
+     * @param name
+     *            file name
      * @return true if the file is present in the directory, false otherwise.
      */
     public boolean hasMediaFile(String name) {
@@ -181,7 +188,8 @@ public class MediaFileDirectory {
     /**
      * Returns file with the given name, if present in this directory
      * 
-     * @param name file name
+     * @param name
+     *            file name
      * @return media file object
      */
     public MediaFile getMediaFile(String name) {
@@ -200,7 +208,8 @@ public class MediaFileDirectory {
     /**
      * Indicates whether this directory contains the specified sub-directory.
      * 
-     * @param name directory name
+     * @param name
+     *            directory name
      * @return true if the sub-directory is present, false otherwise.
      */
     public boolean hasDirectory(String name) {
@@ -213,7 +222,7 @@ public class MediaFileDirectory {
         return false;
     }
 
-   public MediaFileDirectory getChildDirectory(String name) {
+    public MediaFileDirectory getChildDirectory(String name) {
         for (MediaFileDirectory dir : getChildDirectories()) {
             if (name.equals(dir.getName())) {
                 return dir;
@@ -222,23 +231,25 @@ public class MediaFileDirectory {
         return null;
     }
 
-
     /**
      * Creates a new sub-directory
      * 
-     * @param name new directory name
+     * @param name
+     *            new directory name
      * @return reference to the newly created directory.
      */
     public MediaFileDirectory createNewDirectory(String name) {
-        MediaFileDirectory newDirectory = new MediaFileDirectory(this, name, "", this.getWeblog());
+        MediaFileDirectory newDirectory = new MediaFileDirectory(this, name,
+                "", this.getWeblog());
         this.getChildDirectories().add(newDirectory);
         return newDirectory;
     }
 
     /**
      * Removes a directory from this MediaFileDirectory's child list
-     *
-     * @param mfd Media directory to remove
+     * 
+     * @param mfd
+     *            Media directory to remove
      */
     public void removeChildDirectory(MediaFileDirectory mfd) {
         this.getChildDirectories().remove(mfd);
@@ -253,17 +264,15 @@ public class MediaFileDirectory {
             return false;
         }
         MediaFileDirectory o = (MediaFileDirectory) other;
-        return new EqualsBuilder()
-                .append(getId(), o.getId())
+        return new EqualsBuilder().append(getId(), o.getId())
                 .append(getName(), o.getName())
                 .append(getDescription(), o.getDescription())
                 .append(getPath(), o.getPath()).isEquals();
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
+    public int hashCode() {
+        return new HashCodeBuilder().append(getId()).append(getName())
+                .append(getDescription()).append(getPath()).toHashCode();
     }
+
 }
