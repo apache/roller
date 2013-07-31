@@ -83,7 +83,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.2.1.Final</version>
+            <version>4.2.3.Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.javassist</groupId>
@@ -499,6 +499,7 @@
                     <webApp>
                         <contextPath>/roller</contextPath>
                     </webApp>
+                    <jettyXml>src/test/resources/jetty.xml</jettyXml>
                     <systemProperties>
                         <systemProperty>
                             <name>roller.custom.config</name>
