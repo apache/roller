@@ -28,10 +28,6 @@
         <fileSet>
             <outputDirectory></outputDirectory>
             <directory>../app/target/roller/</directory>
-            <excludes>
-                <!-- don't include Jetty config, needed for build time only -->
-                <exclude>**/jetty-env.xml</exclude>
-            </excludes>
         </fileSet>
     </fileSets>
     
