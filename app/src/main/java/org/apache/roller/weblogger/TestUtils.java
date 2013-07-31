@@ -83,13 +83,13 @@ public final class TestUtils {
             if (StringUtils.isNotEmpty(local) && local.equals("true")) {
 
                 System.out
-                        .println("Reseting tables for local tests: roller.tests.reset="
+                        .println("Resetting tables for local tests: roller.tests.reset="
                                 + local);
 
                 try {
                     clearTestData();
                 } catch (Exception e) {
-                    System.out.println("Error reseting tables : "
+                    System.out.println("Error resetting tables : "
                             + e.getMessage());
                 } finally {
                     // flush
@@ -164,7 +164,7 @@ public final class TestUtils {
             } else {
 
                 throw new RuntimeException(
-                        "Reseting tables script unsupported database or not found :"
+                        "Resetting tables script unsupported database or not found :"
                                 + dbname);
 
             }
