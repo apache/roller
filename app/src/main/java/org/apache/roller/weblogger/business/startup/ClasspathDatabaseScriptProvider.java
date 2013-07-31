@@ -20,15 +20,30 @@ package org.apache.roller.weblogger.business.startup;
 
 import java.io.InputStream;
 
-
 /**
  * Reads dbscripts from the classpath.
  */
 public class ClasspathDatabaseScriptProvider implements DatabaseScriptProvider {
-    
+
+    /**
+     * @see org.apache.roller.weblogger.business.startup.DatabaseScriptProvider#getDatabaseScript(java.lang.String)
+     */
     public InputStream getDatabaseScript(String path) {
         String resourcePath = "/dbscripts/" + path;
         return this.getClass().getResourceAsStream(resourcePath);
     }
-    
+
+    /**
+     * @see org.apache.roller.weblogger.business.startup.DatabaseScriptProvider#getAbsoluteDatabaseScript(java.lang.String)
+     */
+    public InputStream getAbsoluteDatabaseScript(String path) {
+
+        // Add leading slash if not present
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
+        return ClasspathDatabaseScriptProvider.class.getResourceAsStream(path);
+    }
+
 }

@@ -20,15 +20,21 @@ package org.apache.roller.weblogger.business.startup;
 
 import java.io.InputStream;
 
-
 /**
  * Interface for retrieving database script.
  */
 public interface DatabaseScriptProvider {
-    
-    /** 
-     * Get an InputStream to a database script at the given path.
+
+    /**
+     * Get an InputStream to a database script at the given path in the
+     * classes/dbscripts/ folder.
      */
     InputStream getDatabaseScript(String path) throws Exception;
-    
+
+    /**
+     * Get an InputStream to a database script at the given path relative to
+     * classes folder.
+     */
+    InputStream getAbsoluteDatabaseScript(String absolutePath) throws Exception;
+
 }
