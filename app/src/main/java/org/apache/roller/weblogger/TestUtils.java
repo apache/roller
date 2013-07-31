@@ -150,7 +150,7 @@ public final class TestUtils {
         ClasspathDatabaseScriptProvider scriptProvider = new ClasspathDatabaseScriptProvider();
 
         InputStream script = scriptProvider
-                .getAbsoluteDatabaseScript("junit-cleartables-" + dbname
+                .getAbsoluteDatabaseScript("sql/junit-cleartables-" + dbname
                         + ".sql");
 
         try {
