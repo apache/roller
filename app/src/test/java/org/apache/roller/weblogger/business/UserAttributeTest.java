@@ -72,7 +72,7 @@ public class UserAttributeTest extends TestCase {
         
         assertNull(umgr.getUserByAttribute("testattname", "testattvalue"));
         
-        TestUtils.teardownUser("auser");
+        TestUtils.teardownUser(user.getUserName());
 
         assertEquals(0, umgr.getUserAttributes("auser").size());
         
