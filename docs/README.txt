@@ -1,4 +1,5 @@
-In this directory you'll find Roller docs in ODF format, various examples and test plans.
+In this directory you'll find Roller docs in ODF format, various examples and 
+test plans.
 
     roller-install-guide.odt  - How to install Roller 
     roller-user-guide.odt     - How to use Roller 
