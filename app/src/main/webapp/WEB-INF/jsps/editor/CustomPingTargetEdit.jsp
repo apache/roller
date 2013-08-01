@@ -23,7 +23,7 @@
     </s:text>
 </p>
 
-<s:form action="customPingTargetEdit!save" >
+<s:form action="customPingTargetEdit" >
 	<s:hidden name="salt" />
     <s:hidden name="bean.id" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
@@ -41,7 +41,7 @@
     <p/>
     <div class="formrow">
        <label for="" class="formrow">&nbsp;</label>
-       <s:submit value="%{getText('pingTarget.save')}" />
+       <s:submit value="%{getText('pingTarget.save')}" action="customPingTargetEdit!save" />
        <s:submit value="%{getText('pingTarget.cancel')}" action="customPingTargets" />
     </div>
 

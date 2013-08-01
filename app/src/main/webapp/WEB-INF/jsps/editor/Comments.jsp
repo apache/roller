@@ -35,7 +35,7 @@
 </script>
 
 <p class="subtitle">
-    <s:if test="bean.entryId != null && bean.entryId !='' ">
+    <s:if test="bean.entryId != null && !bean.entryId.equals('') ">
         <s:text name="commentManagement.entry.subtitle">
             <s:param value="firstComment.weblogEntry.title"/>
         </s:text>

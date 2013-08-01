@@ -29,19 +29,10 @@
     <tr><td><s:text name="pingTarget.pingUrl" />&nbsp;&nbsp;</td><td><b><s:property value="pingTarget.pingUrl" /></b></td></tr>
 </table>
 
-<br/>
-
-<div class="control">
-    <s:form action="customPingTargets!delete">
-		<s:hidden name="salt" />
-        <s:hidden name="pingTargetId" />
-        <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-        <s:submit value="%{getText('pingTarget.removeOK')}" />
-    </s:form>
-    &nbsp;
-    <s:form action="customPingTargets">
-		<s:hidden name="salt" />
-        <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-        <s:submit value="%{getText('pingTarget.cancel')}" />
-    </s:form>
-</div>
+<s:form action="customPingTargets">
+    <s:hidden name="salt" />
+    <s:hidden name="pingTargetId" />
+    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
+    <s:submit value="%{getText('pingTarget.removeOK')}" action="customPingTargets!delete" />
+    <s:submit value="%{getText('pingTarget.cancel')}" action="customPingTargets" />
+</s:form>
