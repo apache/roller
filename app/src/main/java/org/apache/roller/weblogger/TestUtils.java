@@ -23,25 +23,18 @@
 
 package org.apache.roller.weblogger;
 
-import java.io.InputStream;
-import java.sql.Connection;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.startup.ClasspathDatabaseScriptProvider;
-import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -66,8 +59,6 @@ public final class TestUtils {
 
         if (!WebloggerFactory.isBootstrapped()) {
 
-            System.out.println("Bootstrapping system, please wait....");
-
             // do core services preparation
             WebloggerStartup.prepare();
 
@@ -76,29 +67,6 @@ public final class TestUtils {
 
             // always initialize the properties manager and flush
             WebloggerFactory.getWeblogger().initialize();
-
-            // Reset for local tests
-            // On junit test jvm argument -Droller.tests.reset=true/false
-            String local = System.getProperty("roller.tests.reset");
-            if (StringUtils.isNotEmpty(local) && local.equals("true")) {
-
-                System.out
-                        .println("Resetting tables for local tests: roller.tests.reset="
-                                + local);
-
-                try {
-                    clearTestData();
-                } catch (Exception e) {
-                    System.out.println("Error resetting tables : "
-                            + e.getMessage());
-                } finally {
-                    // flush
-                    endSession(true);
-                }
-            }
-
-            System.out
-                    .println("Bootstrapping successful, running tests please wait....");
 
         }
     }
@@ -125,58 +93,6 @@ public final class TestUtils {
         }
 
         WebloggerFactory.getWeblogger().release();
-    }
-
-    /**
-     * Clear test data.
-     * 
-     * @throws Exception
-     *             the exception
-     */
-    private static void clearTestData() throws Exception {
-
-        DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
-        Connection con = dbp.getConnection();
-
-        // normally local tests run against mysql
-        String databaseProductName = con.getMetaData().getDatabaseProductName();
-        String dbname = "mysql";
-        if (databaseProductName.toLowerCase().indexOf("derby") > 0) {
-            // tests against Derby
-            dbname = "derby";
-        }
-
-        // Somewhere on classpath
-        ClasspathDatabaseScriptProvider scriptProvider = new ClasspathDatabaseScriptProvider();
-
-        InputStream script = scriptProvider
-                .getAbsoluteDatabaseScript("sql/test/junit-cleartables-" + dbname
-                        + ".sql");
-
-        try {
-
-            if (script != null) {
-
-                // run script to reset tables
-                SQLScriptRunner create = new SQLScriptRunner(script);
-                create.runScript(con, true);
-
-            } else {
-
-                throw new RuntimeException(
-                        "Resetting tables script unsupported database or not found :"
-                                + dbname);
-
-            }
-
-        } finally {
-            try {
-                script.close();
-            } catch (Exception e) {
-                // ignored
-            }
-        }
-
     }
 
     /**

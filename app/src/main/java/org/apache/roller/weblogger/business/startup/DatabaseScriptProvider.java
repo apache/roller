@@ -31,10 +31,4 @@ public interface DatabaseScriptProvider {
      */
     InputStream getDatabaseScript(String path) throws Exception;
 
-    /**
-     * Get an InputStream to a database script at the given path relative to
-     * classes folder.
-     */
-    InputStream getAbsoluteDatabaseScript(String absolutePath) throws Exception;
-
 }
