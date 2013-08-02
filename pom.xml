@@ -28,6 +28,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <roller.version>5.1.0-SNAPSHOT</roller.version>
         <derby.version>10.10.1.1</derby.version>
     </properties>
@@ -57,6 +58,11 @@
                     <configuration>
                         <downloadSources>true</downloadSources>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <version>9.0.4.v20130625</version>
                 </plugin>
             </plugins>
         </pluginManagement>
