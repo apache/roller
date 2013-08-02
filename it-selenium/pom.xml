@@ -102,11 +102,6 @@
             <plugin>
                 <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
                 <artifactId>inmemdb-maven-plugin</artifactId>
-                <version>1.3.0</version>
-                <configuration>
-                    <monitorKey>inmemdb</monitorKey>
-                    <monitorPort>11527</monitorPort>
-                </configuration>
                 <executions>
                     <execution>
                         <id>run</id>
@@ -129,6 +124,9 @@
                     </execution>
                     <execution>
                         <id>stop</id>
+                        <!-- Moving later to verify phase from post-integration-test.  Reason: Jetty shutdown wants
+                             to close database or will raise error messages. -->
+                        <phase>verify</phase>
                         <goals>
                             <goal>stop</goal>
                         </goals>
@@ -140,6 +138,8 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <configuration>
+                    <stopKey>selenium</stopKey>
+                    <stopPort>9999</stopPort>
                     <webApp>
                         <contextPath>/roller</contextPath>
                     </webApp>

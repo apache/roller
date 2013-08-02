@@ -536,6 +536,41 @@
                 </configuration>
             </plugin>
 
+            <!-- Activates the Derby database for unit tests and mvn jetty:run -->
+            <plugin>
+                <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
+                <artifactId>inmemdb-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>run</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <daemon>true</daemon>
+                            <type>derby</type>
+                            <database>rollerdb</database>
+                            <username>APP</username>
+                            <password>APP</password>
+                            <port>3223</port>
+                            <sources>
+                                <script>
+                                    <sourceFile>${pom.basedir}/target/dbscripts/derby/createdb.sql</sourceFile>
+                                </script>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
@@ -654,47 +689,6 @@
                             </target>
                         </configuration>
                     </execution>
-
-                    <!-- Derby only for unit testing and jetty:run dev testing: skipped when maven.test.skip is set -->
-                    <execution>
-                        <id>startdb</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target unless="${maven.test.skip}">
-                                <delete dir="${basedir}/target/derby-system" verbose="true" failonerror="false" />
-                                <taskdef name="startdb" classname="org.apache.roller.derby.ant.StartDerbyTask"
-                                         classpathref="maven.test.classpath"/>
-                                <startdb databaseDir="${basedir}/target/derby-system"
-                                         port="3223"
-                                         databaseScriptsDir="${basedir}/target/dbscripts" >
-                                </startdb>
-                            </target>
-                        </configuration>
-                    </execution>
-
-                    <!-- Derby only for unit testing: skipped when maven.test.skip is set -->
-                    <execution>
-                        <id>stopdb</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target unless="${maven.test.skip}">
-                                <taskdef name="stopdb" classname="org.apache.roller.derby.ant.StopDerbyTask"
-                                         classpathref="maven.test.classpath"/>
-                                <stopdb databaseDir="${basedir}/target/derby-system"
-                                        port="3223"
-                                        databaseScriptsDir="${basedir}/target/dbscripts" >
-                                </stopdb>
-                                <delete dir="${basedir}/target/derby-system" verbose="true" failonerror="false" />
-                            </target>
-                        </configuration>
-                    </execution>
-
                 </executions>
             </plugin>
 
