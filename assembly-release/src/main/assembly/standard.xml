@@ -29,6 +29,8 @@
     <files> 
         <file> 
             <source>../assembly-war/target/roller-war-${artifact.version}-standard.war</source>
+            <!-- To grab directly from the app submodule: -->
+            <!--source>../app/target/roller.war</source-->
             <outputDirectory>${artifact.artifactId}-${artifact.version}-standard/webapp</outputDirectory>
         </file> 
         <file> 

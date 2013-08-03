@@ -33,15 +33,17 @@
     <description>Assembles Roller into a distribution package</description>
 
     <build>
-
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-
-                <!-- See profiles below for configuration -->
-
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/standard.xml</descriptor>
+                        <descriptor>src/main/assembly/source.xml</descriptor>
+                    </descriptors>
+                    <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
@@ -51,36 +53,12 @@
                         </goals>
                     </execution>
                 </executions>
-
             </plugin>
-
         </plugins>
     </build>
 
     <profiles>
-        
-        <profile>
-            <id>standard-assembly</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/main/assembly/standard.xml</descriptor>
-                                <descriptor>src/main/assembly/source.xml</descriptor>
-                            </descriptors>
-                            <tarLongFileMode>gnu</tarLongFileMode>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        
+        <!-- sign via "mvn clean install -Prelease-sign-artifacts" -->
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
@@ -94,7 +72,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.0-alpha-4</version>
+                        <version>1.4</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

@@ -33,9 +33,7 @@
 				<include>**</include>
 			</includes>
 			<excludes>
-				<exclude>tomcat/**</exclude>
-				<exclude>dist/**</exclude>
-				<exclude>site/**</exclude>
+				<exclude>it-selenium/**</exclude>
 				<exclude>**/target/**</exclude>
 				<exclude>**/samples/create.sql</exclude>
 				<exclude>**/samples/drop.sql</exclude>
