@@ -118,7 +118,7 @@
     <entry>
         <id>$file.permalink</id>
         <title type="html">$utils.escapeXML($file.name)</title>
-        <author><name>$file.creator.screenName</name></author>
+        <author><name>$utils.escapeXML($utils.removeHTML($file.creator.screenName))</name></author>
         <link rel="alternate" type="text/html" href="$file.permalink"/>
         <published>$utils.formatIso8601Date($file.dateUploaded)</published>
         <updated>$utils.formatIso8601Date($file.lastUpdated)</updated> 
