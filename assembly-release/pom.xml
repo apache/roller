@@ -32,6 +32,10 @@
     <name>Roller release assembly</name>
     <description>Assembles Roller into a distribution package</description>
 
+    <!--
+         Check the README.txt in the Roller base folder for 
+         information on creating the Roller distribution files.
+    -->
     <build>
         <plugins>
             <plugin>
@@ -89,4 +93,3 @@
     </profiles>
 
 </project>
-

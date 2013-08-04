@@ -35,8 +35,6 @@
 			<excludes>
 				<exclude>it-selenium/**</exclude>
 				<exclude>**/target/**</exclude>
-				<exclude>**/samples/create.sql</exclude>
-				<exclude>**/samples/drop.sql</exclude>
 				<exclude>**/derby.log</exclude>
 				<exclude>**/.idea/**</exclude>
 				<exclude>**/._*</exclude>

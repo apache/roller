@@ -28,34 +28,32 @@
 
     <files> 
         <file> 
-            <source>../assembly-war/target/roller-war-${artifact.version}-standard.war</source>
-            <!-- To grab directly from the app submodule: -->
-            <!--source>../app/target/roller.war</source-->
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard/webapp</outputDirectory>
+            <source>../app/target/roller.war</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}/webapp</outputDirectory>
         </file> 
         <file> 
             <source>../README.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
         </file> 
         <file> 
             <source>../NOTICE.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
         </file> 
         <file> 
             <source>../LICENSE.txt</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
         </file> 
         <!--file>
             <source>../weblogger-docs/installguide/generated/roller-install-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/userguide/generated/roller-user-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
         </file> 
         <file> 
             <source>../weblogger-docs/templateguide/generated/roller-template-guide.pdf</source>
-            <outputDirectory>${artifact.artifactId}-${artifact.version}-standard/docs</outputDirectory>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
         </file-->
     </files>
 
