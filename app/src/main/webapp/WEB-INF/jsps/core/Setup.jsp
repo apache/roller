@@ -21,9 +21,9 @@
 <div style="width:75%">
     <ul>
         <%--
-                 Tell the user how to complete their Roller install, with helpful
-                 notes and links to the appropriate places in the Roller UI.
-            --%>
+              Index page on Roller startup; tell the user how to complete their Roller install,
+              with helpful notes and links to the appropriate places in the Roller UI.
+        --%>
 
         <%-- STEP 1: Create a user if you don't already have one --%>
         <li><b><s:text name="index.createUser" />
@@ -36,8 +36,7 @@
             <s:text name="index.createUserHelp" /><br /><br />
             <s:text name="index.createUserBy" />
             <a href='<s:url action="register"/>'>
-                <s:text name="index.createUserPage" />
-            </a>.
+                <s:text name="index.createUserPage" /></a>.
             <br /><br /><br />
         </li>
 
@@ -52,12 +51,11 @@
             <s:text name="index.createWeblogHelp" /><br /><br />
             <s:text name="index.createWeblogBy" />
             <a href='<s:url action="createWeblog"/>'>
-                <s:text name="index.createWeblogPage" />
-            </a>
+                <s:text name="index.createWeblogPage" /></a>.
             <br /><br /><br />
         </li>
 
-        <%-- STEP 3: Designate a weblog to be the frontpage weblot --%>
+        <%-- STEP 3: Designate a weblog to be the frontpage weblog --%>
         <li><b><s:text name="index.setFrontpage" /></b><br />
             <br />
             <s:text name="index.setFrontpageHelp" /><br />

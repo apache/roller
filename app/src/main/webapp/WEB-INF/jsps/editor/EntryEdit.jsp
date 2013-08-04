@@ -122,7 +122,7 @@ function fullPreviewMode() {
                 </td>
                 <td>
                     <s:if test="bean.published">
-                        <a href='<s:property value="entry.permalink" />'><s:property value="entry.permalink" /></a>
+                        <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'><s:property value="entry.permalink" /></a>
                         <img src='<s:url value="/images/launch-link.png"/>' />
                     </s:if>
                     <s:else>

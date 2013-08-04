@@ -25,99 +25,91 @@ import static org.hamcrest.CoreMatchers.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.apache.roller.selenium.core.CreateWeblogPage;
+import org.apache.roller.selenium.core.LoginPage;
+import org.apache.roller.selenium.core.MainMenuPage;
+import org.apache.roller.selenium.core.RegisterPage;
+import org.apache.roller.selenium.core.SetupPage;
+import org.apache.roller.selenium.core.WelcomePage;
+import org.apache.roller.selenium.editor.EntryAddPage;
+import org.apache.roller.selenium.editor.EntryEditPage;
+
 
 public class InitialLoginTestIT {
-  private WebDriver driver;
-  private String baseUrl;
-  private boolean acceptNextAlert = true;
-  private StringBuffer verificationErrors = new StringBuffer();
+    private WebDriver driver;
+    private String baseUrl;
+    private boolean acceptNextAlert = true;
+    private StringBuffer verificationErrors = new StringBuffer();
 
-  @Before
-  public void setUp() throws Exception {
-    driver = new FirefoxDriver();
-    baseUrl = "http://localhost:8080/roller/";
-    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-  }
-
-  @Test
-  public void testInitialLogin() throws Exception {
-    driver.get(baseUrl);
-    driver.findElement(By.linkText("New User Registration Page")).click();
-    driver.findElement(By.id("register_bean_userName")).clear();
-    driver.findElement(By.id("register_bean_userName")).sendKeys("bsmith");
-    driver.findElement(By.id("register_bean_screenName")).clear();
-    driver.findElement(By.id("register_bean_screenName")).sendKeys("bsmith");
-    driver.findElement(By.id("register_bean_fullName")).clear();
-    driver.findElement(By.id("register_bean_fullName")).sendKeys("Bob Smith");
-    driver.findElement(By.id("register_bean_emailAddress")).clear();
-    driver.findElement(By.id("register_bean_emailAddress")).sendKeys("bsmith@email.com");
-    driver.findElement(By.id("register_bean_passwordText")).clear();
-    driver.findElement(By.id("register_bean_passwordText")).sendKeys("roller123");
-    driver.findElement(By.id("register_bean_passwordConfirm")).clear();
-    driver.findElement(By.id("register_bean_passwordConfirm")).sendKeys("roller123");
-    driver.findElement(By.id("submit")).click();
-    driver.findElement(By.linkText("Click here")).click();
-    driver.findElement(By.id("j_username")).clear();
-    driver.findElement(By.id("j_username")).sendKeys("bsmith");
-    driver.findElement(By.id("j_password")).clear();
-    driver.findElement(By.id("j_password")).sendKeys("roller123");
-    driver.findElement(By.id("login")).click();
-    driver.findElement(By.linkText("create one?")).click();
-    driver.findElement(By.id("createWeblog_bean_name")).clear();
-    driver.findElement(By.id("createWeblog_bean_name")).sendKeys("Bob's Blog");
-    driver.findElement(By.id("createWeblog_bean_description")).clear();
-    driver.findElement(By.id("createWeblog_bean_description")).sendKeys("A blog suitable for Selenium Testing");
-    driver.findElement(By.id("createWeblog_bean_handle")).clear();
-    driver.findElement(By.id("createWeblog_bean_handle")).sendKeys("bobsblog");
-    driver.findElement(By.id("createWeblog_0")).click();
-    driver.findElement(By.linkText("New Entry")).click();
-    driver.findElement(By.id("entry_bean_title")).clear();
-    driver.findElement(By.id("entry_bean_title")).sendKeys("My First Blog Entry");
-    driver.findElement(By.id("entry_bean_text")).clear();
-    driver.findElement(By.id("entry_bean_text")).sendKeys("<p>Hello!  I'm looking forward to blogging lots of entries!</p>");
-    driver.findElement(By.id("entry_2")).click();
-    driver.findElement(By.linkText("http://localhost:8080/roller/bobsblog/entry/my_first_blog_entry")).click();
-  }
-
-  @After
-  public void tearDown() throws Exception {
-    driver.quit();
-    String verificationErrorString = verificationErrors.toString();
-    if (!"".equals(verificationErrorString)) {
-      fail(verificationErrorString);
+    @Before
+    public void setUp() throws Exception {
+        driver = new FirefoxDriver();
+        baseUrl = "http://localhost:8080/roller/";
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
-  }
 
-  private boolean isElementPresent(By by) {
-    try {
-      driver.findElement(by);
-      return true;
-    } catch (NoSuchElementException e) {
-      return false;
-    }
-  }
+    @Test
+    public void testInitialLogin() throws Exception {
+        String blogEntryTitle = "My First Blog Entry";
+        String blogEntryContent = "Welcome to my blog!";
 
-  private boolean isAlertPresent() {
-    try {
-      driver.switchTo().alert();
-      return true;
-    } catch (NoAlertPresentException e) {
-      return false;
+        driver.get(baseUrl);
+        SetupPage sp = new SetupPage(driver);
+        RegisterPage rp = sp.createNewUser();
+        WelcomePage wp = rp.submitUserRegistration("bsmith", "Bob Smith", "bsmith@email.com", "roller123");
+        LoginPage lp = wp.doRollerLogin();
+        MainMenuPage mmp = lp.loginToRoller("bsmith", "roller123");
+        CreateWeblogPage cwp = mmp.createWeblog();
+        mmp = cwp.createWeblog("Bob's Blog", "bobsblog", "bsmith@email.com");
+        EntryAddPage eap = mmp.createNewBlogEntry();
+        eap.setTitle(blogEntryTitle);
+        eap.setText(blogEntryContent);
+        EntryEditPage eep = eap.postBlogEntry();
+        driver.findElement(By.id("entry_bean_permalink")).click();
+        assertEquals(blogEntryTitle, driver.findElement(By.cssSelector("p.entryTitle")).getText());
+        assertEquals(blogEntryContent, driver.findElement(By.cssSelector("p.entryContent")).getText());
     }
-  }
 
-  private String closeAlertAndGetItsText() {
-    try {
-      Alert alert = driver.switchTo().alert();
-      String alertText = alert.getText();
-      if (acceptNextAlert) {
-        alert.accept();
-      } else {
-        alert.dismiss();
-      }
-      return alertText;
-    } finally {
-      acceptNextAlert = true;
+
+    @After
+    public void tearDown() throws Exception {
+        driver.quit();
+        String verificationErrorString = verificationErrors.toString();
+        if (!"".equals(verificationErrorString)) {
+            fail(verificationErrorString);
+        }
     }
-  }
+
+    private boolean isElementPresent(By by) {
+        try {
+            driver.findElement(by);
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    private boolean isAlertPresent() {
+        try {
+            driver.switchTo().alert();
+            return true;
+        } catch (NoAlertPresentException e) {
+            return false;
+        }
+    }
+
+    private String closeAlertAndGetItsText() {
+        try {
+            Alert alert = driver.switchTo().alert();
+            String alertText = alert.getText();
+            if (acceptNextAlert) {
+                alert.accept();
+            } else {
+                alert.dismiss();
+            }
+            return alertText;
+        } finally {
+            acceptNextAlert = true;
+        }
+    }
 }
