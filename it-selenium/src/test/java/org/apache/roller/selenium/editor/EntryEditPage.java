@@ -28,12 +28,16 @@ import java.lang.String;
  */
 public class EntryEditPage extends AbstractEntryPage {
 
+    // need to read fields on screen.
+
     public EntryEditPage(WebDriver driver) {
         this.driver = driver;
         this.pageName = "blog entry edit page";
         verifyPageTitle("Front Page: Edit Entry");
     }
 
-    // need to read fields on screen.
-
+    public SingleBlogEntryPage viewBlogEntry() {
+        clickById("entry_bean_permalink");
+        return new SingleBlogEntryPage(driver);
+    }
 }

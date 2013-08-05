@@ -33,7 +33,7 @@ import org.apache.roller.selenium.core.SetupPage;
 import org.apache.roller.selenium.core.WelcomePage;
 import org.apache.roller.selenium.editor.EntryAddPage;
 import org.apache.roller.selenium.editor.EntryEditPage;
-
+import org.apache.roller.selenium.view.SingleBlogEntryPage;
 
 public class InitialLoginTestIT {
     private WebDriver driver;
@@ -61,13 +61,15 @@ public class InitialLoginTestIT {
         MainMenuPage mmp = lp.loginToRoller("bsmith", "roller123");
         CreateWeblogPage cwp = mmp.createWeblog();
         mmp = cwp.createWeblog("Bob's Blog", "bobsblog", "bsmith@email.com");
+
         EntryAddPage eap = mmp.createNewBlogEntry();
         eap.setTitle(blogEntryTitle);
         eap.setText(blogEntryContent);
         EntryEditPage eep = eap.postBlogEntry();
-        driver.findElement(By.id("entry_bean_permalink")).click();
-        assertEquals(blogEntryTitle, driver.findElement(By.cssSelector("p.entryTitle")).getText());
-        assertEquals(blogEntryContent, driver.findElement(By.cssSelector("p.entryContent")).getText());
+        SingleBlogEntryPage sbep = eep.viewBlogEntry();
+        System.out.println("title/text: " + sbep.getBlogTitle() + " / " + sbep.getBlogText());
+        assertEquals(blogEntryTitle, sbep.getBlogTitle());
+        assertEquals(blogEntryContent, sbep.getBlogText());
     }
 
 

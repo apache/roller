@@ -28,10 +28,18 @@ import java.lang.String;
  */
 public class SingleBlogEntryPage extends AbstractRollerPage {
 
-    public SingleBlogEntryPage(WebDriver driver, String blogTitle, String entryTitle) {
+    public SingleBlogEntryPage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "Single blog entry page";
-        verifyPageTitle(entryTitle + " : " + blogTitle);
+        this.pageName = "Single blog entry view";
+//      verifyPageTitle("...");
+    }
+
+    public String getBlogTitle() {
+        return getTextByCSS("p.entryTitle");
+    }
+
+    public String getBlogText() {
+        return getTextByCSS("p.entryContent");
     }
 
 }

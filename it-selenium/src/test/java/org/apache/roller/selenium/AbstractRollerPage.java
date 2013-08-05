@@ -18,6 +18,7 @@
 package org.apache.roller.selenium;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By;
 
 /**
@@ -37,8 +38,9 @@ public abstract class AbstractRollerPage {
     }
 
     protected void setFieldValue(String fieldId, String value) {
-        driver.findElement(By.id(fieldId)).clear();
-        driver.findElement(By.id(fieldId)).sendKeys(value);
+        WebElement field = driver.findElement(By.id(fieldId));
+        field.clear();
+        field.sendKeys(value);
     }
 
     protected void clickById(String buttonId) {
@@ -49,4 +51,11 @@ public abstract class AbstractRollerPage {
         driver.findElement(By.linkText(buttonText)).click();
     }
 
+    protected String getTextByCSS(String cssSelector) {
+        return driver.findElement(By.cssSelector(cssSelector)).getText();
+    }
+
+    protected String getTextById(String fieldId) {
+        return driver.findElement(By.id(fieldId)).getText();
+    }
 }
