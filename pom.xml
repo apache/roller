@@ -16,7 +16,7 @@
     <name>Roller project</name>
     <description>
         Roller is an open source blog server built with open source Java
-        libraries including Apache OpenJPA, Struts2, Velocity and Commons.
+        libraries including Spring, Struts2, Velocity and Commons.
     </description>
     <url>http://roller.apache.org</url>
     <inceptionYear>2002</inceptionYear>
@@ -30,7 +30,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <roller.version>5.1.0-SNAPSHOT</roller.version>
         <derby.version>10.10.1.1</derby.version>
     </properties>
 

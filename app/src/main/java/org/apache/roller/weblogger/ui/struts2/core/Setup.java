@@ -46,14 +46,10 @@ public class Setup extends UIAction {
     // weblogs for frontpage blog chooser
     private Collection<Weblog> weblogs;
 
-    
-    
     public Setup() {
-        // TODO: i18n
         this.pageTitle = "index.heading";
     }
-    
-    
+
     @Override
     public boolean isUserRequired() {
         return false;
@@ -63,8 +59,7 @@ public class Setup extends UIAction {
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
     public String execute() {
         
         try {

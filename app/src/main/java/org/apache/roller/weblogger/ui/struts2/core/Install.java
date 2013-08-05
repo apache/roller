@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -37,36 +38,36 @@ import org.springframework.beans.factory.access.BootstrapException;
  * Walk user through install process.
  */
 public class Install extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(Install.class);
-    
+
     private static final String DATABASE_ERROR = "database_error";
     private static final String CREATE_DATABASE = "create_database";
     private static final String UPGRADE_DATABASE = "upgrade_database";
     private static final String BOOTSTRAP = "bootstrap";
-    
+
     private Throwable rootCauseException = null;
     private boolean error = false;
     private boolean success = false;
     private List<String> messages = null;
     private String databaseName = "Unknown";
-    
-    
+
+
     public boolean isUserRequired() {
         return false;
     }
-    
+
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     public String execute() {
-        
+
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
-        
+
         if (WebloggerStartup.getDatabaseProviderException() != null) {
             StartupException se = WebloggerStartup.getDatabaseProviderException();
             if (se.getRootCause() != null) {
@@ -75,12 +76,12 @@ public class Install extends UIAction {
                 rootCauseException = se;
             }
             messages = se.getStartupLog();
-            
+
             log.debug("Forwarding to database error page");
             setPageTitle("installer.error.connection.pageTitle");
             return DATABASE_ERROR;
-        }   
-        
+        }
+
         if (WebloggerStartup.isDatabaseCreationRequired()) {
             log.debug("Forwarding to database table creation page");
             setPageTitle("installer.database.creation.pageTitle");
@@ -91,72 +92,72 @@ public class Install extends UIAction {
             setPageTitle("installer.database.upgrade.pageTitle");
             return UPGRADE_DATABASE;
         }
-        
-        setPageTitle("installer.error.unknown.pageTitle");        
+
+        setPageTitle("installer.error.unknown.pageTitle");
         rootCauseException = new Exception("UNKNOWN ERROR");
         rootCauseException.fillInStackTrace();
         return BOOTSTRAP;
     }
-    
-    
+
+
     public String create() {
-        
-        if(WebloggerFactory.isBootstrapped()) {
+
+        if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
-        
+
         try {
             messages = WebloggerStartup.createDatabase();
-            
+
             success = true;
         } catch (StartupException se) {
             error = true;
             messages = se.getStartupLog();
         }
-        
+
         setPageTitle("installer.database.creation.pageTitle");
         return CREATE_DATABASE;
     }
-    
-    
+
+
     public String upgrade() {
-        
-        if(WebloggerFactory.isBootstrapped()) {
+
+        if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
-        
+
         try {
             messages = WebloggerStartup.upgradeDatabase(true);
-            
+
             success = true;
         } catch (StartupException se) {
             error = true;
             messages = se.getStartupLog();
         }
-        
+
         setPageTitle("installer.database.upgrade.pageTitle");
         return UPGRADE_DATABASE;
     }
-    
-    
+
+
     public String bootstrap() {
         log.info("ENTERING");
-        
+
         if (WebloggerFactory.isBootstrapped()) {
             log.info("EXITING - already bootstrapped, forwarding to Roller");
             return SUCCESS;
         }
-        
+
         try {
             // trigger bootstrapping process
             WebloggerFactory.bootstrap();
-            
+
             // trigger initialization process
             WebloggerFactory.getWeblogger().initialize();
-            
+
             // also need to do planet if it's configured
             if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
-                
+
                 // Now prepare the core services of planet so we can bootstrap it
                 try {
                     WebloggerStartup.prepare();
@@ -164,9 +165,9 @@ public class Install extends UIAction {
                     log.fatal("Roller Planet startup failed during app preparation", ex);
                 }
             }
-            log.info("EXITING - Bootstrap sucessful, forwarding to Roller");
+            log.info("EXITING - Bootstrap successful, forwarding to Roller");
             return SUCCESS;
-            
+
         } catch (BootstrapException ex) {
             log.error("BootstrapException", ex);
             rootCauseException = ex;
@@ -177,42 +178,45 @@ public class Install extends UIAction {
             log.error("Throwable", t);
             rootCauseException = t;
         }
-        
+
         log.info("EXITING - Bootstrap failed, forwarding to error page");
-        setPageTitle("installer.error.unknown.pageTitle");                
+        setPageTitle("installer.error.unknown.pageTitle");
         return BOOTSTRAP;
     }
-    
-    
+
+
     public String getDatabaseProductName() {
         String name = "unknown";
-        
+
         Connection con = null;
         try {
             con = WebloggerStartup.getDatabaseProvider().getConnection();
             name = con.getMetaData().getDatabaseProductName();
-    } catch (Exception intentionallyIgnored) {
+        } catch (Exception intentionallyIgnored) {
             // ignored
         } finally {
-            if(con != null) try {
-                con.close();
-            } catch(Exception ex) {}
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (Exception ex) {
+                }
+            }
         }
-        
+
         return name;
     }
-    
+
     public String getProp(String key) {
         // Static config only, we don't have database yet
         String value = WebloggerConfig.getProperty(key);
         return (value == null) ? key : value;
     }
-    
-    
+
+
     public Throwable getRootCauseException() {
         return rootCauseException;
     }
-    
+
     public String getRootCauseStackTrace() {
         String stackTrace = "";
         if (getRootCauseException() != null) {
@@ -242,5 +246,5 @@ public class Install extends UIAction {
     public boolean isSuccess() {
         return success;
     }
-    
+
 }

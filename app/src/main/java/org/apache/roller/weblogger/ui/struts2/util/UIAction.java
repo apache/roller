@@ -71,7 +71,7 @@ public abstract class UIAction extends ActionSupport
     // the name of the menu this action wants to show, or null for no menu
     protected String desiredMenu = null;
     
-    // page title
+    // page title, called by some Tiles JSPs (e.g., tiles-simplepage.jsp)
     protected String pageTitle = null;
 
     protected String salt = null;

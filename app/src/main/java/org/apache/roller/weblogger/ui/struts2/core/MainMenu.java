@@ -103,9 +103,7 @@ public class MainMenu extends UIAction {
     
     
     public String resign() {
-        
-        User user = getAuthenticatedUser();
-        
+
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();

@@ -34,10 +34,13 @@
                 </s:if>
             </b><br /><br />
             <s:text name="index.createUserHelp" /><br /><br />
-            <s:text name="index.createUserBy" />
-            <a href='<s:url action="register"/>'>
-                <s:text name="index.createUserPage" /></a>.
-            <br /><br /><br />
+            <s:if test="userCount == 0">
+                <s:text name="index.createUserBy" />
+                <a href='<s:url action="register"/>'>
+                    <s:text name="index.createUserPage" /></a>.
+                <br /><br />
+            </s:if>
+            <br />
         </li>
 
         <%-- STEP 2: Create a weblog if you don't already have one --%>
@@ -49,10 +52,13 @@
                 </s:if>
             </b><br /><br />
             <s:text name="index.createWeblogHelp" /><br /><br />
-            <s:text name="index.createWeblogBy" />
-            <a href='<s:url action="createWeblog"/>'>
-                <s:text name="index.createWeblogPage" /></a>.
-            <br /><br /><br />
+            <s:if test="userCount > 0 && blogCount == 0">
+                <s:text name="index.createWeblogBy" />
+                <a href='<s:url action="createWeblog"/>'>
+                    <s:text name="index.createWeblogPage" /></a>.
+            <br /><br />
+            </s:if>
+            <br />
         </li>
 
         <%-- STEP 3: Designate a weblog to be the frontpage weblog --%>
@@ -80,7 +86,7 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <s:text name="frontpageConfig.frontpageAgregated" />
+                            <s:text name="frontpageConfig.frontpageAggregated" />
                             <br /><br />
                         </td>
                         <td class="field">

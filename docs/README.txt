@@ -6,4 +6,5 @@ test plans.
     roller-template-guide.odt - How to create Roller templates and themes 
     roller-dev-guide.odt      - Incomplete developer guide 
     examples/                 - example configuration and script files
-    testing/                  - Test plans (under development)
+    testing/                  - Various test scripts
+

@@ -49,8 +49,8 @@ public class Register extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(Register.class);
     
-    public static String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";    
-    
+    public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
+
     // this is a no-no, we should not need this
     private HttpServletRequest servletRequest = null;
     
@@ -83,7 +83,7 @@ public class Register extends UIAction implements ServletRequestAware {
     @SkipValidation
     public String execute() {
         
-        // if registation is disabled, then don't allow registration
+        // if registration is disabled, then don't allow registration
         try {
             if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
                 // unless there are 0 users (need to allow creation of first user)
@@ -164,7 +164,7 @@ public class Register extends UIAction implements ServletRequestAware {
     
     public String save() {
         
-        // if registation is disabled, then don't allow registration
+        // if registration is disabled, then don't allow registration
         try {
             if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
                 // unless there are 0 users (need to allow creation of first user)
