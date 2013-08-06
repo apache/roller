@@ -98,9 +98,4 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
         <custom-filter position="OPENID_PROCESSING_FILTER"/>
     </beans:bean>
     
-    <beans:bean id="rollerCrowdAuthenticationService"
-                class="org.apache.roller.weblogger.ui.core.security.CrowdAuthenticationProvider">
-           <custom-authentication-provider/>
-    </beans:bean>  
-
 </beans:beans>

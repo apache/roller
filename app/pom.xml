@@ -25,24 +25,6 @@
         <lucene.version>4.4.0</lucene.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-
-        <repository>
-            <id>com.atlassian</id>
-            <name>Atlassian Repository</name>
-            <url>http://maven.atlassian.com/public</url>
-        </repository>
-    </repositories>
-
     <dependencies>
 
         <!-- Eclipselink JPA is the default JPA implementation used by
@@ -397,18 +379,6 @@
             <artifactId>jsp-api</artifactId>
             <version>2.1</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.crowd</groupId>
-            <artifactId>crowd-integration-client-rest</artifactId>
-            <version>2.4.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
