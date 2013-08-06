@@ -12,23 +12,20 @@
     </parent>
 
     <name>Roller app</name>
-    <groupId>org.apache.roller</groupId>
     <artifactId>roller-webapp</artifactId>
     <packaging>war</packaging>
 
-
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
-        <testMediaDir>  ${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
+        <testMediaDir>${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
         <testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
-        <testThemesDir> ${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
-        <testIndexDir>  ${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
+        <testThemesDir>${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
+        <testIndexDir>${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
         <lucene.version>4.4.0</lucene.version>
     </properties>
 
     <repositories>
-
         <repository>
             <id>central</id>
             <name>Maven Repository Switchboard</name>
@@ -37,16 +34,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-
-        <repository>
-            <id>oauth</id>
-            <url>http://oauth.googlecode.com/svn/code/maven</url>
-        </repository>
-
-        <repository>
-            <id>oss.sonatype.org</id>
-            <url>http://oss.sonatype.org/content/groups/public</url>
         </repository>
 
         <repository>
