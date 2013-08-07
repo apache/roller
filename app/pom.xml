@@ -35,11 +35,11 @@
              placed in the src/test/resources/roller-custom.properties
              file.
          -->
-        <!--dependency>
+        <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
             <version>2.5.0</version>
-        </dependency-->
+        </dependency>
 
         <!-- Alternative testing with Hibernate (used by default
              with JBoss
@@ -48,7 +48,6 @@
 
              org.javassist:javassist:3.15.0 cannot replace differently named javassist:javassist:3.11.0
              always provided by struts2-spring-plugin so filtering it out; already provided by JBoss anyway
-        -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
@@ -60,6 +59,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.slf4j</groupId>
