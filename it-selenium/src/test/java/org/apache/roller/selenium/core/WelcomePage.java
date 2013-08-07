@@ -37,7 +37,7 @@ public class WelcomePage extends AbstractRollerPage {
     }
 
     public LoginPage doRollerLogin() {
-        clickByLinkText("Click here");
+        clickById("a_clickHere");
         return new LoginPage(driver);
     }
 

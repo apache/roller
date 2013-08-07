@@ -59,12 +59,10 @@ public class Register extends UIAction implements ServletRequestAware {
     
     private String activationCode = null;
     private ProfileBean bean = new ProfileBean();
-    
-    
+
     public Register() {
         this.pageTitle = "newUser.addNewUser";
     }
-    
     
     // override default security, we do not require an authenticated user
     public boolean isUserRequired() {

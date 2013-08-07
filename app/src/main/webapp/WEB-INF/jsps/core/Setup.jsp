@@ -36,7 +36,7 @@
             <s:text name="index.createUserHelp" /><br /><br />
             <s:if test="userCount == 0">
                 <s:text name="index.createUserBy" />
-                <a href='<s:url action="register"/>'>
+                <a id="a_createUser" href='<s:url action="register"/>'>
                     <s:text name="index.createUserPage" /></a>.
                 <br /><br />
             </s:if>
@@ -54,7 +54,7 @@
             <s:text name="index.createWeblogHelp" /><br /><br />
             <s:if test="userCount > 0 && blogCount == 0">
                 <s:text name="index.createWeblogBy" />
-                <a href='<s:url action="createWeblog"/>'>
+                <a id="a_createBlog" href='<s:url action="createWeblog"/>'>
                     <s:text name="index.createWeblogPage" /></a>.
             <br /><br />
             </s:if>

@@ -36,7 +36,7 @@ public class SetupPage extends AbstractRollerPage {
     }
 
     public RegisterPage createNewUser() {
-        clickByLinkText("New User Registration Page");
+        clickById("a_createUser");
         return new RegisterPage(driver);
     }
 

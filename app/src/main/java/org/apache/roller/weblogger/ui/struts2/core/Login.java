@@ -28,13 +28,11 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 public class Login extends UIAction {
     
     private String error = null;
-    private boolean openidEnabled = WebloggerConfig.getBooleanProperty("authentication.openid.enabled");
-    
+
     public Login() {
         this.pageTitle = "loginPage.title";
     }
-    
-    
+
     // override default security, we do not require an authenticated user
     public boolean isUserRequired() {
         return false;

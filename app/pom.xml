@@ -41,14 +41,18 @@
             <version>2.5.0</version>
         </dependency>
 
-        <!-- Alternative testing with Hibernate (used by default
-             with JBoss
+        <!-- Alternative testing with Hibernate (used by default with JBoss)
              Important: set hibernate.transaction.factory_class=org.hibernate.transaction.JDBCTransactionFactory
              in your roller-custom.properties if using Hibernate with Tomcat
 
              org.javassist:javassist:3.15.0 cannot replace differently named javassist:javassist:3.11.0
              always provided by struts2-spring-plugin so filtering it out; already provided by JBoss anyway
-        <dependency>
+
+             Note: Apache cannot distribute Hibernate due to it being LGPL, so these dependencies must be
+             commented out in trunk.  We have this dependency declaration to help with testing on JBoss
+             which uses Hibernate.
+        -->
+        <!--dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>4.2.3.Final</version>
@@ -59,14 +63,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        -->
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.6.1</version>
             <scope>runtime</scope>
-        </dependency>
+        </dependency-->
 
         <!-- To test with OpenJPA instead of EclipseLink, will need to add OpenJPA
              dependencies and static bytecode enhancement of the generated JPA classes
