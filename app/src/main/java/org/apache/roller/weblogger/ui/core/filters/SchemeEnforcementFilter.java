@@ -135,7 +135,7 @@ public class SchemeEnforcementFilter implements Filter {
 	 */
 	private boolean isIgnoredURL(String theUrl) {
 
-		int i = theUrl.lastIndexOf(".");
+		int i = theUrl.lastIndexOf('.');
 
 		if (i <= 0 || i == theUrl.length() - 1)
 			return true;

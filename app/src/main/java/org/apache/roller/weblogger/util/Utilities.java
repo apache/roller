@@ -96,7 +96,7 @@ public class Utilities {
         // Strip off jsessionid found in referer URL
         int startPos = url.indexOf(";jsessionid=");
         if ( startPos != -1 ) {
-            int endPos = url.indexOf("?",startPos);
+            int endPos = url.indexOf('?',startPos);
             if ( endPos == -1 ) {
                 url = url.substring(0,startPos);
             } else {
@@ -140,7 +140,7 @@ public class Utilities {
     
     //------------------------------------------------------------------------
     /**
-     * Remove occurences of html, defined as any text
+     * Remove occurrences of html, defined as any text
      * between the characters "&lt;" and "&gt;".  Replace
      * any HTML tags with a space.
      */
@@ -149,7 +149,7 @@ public class Utilities {
     }
     
     /**
-     * Remove occurences of html, defined as any text
+     * Remove occurrences of html, defined as any text
      * between the characters "&lt;" and "&gt;".
      * Optionally replace HTML tags with a space.
      *
@@ -158,14 +158,17 @@ public class Utilities {
      * @return
      */
     public static String removeHTML(String str, boolean addSpace) {
-        if (str == null) return "";
+        if (str == null) {
+            return "";
+        }
         StringBuffer ret = new StringBuffer(str.length());
         int start = 0;
-        int beginTag = str.indexOf("<");
+        int beginTag = str.indexOf('<');
         int endTag = 0;
-        if (beginTag == -1)
+        if (beginTag == -1) {
             return str;
-        
+        }
+
         while (beginTag >= start) {
             if (beginTag > 0) {
                 ret.append(str.substring(start, beginTag));
@@ -173,7 +176,7 @@ public class Utilities {
                 // replace each tag with a space (looks better)
                 if (addSpace) ret.append(" ");
             }
-            endTag = str.indexOf(">", beginTag);
+            endTag = str.indexOf('>', beginTag);
             
             // if endTag found move "cursor" forward
             if (endTag > -1) {
@@ -251,7 +254,7 @@ public class Utilities {
     
     //------------------------------------------------------------------------
     /**
-     * Replaces occurences of non-alphanumeric characters with a
+     * Replaces occurrences of non-alphanumeric characters with a
      * supplied char.
      */
     public static String replaceNonAlphanumeric(String str, char subst) {
@@ -546,26 +549,24 @@ public class Utilities {
      * This is weak encoding in that anyone can use the decodeString
      * routine to reverse the encoding.
      *
-     * @param str
+     * @param str String to encode
      * @return String
      * @throws IOException
      */
     public static String encodeString(String str) throws IOException {
-        Base64 base64 = new Base64();
-        String encodedStr = new String(base64.encodeBase64(str.getBytes()));        
+        String encodedStr = new String(Base64.encodeBase64(str.getBytes()));
         return (encodedStr.trim());
     }
     
     /**
      * Decode a string using Base64 encoding.
      *
-     * @param str
-     * @return String
+     * @param str String to decode
+     * @return decoded string
      * @throws IOException
      */
     public static String decodeString(String str) throws IOException {
-        Base64 base64 = new Base64();
-        String value = new String(base64.decodeBase64(str.getBytes()));        
+        String value = new String(Base64.decodeBase64(str.getBytes()));
         return (value);
     }
     
@@ -812,13 +813,13 @@ public class Utilities {
         if (str == null) return "";
         StringBuffer ret = new StringBuffer(str.length());
         int start = 0;
-        int beginTag = str.indexOf("<");
+        int beginTag = str.indexOf('<');
         int endTag = 0;
         if (beginTag == -1)
             return str;
         
         while (beginTag >= start) {
-            endTag = str.indexOf(">", beginTag);
+            endTag = str.indexOf('>', beginTag);
             
             // if endTag found, keep tag
             if (endTag > -1) {
@@ -826,7 +827,7 @@ public class Utilities {
                 
                 // move start forward and find another tag
                 start = endTag + 1;
-                beginTag = str.indexOf("<", start);
+                beginTag = str.indexOf('<', start);
             }
             // if no endTag found, break
             else {

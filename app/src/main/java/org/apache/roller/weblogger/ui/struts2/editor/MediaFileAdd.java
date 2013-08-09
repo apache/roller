@@ -138,16 +138,16 @@ public class MediaFileAdd extends MediaFileBase {
                         bean.copyTo(mediaFile);
 
                         String fileName = getUploadedFilesFileName()[i];
-                        int terminated = fileName.indexOf("\000");
+                        int terminated = fileName.indexOf('\000');
                         if (terminated != -1) {
                             // disallow sneaky null terminated strings
                             fileName = fileName.substring(0, terminated).trim();
                         }
 
                         // make sure fileName is valid
-                        if (fileName.indexOf("/") != -1 ||
-                                fileName.indexOf("\\") != -1 ||
-                                fileName.indexOf("..") != -1) {
+                        if (fileName.indexOf('/') != -1 ||
+                                fileName.indexOf('\\') != -1 ||
+                                fileName.contains("..")) {
                             addError("uploadFiles.error.badPath", fileName);
                             continue;
                         }

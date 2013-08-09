@@ -116,9 +116,9 @@ public class WeblogRequestMapper implements RequestMapper {
                 trailingSlash = true;
             }
             
-            if(servlet.indexOf("/") != -1) {
-                weblogHandle = servlet.substring(0, servlet.indexOf("/"));
-                pathInfo = servlet.substring(servlet.indexOf("/")+1);
+            if(servlet.indexOf('/') != -1) {
+                weblogHandle = servlet.substring(0, servlet.indexOf('/'));
+                pathInfo = servlet.substring(servlet.indexOf('/')+1);
             } else {
                 weblogHandle = servlet;
             }

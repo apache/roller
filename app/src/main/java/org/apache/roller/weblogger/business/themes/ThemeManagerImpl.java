@@ -348,18 +348,18 @@ public class ThemeManagerImpl implements ThemeManager {
 				String justName = null;
 				String justPath = null;
 
-				if (resourcePath.indexOf("/") == -1) {
+				if (resourcePath.indexOf('/') == -1) {
 					mdir = fileMgr.getMediaFileRootDirectory(website);
 					justPath = "";
 					justName = resourcePath;
 
 				} else {
 					justPath = resourcePath.substring(0,
-							resourcePath.lastIndexOf("/"));
+							resourcePath.lastIndexOf('/'));
 					if (!justPath.startsWith("/"))
 						justPath = "/" + justPath;
 					justName = resourcePath.substring(resourcePath
-							.lastIndexOf("/") + 1);
+							.lastIndexOf('/') + 1);
 					mdir = fileMgr.getMediaFileDirectoryByPath(website,
 							justPath);
 					if (mdir == null) {
@@ -438,7 +438,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				if (theme != null) {
 					themeMap.put(theme.getId(), theme);
 				}
-			} catch (Throwable unexpected) {
+			} catch (Exception unexpected) {
 				// shouldn't happen, so let's learn why it did
 				log.error("Problem reading theme " + themenames[i], unexpected);
 			}
@@ -473,7 +473,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 			}
 
-		} catch (Throwable unexpected) {
+		} catch (Exception unexpected) {
 			// shouldn't happen, so let's learn why it did
 			log.error("Problem reloading theme " + reloadTheme, unexpected);
 		}

@@ -62,7 +62,7 @@ public class DatabaseProvider  {
     
     private static Log log = LogFactory.getLog(DatabaseProvider.class);
 
-    public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
+    public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES}
     private ConfigurationType type = ConfigurationType.JNDI_NAME;
     private List<String> startupLog = new ArrayList<String>();
     
@@ -139,12 +139,12 @@ public class DatabaseProvider  {
         try { 
             Connection testcon = getConnection();
             testcon.close();
-        } catch (Throwable t) {
+        } catch (Exception e) {
             String errorMsg = 
                 "ERROR: unable to obtain database connection. "
                +"Likely problem: bad connection parameters or database unavailable.";
             errorMessage(errorMsg);
-            throw new StartupException(errorMsg, t, startupLog);
+            throw new StartupException(errorMsg, e, startupLog);
         }
     }
     

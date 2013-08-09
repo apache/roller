@@ -187,8 +187,8 @@ public class HTMLSanitizer {
 							} else {
 								// may be it is a mailto?
 								//  case <a href="mailto:pippo@pippo.com?subject=...."
-								if (val.toLowerCase().startsWith("mailto:") && val.indexOf("@") >= 0) {
-									String val1 = "http://www." + val.substring(val.indexOf("@") + 1);
+								if (val.toLowerCase().startsWith("mailto:") && val.indexOf('@') >= 0) {
+									String val1 = "http://www." + val.substring(val.indexOf('@') + 1);
 									if (new UrlValidator(customSchemes).isValid(val1)) {
 										foundURL = true;
 									} else {

@@ -131,8 +131,8 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
             FeedUpdater updater = new SingleThreadedFeedUpdater();
             updater.updateSubscriptions();
             
-        } catch (Throwable t) {
-            log.error("ERROR refreshing planet", t);
+        } catch (Exception e) {
+            log.error("ERROR refreshing planet", e);
         } finally {
             // always release
             WebloggerFactory.getWeblogger().release();

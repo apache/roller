@@ -272,10 +272,10 @@ public final class EntryEdit extends EntryBase {
                 results = trackback.send();
             } catch (TrackbackNotAllowedException ex) {
                 addError("error.trackbackNotAllowed");
-            } catch (Throwable t) {
-                log.error("Error sending trackback", t);
+            } catch (Exception e) {
+                log.error("Error sending trackback", e);
                 // TODO: error handling
-                addError("error.general", t.getMessage());
+                addError("error.general", e.getMessage());
             }
 
             if (results != null) {

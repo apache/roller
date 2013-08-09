@@ -118,7 +118,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         try {
             return ((List)strategy.getNamedQuery(
                     "Subscription.getAll").getResultList()).iterator();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new RuntimeException(
                     "ERROR fetching subscription collection", e);
         }
@@ -309,7 +309,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             
             log.debug("Generated aggregation of " + ret.size() + " in " + ((endTime-startTime)/1000.0) + " seconds");
             
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new WebloggerException(e);
         }
         

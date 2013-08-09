@@ -1190,8 +1190,8 @@ public class WeblogEntry implements Serializable {
                         WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin)plugins.get(key);
                         try {
                             ret = pagePlugin.render(this, ret);
-                        } catch (Throwable t) {
-                            mLogger.error("ERROR from plugin: " + pagePlugin.getName(), t);
+                        } catch (Exception e) {
+                            mLogger.error("ERROR from plugin: " + pagePlugin.getName(), e);
                         }
                     }
                 }

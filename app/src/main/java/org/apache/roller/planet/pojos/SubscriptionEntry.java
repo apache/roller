@@ -23,7 +23,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.roller.planet.util.Utilities;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.util.UUIDGenerator;
 
 

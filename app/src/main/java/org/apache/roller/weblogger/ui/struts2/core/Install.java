@@ -161,7 +161,7 @@ public class Install extends UIAction {
                 // Now prepare the core services of planet so we can bootstrap it
                 try {
                     WebloggerStartup.prepare();
-                } catch (Throwable ex) {
+                } catch (Exception ex) {
                     log.fatal("Roller Planet startup failed during app preparation", ex);
                 }
             }
@@ -174,9 +174,9 @@ public class Install extends UIAction {
         } catch (WebloggerException ex) {
             log.error("WebloggerException", ex);
             rootCauseException = ex;
-        } catch (Throwable t) {
-            log.error("Throwable", t);
-            rootCauseException = t;
+        } catch (Exception e) {
+            log.error("Exception", e);
+            rootCauseException = e;
         }
 
         log.info("EXITING - Bootstrap failed, forwarding to error page");

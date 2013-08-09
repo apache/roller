@@ -60,9 +60,9 @@ public class UserDataServlet extends HttpServlet {
         if ("true".equals(request.getParameter("enabled"))) enabledOnly = Boolean.TRUE;
         if ("false".equals(request.getParameter("enabled"))) enabledOnly = Boolean.FALSE;
         try { offset = Integer.parseInt(request.getParameter("offset"));
-        } catch (Throwable ignored) {}
+        } catch (Exception ignored) {}
         try { length = Integer.parseInt(request.getParameter("length"));
-        } catch (Throwable ignored) {}
+        } catch (Exception ignored) {}
         
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {

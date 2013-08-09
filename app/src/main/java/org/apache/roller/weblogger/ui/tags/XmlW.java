@@ -143,7 +143,7 @@ public final class XmlW {
     }
 
     public static String getAttribute(String attribute, String text, int idx) {
-         int close = text.indexOf(">", idx);
+         int close = text.indexOf('>', idx);
          int attrIdx = text.indexOf(attribute+"=\"", idx);
          if(attrIdx == -1) {
              return null;

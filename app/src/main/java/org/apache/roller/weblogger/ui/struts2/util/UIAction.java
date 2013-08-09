@@ -157,7 +157,7 @@ public abstract class UIAction extends ActionSupport
             value = WebloggerRuntimeConfig.getProperty(key);
         }
         
-        return (value == null) ? false : (new Boolean(value)).booleanValue();
+        return (value == null) ? false : Boolean.valueOf(value);
     }
     
     public int getIntProp(String key) {
@@ -167,7 +167,7 @@ public abstract class UIAction extends ActionSupport
             value = WebloggerRuntimeConfig.getProperty(key);
         }
         
-        return (value == null) ? 0 : (new Integer(value)).intValue();
+        return (value == null) ? 0 : new Integer(value);
     }
     
     

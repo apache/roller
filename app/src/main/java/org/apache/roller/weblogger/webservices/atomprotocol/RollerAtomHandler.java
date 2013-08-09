@@ -445,7 +445,7 @@ public class RollerAtomHandler implements AtomHandler {
                     if (basic.equalsIgnoreCase("Basic")) {
                         String credentials = st.nextToken();
                         String userPass = new String(Base64.decodeBase64(credentials.getBytes()));
-                        int p = userPass.indexOf(":");
+                        int p = userPass.indexOf(':');
                         if (p != -1) {
                             userID = userPass.substring(0, p);
                             User user = roller.getUserManager().getUserByUserName(userID);

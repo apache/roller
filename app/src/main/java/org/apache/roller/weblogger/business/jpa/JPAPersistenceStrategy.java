@@ -107,7 +107,7 @@ public class JPAPersistenceStrategy {
             try {
                 this.emf = Persistence.createEntityManagerFactory("RollerPU", emfProps);
 
-            } catch (Throwable pe) {
+            } catch (Exception pe) {
                 logger.error("ERROR: creating entity manager", pe);
                 throw new WebloggerException(pe);
             }

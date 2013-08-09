@@ -66,11 +66,11 @@ public class WorkerThread extends Thread {
             // process job
             try {
                 this.job.execute();
-            } catch(Throwable t) {
+            } catch(Exception e) {
                 // oops
                 log.error("Error executing job. "+
                         "Worker = "+this.id+", "+
-                        "Job = "+this.job.getClass().getName(), t);
+                        "Job = "+this.job.getClass().getName(), e);
             }
             
             // since this is a thread we have to make sure that we tidy up ourselves

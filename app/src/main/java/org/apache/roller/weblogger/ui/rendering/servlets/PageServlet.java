@@ -642,7 +642,7 @@ public class PageServlet extends HttpServlet {
 				// validate the referrer
 				if (referrerUrl != null) {
 					// treat editor referral as direct
-					int lastSlash = requestUrl.indexOf("/", 8);
+					int lastSlash = requestUrl.indexOf('/', 8);
 					if (lastSlash == -1) {
 						lastSlash = requestUrl.length();
 					}

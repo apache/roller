@@ -44,7 +44,7 @@ class BasicAuthenticator extends Authenticator {
             if (basic.equalsIgnoreCase("Basic")) {
                 String credentials = st.nextToken();
                 String userPass = new String(Base64.decodeBase64(credentials.getBytes()));
-                int p = userPass.indexOf(":");
+                int p = userPass.indexOf(':');
                 if (p != -1) {
                     String userName = userPass.substring(0, p);
                     String password = userPass.substring(p+1);

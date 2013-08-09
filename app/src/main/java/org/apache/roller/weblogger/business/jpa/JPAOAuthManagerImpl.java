@@ -229,7 +229,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             Query q = strategy.getNamedQuery("OAuthConsumerRecord.getSiteWideConsumer");
             record = (OAuthConsumerRecord)q.getSingleResult();
 
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             log.debug("ERROR fetching site-wide consumer", ex);
         }
         if (record != null) {
@@ -250,7 +250,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             q.setParameter(1, username);
             record = (OAuthConsumerRecord)q.getSingleResult();
 
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             log.debug("ERROR fetching consumer", ex);
         }
         if (record != null) {
@@ -308,7 +308,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             q.setParameter(1, consumerKey);
             record = (OAuthConsumerRecord)q.getSingleResult();
 
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             log.debug("ERROR fetching consumer", ex);
         }
         return consumerFromRecord(record);
@@ -354,7 +354,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             q.setParameter(1, consumerKey);
             record = (OAuthAccessorRecord)q.getSingleResult();
 
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             log.debug("ERROR fetching accessor", ex);
         }
         return accessorFromRecord(record);
@@ -367,7 +367,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             q.setParameter(1, token);
             record = (OAuthAccessorRecord)q.getSingleResult();
 
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             log.debug("ERROR fetching accessor", ex);
         }
         return accessorFromRecord(record);

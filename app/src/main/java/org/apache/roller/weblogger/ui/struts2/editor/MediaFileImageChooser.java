@@ -108,7 +108,7 @@ public class MediaFileImageChooser extends MediaFileBase {
             log.error("Error viewing media file directory ", ex);
             addError("MediaFile.error.view");
             
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Error viewing media file directory ", e);
             addError("MediaFile.error.view");
         }

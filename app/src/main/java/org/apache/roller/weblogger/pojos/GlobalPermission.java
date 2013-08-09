@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
- * Represents a permssion that applies globally to the entire web application.
+ * Represents a permission that applies globally to the entire web application.
  */
 public class GlobalPermission extends RollerPermission {
     protected String  actions;

@@ -77,8 +77,8 @@ public class DatabaseInstaller {
                 return false;
             }
             
-        } catch (Throwable t) {
-            throw new RuntimeException("Error checking for tables", t);            
+        } catch (Exception e) {
+            throw new RuntimeException("Error checking for tables", e);
         } finally {
             try { if (con != null) con.close(); } catch (Exception ignored) {}
         }

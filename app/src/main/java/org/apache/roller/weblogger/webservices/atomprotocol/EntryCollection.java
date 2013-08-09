@@ -158,7 +158,7 @@ public class EntryCollection {
                 try {
                     String s = pathInfo[2].trim();
                     start = Integer.parseInt(s);
-                } catch (Throwable t) {
+                } catch (Exception e) {
                     log.warn("Unparsable range: " + pathInfo[2]);
                 }
             }        

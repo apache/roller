@@ -265,13 +265,13 @@ public class Blacklist {
         
         String rule = str.trim();
         
-        if (str.indexOf("#") > 0) // line has a comment
+        if (str.indexOf('#') > 0) // line has a comment
         {
-            int commentLoc = str.indexOf("#");
+            int commentLoc = str.indexOf('#');
             rule = str.substring(0, commentLoc-1).trim(); // strip comment
         }
         
-        if (rule.indexOf( "(" ) > -1) // regex rule
+        if (rule.indexOf( '(' ) > -1) // regex rule
         {
             // pre-compile patterns since they will be frequently used
             blacklistRegex.add(Pattern.compile(rule));

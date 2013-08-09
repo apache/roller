@@ -278,7 +278,7 @@ public class FileContentManagerImpl implements FileContentManager {
         // text/xml, etc.).
         
         // if content type is invalid, reject file
-        if (contentType == null || contentType.indexOf("/") == -1)  {
+        if (contentType == null || contentType.indexOf('/') == -1)  {
             return false;
         }
         
@@ -297,7 +297,7 @@ public class FileContentManagerImpl implements FileContentManager {
         if (allowFiles != null && allowFiles.length > 0) {
             for (int y=0; y<allowFiles.length; y++) {
                 // oops, this allowed rule is a content-type, skip it
-                if (allowFiles[y].indexOf("/") != -1) continue;
+                if (allowFiles[y].indexOf('/') != -1) continue;
                 if (fileName.toLowerCase().endsWith(
                         allowFiles[y].toLowerCase())) {
                     allowFile = true;
@@ -310,7 +310,7 @@ public class FileContentManagerImpl implements FileContentManager {
         if (allowFiles != null && allowFiles.length > 0) {
             for (int y=0; y<allowFiles.length; y++) {
                 // oops, this allowed rule is NOT a content-type, skip it
-                if (allowFiles[y].indexOf("/") == -1) continue;
+                if (allowFiles[y].indexOf('/') == -1) continue;
                 if (matchContentType(allowFiles[y], contentType)) {
                     allowFile = true;
                     break;
@@ -324,7 +324,7 @@ public class FileContentManagerImpl implements FileContentManager {
         if (forbidFiles != null && forbidFiles.length > 0) {
             for (int x=0; x<forbidFiles.length; x++) {
                 // oops, this forbid rule is a content-type, skip it
-                if (forbidFiles[x].indexOf("/") != -1) continue;
+                if (forbidFiles[x].indexOf('/') != -1) continue;
                 if (fileName.toLowerCase().endsWith(
                         forbidFiles[x].toLowerCase())) {
                     allowFile = false;
@@ -338,7 +338,7 @@ public class FileContentManagerImpl implements FileContentManager {
         if (forbidFiles != null && forbidFiles.length > 0) {
             for (int x=0; x<forbidFiles.length; x++) {
                 // oops, this forbid rule is NOT a content-type, skip it
-                if (forbidFiles[x].indexOf("/") == -1) continue;
+                if (forbidFiles[x].indexOf('/') == -1) continue;
                 if (matchContentType(forbidFiles[x], contentType)) {
                     allowFile = false;
                     break;

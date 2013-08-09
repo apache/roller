@@ -367,7 +367,7 @@ public class LinkbackExtractor
                     }
                     else if (!mRssLink.startsWith("http"))
                     {
-                        int slash = mRefererURL.lastIndexOf("/");
+                        int slash = mRefererURL.lastIndexOf('/');
                         if (slash != -1)
                         {
                             mRssLink = mRefererURL.substring(0, slash) + "/"

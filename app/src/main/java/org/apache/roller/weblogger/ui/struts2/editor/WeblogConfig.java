@@ -195,7 +195,7 @@ public class WeblogConfig extends UIAction {
             Blacklist.populateSpamRules(getBean().getBlacklist(), stringRules, regexRules, null);
             addMessage("websiteSettings.acceptedBlacklist",
                     Arrays.asList(new String[] {""+stringRules.size(), ""+regexRules.size()}));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             addError("websiteSettings.error.processingBlacklist", e.getMessage());
         }
     }

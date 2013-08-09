@@ -85,7 +85,7 @@ public class InitFilter implements Filter {
         }
         
         // find first "/" starting after hostname is specified
-        int index = fullUrl.indexOf("/", fullUrl.indexOf(request.getServerName()));
+        int index = fullUrl.indexOf('/', fullUrl.indexOf(request.getServerName()));
         
         // extract just the part leading up to uri
         url = fullUrl.substring(0, index);

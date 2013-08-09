@@ -147,7 +147,7 @@ public class MediaResourceServlet extends HttpServlet {
             // close output stream
             out.close();
             
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             log.error("ERROR",ex);
             if(!response.isCommitted()) {
                 response.reset();

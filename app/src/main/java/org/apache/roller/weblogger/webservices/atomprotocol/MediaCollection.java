@@ -119,7 +119,7 @@ public class MediaCollection {
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
                     String justPath = path;
-                    int lastSlash = path.lastIndexOf("/");
+                    int lastSlash = path.lastIndexOf('/');
                     if (lastSlash > -1) {
                         justPath = path.substring(lastSlash);
                     }

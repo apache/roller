@@ -149,7 +149,7 @@ public class RollerAtomService extends AtomService {
         String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         for (int i=0; i<rules.length; i++) {
-            if (rules[i].indexOf("/") == -1) continue;
+            if (rules[i].indexOf('/') == -1) continue;
             accepts.add(rules[i]);
         }
         return accepts;             

@@ -207,7 +207,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             throw new WebloggerException("Invalid path!");
         }
 
-        int lastPathIndex = path.lastIndexOf("/");
+        int lastPathIndex = path.lastIndexOf('/');
 
         MediaFileDirectory newDirectory = null;
         if (lastPathIndex == -1) {
@@ -438,7 +438,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         // get directory
         String fileName = path;
         MediaFileDirectory mdir = null;
-        int slash = path.lastIndexOf("/");
+        int slash = path.lastIndexOf('/');
         if (slash > 0) {
             mdir = getMediaFileDirectoryByPath(weblog, path.substring(0, slash));
         } else {
@@ -752,8 +752,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                                             new File(oldDirName + FS
                                                     + dirs[i].getName()), root);
 
-                                } catch (Throwable t) {
-                                    log.error("ERROR upgading weblog", t);
+                                } catch (Exception e) {
+                                    log.error("ERROR upgading weblog", e);
                                 }
                             }
                         }

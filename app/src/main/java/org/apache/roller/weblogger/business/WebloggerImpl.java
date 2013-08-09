@@ -342,7 +342,7 @@ public abstract class WebloggerImpl implements Weblogger {
             threadManager.release();
             userManager.release();
             weblogManager.release();
-        } catch(Throwable e) {
+        } catch(Exception e) {
             log.error("Error calling Roller.release()", e);
         }
     }
@@ -384,8 +384,8 @@ public abstract class WebloggerImpl implements Weblogger {
                 log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
                 WebloggerFactory.getWeblogger().getAutopingManager().removeAllAutoPings();
             }
-        } catch (Throwable t) {
-            throw new InitializationException("Error initializing ping systems", t);
+        } catch (Exception e) {
+            throw new InitializationException("Error initializing ping systems", e);
         }
         
         // we always need to do a flush after initialization because it's
@@ -409,7 +409,7 @@ public abstract class WebloggerImpl implements Weblogger {
             if (getReferrerQueueManager() != null) getReferrerQueueManager().shutdown();
             if (indexManager != null) indexManager.shutdown();
             if (threadManager != null) threadManager.shutdown();
-        } catch(Throwable e) {
+        } catch(Exception e) {
             log.error("Error calling Roller.shutdown()", e);
         }
     }
