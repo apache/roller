@@ -27,7 +27,7 @@ import java.util.List;
  * 
  * Available enforcements are ...
  *   - require a logged in user
- *   - reguire a valid weblog to work on
+ *   - require a valid weblog to work on
  *   - require a specific user role, such as "admin"
  *   - require a specific weblog permission
  *
