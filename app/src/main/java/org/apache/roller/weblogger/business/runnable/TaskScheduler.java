@@ -182,9 +182,10 @@ public class TaskScheduler implements Runnable {
                     log.debug(task.getName()+": LAUNCHING task");
                     pool.submit(task);
                 }
-                
-            } catch(Exception e) {
-                log.warn(task.getName()+": Unhandled exception caught", e);
+            } catch (ThreadDeath t) {
+                throw t;
+            } catch (Throwable t) {
+                log.warn(task.getName() + ": Unhandled exception caught", t);
             }
         }
         
