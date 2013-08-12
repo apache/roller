@@ -26,10 +26,10 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.ldap.LdapUserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.ldap.userdetails.LdapUserDetails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -136,7 +136,9 @@ public class CustomUserRegistry {
                 locale = rollerDetails.getLocale();
                 timezone = rollerDetails.getTimeZone();
             
-            } else if(userDetails instanceof LdapUserDetails) {
+            } /* Deprecated in Spring Security 2.0.x: http://static.springsource.org/spring-security/site/docs/2.0.x/apidocs/
+                 unsure if can be returned in Spring Security 3.1
+                else if(userDetails instanceof LdapUserDetails) {
                 LdapUserDetails ldapDetails = (LdapUserDetails) userDetails;
 
                 Attributes attributes = ldapDetails.getAttributes();
@@ -146,7 +148,7 @@ public class CustomUserRegistry {
                 locale = getLdapAttribute(attributes, WebloggerConfig.getProperty(LOCALE_LDAP_PROPERTY, DEFAULT_LOCALE_LDAP_ATTRIBUTE));
                 timezone = getLdapAttribute(attributes, WebloggerConfig.getProperty(TIMEZONE_LDAP_PROPERTY, DEFAULT_TIMEZONE_LDAP_ATTRIBUTE));
             
-            }
+            } */
         }
 
         boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.save");

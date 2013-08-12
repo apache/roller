@@ -1,13 +1,13 @@
 package org.apache.roller.weblogger.ui.core.security;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UserDetailsService;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -51,23 +51,24 @@ public class RollerUserDetailsService implements UserDetailsService {
                 }
                 String name;
                 String password;
-                GrantedAuthority[] authorities;
+                ArrayList<SimpleGrantedAuthority> authorities;
                 
                 // We are not throwing UsernameNotFound exception in case of 
                 // openid authentication in order to recieve user SREG attributes 
                 // from the authentication filter and save them                
                 if (userData == null) {
-                     authorities = new GrantedAuthority[1];
-                     GrantedAuthority g = new GrantedAuthorityImpl("openidLogin");
-                     authorities[0] = g;
+                     authorities = new ArrayList<SimpleGrantedAuthority>(1);
+                     SimpleGrantedAuthority g = new SimpleGrantedAuthority("openidLogin");
+                     authorities.add(g);
                      name = "openid";
                      password = "openid";
                 } else {
-                     authorities =  getAuthorities(userData, umgr);
+                     authorities = getAuthorities(userData, umgr);
                      name = userData.getUserName();
                      password = userData.getPassword();
                 }
-                UserDetails usr = new org.springframework.security.userdetails.User(name, password, true, authorities);
+                UserDetails usr = new org.springframework.security.core.userdetails.User(name, password,
+                        true, true, true, true, authorities);
                 return  usr;
                 
             } else {
@@ -79,8 +80,9 @@ public class RollerUserDetailsService implements UserDetailsService {
                 if (userData == null) {
                     throw new UsernameNotFoundException("ERROR no user: " + userName);
                 }
-                GrantedAuthority[] authorities =  getAuthorities(userData, umgr);        
-                return new org.springframework.security.userdetails.User(userData.getUserName(), userData.getPassword(), true, authorities);
+                ArrayList<SimpleGrantedAuthority> authorities =  getAuthorities(userData, umgr);
+                return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
+                        true, true, true, true, authorities);
             }            
         } catch (WebloggerException ex) {
             throw new DataAccessResourceFailureException("ERROR: fetching roles", ex);
@@ -89,14 +91,14 @@ public class RollerUserDetailsService implements UserDetailsService {
 
     }
         
-     private GrantedAuthority[] getAuthorities(User userData, UserManager umgr) throws WebloggerException {
-             List<String> roles = umgr.getRoles(userData);
-            GrantedAuthority[] authorities = new GrantedAuthorityImpl[roles.size()];
-            int i = 0;
-            for (String role : roles) {
-                authorities[i++] = new GrantedAuthorityImpl(role);
-            }
-            return authorities;
-        }
+     private ArrayList<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {
+         List<String> roles = umgr.getRoles(userData);
+         ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(roles.size());
+         int i = 0;
+         for (String role : roles) {
+             authorities.add(new SimpleGrantedAuthority(role));
+         }
+         return authorities;
+     }
     
 }

@@ -18,19 +18,23 @@
 
 package org.apache.roller.weblogger.ui.core.filters;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationException;
-import org.springframework.security.providers.openid.OpenIDAuthenticationToken;
-import org.springframework.security.ui.openid.OpenIDAuthenticationProcessingFilter;
-import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.security.ui.openid.OpenIDConsumer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.openid.OpenIDAuthenticationToken;
+import org.springframework.security.openid.OpenIDAuthenticationFilter;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.openid.OpenIDConsumer;
 //import org.springframework.security.userdetails.openid.OpenIDUserAttribute;
 
 
@@ -39,41 +43,49 @@ import org.springframework.security.ui.openid.OpenIDConsumer;
  * @author Tatyana Tokareva
  */
 public class CustomOpenIDAuthenticationProcessingFilter 
-        extends OpenIDAuthenticationProcessingFilter implements Filter {
+        extends OpenIDAuthenticationFilter implements Filter {
 
     private OpenIDConsumer consumer;
     private String claimedIdentityFieldName = DEFAULT_CLAIMED_IDENTITY_FIELD;
     private static Log log = LogFactory.getLog(CustomOpenIDAuthenticationProcessingFilter.class);
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest req) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse rsp) throws AuthenticationException,
+            IOException {
         OpenIDAuthenticationToken auth = null;
 
         // Processing standard OpenId user authentication    
-        auth = (OpenIDAuthenticationToken) super.attemptAuthentication(req);
+        auth = (OpenIDAuthenticationToken) super.attemptAuthentication(req, rsp);
 
-        if (auth.getAuthorities()[0].getAuthority().equals("openidLogin")) {
+        if (auth != null) {
+            GrantedAuthority ga = (GrantedAuthority) auth.getAuthorities().toArray()[0];
 
-            /* TODO: when Spring Security 2.1 is released, we can uncomment 
-             * this code, which will allow us to pre-populate the new user 
-             * registration form with information from the OpenID Provider.
-             * 
-            Collection<OpenIDUserAttribute> sREGAttributesList = auth.getAttributes();
-            OpenIDUserAttribute openidName = new OpenIDUserAttribute(
-                OpenIDUserAttribute.Attributes.openidname.toString(), "");
-            openidName.setValue(auth.getIdentityUrl());
-            sREGAttributesList.add(openidName);
-            
-            // TODO: find a better place to stash attributes
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();            
-            mgr.userAttributes.put(
-                UserAttribute.Attributes.openidUrl.toString(),
-                sREGAttributesList);
-            */
-            
-            // Username not found in Roller for this user, so throw exception
-            // which will route user to the new user registration page.
-            throw new UsernameNotFoundException("ERROR no user: new openid user");
+            if (ga.getAuthority().equals("openidLogin")) {
+
+                /* TODO: when Spring Security 2.1 is released, we can uncomment
+                 * this code, which will allow us to pre-populate the new user
+                 * registration form with information from the OpenID Provider.
+                 *
+                Collection<OpenIDUserAttribute> sREGAttributesList = auth.getAttributes();
+                OpenIDUserAttribute openidName = new OpenIDUserAttribute(
+                    OpenIDUserAttribute.Attributes.openidname.toString(), "");
+                openidName.setValue(auth.getIdentityUrl());
+                sREGAttributesList.add(openidName);
+
+                // TODO: find a better place to stash attributes
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                mgr.userAttributes.put(
+                    UserAttribute.Attributes.openidUrl.toString(),
+                    sREGAttributesList);
+                */
+
+            } else {
+                // route user to new user registration page.
+                throw new UsernameNotFoundException("ERROR no user: openid authority not found");
+            }
+        } else {
+            // route user to new user registration page.
+            throw new UsernameNotFoundException("ERROR no user: openid authentication failed");
         }
         return auth;
     }
@@ -84,7 +96,7 @@ public class CustomOpenIDAuthenticationProcessingFilter
     @Override
     protected String lookupRealm(String returnToUrl) {
 
-        String mapping = (String) getRealmMapping().get(returnToUrl);
+        String mapping = super.lookupRealm(returnToUrl);
 
         if (mapping == null) {
             try {

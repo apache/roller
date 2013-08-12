@@ -24,7 +24,7 @@
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
         <lucene.version>4.4.0</lucene.version>
         <spring.version>3.2.4.RELEASE</spring.version>
-        <spring.security.version>2.0.7.RELEASE</spring.security.version>
+        <spring.security.version>3.1.4.RELEASE</spring.security.version>
     </properties>
 
     <dependencies>
@@ -268,7 +268,13 @@
        
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
             <version>${spring.security.version}</version>
         </dependency>
 
@@ -306,12 +312,6 @@
                     <artifactId>spring-jdbc</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.ldap</groupId>
-            <artifactId>spring-ldap</artifactId>
-            <version>1.2</version>
         </dependency>
 
         <!-- OpenID deps -->
