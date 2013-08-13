@@ -20,8 +20,10 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.io.InputStream;
 import java.util.Properties;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.velocity.Template;
@@ -56,6 +58,17 @@ public class RollerVelocity {
                     RollerContext.getServletContext().getResourceAsStream(VELOCITY_CONFIG);
             
             velocityProps.load(instream);
+            
+            // Development theme reloading
+            Boolean themeReload = WebloggerConfig.getBooleanProperty("themes.reload.mode");
+            
+            // Override for theme reloading
+            if (themeReload) {
+                velocityProps.setProperty("class.resource.loader.cache", "false");
+                velocityProps.setProperty("webapp.resource.loader.cache", "false");
+                velocityProps.setProperty("webapp.resource.loader.modificationCheckInterval", "2");
+                velocityProps.setProperty("velocimacro.library.autoreload", "true");
+            }
            
             log.debug("Velocity engine props = "+velocityProps);
             
