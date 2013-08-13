@@ -76,7 +76,14 @@ public class InitFilter implements Filter {
         
         String url = null;
         
-        String fullUrl = request.getRequestURL().toString();
+        String fullUrl = null;
+
+        if (!request.isSecure()) {
+            fullUrl = request.getRequestURL().toString();
+        } else {
+            fullUrl = "http://" + request.getServerName()
+                    + request.getContextPath();
+        }
         
         // if the uri is only "/" then we are basically done
         if("/".equals(request.getRequestURI())) {
