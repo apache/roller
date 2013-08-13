@@ -17,9 +17,10 @@
  */
 package org.apache.roller.selenium;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.By;
 
 /**
  * Abstract class holding functionality common to Selenium Page Objects
@@ -34,6 +35,20 @@ public abstract class AbstractRollerPage {
         if(!driver.getTitle().equals(pageTitle)) {
             throw new IllegalStateException("This is not the " + pageName + ", current page is: "
                     + driver.getTitle());
+        }
+    }
+
+    /*
+    * Alternative method of identifying a page, by an HTML ID uniquely on it.
+    * Use when multiple views share the same page title.  This method will require
+    * adding an id to an element specific to that page if one not already available.
+    */
+    protected void verifyIdOnPage(String idOnPage) {
+        try {
+            WebElement div = driver.findElement(By.id(idOnPage));
+        } catch (NoSuchElementException e) {
+            throw new IllegalStateException("This is not the " + pageName + ", HTML ID: "
+                    + idOnPage + " not found.");
         }
     }
 
