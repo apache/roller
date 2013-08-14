@@ -15,34 +15,29 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.selenium.core;
+package org.apache.roller.selenium.view;
 
 import org.apache.roller.selenium.AbstractRollerPage;
-import org.apache.roller.selenium.view.BlogHomePage;
+import org.apache.roller.selenium.editor.EntryAddPage;
 import org.openqa.selenium.WebDriver;
 
+import java.lang.String;
+
 /**
- * represents core/Setup.jsp
- * Page Object encapsulates the Setup.jsp index page
- * that appears on initial startup of Roller, after
- * the database tables were created but before the
- * first user account and blog made.
+ * Represents a URL for the home page of a blog
+ * (URL similar to http://localhost:8080/roller/myblog)
  */
-public class SetupPage extends AbstractRollerPage {
+public class BlogHomePage extends AbstractRollerPage {
 
-    public SetupPage(WebDriver driver) {
+    public BlogHomePage(WebDriver driver) {
         this.driver = driver;
-        this.pageName = "Initial Setup Page";
-        verifyPageTitle("Front Page: Welcome to Roller!");
+        this.pageName = "blog home page";
+        verifyIdOnPage("id_weblog");
     }
 
-    public RegisterPage createNewUser() {
-        clickById("a_createUser");
-        return new RegisterPage(driver);
+    public EntryAddPage createNewBlogEntry() {
+        clickByLinkText("New Entry");
+        return new EntryAddPage(driver);
     }
 
-    public BlogHomePage chooseFrontPageBlog() {
-        clickById("setup_0");
-        return new BlogHomePage(driver);
-    }
 }

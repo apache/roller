@@ -33,6 +33,7 @@ import org.apache.roller.selenium.core.SetupPage;
 import org.apache.roller.selenium.core.WelcomePage;
 import org.apache.roller.selenium.editor.EntryAddPage;
 import org.apache.roller.selenium.editor.EntryEditPage;
+import org.apache.roller.selenium.view.BlogHomePage;
 import org.apache.roller.selenium.view.SingleBlogEntryPage;
 
 public class InitialLoginTestIT {
@@ -50,9 +51,7 @@ public class InitialLoginTestIT {
 
     @Test
     public void testInitialLogin() throws Exception {
-        String blogEntryTitle = "My First Blog Entry";
-        String blogEntryContent = "Welcome to my blog!";
-
+        // create new user and first blog
         driver.get(baseUrl);
         SetupPage sp = new SetupPage(driver);
         RegisterPage rp = sp.createNewUser();
@@ -62,7 +61,14 @@ public class InitialLoginTestIT {
         CreateWeblogPage cwp = mmp.createWeblog();
         mmp = cwp.createWeblog("Bob's Blog", "bobsblog", "bsmith@email.com");
 
-        EntryAddPage eap = mmp.createNewBlogEntry();
+        // set bobsblog as the front page blog
+        driver.get(baseUrl);
+        BlogHomePage bhp = sp.chooseFrontPageBlog();
+
+        // create and read first blog entry
+        String blogEntryTitle = "My First Blog Entry";
+        String blogEntryContent = "Welcome to my blog!";
+        EntryAddPage eap = bhp.createNewBlogEntry();
         eap.setTitle(blogEntryTitle);
         eap.setText(blogEntryContent);
         EntryEditPage eep = eap.postBlogEntry();

@@ -17,7 +17,7 @@ function setCookie(c_name, value, exdays) {
 setCookie("roller_user_request_type","standard",30);
 </script>
 
-<div class="content_wrapper">
+<div id="id_weblog" class="content_wrapper">
   <div class="content">
     <h1 class="weblogName">$utils.escapeHTML($model.weblog.name)</h1>
 
