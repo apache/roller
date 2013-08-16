@@ -51,7 +51,9 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
             Class moduleClass = Class.forName(moduleClassname);
             Module module = (Module)moduleClass.newInstance();
             injector = Guice.createInjector(module);
-        } catch (Throwable e) {                
+        } catch (ThreadDeath t) {
+            throw t;
+        } catch (Throwable e) {
             // Fatal misconfiguration, cannot recover
             throw new RuntimeException("Error instantiating backend module " + moduleClassname, e);
         }
@@ -73,7 +75,9 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
             Class moduleClass = Class.forName(moduleClassname);
             Module module = (Module)moduleClass.newInstance();
             injector = Guice.createInjector(module);
-        } catch (Throwable e) {                
+        } catch (ThreadDeath t) {
+            throw t;
+        } catch (Throwable e) {
             // Fatal misconfiguration, cannot recover
             throw new RuntimeException("Error instantiating backend module " + moduleClassname, e);
         }
