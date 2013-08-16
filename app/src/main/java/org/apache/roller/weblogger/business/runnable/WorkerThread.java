@@ -71,11 +71,11 @@ public class WorkerThread extends Thread {
                 log.error("Error executing job. "+
                         "Worker = "+this.id+", "+
                         "Job = "+this.job.getClass().getName(), e);
+            } finally {
+                // since this is a thread we have to make sure that we tidy up ourselves
+                Weblogger roller = WebloggerFactory.getWeblogger();
+                roller.release();
             }
-            
-            // since this is a thread we have to make sure that we tidy up ourselves
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            roller.release();
         }
         
     }

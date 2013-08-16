@@ -86,7 +86,7 @@ public class HitCountQueue {
     
     public void processHit(Weblog weblog, String url, String referrer) {
         
-        // if the weblog isn't null then just drop it's handle in the queue
+        // if the weblog isn't null then just drop its handle in the queue
         // each entry in the queue is a weblog handle and indicates a single hit
         if(weblog != null) {
             this.queue.add(weblog.getHandle());

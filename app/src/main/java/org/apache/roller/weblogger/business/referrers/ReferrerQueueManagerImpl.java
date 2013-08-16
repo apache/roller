@@ -46,7 +46,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * roller.properties configuration file.
  *
  * In asynchronous processing mode we start some number of worker threads which
- * run continously to process any referrers that have been queued.  Each worker
+ * run continuously to process any referrers that have been queued.  Each worker
  * processes queued referrers until the queue is empty, then sleeps for a given
  * amount of time.  The number of workers used and their sleep time can be set
  * via properties of the static roller.properties file.
