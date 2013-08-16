@@ -87,7 +87,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>2.0</version>
+            <version>3.0</version>
         </dependency>
 
         <dependency>
@@ -246,12 +246,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-openid</artifactId>
             <version>${spring.security.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.openid4java</groupId>
-                    <artifactId>openid4java</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -260,8 +254,8 @@
             <version>${spring.security.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>spring-web</artifactId>
                     <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -288,46 +282,6 @@
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-tiles-plugin</artifactId>
             <version>2.3.15.1</version>
-        </dependency>
-
-        <!-- OpenID deps -->
-
-        <dependency>
-            <groupId>org.openxri</groupId>
-            <artifactId>openxri-client</artifactId>
-            <version>1.2.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>xml-apis</artifactId>
-                    <groupId>xml-apis</groupId>
-                </exclusion>
-                <!-- unsure if following exclusions are necessary -->
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jcl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>jug</groupId>
-                    <artifactId>jug</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.ibm.icu</groupId>
-                    <artifactId>icu4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openid4java</groupId>
-            <artifactId>openid4java-consumer</artifactId>
-            <version>0.9.6</version>
-            <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.code.guice</groupId>
-                    <artifactId>guice</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
