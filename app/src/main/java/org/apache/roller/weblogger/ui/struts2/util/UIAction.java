@@ -19,12 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.util;
 
 import com.opensymphony.xwork2.ActionSupport;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -37,6 +32,12 @@ import org.apache.roller.weblogger.ui.core.util.menu.Menu;
 import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
 import org.apache.struts2.interceptor.RequestAware;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
@@ -169,8 +170,58 @@ public abstract class UIAction extends ActionSupport
         
         return (value == null) ? 0 : new Integer(value);
     }
-    
-    
+
+    @Override
+    public String getText(String aTextName) {
+        return super.getText(cleanText(aTextName));
+    }
+
+    @Override
+    public String getText(String aTextName, String defaultValue) {
+        return super.getText(cleanText(aTextName), cleanText(defaultValue));
+    }
+
+    @Override
+    public String getText(String aTextName, String defaultValue, String obj) {
+        return super.getText(cleanText(aTextName), cleanText(defaultValue), cleanText(obj));
+    }
+
+    @Override
+    public String getText(String aTextName, List<?> args) {
+        List<Object> cleanedArgs = new ArrayList<Object>(args.size());
+        for (Object el : args) {
+            cleanedArgs.add(el instanceof String ? cleanText((String) el) : el);
+        }
+        return super.getText(cleanText(aTextName), cleanedArgs);
+    }
+
+    @Override
+    public String getText(String key, String[] args) {
+        String[] cleanedArgs = new String[args.length];
+        for (int i = 0; i < args.length; ++i) {
+            cleanedArgs[i] = cleanText(args[i]);
+        }
+        return super.getText(cleanText(key), cleanedArgs);
+    }
+
+    @Override
+    public String getText(String aTextName, String defaultValue, List<?> args) {
+        List<Object> cleanedArgs = new ArrayList<Object>(args.size());
+        for (Object el : args) {
+            cleanedArgs.add(el instanceof String ? cleanText((String) el) : el);
+        }
+        return super.getText(cleanText(aTextName), cleanText(defaultValue), cleanedArgs);
+    }
+
+    @Override
+    public String getText(String key, String defaultValue, String[] args) {
+        String[] cleanedArgs = new String[args.length];
+        for (int i = 0; i < args.length; ++i) {
+            cleanedArgs[i] = cleanText(args[i]);
+        }
+        return super.getText(cleanText(key), cleanText(defaultValue), cleanedArgs);
+    }
+
     public void addError(String errorKey) {
         addActionError(getText(errorKey));
     }
@@ -335,5 +386,41 @@ public abstract class UIAction extends ActionSupport
         
         return opts;
     }
-    
+
+    private static String cleanDollarExpressions(String s) {
+        // Remove ${ } expressions; handcoded automaton
+        StringBuilder cleaned = new StringBuilder(s.length());
+        boolean skipping = false;
+        int braceDepth = 0;
+        int p = 0;
+        char prior = ' ';
+        while (p < s.length()) {
+            char c = s.charAt(p);
+            switch (c) {
+                case '{':
+                    ++braceDepth;
+                    skipping = skipping || (prior == '$');
+                    break;
+                case '}':
+                    if (braceDepth > 0) --braceDepth;
+                    break;
+                default:
+            }
+            if (!skipping) {
+                if (prior == '$') cleaned.append(prior);
+                if (c != '$')  cleaned.append(c);
+            }
+            skipping = skipping && (braceDepth > 0);
+            prior = c;
+            ++p;
+        }
+        if (prior == '$') cleaned.append(prior);  // string had final $ held in prior
+        return cleaned.toString();
+    }
+
+    public static String cleanText(String s) {
+        if (s == null || s.isEmpty()) return s;
+        // escape HTML
+        return StringEscapeUtils.escapeHtml(cleanDollarExpressions(s));
+    }
 }
