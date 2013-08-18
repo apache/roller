@@ -19,7 +19,7 @@ setCookie("roller_user_request_type","standard",30);
 
 <div id="id_weblog" class="content_wrapper">
   <div class="content">
-    <h1 class="weblogName">$utils.escapeHTML($model.weblog.name)</h1>
+    <h1 class="weblogName">$model.weblog.name</h1>
 
         <center>
         #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
