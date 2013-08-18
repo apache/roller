@@ -68,7 +68,7 @@
                         #end 
 
                         #foreach($entry in $pager.items)
-                            #if($velocityCount < $maxResults)
+                            #if($velocityCount <= $maxResults)
                                 #includeTemplate($model.weblog "_entry")
                             #end
                         #end

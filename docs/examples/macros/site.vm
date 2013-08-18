@@ -38,7 +38,7 @@ Show pager and next/prev control for site-wide or planet entries.
         #set($endDate = $entries.get($entryCount).pubTime)
     #end
     #foreach($entry in $pager.items)
-        #if($velocityCount < $maxResults)
+        #if($velocityCount <= $maxResults)
 
             <div class="entry">
                 <p class="entryDetails">
