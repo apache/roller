@@ -606,7 +606,7 @@ public class MailUtil {
         }
         
         Session session = mailProvider.getSession();
-        Message message = new MimeMessage(session);
+        MimeMessage message = new MimeMessage(session);
         
         // n.b. any default from address is expected to be determined by caller.
         if (! StringUtils.isEmpty(from)) {
@@ -644,7 +644,7 @@ public class MailUtil {
             }
             message.setRecipients(Message.RecipientType.BCC, copyTo);
         }
-        message.setSubject((subject == null) ? "(no subject)" : subject);
+        message.setSubject((subject == null) ? "(no subject)" : subject, "UTF-8");
         message.setContent(content, mimeType);
         message.setSentDate(new java.util.Date());
         
