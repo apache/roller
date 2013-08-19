@@ -49,7 +49,7 @@ public class ValidateSaltFilter implements Filter  {
 				try {
 					authenticUser = umgr.getUserByUserName(httpReq.getUserPrincipal().getName(), Boolean.TRUE);
 				} catch (WebloggerException ex) {
-					log.error("ERROR checking user rile", ex);
+					log.error("ERROR checking user role", ex);
 					throw new ServletException("Security Violation");
 				}
 			} else {
