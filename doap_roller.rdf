@@ -27,21 +27,19 @@
     <name>Apache Roller</name>
     <homepage rdf:resource="http://roller.apache.org/" />
     <asfext:pmc rdf:resource="http://roller.apache.org" />
-    <shortdesc>Apache Roller is a full-featured, multi-user and group-blog server suitable for blog sites large and small.</shortdesc>
-    <description>Roller is a Java web application that should be able to run on any Java EE server and any relational database. Currently, Roller is best supported on Tomcat and MySQL -- but users have reported success running Roller on Glassfish, Websphere, JBoss, Resin, Geronimo, Derby, PostgresSQL, Oracle, etc.)
-
-Here are some of Roller's key features:
+    <shortdesc>Apache Roller is a full-featured, multi-user and group blog server suitable for blog sites large and small.</shortdesc>
+    <description>Apache Roller is a full-featured, multi-user and group-blog server suitable for blog sites large and small. It runs as a Java web application that should be able to run on most any Java EE server and relational database. Roller's installation guide covers deployment on Tomcat, GlassFish, and JBoss application servers using a MySQL, Derby, or PostgreSQL database. Users however have reported success running Roller on other app servers and databases.
 
 -    Multi-user blogging: can support tens of thousands of users and blogs
 -    Group blogging with three permisson levels (editor, author and limited)
 -    Support for comment moderation and comment spam prevention measures
--    Bloggers have complete control over blog layout/style via templates
+-    Bloggers have complete control over blog layout/style via Apache Velocity-driven templates
 -    Built-in search engine indexes weblog entry content
 -    Pluggable cache and rendering system
 -    Support for blog clients that support MetaWeblog API
 -    All blogs have entry and comment feeds in both RSS 2.0 and Atom 1.0 formats</description>
     <bug-database rdf:resource="https://issues.apache.org/jira/browse/ROL" />
-    <mailing-list rdf:resource="https://cwiki.apache.org/confluence/display/ROLLER/How+to+ask+for+help" />
+    <mailing-list rdf:resource="https://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists" />
     <download-page rdf:resource="http://roller.apache.org/downloads.html" />
     <programming-language>Java</programming-language>
     <category rdf:resource="http://projects.apache.org/category/content" />
