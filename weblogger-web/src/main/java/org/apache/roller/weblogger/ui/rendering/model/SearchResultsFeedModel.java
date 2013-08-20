@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -50,6 +51,7 @@ import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsFeedPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -230,7 +232,9 @@ public class SearchResultsFeedModel implements Model {
     }
     
     public String getTerm() {
-        return (feedRequest.getTerm() == null) ? "" : feedRequest.getTerm();
+		String query =feedRequest.getTerm() ;
+		return (query == null) 
+			? "" : StringEscapeUtils.escapeXml(Utilities.escapeHTML(query));
     }
 
     public int getHits() {

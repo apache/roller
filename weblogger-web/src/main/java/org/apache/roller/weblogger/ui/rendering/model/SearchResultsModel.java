@@ -234,8 +234,9 @@ public class SearchResultsModel extends PageModel {
     
     
     public String getTerm() {
-        String query = searchRequest.getQuery();
-        return (query == null) ? "" : StringEscapeUtils.escapeXml(Utilities.escapeHTML(query));
+		String query = searchRequest.getQuery();
+		return (query == null) 
+			? "" : StringEscapeUtils.escapeXml(Utilities.escapeHTML(query));
     }
 
     public String getRawTerm() {
