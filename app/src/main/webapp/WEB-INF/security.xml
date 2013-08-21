@@ -55,14 +55,15 @@
             </beans:list>
         </beans:property>
     </beans:bean>
+
     <beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter">
         <beans:property name="rolePrefix" value=""/>
     </beans:bean>
 
     <!-- Read users from Roller API -->
     <authentication-manager alias='rollerAuthenticationManager'>
-        <authentication-provider user-service-ref="rollerUserService"/>
         <authentication-provider ref="rememberMeAuthenticationProvider"/>
+        <authentication-provider user-service-ref="rollerUserService"/>
         <authentication-provider ref="openIDAuthProvider"/>
     </authentication-manager>
 
@@ -80,7 +81,6 @@
 
     <beans:bean id="openidAuthenticationProcessingFilter"
                 class="org.apache.roller.weblogger.ui.core.filters.CustomOpenIDAuthenticationProcessingFilter">
-        <beans:property name="claimedIdentityFieldName" value="openid_identifier"/>
         <beans:property name="filterProcessesUrl" value="/roller_j_openid_security_check"/>
         <beans:property name="authenticationManager" ref="rollerAuthenticationManager"/>
         <beans:property name="authenticationSuccessHandler" ref="myAuthenticationSuccessHandler"/>

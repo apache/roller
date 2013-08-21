@@ -31,14 +31,15 @@ public class RollerUserDetailsService implements UserDetailsService {
             roller = WebloggerFactory.getWeblogger();
         } catch (Exception e) {
             // Should only happen in case of 1st time startup, setup required
-            log.debug("Ignorabale error getting Roller instance", e);
-            // Thowing a "soft" exception here allows setup to procede
+            log.debug("Ignorable error getting Roller instance", e);
+            // Thowing a "soft" exception here allows setup to proceed
             throw new UsernameNotFoundException("User info not available yet.");
         }
         try {
             UserManager umgr = roller.getUserManager();
             User userData = null;  
-            if (userName.startsWith("http://")) {
+            // OpenID user
+            if (userName.startsWith("http://") || userName.startsWith("https://")) {
                 if (userName.endsWith("/")) {
                     userName = userName.substring(0, userName.length() -1 );
                 }
@@ -54,11 +55,11 @@ public class RollerUserDetailsService implements UserDetailsService {
                 ArrayList<SimpleGrantedAuthority> authorities;
                 
                 // We are not throwing UsernameNotFound exception in case of 
-                // openid authentication in order to recieve user SREG attributes 
-                // from the authentication filter and save them                
+                // openid authentication in order to receive OpenID Simple Registration (SREG)
+                // attributes from the authentication filter and save them
                 if (userData == null) {
                      authorities = new ArrayList<SimpleGrantedAuthority>(1);
-                     SimpleGrantedAuthority g = new SimpleGrantedAuthority("openidLogin");
+                     SimpleGrantedAuthority g = new SimpleGrantedAuthority("rollerOpenidLogin");
                      authorities.add(g);
                      name = "openid";
                      password = "openid";
@@ -72,6 +73,7 @@ public class RollerUserDetailsService implements UserDetailsService {
                 return  usr;
                 
             } else {
+                // standard username/password auth
                 try {
                     userData = umgr.getUserByUserName(userName);
                 } catch (WebloggerException ex) {

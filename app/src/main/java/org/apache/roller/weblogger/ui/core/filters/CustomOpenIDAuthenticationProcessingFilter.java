@@ -57,10 +57,11 @@ public class CustomOpenIDAuthenticationProcessingFilter
         // Processing standard OpenId user authentication    
         auth = (OpenIDAuthenticationToken) super.attemptAuthentication(req, rsp);
 
+        // auth will be null on the first pass of super.attemptAuthentication()
         if (auth != null) {
             GrantedAuthority ga = (GrantedAuthority) auth.getAuthorities().toArray()[0];
 
-            if (ga.getAuthority().equals("openidLogin")) {
+            if (ga.getAuthority().equals("rollerOpenidLogin")) {
 
                 /* TODO: when Spring Security 2.1 is released, we can uncomment
                  * this code, which will allow us to pre-populate the new user
@@ -79,13 +80,7 @@ public class CustomOpenIDAuthenticationProcessingFilter
                     sREGAttributesList);
                 */
 
-            } else {
-                // route user to new user registration page.
-                throw new UsernameNotFoundException("ERROR no user: openid authority not found");
             }
-        } else {
-            // route user to new user registration page.
-            throw new UsernameNotFoundException("ERROR no user: openid authentication failed");
         }
         return auth;
     }
