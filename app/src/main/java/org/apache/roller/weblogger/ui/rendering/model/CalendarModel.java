@@ -85,7 +85,9 @@ public class CalendarModel implements Model {
     
     private String showWeblogEntryCalendar(WeblogWrapper websiteWrapper, String catArgument, boolean big) {
         
-        if ("nil".equals(catArgument)) catArgument = null;        
+        if ("nil".equals(catArgument)) {
+            catArgument = null;
+        }
         String ret = null;
         try {
             org.apache.roller.weblogger.ui.core.tags.calendar.CalendarModel model = null;

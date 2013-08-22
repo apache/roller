@@ -61,14 +61,15 @@ public class CustomPingTargets extends PingTargetsBase {
     
     
     public void loadPingTargets() {
-        
-        if(!PingConfig.getDisallowCustomTargets()) try {
-            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-            setPingTargets(pingTargetMgr.getCustomPingTargets(getActionWeblog()));
-        } catch (WebloggerException ex) {
-            log.error("Error loading common ping targets", ex);
-            // TODO: i18n
-            addError("Error loading common ping targets");
+        if(!PingConfig.getDisallowCustomTargets()) {
+            try {
+                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
+                setPingTargets(pingTargetMgr.getCustomPingTargets(getActionWeblog()));
+            } catch (WebloggerException ex) {
+                log.error("Error loading common ping targets", ex);
+                // TODO: i18n
+                addError("Error loading common ping targets");
+            }
         }
     }
     

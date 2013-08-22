@@ -105,35 +105,37 @@ public class CategoryAdd extends UIAction {
         // validation
         myValidate();
         
-        if(!hasActionErrors()) try {
-            
-            WeblogCategory newCategory = new WeblogCategory(
-                    getActionWeblog(),
-                    getCategory(),
-                    getBean().getName(),
-                    getBean().getDescription(),
-                    getBean().getImage());
-            
-            // add new folder to parent
-            getCategory().addCategory(newCategory);
-            
-            // save changes
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            wmgr.saveWeblogCategory(newCategory);
-            WebloggerFactory.getWeblogger().flush();
-            
-            // notify caches
-            CacheManager.invalidate(newCategory);
-            
-            // TODO: i18n
-            addMessage("category added");
-            
-            return SUCCESS;
-            
-        } catch(Exception ex) {
-            log.error("Error saving new category", ex);
-            // TODO: i18n
-            addError("Error saving new category");
+        if(!hasActionErrors()) {
+            try {
+
+                WeblogCategory newCategory = new WeblogCategory(
+                        getActionWeblog(),
+                        getCategory(),
+                        getBean().getName(),
+                        getBean().getDescription(),
+                        getBean().getImage());
+
+                // add new folder to parent
+                getCategory().addCategory(newCategory);
+
+                // save changes
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+                wmgr.saveWeblogCategory(newCategory);
+                WebloggerFactory.getWeblogger().flush();
+
+                // notify caches
+                CacheManager.invalidate(newCategory);
+
+                // TODO: i18n
+                addMessage("category added");
+
+                return SUCCESS;
+
+            } catch(Exception ex) {
+                log.error("Error saving new category", ex);
+                // TODO: i18n
+                addError("Error saving new category");
+            }
         }
         
         return INPUT;

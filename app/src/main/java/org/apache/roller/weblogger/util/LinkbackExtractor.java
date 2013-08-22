@@ -59,20 +59,22 @@ public class LinkbackExtractor
     private String     mPermalink     = null;
     private int        mStart         = 0;
     private int        mEnd           = 0;
-    private int        mMaxExcerpt    = 500;                           // characters
     private String     mRequestURL    = null;
     private String     mRequestURLWWW = null;
     private String     mRefererURL;
+
+    private static final int MAX_EXCERPT_CHARS = 500;
+    private static final int DESIRED_TITLE_LENGTH = 50;
 
     //------------------------------------------------------------------------
     /**
      * Extract referring page title, excerpt, and permalink.
      * 
-     * @param refererUrl
-     * @param requestUrl
+     * @param refererURL
+     * @param requestURL
      */
     public LinkbackExtractor(String refererURL, String requestURL)
-            throws MalformedURLException, IOException
+            throws IOException
     {
         try
         {
@@ -93,7 +95,7 @@ public class LinkbackExtractor
 
     //------------------------------------------------------------------------
     private void extractByParsingHtml(String refererURL, String requestURL)
-            throws MalformedURLException, IOException
+            throws IOException
     {
         URL url = new URL(refererURL);
         InputStream is = url.openStream();
@@ -146,9 +148,9 @@ public class LinkbackExtractor
             mExcerpt = sb.toString().substring(mStart, mEnd);
             mExcerpt = Utilities.removeHTML(mExcerpt);
 
-            if (mExcerpt.length() > mMaxExcerpt)
+            if (mExcerpt.length() > MAX_EXCERPT_CHARS)
             {
-                mExcerpt = mExcerpt.substring(0, mMaxExcerpt) + "...";
+                mExcerpt = mExcerpt.substring(0, MAX_EXCERPT_CHARS) + "...";
             }
         }
 
@@ -160,7 +162,7 @@ public class LinkbackExtractor
 
     //------------------------------------------------------------------------
     private void extractByParsingRss(String rssLink, String requestURL)
-            throws IllegalArgumentException, MalformedURLException, FeedException, IOException
+            throws IllegalArgumentException, FeedException, IOException
     {
         SyndFeedInput feedInput = new SyndFeedInput();       
         SyndFeed feed = feedInput.build(
@@ -193,9 +195,9 @@ public class LinkbackExtractor
                 }
                 mExcerpt = item.getDescription().getValue();
                 mExcerpt = Utilities.removeHTML(mExcerpt);
-                if (mExcerpt.length() > mMaxExcerpt)
+                if (mExcerpt.length() > MAX_EXCERPT_CHARS)
                 {
-                    mExcerpt = mExcerpt.substring(0, mMaxExcerpt) + "...";
+                    mExcerpt = mExcerpt.substring(0, MAX_EXCERPT_CHARS) + "...";
                 }
                 break;
             }
@@ -298,8 +300,9 @@ public class LinkbackExtractor
             else if (tag.equals(Tag.A))
             {
                 String href = (String) atts.getAttribute(HTML.Attribute.HREF);
-                if (href == null)
+                if (href == null) {
                     return;
+                }
                 int hashPos = href.lastIndexOf('#');
                 if (hashPos != -1)
                 {
@@ -310,13 +313,6 @@ public class LinkbackExtractor
                                 .equals(mRequestURLWWW)))
                 {
                     mFound = true;
-                }
-                else
-                {
-                    /*
-                     * if (mLogger.isDebugEnabled()) { mLogger.debug("No match:
-                     * "+href); }
-                     */
                 }
             }
             mCurrentTag = tag;
@@ -414,7 +410,7 @@ public class LinkbackExtractor
             if (mCurrentTag != null && mCurrentTag.equals(Tag.TITLE))
             {
                 String newText = new String(data);
-                if (mTitle.length() < 50)
+                if (mTitle.length() < DESIRED_TITLE_LENGTH)
                 {
                     mTitle += newText;
                 }

@@ -98,37 +98,38 @@ public class FolderAdd extends UIAction {
         // validation
         myValidate();
         
-        if(!hasActionErrors()) try {
-            
-            WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder(
-                    getFolder(),
-                    getBean().getName(),
-                    getBean().getDescription(),
-                    getActionWeblog());
-            
-            // add new folder to parent
-            getFolder().addFolder(newFolder);
-            
-            // save changes
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            bmgr.saveFolder(newFolder);
-            WebloggerFactory.getWeblogger().flush();
-            
-            // notify caches
-            CacheManager.invalidate(newFolder);
-            
-            // TODO: i18n
-            addMessage("folder added");
-            
-            // Set for next action
-            getBean().setId(newFolder.getId());
-            
-            return SUCCESS;
-            
-        } catch(Exception ex) {
-            log.error("Error saving new folder", ex);
-            // TODO: i18n
-            addError("Error saving new folder");
+        if(!hasActionErrors())  {
+            try {
+                WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder(
+                        getFolder(),
+                        getBean().getName(),
+                        getBean().getDescription(),
+                        getActionWeblog());
+
+                // add new folder to parent
+                getFolder().addFolder(newFolder);
+
+                // save changes
+                BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+                bmgr.saveFolder(newFolder);
+                WebloggerFactory.getWeblogger().flush();
+
+                // notify caches
+                CacheManager.invalidate(newFolder);
+
+                // TODO: i18n
+                addMessage("folder added");
+
+                // Set for next action
+                getBean().setId(newFolder.getId());
+
+                return SUCCESS;
+
+            } catch(Exception ex) {
+                log.error("Error saving new folder", ex);
+                // TODO: i18n
+                addError("Error saving new folder");
+            }
         }
 
         

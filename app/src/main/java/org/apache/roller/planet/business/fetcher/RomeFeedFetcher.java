@@ -264,7 +264,9 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         File cacheDir = null;
         try {
             cacheDir = new File(cacheDirName);
-            if (!cacheDir.exists()) cacheDir.mkdirs();
+            if (!cacheDir.exists()) {
+                cacheDir.mkdirs();
+            }
         } catch (Exception e) {
             log.error("Unable to create planet cache directory: " + cacheDir.getPath(), e);
             return null;

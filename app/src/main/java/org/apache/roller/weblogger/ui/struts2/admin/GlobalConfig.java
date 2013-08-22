@@ -150,14 +150,16 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
      * Save global properties.
      */
     public String save() {
-        if (!"POST".equals(httpMethod)) return ERROR;
+        if (!"POST".equals(httpMethod)) {
+            return ERROR;
+        }
         
         // only set values for properties that are already defined
         String propName = null;
         RuntimeConfigProperty updProp = null;
         String incomingProp = null;
         Iterator propsIT = getProperties().keySet().iterator();
-        while(propsIT.hasNext()) {
+        while (propsIT.hasNext()) {
             propName = (String) propsIT.next();
             updProp = (RuntimeConfigProperty) getProperties().get(propName);
             incomingProp = this.getParameter(updProp.getName());
@@ -172,10 +174,12 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             if( updProp.getValue() != null // null check needed w/Oracle
                     && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
                 
-                if(incomingProp == null || !incomingProp.equals("on"))
+                if(incomingProp == null || !incomingProp.equals("on")) {
                     incomingProp = "false";
-                else
+                }
+                else {
                     incomingProp = "true";
+                }
             }
             
             // only work on props that were submitted with the request
@@ -218,7 +222,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public void setParameters(Map parameters) {
         this.params = parameters;
         
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("Parameter map:");
             Set<String> keys = parameters.keySet();
             for(String key : keys) {
@@ -263,11 +267,11 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     }
     
     public String[] getCommentPlugins() {
-        return commentPlugins;
+        return commentPlugins.clone();
     }
 
     public void setCommentPlugins(String[] commentPlugins) {
-        this.commentPlugins = commentPlugins;
+        this.commentPlugins = commentPlugins.clone();
     }
 
     public void setServletRequest(HttpServletRequest req) {

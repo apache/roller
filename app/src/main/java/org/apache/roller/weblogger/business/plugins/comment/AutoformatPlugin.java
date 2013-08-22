@@ -93,8 +93,9 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
             
             // if the text ends without an empty line then we need to
             // terminate the last paragraph now
-            if(insidePara)
+            if (insidePara) {
                 buf.append("</p>\n\n");
+            }
             
         } catch(Exception e) {
             log.warn("trouble rendering text.", e);

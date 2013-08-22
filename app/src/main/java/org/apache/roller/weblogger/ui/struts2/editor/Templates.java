@@ -138,80 +138,81 @@ public class Templates extends UIAction {
 		// validation
 		myValidate();
 
-		if (!hasActionErrors())
-			try {
+		if (!hasActionErrors()) {
+            try {
 
-				WeblogTemplate newTemplate = new WeblogTemplate();
-				newTemplate.setWebsite(getActionWeblog());
-				newTemplate.setAction(getNewTmplAction());
-				newTemplate.setName(getNewTmplName());
-				newTemplate.setDescription(newTemplate.getName());
-				newTemplate.setContents(getText("pageForm.newTemplateContent"));
-				newTemplate.setHidden(false);
-				newTemplate.setNavbar(false);
-				newTemplate.setLastModified(new Date());
+                WeblogTemplate newTemplate = new WeblogTemplate();
+                newTemplate.setWebsite(getActionWeblog());
+                newTemplate.setAction(getNewTmplAction());
+                newTemplate.setName(getNewTmplName());
+                newTemplate.setDescription(newTemplate.getName());
+                newTemplate.setContents(getText("pageForm.newTemplateContent"));
+                newTemplate.setHidden(false);
+                newTemplate.setNavbar(false);
+                newTemplate.setLastModified(new Date());
 
-				if (WeblogTemplate.ACTION_CUSTOM.equals(getNewTmplAction())) {
-					newTemplate.setLink(getNewTmplName());
-				}
+                if (WeblogTemplate.ACTION_CUSTOM.equals(getNewTmplAction())) {
+                    newTemplate.setLink(getNewTmplName());
+                }
 
-				// Make sure we have always have a Weblog main page. Stops
-				// deleting main page in custom theme mode also.
-				if (WeblogTemplate.ACTION_WEBLOG.equals(getNewTmplAction())) {
-					newTemplate.setName(WeblogTemplate.DEFAULT_PAGE);
-				}
+                // Make sure we have always have a Weblog main page. Stops
+                // deleting main page in custom theme mode also.
+                if (WeblogTemplate.ACTION_WEBLOG.equals(getNewTmplAction())) {
+                    newTemplate.setName(WeblogTemplate.DEFAULT_PAGE);
+                }
 
-				// all templates start out as velocity templates
-				newTemplate.setTemplateLanguage("velocity");
+                // all templates start out as velocity templates
+                newTemplate.setTemplateLanguage("velocity");
 
-				// for now, all templates just use _decorator
-				if (!"_decorator".equals(newTemplate.getName())) {
-					newTemplate.setDecoratorName("_decorator");
-				}
+                // for now, all templates just use _decorator
+                if (!"_decorator".equals(newTemplate.getName())) {
+                    newTemplate.setDecoratorName("_decorator");
+                }
 
-				// save the new Template
-				WebloggerFactory.getWeblogger().getWeblogManager()
-						.savePage(newTemplate);
+                // save the new Template
+                WebloggerFactory.getWeblogger().getWeblogManager()
+                        .savePage(newTemplate);
 
-				// Create weblog template codes for available types.
-				WeblogThemeTemplateCode standardTemplCode = new WeblogThemeTemplateCode(
-						newTemplate.getId(), "standard");
-				WeblogThemeTemplateCode mobileTemplCode = new WeblogThemeTemplateCode(
-						newTemplate.getId(), "mobile");
+                // Create weblog template codes for available types.
+                WeblogThemeTemplateCode standardTemplCode = new WeblogThemeTemplateCode(
+                        newTemplate.getId(), "standard");
+                WeblogThemeTemplateCode mobileTemplCode = new WeblogThemeTemplateCode(
+                        newTemplate.getId(), "mobile");
 
-				standardTemplCode.setTemplate(newTemplate.getContents());
-				standardTemplCode.setTemplateLanguage("velocity");
+                standardTemplCode.setTemplate(newTemplate.getContents());
+                standardTemplCode.setTemplateLanguage("velocity");
 
-				mobileTemplCode.setTemplate(newTemplate.getContents());
-				mobileTemplCode.setTemplateLanguage("velocity");
+                mobileTemplCode.setTemplate(newTemplate.getContents());
+                mobileTemplCode.setTemplateLanguage("velocity");
 
-				WebloggerFactory.getWeblogger().getWeblogManager()
-						.saveTemplateCode(standardTemplCode);
-				WebloggerFactory.getWeblogger().getWeblogManager()
-						.saveTemplateCode(mobileTemplCode);
+                WebloggerFactory.getWeblogger().getWeblogManager()
+                        .saveTemplateCode(standardTemplCode);
+                WebloggerFactory.getWeblogger().getWeblogManager()
+                        .saveTemplateCode(mobileTemplCode);
 
-				// if this person happened to create a Weblog template from
-				// scratch then make sure and set the defaultPageId. What does
-				// this do????
-				if (WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
-					getActionWeblog().setDefaultPageId(newTemplate.getId());
-					WebloggerFactory.getWeblogger().getWeblogManager()
-							.saveWeblog(getActionWeblog());
-				}
+                // if this person happened to create a Weblog template from
+                // scratch then make sure and set the defaultPageId. What does
+                // this do????
+                if (WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
+                    getActionWeblog().setDefaultPageId(newTemplate.getId());
+                    WebloggerFactory.getWeblogger().getWeblogManager()
+                            .saveWeblog(getActionWeblog());
+                }
 
-				// flush results to db
-				WebloggerFactory.getWeblogger().flush();
+                // flush results to db
+                WebloggerFactory.getWeblogger().flush();
 
-				// reset form fields
-				setNewTmplName(null);
-				setNewTmplAction(null);
+                // reset form fields
+                setNewTmplName(null);
+                setNewTmplAction(null);
 
-			} catch (WebloggerException ex) {
-				log.error("Error adding new template for weblog - "
-						+ getActionWeblog().getHandle(), ex);
-				// TODO: i18n
-				addError("Error adding new template");
-			}
+            } catch (WebloggerException ex) {
+                log.error("Error adding new template for weblog - "
+                        + getActionWeblog().getHandle(), ex);
+                // TODO: i18n
+                addError("Error adding new template");
+            }
+        }
 
 		return execute();
 	}

@@ -58,20 +58,22 @@ public abstract class PingTargetAddBase extends UIAction {
         // If there are errors, go back to the target edit page.
         myValidate(pingTarget);
         
-        if(!hasActionErrors()) try {
-            // Appears to be ok.  Save it and flush.
-            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-            pingTargetMgr.savePingTarget(pingTarget);
-            WebloggerFactory.getWeblogger().flush();
-            
-            addMessage("pingTarget.saved");
-            
-            return SUCCESS;
-            
-        } catch (WebloggerException ex) {
-            getLogger().error("Error adding ping target", ex);
-            // TODO: i18n
-            addError("Error adding ping target.");
+        if(!hasActionErrors()) {
+            try {
+                // Appears to be ok.  Save it and flush.
+                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
+                pingTargetMgr.savePingTarget(pingTarget);
+                WebloggerFactory.getWeblogger().flush();
+
+                addMessage("pingTarget.saved");
+
+                return SUCCESS;
+
+            } catch (WebloggerException ex) {
+                getLogger().error("Error adding ping target", ex);
+                // TODO: i18n
+                addError("Error adding ping target.");
+            }
         }
         
         return INPUT;

@@ -143,8 +143,9 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
             mLogger.error("ERROR adding/deleting doc to index", e);
         } finally {
             endWriting();
-            if (roller != null)
+            if (roller != null) {
                 roller.release();
+            }
         }
 
         Date end = new Date();

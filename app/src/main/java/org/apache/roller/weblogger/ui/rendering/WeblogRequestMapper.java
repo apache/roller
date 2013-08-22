@@ -104,8 +104,9 @@ public class WeblogRequestMapper implements RequestMapper {
                 
         if(servlet != null && servlet.trim().length() > 1) {
             
-            if(request.getContextPath() != null)
+            if(request.getContextPath() != null) {
                 servlet = servlet.substring(request.getContextPath().length());
+            }
             
             // strip off the leading slash
             servlet = servlet.substring(1);

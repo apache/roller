@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.pojos.WeblogReferrer;
 /**
  * Pojo safety wrapper for Weblog objects.
  */
-public class WeblogWrapper {
+public final class WeblogWrapper {
     
     // keep a reference to the wrapped pojo
     private final Weblog pojo;
@@ -52,9 +52,9 @@ public class WeblogWrapper {
     
     // wrap the given pojo if it is not null with detected type
     public static WeblogWrapper wrap(Weblog toWrap, URLStrategy strat) {
-        if(toWrap != null)
+        if (toWrap != null) {
             return new WeblogWrapper(toWrap, strat);
-        
+        }
         return null;
     }
 

@@ -92,10 +92,12 @@ public class GlobalCommentManagementBean {
     }
     
     public Date getStartDate() {
-        if(!StringUtils.isEmpty(getStartDateString())) try {
-            DateFormat df = new SimpleDateFormat("MM/dd/yy");
-            return df.parse(getStartDateString());
-        } catch(Exception e) { }
+        if(!StringUtils.isEmpty(getStartDateString())) {
+            try {
+                DateFormat df = new SimpleDateFormat("MM/dd/yy");
+                return df.parse(getStartDateString());
+            } catch(Exception e) { }
+        }
         return null;
     }
 
@@ -144,19 +146,19 @@ public class GlobalCommentManagementBean {
     }
 
     public String[] getSpamComments() {
-        return spamComments;
+        return spamComments.clone();
     }
 
     public void setSpamComments(String[] spamComments) {
-        this.spamComments = spamComments;
+        this.spamComments = spamComments.clone();
     }
 
     public String[] getDeleteComments() {
-        return deleteComments;
+        return deleteComments.clone();
     }
 
     public void setDeleteComments(String[] deleteComments) {
-        this.deleteComments = deleteComments;
+        this.deleteComments = deleteComments.clone();
     }
 
     public String getApprovedString() {

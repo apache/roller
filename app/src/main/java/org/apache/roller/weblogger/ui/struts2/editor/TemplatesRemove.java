@@ -64,7 +64,7 @@ public class TemplatesRemove extends UIAction {
 
 	public void myPrepare() {
 
-		if (getIdSelections() != null) {
+        if (getIdSelections() != null) {
 
 			// query for templates list
 			try {
@@ -124,87 +124,87 @@ public class TemplatesRemove extends UIAction {
 	 */
 	public String remove() {
 
-		if (getIds() != null)
+		if (getIds() != null) {
+            try {
 
-			try {
+                String[] idsToDelete = Utilities.stringToStringArray(getIds(),
+                        ",");
+                if (idsToDelete != null && idsToDelete.length > 0) {
 
-				String[] idsToDelete = Utilities.stringToStringArray(getIds(),
-						",");
-				if (idsToDelete != null && idsToDelete.length > 0) {
+                    WeblogManager mgr = WebloggerFactory.getWeblogger()
+                            .getWeblogManager();
 
-					WeblogManager mgr = WebloggerFactory.getWeblogger()
-							.getWeblogManager();
+                    Weblog weblog = getActionWeblog();
+                    WeblogTemplate template = null;
 
-					Weblog weblog = getActionWeblog();
-					WeblogTemplate template = null;
+                    for (int i = 0; i < idsToDelete.length; i++) {
+                        if (!idsToDelete[i].equals("")) {
 
-					for (int i = 0; i < idsToDelete.length; i++) {
-						if (!idsToDelete[i].equals("")) {
+                            template = mgr.getPage(idsToDelete[i]);
+                            if (!template.isRequired()
+                                    || !WeblogTemplate.ACTION_CUSTOM
+                                    .equals(getActionWeblog()
+                                            .getEditorTheme())) {
 
-							template = mgr.getPage(idsToDelete[i]);
-							if (!template.isRequired()
-									|| !WeblogTemplate.ACTION_CUSTOM
-											.equals(getActionWeblog()
-													.getEditorTheme())) {
+                                // if weblog template remove custom style sheet
+                                // also
+                                if (template.getName().equals(
+                                        WeblogTemplate.DEFAULT_PAGE)) {
 
-								// if weblog template remove custom style sheet
-								// also
-								if (template.getName().equals(
-										WeblogTemplate.DEFAULT_PAGE)) {
+                                    ThemeTemplate stylesheet = getActionWeblog()
+                                            .getTheme().getStylesheet();
 
-									ThemeTemplate stylesheet = getActionWeblog()
-											.getTheme().getStylesheet();
+                                    // Delete style sheet if the same name
+                                    if (stylesheet != null
+                                            && getActionWeblog().getTheme()
+                                            .getStylesheet() != null
+                                            && stylesheet.getLink().equals(
+                                            getActionWeblog()
+                                                    .getTheme()
+                                                    .getStylesheet()
+                                                    .getLink())) {
+                                        // Same so OK to delete
+                                        WeblogTemplate css = mgr.getPageByLink(
+                                                getActionWeblog(),
+                                                stylesheet.getLink());
 
-									// Delete style sheet if the same name
-									if (stylesheet != null
-											&& getActionWeblog().getTheme()
-													.getStylesheet() != null
-											&& stylesheet.getLink().equals(
-													getActionWeblog()
-															.getTheme()
-															.getStylesheet()
-															.getLink())) {
-										// Same so OK to delete
-										WeblogTemplate css = mgr.getPageByLink(
-												getActionWeblog(),
-												stylesheet.getLink());
+                                        if (css != null) {
+                                            mgr.removePage(css);
+                                        }
+                                    }
 
-										if (css != null) {
-											mgr.removePage(css);
-										}
-									}
+                                    // Clear for next custom theme
+                                    weblog.setCustomStylesheetPath(null);
+                                    weblog.setDefaultPageId(null);
 
-									// Clear for next custom theme
-									weblog.setCustomStylesheetPath(null);
-									weblog.setDefaultPageId(null);
+                                }
 
-								}
+                                mgr.removePage(template);
 
-								mgr.removePage(template);
+                            }
+                        }
+                    }
 
-							}
-						}
-					}
+                    // Save for changes
+                    mgr.saveWeblog(weblog);
 
-					// Save for changes
-					mgr.saveWeblog(weblog);
+                    WebloggerFactory.getWeblogger().flush();
 
-					WebloggerFactory.getWeblogger().flush();
+                    // notify caches
+                    CacheManager.invalidate(getActionWeblog());
 
-					// notify caches
-					CacheManager.invalidate(getActionWeblog());
+                }
 
-				}
+                return SUCCESS;
 
-				return SUCCESS;
+            } catch (Exception e) {
+                log.error("Error deleting templates for weblog - "
+                        + getActionWeblog().getHandle(), e);
 
-			} catch (Exception e) {
-				log.error("Error deleting templates for weblog - "
-						+ getActionWeblog().getHandle(), e);
+                addError("error.unexpected");
 
-				addError("error.unexpected");
-
-			}
+            }
+        }
 
 		return "confirm";
 	}
@@ -241,14 +241,14 @@ public class TemplatesRemove extends UIAction {
 	 * Select check boxes for deleting records
 	 */
 	public String[] getIdSelections() {
-		return idSelections;
+		return idSelections.clone();
 	}
 
 	/**
 	 * Select check boxes for deleting records
 	 */
 	public void setIdSelections(String[] idSelections) {
-		this.idSelections = idSelections;
+		this.idSelections = idSelections.clone();
 	}
 
 	/**

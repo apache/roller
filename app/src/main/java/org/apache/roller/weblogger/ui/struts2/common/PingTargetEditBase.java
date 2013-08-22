@@ -102,18 +102,19 @@ public abstract class PingTargetEditBase extends UIAction {
         // If there are errors, go back to the target edit page.
         myValidate(getPingTarget());
         
-        if(!hasActionErrors()) try {
-            // Appears to be ok.  Save it and flush.
-            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-            pingTargetMgr.savePingTarget(getPingTarget());
-            WebloggerFactory.getWeblogger().flush();
-            
-            addMessage("pingTarget.saved");
-            
-        } catch (WebloggerException ex) {
-            getLogger().error("Error saving ping target", ex);
-            // TODO: i18n
-            addError("Error saving ping target.");
+        if (!hasActionErrors()) {
+            try {
+                // Appears to be ok.  Save it and flush.
+                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
+                pingTargetMgr.savePingTarget(getPingTarget());
+                WebloggerFactory.getWeblogger().flush();
+
+                addMessage("pingTarget.saved");
+            } catch (WebloggerException ex) {
+                getLogger().error("Error saving ping target", ex);
+                // TODO: i18n
+                addError("Error saving ping target.");
+            }
         }
         
         return INPUT;

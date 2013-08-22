@@ -45,7 +45,9 @@ import javax.servlet.jsp.tagext.TagSupport;
 public class CalendarTag extends TagSupport {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(CalendarTag.class);
-    
+
+    private Locale mLocale = Locale.getDefault();
+
     // JSP Attributes
     
     /** @jsp.attribute required="true" */
@@ -71,11 +73,11 @@ public class CalendarTag extends TagSupport {
     
     // not a tag attribute
     public void setLocale(Locale locale) {
-        if (locale != null)
+        if (locale != null) {
             mLocale = locale;
+        }
     }
-    private Locale mLocale = Locale.getDefault();
-    
+
     // not a tag attribute
     /*
     private TimeZone mTimeZone = TimeZone.getDefault();
@@ -147,9 +149,6 @@ public class CalendarTag extends TagSupport {
             
             // formatter Month-Year title of calendar
             SimpleDateFormat formatTitle = new SimpleDateFormat("MMMM yyyy", mLocale);
-            
-            HttpServletRequest request =
-                    (HttpServletRequest)pageContext.getRequest();
             
             // get Resource Bundle
             ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources", mLocale);

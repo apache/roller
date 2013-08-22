@@ -64,7 +64,9 @@ public class PlanetModel implements Model {
     
     public void init(Map initData) throws WebloggerException {
 
-        if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) return;
+        if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+            return;
+        }
         
         // we expect the init data to contain a weblogRequest object
         this.weblogRequest = (WeblogRequest) initData.get("parsedRequest");

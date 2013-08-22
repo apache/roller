@@ -24,7 +24,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 /**
  * Pojo safety wrapper for WeblogEntryAttribute object.
  */
-public class WeblogEntryAttributeWrapper {
+public final class WeblogEntryAttributeWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogEntryAttribute pojo;
@@ -37,22 +37,11 @@ public class WeblogEntryAttributeWrapper {
     
     // wrap the given pojo if it is not null
     public static WeblogEntryAttributeWrapper wrap(WeblogEntryAttribute toWrap) {
-        if(toWrap != null)
+        if (toWrap != null) {
             return new WeblogEntryAttributeWrapper(toWrap);
-        
+        }
         return null;
     }
-    
-    // NOTD: removing this for 4.0 because there is no need for it
-//    public String getId() {
-//        return this.pojo.getId();
-//    }
-    
-    // NOTE: removing this for 4.0 because there is no need for it
-//    public WeblogEntryWrapper getEntry() {
-//        return WeblogEntryWrapper.wrap(this.pojo.getEntry());
-//    }
-    
     
     public String getName() {
         return this.pojo.getName();

@@ -89,8 +89,9 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
             try {
                 this.numWorkers = Integer.parseInt(num);
                 
-                if(numWorkers < 1)
+                if(numWorkers < 1) {
                     this.numWorkers = 1;
+                }
                 
             } catch(NumberFormatException nfe) {
                 mLogger.warn("Invalid num workers ["+num+"], using default");

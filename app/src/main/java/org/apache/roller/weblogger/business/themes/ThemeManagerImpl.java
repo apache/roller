@@ -129,10 +129,9 @@ public class ThemeManagerImpl implements ThemeManager {
 	}
 
 	/**
-	 * @see org.apache.roller.weblogger.model.ThemeManager#getTheme(java.lang.String)
+	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getTheme(java.lang.String)
 	 */
-	public SharedTheme getTheme(String id) throws ThemeNotFoundException,
-			WebloggerException {
+	public SharedTheme getTheme(String id) throws WebloggerException {
 
 		// try to lookup theme from library
 		SharedTheme theme = (SharedTheme) this.themes.get(id);
@@ -146,7 +145,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	}
 
 	/**
-	 * @see org.apache.roller.weblogger.model.ThemeManager#getTheme(weblog)
+	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getTheme(Weblog)
 	 */
 	public WeblogTheme getTheme(Weblog weblog) throws WebloggerException {
 
@@ -163,7 +162,6 @@ public class ThemeManagerImpl implements ThemeManager {
 
 			// otherwise we are returning a WeblogSharedTheme
 		} else {
-			ThemeManager themeMgr = roller.getThemeManager();
 			SharedTheme staticTheme = (SharedTheme) this.themes.get(weblog
 					.getEditorTheme());
 			if (staticTheme != null) {
@@ -180,23 +178,23 @@ public class ThemeManagerImpl implements ThemeManager {
 	}
 
 	/**
-	 * @see org.apache.roller.weblogger.model.ThemeManager#getEnabledThemesList()
+	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getEnabledThemesList()
 	 * 
 	 *      TODO: reimplement enabled vs. disabled logic once we support it
 	 */
 	public List getEnabledThemesList() {
 
-		List all_themes = new ArrayList(this.themes.values());
+		List allThemes = new ArrayList(this.themes.values());
 
 		// sort 'em ... default ordering for themes is by name
-		Collections.sort(all_themes);
+		Collections.sort(allThemes);
 
-		return all_themes;
+		return allThemes;
 	}
 
 	/**
-	 * @see org.apache.roller.weblogger.model.ThemeManager#importTheme(website,
-	 *      theme)
+	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#importTheme(Weblog,
+	 *      SharedTheme)
 	 */
 	public void importTheme(Weblog website, SharedTheme theme)
 			throws WebloggerException {
@@ -208,8 +206,10 @@ public class ThemeManagerImpl implements ThemeManager {
 		MediaFileManager fileMgr = roller.getMediaFileManager();
 
 		MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
-		log.warn("Weblog " + website.getHandle()
-				+ " does not have a root MediaFile directory");
+        if (root == null) {
+            log.warn("Weblog " + website.getHandle()
+                    + " does not have a root MediaFile directory");
+        }
 
 		Set importedActionTemplates = new HashSet();
 		ThemeTemplate themeTemplate = null;
@@ -356,8 +356,9 @@ public class ThemeManagerImpl implements ThemeManager {
 				} else {
 					justPath = resourcePath.substring(0,
 							resourcePath.lastIndexOf('/'));
-					if (!justPath.startsWith("/"))
-						justPath = "/" + justPath;
+					if (!justPath.startsWith("/")) {
+                        justPath = "/" + justPath;
+                    }
 					justName = resourcePath.substring(resourcePath
 							.lastIndexOf('/') + 1);
 					mdir = fileMgr.getMediaFileDirectoryByPath(website,
@@ -428,21 +429,19 @@ public class ThemeManagerImpl implements ThemeManager {
 		if (themenames == null) {
 			log.warn("No themes loaded!  Perhaps you specified the wrong "
 					+ "location for your themes directory?");
-		}
-
-		// now go through each theme and load it into a Theme object
-		for (int i = 0; i < themenames.length; i++) {
-			try {
-				Theme theme = new SharedThemeFromDir(this.themeDir
-						+ File.separator + themenames[i]);
-				if (theme != null) {
-					themeMap.put(theme.getId(), theme);
-				}
-			} catch (Exception unexpected) {
-				// shouldn't happen, so let's learn why it did
-				log.error("Problem reading theme " + themenames[i], unexpected);
-			}
-		}
+		} else {
+            // now go through each theme and load it into a Theme object
+            for (String themeName : themenames) {
+                try {
+                    Theme theme = new SharedThemeFromDir(this.themeDir
+                            + File.separator + themeName);
+                    themeMap.put(theme.getId(), theme);
+                } catch (Exception unexpected) {
+                    // shouldn't happen, so let's learn why it did
+                    log.error("Problem reading theme " + themeName, unexpected);
+                }
+            }
+        }
 
 		return themeMap;
 	}

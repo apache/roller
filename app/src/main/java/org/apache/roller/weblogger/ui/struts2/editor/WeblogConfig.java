@@ -123,55 +123,57 @@ public class WeblogConfig extends UIAction {
         // run validation
         myValidate();
         
-        if(!hasActionErrors()) try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            
-            Weblog weblog = getActionWeblog();
-            
-            getBean().copyTo(weblog);
-            
-            // if blogger category changed then lookup new cat and set it
-            if(getBean().getBloggerCategoryId() != null && 
-                    !weblog.getBloggerCategory().getId().equals(getBean().getBloggerCategoryId())) {
-                weblog.setBloggerCategory(wmgr.getWeblogCategory(getBean().getBloggerCategoryId()));
+        if(!hasActionErrors()) {
+            try {
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+
+                Weblog weblog = getActionWeblog();
+
+                getBean().copyTo(weblog);
+
+                // if blogger category changed then lookup new cat and set it
+                if(getBean().getBloggerCategoryId() != null &&
+                        !weblog.getBloggerCategory().getId().equals(getBean().getBloggerCategoryId())) {
+                    weblog.setBloggerCategory(wmgr.getWeblogCategory(getBean().getBloggerCategoryId()));
+                }
+
+                // ROL-485: comments not allowed on inactive weblogs
+                if(!weblog.getActive()) {
+                    weblog.setAllowComments(Boolean.FALSE);
+                    addMessage("websiteSettings.commentsOffForInactiveWeblog");
+                }
+
+                // if blog has unchecked 'show all langs' then we must make sure
+                // the multi-language blogging option is enabled.
+                // TODO: this should be properly reflected via the UI
+                if(!weblog.isShowAllLangs() && !weblog.isEnableMultiLang()) {
+                    weblog.setEnableMultiLang(true);
+                }
+
+                // save config
+                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
+
+                // ROL-1050: apply comment defaults to existing entries
+                if(getBean().getApplyCommentDefaults()) {
+                    wmgr.applyCommentDefaultsToEntries(weblog);
+                }
+
+                // apply referer filters
+                WebloggerFactory.getWeblogger().getRefererManager().applyRefererFilters(weblog);
+
+                // flush
+                WebloggerFactory.getWeblogger().flush();
+
+                addMessage("websiteSettings.savedChanges");
+
+                // Clear cache entries associated with website
+                CacheManager.invalidate(weblog);
+
+            } catch (Exception ex) {
+                log.error("Error updating weblog config", ex);
+                // TODO: i18n
+                addError("Error updating configuration");
             }
-            
-            // ROL-485: comments not allowed on inactive weblogs
-            if(!weblog.getActive()) {
-                weblog.setAllowComments(Boolean.FALSE);
-                addMessage("websiteSettings.commentsOffForInactiveWeblog");
-            }
-            
-            // if blog has unchecked 'show all langs' then we must make sure
-            // the multi-language blogging option is enabled.
-            // TODO: this should be properly reflected via the UI
-            if(!weblog.isShowAllLangs() && !weblog.isEnableMultiLang()) {
-                weblog.setEnableMultiLang(true);
-            }
-            
-            // save config
-            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
-            
-            // ROL-1050: apply comment defaults to existing entries
-            if(getBean().getApplyCommentDefaults()) {
-                wmgr.applyCommentDefaultsToEntries(weblog);
-            }
-            
-            // apply referer filters
-            WebloggerFactory.getWeblogger().getRefererManager().applyRefererFilters(weblog);
-            
-            // flush
-            WebloggerFactory.getWeblogger().flush();
-            
-            addMessage("websiteSettings.savedChanges");
-            
-            // Clear cache entries associated with website
-            CacheManager.invalidate(weblog);
-            
-        } catch (Exception ex) {
-            log.error("Error updating weblog config", ex);
-            // TODO: i18n
-            addError("Error updating configuration");
         }
         
         return  INPUT;

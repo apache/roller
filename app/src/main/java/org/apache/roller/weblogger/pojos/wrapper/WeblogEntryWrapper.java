@@ -57,9 +57,9 @@ public class WeblogEntryWrapper {
     
     // wrap the given pojo if it is not null
     public static WeblogEntryWrapper wrap(WeblogEntry toWrap, URLStrategy strat) {
-        if(toWrap != null)
+        if(toWrap != null) {
             return new WeblogEntryWrapper(toWrap, strat);
-        
+        }
         return null;
     }
     

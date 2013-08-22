@@ -50,6 +50,8 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  */
 public final class EntryEdit extends EntryBase {
 
+    private static final long MINUTE_IN_MILLIS = 60000;
+
     private static Log log = LogFactory.getLog(EntryEdit.class);
 
     // bean for managing form data
@@ -123,7 +125,7 @@ public final class EntryEdit extends EntryBase {
             return DENIED;
         }
 
-        if (!hasActionErrors())
+        if (!hasActionErrors()) {
             try {
                 WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
@@ -156,7 +158,7 @@ public final class EntryEdit extends EntryBase {
                     // SCHEDULED we only consider an entry future published if
                     // it is scheduled more than 1 minute into the future
                     if (entry.getPubTime().after(
-                            new Date(System.currentTimeMillis() + 60000))) {
+                            new Date(System.currentTimeMillis() + MINUTE_IN_MILLIS))) {
                         getBean().setStatus(WeblogEntry.SCHEDULED);
                     }
 
@@ -246,6 +248,7 @@ public final class EntryEdit extends EntryBase {
                 // TODO: i18n
                 addError("Error saving new entry");
             }
+        }
 
         return INPUT;
     }

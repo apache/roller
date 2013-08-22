@@ -42,6 +42,10 @@ public final class BookmarksImport extends UIAction {
     
     private static Log log = LogFactory.getLog(BookmarksImport.class);
     
+    // only write files out that are below this threshold
+    private static final long WRITE_THRESHOLD_IN_MB = 4;
+    private static final long WRITE_THRESHOLD = WRITE_THRESHOLD_IN_MB * 1024000;
+
     // uploaded opml file
     private File opmlFile = null;
     
@@ -81,64 +85,63 @@ public final class BookmarksImport extends UIAction {
         BookmarkManager bm = WebloggerFactory.getWeblogger().getBookmarkManager();
         
         InputStream stream = null;
-        if(getOpmlFile() != null && getOpmlFile().exists()) try {
-            
-            //only write files out that are less than 4MB
-            if (getOpmlFile().length() < (4*1024000)) {
-                
-                stream = new FileInputStream(getOpmlFile());
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                
-                byte[] buffer = new byte[8192];
-                int bytesRead = 0;
-                while ((bytesRead=stream.read(buffer,0,8192)) != -1) {
-                    baos.write(buffer, 0, bytesRead);
+        if(getOpmlFile() != null && getOpmlFile().exists()) {
+            try {
+                //only write files out that are less than 4MB
+                if (getOpmlFile().length() < WRITE_THRESHOLD) {
+
+                    stream = new FileInputStream(getOpmlFile());
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                    byte[] buffer = new byte[8192];
+                    int bytesRead = 0;
+                    while ((bytesRead=stream.read(buffer,0,8192)) != -1) {
+                        baos.write(buffer, 0, bytesRead);
+                    }
+                    String data = new String(baos.toByteArray());
+
+                    SimpleDateFormat formatter =
+                            new SimpleDateFormat("yyyyMMddHHmmss");
+                    Date now = new Date();
+                    String folderName = "imported-" + formatter.format(now);
+
+                    // Use Roller BookmarkManager to import bookmarks
+                    bm.importBookmarks(getActionWeblog(), folderName, data);
+                    WebloggerFactory.getWeblogger().flush();
+
+                    // notify caches
+                    CacheManager.invalidate(getActionWeblog());
+
+                    // message to user
+                    addMessage("bookmarksImport.imported", folderName);
+
+                    // destroy the temporary file created
+                    getOpmlFile().delete();
+
+                    return SUCCESS;
+
+                } else {
+                    String data = "The file is greater than " + WRITE_THRESHOLD_IN_MB
+                            +" MB, and has not been written to stream."
+                            +" File Size: "+getOpmlFile().length()+" bytes. "
+                            +" This is a limitation of this particular "
+                            +" web application";
+                    addError("bookmarksImport.error", data);
                 }
-                String data = new String(baos.toByteArray());
-                
-                SimpleDateFormat formatter =
-                        new SimpleDateFormat("yyyyMMddHHmmss");
-                Date now = new Date();
-                String folderName = "imported-" + formatter.format(now);
-                
-                // Use Roller BookmarkManager to import bookmarks
-                bm.importBookmarks(getActionWeblog(), folderName, data);
-                WebloggerFactory.getWeblogger().flush();
-                
-                // notify caches
-                CacheManager.invalidate(getActionWeblog());
-                
-                // message to user
-                addMessage("bookmarksImport.imported", folderName);
-                
-                // destroy the temporary file created
-                getOpmlFile().delete();
-                
-                return SUCCESS;
-                
-            } else {
-                String data = "The file is greater than 4MB, "
-                        +" and has not been written to stream."
-                        +" File Size: "+getOpmlFile().length()+" bytes. "
-                        +" This is a limitation of this particular "
-                        +" web application";
-                addError("bookmarksImport.error", data);
-            }
-            
-        } catch (Exception ex) {
-            log.error("ERROR: importing bookmarks", ex);
-            // TODO: i18n
-            addError("bookmarksImport.error", ex.toString());
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (Exception e) {
-                    log.error("Closing stream",e);
+            } catch (Exception ex) {
+                log.error("ERROR: importing bookmarks", ex);
+                // TODO: i18n
+                addError("bookmarksImport.error", ex.toString());
+            } finally {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (Exception e) {
+                        log.error("Closing stream",e);
+                    }
                 }
             }
         }
-        
         return INPUT;
     }
     

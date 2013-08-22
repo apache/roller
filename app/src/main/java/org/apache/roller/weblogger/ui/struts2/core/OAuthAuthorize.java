@@ -51,8 +51,6 @@ public class OAuthAuthorize extends UIAction implements ServletRequestAware {
     @SkipValidation
     @Override
     public String execute() {
-        boolean flush = false;
-        
         try {
             User ud = getAuthenticatedUser();
 
@@ -96,6 +94,8 @@ public class OAuthAuthorize extends UIAction implements ServletRequestAware {
         this.appDesc = (String)request.getAttribute("CONS_DESC");
         this.token = (String)request.getAttribute("TOKEN");
         this.callback = (String)request.getAttribute("CALLBACK");
-        if (this.getCallback() == null) this.callback = "";
+        if (this.getCallback() == null) {
+            this.callback = "";
+        }
     }
 }

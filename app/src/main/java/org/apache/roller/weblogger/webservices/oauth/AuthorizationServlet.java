@@ -151,8 +151,9 @@ public class AuthorizationServlet extends HttpServlet {
             out.close();
         } else {
             // if callback is not passed in, use the callback from config
-            if(callback == null || callback.length() <=0 )
+            if(callback == null || callback.length() <=0 ) {
                 callback = accessor.consumer.callbackURL;
+            }
             String token = accessor.requestToken;
             if (token != null && callback != null) {
                 callback = OAuth.addParameters(callback, "oauth_token", token);

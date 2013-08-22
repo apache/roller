@@ -408,8 +408,9 @@ public class SharedThemeFromDir extends SharedTheme {
             length = reader.read(chars);
         } catch (Exception noprob) {
             log.error("Exception reading theme [" + this.getName() + "] template file ["+templateFile+"]");
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug(noprob);
+            }
             return null;
         }
         

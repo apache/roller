@@ -42,7 +42,6 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
  * instance.
  */
 public class ValidateSaltFilter implements Filter {
-	private static Log log = LogFactory.getLog(ValidateSaltFilter.class);
 	private Set<String> ignored = new HashSet<String>();
 
 	// @Override
@@ -50,19 +49,17 @@ public class ValidateSaltFilter implements Filter {
 			FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpReq = (HttpServletRequest) request;
 
-		if (httpReq.getMethod().equals("POST")) {
+        // TODO multipart/form-data does not send parameters
+        if (httpReq.getMethod().equals("POST") &&
+                !isIgnoredURL(((HttpServletRequest) request).getServletPath())) {
+            String salt = (String) httpReq.getParameter("salt");
+            SaltCache saltCache = SaltCache.getInstance();
+            if (salt == null || saltCache.get(salt) == null
+                    || saltCache.get(salt).equals(false)) {
+                throw new ServletException("Security Violation");
+            }
+        }
 
-			// TODO multipart/form-data does not send parameters
-			if (!isIgnoredURL(((HttpServletRequest) request).getServletPath())) {
-				String salt = (String) httpReq.getParameter("salt");
-				SaltCache saltCache = SaltCache.getInstance();
-				if (salt == null || saltCache.get(salt) == null
-						|| saltCache.get(salt).equals(false)) {
-					throw new ServletException("Security Violation");
-				}
-			}
-
-		}
 		chain.doFilter(request, response);
 	}
 
@@ -72,9 +69,9 @@ public class ValidateSaltFilter implements Filter {
 		// Construct our list of ignord urls
 		String urls = WebloggerConfig.getProperty("salt.ignored.urls");
 		String[] urlsArray = StringUtils.stripAll(StringUtils.split(urls, ","));
-		for (int i = 0; i < urlsArray.length; i++)
-			this.ignored.add(urlsArray[i]);
-
+		for (int i = 0; i < urlsArray.length; i++) {
+            this.ignored.add(urlsArray[i]);
+        }
 	}
 
 	// @Override
@@ -90,14 +87,12 @@ public class ValidateSaltFilter implements Filter {
 	 * @return true, if is ignored resource
 	 */
 	private boolean isIgnoredURL(String theUrl) {
-
 		int i = theUrl.lastIndexOf('/');
 
-		// If its not a resource then do not ignore it
-		if (i <= 0 || i == theUrl.length() - 1)
-			return false;
-
+		// If it's not a resource then don't ignore it
+		if (i <= 0 || i == theUrl.length() - 1) {
+            return false;
+        }
 		return ignored.contains(theUrl.substring(i + 1));
-
 	}
 }

@@ -33,6 +33,8 @@ import org.apache.lucene.index.Term;
  */
 public class IndexUtil {
 
+    private IndexUtil() {}
+
     /**
      * Create a lucene term from the first token of the input string.
      * 
@@ -45,8 +47,9 @@ public class IndexUtil {
      */
     public static final Term getTerm(String field, String input) {
 
-        if (input == null || field == null)
+        if (input == null || field == null) {
             return null;
+        }
 
         Analyzer analyzer = IndexManagerImpl.getAnalyzer();
 

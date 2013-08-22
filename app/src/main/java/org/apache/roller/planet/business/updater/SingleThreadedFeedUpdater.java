@@ -39,6 +39,8 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 public class SingleThreadedFeedUpdater implements FeedUpdater {
     
     private static Log log = LogFactory.getLog(SingleThreadedFeedUpdater.class);
+
+    private static final double MS_TO_SEC_DIVISOR = 1000.0;
     
     
     public SingleThreadedFeedUpdater() {
@@ -96,30 +98,32 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         int entries = 0;
         Set<SubscriptionEntry> newEntries = updatedSub.getEntries();
         log.debug("newEntries.size() = " + newEntries.size());
-        if (newEntries.size() > 0) try {
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-            
-            // clear out old entries
-            pmgr.deleteEntries(sub);
-            
-            // add fresh entries
-            sub.getEntries().clear();
-            sub.addEntries(newEntries);
-            
-            // save and flush
-            pmgr.saveSubscription(sub);
-            WebloggerFactory.getWeblogger().flush();
+        if (newEntries.size() > 0) {
+            try {
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
 
-            log.debug("Added entries");
-            entries += newEntries.size();            
+                // clear out old entries
+                pmgr.deleteEntries(sub);
 
-        } catch(RollerException ex) {
-            throw new UpdaterException("Error persisting updated subscription", ex);
+                // add fresh entries
+                sub.getEntries().clear();
+                sub.addEntries(newEntries);
+
+                // save and flush
+                pmgr.saveSubscription(sub);
+                WebloggerFactory.getWeblogger().flush();
+
+                log.debug("Added entries");
+                entries += newEntries.size();
+
+            } catch(RollerException ex) {
+                throw new UpdaterException("Error persisting updated subscription", ex);
+            }
         }
         
         long subEndTime = System.currentTimeMillis();
-        log.debug("updated feed -- "+sub.getFeedURL()+" -- in "+
-                ((subEndTime-subStartTime)/1000.0)+" seconds.  "+entries+
+        log.debug("updated feed -- "+sub.getFeedURL()+" -- in " +
+                ((subEndTime-subStartTime) / MS_TO_SEC_DIVISOR) + " seconds.  " + entries +
                 " entries updated.");
     }
     
@@ -145,7 +149,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
-                + ((endTime-startTime)/1000.0) + " seconds");
+                + ((endTime-startTime) / MS_TO_SEC_DIVISOR) + " seconds");
     }
     
     
@@ -168,7 +172,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
-                + ((endTime-startTime)/1000.0) + " seconds");
+                + ((endTime-startTime) / MS_TO_SEC_DIVISOR) + " seconds");
     }
     
     

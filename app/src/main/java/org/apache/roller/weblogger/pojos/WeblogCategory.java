@@ -99,7 +99,9 @@ public class WeblogCategory implements Serializable, Comparable {
     
     public boolean equals(Object other) {
         
-        if (other == null) return false;
+        if (other == null) {
+            return false;
+        }
         
         if (other instanceof WeblogCategory) {
             WeblogCategory o = (WeblogCategory)other;

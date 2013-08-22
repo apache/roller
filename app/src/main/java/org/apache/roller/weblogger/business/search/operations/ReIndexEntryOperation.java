@@ -69,7 +69,7 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
     public void doRun() {
 
         // since this operation can be run on a separate thread we must treat
-        // the weblog object passed in as a detached object which is proned to
+        // the weblog object passed in as a detached object which is prone to
         // lazy initialization problems, so requery for the object now
         try {
             WeblogEntryManager wMgr = roller.getWeblogEntryManager();
@@ -93,8 +93,9 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
         } catch (IOException e) {
             mLogger.error("Problems adding/deleting doc to index", e);
         } finally {
-            if (roller != null)
+            if (roller != null) {
                 roller.release();
+            }
             endWriting();
         }
     }

@@ -101,10 +101,12 @@ public class CommentsBean {
     }
     
     public Date getStartDate() {
-        if(!StringUtils.isEmpty(getStartDateString())) try {
-            DateFormat df = new SimpleDateFormat("MM/dd/yy");
-            return df.parse(getStartDateString());
-        } catch(Exception e) { }
+        if(!StringUtils.isEmpty(getStartDateString())) {
+            try {
+                DateFormat df = new SimpleDateFormat("MM/dd/yy");
+                return df.parse(getStartDateString());
+            } catch(Exception e) { }
+        }
         return null;
     }
 

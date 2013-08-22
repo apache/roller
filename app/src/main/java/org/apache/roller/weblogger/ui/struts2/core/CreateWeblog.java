@@ -166,17 +166,19 @@ public class CreateWeblog extends UIAction {
         // make sure theme was specified and is a valid value
         
         // make sure handle isn't already taken
-        if(!StringUtils.isEmpty(getBean().getHandle())) try {
-            if (WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getWeblogByHandle(getBean().getHandle()) != null) {
-                addError("createWeblog.error.handleExists");
-                // reset handle
-                getBean().setHandle(null);
+        if(!StringUtils.isEmpty(getBean().getHandle())) {
+            try {
+                if (WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getWeblogByHandle(getBean().getHandle()) != null) {
+                    addError("createWeblog.error.handleExists");
+                    // reset handle
+                    getBean().setHandle(null);
+                }
+            } catch (WebloggerException ex) {
+                log.error("error checking for weblog", ex);
+                // TODO: i18n
+                addError("unexpected error");
             }
-        } catch (WebloggerException ex) {
-            log.error("error checking for weblog", ex);
-            // TODO: i18n
-            addError("unexpected error");
         }
     }
     

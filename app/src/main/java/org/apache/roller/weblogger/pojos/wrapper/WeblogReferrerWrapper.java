@@ -43,8 +43,9 @@ public class WeblogReferrerWrapper {
     
     // wrap the given pojo if it is not null
     public static WeblogReferrerWrapper wrap(WeblogReferrer toWrap, URLStrategy strat) {
-        if(toWrap != null)
+        if(toWrap != null) {
             return new WeblogReferrerWrapper(toWrap, strat);
+        }
         
         return null;
     }

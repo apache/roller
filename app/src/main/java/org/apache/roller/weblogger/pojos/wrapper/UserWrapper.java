@@ -27,7 +27,7 @@ import org.apache.roller.weblogger.util.HTMLSanitizer;
 /**
  * Pojo safety wrapper for User objects.
  */
-public class UserWrapper {
+public final class UserWrapper {
     
     // keep a reference to the wrapped pojo
     private final User pojo;
@@ -36,19 +36,18 @@ public class UserWrapper {
     private UserWrapper(User toWrap) {
         this.pojo = toWrap;
     }
-    
-    
+
     // wrap the given pojo if it is not null
     public static UserWrapper wrap(User toWrap) {
-        if(toWrap != null)
+        if(toWrap != null) {
             return new UserWrapper(toWrap);
-        
+        }
         return null;
     }
     
     
     /**
-     * This is here for backwards compatability.  We no longer allow the
+     * This is here for backwards compatibility.  We no longer allow the
      * username to be displayed publicly, so screen name is returned instead.
      */
     public String getUserName() {

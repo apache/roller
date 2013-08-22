@@ -79,7 +79,9 @@ public class AddEntryOperation extends WriteToIndexOperation {
         } catch (IOException e) {
             mLogger.error("Problems adding doc to index", e);
         } finally {
-            if (roller != null) roller.release();
+            if (roller != null) {
+                roller.release();
+            }
             endWriting();
         }
     }   

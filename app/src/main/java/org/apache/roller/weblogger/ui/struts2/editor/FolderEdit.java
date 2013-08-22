@@ -106,26 +106,28 @@ public class FolderEdit extends UIAction {
         // validation
         myValidate();
         
-        if(!hasActionErrors()) try {
-            
-            // copy updated attributes
-            getBean().copyTo(getFolder());
-            
-            // save changes
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            bmgr.saveFolder(getFolder());
-            WebloggerFactory.getWeblogger().flush();
-            
-            // notify caches
-            CacheManager.invalidate(getFolder());
-            
-            // TODO: i18n
-            addMessage("folder updated");
-            
-        } catch(Exception ex) {
-            log.error("Error saving folder", ex);
-            // TODO: i18n
-            addError("Error saving folder");
+        if(!hasActionErrors()) {
+            try {
+
+                // copy updated attributes
+                getBean().copyTo(getFolder());
+
+                // save changes
+                BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+                bmgr.saveFolder(getFolder());
+                WebloggerFactory.getWeblogger().flush();
+
+                // notify caches
+                CacheManager.invalidate(getFolder());
+
+                // TODO: i18n
+                addMessage("folder updated");
+
+            } catch(Exception ex) {
+                log.error("Error saving folder", ex);
+                // TODO: i18n
+                addError("Error saving folder");
+            }
         }
         
         return INPUT;

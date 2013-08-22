@@ -39,9 +39,7 @@ import org.apache.commons.logging.LogFactory;
  * This class unmarshalls a theme descriptor into a set of objects.
  */
 public class ThemeMetadataParser {
-   
-    private static Log log = LogFactory.getLog(ThemeMetadataParser.class);
-    
+
     /**
      * Unmarshall the given input stream into our defined
      * set of Java objects.
@@ -49,8 +47,9 @@ public class ThemeMetadataParser {
     public ThemeMetadata unmarshall(InputStream instream)
         throws ThemeParsingException, IOException, JDOMException {
         
-        if(instream == null)
+        if(instream == null) {
             throw new IOException("InputStream is null!");
+        }
         
         ThemeMetadata theme = new ThemeMetadata();
         
@@ -71,7 +70,7 @@ public class ThemeMetadataParser {
         
         // now grab the preview image path
         Element previewImage = root.getChild("preview-image");
-        if(previewImage != null) {
+        if (previewImage != null) {
             theme.setPreviewImage(previewImage.getAttributeValue("path"));
         } else {
             throw new ThemeParsingException("No preview image specified");
@@ -79,7 +78,7 @@ public class ThemeMetadataParser {
         
         // grab the stylesheet if it exists
         Element stylesheet = root.getChild("stylesheet");
-        if(stylesheet != null) {
+        if (stylesheet != null) {
             theme.setStylesheet(elementToStylesheet(stylesheet));
 
         }

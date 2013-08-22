@@ -88,7 +88,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
         // Return false if entry not found
-        if (entry == null) return false;
+        if (entry == null) {
+            return false;
+        }
         
         validate(entry.getWebsite().getHandle(), userid, password);
         

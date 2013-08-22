@@ -105,26 +105,27 @@ public class CategoryEdit extends UIAction {
         // validation
         myValidate();
         
-        if(!hasActionErrors()) try {
-            
-            // copy updated attributes
-            getBean().copyTo(getCategory());
-            
-            // save changes
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            wmgr.saveWeblogCategory(getCategory());
-            WebloggerFactory.getWeblogger().flush();
-            
-            // notify caches
-            CacheManager.invalidate(getCategory());
-            
-            // TODO: i18n
-            addMessage("category updated");
-            
-        } catch(Exception ex) {
-            log.error("Error saving category", ex);
-            // TODO: i18n
-            addError("Error saving category");
+        if(!hasActionErrors()) {
+            try {
+                // copy updated attributes
+                getBean().copyTo(getCategory());
+
+                // save changes
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+                wmgr.saveWeblogCategory(getCategory());
+                WebloggerFactory.getWeblogger().flush();
+
+                // notify caches
+                CacheManager.invalidate(getCategory());
+
+                // TODO: i18n
+                addMessage("category updated");
+
+            } catch(Exception ex) {
+                log.error("Error saving category", ex);
+                // TODO: i18n
+                addError("Error saving category");
+            }
         }
         
         return INPUT;

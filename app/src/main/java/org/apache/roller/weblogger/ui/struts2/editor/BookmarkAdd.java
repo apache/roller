@@ -101,30 +101,32 @@ public class BookmarkAdd extends UIAction {
         // validation
         myValidate();
         
-        if(!hasActionErrors()) try {
-            
-            WeblogBookmark newBookmark = new WeblogBookmark();
-            newBookmark.setFolder(getFolder());
-            getBean().copyTo(newBookmark);
-            
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            bmgr.saveBookmark(newBookmark);
-            WebloggerFactory.getWeblogger().flush();
-            
-            CacheManager.invalidate(newBookmark);
-            
-            // TODO: i18n
-            addMessage("bookmark added");
-            
-            // Set for next action
-            getBean().setId(newBookmark.getId());
-            
-            return SUCCESS;
-            
-        } catch(Exception ex) {
-            log.error("Error saving new bookmark", ex);
-            // TODO: i18n
-            addError("Error saving new bookmark");
+        if(!hasActionErrors()) {
+            try {
+
+                WeblogBookmark newBookmark = new WeblogBookmark();
+                newBookmark.setFolder(getFolder());
+                getBean().copyTo(newBookmark);
+
+                BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+                bmgr.saveBookmark(newBookmark);
+                WebloggerFactory.getWeblogger().flush();
+
+                CacheManager.invalidate(newBookmark);
+
+                // TODO: i18n
+                addMessage("bookmark added");
+
+                // Set for next action
+                getBean().setId(newBookmark.getId());
+
+                return SUCCESS;
+
+            } catch(Exception ex) {
+                log.error("Error saving new bookmark", ex);
+                // TODO: i18n
+                addError("Error saving new bookmark");
+            }
         }
 
         

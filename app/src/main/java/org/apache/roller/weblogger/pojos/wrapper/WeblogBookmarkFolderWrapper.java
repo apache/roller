@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 /**
  * Pojo safety wrapper for WeblogBookmarkFolder object.
  */
-public class WeblogBookmarkFolderWrapper {
+public final class WeblogBookmarkFolderWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogBookmarkFolder pojo;
@@ -45,9 +45,9 @@ public class WeblogBookmarkFolderWrapper {
     
     // wrap the given pojo if it is not null
     public static WeblogBookmarkFolderWrapper wrap(WeblogBookmarkFolder toWrap) {
-        if(toWrap != null)
+        if (toWrap != null) {
             return new WeblogBookmarkFolderWrapper(toWrap);
-        
+        }
         return null;
     }
     
@@ -71,16 +71,9 @@ public class WeblogBookmarkFolderWrapper {
         return this.pojo.getPath();
     }
     
-    // NOTE: removing this for 4.0 since there is really no need for this in templates
-//    public WeblogWrapper getWebsite() {
-//        return WeblogWrapper.wrap(this.pojo.getWebsite());
-//    }
-    
-    
     public WeblogBookmarkFolderWrapper getParent() {
         return WeblogBookmarkFolderWrapper.wrap(this.pojo.getParent());
     }
-    
     
     public List getFolders() {
         Set initialCollection = this.pojo.getFolders();
@@ -137,7 +130,6 @@ public class WeblogBookmarkFolderWrapper {
         
         return wrappedCollection;
     }
-    
     
     // TODO: this method won't actually work and we probably don't need it here anyways?
     public boolean descendentOf(WeblogBookmarkFolder ancestor) {

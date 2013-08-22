@@ -50,11 +50,6 @@ import com.sun.syndication.propono.atom.server.AtomException;
  */
 public class RollerAtomService extends AtomService {
 
-    //private Map workspaceMap = new TreeMap();
-    //private Map collectionMap = new TreeMap();
-    //private static Properties cacheProps = new Properties();
-    //private boolean firstTime = true;
-
     /**
      * Creates a new instance of FileBasedAtomService.
      */
@@ -148,8 +143,10 @@ public class RollerAtomService extends AtomService {
         Map config = roller.getPropertiesManager().getProperties();        
         String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
-        for (int i=0; i<rules.length; i++) {
-            if (rules[i].indexOf('/') == -1) continue;
+        for (int i = 0; i < rules.length; i++) {
+            if (rules[i].indexOf('/') == -1) {
+                continue;
+            }
             accepts.add(rules[i]);
         }
         return accepts;             
