@@ -135,10 +135,10 @@ public class Register extends UIAction implements ServletRequestAware {
 
             boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
             if (usingSSO) {
-                // See if user is already logged in via Acegi
+                // See if user is already logged in via Spring Security
                 User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
                 if (fromSSO != null) {
-                    // Copy user details from Acegi, including LDAP attributes
+                    // Copy user details from Spring Security, including LDAP attributes
                     getBean().copyFrom(fromSSO);
                     setFromSso(true);
                 }
@@ -321,7 +321,7 @@ public class Register extends UIAction implements ServletRequestAware {
             boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
             String password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
             
-            // Preserve username and password, Acegi case             
+            // Preserve username and password, Spring Security case
             User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
             if (fromSSO != null) {
                 if (storePassword) {

@@ -38,9 +38,9 @@ public class CmaRollerContext extends RollerContext {
     }
     
     /**
-     * Setup Acegi security features.
+     * Setup Spring Security features.
      */
     protected void initializeSecurityFeatures(ServletContext context) { 
-        // no need to setup Acegi security
+        // no need to setup Spring Security
     }
 }

@@ -95,7 +95,7 @@ public class RollerContext extends ContextLoaderListener
 
         // First, initialize everything that requires no database
 
-        // Keep a reverence to ServletContext object
+        // Keep a reference to ServletContext object
         this.servletContext = sce.getServletContext();
         
         // Call Spring's context ContextLoaderListener to initialize all the
@@ -105,10 +105,11 @@ public class RollerContext extends ContextLoaderListener
         
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");
-        if(!ctxPath.endsWith(File.separator))
+        if (!ctxPath.endsWith(File.separator)) {
             ctxPath += File.separator + "resources";
-        else
+        } else {
             ctxPath += "resources";
+        }
         
         // try setting the uploads path to <context>/resources
         // NOTE: this should go away at some point
@@ -165,7 +166,7 @@ public class RollerContext extends ContextLoaderListener
             
         // do a small amount of work to initialize the web tier
         try {
-            // Initialize Acegi based on Roller configuration
+            // Initialize Spring Security based on Roller configuration
             initializeSecurityFeatures(servletContext);
             
             // Setup Velocity template engine
@@ -225,7 +226,7 @@ public class RollerContext extends ContextLoaderListener
             System.out.println(name);*/
         
         String rememberMe = WebloggerConfig.getProperty("rememberme.enabled");
-        boolean rememberMeEnabled = Boolean.valueOf(rememberMe).booleanValue();
+        boolean rememberMeEnabled = Boolean.valueOf(rememberMe);
         
         log.info("Remember Me enabled: " + rememberMeEnabled);
         
@@ -242,7 +243,7 @@ public class RollerContext extends ContextLoaderListener
         }
         
         String encryptPasswords = WebloggerConfig.getProperty("passwds.encryption.enabled");
-        boolean doEncrypt = Boolean.valueOf(encryptPasswords).booleanValue();
+        boolean doEncrypt = Boolean.valueOf(encryptPasswords);
         
         if (doEncrypt) {
             DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean("org.springframework.security.authentication.dao.DaoAuthenticationProvider#0");
@@ -279,7 +280,7 @@ public class RollerContext extends ContextLoaderListener
             PathBasedFilterInvocationDefinitionMap defmap =
                     (PathBasedFilterInvocationDefinitionMap)procfilter.getFilterInvocationDefinitionSource();
             
-            // add HTTPS URL path patterns to Acegi config
+            // add HTTPS URL path patterns to Spring Security config
             String httpsUrlsProp = WebloggerConfig.getProperty("schemeenforcement.https.urls");
             if (httpsUrlsProp != null) {
                 String[] httpsUrls = StringUtils.stripAll(StringUtils.split(httpsUrlsProp, ",") );

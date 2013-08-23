@@ -26,9 +26,6 @@ This product includes:
 * Code written by Dave Johnson for RSS and Atom in Action
     Copyright 2005 David M Johnson (For RSS and Atom In Action)
 
-* Code from OSCache, a product of the OpenSymphony project
-    Copyright 2002-2003 by OpenSymphony
-
 * A Struts LinkTag and LinkParamTag by BSquare Software
     Copyright 2001 Bsquare Projects 
 
@@ -47,7 +44,7 @@ OTHER NOTICES
     "This product includes software developed by the Acegi Security
     System for Spring Project (http://acegisecurity.org)"
 
-* Roller include icons by Mark James (http://www.famfamfam.com/lab/icons)
+* Roller includes icons by Mark James (http://www.famfamfam.com/lab/icons)
 
 
 CREDITS
@@ -67,3 +64,4 @@ Matt Schmidt (emeritus)
 Jeff Blattman (emeritus)
 Craig Russell
 Greg Huber
+Glen Mazza
