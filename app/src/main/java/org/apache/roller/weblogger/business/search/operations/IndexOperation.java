@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -27,6 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.roller.weblogger.business.search.FieldConstants;
@@ -35,7 +36,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * This is the base class for all index operation. These operations include:<br>
@@ -76,14 +76,12 @@ public abstract class IndexOperation implements Runnable {
         String commentEmail = "";
         String commentName = "";
         if (indexComments) {
-            List comments = data.getComments();
+            List<WeblogEntryComment> comments = data.getComments();
             if (comments != null) {
                 StringBuilder commentEmailBld = new StringBuilder();
                 StringBuilder commentContentBld = new StringBuilder();
                 StringBuilder commentNameBld = new StringBuilder();
-                for (Iterator cItr = comments.iterator(); cItr.hasNext();) {
-                    WeblogEntryComment comment = (WeblogEntryComment) cItr
-                            .next();
+                for (WeblogEntryComment comment : comments) {
                     if (comment.getContent() != null) {
                         commentContentBld.append(comment.getContent());
                         commentContentBld.append(",");
@@ -106,73 +104,54 @@ public abstract class IndexOperation implements Runnable {
         Document doc = new Document();
 
         // keyword
-        doc.add(new Field(FieldConstants.ID, data.getId(), Field.Store.YES,
-                Field.Index.NOT_ANALYZED));
+        doc.add(new StringField(FieldConstants.ID, data.getId(), Field.Store.YES));
 
         // keyword
-        doc.add(new Field(FieldConstants.WEBSITE_HANDLE, data.getWebsite()
-                .getHandle(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new StringField(FieldConstants.WEBSITE_HANDLE, data.getWebsite()
+                .getHandle(), Field.Store.YES));
 
-        // unindexed
-        doc.add(new Field(FieldConstants.ANCHOR, data.getAnchor(),
-                Field.Store.YES, Field.Index.NO));
-
-        // text
-        doc.add(new Field(FieldConstants.USERNAME, data.getCreator()
-                .getUserName(), Field.Store.YES, Field.Index.ANALYZED));
+        // text, don't index deleted/disabled users of a group blog
+        if (data.getCreator() != null) {
+            doc.add(new TextField(FieldConstants.USERNAME, data.getCreator().getUserName(),
+                    Field.Store.YES));
+        }
 
         // text
-        doc.add(new Field(FieldConstants.TITLE, data.getTitle(),
-                Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new TextField(FieldConstants.TITLE, data.getTitle(),
+                Field.Store.YES));
 
-        // text
-        doc.add(new Field(FieldConstants.LOCALE, data.getLocale(),
-                Field.Store.YES, Field.Index.ANALYZED));
+        // keyword
+        doc.add(new StringField(FieldConstants.LOCALE, data.getLocale(),
+                Field.Store.YES));
 
         // index the entry text, but don't store it - moved to end of block
-        // unstored
-        doc.add(new Field(FieldConstants.CONTENT, data.getText(),
-                Field.Store.NO, Field.Index.ANALYZED));
-
-        // store an abbreviated version of the entry text, but don't index
-        // unindexed
-        doc.add(new Field(FieldConstants.CONTENT_STORED, Utilities
-                .truncateNicely(Utilities.removeHTML(data.getText()), 240, 260,
-                        "..."), Field.Store.YES, Field.Index.NO));
+        doc.add(new TextField(FieldConstants.CONTENT, data.getText(),
+                Field.Store.NO));
 
         // keyword
-        doc.add(new Field(FieldConstants.UPDATED, data.getUpdateTime()
-                .toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new StringField(FieldConstants.UPDATED, data.getUpdateTime()
+                .toString(), Field.Store.YES));
 
         // keyword
-        doc.add(new Field(FieldConstants.PUBLISHED, data.getPubTime()
-                .toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-
-        // index Comments
-        // unstored
-        doc.add(new Field(FieldConstants.C_CONTENT, commentContent,
-                Field.Store.NO, Field.Index.ANALYZED));
-        // unstored
-        doc.add(new Field(FieldConstants.C_EMAIL, commentEmail, Field.Store.NO,
-                Field.Index.ANALYZED));
-        // unstored
-        doc.add(new Field(FieldConstants.C_NAME, commentName, Field.Store.NO,
-                Field.Index.ANALYZED));
-
-        // unstored
-        doc.add(new Field(FieldConstants.CONSTANT, FieldConstants.CONSTANT_V,
-                Field.Store.NO, Field.Index.ANALYZED));
+        doc.add(new StringField(FieldConstants.PUBLISHED, data.getPubTime()
+                .toString(), Field.Store.YES));
 
         // index Category
         WeblogCategory categorydata = data.getCategory();
-        Field category = (categorydata == null)
-        // unstored
-        ? new Field(FieldConstants.CATEGORY, "", Field.Store.NO,
-                Field.Index.ANALYZED)
-        // text
-                : new Field(FieldConstants.CATEGORY, categorydata.getName(),
-                        Field.Store.YES, Field.Index.ANALYZED);
-        doc.add(category);
+        if (categorydata != null) {
+            doc.add(new StringField(FieldConstants.CATEGORY, categorydata.getName(),
+                    Field.Store.YES));
+        }
+
+        // index Comments, unstored
+        doc.add(new TextField(FieldConstants.C_CONTENT, commentContent,
+                Field.Store.NO));
+
+        // keyword
+        doc.add(new StringField(FieldConstants.C_EMAIL, commentEmail, Field.Store.YES));
+
+        // keyword
+        doc.add(new StringField(FieldConstants.C_NAME, commentName, Field.Store.YES));
 
         return doc;
     }
