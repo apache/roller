@@ -119,9 +119,11 @@ public abstract class IndexOperation implements Runnable {
                 Field.Store.YES, Field.Index.NO));
 
         // text
-        doc.add(new Field(FieldConstants.USERNAME,
-                data.getCreator().getUserName(),
-                Field.Store.YES, Field.Index.ANALYZED));
+        if (data.getCreator() != null) {
+            doc.add(new Field(FieldConstants.USERNAME,
+                    data.getCreator().getUserName(),
+                    Field.Store.YES, Field.Index.ANALYZED));
+        }
 
         // text
         doc.add(new Field(FieldConstants.TITLE,
