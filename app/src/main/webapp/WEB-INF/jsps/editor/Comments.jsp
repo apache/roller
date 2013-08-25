@@ -47,15 +47,13 @@
     </s:else>
 </p>
 
-<p class="pagetip"><s:text name="commentManagement.tip" /></p>
-
 <s:if test="pager.items.isEmpty">
     <s:text name="commentManagement.noCommentsFound" />
 </s:if>
-
 <s:else>
+<p class="pagetip"><s:text name="commentManagement.tip" /></p>
 
-    <%-- ============================================================= --%>
+<%-- ============================================================= --%>
 <%-- Comment table / form with checkboxes --%>
 <%-- ============================================================= --%>
 
@@ -71,9 +69,9 @@
         <s:hidden name="bean.pendingString" />
         <s:hidden name="bean.spamString" />
 
-        <%-- ============================================================= --%>
+<%-- ============================================================= --%>
 <%-- Number of comments and date message --%>
-        <%-- ============================================================= --%>
+<%-- ============================================================= --%>
 
         <div class="tablenav">
 
