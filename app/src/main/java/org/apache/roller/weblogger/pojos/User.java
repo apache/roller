@@ -57,9 +57,7 @@ public class User implements Serializable {
     private String  activationCode;
     
     private Set roles = new HashSet();
-    private List permissions = new ArrayList();
-                 
-    
+
     public User() {
     }
     
@@ -134,7 +132,7 @@ public class User implements Serializable {
         
         String encrypt = WebloggerConfig.getProperty("passwds.encryption.enabled");
         String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
-        if (new Boolean(encrypt).booleanValue()) {
+        if (new Boolean(encrypt)) {
             setPassword(Utilities.encodePassword(newPassword, algorithm));
         } else {
             setPassword(newPassword);
@@ -300,5 +298,5 @@ public class User implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder().append(getUserName()).toHashCode();
     }
-    
+
 }

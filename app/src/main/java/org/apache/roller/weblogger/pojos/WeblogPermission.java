@@ -99,7 +99,7 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
                 return true;
                 
             } else if (hasAction(POST)) {
-                // Best we've got is POST, so make sure perm doesn't specify POST
+                // Best we've got is POST, so make sure perm doesn't specify ADMIN
                 for (String action : rperm.getActionsAsList()) {
                     if (action.equals(ADMIN)) return false;
                 }

@@ -96,20 +96,20 @@
     
     <p class="subtitle"><s:text name="userAdmin.userWeblogs" /></p> 
     
-    <s:if test="user.permissions != null && !user.permissions.isEmpty() > 0">  
+    <s:if test="permissions != null && !permissions.isEmpty() > 0">
         
         <p><s:text name="userAdmin.userMemberOf" /></p>  
         <table class="rollertable" style="width: 80%">
-            <s:iterator id="perms" value="user.permissions">
+            <s:iterator id="perms" value="permissions">
                 <tr>
                     <td width="%30">
-                        <a href='<s:property value="baseURL" />/<s:property value="#perms.website.handle" />'>
-                            <s:property value="#perms.website.name" /> [<s:property value="#perms.website.handle" />] 
+                        <a href='<s:property value="#perms.weblog.absoluteURL" />'>
+                            <s:property value="#perms.weblog.name" /> [<s:property value="#perms.weblog.handle" />]
                         </a>
                     </td>
                     <td width="%15">
                         <s:url action="entryAdd" namespace="/roller-ui/authoring" id="newEntry">
-                            <s:param name="weblog" value="#perms.website.handle" />
+                            <s:param name="weblog" value="#perms.weblog.handle" />
                         </s:url>
                         <img src='<s:url value="/images/page_white_edit.png"/>' />
                         <a href='<s:property value="newEntry" />'>
@@ -117,7 +117,7 @@
                     </td>
                     <td width="%15">
                         <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
-                            <s:param name="weblog" value="#perms.website.handle" />
+                            <s:param name="weblog" value="#perms.weblog.handle" />
                         </s:url>
                         <img src='<s:url value="/images/page_white_edit.png"/>' />
                         <a href='<s:property value="editEntries" />'>
@@ -125,7 +125,7 @@
                     </td>
                     <td width="%15">
                         <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
-                            <s:param name="weblog" value="#perms.website.handle" />
+                            <s:param name="weblog" value="#perms.weblog.handle" />
                         </s:url>
                         <img src='<s:url value="/images/page_white_edit.png"/>' />
                         <a href='<s:property value="manageWeblog" />'>

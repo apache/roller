@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -225,5 +227,14 @@ public class ModifyUser extends UIAction {
     public boolean isUserEditingSelf() {
         return getUser().equals(getAuthenticatedUser());
     }
-    
+
+    public List<WeblogPermission> getPermissions() {
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager().getWeblogPermissions(user);
+        } catch (WebloggerException ex) {
+            log.error("ERROR getting permissions for user " + user.getUserName(), ex);
+        }
+        return new ArrayList<WeblogPermission>();
+    }
+
 }

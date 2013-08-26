@@ -248,7 +248,7 @@ public interface UserManager {
     
     /**
      * Confirm user's permission within specified weblog or throw exception if no pending permission exists.
-     * (changes state of permsission record to pending = true)
+     * (changes state of permission record to pending = true)
      * @param weblog  Weblog to grant permissions in
      * @param user    User to grant permissions to
      * @param actions Actions to be granted
