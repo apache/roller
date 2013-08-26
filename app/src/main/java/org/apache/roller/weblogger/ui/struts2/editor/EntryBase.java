@@ -78,7 +78,6 @@ public abstract class EntryBase extends UIAction {
 	 * date, and category name parameters.
 	 * 
 	 * @return List of WeblogEntryData objects.
-	 * @throws WebloggerException
 	 */
 	public List<WeblogEntry> getRecentPublishedEntries() {
 		List<WeblogEntry> entries = Collections.EMPTY_LIST;
@@ -105,7 +104,6 @@ public abstract class EntryBase extends UIAction {
 	 * date, and category name parameters.
 	 * 
 	 * @return List of WeblogEntryData objects.
-	 * @throws WebloggerException
 	 */
 	public List<WeblogEntry> getRecentScheduledEntries() {
 		List<WeblogEntry> entries = Collections.EMPTY_LIST;
@@ -132,7 +130,6 @@ public abstract class EntryBase extends UIAction {
 	 * date, and category name parameters.
 	 * 
 	 * @return List of WeblogEntryData objects.
-	 * @throws WebloggerException
 	 */
 	public List<WeblogEntry> getRecentDraftEntries() {
 		List<WeblogEntry> entries = Collections.EMPTY_LIST;
@@ -158,7 +155,6 @@ public abstract class EntryBase extends UIAction {
 	 * date, and category name parameters.
 	 * 
 	 * @return List of WeblogEntryData objects.
-	 * @throws WebloggerException
 	 */
 	public List<WeblogEntry> getRecentPendingEntries() {
 		List<WeblogEntry> entries = Collections.EMPTY_LIST;

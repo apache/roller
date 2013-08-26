@@ -292,7 +292,27 @@
             <result name="error" type="chain">menu</result>
             <result name="success" type="chain">entryAdd</result>
         </action>
-        
+
+        <!-- Below activated by entries.jsp, kept separate from entryRemove!* above
+        as return page is different (the list of entries in this case, new blog
+        entry in the other.
+
+        Process flow:
+        1. Delete item on entries.jsp activates this action.
+        2. Tiles.xml is consulted to satisfy the input (here, EntryRemoveViaList.jsp
+        3. EntryRemoveViaList.jsp codes the yes confirmation to return to this action,
+        with method "EntryRemove.remove()" activated, a success of which will return
+        to the entries page as coded below with the blog entry removed from the table.
+        4. EntryRemoveViaList.jsp codes the no/cancel button to return to the
+        entries.jsp page with the blog article still remaining.
+        -->
+        <action name="entryRemoveViaList!*" method="{1}"
+              class="org.apache.roller.weblogger.ui.struts2.editor.EntryRemove">
+          <result name="input" type="tiles">.EntryRemoveViaList</result>
+          <result name="error" type="chain">menu</result>
+          <result name="success" type="chain">entries</result>
+        </action>
+
         <action name="entries"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Entries">
             <result name="list" type="tiles">.Entries</result>

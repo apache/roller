@@ -28,7 +28,7 @@
 
 
 <%-- ============================================================= --%>
-<%-- Number of comments and date message --%>
+<%-- Number of entries and date message --%>
 <%-- ============================================================= --%>
 
 <div class="tablenav">
@@ -117,6 +117,8 @@
     </th>
     <th class="rollertable" width="5%">
     </th>
+    <th class="rollertable" width="5%">
+    </th>
 </tr>
 
 <s:iterator id="post" value="pager.items">
@@ -151,19 +153,27 @@
     </td>
     
     <td>
+        <s:if test="#post.status == 'PUBLISHED'">
+            <a href='<s:property value="#post.permalink" />'><s:text name="weblogEntryQuery.view" /></a>
+        </s:if>
+    </td>
+
+    <td>
         <s:url id="editUrl" action="entryEdit">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
             <s:param name="bean.id" value="#post.id" />
         </s:url>
         <s:a href="%{editUrl}"><s:text name="weblogEntryQuery.edit" /></s:a>
     </td>
-    
+
     <td>
-        <s:if test="#post.status == 'PUBLISHED'">
-            <a href='<s:property value="#post.permalink" />'><s:text name="weblogEntryQuery.view" /></a>
-        </s:if>
+        <s:url id="deleteUrl" action="entryRemoveViaList">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+            <s:param name="removeId" value="#post.id" />
+        </s:url>
+        <s:a href="%{deleteUrl}"><s:text name="weblogEntryQuery.delete" /></s:a>
     </td>
-    
+
     </tr>
 </s:iterator>
 
