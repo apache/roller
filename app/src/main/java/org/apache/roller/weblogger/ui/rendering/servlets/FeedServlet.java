@@ -50,9 +50,6 @@ import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 
 /**
  * Responsible for rendering weblog feeds.
- *
- * @web.servlet name="FeedServlet" load-on-startup="5"
- * @web.servlet-mapping url-pattern="/roller-ui/rendering/feed/*"
  */
 public class FeedServlet extends HttpServlet {
 

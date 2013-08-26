@@ -46,10 +46,7 @@ import org.apache.roller.weblogger.util.cache.CachedContent;
 
 
 /**
- * Planet Roller (i.e. NOT for Planet Tool) RSS feed.
- *
- * @web.servlet name="PlanetFeedServlet" load-on-startup="7"
- * @web.servlet-mapping url-pattern="/planetrss/*"
+ * Planet Roller RSS feed.
  */
 public class PlanetFeedServlet extends HttpServlet {
 

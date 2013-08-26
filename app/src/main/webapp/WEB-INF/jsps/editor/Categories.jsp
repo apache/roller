@@ -124,11 +124,13 @@ function onMove()
                 </td>
                 
                 <td class="rollertable" align="center">
-                    <s:url id="removeUrl" action="categoryRemove">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="removeId" value="#category.id" />
-                    </s:url>
-                    <s:a href="%{removeUrl}"><img src='<s:url value="/images/delete.png"/>' border="0" alt="icon" /></s:a>
+                    <s:if test="!categoryPath.isEmpty || category.weblogCategories.size() > 1">
+                        <s:url id="removeUrl" action="categoryRemove">
+                            <s:param name="weblog" value="%{actionWeblog.handle}" />
+                            <s:param name="removeId" value="#category.id" />
+                        </s:url>
+                        <s:a href="%{removeUrl}"><img src='<s:url value="/images/delete.png"/>' border="0" alt="icon" /></s:a>
+                    </s:if>
                 </td>
                 
             </tr>

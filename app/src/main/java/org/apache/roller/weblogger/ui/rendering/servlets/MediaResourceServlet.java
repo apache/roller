@@ -45,9 +45,6 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogMediaResourceRequest;
  * Since we keep resources in a location outside of the webapp
  * context we need a way to serve them up.  This servlet assumes that
  * resources are stored on a filesystem in the "uploads.dir" directory.
- *
- * @web.servlet name="MediaResourceServlet" load-on-startup="5"
- * @web.servlet-mapping url-pattern="/roller-ui/rendering/media-resources/*"
  */
 public class MediaResourceServlet extends HttpServlet {
 

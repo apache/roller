@@ -43,9 +43,6 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogResourceRequest;
 /**
  * Serves fixed-path files such as old-style uploads and theme resources,
  * which must exist at a fixed-path even if moved in media file folders.
- *
- * @web.servlet name="ResourcesServlet" load-on-startup="5"
- * @web.servlet-mapping url-pattern="/roller-ui/rendering/resources/*"
  */
 public class ResourceServlet extends HttpServlet {
 

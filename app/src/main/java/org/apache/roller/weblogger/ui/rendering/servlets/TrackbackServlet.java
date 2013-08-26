@@ -48,10 +48,7 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 /**
  * Roller's Trackback server implementation. POSTing to this Servlet will add a
  * Trackback to a Weblog Entry. For more info on Trackback, read the spec:
- * <a href="http://www.movabletype.org/docs/mttrackback.html">MT Trackback</a>.
- *
- * @web.servlet name="TrackbackServlet"
- * @web.servlet-mapping url-pattern="/roller-ui/rendering/trackback/*"
+ * <a href="http://www.movabletype.org/documentation/trackback/specification.html">MT Trackback</a>.
  */
 public class TrackbackServlet extends HttpServlet { 
     

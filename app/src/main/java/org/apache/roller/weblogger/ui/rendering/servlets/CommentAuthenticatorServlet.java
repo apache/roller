@@ -37,9 +37,6 @@ import org.apache.roller.weblogger.ui.rendering.plugins.comments.DefaultCommentA
  * comment authentication.  This is done outside of the normal rendering process
  * so that we can cache full pages and still set the comment authentication
  * section dynamically.
- *
- * @web.servlet name="CommentAuthenticatorServlet" load-on-startup="7"
- * @web.servlet-mapping url-pattern="/CommentAuthenticatorServlet"
  */
 public class CommentAuthenticatorServlet extends HttpServlet {
     

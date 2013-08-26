@@ -47,9 +47,6 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewResourceReques
  * static resources in shared themes.  This servlet differs from the normal
  * ResourceServlet because it can accept urls parameters which affect how it
  * behaves which are used for previewing.
- *
- * @web.servlet name="PreviewResourceServlet" load-on-startup="9"
- * @web.servlet-mapping url-pattern="/roller-ui/authoring/previewresource/*"
  */
 public class PreviewResourceServlet extends HttpServlet {
 

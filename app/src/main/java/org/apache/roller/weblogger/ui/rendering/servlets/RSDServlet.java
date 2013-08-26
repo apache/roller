@@ -48,9 +48,6 @@ import org.apache.roller.weblogger.util.cache.CachedContent;
  *
  * This servlet supports 304 If-Modified-Since checking, but does not do any
  * level of content caching.
- *
- * @web.servlet name="RSDServlet" load-on-startup="7"
- * @web.servlet-mapping url-pattern="/roller-ui/rendering/rsd/*"
  */
 public class RSDServlet extends HttpServlet {
     
