@@ -65,8 +65,9 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
     private int sleepTime = 10000;
     private List workers = null;
     private List referrerQueue = null;
+    private int referrerCount = 0;
+    private int maxAsyncQueueSize = 0;
 
-    
     // private because we are a singleton
     @com.google.inject.Inject
     protected ReferrerQueueManagerImpl(Weblogger roller) {
@@ -129,7 +130,8 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
      * now.
      */
     public void processReferrer(IncomingReferrer referrer) {
-        
+        referrerCount++;
+
         if(this.asyncMode) {
             mLogger.debug("QUEUING: "+referrer.getRequestUrl());
             
@@ -163,8 +165,12 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
      */
     public void enqueue(IncomingReferrer referrer) {
         this.referrerQueue.add(referrer);
-        
-        if(this.referrerQueue.size() > 250) {
+
+        int currentSize = this.referrerQueue.size();
+        if (currentSize > maxAsyncQueueSize) {
+            maxAsyncQueueSize = currentSize;
+        }
+        if (currentSize > 250) {
             mLogger.warn("Referrer queue is rather full. queued="+this.referrerQueue.size());
         }
     }
@@ -190,7 +196,10 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
         
         if(this.workers != null && this.workers.size() > 0) {
             mLogger.info("stopping all ReferrerQueue worker threads");
-            
+            mLogger.info("Total referrers received: " + referrerCount);
+            if (this.asyncMode) {
+                mLogger.info("Max Async Referrer queue size: " + maxAsyncQueueSize);
+            }
             // kill all of our threads
             WorkerThread worker = null;
             Iterator it = this.workers.iterator();
