@@ -1,7 +1,7 @@
 <!-- 
 Defines the Roller Weblog Editor/Admin UI menu and roles allowed to use each 
 menu. See also, admin-menu.xml, which defines the Global Admin menu.
-Each menu or menu item is governed by four attrbibutes:
+Each menu or menu item is governed by four attributes:
 
     1) globalPerms: these are the global permissions required to view the item
        Possible values:
@@ -9,9 +9,9 @@ Each menu or menu item is governed by four attrbibutes:
        - login:    allowed to login and save profile
        - weblog:   is allowed to create and user weblogs
        - comment:  allowed to comment on weblogs
-       Use "any" to indicate that role is not required to view ite
+       Use "any" to indicate that role is not required to view item
        
-    2) webogPerms: these are the weblog specific permissions required to view item
+    2) weblogPerms: these are the weblog specific permissions required to view item
        - post:        edit and publish entries, bookmarks
        - edit_draft:  create and edit draft posts only
        - admin:       edit and publish entries, edit categories, manage users, etc.
@@ -34,7 +34,7 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item action="entries" 
                    name="tabbedmenu.weblog.archives" 
                    globalPerms="login"
-                   weblogPerms="edit_draft" />
+                   weblogPerms="post" />
         
         <menu-item action="comments" 
                    name="tabbedmenu.admin.commentManagement" 

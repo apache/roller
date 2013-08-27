@@ -28,7 +28,7 @@
 
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.4.2.min.js" />"></script>
 <!-- Combo-handled YUI JS files: TODO add to roller-ui/yui or remove??
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0r4/build/autocomplete/assets/skins/sam/autocomplete.css"> 
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0r4/build/autocomplete/assets/skins/sam/autocomplete.css">
 <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.8.0r4/build/animation/animation-min.js&2.8.0r4/build/connection/connection-min.js&2.8.0r4/build/datasource/datasource-min.js&2.8.0r4/build/autocomplete/autocomplete-min.js"></script>
 -->
 <style>

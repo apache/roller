@@ -136,7 +136,7 @@ public class MainMenu extends UIAction {
     public List getPendingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            return mgr.getWeblogPermissionsPending(getAuthenticatedUser());
+            return mgr.getPendingWeblogPermissions(getAuthenticatedUser());
         } catch(Exception e) {
             return Collections.EMPTY_LIST;
         }

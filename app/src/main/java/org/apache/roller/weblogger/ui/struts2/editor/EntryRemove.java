@@ -25,7 +25,11 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Remove a weblog entry.
@@ -129,5 +133,10 @@ public class EntryRemove extends EntryBase {
 	public void setRemoveEntry(WeblogEntry removeEntry) {
 		this.removeEntry = removeEntry;
 	}
+
+    // allow LIMITED users to delete their own draft/pending blog entries
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
+    }
 
 }

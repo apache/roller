@@ -111,23 +111,27 @@
                        <s:a href="%{newEntry}"><s:text name="yourWebsites.newEntry" /></s:a>
                        <br />
 
-                       <%-- Show Entries link with count, TODO: show N/M where N is draft, M is published --%>
-                       <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
-                           <s:param name="weblog" value="#perms.weblog.handle" />
-                       </s:url>
-                       <img src='<s:url value="/images/table_multiple.png"/>' />
-                       <s:a href="%{editEntries}"><s:text name="yourWebsites.editEntries" /> (<s:property value="#perms.weblog.entryCount" />)</s:a> 
-                       <br />
+                       <%-- Show Entries link with count for users above LIMITED permission --%>
+                       <s:if test='!(#perms.hasAction("edit_draft"))'>
+                           <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
+                               <s:param name="weblog" value="#perms.weblog.handle" />
+                           </s:url>
+                           <img src='<s:url value="/images/table_multiple.png"/>' />
+                           <s:a href="%{editEntries}"><s:text name="yourWebsites.editEntries" /> (<s:property value="#perms.weblog.entryCount" />)</s:a>
+                           <br />
+                       </s:if>
 
-                       <%-- Show Comments link with count, TODO: show N/M where N is pending, M is approved --%>
-                       <s:url action="comments" namespace="/roller-ui/authoring" id="manageComments">
-                           <s:param name="weblog" value="#perms.weblog.handle" />
-                       </s:url>
-                       <img src='<s:url value="/images/page_white_edit.png"/>' />
-                       <s:a href="%{manageComments}"><s:text name="yourWebsites.manageComments" /> (<s:property value="#perms.weblog.commentCount" />)</s:a> 
-                       <br />
-                       
-                       <%-- Only adming get access to theme and config settings --%>
+                       <%-- Show Comments link with count for users above LIMITED permission --%>
+                       <s:if test='!(#perms.hasAction("edit_draft"))'>
+                           <s:url action="comments" namespace="/roller-ui/authoring" id="manageComments">
+                               <s:param name="weblog" value="#perms.weblog.handle" />
+                           </s:url>
+                           <img src='<s:url value="/images/page_white_edit.png"/>' />
+                           <s:a href="%{manageComments}"><s:text name="yourWebsites.manageComments" /> (<s:property value="#perms.weblog.commentCount" />)</s:a>
+                           <br />
+                       </s:if>
+
+                       <%-- Only admins get access to theme and config settings --%>
                        <s:if test='#perms.hasAction("admin")'>
                            
                            <%-- And only show theme option if custom themes are enabled --%>

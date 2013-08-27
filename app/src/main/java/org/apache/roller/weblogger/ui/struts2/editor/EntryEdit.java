@@ -235,7 +235,9 @@ public final class EntryEdit extends EntryBase {
 
                 if (entry.isPending()) {
                     // implies that entry just changed to pending
-                    MailUtil.sendPendingEntryNotice(entry);
+                    if (MailUtil.isMailConfigured()) {
+                        MailUtil.sendPendingEntryNotice(entry);
+                    }
                     addMessage("weblogEdit.submittedForReview");
                 } else {
                     addMessage("weblogEdit.changesSaved");

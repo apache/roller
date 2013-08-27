@@ -217,13 +217,6 @@
     
     
     <!-- weblog editor pages (and associates) -->
-    <definition name=".EntryAdd" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryAdd.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
-    </definition>
-
     <definition name=".MediaFileAdd" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAdd.jsp" />
@@ -252,7 +245,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileImageDimension.jsp" />
     </definition>
     
-
     <definition name=".MediaFileSearchInclude" extends=".tiles-popuppage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileSearch.jsp" />
@@ -300,14 +292,21 @@
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
-    
+
+    <definition name=".EntryAdd" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryAdd.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+
     <definition name=".EntryEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
-    
+
     <definition name=".EntryRemove" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryRemove.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
@@ -324,7 +323,7 @@
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntriesSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
-    
+
     <definition name=".Comments" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />

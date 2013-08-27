@@ -569,7 +569,7 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     public WeblogPermission getWeblogPermission(Weblog weblog, User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId&NotPending");
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         try {
@@ -579,11 +579,21 @@ public class JPAUserManagerImpl implements UserManager {
         }
     }
 
-    
+    public WeblogPermission getWeblogPermissionIncludingPending(Weblog weblog, User user) throws WebloggerException {
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
+        q.setParameter(1, user.getUserName());
+        q.setParameter(2, weblog.getHandle());
+        try {
+            return (WeblogPermission)q.getSingleResult();
+        } catch (NoResultException ignored) {
+            return null;
+        }
+    }
+
     public void grantWeblogPermission(Weblog weblog, User user, List<String> actions) throws WebloggerException {
 
         // first, see if user already has a permission for the specified object
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm = null;
@@ -606,7 +616,7 @@ public class JPAUserManagerImpl implements UserManager {
     public void grantWeblogPermissionPending(Weblog weblog, User user, List<String> actions) throws WebloggerException {
 
         // first, see if user already has a permission for the specified object
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm = null;
@@ -630,7 +640,7 @@ public class JPAUserManagerImpl implements UserManager {
     public void confirmWeblogPermission(Weblog weblog, User user) throws WebloggerException {
 
         // get specified permission
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm = null;
@@ -649,7 +659,7 @@ public class JPAUserManagerImpl implements UserManager {
     public void declineWeblogPermission(Weblog weblog, User user) throws WebloggerException {
 
         // get specified permission
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm = null;
@@ -666,7 +676,7 @@ public class JPAUserManagerImpl implements UserManager {
     public void revokeWeblogPermission(Weblog weblog, User user, List<String> actions) throws WebloggerException {
 
         // get specified permission
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission oldperm = null;
@@ -676,7 +686,7 @@ public class JPAUserManagerImpl implements UserManager {
             throw new WebloggerException("ERROR: permission not found");
         }
 
-// remove actions specified in perm agument
+        // remove actions specified in perm argument
         oldperm.removeActions(actions);
 
         if (oldperm.isEmpty()) {
@@ -695,28 +705,30 @@ public class JPAUserManagerImpl implements UserManager {
         return (List<WeblogPermission>)q.getResultList();
     }
 
-    
     public List<WeblogPermission> getWeblogPermissions(Weblog weblog) throws WebloggerException {
         Query q = strategy.getNamedQuery("WeblogPermission.getByWeblogId");
         q.setParameter(1, weblog.getHandle());
         return (List<WeblogPermission>)q.getResultList();
     }
 
-    
-    public List<WeblogPermission> getWeblogPermissionsPending(User user) throws WebloggerException {
+    public List<WeblogPermission> getWeblogPermissionsIncludingPending(Weblog weblog) throws WebloggerException {
+        Query q = strategy.getNamedQuery("WeblogPermission.getByWeblogIdIncludingPending");
+        q.setParameter(1, weblog.getHandle());
+        return (List<WeblogPermission>)q.getResultList();
+    }
+
+    public List<WeblogPermission> getPendingWeblogPermissions(User user) throws WebloggerException {
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&Pending");
         q.setParameter(1, user.getUserName());
         return (List<WeblogPermission>)q.getResultList();
     }
 
-
-    public List<WeblogPermission> getWeblogPermissionsPending(Weblog weblog) throws WebloggerException {
+    public List<WeblogPermission> getPendingWeblogPermissions(Weblog weblog) throws WebloggerException {
         Query q = strategy.getNamedQuery("WeblogPermission.getByWeblogId&Pending");
         q.setParameter(1, weblog.getHandle());
         return (List<WeblogPermission>)q.getResultList();
     }
 
-    
 //-------------------------------------------------------------- role CRUD
  
     

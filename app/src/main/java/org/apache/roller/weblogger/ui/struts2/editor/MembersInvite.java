@@ -70,7 +70,7 @@ public class MembersInvite extends UIAction {
             return SUCCESS;
         }
         
-        log.debug("Showing weblog inivitation form");
+        log.debug("Showing weblog invitation form");
         
         return INPUT;
     }
@@ -112,8 +112,8 @@ public class MembersInvite extends UIAction {
         
         // check for existing permissions or invitation
         try {
-            WeblogPermission perm = umgr.getWeblogPermission(getActionWeblog(), user);
-            
+            WeblogPermission perm = umgr.getWeblogPermissionIncludingPending(getActionWeblog(), user);
+
             if (perm != null && perm.isPending()) {
                 addError("inviteMember.error.userAlreadyInvited");
             } else if (perm != null) {

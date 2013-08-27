@@ -73,21 +73,21 @@ public class Members extends UIAction implements ParameterAware {
     
     public String save() {
         
-        log.debug("Attempting to processing weblog permissions updates");
+        log.debug("Attempting to process weblog permissions updates");
         
         int removed = 0;
         int changed = 0;
         List<WeblogPermission> permsList = new ArrayList<WeblogPermission>();
         try {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();   
-            List<WeblogPermission> permissions = userMgr.getWeblogPermissions(getActionWeblog());
+            List<WeblogPermission> permissions = userMgr.getWeblogPermissionsIncludingPending(getActionWeblog());
 
             // we have to copy the permissions list so that when we remove permissions
             // below we don't get ConcurrentModificationExceptions
             for( WeblogPermission perm : permissions ) {
                 permsList.add(perm);
             }
-        
+            // one iteration for each line (user) in the members table
             for (WeblogPermission perms : permsList) {
                 
                 String sval = getParameter("perm-" + perms.getUser().getId());
@@ -108,8 +108,8 @@ public class Members extends UIAction implements ParameterAware {
                         
                     } 
                     if (!error && !perms.hasAction(sval)) {
-                        if (sval == null) {
-                            userMgr.revokeWeblogPermission(
+                        if ("-1".equals(sval)) {
+                             userMgr.revokeWeblogPermission(
                                     perms.getWeblog(), perms.getUser(), WeblogPermission.ALL_ACTIONS);
                             removed++;
                         } else {
@@ -167,7 +167,7 @@ public class Members extends UIAction implements ParameterAware {
     
     public List<WeblogPermission> getWeblogPermissions() {
         try {
-            return WebloggerFactory.getWeblogger().getUserManager().getWeblogPermissions(getActionWeblog());
+            return WebloggerFactory.getWeblogger().getUserManager().getWeblogPermissionsIncludingPending(getActionWeblog());
         } catch (WebloggerException ex) {
             // serious problem, but not much we can do here
             log.error("ERROR getting weblog permissions", ex);

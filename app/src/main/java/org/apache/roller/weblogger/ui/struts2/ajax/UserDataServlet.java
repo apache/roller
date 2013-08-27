@@ -57,11 +57,17 @@ public class UserDataServlet extends HttpServlet {
         Boolean enabledOnly = null;
         int offset = 0;
         int length = MAX_LENGTH;
-        if ("true".equals(request.getParameter("enabled"))) enabledOnly = Boolean.TRUE;
-        if ("false".equals(request.getParameter("enabled"))) enabledOnly = Boolean.FALSE;
-        try { offset = Integer.parseInt(request.getParameter("offset"));
+        if ("true".equals(request.getParameter("enabled"))) {
+            enabledOnly = Boolean.TRUE;
+        }
+        if ("false".equals(request.getParameter("enabled"))) {
+            enabledOnly = Boolean.FALSE;
+        }
+        try {
+            offset = Integer.parseInt(request.getParameter("offset"));
         } catch (Exception ignored) {}
-        try { length = Integer.parseInt(request.getParameter("length"));
+        try {
+            length = Integer.parseInt(request.getParameter("length"));
         } catch (Exception ignored) {}
         
         Weblogger roller = WebloggerFactory.getWeblogger();

@@ -116,7 +116,6 @@ public interface UserManager {
      * to users created within a certain date range, and the results can be
      * confined to a certain offset & length for paging abilities.
      * 
-     * @param weblog Confine results to users with permission to a certain weblog.
      * @param enabled True for enabled only, False for disabled only (or null for all)
      * @param startDate Restrict to those created after startDate (or null for all)
      * @param endDate Restrict to those created before startDate (or null for all)
@@ -187,8 +186,8 @@ public interface UserManager {
     
     
     /**
-     * Get user atribute value
-     * @param user User
+     * Get user attribute value
+     * @param userName User
      * @param attribute Atribute name
      * @return List of user attributes
      */
@@ -197,7 +196,7 @@ public interface UserManager {
     
     /**
      * Set user atribute value
-     * @param user User
+     * @param userName User
      * @param attribute Atribute name     
      * @param value Atribute value
      * @throws org.apache.roller.weblogger.WebloggerException
@@ -251,7 +250,6 @@ public interface UserManager {
      * (changes state of permission record to pending = true)
      * @param weblog  Weblog to grant permissions in
      * @param user    User to grant permissions to
-     * @param actions Actions to be granted
      */
     void confirmWeblogPermission(Weblog weblog, User user)
             throws WebloggerException;
@@ -262,7 +260,6 @@ public interface UserManager {
      * (removes permission record)
      * @param weblog  Weblog to grant permissions in
      * @param user    User to grant permissions to
-     * @param actions Actions to be granted
      */
     void declineWeblogPermission(Weblog weblog, User user)
             throws WebloggerException;
@@ -289,31 +286,41 @@ public interface UserManager {
     /**
      * Get all of user's pending weblog permissions.
      */
-    List<WeblogPermission> getWeblogPermissionsPending(User user)
+    List<WeblogPermission> getPendingWeblogPermissions(User user)
             throws WebloggerException;
-    
-    
+
     /**
-     * Get all permissions associated with a weblog.
+     * Get all active permissions associated with a weblog.
      */
     List<WeblogPermission> getWeblogPermissions(Weblog weblog)
             throws WebloggerException;
-    
-    
+
     /**
      * Get all pending permissions associated with a weblog.
      */
-    List<WeblogPermission> getWeblogPermissionsPending(Weblog weblog)
+    List<WeblogPermission> getPendingWeblogPermissions(Weblog weblog)
             throws WebloggerException;
-    
-    
+
+    /**
+     * Get all permissions (pending or actual) for a weblog.
+     */
+    List<WeblogPermission> getWeblogPermissionsIncludingPending(Weblog weblog)
+            throws WebloggerException;
+
+
     /**
      * Get user's permission within a weblog or null if none.
      */
     WeblogPermission getWeblogPermission(Weblog weblog, User user)
-            throws WebloggerException;        
-    
-    
+            throws WebloggerException;
+
+    /**
+     * Get user's permission (pending or actual) for a weblog
+     */
+    WeblogPermission getWeblogPermissionIncludingPending(Weblog weblog, User user)
+            throws WebloggerException;
+
+
     //--------------------------------------------------------------- role CRUD
 
     

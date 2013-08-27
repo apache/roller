@@ -223,13 +223,7 @@
     
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger">
-        
-        <action name="entryAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAdd">
-            <result name="input" type="tiles">.EntryAdd</result>
-            <result name="success" type="chain">entryEdit</result>
-        </action>
-        
+
         <action name="entryAddWithMediaFile!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile">
             <result name="success" type="chain">entryAdd</result>
@@ -275,9 +269,15 @@
         </action>
 -->
 		
-	<action name="mediaFileImageDim!*" method="{1}"
+	    <action name="mediaFileImageDim!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
             <result name="success" type="tiles">.MediaFileImageDimension</result>
+        </action>
+
+        <action name="entryAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAdd">
+            <result name="input" type="tiles">.EntryAdd</result>
+            <result name="success" type="chain">entryEdit</result>
         </action>
 
         <action name="entryEdit!*" method="{1}"
