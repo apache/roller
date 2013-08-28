@@ -157,8 +157,8 @@
                        <%-- don't allow last admin to resign from blog --%>
                        <s:if test='!(#perms.hasAction("admin") && #perms.weblog.adminUserCount == 1)'>
                           <img src='<c:url value="/images/delete.png"/>' />
-                          <s:url action="menu!resign" id="resignWeblog">
-                               <s:param name="websiteId" value="#perms.weblog.id" />
+                          <s:url action="memberResign" namespace="/roller-ui/authoring" id="resignWeblog">
+                              <s:param name="weblog" value="#perms.weblog.handle" />
                           </s:url>
                           <a href='<s:property value="resignWeblog" />'>
                               <s:text name='yourWebsites.resign' />

@@ -99,31 +99,7 @@ public class MainMenu extends UIAction {
         
         return SUCCESS;
     }
-    
-    
-    public String resign() {
 
-        try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            Weblog weblog = wmgr.getWeblog(getWebsiteId());
-            String handle = weblog.getHandle();
-            // TODO ROLLER_2.0: notify website members that user has resigned
-            // TODO EXCEPTIONS: better exception handling
-            umgr.revokeWeblogPermission(weblog, getAuthenticatedUser(), WeblogPermission.ALL_ACTIONS);
-            WebloggerFactory.getWeblogger().flush();            
-            addMessage("yourWebsites.resigned", handle);
-            
-        } catch (WebloggerException ex) {
-            log.error("Error doing weblog resign - "+getWebsiteId(), ex);
-            // TODO: i18n
-            addError("resignation failed.");
-        }
-        
-        return SUCCESS;
-    }
-    
-    
     public List getExistingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();

@@ -468,7 +468,14 @@
             <result name="disabled" type="tiles">.disabled</result>
             <result name="success" type="chain">members</result>
         </action>
-        
+
+        <action name="memberResign!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MemberResign">
+            <result name="input" type="tiles">.MemberResign</result>
+            <result name="error" type="chain">menu</result>
+            <result name="success" type="chain">menu</result>
+        </action>
+
         <action name="pings!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Pings">
             <result name="list" type="tiles">.Pings</result>
