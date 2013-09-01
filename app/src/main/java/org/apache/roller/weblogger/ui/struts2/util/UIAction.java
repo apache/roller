@@ -35,9 +35,12 @@ import org.apache.struts2.interceptor.RequestAware;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
@@ -387,19 +390,21 @@ public abstract class UIAction extends ActionSupport
         return opts;
     }
 
-    private static String cleanDollarExpressions(String s) {
-        // Remove ${ } expressions; handcoded automaton
+    private static Set OPEN_CHARS = new HashSet(Arrays.asList('$', '%'));
+
+    private static String cleanExpressions(String s) {
         StringBuilder cleaned = new StringBuilder(s.length());
         boolean skipping = false;
         int braceDepth = 0;
         int p = 0;
-        char prior = ' ';
+        Character prior = ' ';
         while (p < s.length()) {
+            boolean priorIsOpenChar = OPEN_CHARS.contains(prior);
             char c = s.charAt(p);
             switch (c) {
                 case '{':
                     ++braceDepth;
-                    skipping = skipping || (prior == '$');
+                    skipping = skipping || priorIsOpenChar;
                     break;
                 case '}':
                     if (braceDepth > 0) --braceDepth;
@@ -407,20 +412,20 @@ public abstract class UIAction extends ActionSupport
                 default:
             }
             if (!skipping) {
-                if (prior == '$') cleaned.append(prior);
-                if (c != '$')  cleaned.append(c);
+                if (priorIsOpenChar) cleaned.append(prior);
+                if (!OPEN_CHARS.contains(c))  cleaned.append(c);
             }
             skipping = skipping && (braceDepth > 0);
             prior = c;
             ++p;
         }
-        if (prior == '$') cleaned.append(prior);  // string had final $ held in prior
+        if (OPEN_CHARS.contains(prior)) cleaned.append(prior);  // string had final open character held in prior
         return cleaned.toString();
     }
 
     public static String cleanText(String s) {
         if (s == null || s.isEmpty()) return s;
         // escape HTML
-        return StringEscapeUtils.escapeHtml(cleanDollarExpressions(s));
+        return StringEscapeUtils.escapeHtml(cleanExpressions(s));
     }
 }

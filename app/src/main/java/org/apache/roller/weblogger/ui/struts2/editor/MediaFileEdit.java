@@ -102,9 +102,8 @@ public class MediaFileEdit extends MediaFileBase {
             addError("uploadFiles.error.upload", bean.getName());
 
         } catch (Exception e) {
-            log.error("Error saving new entry", e);
-            // TODO: i18n
-            addError("Error reading uploaded file - " + bean.getName());
+            log.error("Error uploading file " + bean.getName(), e);
+            addError("uploadFiles.error.upload", bean.getName());
         }
 
         return INPUT;
@@ -151,9 +150,8 @@ public class MediaFileEdit extends MediaFileBase {
                 addError("uploadFiles.error.upload", bean.getName());
 
             } catch (Exception e) {
-                log.error("Error saving new entry", e);
-                // TODO: i18n
-                addError("Error reading uploaded file - " + bean.getName());
+                log.error("Error uploading file " + bean.getName(), e);
+                addError("uploadFiles.error.upload", bean.getName());
             }
 
         }

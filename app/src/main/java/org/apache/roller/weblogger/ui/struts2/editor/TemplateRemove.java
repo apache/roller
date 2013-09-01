@@ -66,8 +66,7 @@ public class TemplateRemove extends UIAction {
 			} catch (WebloggerException ex) {
 				log.error("Error looking up template by id - " + getRemoveId(),
 						ex);
-				// TODO: i18n
-				addError("Could not find template to remove - " + getRemoveId());
+				addError("editPages.remove.notFound", getRemoveId());
 			}
 	}
 
@@ -129,14 +128,12 @@ public class TemplateRemove extends UIAction {
 
 					return SUCCESS;
 				} else {
-					// TODO: i18n
-					addError("Cannot remove required template");
+					addError("editPages.remove.requiredTemplate");
 				}
 
 			} catch (Exception ex) {
 				log.error("Error removing page - " + getRemoveId(), ex);
-				// TODO: i18n
-				addError("Error removing page");
+				addError("editPages.remove.error");
 			}
 
 		return "confirm";

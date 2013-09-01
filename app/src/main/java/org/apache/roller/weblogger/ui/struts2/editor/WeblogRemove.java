@@ -66,14 +66,12 @@ public class WeblogRemove extends UIAction {
 
             CacheManager.invalidate(getActionWeblog());
 
-            // TODO: i18n
-            addMessage("Successfully removed weblog - " + getActionWeblog().getName());
+            addMessage("websiteRemove.success", getActionWeblog().getName());
 
             return SUCCESS;
         } catch (Exception ex) {
             log.error("Error removing weblog - " + getActionWeblog().getHandle(), ex);
-            // TODO: i18n
-            addError("Error removing weblog");
+            addError("websiteRemove.error", getActionWeblog().getName());
         }
 
         return "confirm";
