@@ -19,7 +19,7 @@
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
            <contentType>text/html</contentType>
-           <contentsFile>Weblog.vm</contentsFile>
+           <contentsFile>weblog.vm</contentsFile>
            <type>standard</type>
        </templateCode>
     </template>
