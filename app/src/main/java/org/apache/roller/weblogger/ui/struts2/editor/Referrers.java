@@ -39,10 +39,10 @@ public class Referrers extends UIAction {
     
     // list of referrers to display
     private List<WeblogReferrer> referrers = Collections.EMPTY_LIST;
-    
+
     // referrers hits today
     private int dayHits = 0;
-    
+
     // ids of referrers to remove
     private String[] removeIds = null;
     

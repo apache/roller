@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;

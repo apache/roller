@@ -32,14 +32,13 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 
 
 /**
- * Allows user to perform maintenence operations such as flushing
+ * Allows user to perform maintenance operations such as flushing
  * the page cache or re-indexing the search index.
  */
 public class Maintenance extends UIAction {
     
     private static Log log = LogFactory.getLog(Maintenance.class);
-    
-    
+
     public Maintenance() {
         this.actionName = "maintenance";
         this.desiredMenu = "editor";
@@ -105,5 +104,5 @@ public class Maintenance extends UIAction {
 
         return SUCCESS;
     }
-    
+
 }

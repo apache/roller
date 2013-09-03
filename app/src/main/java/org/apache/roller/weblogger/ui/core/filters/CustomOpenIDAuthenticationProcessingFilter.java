@@ -33,7 +33,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.security.openid.OpenIDAuthenticationFilter;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.openid.OpenIDConsumer;
 //import org.springframework.security.userdetails.openid.OpenIDUserAttribute;
 
