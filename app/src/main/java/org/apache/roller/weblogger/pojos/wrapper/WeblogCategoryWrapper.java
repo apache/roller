@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 /**
  * Pojo safety wrapper for WeblogCategory objects.
  */
-public class WeblogCategoryWrapper {
+public final class WeblogCategoryWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogCategory pojo;
@@ -49,8 +49,9 @@ public class WeblogCategoryWrapper {
     
     // wrap the given pojo if it is not null
     public static WeblogCategoryWrapper wrap(WeblogCategory toWrap, URLStrategy strat) {
-        if(toWrap != null)
+        if (toWrap != null) {
             return new WeblogCategoryWrapper(toWrap, strat);
+        }
         
         return null;
     }

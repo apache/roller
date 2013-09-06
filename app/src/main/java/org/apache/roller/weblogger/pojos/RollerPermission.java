@@ -55,7 +55,9 @@ public abstract class RollerPermission extends java.security.Permission {
     public boolean hasActions(List<String> actionsToCheck) {
         List<String> actionList = getActionsAsList();
         for (String actionToCheck : actionsToCheck) {
-            if (!actionList.contains(actionToCheck)) return false;
+            if (!actionList.contains(actionToCheck)) {
+                return false;
+            }
         }
         return true;
     }
@@ -103,9 +105,6 @@ public abstract class RollerPermission extends java.security.Permission {
      * True if permission specifies no actions
      */
     public boolean isEmpty() {
-        if (getActions() == null || getActions().trim().length() == 0) {
-            return true;
-        }
-        return false;
+        return (getActions() == null || getActions().trim().length() == 0);
     }
 }

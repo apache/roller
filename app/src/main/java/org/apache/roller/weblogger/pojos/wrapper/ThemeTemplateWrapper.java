@@ -25,7 +25,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 /**
  * Pojo safety wrapper for ThemeTemplate objects.
  */
-public class ThemeTemplateWrapper {
+public final class ThemeTemplateWrapper {
     
     // keep a reference to the wrapped pojo
     private final ThemeTemplate pojo;
@@ -34,16 +34,14 @@ public class ThemeTemplateWrapper {
     private ThemeTemplateWrapper(ThemeTemplate toWrap) {
         this.pojo = toWrap;
     }
-    
-    
+
     // wrap the given pojo if it is not null
     public static ThemeTemplateWrapper wrap(ThemeTemplate toWrap) {
-        if(toWrap != null)
+        if (toWrap != null) {
             return new ThemeTemplateWrapper(toWrap);
-        
+        }
         return null;
     }
-    
     
     public String getId() {
         return this.pojo.getId();

@@ -242,7 +242,9 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
      * Update a list of comments.
      */
     public String update() {
-        if (!"POST".equals(httpMethod)) return ERROR;
+        if (!"POST".equals(httpMethod)) {
+            return ERROR;
+        }
         
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();

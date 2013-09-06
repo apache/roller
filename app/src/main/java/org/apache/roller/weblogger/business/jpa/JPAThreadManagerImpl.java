@@ -41,9 +41,8 @@ import org.apache.roller.weblogger.pojos.TaskLock;
 @com.google.inject.Singleton
 public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
-    private static final Log log = LogFactory.getLog(JPAThreadManagerImpl.class);
+    private static final Log LOG = LogFactory.getLog(JPAThreadManagerImpl.class);
 
-    private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
 
 
@@ -51,9 +50,8 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     protected JPAThreadManagerImpl(Weblogger roller, JPAPersistenceStrategy strat) {
         super();
 
-        log.debug("Instantiating JPA Thread Manager");
+        LOG.debug("Instantiating JPA Thread Manager");
 
-        this.roller = roller;
         this.strategy = strat;
     }
 
@@ -64,7 +62,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     @Override
     public boolean registerLease(RollerTask task) {
         
-        log.debug("Attempting to register lease for task - "+task.getName());
+        LOG.debug("Attempting to register lease for task - " + task.getName());
         
         // keep a copy of the current time
         Date currentTime = new Date();
@@ -74,59 +72,61 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         try {
             taskLock = getTaskLockByName(task.getName());
             if(taskLock == null) {
-                log.warn("Cannot acquire lease when no tasklock record exists for task - "+task.getName());
+                LOG.warn("Cannot acquire lease when no tasklock record exists for task - " + task.getName());
             }
         } catch (WebloggerException ex) {
-            log.warn("Error getting TaskLock", ex);
+            LOG.warn("Error getting TaskLock", ex);
             return false;
         }
 
         // try to acquire lease
-        if(taskLock != null) try {
-            // calculate lease expiration time
-            Date leaseExpiration = taskLock.getLeaseExpiration();
-            
-            // calculate run time for task, this is expected time, not actual time
-            // i.e. if a task is meant to run daily at midnight this should
-            // reflect 00:00:00 on the current day
-            Date runTime = currentTime;
-            if("startOfDay".equals(task.getStartTimeDesc())) {
-                // start of today
-                runTime = DateUtil.getStartOfDay(currentTime);
-            } else if("startOfHour".equals(task.getStartTimeDesc())) {
-                // start of this hour
-                runTime = DateUtil.getStartOfHour(currentTime);
-            } else {
-                // start of this minute
-                runTime = DateUtil.getStartOfMinute(currentTime);
-            }
-            
-            if(log.isDebugEnabled()) {
-                log.debug("last run = "+taskLock.getLastRun());
-                log.debug("new run time = "+runTime);
-                log.debug("last acquired = "+taskLock.getTimeAquired());
-                log.debug("time leased = "+taskLock.getTimeLeased());
-                log.debug("lease expiration = "+leaseExpiration);
-            }
+        if(taskLock != null) {
+            try {
+                // calculate lease expiration time
+                Date leaseExpiration = taskLock.getLeaseExpiration();
 
-            Query q = strategy.getNamedUpdate(
-                    "TaskLock.updateClient&Timeacquired&Timeleased&LastRunByName&Timeacquired");
-            q.setParameter(1, task.getClientId());
-            q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
-            q.setParameter(3, new Timestamp(runTime.getTime()));
-            q.setParameter(4, task.getName());
-            q.setParameter(5, taskLock.getTimeAquired());
-            q.setParameter(6, new Timestamp(leaseExpiration.getTime()));
-            int result = q.executeUpdate();
-            
-            if(result == 1) {
-                strategy.flush();
-                return true;
-            }
+                // calculate run time for task, this is expected time, not actual time
+                // i.e. if a task is meant to run daily at midnight this should
+                // reflect 00:00:00 on the current day
+                Date runTime = currentTime;
+                if("startOfDay".equals(task.getStartTimeDesc())) {
+                    // start of today
+                    runTime = DateUtil.getStartOfDay(currentTime);
+                } else if("startOfHour".equals(task.getStartTimeDesc())) {
+                    // start of this hour
+                    runTime = DateUtil.getStartOfHour(currentTime);
+                } else {
+                    // start of this minute
+                    runTime = DateUtil.getStartOfMinute(currentTime);
+                }
 
-        } catch (Exception e) {
-            log.warn("Error obtaining lease, assuming race condition.", e);
-            return false;
+                if(LOG.isDebugEnabled()) {
+                    LOG.debug("last run = "+taskLock.getLastRun());
+                    LOG.debug("new run time = "+runTime);
+                    LOG.debug("last acquired = "+taskLock.getTimeAquired());
+                    LOG.debug("time leased = "+taskLock.getTimeLeased());
+                    LOG.debug("lease expiration = "+leaseExpiration);
+                }
+
+                Query q = strategy.getNamedUpdate(
+                        "TaskLock.updateClient&Timeacquired&Timeleased&LastRunByName&Timeacquired");
+                q.setParameter(1, task.getClientId());
+                q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
+                q.setParameter(3, new Timestamp(runTime.getTime()));
+                q.setParameter(4, task.getName());
+                q.setParameter(5, taskLock.getTimeAquired());
+                q.setParameter(6, new Timestamp(leaseExpiration.getTime()));
+                int result = q.executeUpdate();
+
+                if(result == 1) {
+                    strategy.flush();
+                    return true;
+                }
+
+            } catch (Exception e) {
+                LOG.warn("Error obtaining lease, assuming race condition.", e);
+                return false;
+            }
         }
 
         return false;
@@ -149,10 +149,10 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             }
 
         } catch (WebloggerException ex) {
-            if (log.isDebugEnabled()) {
-                log.debug("Error getting TaskLock", ex);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error getting TaskLock", ex);
             } else {
-                log.warn("Error getting TaskLock, enable debug for more info");
+                LOG.warn("Error getting TaskLock, enable debug for more info");
             }
             return false;
         }
@@ -172,10 +172,10 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             }
 
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Error releasing lease", e);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error releasing lease", e);
             } else {
-                log.warn("Error releasing lease, enable debug for more info");
+                LOG.warn("Error releasing lease, enable debug for more info");
             }
             return false;
         }

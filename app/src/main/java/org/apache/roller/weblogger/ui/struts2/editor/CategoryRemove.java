@@ -85,7 +85,7 @@ public class CategoryRemove extends UIAction {
     public String execute() {
         
         // build list of categories for display
-        TreeSet allCategories = new TreeSet(new WeblogCategoryPathComparator());
+        TreeSet allCategoriesSet = new TreeSet(new WeblogCategoryPathComparator());
         
         try {
             // Build list of all categories, except for current one, sorted by path.
@@ -93,7 +93,7 @@ public class CategoryRemove extends UIAction {
             List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
             for(WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getRemoveId())) {
-                    allCategories.add(cat);
+                    allCategoriesSet.add(cat);
                 }
             }
         } catch (WebloggerException ex) {
@@ -102,8 +102,8 @@ public class CategoryRemove extends UIAction {
             addError("Error building categories list");
         }
         
-        if (allCategories.size() > 0) {
-            setAllCategories(allCategories);
+        if (allCategoriesSet.size() > 0) {
+            setAllCategories(allCategoriesSet);
         }
         
         return INPUT;
@@ -115,31 +115,33 @@ public class CategoryRemove extends UIAction {
      */
     public String remove() {
         
-        if(getCategory() != null) try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            
-            if(getTargetCategoryId() != null) {
-                WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
-                wmgr.moveWeblogCategoryContents(getCategory(), target);
+        if(getCategory() != null) {
+            try {
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+
+                if(getTargetCategoryId() != null) {
+                    WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
+                    wmgr.moveWeblogCategoryContents(getCategory(), target);
+                    WebloggerFactory.getWeblogger().flush();
+                }
+
+                // notify cache
+                String id = getCategory().getId();
+                CacheManager.invalidate(getCategory());
+
+                wmgr.removeWeblogCategory(getCategory());
                 WebloggerFactory.getWeblogger().flush();
+
+                // set category id to parent for next page
+                setRemoveId(id);
+
+                return SUCCESS;
+
+            } catch(Exception ex) {
+                log.error("Error removing category - "+getRemoveId(), ex);
+                // TODO: i18n
+                addError("Error removing category");
             }
-            
-            // notify cache
-            String id = getCategory().getId();
-            CacheManager.invalidate(getCategory());
-            
-            wmgr.removeWeblogCategory(getCategory());
-            WebloggerFactory.getWeblogger().flush();
-            
-            // set category id to parent for next page
-            setRemoveId(id);
-            
-            return SUCCESS;
-            
-        } catch(Exception ex) {
-            log.error("Error removing category - "+getRemoveId(), ex);
-            // TODO: i18n
-            addError("Error removing category");
         }
         
         return execute();

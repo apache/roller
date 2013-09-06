@@ -100,23 +100,23 @@ public class BookmarkEdit extends UIAction {
         // validation
         myValidate();
         
-        if(!hasActionErrors()) try {
-            
-            getBean().copyTo(getBookmark());
-            
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            bmgr.saveBookmark(getBookmark());
-            WebloggerFactory.getWeblogger().flush();
-            
-            CacheManager.invalidate(getBookmark());
-            
-            // TODO: i18n
-            addMessage("bookmark updated");
-            
-        } catch(Exception ex) {
-            log.error("Error saving bookmark", ex);
-            // TODO: i18n
-            addError("Error saving bookmark");
+        if(!hasActionErrors()) {
+            try {
+                getBean().copyTo(getBookmark());
+
+                BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+                bmgr.saveBookmark(getBookmark());
+                WebloggerFactory.getWeblogger().flush();
+
+                CacheManager.invalidate(getBookmark());
+
+                // TODO: i18n
+                addMessage("bookmark updated");
+            } catch(Exception ex) {
+                log.error("Error saving bookmark", ex);
+                // TODO: i18n
+                addError("Error saving bookmark");
+            }
         }
         
         return INPUT;

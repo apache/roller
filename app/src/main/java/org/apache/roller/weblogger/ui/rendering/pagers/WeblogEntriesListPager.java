@@ -110,9 +110,7 @@ public class WeblogEntriesListPager extends AbstractPager {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                UserManager umgr = roller.getUserManager();
                 List rawEntries = wmgr.getWeblogEntries(
-                        
                         queryWeblog,
                         queryUser,
                         startDate,
@@ -134,7 +132,9 @@ public class WeblogEntriesListPager extends AbstractPager {
                         results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
                     }
                 }
-                if (rawEntries.size() > length) more = true;
+                if (rawEntries.size() > length) {
+                    more = true;
+                }
                 
             } catch (Exception e) {
                 log.error("ERROR: fetching weblog entries list", e);

@@ -118,37 +118,39 @@ public class TemplateEdit extends UIAction {
         // validation
         myValidate();
 
-        if (!hasActionErrors()) try {
+        if (!hasActionErrors()) {
+            try {
 
-            WeblogTemplate template = getTemplate();
-            getBean().copyTo(template);
-            template.setLastModified(new Date());
+                WeblogTemplate templateToSave = getTemplate();
+                getBean().copyTo(templateToSave);
+                templateToSave.setLastModified(new Date());
 
-            if (getBean().getAutoContentType() == null ||
-                    !getBean().getAutoContentType().booleanValue()) {
-                template.setOutputContentType(getBean().getManualContentType());
-            } else {
-                // empty content-type indicates that template uses auto content-type detection
-                template.setOutputContentType(null);
+                if (getBean().getAutoContentType() == null ||
+                        !getBean().getAutoContentType().booleanValue()) {
+                    templateToSave.setOutputContentType(getBean().getManualContentType());
+                } else {
+                    // empty content-type indicates that template uses auto content-type detection
+                    templateToSave.setOutputContentType(null);
+                }
+
+                // save template
+                WebloggerFactory.getWeblogger().getWeblogManager().savePage(templateToSave);
+                log.debug("Saved template: " + templateToSave.getId());
+
+                //flush
+                WebloggerFactory.getWeblogger().flush();
+
+                // notify caches
+                CacheManager.invalidate(templateToSave);
+
+                // success message
+                addMessage("pageForm.save.success", templateToSave.getName());
+
+            } catch (Exception ex) {
+                log.error("Error updating page - " + getBean().getId(), ex);
+                // TODO: i18n
+                addError("Error saving template");
             }
-
-            // save template
-            WebloggerFactory.getWeblogger().getWeblogManager().savePage(template);
-            log.debug("Saved template: " + template.getId());
-
-            //flush
-            WebloggerFactory.getWeblogger().flush();
-
-            // notify caches
-            CacheManager.invalidate(template);
-
-            // success message
-            addMessage("pageForm.save.success", template.getName());
-
-        } catch (Exception ex) {
-            log.error("Error updating page - " + getBean().getId(), ex);
-            // TODO: i18n
-            addError("Error saving template");
         }
 
         log.debug("Leaving save()");

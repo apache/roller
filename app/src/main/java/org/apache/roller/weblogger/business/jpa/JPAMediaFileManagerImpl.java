@@ -456,8 +456,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
             throws WebloggerException {
 
-        if (null == origpath)
+        if (null == origpath) {
             return null;
+        }
 
         if (!origpath.startsWith("/")) {
             origpath = "/" + origpath;
@@ -543,8 +544,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public List<MediaFile> fetchRecentPublicMediaFiles(int length)
             throws WebloggerException {
 
-        List<Object> params = new ArrayList<Object>();
-        int size = 0;
         StringBuilder queryString = new StringBuilder();
 
         queryString
@@ -815,8 +814,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                     upgradeUploadsDir(weblog, user, files[i], subDir);
                 }
 
-            } else { // a file: create a database record for it
-
+            } else {
+                // a file: create a database record for it
                 // check to make sure that file does not already exist
                 if (newDir.hasMediaFile(files[i].getName())) {
                     log.debug("    Skipping file that already exists: "
@@ -868,10 +867,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             }
         }
 
-        try { // flush changes to this directory
+        try {
+            // flush changes to this directory
             roller.flush();
 
-            log.debug("Count of dirs  created: " + dirCount);
+            log.debug("Count of dirs created: " + dirCount);
             log.debug("Count of files created: " + fileCount);
 
         } catch (WebloggerException ex) {

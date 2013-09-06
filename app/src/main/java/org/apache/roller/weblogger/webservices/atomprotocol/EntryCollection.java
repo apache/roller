@@ -312,7 +312,6 @@ public class EntryCollection {
     private Entry createAtomEntry(WeblogEntry entry) {
         Entry atomEntry = new Entry();
         
-        String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         atomEntry.setId(        entry.getPermalink());
         atomEntry.setTitle(     entry.getTitle());
         atomEntry.setPublished( entry.getPubTime());
@@ -449,18 +448,19 @@ public class EntryCollection {
         // Now process incoming categories that are tags:
         // Atom categories with no scheme are considered tags.
         String tags = "";
+        StringBuilder buff = new StringBuilder();
         if (categories != null && categories.size() > 0) {
             for (int i=0; i<categories.size(); i++) {
                 Category cat = (Category)categories.get(i);            
                 if (cat.getScheme() == null) {
-                    tags = tags + " " + cat.getTerm();
+                    buff.append(" ").append(cat.getTerm());
                 }                
             }
+            tags = buff.toString();
         }
         rollerEntry.setTagsAsString(tags);        
     }
-    
-    
+
     private void reindexEntry(WeblogEntry entry) throws WebloggerException {
         IndexManager manager = roller.getIndexManager();
         

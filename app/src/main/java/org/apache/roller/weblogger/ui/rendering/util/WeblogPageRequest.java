@@ -66,11 +66,9 @@ public class WeblogPageRequest extends WeblogRequest {
     private WeblogEntry weblogEntry = null;
     private ThemeTemplate weblogPage = null;
     private WeblogCategory weblogCategory = null;
-    
-    
+
     public WeblogPageRequest() {}
-    
-    
+
     /**
      * Construct the WeblogPageRequest by parsing the incoming url
      */
@@ -87,11 +85,11 @@ public class WeblogPageRequest extends WeblogRequest {
         String pathInfo = this.getPathInfo();
         
         // parse the request object and figure out what we've got
-        log.debug("parsing path "+pathInfo);
+        log.debug("parsing path " + pathInfo);
         
         // was this request bound for the right servlet?
         if(!isValidDestination(servlet)) {
-            throw new InvalidRequestException("invalid destination for request, "+
+            throw new InvalidRequestException("invalid destination for request, " +
                     request.getRequestURL());
         }
         
@@ -149,9 +147,9 @@ public class WeblogPageRequest extends WeblogRequest {
                     String tagsString = pathElements[1].replace('+', ' ');
                     this.tags = Utilities.splitStringAsTags(URLUtilities.decode(tagsString));                  
                     int maxSize = WebloggerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);                  
-                    if(this.tags.size() > maxSize)
+                    if(this.tags.size() > maxSize) {
                         throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
-                                      
+                    }
                 } else {
                     throw new InvalidRequestException("context "+this.context+
                             "not supported, "+request.getRequestURL());
@@ -164,11 +162,7 @@ public class WeblogPageRequest extends WeblogRequest {
                             request.getRequestURL());
                 }
             }
-            
-        } else {
-            // default view, weblog homepage
         }
-        
         
         /*
          * parse request parameters

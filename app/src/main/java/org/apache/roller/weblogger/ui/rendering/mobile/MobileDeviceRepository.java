@@ -31,10 +31,10 @@ public class MobileDeviceRepository {
         standard, mobile
     }
 
-    public static final String possibleDevices1 = ".*(android|avantgo|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)"
+    public static final String POSSIBLE_DEVICES_1 = ".*(android|avantgo|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)"
             + "|iris|kindle|lge |maemo|midp|mmp|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\\\\/|"
             + "plucker|pocket|psp|symbian|treo|up\\\\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino).*";
-    public static final String possibleDevices2 = "\"1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\\\\-)|"
+    public static final String POSSIBLE_DEVICES_2 = "\"1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\\\\-)|"
             + "ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\\\\-m|r |s )|"
             + "avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\\\\-(n|u)|c55\\\\/|capi|ccwa|cdm\\\\-|"
             + "cell|chtm|cldc|cmd\\\\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\\\\-s|devi|dica|dmob|do(c|p)o|ds(12|\\\\-d)|"
@@ -70,8 +70,8 @@ public class MobileDeviceRepository {
             userAgent = request.getHeader("User-Agent").toLowerCase();
 
             try {
-                return (userAgent.matches(possibleDevices1) || userAgent
-                        .substring(0, 4).matches(possibleDevices2));
+                return (userAgent.matches(POSSIBLE_DEVICES_1) || userAgent
+                        .substring(0, 4).matches(POSSIBLE_DEVICES_2));
             } catch (StringIndexOutOfBoundsException e) {
                 // invalid device
                 log.error("ERROR invalid userAgent type : " + userAgent);
@@ -106,13 +106,14 @@ public class MobileDeviceRepository {
 
     private static String getCookieValue(Cookie[] cookies, String cookieName,
             String defaultValue) {
-        if (cookies != null)
+        if (cookies != null) {
             for (int i = 0; i < cookies.length; i++) {
                 Cookie cookie = cookies[i];
                 if (cookieName.equals(cookie.getName())) {
                     return (cookie.getValue());
                 }
             }
+        }
         return (defaultValue);
     }
 }

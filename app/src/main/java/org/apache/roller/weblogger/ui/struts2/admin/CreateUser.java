@@ -86,37 +86,40 @@ public class CreateUser extends UIAction {
         // run some validation
         myValidate();
         
-        if (!hasActionErrors()) try {
-            
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            
-            // copy form data into new user pojo
-            User newUser = new User();
-            getBean().copyTo(newUser, getLocale()); // doesn't copy password
-            newUser.setDateCreated(new java.util.Date());
-            
-            // set username and password
-            newUser.setUserName(getBean().getUserName());
-            newUser.resetPassword(getBean().getPassword());
-            
-            // are we granting the user admin rights?
-            if(((CreateUserBean)getBean()).isAdministrator()) {
-                mgr.grantRole("admin", newUser);
+        if (!hasActionErrors()) {
+            try {
+
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+
+                // copy form data into new user pojo
+                User newUser = new User();
+                getBean().copyTo(newUser, getLocale());
+                // password not copied
+                newUser.setDateCreated(new java.util.Date());
+
+                // set username and password
+                newUser.setUserName(getBean().getUserName());
+                newUser.resetPassword(getBean().getPassword());
+
+                // are we granting the user admin rights?
+                if(((CreateUserBean)getBean()).isAdministrator()) {
+                    mgr.grantRole("admin", newUser);
+                }
+
+                // save new user
+                mgr.addUser(newUser);
+                WebloggerFactory.getWeblogger().flush();
+
+                // TODO: i18n
+                addMessage("New user created");
+
+                return INPUT;
+
+            } catch (WebloggerException e) {
+                log.error("Error adding new user", e);
+                // TODO: i18n
+                addError("Error creating user");
             }
-            
-            // save new user
-            mgr.addUser(newUser);
-            WebloggerFactory.getWeblogger().flush();
-            
-            // TODO: i18n
-            addMessage("New user created");
-            
-            return INPUT;
-            
-        } catch (WebloggerException e) {
-            log.error("Error adding new user", e);
-            // TODO: i18n
-            addError("Error creating user");
         }
         
         return INPUT;

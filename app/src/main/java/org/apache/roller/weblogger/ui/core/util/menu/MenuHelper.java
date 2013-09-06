@@ -49,7 +49,9 @@ public class MenuHelper {
     private static Log log = LogFactory.getLog(MenuHelper.class);
     
     private static Hashtable menus = new Hashtable();
-    
+
+    private MenuHelper() {
+    }
     
     static {
         try {
@@ -250,8 +252,9 @@ public class MenuHelper {
     private static ParsedMenu unmarshall(InputStream instream) 
         throws IOException, JDOMException {
         
-        if (instream == null)
+        if (instream == null) {
             throw new IOException("InputStream is null!");
+        }
         
         ParsedMenu config = new ParsedMenu();
         

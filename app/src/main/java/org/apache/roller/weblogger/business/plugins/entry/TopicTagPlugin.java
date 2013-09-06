@@ -98,8 +98,8 @@ import java.util.regex.PatternSyntaxException;
  */
 public class TopicTagPlugin implements WeblogEntryPlugin
 {
-    private static final String version = "0.3";
-    private static final Log mLogger = LogFactory.getFactory().getInstance(TopicTagPlugin.class);
+    private static final String VERSION = "0.3";
+    private static final Log LOG = LogFactory.getFactory().getInstance(TopicTagPlugin.class);
 
 
     // Default values of properties that can be set from the web.xml configuration.
@@ -126,15 +126,13 @@ public class TopicTagPlugin implements WeblogEntryPlugin
     /**
      * Initialize the plugin instance.   This sets up the configurable properties and default topic site.
      * 
-     * @param rreq Plugins may need to access RollerRequest.
-     * @param ctx  Plugins may place objects into the Velocity Context.
-     * @see PagWeblogEntryPluginit(org.apache.roller.weblogger.presentation.RollerRequest, org.apache.velocity.context.Context)
+     * @param website Website plugin is attached to.
+     * @see WeblogEntryPlugin#init(Weblog)
      */
     public void init(Weblog website) throws WebloggerException
     {
-        if (mLogger.isDebugEnabled())
-        {
-            mLogger.debug("TopicTagPlugin v. " + version);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("TopicTagPlugin v. " + VERSION);
         }
 
         // Initialize property settings
@@ -145,11 +143,12 @@ public class TopicTagPlugin implements WeblogEntryPlugin
 
         // Determine default topic site from bookmark if present
         WeblogBookmark defaultTopicBookmark = (WeblogBookmark) userBookmarks.get(defaultTopicBookmarkName);
-        if (defaultTopicBookmark != null) defaultTopicSite = defaultTopicBookmark.getUrl();
+        if (defaultTopicBookmark != null) {
+            defaultTopicSite = defaultTopicBookmark.getUrl();
+        }
 
         // Append / to defaultTopicSite if it doesn't have it
-        if (!defaultTopicSite.endsWith("/"))
-        {
+        if (!defaultTopicSite.endsWith("/")) {
             defaultTopicSite += "/";
         }
 
@@ -194,7 +193,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      * Apply the plugin to the given entry.  Returns the entry text with topic tags expanded.
      *
      * @param entry           WeblogEntry to which plugin should be applied.
-     * @param singleEntry     Ignored.
+     * @param str     Ignored.
      * @return Results of applying plugin to entry.
      */
     public String render(WeblogEntry entry, String str)
@@ -310,7 +309,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
         }
         if (website == null)
         {
-            mLogger.debug("Init called without website.  Skipping bookmark initialization.");
+            LOG.debug("Init called without website.  Skipping bookmark initialization.");
         }
         else
         {

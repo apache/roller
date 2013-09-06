@@ -53,8 +53,9 @@ public class ReferrerProcessingJob implements Job {
      */
     public void execute() {
         
-        if(this.referrer == null)
+        if(this.referrer == null) {
             return;
+        }
         
         mLogger.debug("PROCESSING: "+referrer.getRequestUrl());
         

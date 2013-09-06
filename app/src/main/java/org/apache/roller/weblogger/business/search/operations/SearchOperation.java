@@ -203,9 +203,9 @@ public class SearchOperation extends ReadFromIndexOperation {
      * @return the results count
      */
     public int getResultsCount() {
-        if (searchresults == null)
+        if (searchresults == null) {
             return -1;
-
+        }
         return searchresults.totalHits;
     }
 

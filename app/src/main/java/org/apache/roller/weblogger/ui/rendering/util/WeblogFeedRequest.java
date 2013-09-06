@@ -58,8 +58,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     
     // heavyweight attributes
     private WeblogCategory weblogCategory = null;
-    
-    
+
     public WeblogFeedRequest() {}
     
     
@@ -133,9 +132,10 @@ public class WeblogFeedRequest extends WeblogRequest {
         if(request.getParameter("tags") != null) {
             this.tags = Utilities.splitStringAsTags(request.getParameter("tags"));                  
             int maxSize = WebloggerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);
-            if (this.tags.size() > maxSize)
+            if (this.tags.size() > maxSize) {
                 throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", "
-                                + request.getRequestURL());
+                        + request.getRequestURL());
+            }
         }        
         
         if(request.getParameter("excerpts") != null) {

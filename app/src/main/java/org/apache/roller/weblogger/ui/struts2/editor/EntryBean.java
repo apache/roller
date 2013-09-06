@@ -18,23 +18,25 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
+
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 
 /**
@@ -52,15 +54,14 @@ public class EntryBean {
     private String summary = null;
     private String text = null;
     private String status = null;
-    private String weblogHandle = null;
-    
+
     private String[] plugins = null;
     private String dateString = null;
     private int hours = 0;
     private int minutes = 0;
     private int seconds = 0;
     private boolean allowComments = true;
-    private Integer commentDays = new Integer(0);
+    private Integer commentDays = Integer.valueOf(0);
     private boolean rightToLeft = false;
     private boolean pinnedToMain = false;
     private String enclosureURL = null;
@@ -234,32 +235,34 @@ public class EntryBean {
         
         Timestamp pubtime = null;
         
-        if(!StringUtils.isEmpty(getDateString())) try {
-            log.debug("pubtime vals are "+getDateString()+", "+getHours()+", "+getMinutes()+", "+getSeconds());
-            
-            // first convert the specified date string into an actual Date obj
-            // TODO: at some point this date conversion should be locale sensitive,
-            // however at this point our calendar widget does not take into account
-            // locales and only operates in the standard English US locale.
+        if(!StringUtils.isEmpty(getDateString())) {
+            try {
+                log.debug("pubtime vals are "+getDateString()+", "+getHours()+", "+getMinutes()+", "+getSeconds());
 
-            // Don't require user add preceding '0' of month and day.
-            DateFormat df = new SimpleDateFormat("M/d/yy");
-            df.setTimeZone(timezone);
-            Date newDate = df.parse(getDateString());
-            
-            log.debug("dateString yields date - "+newDate);
-            
-            // Now handle the time from the hour, minute and second combos
-            Calendar cal = Calendar.getInstance(timezone,locale);
-            cal.setTime(newDate);
-            cal.set(Calendar.HOUR_OF_DAY, getHours());
-            cal.set(Calendar.MINUTE, getMinutes());
-            cal.set(Calendar.SECOND, getSeconds());
-            pubtime = new Timestamp(cal.getTimeInMillis());
-            
-            log.debug("pubtime is "+pubtime);
-        } catch(Exception e) {
-            log.error("Error calculating pubtime", e);
+                // first convert the specified date string into an actual Date obj
+                // TODO: at some point this date conversion should be locale sensitive,
+                // however at this point our calendar widget does not take into account
+                // locales and only operates in the standard English US locale.
+
+                // Don't require user add preceding '0' of month and day.
+                DateFormat df = new SimpleDateFormat("M/d/yy");
+                df.setTimeZone(timezone);
+                Date newDate = df.parse(getDateString());
+
+                log.debug("dateString yields date - "+newDate);
+
+                // Now handle the time from the hour, minute and second combos
+                Calendar cal = Calendar.getInstance(timezone,locale);
+                cal.setTime(newDate);
+                cal.set(Calendar.HOUR_OF_DAY, getHours());
+                cal.set(Calendar.MINUTE, getMinutes());
+                cal.set(Calendar.SECOND, getSeconds());
+                pubtime = new Timestamp(cal.getTimeInMillis());
+
+                log.debug("pubtime is "+pubtime);
+            } catch(Exception e) {
+                log.error("Error calculating pubtime", e);
+            }
         }
         
         return pubtime;
@@ -405,7 +408,7 @@ public class EntryBean {
         buf.append("search description = ").append(getSearchDescription()).append("\n");
         buf.append("comments = ").append(getAllowComments()).append("\n");
         buf.append("commentDays = ").append(getCommentDays()).append("\n");
-        buf.append("plugins = ").append(getPlugins()).append("\n");
+        buf.append("plugins = ").append(Arrays.toString(getPlugins())).append("\n");
         
         return buf.toString();
     }

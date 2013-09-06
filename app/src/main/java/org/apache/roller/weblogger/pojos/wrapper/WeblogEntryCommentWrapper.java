@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.util.Utilities;
 /**
  * Pojo safety wrapper for WeblogEntryComment object.
  */
-public class WeblogEntryCommentWrapper {
+public final class WeblogEntryCommentWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogEntryComment pojo;
@@ -48,8 +48,9 @@ public class WeblogEntryCommentWrapper {
     
     // wrap the given pojo if it is not null
     public static WeblogEntryCommentWrapper wrap(WeblogEntryComment toWrap, URLStrategy strat) {
-        if(toWrap != null)
+        if(toWrap != null) {
             return new WeblogEntryCommentWrapper(toWrap, strat);
+        }
         
         return null;
     }

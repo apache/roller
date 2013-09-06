@@ -24,7 +24,7 @@ import org.apache.roller.weblogger.pojos.WeblogBookmark;
 /**
  * Pojo safety wrapper for WeblogBookmark object.
  */
-public class WeblogBookmarkWrapper {
+public final class WeblogBookmarkWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogBookmark pojo;
@@ -37,8 +37,9 @@ public class WeblogBookmarkWrapper {
     
     // wrap the given pojo if it is not null
     public static WeblogBookmarkWrapper wrap(WeblogBookmark toWrap) {
-        if(toWrap != null)
+        if(toWrap != null) {
             return new WeblogBookmarkWrapper(toWrap);
+        }
         
         return null;
     }

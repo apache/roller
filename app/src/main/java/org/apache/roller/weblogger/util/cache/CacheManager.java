@@ -50,7 +50,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * their cached data needs to be invalidated, and the CacheManager makes that
  * process easier.
  */
-public class CacheManager {
+public final class CacheManager {
     
     private static Log log = LogFactory.getLog(CacheManager.class);
     
@@ -83,14 +83,16 @@ public class CacheManager {
                     " falling back on default", e);
         }
         
-        if(cacheFactory == null) try {
-            // hmm ... failed to load the specified cache factory
-            // lets try our default
-            Class factoryClass = Class.forName(DEFAULT_FACTORY);
-            cacheFactory = (CacheFactory) factoryClass.newInstance();
-        } catch(Exception e) {
-            log.fatal("Failed to instantiate a cache factory", e);
-            throw new RuntimeException(e);
+        if(cacheFactory == null) {
+            try {
+                // hmm ... failed to load the specified cache factory
+                // lets try our default
+                Class factoryClass = Class.forName(DEFAULT_FACTORY);
+                cacheFactory = (CacheFactory) factoryClass.newInstance();
+            } catch(Exception e) {
+                log.fatal("Failed to instantiate a cache factory", e);
+                throw new RuntimeException(e);
+            }
         }
         
         log.info("Cache Manager Initialized.");
