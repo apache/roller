@@ -406,9 +406,15 @@ public abstract class WebloggerImpl implements Weblogger {
     public void shutdown() {
         try {
             HitCountQueue.getInstance().shutdown();
-            if (getReferrerQueueManager() != null) getReferrerQueueManager().shutdown();
-            if (indexManager != null) indexManager.shutdown();
-            if (threadManager != null) threadManager.shutdown();
+            if (getReferrerQueueManager() != null) {
+                getReferrerQueueManager().shutdown();
+            }
+            if (indexManager != null) {
+                indexManager.shutdown();
+            }
+            if (threadManager != null) {
+                threadManager.shutdown();
+            }
         } catch(Exception e) {
             log.error("Error calling Roller.shutdown()", e);
         }

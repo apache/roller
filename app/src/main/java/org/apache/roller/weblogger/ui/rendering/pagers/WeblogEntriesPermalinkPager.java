@@ -69,16 +69,18 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     
     public Map getEntries() {
-        if (entries == null) try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
-            if (currEntry != null && currEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
-                entries = new TreeMap();
-                entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry, urlStrategy)));
+        if (entries == null) {
+            try {
+                Weblogger roller = WebloggerFactory.getWeblogger();
+                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+                currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
+                if (currEntry != null && currEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
+                    entries = new TreeMap();
+                    entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry, urlStrategy)));
+                }
+            } catch (Exception e) {
+                log.error("ERROR: fetching entry");
             }
-        } catch (Exception e) {
-            log.error("ERROR: fetching entry");
         }
 
 
@@ -132,17 +134,19 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     
     private WeblogEntry getNextEntry() {
-        if (nextEntry == null) try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            nextEntry = wmgr.getNextEntry(currEntry, null, locale);
-            // make sure that entry is published and not to future
-            if (nextEntry != null && nextEntry.getPubTime().after(new Date())
-            && nextEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
-                nextEntry = null;
+        if (nextEntry == null) {
+            try {
+                Weblogger roller = WebloggerFactory.getWeblogger();
+                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+                nextEntry = wmgr.getNextEntry(currEntry, null, locale);
+                // make sure that entry is published and not to future
+                if (nextEntry != null && nextEntry.getPubTime().after(new Date())
+                        && nextEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
+                    nextEntry = null;
+                }
+            } catch (WebloggerException e) {
+                log.error("ERROR: getting next entry", e);
             }
-        } catch (WebloggerException e) {
-            log.error("ERROR: getting next entry", e);
         }
 
         return nextEntry;
@@ -150,17 +154,19 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     
     private WeblogEntry getPrevEntry() {
-        if (prevEntry == null) try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            prevEntry = wmgr.getPreviousEntry(currEntry, null, locale);
-            // make sure that entry is published and not to future
-            if (prevEntry != null && prevEntry.getPubTime().after(new Date())
-            && prevEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
-                prevEntry = null;
+        if (prevEntry == null) {
+            try {
+                Weblogger roller = WebloggerFactory.getWeblogger();
+                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+                prevEntry = wmgr.getPreviousEntry(currEntry, null, locale);
+                // make sure that entry is published and not to future
+                if (prevEntry != null && prevEntry.getPubTime().after(new Date())
+                        && prevEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
+                    prevEntry = null;
+                }
+            } catch (WebloggerException e) {
+                log.error("ERROR: getting prev entry", e);
             }
-        } catch (WebloggerException e) {
-            log.error("ERROR: getting prev entry", e);
         }
 
         return prevEntry;

@@ -200,8 +200,9 @@ public class SearchServlet extends HttpServlet {
         } catch (WebloggerException ex) {
             log.error("Error loading model objects for page", ex);
 
-            if (!response.isCommitted())
+            if (!response.isCommitted()) {
                 response.reset();
+            }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -242,8 +243,9 @@ public class SearchServlet extends HttpServlet {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);
 
-            if (!response.isCommitted())
+            if (!response.isCommitted()) {
                 response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -261,8 +263,9 @@ public class SearchServlet extends HttpServlet {
             // bummer, error during rendering
             log.error("Error during rendering for rsd template", e);
 
-            if (!response.isCommitted())
+            if (!response.isCommitted()) {
                 response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }

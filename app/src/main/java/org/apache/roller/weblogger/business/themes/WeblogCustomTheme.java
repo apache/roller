@@ -35,13 +35,11 @@ import org.apache.roller.weblogger.pojos.WeblogTheme;
  * A WeblogTheme custom defined by the weblog owner.
  */
 public class WeblogCustomTheme extends WeblogTheme {
-    
-    
+
     public WeblogCustomTheme(Weblog weblog) {
         super(weblog);
     }
-    
-    
+
     public String getId() {
         return CUSTOM;
     }
@@ -103,8 +101,9 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getTemplateByAction(String action) throws WebloggerException {
-        if(action == null)
+        if (action == null) {
             return null;
+        }
         
         return WebloggerFactory.getWeblogger().getWeblogManager().getPageByAction(this.weblog, action);
     }
@@ -115,8 +114,9 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
-        if(name == null)
+        if (name == null) {
             return null;
+        }
         
         return WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(this.weblog, name);
     }
@@ -127,10 +127,11 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
-        if(link == null)
+        if (link == null) {
             return null;
+        }
 
-          return WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(this.weblog, link);
+        return WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(this.weblog, link);
     }
     
     
@@ -147,7 +148,6 @@ public class WeblogCustomTheme extends WeblogTheme {
                 WebloggerFactory.getWeblogger().getMediaFileManager();
             MediaFile mf = mmgr.getMediaFileByOriginalPath(
                 this.weblog, path);
-
         } catch (WebloggerException ex) {
             // ignored, resource considered not found
         }

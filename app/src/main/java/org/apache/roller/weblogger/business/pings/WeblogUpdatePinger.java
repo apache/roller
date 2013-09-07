@@ -48,8 +48,8 @@ import java.util.Set;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @author llavandowska (for code refactored from the now-defunct <code>RollerXmlRpcClient</code>)
  */
-public class WeblogUpdatePinger {
-    public static final Log logger = LogFactory.getLog(WeblogUpdatePinger.class);
+public final class WeblogUpdatePinger {
+    public static final Log LOGGER = LogFactory.getLog(WeblogUpdatePinger.class);
 
     /**
      * Conveys a ping result.
@@ -109,8 +109,8 @@ public class WeblogUpdatePinger {
             params.add(website.getName());
         }
         params.add(websiteUrl);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Executing ping to '" + pingTargetUrl + "' for website '" + websiteUrl + "' (" + website.getName() + ")" + (variantOptions.isEmpty() ? "" : " with variant options " + variantOptions));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Executing ping to '" + pingTargetUrl + "' for website '" + websiteUrl + "' (" + website.getName() + ")" + (variantOptions.isEmpty() ? "" : " with variant options " + variantOptions));
         }
 
         // Send the ping.
@@ -120,13 +120,17 @@ public class WeblogUpdatePinger {
         client.setConfig(config);
         PingResult pingResult = parseResult(client.execute("weblogUpdates.ping", params.toArray()));
 
-        if (logger.isDebugEnabled()) logger.debug("Ping result is: " + pingResult);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Ping result is: " + pingResult);
+        }
         return pingResult;
     }
 
     private static PingResult parseResult(Object obj) {
         // Deal with the fact that some buggy ping targets may not respond with the proper struct type.
-        if (obj == null) return new PingResult(null,null);
+        if (obj == null) {
+            return new PingResult(null,null);
+        }
         try {
             // normal case: response is a struct (represented as a Map) with Boolean flerror and String fields.
             Map result = (Map) obj;
@@ -134,7 +138,9 @@ public class WeblogUpdatePinger {
         } catch (Exception ex) {
             // exception case:  The caller responded with an unexpected type, though parsed at the basic XML RPC level.
             // This effectively assumes flerror = false, and sets message = obj.toString();
-            if (logger.isDebugEnabled()) logger.debug("Invalid ping result of type: " + obj.getClass().getName() + "; proceeding with stand-in representative.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Invalid ping result of type: " + obj.getClass().getName() + "; proceeding with stand-in representative.");
+            }
             return new PingResult(null,obj.toString());
         }
     }

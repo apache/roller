@@ -43,8 +43,6 @@ import org.apache.roller.weblogger.util.I18nMessages;
  */
 public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
-    private static Log log = LogFactory.getLog(AbstractWeblogEntriesPager.class);
-    
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
     
@@ -83,8 +81,9 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         this.dateString = dateString;
         this.catPath = catPath;
         
-        if(tags != null)
-          this.tags = tags;
+        if (tags != null) {
+            this.tags = tags;
+        }
         
         // make sure offset, length, and page are valid
         int maxLength = WebloggerRuntimeConfig.getIntProperty("site.pages.maxEntries");
@@ -199,7 +198,9 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             
             // make sure the requested date is not in the future
             Date today = getToday();
-            if (ret.after(today)) ret = today;
+            if (ret.after(today)) {
+                ret = today;
+            }
         }
         if (   dateString!=null
                 && dateString.length()==6
@@ -210,7 +211,9 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             
             // make sure the requested date is not in the future
             Date today = getToday();
-            if (ret.after(today)) ret = today;
+            if (ret.after(today)) {
+                ret = today;
+            }
         }
         return ret;
     }

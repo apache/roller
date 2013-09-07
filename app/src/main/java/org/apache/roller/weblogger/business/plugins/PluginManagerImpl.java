@@ -131,7 +131,7 @@ public class PluginManagerImpl implements PluginManager {
         if (commentPlugins.size() > 0) {
             for( WeblogEntryCommentPlugin plugin : commentPlugins ) {
                 if(comment.getPlugins() != null &&
-                        comment.getPlugins().indexOf(plugin.getId()) != -1) {
+                        comment.getPlugins().contains(plugin.getId())) {
                     log.debug("Invoking comment plugin "+plugin.getId());
                     content = plugin.render(comment, content);
                 }
@@ -152,12 +152,16 @@ public class PluginManagerImpl implements PluginManager {
         log.debug("Initializing page plugins");
         
         String pluginStr = WebloggerConfig.getProperty("plugins.page");
-        if (log.isDebugEnabled()) log.debug(pluginStr);
+        if (log.isDebugEnabled()) {
+            log.debug(pluginStr);
+        }
         if (pluginStr != null) {
             String[] plugins = StringUtils.stripAll(
                     StringUtils.split(pluginStr, ",") );
             for (int i=0; i<plugins.length; i++) {
-                if (log.isDebugEnabled()) log.debug("try " + plugins[i]);
+                if (log.isDebugEnabled()) {
+                    log.debug("try " + plugins[i]);
+                }
                 try {
                     Class pluginClass = Class.forName(plugins[i]);
                     if (isPagePlugin(pluginClass)) {
@@ -219,7 +223,9 @@ public class PluginManagerImpl implements PluginManager {
     private static boolean isPagePlugin(Class pluginClass) {
         Class[] interfaces = pluginClass.getInterfaces();
         for (int i=0; i<interfaces.length; i++) {
-            if (interfaces[i].equals(WeblogEntryPlugin.class)) return true;
+            if (interfaces[i].equals(WeblogEntryPlugin.class)) {
+                return true;
+            }
         }
         return false;
     }

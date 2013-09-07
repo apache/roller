@@ -52,8 +52,9 @@ public class RuntimeConfigDefsParser {
     public RuntimeConfigDefs unmarshall(InputStream instream) 
         throws IOException, JDOMException {
         
-        if(instream == null)
+        if(instream == null) {
             throw new IOException("InputStream is null!");
+        }
         
         RuntimeConfigDefs configs = new RuntimeConfigDefs();
         
@@ -80,8 +81,7 @@ public class RuntimeConfigDefsParser {
         
         List displaygroups = element.getChildren("display-group");
         Iterator iter = displaygroups.iterator();
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             Element e = (Element) iter.next();
             configdef.addDisplayGroup(this.elementToDisplayGroup(e));
         }
@@ -119,11 +119,13 @@ public class RuntimeConfigDefsParser {
         prop.setDefaultValue(element.getChildText("default-value"));
         
         // optional elements
-        if(element.getChild("rows") != null)
+        if (element.getChild("rows") != null) {
             prop.setRows(element.getChildText("rows"));
+        }
         
-        if(element.getChild("cols") != null)
+        if (element.getChild("cols") != null) {
             prop.setCols(element.getChildText("cols"));
+        }
         
         return prop;
     }

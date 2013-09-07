@@ -48,7 +48,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class Register extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(Register.class);
-    
+    private static final String DISABLED_RETURN_CODE = "disabled";
     public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
 
     // this is a no-no, we should not need this
@@ -86,11 +86,11 @@ public class Register extends UIAction implements ServletRequestAware {
             if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
                 // unless there are 0 users (need to allow creation of first user)
                 && WebloggerFactory.getWeblogger().getUserManager().getUserCount() != 0) {
-                return "disabled";
+                return DISABLED_RETURN_CODE;
             }
         } catch (Exception e) {
             log.error("Error checking user count", e);
-            return "disabled";
+            return DISABLED_RETURN_CODE;
         }
                 
         // For new user default to locale set in browser
@@ -167,104 +167,109 @@ public class Register extends UIAction implements ServletRequestAware {
             if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
                 // unless there are 0 users (need to allow creation of first user)
                 && WebloggerFactory.getWeblogger().getUserManager().getUserCount() != 0) {
-                return "disabled";
+                return DISABLED_RETURN_CODE;
             }
         } catch (Exception e) {
             log.error("Error checking user count", e);
-            return "disabled";
+            return DISABLED_RETURN_CODE;
         }
                 
         myValidate();
         
-        if (!hasActionErrors()) try {
-            
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            
-            // copy form data into new user pojo
-            User ud = new User();
-            getBean().copyTo(ud); // doesn't copy password
-            ud.setUserName(getBean().getUserName());
-            ud.setDateCreated(new java.util.Date());
-            ud.setEnabled(Boolean.TRUE);
-            
-            // If user set both password and passwordConfirm then reset password
-            if (!StringUtils.isEmpty(getBean().getPasswordText()) && 
-                    !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
-                ud.resetPassword(getBean().getPasswordText());
-            }
-            
-            // are we using email activation?
-            boolean activationEnabled = WebloggerRuntimeConfig.getBooleanProperty(
-                    "user.account.activation.enabled");
-            if (activationEnabled) {
-                // User account will be enabled after the activation process
-                ud.setEnabled(Boolean.FALSE);
-                
-                // Create & save the activation data
-                String activationCode = UUID.randomUUID().toString();
-                
-                if (mgr.getUserByActivationCode(activationCode) != null) {
-                    // In the *extremely* unlikely event that we generate an
-                    // activation code that is already use, we'll retry 3 times.
-                    int numOfRetries = 3;
-                    if (numOfRetries < 1) numOfRetries = 1;
-                    for (int i = 0; i < numOfRetries; i++) {
-                        activationCode = UUID.randomUUID().toString();
-                        if (mgr.getUserByActivationCode(activationCode) == null) {
-                            break;
-                        } else {
-                            activationCode = null;
+        if (!hasActionErrors()) {
+            try {
+
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+
+                // copy form data into new user pojo
+                User ud = new User();
+                // copyTo skips password
+                getBean().copyTo(ud);
+                ud.setUserName(getBean().getUserName());
+                ud.setDateCreated(new java.util.Date());
+                ud.setEnabled(Boolean.TRUE);
+
+                // If user set both password and passwordConfirm then reset password
+                if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
+                        !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
+                    ud.resetPassword(getBean().getPasswordText());
+                }
+
+                // are we using email activation?
+                boolean activationEnabled = WebloggerRuntimeConfig.getBooleanProperty(
+                        "user.account.activation.enabled");
+                if (activationEnabled) {
+                    // User account will be enabled after the activation process
+                    ud.setEnabled(Boolean.FALSE);
+
+                    // Create & save the activation data
+                    String inActivationCode = UUID.randomUUID().toString();
+
+                    if (mgr.getUserByActivationCode(inActivationCode) != null) {
+                        // In the *extremely* unlikely event that we generate an
+                        // activation code that is already use, we'll retry 3 times.
+                        int numOfRetries = 3;
+                        if (numOfRetries < 1) {
+                            numOfRetries = 1;
+                        }
+                        for (int i = 0; i < numOfRetries; i++) {
+                            inActivationCode = UUID.randomUUID().toString();
+                            if (mgr.getUserByActivationCode(inActivationCode) == null) {
+                                break;
+                            } else {
+                                inActivationCode = null;
+                            }
+                        }
+                        // In more unlikely event that three retries isn't enough
+                        if (inActivationCode == null){
+                            throw new WebloggerException("error.add.user.activationCodeInUse");
                         }
                     }
-                    // In more unlikely event that three retries isn't enough
-                    if (activationCode == null){
-                        throw new WebloggerException("error.add.user.activationCodeInUse");
+                    ud.setActivationCode(inActivationCode);
+                }
+
+                // save new user
+                mgr.addUser(ud);
+
+                String openidurl = getBean().getOpenIdUrl();
+                if (openidurl != null) {
+                    if (openidurl.endsWith("/")) {
+                        openidurl = openidurl.substring(0, openidurl.length() - 1);
                     }
+                    mgr.setUserAttribute(
+                            ud.getUserName(), UserAttribute.Attributes.OPENID_URL.toString(),
+                            openidurl);
                 }
-                ud.setActivationCode(activationCode);
-            }
-            
-            // save new user
-            mgr.addUser(ud);
-            
-            String openidurl = getBean().getOpenIdUrl();
-            if (openidurl != null) {
-                if (openidurl.endsWith("/")) {
-                    openidurl = openidurl.substring(0, openidurl.length() - 1);
+
+                WebloggerFactory.getWeblogger().flush();
+
+                // now send activation email if necessary
+                if (activationEnabled && ud.getActivationCode() != null) {
+                    try {
+                        // send activation mail to the user
+                        MailUtil.sendUserActivationEmail(ud);
+                    } catch (WebloggerException ex) {
+                        log.error("Error sending activation email to - "+ud.getEmailAddress(), ex);
+                    }
+
+                    setActivationStatus("pending");
                 }
-                mgr.setUserAttribute(
-                    ud.getUserName(), UserAttribute.Attributes.OPENID_URL.toString(),
-                    openidurl);
+
+                // Invalidate session, otherwise new user who was originally
+                // authenticated via LDAP/SSO will remain logged in with
+                // a but without a valid Roller role.
+                getServletRequest().getSession().invalidate();
+
+                // set a special page title
+                setPageTitle("welcome.title");
+
+                return SUCCESS;
+
+            } catch (WebloggerException ex) {
+                log.error("Error adding new user", ex);
+                // TODO: i18n
+                addError("Error adding new user");
             }
-            
-            WebloggerFactory.getWeblogger().flush();
-            
-            // now send activation email if necessary
-            if (activationEnabled && ud.getActivationCode() != null) {
-                try {
-                    // send activation mail to the user
-                    MailUtil.sendUserActivationEmail(ud);
-                } catch (WebloggerException ex) {
-                    log.error("Error sending activation email to - "+ud.getEmailAddress(), ex);
-                }
-                
-                setActivationStatus("pending");
-            }
-             
-            // Invalidate session, otherwise new user who was originally
-            // authenticated via LDAP/SSO will remain logged in with
-            // a but without a valid Roller role.
-            getServletRequest().getSession().invalidate();
-            
-            // set a special page title
-            setPageTitle("welcome.title");
-            
-            return SUCCESS;
-            
-        } catch (WebloggerException ex) {
-            log.error("Error adding new user", ex);
-            // TODO: i18n
-            addError("Error adding new user");
         }
         
         return INPUT;
@@ -354,11 +359,10 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         // check password, it is required if OpenID and SSO are disabled
-        if (getOpenIdConfiguration().equals("disabled") && !getFromSso()) {
-            if (StringUtils.isEmpty(getBean().getPasswordText())) {            
+        if (getOpenIdConfiguration().equals("disabled") && !getFromSso()
+                && StringUtils.isEmpty(getBean().getPasswordText())) {
                 addError("error.add.user.passwordEmpty");
                 return;
-            }
         }
         
         // User.password does not allow null, so generate one
@@ -374,17 +378,19 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         // check that username is not taken
-        if (!StringUtils.isEmpty(getBean().getUserName())) try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            if (mgr.getUserByUserName(getBean().getUserName(), null) != null) {
-                addError("error.add.user.userNameInUse");
-                // reset user name
-                getBean().setUserName(null);
+        if (!StringUtils.isEmpty(getBean().getUserName())) {
+            try {
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                if (mgr.getUserByUserName(getBean().getUserName(), null) != null) {
+                    addError("error.add.user.userNameInUse");
+                    // reset user name
+                    getBean().setUserName(null);
+                }
+            } catch (WebloggerException ex) {
+                log.error("error checking for user", ex);
+                // TODO: i18n
+                addError("unexpected error");
             }
-        } catch (WebloggerException ex) {
-            log.error("error checking for user", ex);
-            // TODO: i18n
-            addError("unexpected error");
         }
     }
     

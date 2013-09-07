@@ -112,7 +112,9 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
         while (bookmarks.hasNext()) {
             WeblogBookmark bookmark = (WeblogBookmark)bookmarks.next();
             String bkDescription = bookmark.getDescription();
-            if (bkDescription == null) bkDescription = "";
+            if (bkDescription == null) {
+                bkDescription = "";
+            }
             String bookmarkLink = "<a href=\"" +
                     bookmark.getUrl() + "\" title=\"" +
                     bkDescription + "\">" +
@@ -136,10 +138,14 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
                         inLink++;
                     } else if (m.group(3) != null) {
                         // closing anchor tag </a>, but ignore nonmatching ones
-                        if (inLink > 0) inLink--;
+                        if (inLink > 0) {
+                            inLink--;
+                        }
                     } else if (m.group(4) != null) {
                         // matched the bookmark -- replace, but only if not within a link tag.
-                        if (inLink == 0) m.appendReplacement(textBuf, bookmarkLink);
+                        if (inLink == 0) {
+                            m.appendReplacement(textBuf, bookmarkLink);
+                        }
                     }
                     // Any remaining case indicates a bug.  One could add an else with assertion here.  Conservatively don't substitute.
                 }
@@ -150,7 +156,7 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
                 mLogger.warn("Failed to substitute for bookmark [" + bookmark.getName() + "] due to regular expression characters.");
             }
         }
-        return workingText.toString();
+        return workingText;
     }
     
 }

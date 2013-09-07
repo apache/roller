@@ -75,7 +75,9 @@ public class AutoPing implements Serializable {
      */
     public void setId(String id) {
         // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+        if (id != null && id.trim().length() == 0) {
+            return;
+        }
         this.id = id;
     }
 
@@ -118,7 +120,7 @@ public class AutoPing implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append("}");
@@ -126,8 +128,12 @@ public class AutoPing implements Serializable {
     }
     
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof AutoPing != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof AutoPing)) {
+            return false;
+        }
         AutoPing o = (AutoPing)other;
         return new EqualsBuilder()
             .append(getId(), o.getId())
