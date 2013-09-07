@@ -343,7 +343,7 @@ public class WeblogReferrer implements Serializable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getRequestUrl());
@@ -355,8 +355,12 @@ public class WeblogReferrer implements Serializable {
     }
     
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogReferrer != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof WeblogReferrer)) {
+            return false;
+        }
         WeblogReferrer o = (WeblogReferrer)other;
         return new EqualsBuilder()
         .append(getRefererUrl(), o.getRefererUrl())

@@ -51,7 +51,6 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     private static Log log = LogFactory.getLog(
         JPAPropertiesManagerImpl.class);
 
-    private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
     
     
@@ -61,7 +60,6 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     @com.google.inject.Inject
     protected JPAPropertiesManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Properties Manager");
-        this.roller = roller;
         this.strategy = strategy;
     }
     
@@ -74,14 +72,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         Map props = null;
         try {
             props = this.getProperties();
-
-            if(props.size() < 1) {
-                // empty props table ... load defaults
-                props = initializeMissingProps(props);
-            } else {
-                // found existing props ... check for new props
-                props = initializeMissingProps(props);
-            }
+            initializeMissingProps(props);
 
             // save our changes
             this.saveProperties(props);
@@ -162,16 +153,18 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      **/
     private Map initializeMissingProps(Map props) {
 
-        if(props == null)
+        if(props == null) {
             props = new HashMap();
+        }
 
         // start by getting our runtimeConfigDefs
         RuntimeConfigDefs runtimeConfigDefs =
                 WebloggerRuntimeConfig.getRuntimeConfigDefs();
 
         // can't do initialization without our config defs
-        if(runtimeConfigDefs == null)
+        if(runtimeConfigDefs == null) {
             return props;
+        }
 
         // iterator through all the definitions and add properties
         // that are not already in our props map

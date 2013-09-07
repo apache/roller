@@ -52,7 +52,7 @@ public class GeneratePlanetTask extends PlanetTask {
     public void run() {
         try {            
             Weblogger weblogger = WebloggerFactory.getWeblogger();
-            PlanetManager planetManager = weblogger.getPlanetManager();
+//          PlanetManager planetManager = weblogger.getPlanetManager();
                         
             // Ignore values from database
             //String mainPage = planetManager.getConfiguration().getMainPage();
@@ -90,7 +90,9 @@ public class GeneratePlanetTask extends PlanetTask {
             
             // Ensure that output directories exists, one for each group
             File outputDirObj = new File(outputDir);
-            if (!outputDirObj.exists()) outputDirObj.mkdirs();
+            if (!outputDirObj.exists()) {
+                outputDirObj.mkdirs();
+            }
             
             List groups = Collections.EMPTY_LIST;
             // groups must be part of a planet now, so getGroupHandles() was removed
@@ -99,7 +101,9 @@ public class GeneratePlanetTask extends PlanetTask {
                 String groupHandle = (String) it.next();
                 String groupDirName = outputDirObj + File.separator + groupHandle;
                 File groupDir = new File(groupDirName);
-                if (!groupDir.exists()) groupDir.mkdirs();
+                if (!groupDir.exists()) {
+                    groupDir.mkdirs();
+                }
             }
             
             // Generate files: execute control template

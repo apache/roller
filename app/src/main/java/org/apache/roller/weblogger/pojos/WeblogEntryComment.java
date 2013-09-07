@@ -277,7 +277,7 @@ public class WeblogEntryComment implements Serializable {
      * Indicates that weblog owner considers this comment to be spam.
      */
     public Boolean getSpam() {
-        return new Boolean(SPAM.equals(getStatus()));
+        return SPAM.equals(getStatus());
     }
     
     
@@ -285,7 +285,7 @@ public class WeblogEntryComment implements Serializable {
      * True if comment has is pending moderator approval.
      */
     public Boolean getPending() {
-        return new Boolean(PENDING.equals(getStatus()));
+        return PENDING.equals(getStatus());
     }
     
     
@@ -293,7 +293,7 @@ public class WeblogEntryComment implements Serializable {
      * Indicates that comment has been approved for display on weblog.
      */
     public Boolean getApproved() {
-        return new Boolean(APPROVED.equals(getStatus()));
+        return APPROVED.equals(getStatus());
     }
     
     
@@ -310,7 +310,7 @@ public class WeblogEntryComment implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getName());
@@ -321,8 +321,12 @@ public class WeblogEntryComment implements Serializable {
     }
 
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogEntryComment != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof WeblogEntryComment)) {
+            return false;
+        }
         WeblogEntryComment o = (WeblogEntryComment)other;
         return new EqualsBuilder()
             .append(getName(), o.getName()) 

@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.util.URLUtilities;
 public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     
     private final String previewTheme;
-    
+    private static final String PREVIEW_URL_SEGMENT = "/roller-ui/authoring/preview/";
     
     public PreviewURLStrategy(String theme) {
         previewTheme = theme;
@@ -59,7 +59,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
+        url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
         
         if(locale != null) {
             url.append(locale).append("/");
@@ -96,7 +96,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
+        url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
         
         if(locale != null) {
             url.append(locale).append("/");
@@ -138,7 +138,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         	pathinfo.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        pathinfo.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
+        pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
         
         if(locale != null) {
         	pathinfo.append(locale).append("/");
@@ -160,8 +160,12 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         } else if(tags != null && tags.size() > 0) {
             pathinfo.append("tags/").append(URLUtilities.getEncodedTagsString(tags));
         } else {
-            if(dateString != null) params.put("date", dateString);
-            if(cat != null) params.put("cat", URLUtilities.encode(cat));
+            if (dateString != null) {
+                params.put("date", dateString);
+            }
+            if (cat != null) {
+                params.put("cat", URLUtilities.encode(cat));
+            }
         }
 
         if(pageNum > 0) {
@@ -203,7 +207,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             pathinfo.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        pathinfo.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
+        pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
         
         if(locale != null) {
             pathinfo.append(locale).append("/");

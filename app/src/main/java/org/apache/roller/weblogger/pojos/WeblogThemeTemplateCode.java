@@ -87,7 +87,7 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 	// ------------------------------------------------------- Good citizenship
 
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("{");
 		buf.append(getId());
 		buf.append(", ").append(getTemplateId());
@@ -98,10 +98,12 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 	}
 
 	public boolean equals(Object other) {
-		if (other == this)
-			return true;
-		if (other instanceof WeblogThemeTemplateCode != true)
-			return false;
+		if (other == this) {
+            return true;
+        }
+		if (!(other instanceof WeblogThemeTemplateCode)) {
+            return false;
+        }
 		WeblogThemeTemplateCode o = (WeblogThemeTemplateCode) other;
 		return new EqualsBuilder().append(getTemplateId(), o.getTemplateId())
 				.append(getTemplate(), o.getTemplate()).isEquals();

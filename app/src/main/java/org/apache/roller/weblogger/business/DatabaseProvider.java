@@ -114,8 +114,12 @@ public class DatabaseProvider  {
             
             if (getJdbcUsername() != null || getJdbcPassword() != null) {
                 props = new Properties();
-                if (getJdbcUsername() != null) props.put("user", getJdbcUsername());
-                if (getJdbcPassword() != null) props.put("password", getJdbcPassword());
+                if (getJdbcUsername() != null) {
+                    props.put("user", getJdbcUsername());
+                }
+                if (getJdbcPassword() != null) {
+                    props.put("password", getJdbcPassword());
+                }
             }
             
         // Else attempt to locate JNDI datasource

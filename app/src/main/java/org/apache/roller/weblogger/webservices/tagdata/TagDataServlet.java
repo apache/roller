@@ -132,7 +132,9 @@ public class TagDataServlet extends HttpServlet {
                 if (it.hasNext()) {
                     pw.println(", ");
                 }
-                if (count++ > MAX) break;
+                if (count++ > MAX) {
+                    break;
+                }
             }
             pw.println("\n  ]\n}");
             response.flushBuffer();
@@ -160,7 +162,9 @@ public class TagDataServlet extends HttpServlet {
                 int frequency = stat.getCount();
                 pw.print("<atom:category term=\"" + term + "\" tagdata:frequency=\"" + frequency + "\" ");
                 pw.println("tagdata:href=\"" + viewURI + "\" />");
-                if (count++ > MAX) break;
+                if (count++ > MAX) {
+                    break;
+                }
             }
             if (tags.size() > MAX) {
                 // get next URI, if site-wide then don't specify weblog

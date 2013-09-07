@@ -92,7 +92,7 @@ public class WeblogThemeAssoc implements Serializable{
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append("}");
@@ -100,8 +100,12 @@ public class WeblogThemeAssoc implements Serializable{
     }
 
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogThemeAssoc != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof WeblogThemeAssoc)) {
+            return false;
+        }
         WeblogThemeAssoc o = (WeblogThemeAssoc) other;
         return new EqualsBuilder()
             .append(getId(), o.getId())

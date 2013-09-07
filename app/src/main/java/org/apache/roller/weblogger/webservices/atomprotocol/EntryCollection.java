@@ -65,7 +65,7 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 public class EntryCollection {
     private Weblogger      roller;
     private User           user;
-    private int            maxEntries = 20;    
+    private final static int MAX_ENTRIES = 20;
     private final String   atomURL;    
     
     private static Log log =
@@ -153,7 +153,7 @@ public class EntryCollection {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         try {
             int start = 0;
-            int max = maxEntries;
+            int max = MAX_ENTRIES;
             if (pathInfo.length > 2) {
                 try {
                     String s = pathInfo[2].trim();
@@ -184,7 +184,7 @@ public class EntryCollection {
                     null,
                     null,              // locale
                     start,             // offset (for range paging)
-                    max + 1);          // maxEntries
+                    max + 1);          // MAX_ENTRIES
             Feed feed = new Feed();
             feed.setId(atomURL
                 +"/"+website.getHandle() + "/entries/" + start);
@@ -198,7 +198,7 @@ public class EntryCollection {
 
             List atomEntries = new ArrayList();
             int count = 0;
-            for (Iterator iter = entries.iterator(); iter.hasNext() && count < maxEntries; count++) {
+            for (Iterator iter = entries.iterator(); iter.hasNext() && count < MAX_ENTRIES; count++) {
                 WeblogEntry rollerEntry = (WeblogEntry)iter.next();
                 Entry entry = createAtomEntry(rollerEntry);
                 atomEntries.add(entry);
@@ -208,7 +208,8 @@ public class EntryCollection {
                 }
             }
             List links = new ArrayList();
-            if (entries.size() > max) { // add next link
+            if (entries.size() > max) {
+                // add next link
                 int nextOffset = start + max;
                 String url = atomURL+"/"
                         + website.getHandle() + "/entries/" + nextOffset;
@@ -217,7 +218,8 @@ public class EntryCollection {
                 nextLink.setHref(url);
                 links.add(nextLink);
             }
-            if (start > 0) { // add previous link
+            if (start > 0) {
+                // add previous link
                 int prevOffset = start > max ? start - max : 0;
                 String url = atomURL+"/"
                         +website.getHandle() + "/entries/" + prevOffset;

@@ -97,7 +97,7 @@ public class PingTarget implements Serializable {
 
     /**
      * get the name of this ping target.  This is a name assigned by the administrator or a user (for custom) targets.
-     * It is deescriptive and is not necessarily unique.
+     * It is descriptive and is not necessarily unique.
      *
      * @return the name of this ping target
      */
@@ -226,7 +226,7 @@ public class PingTarget implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getName());
@@ -238,8 +238,12 @@ public class PingTarget implements Serializable {
     }
 
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof PingTarget != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof PingTarget)) {
+            return false;
+        }
         PingTarget o = (PingTarget)other;
         return new EqualsBuilder()
             .append(getId(), o.getId()) 

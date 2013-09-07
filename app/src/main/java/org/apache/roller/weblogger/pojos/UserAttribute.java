@@ -45,12 +45,13 @@ public class UserAttribute implements Serializable {
             this.name = name;
         }        
         private final String name;
+
         @Override
         public String toString() {
             return name;
         }     
         public String get() {
-            return name.toString();
+            return name;
         }
     }
 
@@ -97,7 +98,7 @@ public class UserAttribute implements Serializable {
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getUserName());
@@ -108,8 +109,12 @@ public class UserAttribute implements Serializable {
     }
     
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof UserRole != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof UserRole)) {
+            return false;
+        }
         UserAttribute o = (UserAttribute)other;
         return new EqualsBuilder()
             .append(getUserName(), o.getUserName())

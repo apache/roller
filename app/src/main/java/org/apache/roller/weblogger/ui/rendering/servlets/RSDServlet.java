@@ -126,7 +126,9 @@ public class RSDServlet extends HttpServlet {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);
             
-            if(!response.isCommitted()) response.reset();
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -144,7 +146,9 @@ public class RSDServlet extends HttpServlet {
             // bummer, error during rendering
             log.error("Error during rendering for rsd template", e);
             
-            if(!response.isCommitted()) response.reset();
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }

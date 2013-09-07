@@ -54,18 +54,22 @@ public class EntriesBean {
     }
     
     public Date getStartDate() {
-        if(!StringUtils.isEmpty(getStartDateString())) try {
-            DateFormat df = new SimpleDateFormat("MM/dd/yy");
-            return df.parse(getStartDateString());
-        } catch(Exception e) { }
+        if(!StringUtils.isEmpty(getStartDateString())) {
+            try {
+                DateFormat df = new SimpleDateFormat("MM/dd/yy");
+                return df.parse(getStartDateString());
+            } catch(Exception e) { }
+        }
         return null;
     }
 
     public Date getEndDate() {
-        if(!StringUtils.isEmpty(getEndDateString())) try {
-            DateFormat df = new SimpleDateFormat("MM/dd/yy");
-            return df.parse(getEndDateString());
-        } catch(Exception e) { }
+        if(!StringUtils.isEmpty(getEndDateString())) {
+            try {
+                DateFormat df = new SimpleDateFormat("MM/dd/yy");
+                return df.parse(getEndDateString());
+            } catch(Exception e) { }
+        }
         return null;
     }
     
@@ -120,7 +124,7 @@ public class EntriesBean {
     
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         
         buf.append("startDate = ").append(getStartDate()).append("\n");
         buf.append("endDate = ").append(getEndDate()).append("\n");

@@ -189,8 +189,12 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         } else if(tags != null && tags.size() > 0) {
             pathinfo.append("tags/").append(URLUtilities.getEncodedTagsString(tags));
         } else {
-            if(dateString != null) params.put("date", dateString);
-            if(cat != null) params.put("cat", URLUtilities.encode(cat));
+            if(dateString != null) {
+                params.put("date", dateString);
+            }
+            if(cat != null) {
+                params.put("cat", URLUtilities.encode(cat));
+            }
         }
 
         if(pageNum > 0) {

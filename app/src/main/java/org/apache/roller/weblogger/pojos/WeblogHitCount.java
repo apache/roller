@@ -39,7 +39,7 @@ public class WeblogHitCount implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getDailyHits());
@@ -49,8 +49,12 @@ public class WeblogHitCount implements Serializable {
     
     public boolean equals(Object other) {
         
-        if(this == other) return true;
-        if( !(other instanceof WeblogHitCount) ) return false;
+        if(this == other) {
+            return true;
+        }
+        if( !(other instanceof WeblogHitCount) ) {
+            return false;
+        }
         
         // our natural key, or business key, is our weblog
         final WeblogHitCount that = (WeblogHitCount) other;

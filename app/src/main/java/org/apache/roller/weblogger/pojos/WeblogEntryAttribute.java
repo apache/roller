@@ -77,7 +77,7 @@ public class WeblogEntryAttribute implements Comparable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getName());
@@ -87,8 +87,12 @@ public class WeblogEntryAttribute implements Comparable {
     }
     
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogEntryAttribute != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof WeblogEntryAttribute)) {
+            return false;
+        }
         WeblogEntryAttribute o = (WeblogEntryAttribute)other;
         return new EqualsBuilder()
         .append(getName(), o.getName())

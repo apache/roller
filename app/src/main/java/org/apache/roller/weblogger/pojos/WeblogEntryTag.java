@@ -138,7 +138,7 @@ public class WeblogEntryTag implements Serializable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getName());
@@ -148,8 +148,12 @@ public class WeblogEntryTag implements Serializable {
     }
     
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogEntryTag != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof WeblogEntryTag)) {
+            return false;
+        }
         WeblogEntryTag o = (WeblogEntryTag)other;
         return new EqualsBuilder()
         .append(getName(), o.getName())

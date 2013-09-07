@@ -89,7 +89,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getPath());
@@ -99,7 +99,9 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     public boolean equals(Object other) {
         
-        if (other == null) return false;
+        if (other == null) {
+            return false;
+        }
         
         if (other instanceof WeblogBookmarkFolder) {
             WeblogBookmarkFolder o = (WeblogBookmarkFolder) other;
@@ -143,7 +145,9 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     public void setId(String id) {
         // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+        if (id != null && id.trim().length() == 0) {
+            return;
+        }
         this.id = id;
     }
     

@@ -82,7 +82,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
                         taskLock = new TaskLock();
                         taskLock.setName(task.getName());
                         taskLock.setLastRun(new Date(0));
-                        taskLock.setTimeAquired(new Date(0));
+                        taskLock.setTimeAcquired(new Date(0));
                         taskLock.setTimeLeased(0);
 
                         // save it

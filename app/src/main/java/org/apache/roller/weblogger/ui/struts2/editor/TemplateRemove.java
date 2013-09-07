@@ -59,15 +59,16 @@ public class TemplateRemove extends UIAction {
 	}
 
 	public void myPrepare() {
-		if (getRemoveId() != null)
-			try {
-				setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
-						.getPage(getRemoveId()));
-			} catch (WebloggerException ex) {
-				log.error("Error looking up template by id - " + getRemoveId(),
-						ex);
-				addError("editPages.remove.notFound", getRemoveId());
-			}
+		if (getRemoveId() != null) {
+            try {
+                setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getPage(getRemoveId()));
+            } catch (WebloggerException ex) {
+                log.error("Error looking up template by id - " + getRemoveId(),
+                        ex);
+                addError("editPages.remove.notFound", getRemoveId());
+            }
+        }
 	}
 
 	/**
@@ -82,59 +83,60 @@ public class TemplateRemove extends UIAction {
 	 */
 	public String remove() {
 
-		if (getTemplate() != null)
-			try {
-				if (!getTemplate().isRequired()
-						|| !WeblogTheme.CUSTOM.equals(getActionWeblog()
-								.getEditorTheme())) {
+		if (getTemplate() != null) {
+            try {
+                if (!getTemplate().isRequired()
+                        || !WeblogTheme.CUSTOM.equals(getActionWeblog()
+                        .getEditorTheme())) {
 
-					WeblogManager mgr = WebloggerFactory.getWeblogger()
-							.getWeblogManager();
+                    WeblogManager mgr = WebloggerFactory.getWeblogger()
+                            .getWeblogManager();
 
-					// if weblog template remove custom style sheet also
-					if (getTemplate().getName().equals(
-							WeblogTemplate.DEFAULT_PAGE)) {
+                    // if weblog template remove custom style sheet also
+                    if (getTemplate().getName().equals(
+                            WeblogTemplate.DEFAULT_PAGE)) {
 
-						Weblog weblog = getActionWeblog();
+                        Weblog weblog = getActionWeblog();
 
-						ThemeTemplate stylesheet = getActionWeblog().getTheme()
-								.getStylesheet();
+                        ThemeTemplate stylesheet = getActionWeblog().getTheme()
+                                .getStylesheet();
 
-						// Delete style sheet if the same name
-						if (stylesheet != null
-								&& getActionWeblog().getTheme().getStylesheet() != null
-								&& stylesheet.getLink().equals(
-										getActionWeblog().getTheme()
-												.getStylesheet().getLink())) {
-							// Same so OK to delete
-							WeblogTemplate css = mgr.getPageByLink(
-									getActionWeblog(), stylesheet.getLink());
+                        // Delete style sheet if the same name
+                        if (stylesheet != null
+                                && getActionWeblog().getTheme().getStylesheet() != null
+                                && stylesheet.getLink().equals(
+                                getActionWeblog().getTheme()
+                                        .getStylesheet().getLink())) {
+                            // Same so OK to delete
+                            WeblogTemplate css = mgr.getPageByLink(
+                                    getActionWeblog(), stylesheet.getLink());
 
-							if (css != null) {
-								mgr.removePage(css);
-							}
-						}
+                            if (css != null) {
+                                mgr.removePage(css);
+                            }
+                        }
 
-						// Clear for next custom theme
-						weblog.setCustomStylesheetPath(null);
-						weblog.setDefaultPageId(null);
+                        // Clear for next custom theme
+                        weblog.setCustomStylesheetPath(null);
+                        weblog.setDefaultPageId(null);
 
-					}
+                    }
 
-					// notify cache
-					CacheManager.invalidate(getTemplate());
-					mgr.removePage(getTemplate());
-					WebloggerFactory.getWeblogger().flush();
+                    // notify cache
+                    CacheManager.invalidate(getTemplate());
+                    mgr.removePage(getTemplate());
+                    WebloggerFactory.getWeblogger().flush();
 
-					return SUCCESS;
-				} else {
-					addError("editPages.remove.requiredTemplate");
-				}
+                    return SUCCESS;
+                } else {
+                    addError("editPages.remove.requiredTemplate");
+                }
 
-			} catch (Exception ex) {
-				log.error("Error removing page - " + getRemoveId(), ex);
-				addError("editPages.remove.error");
-			}
+            } catch (Exception ex) {
+                log.error("Error removing page - " + getRemoveId(), ex);
+                addError("editPages.remove.error");
+            }
+        }
 
 		return "confirm";
 	}

@@ -64,11 +64,13 @@ public class PlanetGroups extends PlanetUIAction {
     @Override
     public void myPrepare() {
         
-        if(getPlanet() != null && getBean().getId() != null) try {
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-            setGroup(pmgr.getGroupById(getBean().getId()));
-        } catch(Exception ex) {
-            log.error("Error looking up planet group - "+getBean().getId(), ex);
+        if(getPlanet() != null && getBean().getId() != null) {
+            try {
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+                setGroup(pmgr.getGroupById(getBean().getId()));
+            } catch(Exception ex) {
+                log.error("Error looking up planet group - " + getBean().getId(), ex);
+            }
         }
     }
 
@@ -94,31 +96,32 @@ public class PlanetGroups extends PlanetUIAction {
         
         myValidate();
         
-        if (!hasActionErrors()) try {
-            
-            PlanetGroup group = getGroup();
-            if(group == null) {
-                log.debug("Adding New Group");
-                group = new PlanetGroup();
-                group.setPlanet(getPlanet());
-            } else {
-                log.debug("Updating Existing Group");
+        if (!hasActionErrors()) {
+            try {
+                PlanetGroup group = getGroup();
+                if(group == null) {
+                    log.debug("Adding New Group");
+                    group = new PlanetGroup();
+                    group.setPlanet(getPlanet());
+                } else {
+                    log.debug("Updating Existing Group");
+                }
+
+                // copy in submitted data
+                getBean().copyTo(group);
+
+                // save and flush
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+                pmgr.saveGroup(group);
+                WebloggerFactory.getWeblogger().flush();
+
+                addMessage("planetGroups.success.saved");
+
+            } catch(Exception ex) {
+                log.error("Error saving planet group - "+getBean().getId(), ex);
+                // TODO: i18n
+                addError("Error saving planet group");
             }
-            
-            // copy in submitted data
-            getBean().copyTo(group);
-            
-            // save and flush
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-            pmgr.saveGroup(group);
-            WebloggerFactory.getWeblogger().flush();
-            
-            addMessage("planetGroups.success.saved");
-            
-        } catch(Exception ex) {
-            log.error("Error saving planet group - "+getBean().getId(), ex);
-            // TODO: i18n
-            addError("Error saving planet group");
         }
         
         return LIST;

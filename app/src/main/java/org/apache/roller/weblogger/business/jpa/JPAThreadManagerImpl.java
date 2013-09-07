@@ -103,7 +103,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
                 if(LOG.isDebugEnabled()) {
                     LOG.debug("last run = "+taskLock.getLastRun());
                     LOG.debug("new run time = "+runTime);
-                    LOG.debug("last acquired = "+taskLock.getTimeAquired());
+                    LOG.debug("last acquired = "+taskLock.getTimeAcquired());
                     LOG.debug("time leased = "+taskLock.getTimeLeased());
                     LOG.debug("lease expiration = "+leaseExpiration);
                 }
@@ -114,7 +114,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
                 q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
                 q.setParameter(3, new Timestamp(runTime.getTime()));
                 q.setParameter(4, task.getName());
-                q.setParameter(5, taskLock.getTimeAquired());
+                q.setParameter(5, taskLock.getTimeAcquired());
                 q.setParameter(6, new Timestamp(leaseExpiration.getTime()));
                 int result = q.executeUpdate();
 

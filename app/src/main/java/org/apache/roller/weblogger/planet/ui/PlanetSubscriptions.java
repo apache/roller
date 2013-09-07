@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
  */
 public class PlanetSubscriptions extends PlanetUIAction {
     
-    private static final Log log = LogFactory.getLog(PlanetSubscriptions.class);
+    private static final Log LOGGER = LogFactory.getLog(PlanetSubscriptions.class);
     
     // id of the group we are working in
     private String groupHandle = null;
@@ -80,7 +80,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
         try {
             setGroup(pmgr.getGroup(getPlanet(), getGroupHandle()));
         } catch (RollerException ex) {
-            log.error("Error looking up planet group - "+getGroupHandle(), ex);
+            LOGGER.error("Error looking up planet group - " + getGroupHandle(), ex);
         }
     }
     
@@ -100,43 +100,45 @@ public class PlanetSubscriptions extends PlanetUIAction {
         
         myValidate();
         
-        if(!hasActionErrors()) try {
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-            
-            // check if this subscription already exists before adding it
-            Subscription sub = pmgr.getSubscription(getSubUrl());
-            if(sub == null) {
-                log.debug("Adding New Subscription - "+getSubUrl());
-                
-                // sub doesn't exist yet, so we need to fetch it
-                FeedFetcher fetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
-                sub = fetcher.fetchSubscription(getSubUrl());
-                
-                // save new sub
-                pmgr.saveSubscription(sub);
-            } else {
-                log.debug("Adding Existing Subscription - "+getSubUrl());
-                
-                // Subscription already exists
-                addMessage("planetSubscription.foundExisting", sub.getTitle());
+        if(!hasActionErrors()) {
+            try {
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+
+                // check if this subscription already exists before adding it
+                Subscription sub = pmgr.getSubscription(getSubUrl());
+                if(sub == null) {
+                    LOGGER.debug("Adding New Subscription - " + getSubUrl());
+
+                    // sub doesn't exist yet, so we need to fetch it
+                    FeedFetcher fetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
+                    sub = fetcher.fetchSubscription(getSubUrl());
+
+                    // save new sub
+                    pmgr.saveSubscription(sub);
+                } else {
+                    LOGGER.debug("Adding Existing Subscription - " + getSubUrl());
+
+                    // Subscription already exists
+                    addMessage("planetSubscription.foundExisting", sub.getTitle());
+                }
+
+                // add the sub to the group
+                group.getSubscriptions().add(sub);
+                sub.getGroups().add(group);
+                pmgr.saveGroup(group);
+
+                // flush changes
+                WebloggerFactory.getWeblogger().flush();
+
+                // clear field after success
+                setSubUrl(null);
+
+                addMessage("planetSubscription.success.saved");
+
+            } catch (RollerException ex) {
+                LOGGER.error("Unexpected error saving subscription", ex);
+                addError("planetSubscriptions.error.duringSave", ex.getRootCauseMessage());
             }
-            
-            // add the sub to the group
-            group.getSubscriptions().add(sub);
-            sub.getGroups().add(group);
-            pmgr.saveGroup(group);
-            
-            // flush changes
-            WebloggerFactory.getWeblogger().flush();
-            
-            // clear field after success
-            setSubUrl(null);
-            
-            addMessage("planetSubscription.success.saved");
-            
-        } catch (RollerException ex) {
-            log.error("Unexpected error saving subscription", ex);
-            addError("planetSubscriptions.error.duringSave", ex.getRootCauseMessage());
         }
         
         return LIST;
@@ -148,25 +150,27 @@ public class PlanetSubscriptions extends PlanetUIAction {
      */
     public String delete() {
         
-        if(getSubUrl() != null) try {
-            
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-            
-            // remove subscription
-            Subscription sub = pmgr.getSubscription(getSubUrl());
-            getGroup().getSubscriptions().remove(sub);
-            sub.getGroups().remove(getGroup());
-            pmgr.saveGroup(getGroup());
-            WebloggerFactory.getWeblogger().flush();
-            
-            // clear field after success
-            setSubUrl(null);
-            
-            addMessage("planetSubscription.success.deleted");
-            
-        } catch (RollerException ex) {
-            log.error("Error removing planet subscription", ex);
-            addError("planetSubscription.error.deleting");
+        if(getSubUrl() != null) {
+            try {
+
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+
+                // remove subscription
+                Subscription sub = pmgr.getSubscription(getSubUrl());
+                getGroup().getSubscriptions().remove(sub);
+                sub.getGroups().remove(getGroup());
+                pmgr.saveGroup(getGroup());
+                WebloggerFactory.getWeblogger().flush();
+
+                // clear field after success
+                setSubUrl(null);
+
+                addMessage("planetSubscription.success.deleted");
+
+            } catch (RollerException ex) {
+                LOGGER.error("Error removing planet subscription", ex);
+                addError("planetSubscription.error.deleting");
+            }
         }
 
         return LIST;

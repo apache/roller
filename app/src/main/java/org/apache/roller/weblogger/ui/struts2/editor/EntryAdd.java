@@ -94,8 +94,7 @@ public final class EntryAdd extends EntryBase {
 
 		// set comment defaults
 		getBean().setAllowComments(getActionWeblog().getDefaultAllowComments());
-		getBean().setCommentDays(
-				new Integer(getActionWeblog().getDefaultCommentDays()));
+		getBean().setCommentDays(getActionWeblog().getDefaultCommentDays());
 
 		// apply weblog default plugins
 		if (getActionWeblog().getDefaultPlugins() != null) {
@@ -114,112 +113,114 @@ public final class EntryAdd extends EntryBase {
 	 */
 	public String save() {
 
-		if (!hasActionErrors())
-			try {
-				UserManager userMgr = WebloggerFactory.getWeblogger()
-						.getUserManager();
-				WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger()
-						.getWeblogEntryManager();
+		if (!hasActionErrors()) {
+            try {
+                UserManager userMgr = WebloggerFactory.getWeblogger()
+                        .getUserManager();
+                WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger()
+                        .getWeblogEntryManager();
 
-				WeblogEntry entry = new WeblogEntry();
-				entry.setCreatorUserName(getAuthenticatedUser().getUserName());
-				entry.setWebsite(getActionWeblog());
+                WeblogEntry entry = new WeblogEntry();
+                entry.setCreatorUserName(getAuthenticatedUser().getUserName());
+                entry.setWebsite(getActionWeblog());
 
-				// set updatetime & pubtime if it was specified
-				entry.setUpdateTime(new Timestamp(new Date().getTime()));
-				entry.setPubTime(getBean().getPubTime(getLocale(),
-						getActionWeblog().getTimeZoneInstance()));
+                // set updatetime & pubtime if it was specified
+                entry.setUpdateTime(new Timestamp(new Date().getTime()));
+                entry.setPubTime(getBean().getPubTime(getLocale(),
+                        getActionWeblog().getTimeZoneInstance()));
 
-				// copy data to new entry pojo
-				getBean().copyTo(entry);
+                // copy data to new entry pojo
+                getBean().copyTo(entry);
 
-				// handle pubtime auto set
-				if (entry.isPublished()) {
-					if (entry.getPubTime() == null) {
-						// no time specified, use current time
-						entry.setPubTime(entry.getUpdateTime());
-					}
+                // handle pubtime auto set
+                if (entry.isPublished()) {
+                    if (entry.getPubTime() == null) {
+                        // no time specified, use current time
+                        entry.setPubTime(entry.getUpdateTime());
+                    }
 
-					// if user does not have author perms then force PENDING
-					// status
-					if (!getActionWeblog().hasUserPermission(
-							getAuthenticatedUser(), WeblogPermission.POST)) {
-						entry.setStatus(WeblogEntry.PENDING);
-					}
-				}
+                    // if user does not have author perms then force PENDING
+                    // status
+                    if (!getActionWeblog().hasUserPermission(
+                            getAuthenticatedUser(), WeblogPermission.POST)) {
+                        entry.setStatus(WeblogEntry.PENDING);
+                    }
+                }
 
-				// if user is an admin then apply pinned to main value as well
-				GlobalPermission adminPerm = new GlobalPermission(
-						Collections.singletonList(GlobalPermission.ADMIN));
-				if (userMgr.checkPermission(adminPerm, getAuthenticatedUser())) {
-					entry.setPinnedToMain(getBean().getPinnedToMain());
-				}
+                // if user is an admin then apply pinned to main value as well
+                GlobalPermission adminPerm = new GlobalPermission(
+                        Collections.singletonList(GlobalPermission.ADMIN));
+                if (userMgr.checkPermission(adminPerm, getAuthenticatedUser())) {
+                    entry.setPinnedToMain(getBean().getPinnedToMain());
+                }
 
-				if (!StringUtils.isEmpty(getBean().getEnclosureURL()))
-					try {
-						// Fetch MediaCast resource
-						log.debug("Checking MediaCast attributes");
-						MediacastResource mediacast = MediacastUtil
-								.lookupResource(getBean().getEnclosureURL());
+                if (!StringUtils.isEmpty(getBean().getEnclosureURL())) {
+                    try {
+                        // Fetch MediaCast resource
+                        log.debug("Checking MediaCast attributes");
+                        MediacastResource mediacast = MediacastUtil
+                                .lookupResource(getBean().getEnclosureURL());
 
-						// set mediacast attributes
-						entry.putEntryAttribute("att_mediacast_url",
-								mediacast.getUrl());
-						entry.putEntryAttribute("att_mediacast_type",
-								mediacast.getContentType());
-						entry.putEntryAttribute("att_mediacast_length", ""
-								+ mediacast.getLength());
+                        // set mediacast attributes
+                        entry.putEntryAttribute("att_mediacast_url",
+                                mediacast.getUrl());
+                        entry.putEntryAttribute("att_mediacast_type",
+                                mediacast.getContentType());
+                        entry.putEntryAttribute("att_mediacast_length", ""
+                                + mediacast.getLength());
 
-					} catch (MediacastException ex) {
-						addMessage(getText(ex.getErrorKey()));
-					}
+                    } catch (MediacastException ex) {
+                        addMessage(getText(ex.getErrorKey()));
+                    }
+                }
 
-				if (log.isDebugEnabled()) {
-					log.debug("entry bean is ...\n" + getBean().toString());
-					log.debug("final status = " + entry.getStatus());
-					log.debug("updtime = " + entry.getUpdateTime());
-					log.debug("pubtime = " + entry.getPubTime());
-				}
+                if (log.isDebugEnabled()) {
+                    log.debug("entry bean is ...\n" + getBean().toString());
+                    log.debug("final status = " + entry.getStatus());
+                    log.debug("updtime = " + entry.getUpdateTime());
+                    log.debug("pubtime = " + entry.getPubTime());
+                }
 
-				log.debug("Saving entry");
-				weblogMgr.saveWeblogEntry(entry);
-				WebloggerFactory.getWeblogger().flush();
+                log.debug("Saving entry");
+                weblogMgr.saveWeblogEntry(entry);
+                WebloggerFactory.getWeblogger().flush();
 
-				// notify search of the new entry
-				if (entry.isPublished()) {
-					reindexEntry(entry);
-				}
+                // notify search of the new entry
+                if (entry.isPublished()) {
+                    reindexEntry(entry);
+                }
 
-				// notify caches
-				CacheManager.invalidate(entry);
+                // notify caches
+                CacheManager.invalidate(entry);
 
-				// Queue applicable pings for this update.
-				if (entry.isPublished()) {
-					WebloggerFactory.getWeblogger().getAutopingManager()
-							.queueApplicableAutoPings(entry);
-				}
+                // Queue applicable pings for this update.
+                if (entry.isPublished()) {
+                    WebloggerFactory.getWeblogger().getAutopingManager()
+                            .queueApplicableAutoPings(entry);
+                }
 
-				if (entry.isPending()) {
-					// implies that entry just changed to pending
-					if (MailUtil.isMailConfigured()) {
+                if (entry.isPending()) {
+                    // implies that entry just changed to pending
+                    if (MailUtil.isMailConfigured()) {
                         MailUtil.sendPendingEntryNotice(entry);
                     }
-					addMessage("weblogEdit.submittedForReview");
-				} else {
-					addMessage("weblogEdit.changesSaved");
-				}
+                    addMessage("weblogEdit.submittedForReview");
+                } else {
+                    addMessage("weblogEdit.changesSaved");
+                }
 
-				// now that entry is saved we want to store the id in the bean
-				// so that our success action can use it properly
-				getBean().setId(entry.getId());
+                // now that entry is saved we want to store the id in the bean
+                // so that our success action can use it properly
+                getBean().setId(entry.getId());
 
-				return SUCCESS;
+                return SUCCESS;
 
-			} catch (Exception e) {
-				log.error("Error saving new entry", e);
-				// TODO: i18n
-				addError("Error saving new entry");
-			}
+            } catch (Exception e) {
+                log.error("Error saving new entry", e);
+                // TODO: i18n
+                addError("Error saving new entry");
+            }
+        }
 
 		return INPUT;
 	}

@@ -32,7 +32,7 @@ public class SharedThemeTemplateCode implements Serializable, TemplateCode {
 	private String templateId = null;
 	private String template = null;
 	private String type = null;
-	private String ContentType = null;
+	private String contentType = null;
 	private String templateLanguage = null;
 	private Date lastModified = null;
 
@@ -96,7 +96,7 @@ public class SharedThemeTemplateCode implements Serializable, TemplateCode {
 	// ------------------------------------------------------- Good citizenship
 
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("{");
 		buf.append(this.templateId);
 		buf.append(", [ ").append(this.template);
@@ -106,10 +106,12 @@ public class SharedThemeTemplateCode implements Serializable, TemplateCode {
 	}
 
 	public boolean equals(Object other) {
-		if (other == this)
-			return true;
-		if (other instanceof SharedThemeTemplateCode != true)
-			return false;
+		if (other == this) {
+            return true;
+        }
+		if (!(other instanceof SharedThemeTemplateCode)) {
+            return false;
+        }
 		SharedThemeTemplateCode o = (SharedThemeTemplateCode) other;
 		return new EqualsBuilder().append(templateId, o.getTemplateId())
 				.append(template, o.getTemplate()).isEquals();
@@ -132,11 +134,11 @@ public class SharedThemeTemplateCode implements Serializable, TemplateCode {
 
 	// @Override
 	public String getContentType() {
-		return ContentType;
+		return contentType;
 	}
 
 	// @Override
 	public void setContentType(String contentType) {
-		ContentType = contentType;
+		this.contentType = contentType;
 	}
 }

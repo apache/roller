@@ -75,9 +75,10 @@ public class ThemeResourceLoader extends ResourceLoader {
 			// parse the name ... theme templates name are
 			// <theme>:<template>|<deviceType>
 			String[] split = name.split(":", 2);
-			if (split.length < 2)
+			if (split.length < 2) {
 				throw new ResourceNotFoundException("Invalid ThemeRL key "
 						+ name);
+            }
 
 			// lookup the template from the proper theme
 			ThemeManager themeMgr = WebloggerFactory.getWeblogger()
@@ -85,10 +86,11 @@ public class ThemeResourceLoader extends ResourceLoader {
 			Theme theme = themeMgr.getTheme(split[0]);
 			ThemeTemplate template = theme.getTemplateByName(split[1]);
 
-			if (template == null)
+			if (template == null) {
 				throw new ResourceNotFoundException("Template [" + split[1]
 						+ "] doesn't seem to be part of theme [" + split[0]
 						+ "]");
+            }
 
 			final String contents;
 			if (template.getTemplateCode(deviceType) != null) {

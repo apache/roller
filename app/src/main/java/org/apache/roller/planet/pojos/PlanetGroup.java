@@ -200,11 +200,15 @@ public class PlanetGroup implements Serializable, Comparable {
      */
     public boolean qualified(SubscriptionEntry entry) {
         String[] cats = createCategoryRestrictionAsArray();
-        if (cats == null || cats.length == 0) return true;
-        for (int i=0; i<cats.length; i++) {
-            if (entry.inCategory(cats[i])) return true;
+        if (cats == null || cats.length == 0) {
+            return true;
         }
-        return  false;
+        for (int i=0; i<cats.length; i++) {
+            if (entry.inCategory(cats[i])) {
+                return true;
+            }
+        }
+        return false;
     }
     
     

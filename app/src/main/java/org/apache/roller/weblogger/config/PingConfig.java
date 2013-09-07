@@ -41,10 +41,10 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class PingConfig {
-    private static final Log logger = LogFactory.getLog(PingConfig.class);
+    private static final Log LOGGER = LogFactory.getLog(PingConfig.class);
 
 
-    // Config property for maximim ping attempts.
+    // Config property for maximum ping attempts.
     static final String MAX_PING_ATTEMPTS_PROP = "pings.maxPingAttempts";
     private static final int MAX_PING_ATTEMPTS_DEFAULT = 3;
     private static final int MAX_PING_ATTEMPTS_MIN = 1;
@@ -98,7 +98,7 @@ public class PingConfig {
     // This was introduced in order to support certain buggy (but popular) ping
     // targets that implement minor variants of the WeblogUpdates.ping call.
     // This is initialized once at startup, and referenced when pings are made.
-    private static final Map configuredVariants = new HashMap();
+    private static final Map CONFIGURED_VARIANTS = new HashMap();
     
     // Pattern used to parse common ping targets as well as ping variants.
     // Each initial commmon ping target is specified in the format {{name}{url}}
@@ -186,15 +186,15 @@ public class PingConfig {
     public static void initializeCommonTargets() throws WebloggerException {
         String configuredVal = WebloggerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
         if (configuredVal == null || configuredVal.trim().length() == 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
             }
             return;
         }
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         if (!pingTargetMgr.getCommonPingTargets().isEmpty()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Some common ping targets are present in the database already.  Skipping initialization.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Some common ping targets are present in the database already.  Skipping initialization.");
             }
             return;
         }
@@ -204,17 +204,19 @@ public class PingConfig {
             // Trim space around the target spec
             String thisTarget = configuredTargets[i].trim();
             // skip empty ones
-            if (thisTarget.length() == 0) continue;
+            if (thisTarget.length() == 0) {
+                continue;
+            }
             // parse the ith target and store it
             Matcher m = NESTED_BRACE_PAIR.matcher(thisTarget);
             if (m.matches() && m.groupCount() == 2) {
                 String name = m.group(1).trim();
                 String url = m.group(2).trim();
-                logger.info("Creating common ping target '" + name + "' from configuration properties.");
+                LOGGER.info("Creating common ping target '" + name + "' from configuration properties.");
                 PingTarget pingTarget = new PingTarget(null, name, url, null, false);
                 pingTargetMgr.savePingTarget(pingTarget);
             } else {
-                logger.error("Unable to parse configured initial ping target '" + thisTarget + "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
+                LOGGER.error("Unable to parse configured initial ping target '" + thisTarget + "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
             }
         }
     }
@@ -225,15 +227,17 @@ public class PingConfig {
     public static void initializePingVariants() {
         String configuredVal = WebloggerConfig.getProperty(PINGS_VARIANT_OPTIONS_PROP);
         if (configuredVal == null || configuredVal.trim().length() == 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No (or empty) value of " + PINGS_VARIANT_OPTIONS_PROP + " present in the configuration.  Skipping initialization of ping variants.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No (or empty) value of " + PINGS_VARIANT_OPTIONS_PROP + " present in the configuration.  Skipping initialization of ping variants.");
             }
             return;
         }
         String[] variants = configuredVal.trim().split(",");
         for (int i = 0; i < variants.length; i++) {
             String thisVariant = variants[i].trim();
-            if (thisVariant.length() == 0) continue;
+            if (thisVariant.length() == 0) {
+                continue;
+            }
             Matcher m = NESTED_BRACE_PAIR.matcher(thisVariant);
             if (m.matches() && m.groupCount() == 2) {
                 String url = m.group(1).trim();
@@ -247,12 +251,12 @@ public class PingConfig {
                     }
                 }
                 if (!variantOptions.isEmpty()) {
-                    configuredVariants.put(url, variantOptions);
+                    CONFIGURED_VARIANTS.put(url, variantOptions);
                 } else {
-                    logger.warn("Ping variant entry for url '" + url + "' has an empty variant options list.  Ignored.");
+                    LOGGER.warn("Ping variant entry for url '" + url + "' has an empty variant options list.  Ignored.");
                 }
             } else {
-                logger.error("Unable to parse configured ping variant '" + thisVariant + "'. Skipping this variant. Check your setting of the property " + PINGS_VARIANT_OPTIONS_PROP);
+                LOGGER.error("Unable to parse configured ping variant '" + thisVariant + "'. Skipping this variant. Check your setting of the property " + PINGS_VARIANT_OPTIONS_PROP);
             }
         }
     }
@@ -265,7 +269,7 @@ public class PingConfig {
      *         the empty set if there are no variants configured.
      */
     public static Set getVariantOptions(String pingTargetUrl) {
-        Set variantOptions = (Set) configuredVariants.get(pingTargetUrl);
+        Set variantOptions = (Set) CONFIGURED_VARIANTS.get(pingTargetUrl);
         if (variantOptions == null) {
             variantOptions = Collections.EMPTY_SET;
         }
@@ -288,8 +292,8 @@ public class PingConfig {
     private static int getIntegerProperty(String propName, int defaultValue, int min, int max) {
         String configuredVal = WebloggerConfig.getProperty(propName);
         if (configuredVal == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
             }
             return defaultValue;
         }
@@ -298,12 +302,12 @@ public class PingConfig {
         try {
             val = Integer.parseInt(configuredVal);
         } catch (NumberFormatException ex) {
-            logger.error("ERROR: PingConfig property '" + propName + "' is not an integer value.  Using default value: " + defaultValue);
+            LOGGER.error("ERROR: PingConfig property '" + propName + "' is not an integer value.  Using default value: " + defaultValue);
             return defaultValue;
         }
 
         if (val < min || val > max) {
-            logger.error("ERROR: PingConfig property '" + propName + "' is outside the required range (" + min + ", " + max + ").  Using default value: " + defaultValue);
+            LOGGER.error("ERROR: PingConfig property '" + propName + "' is outside the required range (" + min + ", " + max + ").  Using default value: " + defaultValue);
             return defaultValue;
         }
 
@@ -320,8 +324,8 @@ public class PingConfig {
     private static boolean getBooleanProperty(String propName, boolean defaultValue) {
         String configuredVal = WebloggerConfig.getProperty(propName);
         if (configuredVal == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
             }
             return defaultValue;
         }

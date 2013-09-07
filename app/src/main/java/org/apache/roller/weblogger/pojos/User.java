@@ -21,9 +21,7 @@ package org.apache.roller.weblogger.pojos;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
@@ -55,8 +53,6 @@ public class User implements Serializable {
     private Boolean enabled = Boolean.TRUE;
     private String  activationCode;
     
-    private Set roles = new HashSet();
-
     public User() {
     }
     
@@ -131,7 +127,7 @@ public class User implements Serializable {
         
         String encrypt = WebloggerConfig.getProperty("passwds.encryption.enabled");
         String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
-        if (new Boolean(encrypt)) {
+        if (Boolean.valueOf(encrypt)) {
             setPassword(Utilities.encodePassword(newPassword, algorithm));
         } else {
             setPassword(newPassword);
@@ -275,7 +271,7 @@ public class User implements Serializable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getUserName());
@@ -288,8 +284,12 @@ public class User implements Serializable {
     }
     
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof User != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof User)) {
+            return false;
+        }
         User o = (User)other;
         return new EqualsBuilder().append(getUserName(), o.getUserName()).isEquals();
     }

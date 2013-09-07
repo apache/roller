@@ -44,11 +44,11 @@ public class StatCount {
     private String weblogHandle = null;
 
     public StatCount(String subjectId, String subjectNameShort, String subjectNameLong, String typeKey, long count) {
-        this.setSubjectId(subjectId);
-        this.setSubjectNameShort(subjectNameShort);
-        this.setSubjectNameLong(subjectNameLong);
-        this.setTypeKey(typeKey);
-        this.setCount(count);
+        this.subjectId = subjectId;
+        this.subjectNameShort = subjectNameShort;
+        this.subjectNameLong = subjectNameLong;
+        this.typeKey = typeKey;
+        this.count = count;
     } 
     
     public String getTypeKey() {
@@ -102,7 +102,7 @@ public class StatCount {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getWeblogHandle());
         buf.append(", ").append(getCount());
@@ -111,8 +111,12 @@ public class StatCount {
     }
 
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof StatCount != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof StatCount)) {
+            return false;
+        }
         StatCount o = (StatCount)other;
         return new EqualsBuilder()
             .append(getSubjectId(), o.getSubjectId()) 

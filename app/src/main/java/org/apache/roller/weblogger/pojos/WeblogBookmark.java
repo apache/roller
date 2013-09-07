@@ -240,7 +240,7 @@ public class WeblogBookmark implements Serializable, Comparable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getUrl());
@@ -249,8 +249,12 @@ public class WeblogBookmark implements Serializable, Comparable {
     }
     
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogBookmark != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof WeblogBookmark)) {
+            return false;
+        }
         WeblogBookmark o = (WeblogBookmark)other;
         return new EqualsBuilder()
         .append(getName(), o.getName())

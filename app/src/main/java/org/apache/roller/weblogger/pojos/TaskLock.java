@@ -31,7 +31,7 @@ public class TaskLock implements Serializable {
     
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
-    private Date timeAquired = null;
+    private Date timeAcquired = null;
     private int timeLeased = 0;
     private Date lastRun = null;
     private String clientId = null;
@@ -69,8 +69,8 @@ public class TaskLock implements Serializable {
     public Date getLeaseExpiration() {
         
         Date leaseAcquisitionTime = new Date(0);
-        if(getTimeAquired() != null) {
-            leaseAcquisitionTime = getTimeAquired();
+        if(getTimeAcquired() != null) {
+            leaseAcquisitionTime = getTimeAcquired();
         }
         
         // calculate lease expiration time
@@ -89,7 +89,7 @@ public class TaskLock implements Serializable {
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getName());
-        buf.append(", ").append(getTimeAquired());
+        buf.append(", ").append(getTimeAcquired());
         buf.append(", ").append(getTimeLeased());
         buf.append("}");
         return buf.toString();
@@ -98,9 +98,12 @@ public class TaskLock implements Serializable {
     @Override
     public boolean equals(Object other) {
         
-        if(this == other) return true;
-        if( !(other instanceof TaskLock) ) return false;
-        
+        if(this == other) {
+            return true;
+        }
+        if( !(other instanceof TaskLock) ) {
+            return false;
+        }
         // our natural key, or business key, is our name
         final TaskLock that = (TaskLock) other;
         return this.getName().equals(that.getName());
@@ -108,7 +111,7 @@ public class TaskLock implements Serializable {
     
     @Override
     public int hashCode() {
-        // our natrual key, or business key, is our name
+        // our natural key, or business key, is our name
         return this.getName().hashCode();
     }
     
@@ -131,12 +134,12 @@ public class TaskLock implements Serializable {
     }
 
     
-    public Date getTimeAquired() {
-        return timeAquired;
+    public Date getTimeAcquired() {
+        return timeAcquired;
     }
 
-    public void setTimeAquired(Date timeAquired) {
-        this.timeAquired = timeAquired;
+    public void setTimeAcquired(Date timeAcquired) {
+        this.timeAcquired = timeAcquired;
     }
 
     

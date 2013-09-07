@@ -172,8 +172,9 @@ public class UtilitiesModel implements Model {
      */
     public String formatDate(Date d, String fmt, TimeZone tzOverride) {
         
-        if(d == null || fmt == null)
+        if (d == null || fmt == null) {
             return fmt;
+        }
         
         SimpleDateFormat format = new SimpleDateFormat(fmt, weblog.getLocaleInstance());
         if(tzOverride != null) {
@@ -321,7 +322,9 @@ public class UtilitiesModel implements Model {
     }    
     
     public String hexEncode(String str) {
-        if (StringUtils.isEmpty(str)) return str;
+        if (StringUtils.isEmpty(str)) {
+            return str;
+        }
         
         return RegexUtil.encode(str);
     }

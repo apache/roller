@@ -127,30 +127,34 @@ public class MembersInvite extends UIAction {
         }
         
         // if no errors then send the invitation
-        if(!hasActionErrors()) try {
-            umgr.grantWeblogPermissionPending(getActionWeblog(), user, 
-                    Collections.singletonList(getPermissionString()));
-            WebloggerFactory.getWeblogger().flush();
-            
-            addMessage("inviteMember.userInvited");
-            
-            if (MailUtil.isMailConfigured()) try {
-                MailUtil.sendWeblogInvitation(getActionWeblog(), user);
-            } catch (WebloggerException e) {
-                // TODO: this should be an error except that struts2 misbehaves
-                // when we chain this action to the next one thinking that an error
-                // means that validation broke during the chain
-                addMessage("error.untranslated", e.getMessage());
+        if(!hasActionErrors()) {
+            try {
+                umgr.grantWeblogPermissionPending(getActionWeblog(), user,
+                        Collections.singletonList(getPermissionString()));
+                WebloggerFactory.getWeblogger().flush();
+
+                addMessage("inviteMember.userInvited");
+
+                if (MailUtil.isMailConfigured()) {
+                    try {
+                        MailUtil.sendWeblogInvitation(getActionWeblog(), user);
+                    } catch (WebloggerException e) {
+                        // TODO: this should be an error except that struts2 misbehaves
+                        // when we chain this action to the next one thinking that an error
+                        // means that validation broke during the chain
+                        addMessage("error.untranslated", e.getMessage());
+                    }
+                }
+
+                log.debug("Invitation successfully recorded");
+
+                return SUCCESS;
+
+            } catch (Exception ex) {
+                log.error("Error creating user invitation", ex);
+                // TODO: i18n
+                addError("Error creating user invitation");
             }
-            
-            log.debug("Invitation successfully recorded");
-            
-            return SUCCESS;
-            
-        } catch (Exception ex) {
-            log.error("Error creating user invitation", ex);
-            // TODO: i18n
-            addError("Error creating user invitation");
         }
         
         log.debug("Invitation had errors, giving user another chance");

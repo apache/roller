@@ -38,11 +38,11 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
  * 
  * We also provide some methods for converting to different data types.
  */
-public class WebloggerRuntimeConfig {
+public final class WebloggerRuntimeConfig {
     
     private static Log log = LogFactory.getLog(WebloggerRuntimeConfig.class);
     
-    private static String runtime_config = "/org/apache/roller/weblogger/config/runtimeConfigDefs.xml";
+    private static String RUNTIME_CONFIG = "/org/apache/roller/weblogger/config/runtimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
     
     // special case for our context urls
@@ -86,10 +86,11 @@ public class WebloggerRuntimeConfig {
         // get the value first, then convert
         String value = WebloggerRuntimeConfig.getProperty(name);
         
-        if(value == null)
+        if (value == null) {
             return false;
-        
-        return (new Boolean(value)).booleanValue();
+        }
+
+        return Boolean.valueOf(value);
     }
     
     
@@ -101,8 +102,9 @@ public class WebloggerRuntimeConfig {
         // get the value first, then convert
         String value = WebloggerRuntimeConfig.getProperty(name);
         
-        if(value == null)
+        if (value == null) {
             return -1;
+        }
         
         int intval = -1;
         try {
@@ -122,7 +124,7 @@ public class WebloggerRuntimeConfig {
             // unmarshall the config defs file
             try {
                 InputStream is = 
-                        WebloggerRuntimeConfig.class.getResourceAsStream(runtime_config);
+                        WebloggerRuntimeConfig.class.getResourceAsStream(RUNTIME_CONFIG);
                 
                 RuntimeConfigDefsParser parser = new RuntimeConfigDefsParser();
                 configDefs = parser.unmarshall(is);
@@ -152,13 +154,14 @@ public class WebloggerRuntimeConfig {
         
         try {
             InputStreamReader reader =
-                    new InputStreamReader(WebloggerConfig.class.getResourceAsStream(runtime_config));
+                    new InputStreamReader(WebloggerConfig.class.getResourceAsStream(RUNTIME_CONFIG));
             StringWriter configString = new StringWriter();
             
             char[] buf = new char[8196];
             int length = 0;
-            while((length = reader.read(buf)) > 0)
+            while((length = reader.read(buf)) > 0) {
                 configString.write(buf, 0, length);
+            }
             
             reader.close();
             

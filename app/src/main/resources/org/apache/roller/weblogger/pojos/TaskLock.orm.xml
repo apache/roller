@@ -12,7 +12,7 @@
         </named-query>
         
         <named-query name="TaskLock.updateClient&amp;Timeacquired&amp;Timeleased&amp;LastRunByName&amp;Timeacquired">
-            <query> UPDATE TaskLock t SET t.clientId=?1, t.timeAquired= CURRENT_TIMESTAMP, t.timeLeased= ?2, t.lastRun= ?3 WHERE t.name=?4 AND t.timeAquired=?5 AND ?6 &lt; CURRENT_TIMESTAMP</query>
+            <query> UPDATE TaskLock t SET t.clientId=?1, t.timeAcquired= CURRENT_TIMESTAMP, t.timeLeased= ?2, t.lastRun= ?3 WHERE t.name=?4 AND t.timeAcquired=?5 AND ?6 &lt; CURRENT_TIMESTAMP</query>
         </named-query>
         
         <named-query name="TaskLock.updateTimeLeasedByName&amp;Client">
@@ -26,7 +26,7 @@
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="true"/>
             </basic>
-            <basic name="timeAquired">
+            <basic name="timeAcquired">
                 <column name="timeacquired" insertable="true" updatable="true" unique="false"/>
                 <temporal>TIMESTAMP</temporal>
             </basic>

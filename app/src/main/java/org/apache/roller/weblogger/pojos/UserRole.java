@@ -75,7 +75,7 @@ public class UserRole implements Serializable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getUserName());
@@ -85,8 +85,12 @@ public class UserRole implements Serializable {
     }
     
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof UserRole != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof UserRole)) {
+            return false;
+        }
         UserRole o = (UserRole)other;
         return new EqualsBuilder()
         .append(getRole(), o.getRole())

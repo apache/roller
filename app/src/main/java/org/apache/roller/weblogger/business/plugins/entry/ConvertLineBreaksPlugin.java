@@ -45,23 +45,23 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
     
     private static Log mLogger = LogFactory.getLog(ConvertLineBreaksPlugin.class);
     
-    private static final String name = "Convert Line Breaks";
-    private static final String description = "Convert plain text paragraphs to html by adding p and br tags";
-    private static final String version = "0.1";
+    private static final String NAME = "Convert Line Breaks";
+    private static final String DESCRIPTION = "Convert plain text paragraphs to html by adding p and br tags";
+    private static final String VERSION = "0.1";
     
     
     public ConvertLineBreaksPlugin() {
-        mLogger.debug("Instantiating ConvertLineBreaksPlugin v"+this.version);
+        mLogger.debug("Instantiating ConvertLineBreaksPlugin v"+this.VERSION);
     }
     
     
     public String getName() {
-        return name;
+        return NAME;
     }
     
     
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
     
     
@@ -77,8 +77,9 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
      */
     public String render(WeblogEntry entry, String str) {
         
-        if(str == null || str.trim().equals(""))
+        if(str == null || str.trim().equals("")) {
             return "";
+        }
         
         mLogger.debug("Rendering string of length "+str.length());
         

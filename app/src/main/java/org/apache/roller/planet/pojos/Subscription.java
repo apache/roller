@@ -60,7 +60,7 @@ public class Subscription implements Serializable, Comparable {
     }
     
     /**
-     * Determines if subscriotions are equal by comparing feed URLs.
+     * Determines if subscriptions are equal by comparing feed URLs.
      */
     public boolean equals(Object other) {        
         if(this == other) return true;
@@ -74,7 +74,7 @@ public class Subscription implements Serializable, Comparable {
     }
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         
         buf.append("{");
         buf.append(getFeedURL()).append(", ");
