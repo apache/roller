@@ -71,7 +71,7 @@ import org.apache.roller.weblogger.util.Utilities;
 public class MediaCollection {
     private Weblogger      roller;
     private User           user;
-    private int            maxEntries = 20;    
+    private static final int MAX_ENTRIES = 20;
     private final String   atomURL;    
     
     private static Log log =
@@ -131,7 +131,9 @@ public class MediaCollection {
                         throw new AtomException("Duplicate file name");
                     }
 
-                    if (path.length() > 0) path = path + File.separator;
+                    if (path.length() > 0) {
+                        path = path + File.separator;
+                    }
                     FileInputStream fis = new FileInputStream(tempFile);
 
                     MediaFile mf = new MediaFile();
@@ -168,7 +170,9 @@ public class MediaCollection {
                     throw new AtomException(
                         "File upload disabled, over-quota or other error", fie);
                 } finally {
-                    if (tempFile != null) tempFile.delete();
+                    if (tempFile != null) {
+                        tempFile.delete();
+                    }
                 }
             }
             throw new AtomException("Error saving media entry");
@@ -210,7 +214,6 @@ public class MediaCollection {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         try {
             // authenticated client posted a weblog entry
-            File tempFile = null;
             String handle = pathInfo[0];
             MediaFileManager fmgr = roller.getMediaFileManager();
             Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
@@ -245,19 +248,21 @@ public class MediaCollection {
         String[] rawPathInfo = StringUtils.split(areq.getPathInfo(),"/");
         try {
             int start = 0;
-            int max = maxEntries;
+            int max = MAX_ENTRIES;
             String[] pathInfo = rawPathInfo;
             if (rawPathInfo.length > 2) {
                 try {
                     start = Integer.parseInt(rawPathInfo[rawPathInfo.length - 1]);
                     pathInfo = new String[rawPathInfo.length - 1];
-                    for (int i=0; i<rawPathInfo.length - 1; i++) {
+                    for (int i=0; i < rawPathInfo.length - 1; i++) {
                         pathInfo[i] = rawPathInfo[i];
                     }
                 } catch (Exception ingored) {}
             }
             String path = filePathFromPathInfo(pathInfo);
-            if (!path.equals("")) path = path + File.separator;
+            if (!path.equals("")) {
+                path = path + File.separator;
+            }
             
             String handle = pathInfo[0];
             String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
@@ -295,9 +300,15 @@ public class MediaCollection {
                 public int compare(Object o1, Object o2) {
                     MediaFile f1 = (MediaFile)o1;
                     MediaFile f2 = (MediaFile)o2;
-                    if (f1.getLastModified() < f2.getLastModified()) return 1;
-                    else if (f1.getLastModified() == f2.getLastModified()) return 0;
-                    else return -1;
+                    if (f1.getLastModified() < f2.getLastModified()) {
+                        return 1;
+                    }
+                    else if (f1.getLastModified() == f2.getLastModified()) {
+                        return 0;
+                    }
+                    else {
+                        return -1;
+                    }
                 }
             });
                                     
@@ -320,7 +331,8 @@ public class MediaCollection {
                 }
 
                 List otherLinks = new ArrayList();
-                if (start + count < files.size()) { // add next link
+                if (start + count < files.size()) {
+                    // add next link
                     int nextOffset = start + max;
                     String url = atomURL
                         +"/"+ website.getHandle() + "/resources/" + path + nextOffset;
@@ -329,7 +341,8 @@ public class MediaCollection {
                     nextLink.setHref(url);
                     otherLinks.add(nextLink);
                 }
-                if (start > 0) { // add previous link
+                if (start > 0) {
+                    // add previous link
                     int prevOffset = start > max ? start - max : 0;
                     String url = atomURL
                         +"/"+website.getHandle() + "/resources/" + path + prevOffset;
@@ -407,7 +420,9 @@ public class MediaCollection {
                     throw new AtomException(
                         "Unexpected error during file upload", e);
                 } finally {
-                    if (tempFile != null) tempFile.delete();
+                    if (tempFile != null) {
+                        tempFile.delete();
+                    }
                 }
             }
             throw new AtomException("Incorrect path information");
@@ -458,10 +473,12 @@ public class MediaCollection {
         String path = null;
         if (pathInfo.length > 2) {
             for (int i = 2; i < pathInfo.length; i++) {
-                if (path != null && path.length() > 0)
+                if (path != null && path.length() > 0) {
                     path = path + File.separator + pathInfo[i];
-                else
+                }
+                else {
                     path = pathInfo[i];
+                }
             }
         } if (pathInfo.length == 2) {
             path = "";
@@ -553,10 +570,14 @@ public class MediaCollection {
      *    content-type  = "image/jpg"
      * Might result in daveblog-200608201034.jpg
      */
-    private String createFileName(Weblog weblog, String slug, String contentType) {
+    private String createFileName(Weblog weblog, String title, String contentType) {
         
-        if (weblog == null) throw new IllegalArgumentException("weblog cannot be null");
-        if (contentType == null) throw new IllegalArgumentException("contentType cannot be null");
+        if (weblog == null) {
+            throw new IllegalArgumentException("weblog cannot be null");
+        }
+        if (contentType == null) {
+            throw new IllegalArgumentException("contentType cannot be null");
+        }
         
         String fileName = null;
         
@@ -567,9 +588,9 @@ public class MediaCollection {
         String[] typeTokens = contentType.split("/");
         String ext = typeTokens[1];
         
-        if (slug != null && !slug.trim().equals("")) {              
+        if (title != null && !title.trim().equals("")) {
             // We've got a title, so use it to build file name
-            StringTokenizer toker = new StringTokenizer(slug);
+            StringTokenizer toker = new StringTokenizer(title);
             String tmp = null;
             int count = 0;
             while (toker.hasMoreTokens() && count < 5) {

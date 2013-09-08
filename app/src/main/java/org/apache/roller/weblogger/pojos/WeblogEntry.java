@@ -171,7 +171,7 @@ public class WeblogEntry implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(this.getAnchor());
@@ -182,8 +182,12 @@ public class WeblogEntry implements Serializable {
     }
 
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogEntry != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof WeblogEntry)) {
+            return false;
+        }
         WeblogEntry o = (WeblogEntry)other;
         return new EqualsBuilder()
             .append(getAnchor(), o.getAnchor()) 
@@ -212,7 +216,9 @@ public class WeblogEntry implements Serializable {
     /** @ejb:persistent-field */
     public void setId(String id) {
         // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+        if (id != null && id.trim().length() == 0) {
+            return;
+        }
         this.id = id;
     }
     
@@ -427,7 +433,9 @@ public class WeblogEntry implements Serializable {
         if (getEntryAttributes() != null) {
             for (Iterator it = getEntryAttributes().iterator(); it.hasNext(); ) {
                 WeblogEntryAttribute att = (WeblogEntryAttribute) it.next();
-                if (name.equals(att.getName())) return att.getValue();
+                if (name.equals(att.getName())) {
+                    return att.getValue();
+                }
             }
         }
         return null;
@@ -675,13 +683,15 @@ public class WeblogEntry implements Serializable {
     public void addTag(String name) throws WebloggerException {
         Locale localeObject = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
         name = Utilities.normalizeTag(name, localeObject);
-        if(name.length() == 0)
+        if (name.length() == 0) {
             return;
+        }
         
         for (Iterator it = getTags().iterator(); it.hasNext();) {
             WeblogEntryTag tag = (WeblogEntryTag) it.next();
-            if (tag.getName().equals(name))
+            if (tag.getName().equals(name)) {
                 return;
+            }
         }
 
         WeblogEntryTag tag = new WeblogEntryTag();
@@ -795,14 +805,14 @@ public class WeblogEntry implements Serializable {
         } else {
             // we want to use pubtime for calculating when comments expire, but
             // if pubtime isn't set (like for drafts) then just use updatetime
-            Date pubTime = getPubTime();
-            if(pubTime == null) {
-                pubTime = getUpdateTime();
+            Date inPubTime = getPubTime();
+            if (inPubTime == null) {
+                inPubTime = getUpdateTime();
             }
             
             Calendar expireCal = Calendar.getInstance(
                     getWebsite().getLocaleInstance());
-            expireCal.setTime(pubTime);
+            expireCal.setTime(inPubTime);
             expireCal.add(Calendar.DATE, getCommentDays().intValue());
             Date expireDay = expireCal.getTime();
             Date today = new Date();
@@ -943,7 +953,6 @@ public class WeblogEntry implements Serializable {
         } catch (UnsupportedEncodingException e) {
             // go with the "no encoding" version
         }        
-        Weblog website = this.getWebsite();
         return "/" + getWebsite().getHandle() + "/entry/" + lAnchor;
     }
     
@@ -1155,12 +1164,13 @@ public class WeblogEntry implements Serializable {
         } catch (WebloggerException ex) {
             // security interceptor should ensure this never happens
             mLogger.error("ERROR retrieving user's permission", ex);
+            return false;
         }
 
         boolean author = perm.hasAction(WeblogPermission.POST) || perm.hasAction(WeblogPermission.ADMIN);
         boolean limited = !author && perm.hasAction(WeblogPermission.EDIT_DRAFT);
         
-        if (author || (limited && isDraft()) || (limited && isPending())) {
+        if (author || (limited && (isDraft() || isPending()))) {
             return true;
         }
         
@@ -1173,8 +1183,8 @@ public class WeblogEntry implements Serializable {
     private String render(String str) {
         String ret = str;
         mLogger.debug("Applying page plugins to string");
-        Map plugins = getWebsite().getInitializedPlugins();
-        if (str != null && plugins != null) {
+        Map inPlugins = getWebsite().getInitializedPlugins();
+        if (str != null && inPlugins != null) {
             List entryPlugins = getPluginsList();
             
             // if no Entry plugins, don't bother looping.
@@ -1183,11 +1193,11 @@ public class WeblogEntry implements Serializable {
                 // now loop over mPagePlugins, matching
                 // against Entry plugins (by name):
                 // where a match is found render Plugin.
-                Iterator iter = plugins.keySet().iterator();
+                Iterator iter = inPlugins.keySet().iterator();
                 while (iter.hasNext()) {
                     String key = (String)iter.next();
                     if (entryPlugins.contains(key)) {
-                        WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin)plugins.get(key);
+                        WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin) inPlugins.get(key);
                         try {
                             ret = pagePlugin.render(this, ret);
                         } catch (Exception e) {

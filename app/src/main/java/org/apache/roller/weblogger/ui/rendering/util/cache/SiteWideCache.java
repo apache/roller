@@ -107,8 +107,9 @@ public class SiteWideCache implements CacheHandler {
     
     public Object get(String key) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return null;
+        }
         
         Object entry = contentCache.get(key);
         
@@ -124,8 +125,9 @@ public class SiteWideCache implements CacheHandler {
     
     public void put(String key, Object value) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.put(key, value);
         log.debug("PUT "+key);
@@ -134,8 +136,9 @@ public class SiteWideCache implements CacheHandler {
     
     public void remove(String key) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.remove(key);
         log.debug("REMOVE "+key);
@@ -144,8 +147,9 @@ public class SiteWideCache implements CacheHandler {
     
     public void clear() {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.clear();
         this.lastUpdateTime = null;
@@ -328,8 +332,9 @@ public class SiteWideCache implements CacheHandler {
      */
     public void invalidate(WeblogEntry entry) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         this.contentCache.clear();
         this.lastUpdateTime = null;
@@ -341,8 +346,9 @@ public class SiteWideCache implements CacheHandler {
      */
     public void invalidate(Weblog website) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         this.contentCache.clear();
         this.lastUpdateTime = null;

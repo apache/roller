@@ -144,14 +144,22 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             Query q = strategy.getNamedQuery(
                     "Subscription.getByGroupOrderByInboundBlogsDesc");
             q.setParameter(1, group);
-            if (offset != 0) q.setFirstResult(offset);
-            if (len != -1) q.setMaxResults(len);
+            if (offset != 0) {
+                q.setFirstResult(offset);
+            }
+            if (len != -1) {
+                q.setMaxResults(len);
+            }
             result = q.getResultList();
         } else {
             Query q = strategy.getNamedQuery(
                     "Subscription.getAllOrderByInboundBlogsDesc");
-            if (offset != 0) q.setFirstResult(offset);
-            if (len != -1) q.setMaxResults(len);
+            if (offset != 0) {
+                q.setFirstResult(offset);
+            }
+            if (len != -1) {
+                q.setMaxResults(len);
+            }
             result = q.getResultList();
         }
         return result;
@@ -253,8 +261,12 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         }
         Query q = strategy.getNamedQuery("SubscriptionEntry.getBySubscription");
         q.setParameter(1, sub);
-        if (offset != 0) q.setFirstResult(offset);
-        if (len != -1) q.setMaxResults(len);
+        if (offset != 0) {
+            q.setFirstResult(offset);
+        }
+        if (len != -1) {
+            q.setMaxResults(len);
+        }
         return q.getResultList();
     }
 
@@ -263,8 +275,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
 
     public List getEntries(PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws RollerException {
-        StringBuffer queryString = new StringBuffer();
-                
+
         if (group == null) {
             throw new WebloggerException("group cannot be null or empty");
         }

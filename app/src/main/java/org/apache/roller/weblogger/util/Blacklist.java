@@ -66,8 +66,8 @@ public class Blacklist {
     private static Log mLogger = LogFactory.getLog(Blacklist.class);
     
     private static Blacklist blacklist;
-    private static final String blacklistFile = "blacklist.txt";
-    private static final String lastUpdateStr = "Last update:";
+    private static final String BLACKLIST_FILE = "blacklist.txt";
+    private static final String LAST_UPDATE_STR = "Last update:";
 
     /** We no longer have a blacklist update URL */
     private static final String blacklistURL = null; 
@@ -99,7 +99,7 @@ public class Blacklist {
     
     /** Non-Static update method. */
     public void update() {
-        if (this.blacklistURL != null) {
+        if (blacklistURL != null) {
             boolean blacklist_updated = this.downloadBlacklist();
             if (blacklist_updated) {
                 this.loadBlacklistFromFile(null);
@@ -110,7 +110,7 @@ public class Blacklist {
     /** Download the MT blacklist from the web to our uploads directory. */
     private boolean downloadBlacklist() {
         
-        boolean blacklist_updated = false;
+        boolean blacklistUpdated = false;
         try {
             mLogger.debug("Attempting to download MT blacklist");
             
@@ -147,14 +147,15 @@ public class Blacklist {
                     (this.lastModified == null ||
                     this.lastModified.getTime() < lastModifiedLong)) {
 
-                mLogger.debug("my last modified = "+this.lastModified.getTime());
-                mLogger.debug("MT last modified = "+lastModifiedLong);
+                mLogger.debug("my last modified = " + (this.lastModified == null ? "(null)" :
+                        this.lastModified.getTime()));
+                mLogger.debug("MT last modified = " + lastModifiedLong);
                 
                 // save the new blacklist
                 InputStream instream = connection.getInputStream();
                 
                 String uploadDir = WebloggerConfig.getProperty("uploads.dir");
-                String path = uploadDir + File.separator + blacklistFile;
+                String path = uploadDir + File.separator + BLACKLIST_FILE;
                 FileOutputStream outstream = new FileOutputStream(path);
                 
                 mLogger.debug("writing updated MT blacklist to "+path);
@@ -162,13 +163,14 @@ public class Blacklist {
                 // read from url and write to file
                 byte[] buf = new byte[4096];
                 int length = 0;
-                while((length = instream.read(buf)) > 0)
+                while((length = instream.read(buf)) > 0) {
                     outstream.write(buf, 0, length);
+                }
                 
                 outstream.close();
                 instream.close();
                 
-                blacklist_updated = true;
+                blacklistUpdated = true;
                 
                 mLogger.debug("MT blacklist download completed.");
                 
@@ -180,7 +182,7 @@ public class Blacklist {
             mLogger.error("error downloading blacklist", e);
         }
         
-        return blacklist_updated;
+        return blacklistUpdated;
     }
         
     /**
@@ -196,7 +198,7 @@ public class Blacklist {
             String path = blacklistFilePath;
             if (path == null) {
                 String uploadDir = WebloggerConfig.getProperty("uploads.dir");
-                path = uploadDir + File.separator + blacklistFile;
+                path = uploadDir + File.separator + BLACKLIST_FILE;
             }
             File blacklistFile = new File(path);
             
@@ -246,7 +248,9 @@ public class Blacklist {
                     readRule(line);
                 }
                 
-                if (saveStream) buf.append(line).append("\n");
+                if (saveStream) {
+                    buf.append(line).append("\n");
+                }
             }
         } catch (Exception e) {
             mLogger.error(e);
@@ -261,18 +265,21 @@ public class Blacklist {
     }
     
     private void readRule(String str) {
-        if (StringUtils.isEmpty(str)) return; // bad condition
+        // check for bad condition
+        if (StringUtils.isEmpty(str)) {
+            return;
+        }
         
         String rule = str.trim();
-        
-        if (str.indexOf('#') > 0) // line has a comment
-        {
+
+        // line has a comment?
+        if (str.indexOf('#') > 0) {
             int commentLoc = str.indexOf('#');
             rule = str.substring(0, commentLoc-1).trim(); // strip comment
         }
-        
-        if (rule.indexOf( '(' ) > -1) // regex rule
-        {
+
+        // regex rule?
+        if (rule.indexOf( '(' ) > -1) {
             // pre-compile patterns since they will be frequently used
             blacklistRegex.add(Pattern.compile(rule));
         } else if (StringUtils.isNotEmpty(rule)) {
@@ -282,9 +289,9 @@ public class Blacklist {
         
     /** Read comment and try to parse out "Last update" value */
     private void readComment(String str) {
-        int lastUpdatePos = str.indexOf(lastUpdateStr);
+        int lastUpdatePos = str.indexOf(LAST_UPDATE_STR);
         if (lastUpdatePos > -1) {
-            str = str.substring(lastUpdatePos + lastUpdateStr.length());
+            str = str.substring(lastUpdatePos + LAST_UPDATE_STR.length());
             str = str.trim();
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -311,7 +318,9 @@ public class Blacklist {
      */
     public boolean isBlacklisted(
          String str, List moreStringRules, List moreRegexRules) {
-        if (str == null || StringUtils.isEmpty(str)) return false;
+        if (str == null || StringUtils.isEmpty(str)) {
+            return false;
+        }
 
         // First iterate over blacklist, doing indexOf.
         // Then iterate over blacklistRegex and test.
@@ -324,7 +333,9 @@ public class Blacklist {
             stringRules.addAll(moreStringRules);
             stringRules.addAll(blacklistStr);
         }
-        if (testStringRules(str, stringRules)) return true;
+        if (testStringRules(str, stringRules)) {
+            return true;
+        }
         
         // test regex blacklisted
         List regexRules = blacklistRegex;
@@ -339,12 +350,14 @@ public class Blacklist {
     /** 
      * Test string only against rules provided by caller, NOT against built-in blacklist.
      * @param str             String to be checked against rules
-     * @param moreStringRules String rules to consider
-     * @param moreRegexRules  Regex rules to consider 
+     * @param stringRules String rules to consider
+     * @param regexRules  Regex rules to consider
      */
     public static boolean matchesRulesOnly(
         String str, List stringRules, List regexRules) {
-        if (testStringRules(str, stringRules)) return true;
+        if (testStringRules(str, stringRules)) {
+            return true;
+        }
         return testRegExRules(str, regexRules);  
     }
         
@@ -436,7 +449,9 @@ public class Blacklist {
         StringTokenizer toker = new StringTokenizer(siteWords + "\n" + weblogWords, "\n");
         while (toker.hasMoreTokens()) {
             String token = toker.nextToken().trim();
-            if (token.startsWith("#")) continue;
+            if (token.startsWith("#")) {
+                continue;
+            }
             if (token.startsWith("(")) {
                 regexRules.add(Pattern.compile(token));
             } else {
