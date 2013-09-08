@@ -219,13 +219,15 @@ public class MediaFile implements Serializable {
         Locale localeObject = getWeblog() != null ? getWeblog()
                 .getLocaleInstance() : Locale.getDefault();
         name = Utilities.normalizeTag(name, localeObject);
-        if (name.length() == 0)
+        if (name.length() == 0) {
             return;
+        }
 
         for (Iterator it = getTags().iterator(); it.hasNext();) {
             MediaFileTag tag = (MediaFileTag) it.next();
-            if (tag.getName().equals(name))
+            if (tag.getName().equals(name)) {
                 return;
+            }
         }
 
         MediaFileTag tag = new MediaFileTag();
@@ -260,8 +262,8 @@ public class MediaFile implements Serializable {
                 .getLocaleInstance() : Locale.getDefault();
 
         for (Iterator<String> it = updatedTags.iterator(); it.hasNext();) {
-            String name = it.next();
-            newTags.add(Utilities.normalizeTag(name, localeObject));
+            String inName = it.next();
+            newTags.add(Utilities.normalizeTag(inName, localeObject));
         }
 
         HashSet removeTags = new HashSet();
@@ -526,10 +528,12 @@ public class MediaFile implements Serializable {
     }
 
     public boolean equals(Object other) {
-        if (other == this)
+        if (other == this) {
             return true;
-        if (other instanceof MediaFile != true)
+        }
+        if (!(other instanceof MediaFile)) {
             return false;
+        }
         MediaFile o = (MediaFile) other;
         return new EqualsBuilder().append(getName(), o.getName())
                 .append(getDirectory(), o.getDirectory())

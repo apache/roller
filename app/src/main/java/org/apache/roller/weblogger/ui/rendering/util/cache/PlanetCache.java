@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
 /**
  * Cache for planet content.
  */
-public class PlanetCache {
+public final class PlanetCache {
     
     private static Log log = LogFactory.getLog(PlanetCache.class);
     
@@ -52,8 +52,7 @@ public class PlanetCache {
     
     // reference to our singleton instance
     private static PlanetCache singletonInstance = new PlanetCache();
-    
-    
+
     private PlanetCache() {
         
         cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
@@ -74,7 +73,7 @@ public class PlanetCache {
         
         log.info("Planet cache = "+cacheProps);
         
-        if(cacheEnabled) {
+        if (cacheEnabled) {
             contentCache = CacheManager.constructCache(null, cacheProps);
         } else {
             log.warn("Caching has been DISABLED");
@@ -98,8 +97,9 @@ public class PlanetCache {
     
     public Object get(String key) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return null;
+        }
         
         Object entry = contentCache.get(key);
         
@@ -115,8 +115,9 @@ public class PlanetCache {
     
     public void put(String key, Object value) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.put(key, value);
         log.debug("PUT "+key);
@@ -125,8 +126,9 @@ public class PlanetCache {
     
     public void remove(String key) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.remove(key);
         log.debug("REMOVE "+key);
@@ -135,8 +137,9 @@ public class PlanetCache {
     
     public void clear() {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.clear();
         this.lastUpdateTime = null;

@@ -77,8 +77,9 @@ public class WebappResourceLoader extends ResourceLoader {
 	 */
 	public void init(ExtendedProperties configuration) {
 
-		if (log.isDebugEnabled())
+		if (log.isDebugEnabled()) {
 			log.debug("WebappResourceLoader: initialization starting.");
+        }
 
 		// get configured paths
 		paths = configuration.getStringArray("path");
@@ -91,24 +92,27 @@ public class WebappResourceLoader extends ResourceLoader {
 				if (!paths[i].endsWith("/")) {
 					paths[i] += '/';
 				}
-				if (log.isDebugEnabled())
-					log.debug("WebappResourceLoader: added template path - '"
-							+ paths[i] + "'");
+				if (log.isDebugEnabled()) {
+                    log.debug("WebappResourceLoader: added template path - '"
+                            + paths[i] + "'");
+                }
 			}
 		}
 
 		// get the ServletContext
 		servletContext = RollerContext.getServletContext();
 
-		if (log.isDebugEnabled())
+		if (log.isDebugEnabled()) {
 			log.debug("Servlet Context = "
 					+ servletContext.getRealPath("/WEB-INF/velocity/"));
+        }
 
 		// init the template paths map
 		templatePaths = new HashMap<String, String>();
 
-		if (log.isDebugEnabled())
-			log.debug("WebappResourceLoader: initialization complete.");
+		if (log.isDebugEnabled()) {
+            log.debug("WebappResourceLoader: initialization complete.");
+        }
 	}
 
 	/**

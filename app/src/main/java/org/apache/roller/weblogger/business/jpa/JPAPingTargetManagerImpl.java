@@ -102,7 +102,9 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     public boolean isNameUnique(PingTarget pingTarget) 
             throws WebloggerException {
         String name = pingTarget.getName();
-        if (name == null || name.trim().length() == 0) return false;
+        if (name == null || name.trim().length() == 0) {
+            return false;
+        }
         
         String id = pingTarget.getId();
         
@@ -135,7 +137,9 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     public boolean isUrlWellFormed(PingTarget pingTarget) 
             throws WebloggerException {
         String url = pingTarget.getPingUrl();
-        if (url == null || url.trim().length() == 0) return false;
+        if (url == null || url.trim().length() == 0) {
+            return false;
+        }
         try {
             URL parsedUrl = new URL(url);
             // OK.  If we get here, it parses ok.  Now just check 
@@ -153,11 +157,15 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     public boolean isHostnameKnown(PingTarget pingTarget) 
             throws WebloggerException {
         String url = pingTarget.getPingUrl();
-        if (url == null || url.trim().length() == 0) return false;
+        if (url == null || url.trim().length() == 0) {
+            return false;
+        }
         try {
             URL parsedUrl = new URL(url);
             String host = parsedUrl.getHost();
-            if (host == null || host.trim().length() == 0) return false;
+            if (host == null || host.trim().length() == 0) {
+                return false;
+            }
             InetAddress addr = InetAddress.getByName(host);
             return true;
         } catch (MalformedURLException e) {

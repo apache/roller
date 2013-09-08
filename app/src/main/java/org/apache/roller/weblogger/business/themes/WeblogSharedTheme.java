@@ -153,8 +153,9 @@ public class WeblogSharedTheme extends WeblogTheme {
      */
     public ThemeTemplate getTemplateByAction(String action) throws WebloggerException {
         
-        if(action == null)
+        if (action == null) {
             return null;
+        }
         
         // NOTE: we specifically do *NOT* return templates by action from the
         // weblog's custom templates if the weblog is using a theme because we
@@ -169,14 +170,15 @@ public class WeblogSharedTheme extends WeblogTheme {
      */
     public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
         
-        if(name == null)
+        if (name == null) {
             return null;
+        }
         
         ThemeTemplate template = null;
         
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
-        if(stylesheet != null && name.equals(stylesheet.getName())) {
+        if (stylesheet != null && name.equals(stylesheet.getName())) {
             return stylesheet;
         }
         
@@ -185,7 +187,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         template = this.theme.getTemplateByName(name);
         
         // if we didn't get the Template from a theme then look in the db
-        if(template == null) {
+        if (template == null) {
             template = WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(this.weblog, name);
         }
         
@@ -199,8 +201,9 @@ public class WeblogSharedTheme extends WeblogTheme {
      */
      public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
 
-        if(link == null)
+        if (link == null) {
             return null;
+        }
 
         ThemeTemplate template = null;
 
@@ -230,8 +233,9 @@ public class WeblogSharedTheme extends WeblogTheme {
      */
     public ThemeResource getResource(String path) {
         
-        if(path == null)
+        if (path == null) {
             return null;
+        }
         
         ThemeResource resource = null;
         

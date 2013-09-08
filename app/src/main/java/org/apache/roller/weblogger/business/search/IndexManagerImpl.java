@@ -102,8 +102,9 @@ public class IndexManagerImpl implements IndexManager {
 
         // check config to see if the internal search is enabled
         String enabled = WebloggerConfig.getProperty("search.enabled");
-        if ("false".equalsIgnoreCase(enabled))
+        if ("false".equalsIgnoreCase(enabled)) {
             this.searchEnabled = false;
+        }
 
         // we also need to know what our index directory is
         // Note: system property expansion is now handled by WebloggerConfig
@@ -314,11 +315,13 @@ public class IndexManagerImpl implements IndexManager {
             directory = FSDirectory.open(new File(indexDir));
 
             if (delete && directory != null) {
-                String[] files = directory.listAll(); // clear old files
+                // clear old files
+                String[] files = directory.listAll();
                 for (int i = 0; i < files.length; i++) {
                     File file = new File(indexDir, files[i]);
-                    if (!file.delete())
+                    if (!file.delete()) {
                         throw new IOException("couldn't delete " + files[i]);
+                    }
                 }
             }
 
@@ -385,8 +388,9 @@ public class IndexManagerImpl implements IndexManager {
                     getFSDirectory(true);
                 } finally {
                     try {
-                        if (writer != null)
+                        if (writer != null) {
                             writer.close();
+                        }
                     } catch (IOException e1) {
                         mLogger.warn("Unable to close IndexWriter.");
                     }
@@ -408,8 +412,9 @@ public class IndexManagerImpl implements IndexManager {
         }
 
         try {
-            if (reader != null)
+            if (reader != null) {
                 reader.close();
+            }
         } catch (IOException e) {
             // won't happen, since it was
         }

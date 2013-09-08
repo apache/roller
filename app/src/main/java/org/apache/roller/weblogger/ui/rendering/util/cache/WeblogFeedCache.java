@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.util.cache.LazyExpiringCacheEntry;
 /**
  * Cache for weblog feed content.
  */
-public class WeblogFeedCache {
+public final class WeblogFeedCache {
     
     private static Log log = LogFactory.getLog(WeblogFeedCache.class);
     
@@ -89,8 +89,9 @@ public class WeblogFeedCache {
     
     public Object get(String key, long lastModified) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return null;
+        }
         
         Object entry = null;
         
@@ -115,8 +116,9 @@ public class WeblogFeedCache {
     
     public void put(String key, Object value) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.put(key, new LazyExpiringCacheEntry(value));
         log.debug("PUT "+key);
@@ -125,8 +127,9 @@ public class WeblogFeedCache {
     
     public void remove(String key) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.remove(key);
         log.debug("REMOVE "+key);
@@ -135,8 +138,9 @@ public class WeblogFeedCache {
     
     public void clear() {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.clear();
         log.debug("CLEAR");

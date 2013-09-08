@@ -47,6 +47,8 @@ public class StylesheetEdit extends UIAction {
 	private static final long serialVersionUID = 4657591015852311907L;
 
 	private static Log log = LogFactory.getLog(StylesheetEdit.class);
+    private static final String MOBILE_THEME_TYPE = "mobile";
+    private static final String STANDARD_THEME_TYPE = "standard";
 
 	// the template we are working on
 	private WeblogTemplate template = null;
@@ -105,14 +107,14 @@ public class StylesheetEdit extends UIAction {
 
 					// create template codes for available template code Types
 					WeblogThemeTemplateCode standardTemplateCode = new WeblogThemeTemplateCode(
-							stylesheetTmpl.getId(), "standard");
+							stylesheetTmpl.getId(), STANDARD_THEME_TYPE);
 					standardTemplateCode.setTemplate(stylesheetTmpl
 							.getContents());
 					standardTemplateCode.setTemplateLanguage(stylesheetTmpl
 							.getTemplateLanguage());
 
 					WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(
-							stylesheetTmpl.getId(), "mobile");
+							stylesheetTmpl.getId(), MOBILE_THEME_TYPE);
 					mobileTemplateCode
 							.setTemplate(stylesheetTmpl.getContents());
 					mobileTemplateCode.setTemplateLanguage(stylesheetTmpl
@@ -167,20 +169,21 @@ public class StylesheetEdit extends UIAction {
 
 		try {
 
-			if (getTemplate().getTemplateCode("standard") != null) {
-				setContentsStandard(getTemplate().getTemplateCode("standard")
+			if (getTemplate().getTemplateCode(STANDARD_THEME_TYPE) != null) {
+				setContentsStandard(getTemplate().getTemplateCode(STANDARD_THEME_TYPE)
 						.getTemplate());
 			} else {
 				setContentsStandard(getTemplate().getContents());
 			}
-			if (getTemplate().getTemplateCode("mobile") != null) {
-				setContentsMobile(getTemplate().getTemplateCode("mobile")
+			if (getTemplate().getTemplateCode(MOBILE_THEME_TYPE) != null) {
+				setContentsMobile(getTemplate().getTemplateCode(MOBILE_THEME_TYPE)
 						.getTemplate());
 			}
 
-			if (log.isDebugEnabled())
-				log.debug("Standard: " + getContentsStandard() + " Mobile: "
-						+ getContentsMobile());
+			if (log.isDebugEnabled()) {
+                log.debug("Standard: " + getContentsStandard() + " Mobile: "
+                        + getContentsMobile());
+            }
 
 		} catch (WebloggerException e) {
 			log.error("Error loading Weblog template codes for stylesheet", e);
@@ -200,63 +203,64 @@ public class StylesheetEdit extends UIAction {
 			return ERROR;
 		}
 
-		if (!hasActionErrors())
-			try {
+		if (!hasActionErrors()) {
+            try {
 
-				WeblogTemplate stylesheet = getTemplate();
+                WeblogTemplate stylesheet = getTemplate();
 
-				stylesheet.setLastModified(new Date());
+                stylesheet.setLastModified(new Date());
 
-				if (stylesheet.getTemplateCode("standard") != null) {
-					// if we have a template, then set it
-					WeblogThemeTemplateCode tc = stylesheet
-							.getTemplateCode("standard");
-					tc.setTemplate(getContentsStandard());
-					WebloggerFactory.getWeblogger().getWeblogManager()
-							.saveTemplateCode(tc);
-				} else {
-					// otherwise create it, then set it
-					WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(
-							stylesheet.getId(), "standard");
-					tc.setTemplate(stylesheet.getContents());
-					WebloggerFactory.getWeblogger().getWeblogManager()
-							.saveTemplateCode(tc);
-				}
+                if (stylesheet.getTemplateCode(STANDARD_THEME_TYPE) != null) {
+                    // if we have a template, then set it
+                    WeblogThemeTemplateCode tc = stylesheet
+                            .getTemplateCode(STANDARD_THEME_TYPE);
+                    tc.setTemplate(getContentsStandard());
+                    WebloggerFactory.getWeblogger().getWeblogManager()
+                            .saveTemplateCode(tc);
+                } else {
+                    // otherwise create it, then set it
+                    WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(
+                            stylesheet.getId(), STANDARD_THEME_TYPE);
+                    tc.setTemplate(stylesheet.getContents());
+                    WebloggerFactory.getWeblogger().getWeblogManager()
+                            .saveTemplateCode(tc);
+                }
 
-				if (stylesheet.getTemplateCode("mobile") != null) {
-					WeblogThemeTemplateCode tc = stylesheet
-							.getTemplateCode("mobile");
-					tc.setTemplate(getContentsMobile());
-				} else {
-					WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(
-							stylesheet.getId(), "mobile");
-					tc.setTemplate(""); // empty, we've got no default mobile
-										// template
-					WebloggerFactory.getWeblogger().getWeblogManager()
-							.saveTemplateCode(tc);
-				}
+                if (stylesheet.getTemplateCode(MOBILE_THEME_TYPE) != null) {
+                    WeblogThemeTemplateCode tc = stylesheet
+                            .getTemplateCode(MOBILE_THEME_TYPE);
+                    tc.setTemplate(getContentsMobile());
+                } else {
+                    WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(
+                            stylesheet.getId(), MOBILE_THEME_TYPE);
+                    // empty, we've got no default mobile template
+                    tc.setTemplate("");
+                    WebloggerFactory.getWeblogger().getWeblogManager()
+                            .saveTemplateCode(tc);
+                }
 
-				// TODO do we still want to set the contents here?
-				stylesheet.setContents(getContentsStandard());
+                // TODO do we still want to set the contents here?
+                stylesheet.setContents(getContentsStandard());
 
-				// save template and flush
-				WebloggerFactory.getWeblogger().getWeblogManager()
-						.savePage(stylesheet);
+                // save template and flush
+                WebloggerFactory.getWeblogger().getWeblogManager()
+                        .savePage(stylesheet);
 
-				WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.getWeblogger().flush();
 
-				// notify caches
-				CacheManager.invalidate(stylesheet);
+                // notify caches
+                CacheManager.invalidate(stylesheet);
 
-				// success message
-				addMessage("stylesheetEdit.save.success", stylesheet.getName());
+                // success message
+                addMessage("stylesheetEdit.save.success", stylesheet.getName());
 
-			} catch (WebloggerException ex) {
-				log.error("Error updating stylesheet template for weblog - "
-						+ getActionWeblog().getHandle(), ex);
-				// TODO: i18n
-				addError("Error saving template");
-			}
+            } catch (WebloggerException ex) {
+                log.error("Error updating stylesheet template for weblog - "
+                        + getActionWeblog().getHandle(), ex);
+                // TODO: i18n
+                addError("Error saving template");
+            }
+        }
 
 		return INPUT;
 	}
@@ -279,59 +283,60 @@ public class StylesheetEdit extends UIAction {
 			addError("stylesheetEdit.error.customTheme");
 		}
 
-		if (!hasActionErrors())
-			try {
+		if (!hasActionErrors()) {
+            try {
 
-				WeblogTemplate stylesheet = getTemplate();
+                WeblogTemplate stylesheet = getTemplate();
 
-				// lookup the theme used by this weblog
-				ThemeManager tmgr = WebloggerFactory.getWeblogger()
-						.getThemeManager();
-				Theme theme = tmgr.getTheme(getActionWeblog().getEditorTheme());
+                // lookup the theme used by this weblog
+                ThemeManager tmgr = WebloggerFactory.getWeblogger()
+                        .getThemeManager();
+                Theme theme = tmgr.getTheme(getActionWeblog().getEditorTheme());
 
-				stylesheet.setLastModified(new Date());
+                stylesheet.setLastModified(new Date());
 
-				if (stylesheet.getTemplateCode("standard") != null) {
-					TemplateCode templateCode = theme.getStylesheet()
-							.getTemplateCode("standard");
-					// if we have a template, then set it
-					WeblogThemeTemplateCode existingTemplateCode = stylesheet
-							.getTemplateCode("standard");
-					existingTemplateCode
-							.setTemplate(templateCode.getTemplate());
-					WebloggerFactory.getWeblogger().getWeblogManager()
-							.saveTemplateCode(existingTemplateCode);
+                if (stylesheet.getTemplateCode(STANDARD_THEME_TYPE) != null) {
+                    TemplateCode templateCode = theme.getStylesheet()
+                            .getTemplateCode(STANDARD_THEME_TYPE);
+                    // if we have a template, then set it
+                    WeblogThemeTemplateCode existingTemplateCode = stylesheet
+                            .getTemplateCode(STANDARD_THEME_TYPE);
+                    existingTemplateCode
+                            .setTemplate(templateCode.getTemplate());
+                    WebloggerFactory.getWeblogger().getWeblogManager()
+                            .saveTemplateCode(existingTemplateCode);
 
-					// TODO do we still want to set the contents here?
-					stylesheet.setContents(templateCode.getTemplate());
-				}
-				if (stylesheet.getTemplateCode("mobile") != null) {
-					TemplateCode templateCode = theme.getStylesheet()
-							.getTemplateCode("mobile");
-					WeblogThemeTemplateCode existingTemplateCode = stylesheet
-							.getTemplateCode("mobile");
-					existingTemplateCode
-							.setTemplate(templateCode.getTemplate());
-				}
+                    // TODO do we still want to set the contents here?
+                    stylesheet.setContents(templateCode.getTemplate());
+                }
+                if (stylesheet.getTemplateCode(MOBILE_THEME_TYPE) != null) {
+                    TemplateCode templateCode = theme.getStylesheet()
+                            .getTemplateCode(MOBILE_THEME_TYPE);
+                    WeblogThemeTemplateCode existingTemplateCode = stylesheet
+                            .getTemplateCode(MOBILE_THEME_TYPE);
+                    existingTemplateCode
+                            .setTemplate(templateCode.getTemplate());
+                }
 
-				// save template and flush
-				WebloggerFactory.getWeblogger().getWeblogManager()
-						.savePage(stylesheet);
-				WebloggerFactory.getWeblogger().flush();
+                // save template and flush
+                WebloggerFactory.getWeblogger().getWeblogManager()
+                        .savePage(stylesheet);
+                WebloggerFactory.getWeblogger().flush();
 
-				// notify caches
-				CacheManager.invalidate(stylesheet);
+                // notify caches
+                CacheManager.invalidate(stylesheet);
 
-				// success message
-				addMessage("stylesheetEdit.revert.success",
-						stylesheet.getName());
+                // success message
+                addMessage("stylesheetEdit.revert.success",
+                        stylesheet.getName());
 
-			} catch (WebloggerException ex) {
-				log.error("Error updating stylesheet template for weblog - "
-						+ getActionWeblog().getHandle(), ex);
-				// TODO: i18n
-				addError("Error saving template");
-			}
+            } catch (WebloggerException ex) {
+                log.error("Error updating stylesheet template for weblog - "
+                        + getActionWeblog().getHandle(), ex);
+                // TODO: i18n
+                addError("Error saving template");
+            }
+        }
 
 		return execute();
 	}
@@ -354,42 +359,43 @@ public class StylesheetEdit extends UIAction {
 			addError("stylesheetEdit.error.customTheme");
 		}
 
-		if (!hasActionErrors())
-			try {
+		if (!hasActionErrors()) {
+            try {
 
-				WeblogTemplate stylesheet = getTemplate();
+                WeblogTemplate stylesheet = getTemplate();
 
-				// Delete template and flush
-				WeblogManager mgr = WebloggerFactory.getWeblogger()
-						.getWeblogManager();
+                // Delete template and flush
+                WeblogManager mgr = WebloggerFactory.getWeblogger()
+                        .getWeblogManager();
 
-				// Remove template and page codes
-				mgr.removePage(stylesheet);
+                // Remove template and page codes
+                mgr.removePage(stylesheet);
 
-				Weblog weblog = getActionWeblog();
+                Weblog weblog = getActionWeblog();
 
-				// Clear for next custom theme
-				weblog.setCustomStylesheetPath(null);
+                // Clear for next custom theme
+                weblog.setCustomStylesheetPath(null);
 
-				// save updated weblog and flush
-				mgr.saveWeblog(weblog);
+                // save updated weblog and flush
+                mgr.saveWeblog(weblog);
 
-				// notify caches
-				CacheManager.invalidate(stylesheet);
+                // notify caches
+                CacheManager.invalidate(stylesheet);
 
-				// Flush for operation
-				WebloggerFactory.getWeblogger().flush();
+                // Flush for operation
+                WebloggerFactory.getWeblogger().flush();
 
-				// success message
-				addMessage("stylesheetEdit.default.success",
-						stylesheet.getName());
+                // success message
+                addMessage("stylesheetEdit.default.success",
+                        stylesheet.getName());
 
-			} catch (Exception e) {
-				log.error("Error deleting stylesheet template for weblog - "
-						+ getActionWeblog().getHandle(), e);
+            } catch (Exception e) {
+                log.error("Error deleting stylesheet template for weblog - "
+                        + getActionWeblog().getHandle(), e);
 
-				return ERROR;
-			}
+                return ERROR;
+            }
+        }
 
 		return "delete";
 

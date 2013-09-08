@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.util.cache.LazyExpiringCacheEntry;
 /**
  * Cache for weblog page content.
  */
-public class WeblogPageCache {
+public final class WeblogPageCache {
     
     private static Log log = LogFactory.getLog(WeblogPageCache.class);
     
@@ -75,7 +75,7 @@ public class WeblogPageCache {
         
         log.info(cacheProps);
         
-        if(cacheEnabled) {
+        if (cacheEnabled) {
             contentCache = CacheManager.constructCache(null, cacheProps);
         } else {
             log.warn("Caching has been DISABLED");
@@ -90,8 +90,9 @@ public class WeblogPageCache {
     
     public Object get(String key, long lastModified) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return null;
+        }
         
         Object entry = null;
         
@@ -116,8 +117,9 @@ public class WeblogPageCache {
     
     public void put(String key, Object value) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.put(key, new LazyExpiringCacheEntry(value));
         log.debug("PUT "+key);
@@ -126,8 +128,9 @@ public class WeblogPageCache {
     
     public void remove(String key) {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.remove(key);
         log.debug("REMOVE "+key);
@@ -136,8 +139,9 @@ public class WeblogPageCache {
     
     public void clear() {
         
-        if(!cacheEnabled)
+        if (!cacheEnabled) {
             return;
+        }
         
         contentCache.clear();
         log.debug("CLEAR");
@@ -241,7 +245,7 @@ public class WeblogPageCache {
     
     private String paramsToString(Map map) {
         
-        if(map == null) {
+        if (map == null) {
             return null;
         }
         
@@ -250,7 +254,7 @@ public class WeblogPageCache {
         String key = null;
         String[] value = null;
         Iterator keys = map.keySet().iterator();
-        while(keys.hasNext()) {
+        while (keys.hasNext()) {
             key = (String) keys.next();
             value = (String[]) map.get(key);
             

@@ -167,17 +167,12 @@ public class FeedServlet extends HttpServlet {
         } else {
             log.debug("MISS "+cacheKey);
         }
-        
-        
+
         // validation.  make sure that request input makes sense.
         boolean invalid = false;
-        if(feedRequest.getLocale() != null) {
-            
-            // locale view only allowed if weblog has enabled it
-            if(!feedRequest.getWeblog().isEnableMultiLang()) {
-                invalid = true;
-            }
-            
+        if (feedRequest.getLocale() != null
+                && !feedRequest.getWeblog().isEnableMultiLang()) {
+            invalid = true;
         }
         if(feedRequest.getWeblogCategoryName() != null) {
             
@@ -198,7 +193,9 @@ public class FeedServlet extends HttpServlet {
         }
         
         if(invalid) {
-            if(!response.isCommitted()) response.reset();
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -234,7 +231,7 @@ public class FeedServlet extends HttpServlet {
 
             // define url strategy
             initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());
-            
+
             // Load models for feeds
             String feedModels = WebloggerConfig.getProperty("rendering.feedModels");
             ModelLoader.loadModels(feedModels, model, initData, true);
@@ -257,7 +254,9 @@ public class FeedServlet extends HttpServlet {
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
 
-            if(!response.isCommitted()) response.reset();
+            if(!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -281,7 +280,9 @@ public class FeedServlet extends HttpServlet {
             // get this far if we expect the template to be found
             //log.error("Couldn't find renderer for page "+pageId, e);
 
-            if(!response.isCommitted()) response.reset();
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -295,11 +296,13 @@ public class FeedServlet extends HttpServlet {
             // flush rendered output and close
             rendererOutput.flush();
             rendererOutput.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             // bummer, error during rendering
             log.error("Error during rendering for page "+pageId, e);
 
-            if(!response.isCommitted()) response.reset();
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }

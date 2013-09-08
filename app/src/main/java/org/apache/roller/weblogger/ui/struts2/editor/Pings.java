@@ -82,10 +82,12 @@ public class Pings extends UIAction {
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         
         // load selected ping target, if possible
-        if(getPingTargetId() != null) try {
-            setPingTarget(pingTargetMgr.getPingTarget(getPingTargetId()));
-        } catch (WebloggerException ex) {
-            log.error("Error looking up ping target - "+getPingTargetId(), ex);
+        if(getPingTargetId() != null) {
+            try {
+                setPingTarget(pingTargetMgr.getPingTarget(getPingTargetId()));
+            } catch (WebloggerException ex) {
+                log.error("Error looking up ping target - "+getPingTargetId(), ex);
+            }
         }
         
         try {
@@ -122,15 +124,17 @@ public class Pings extends UIAction {
      */
     public String enable() {
         
-        if(getPingTarget() != null) try {
-            AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
-            AutoPing autoPing = new AutoPing(null, getPingTarget(), getActionWeblog());
-            autoPingMgr.saveAutoPing(autoPing);
-            WebloggerFactory.getWeblogger().flush();
-        } catch(Exception ex) {
-            log.error("Error saving auto ping for target - "+getPingTargetId(), ex);
-            // TODO: i18n
-            addError("Error enabling auto ping");
+        if(getPingTarget() != null) {
+            try {
+                AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
+                AutoPing autoPing = new AutoPing(null, getPingTarget(), getActionWeblog());
+                autoPingMgr.saveAutoPing(autoPing);
+                WebloggerFactory.getWeblogger().flush();
+            } catch(Exception ex) {
+                log.error("Error saving auto ping for target - "+getPingTargetId(), ex);
+                // TODO: i18n
+                addError("Error enabling auto ping");
+            }
         }
         
         return execute();
@@ -142,14 +146,16 @@ public class Pings extends UIAction {
      */
     public String disable() {
         
-        if(getPingTarget() != null) try {
-            AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
-            autoPingMgr.removeAutoPing(getPingTarget(), getActionWeblog());
-            WebloggerFactory.getWeblogger().flush();
-        } catch (Exception ex) {
-            log.error("Error removing auto ping for target - "+getPingTargetId(), ex);
-            // TODO: i18n
-            addError("Error disabling auto ping");
+        if(getPingTarget() != null) {
+            try {
+                AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
+                autoPingMgr.removeAutoPing(getPingTarget(), getActionWeblog());
+                WebloggerFactory.getWeblogger().flush();
+            } catch (Exception ex) {
+                log.error("Error removing auto ping for target - "+getPingTargetId(), ex);
+                // TODO: i18n
+                addError("Error disabling auto ping");
+            }
         }
         
         return execute();
@@ -161,32 +167,34 @@ public class Pings extends UIAction {
      */
     public String pingNow() {
         
-        if(getPingTarget() != null) try {
-            if (PingConfig.getSuspendPingProcessing()) {
-                log.debug("Ping processing is disabled.");
-                addError("ping.pingProcessingIsSuspended");
-            } else {
-                WeblogUpdatePinger.PingResult pingResult = WeblogUpdatePinger.sendPing(getPingTarget(), getActionWeblog());
-                if (pingResult.isError()) {
-                    log.debug("Ping Result: " + pingResult);
-                    if (pingResult.getMessage() != null && pingResult.getMessage().trim().length() > 0) {
-                        addError("ping.transmittedButError");
-                        addError(pingResult.getMessage());
-                    } else {
-                        addError("ping.transmissionFailed");
-                    }
+        if(getPingTarget() != null) {
+            try {
+                if (PingConfig.getSuspendPingProcessing()) {
+                    log.debug("Ping processing is disabled.");
+                    addError("ping.pingProcessingIsSuspended");
                 } else {
-                    addMessage("ping.successful");
+                    WeblogUpdatePinger.PingResult pingResult = WeblogUpdatePinger.sendPing(getPingTarget(), getActionWeblog());
+                    if (pingResult.isError()) {
+                        log.debug("Ping Result: " + pingResult);
+                        if (pingResult.getMessage() != null && pingResult.getMessage().trim().length() > 0) {
+                            addError("ping.transmittedButError");
+                            addError(pingResult.getMessage());
+                        } else {
+                            addError("ping.transmissionFailed");
+                        }
+                    } else {
+                        addMessage("ping.successful");
+                    }
                 }
+            } catch (IOException ex) {
+                log.debug(ex);
+                addError("ping.transmissionFailed");
+                addSpecificMessages(ex);
+            } catch (XmlRpcException ex) {
+                log.debug(ex);
+                addError("ping.transmissionFailed");
+                addSpecificMessages(ex);
             }
-        } catch (IOException ex) {
-            log.debug(ex);
-            addError("ping.transmissionFailed");
-            addSpecificMessages(ex);
-        } catch (XmlRpcException ex) {
-            log.debug(ex);
-            addError("ping.transmissionFailed");
-            addSpecificMessages(ex);
         }
         
         return execute();
@@ -230,21 +238,21 @@ public class Pings extends UIAction {
         // Somewhat awkward, but the two loops save building a separate combined list.
         // Add disabled common ones with FALSE
         for (Iterator i = getCommonPingTargets().iterator(); i.hasNext();) {
-            PingTarget pingTarget = (PingTarget) i.next();
-            if (isEnabled.get(pingTarget.getId()) == null) {
-                isEnabled.put(pingTarget.getId(), Boolean.FALSE);
+            PingTarget inPingTarget = (PingTarget) i.next();
+            if (isEnabled.get(inPingTarget.getId()) == null) {
+                isEnabled.put(inPingTarget.getId(), Boolean.FALSE);
             }
         }
         
         // Add disabled custom ones with FALSE
         for (Iterator i = getCustomPingTargets().iterator(); i.hasNext();) {
-            PingTarget pingTarget = (PingTarget) i.next();
-            if (isEnabled.get(pingTarget.getId()) == null) {
-                isEnabled.put(pingTarget.getId(), Boolean.FALSE);
+            PingTarget inPingTarget = (PingTarget) i.next();
+            if (isEnabled.get(inPingTarget.getId()) == null) {
+                isEnabled.put(inPingTarget.getId(), Boolean.FALSE);
             }
         }
         
-        if(isEnabled.size() > 0) {
+        if (isEnabled.size() > 0) {
             setPingStatus(isEnabled);
         }
     }
