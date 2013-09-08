@@ -97,18 +97,22 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
             if (hasAction(ADMIN)) {
                 // admin implies all other permissions
                 return true;
-                
             } else if (hasAction(POST)) {
                 // Best we've got is POST, so make sure perm doesn't specify ADMIN
                 for (String action : rperm.getActionsAsList()) {
-                    if (action.equals(ADMIN)) return false;
+                    if (action.equals(ADMIN)) {
+                        return false;
+                    }
                 }
-                
             } else if (hasAction(EDIT_DRAFT)) {
                 // Best we've got is EDIT_DRAFT, so make sure perm doesn't specify anything else
                 for (String action : rperm.getActionsAsList()) {
-                    if (action.equals(POST)) return false;
-                    if (action.equals(ADMIN)) return false;
+                    if (action.equals(POST)) {
+                        return false;
+                    }
+                    if (action.equals(ADMIN)) {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -126,8 +130,12 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
     }
 
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogPermission != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof WeblogPermission)) {
+            return false;
+        }
         WeblogPermission o = (WeblogPermission)other;
         return new EqualsBuilder()
                 .append(getUserName(), o.getUserName())

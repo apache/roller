@@ -98,7 +98,7 @@ public class Bookmarks extends UIAction {
 	public String execute() {
 
 		// build list of folders for display
-		TreeSet allFolders = new TreeSet(new FolderPathComparator());
+		TreeSet newFolders = new TreeSet(new FolderPathComparator());
 
 		try {
 			// Build list of all folders, except for current one, sorted by
@@ -111,20 +111,20 @@ public class Bookmarks extends UIAction {
 				if (getFolderId() == null && fd.getParent() == null) {
 					// Root folder so do not show the root /
 				} else if (!fd.getId().equals(getFolderId())) {
-					allFolders.add(fd);
+					newFolders.add(fd);
 				}
 			}
 
 			// build folder path
 			WeblogBookmarkFolder parent = getFolder().getParent();
 			if (parent != null) {
-				List folderPath = new LinkedList();
-				folderPath.add(0, getFolder());
+				List inFolderPath = new LinkedList();
+				inFolderPath.add(0, getFolder());
 				while (parent != null) {
-					folderPath.add(0, parent);
+					inFolderPath.add(0, parent);
 					parent = parent.getParent();
 				}
-				setFolderPath(folderPath);
+				setFolderPath(inFolderPath);
 			}
 		} catch (WebloggerException ex) {
 			log.error("Error building folders list", ex);
@@ -132,8 +132,8 @@ public class Bookmarks extends UIAction {
 			addError("Error building folders list");
 		}
 
-		if (allFolders.size() > 0) {
-			setAllFolders(allFolders);
+		if (newFolders.size() > 0) {
+			setAllFolders(newFolders);
 		}
 
 		return LIST;
@@ -152,12 +152,14 @@ public class Bookmarks extends UIAction {
 		try {
 			String folders[] = getSelectedFolders();
 			if (null != folders && folders.length > 0) {
-				if (log.isDebugEnabled())
-					log.debug("Processing delete of " + folders.length
-							+ " folders.");
+				if (log.isDebugEnabled()) {
+                    log.debug("Processing delete of " + folders.length
+                            + " folders.");
+                }
 				for (int i = 0; i < folders.length; i++) {
-					if (log.isDebugEnabled())
-						log.debug("Deleting folder - " + folders[i]);
+					if (log.isDebugEnabled()) {
+                        log.debug("Deleting folder - " + folders[i]);
+                    }
 					WeblogBookmarkFolder fd = bmgr.getFolder(folders[i]);
 					if (fd != null) {
 						bmgr.removeFolder(fd); // removes child folders and
@@ -169,9 +171,10 @@ public class Bookmarks extends UIAction {
 			WeblogBookmark bookmark = null;
 			String bookmarks[] = getSelectedBookmarks();
 			if (null != bookmarks && bookmarks.length > 0) {
-				if (log.isDebugEnabled())
-					log.debug("Processing delete of " + bookmarks.length
-							+ " bookmarks.");
+				if (log.isDebugEnabled()) {
+                    log.debug("Processing delete of " + bookmarks.length
+                            + " bookmarks.");
+                }
 				for (int j = 0; j < bookmarks.length; j++) {
 					if (log.isDebugEnabled())
 						log.debug("Deleting bookmark - " + bookmarks[j]);
@@ -207,9 +210,10 @@ public class Bookmarks extends UIAction {
 			BookmarkManager bmgr = WebloggerFactory.getWeblogger()
 					.getBookmarkManager();
 
-			if (log.isDebugEnabled())
-				log.debug("Moving folders and bookmarks to folder - "
-						+ getTargetFolderId());
+			if (log.isDebugEnabled()) {
+                log.debug("Moving folders and bookmarks to folder - "
+                        + getTargetFolderId());
+            }
 
 			// Move folders to new parent folder.
 			String folders[] = getSelectedFolders();

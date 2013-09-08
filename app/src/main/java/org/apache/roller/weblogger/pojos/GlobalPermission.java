@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.util.Utilities;
  * Represents a permission that applies globally to the entire web application.
  */
 public class GlobalPermission extends RollerPermission {
-    protected String  actions;
+    protected String actions;
 
     /** Allowed to login and edit profile */
     public static final String LOGIN  = "login";
@@ -70,7 +70,7 @@ public class GlobalPermission extends RollerPermission {
         
     /** 
      * Create global permission with the actions specified by array.
-     * @param user User of permission.
+     * @param actions actions to add to permission
      * @throws org.apache.roller.weblogger.WebloggerException
      */
     public GlobalPermission(List<String> actions) throws WebloggerException {
@@ -104,14 +104,20 @@ public class GlobalPermission extends RollerPermission {
             } else if (hasAction(WEBLOG)) {
                 // Best we've got is WEBLOG, so make sure perm doesn't specify ADMIN
                 for (String action : rperm.getActionsAsList()) {
-                    if (action.equals(ADMIN)) return false;
+                    if (action.equals(ADMIN)) {
+                        return false;
+                    }
                 }
                 
             } else if (hasAction(LOGIN)) {
                 // Best we've got is LOGIN, so make sure perm doesn't specify anything else
                 for (String action : rperm.getActionsAsList()) {
-                    if (action.equals(WEBLOG)) return false;
-                    if (action.equals(ADMIN)) return false;
+                    if (action.equals(WEBLOG)) {
+                        return false;
+                    }
+                    if (action.equals(ADMIN)) {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -120,17 +126,7 @@ public class GlobalPermission extends RollerPermission {
     }
     
     private boolean actionImplies(String action1, String action2) {
-        if (action1.equals(ADMIN)) return true;
-        if (action1.equals(WEBLOG) && action2.equals(LOGIN)) return true;
-        return false;
-    }
-    
-    public boolean equals(Object arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int hashCode() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return action1.equals(ADMIN) || (action1.equals(WEBLOG) && action2.equals(LOGIN));
     }
     
     public String toString() {
@@ -140,6 +136,14 @@ public class GlobalPermission extends RollerPermission {
             sb.append(" ").append(action).append(" ");
         }
         return sb.toString();
+    }
+
+    public boolean equals(Object arg0) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int hashCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

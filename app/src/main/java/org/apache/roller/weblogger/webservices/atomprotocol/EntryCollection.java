@@ -65,7 +65,7 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 public class EntryCollection {
     private Weblogger      roller;
     private User           user;
-    private final static int MAX_ENTRIES = 20;
+    private static final int MAX_ENTRIES = 20;
     private final String   atomURL;    
     
     private static Log log =
@@ -228,7 +228,9 @@ public class EntryCollection {
                 prevLink.setHref(url);
                 links.add(prevLink);
             }
-            if (links.size() > 0) feed.setOtherLinks(links);
+            if (links.size() > 0) {
+                feed.setOtherLinks(links);
+            }
             // Use collection URI as id
             feed.setEntries(atomEntries);
             
@@ -245,8 +247,9 @@ public class EntryCollection {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         try {
-            if (pathInfo.length == 3) // URI is /blogname/entries/entryid
+            if (pathInfo.length == 3)
             {
+                // URI is /blogname/entries/entryid
                 WeblogEntry rollerEntry =
                     roller.getWeblogEntryManager().getWeblogEntry(pathInfo[2]);
                 if (rollerEntry == null) {

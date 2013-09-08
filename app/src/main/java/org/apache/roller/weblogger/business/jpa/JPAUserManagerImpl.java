@@ -94,8 +94,9 @@ public class JPAUserManagerImpl implements UserManager {
     
     public void addUser(User newUser) throws WebloggerException {
 
-        if(newUser == null)
+        if(newUser == null) {
             throw new WebloggerException("cannot add null user");
+        }
         
         // TODO BACKEND: we must do this in a better fashion, like getUserCnt()?
         boolean adminUser = false;
@@ -140,8 +141,9 @@ public class JPAUserManagerImpl implements UserManager {
     public User getUserByUserName(String userName, Boolean enabled)
             throws WebloggerException {
 
-        if (userName==null )
+        if (userName==null) {
             throw new WebloggerException("userName cannot be null");
+        }
         
         // check cache first
         // NOTE: if we ever allow changing usernames then this needs updating
@@ -196,7 +198,6 @@ public class JPAUserManagerImpl implements UserManager {
             Date endDate, int offset, int length)
             throws WebloggerException {
         Query query = null;
-        List results = null;
 
         // if we are doing date range then we must have an end date
         if (startDate != null && endDate == null) {
@@ -272,7 +273,9 @@ public class JPAUserManagerImpl implements UserManager {
         List results = null;
         boolean setRange = offset != 0 || length != -1;
 
-        if (endDate == null) endDate = new Date();
+        if (endDate == null) {
+            endDate = new Date();
+        }
         
         if (enabled != null) {
             if (startDate != null) {
@@ -320,8 +323,6 @@ public class JPAUserManagerImpl implements UserManager {
      */
     public List getUsers(Weblog website, Boolean enabled, int offset, int length) throws WebloggerException {
         Query query = null;
-        List results = null;
-        boolean setRange = offset != 0 || length != -1;
 
         if (length == -1) {
             length = Integer.MAX_VALUE - offset;
@@ -555,11 +556,15 @@ public class JPAUserManagerImpl implements UserManager {
                 existingPerm = getWeblogPermission(permToCheck.getWeblog(), user);
             } catch (WebloggerException ignored) {}        
             }
-        if (existingPerm != null && existingPerm.implies(perm)) return true;  
+        if (existingPerm != null && existingPerm.implies(perm)) {
+            return true;
+        }
         
         // user has no existing perm in a weblog, so try his global perms
         GlobalPermission globalPerm = new GlobalPermission(user);
-        if (globalPerm.implies(perm)) return true;
+        if (globalPerm.implies(perm)) {
+            return true;
+        }
         
         if (log.isDebugEnabled()) {
             log.debug("PERM CHECK FAILED: user "+user.getUserName()+" does not have " + perm.toString());

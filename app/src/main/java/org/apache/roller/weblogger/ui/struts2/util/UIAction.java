@@ -59,7 +59,7 @@ public abstract class UIAction extends ActionSupport
     
     // a common result name used to indicate the result should list some data
     public static final String LIST = "list";
-    
+
     // the authenticated user accessing this action, or null if client is not logged in
     private User authenticatedUser = null;
     
@@ -171,7 +171,7 @@ public abstract class UIAction extends ActionSupport
             value = WebloggerRuntimeConfig.getProperty(key);
         }
         
-        return (value == null) ? 0 : new Integer(value);
+        return (value == null) ? 0 : Integer.valueOf(value);
     }
 
     @Override
@@ -374,23 +374,23 @@ public abstract class UIAction extends ActionSupport
         
         List opts = new ArrayList();
         
-        opts.add(new KeyValueObject(new Integer(0), getText("weblogEdit.unlimitedCommentDays")));
-        opts.add(new KeyValueObject(new Integer(1), getText("weblogEdit.days1")));
-        opts.add(new KeyValueObject(new Integer(2), getText("weblogEdit.days2")));
-        opts.add(new KeyValueObject(new Integer(3), getText("weblogEdit.days3")));
-        opts.add(new KeyValueObject(new Integer(4), getText("weblogEdit.days4")));
-        opts.add(new KeyValueObject(new Integer(5), getText("weblogEdit.days5")));
-        opts.add(new KeyValueObject(new Integer(7), getText("weblogEdit.days7")));
-        opts.add(new KeyValueObject(new Integer(10), getText("weblogEdit.days10")));
-        opts.add(new KeyValueObject(new Integer(20), getText("weblogEdit.days20")));
-        opts.add(new KeyValueObject(new Integer(30), getText("weblogEdit.days30")));
-        opts.add(new KeyValueObject(new Integer(60), getText("weblogEdit.days60")));
-        opts.add(new KeyValueObject(new Integer(90), getText("weblogEdit.days90")));
+        opts.add(new KeyValueObject(0, getText("weblogEdit.unlimitedCommentDays")));
+        opts.add(new KeyValueObject(1, getText("weblogEdit.days1")));
+        opts.add(new KeyValueObject(2, getText("weblogEdit.days2")));
+        opts.add(new KeyValueObject(3, getText("weblogEdit.days3")));
+        opts.add(new KeyValueObject(4, getText("weblogEdit.days4")));
+        opts.add(new KeyValueObject(5, getText("weblogEdit.days5")));
+        opts.add(new KeyValueObject(7, getText("weblogEdit.days7")));
+        opts.add(new KeyValueObject(10, getText("weblogEdit.days10")));
+        opts.add(new KeyValueObject(20, getText("weblogEdit.days20")));
+        opts.add(new KeyValueObject(30, getText("weblogEdit.days30")));
+        opts.add(new KeyValueObject(60, getText("weblogEdit.days60")));
+        opts.add(new KeyValueObject(90, getText("weblogEdit.days90")));
         
         return opts;
     }
 
-    private static Set OPEN_CHARS = new HashSet(Arrays.asList('$', '%'));
+    private static final Set OPEN_CHARS = new HashSet(Arrays.asList('$', '%'));
 
     private static String cleanExpressions(String s) {
         StringBuilder cleaned = new StringBuilder(s.length());
@@ -407,24 +407,35 @@ public abstract class UIAction extends ActionSupport
                     skipping = skipping || priorIsOpenChar;
                     break;
                 case '}':
-                    if (braceDepth > 0) --braceDepth;
+                    if (braceDepth > 0) {
+                        --braceDepth;
+                    }
                     break;
                 default:
             }
             if (!skipping) {
-                if (priorIsOpenChar) cleaned.append(prior);
-                if (!OPEN_CHARS.contains(c))  cleaned.append(c);
+                if (priorIsOpenChar) {
+                    cleaned.append(prior);
+                }
+                if (!OPEN_CHARS.contains(c)) {
+                    cleaned.append(c);
+                }
             }
             skipping = skipping && (braceDepth > 0);
             prior = c;
             ++p;
         }
-        if (OPEN_CHARS.contains(prior)) cleaned.append(prior);  // string had final open character held in prior
+        if (OPEN_CHARS.contains(prior)) {
+            // string had final open character held in prior
+            cleaned.append(prior);
+        }
         return cleaned.toString();
     }
 
     public static String cleanText(String s) {
-        if (s == null || s.isEmpty()) return s;
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
         // escape HTML
         return StringEscapeUtils.escapeHtml(cleanExpressions(s));
     }

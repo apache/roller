@@ -106,7 +106,7 @@ public class WeblogEntryTagAggregate implements Serializable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getName());
@@ -117,8 +117,12 @@ public class WeblogEntryTagAggregate implements Serializable {
     }
     
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogEntryTagAggregate != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof WeblogEntryTagAggregate)) {
+            return false;
+        }
         WeblogEntryTagAggregate o = (WeblogEntryTagAggregate)other;
         return new EqualsBuilder()
         .append(getName(), o.getName())

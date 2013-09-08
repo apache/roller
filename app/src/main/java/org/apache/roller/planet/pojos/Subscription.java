@@ -63,8 +63,12 @@ public class Subscription implements Serializable, Comparable {
      * Determines if subscriptions are equal by comparing feed URLs.
      */
     public boolean equals(Object other) {        
-        if(this == other) return true;
-        if(!(other instanceof Subscription)) return false;        
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Subscription)) {
+            return false;
+        }
         final Subscription that = (Subscription) other;
         return this.feedUrl.equals(that.getFeedURL());
     }

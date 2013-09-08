@@ -114,8 +114,9 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
             
             // if the text ends without an empty line then we need to
             // terminate the last paragraph now
-            if(insidePara)
+            if(insidePara) {
                 buf.append("</p>\n\n");
+            }
             
         } catch(Exception e) {
             mLogger.warn("trouble rendering text.", e);

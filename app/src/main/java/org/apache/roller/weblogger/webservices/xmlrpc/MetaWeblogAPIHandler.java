@@ -135,10 +135,14 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Hashtable postcontent = struct;
         String description = (String)postcontent.get("description");
         String title = (String)postcontent.get("title");
-        if (title == null) title = "";
+        if (title == null) {
+            title = "";
+        }
         
         Date dateCreated = (Date)postcontent.get("dateCreated");
-        if (dateCreated == null) dateCreated = (Date)postcontent.get("pubDate");
+        if (dateCreated == null) {
+            dateCreated = (Date)postcontent.get("pubDate");
+        }
         
         String cat = null;
         if ( postcontent.get("categories") != null ) {
@@ -155,7 +159,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Timestamp current =
                     new Timestamp(System.currentTimeMillis());
             
-            if ( !title.equals("") ) entry.setTitle(title);
+            if ( !title.equals("") ) {
+                entry.setTitle(title);
+            }
             entry.setText(description);
             entry.setUpdateTime(current);
             if (Boolean.valueOf(publish).booleanValue()) {
@@ -234,8 +240,12 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         }
         
         Date dateCreated = (Date)postcontent.get("dateCreated");
-        if (dateCreated == null) dateCreated = (Date)postcontent.get("pubDate");
-        if (dateCreated == null) dateCreated = new Date();
+        if (dateCreated == null) {
+            dateCreated = (Date)postcontent.get("pubDate");
+        }
+        if (dateCreated == null) {
+            dateCreated = new Date();
+        }
         mLogger.debug("      Title: " + title);
         
         try {
@@ -366,8 +376,6 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             byte[] bits = (byte[]) struct.get("bits");
             
-            RollerMessages msgs = new RollerMessages();
-
             Weblogger roller = WebloggerFactory.getWeblogger();
             MediaFileManager fmgr = roller.getMediaFileManager();
             MediaFileDirectory root = fmgr.getMediaFileRootDirectory(website);

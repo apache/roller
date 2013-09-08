@@ -54,14 +54,14 @@ public class WebloggerConfig {
 
         try {
             // we'll need this to get at our properties files in the classpath
-            Class config_class = Class.forName("org.apache.roller.weblogger.config.WebloggerConfig");
+            Class configClass = Class.forName("org.apache.roller.weblogger.config.WebloggerConfig");
 
             // first, lets load our default properties
-            InputStream is = config_class.getResourceAsStream(default_config);
+            InputStream is = configClass.getResourceAsStream(default_config);
             config.load(is);
 
             // now, see if we can find our custom config
-            is = config_class.getResourceAsStream(custom_config);
+            is = configClass.getResourceAsStream(custom_config);
             if(is != null) {
                 config.load(is);
                 System.out.println("Roller Weblogger: Successfully loaded custom properties file from classpath");
@@ -151,8 +151,9 @@ public class WebloggerConfig {
     public static String getProperty(String key, String defaultValue) {
         log.debug("Fetching property ["+key+"="+config.getProperty(key)+",defaultValue="+defaultValue+"]");
         String value = config.getProperty(key);
-        if(value == null)
-          return defaultValue;
+        if (value == null) {
+            return defaultValue;
+        }
         
         return value.trim();
     }
@@ -171,10 +172,11 @@ public class WebloggerConfig {
         // get the value first, then convert
         String value = WebloggerConfig.getProperty(name);
 
-        if(value == null)
+        if(value == null) {
             return defaultValue;
+        }
 
-        return (new Boolean(value)).booleanValue();
+        return Boolean.valueOf(value);
     }
 
     /**
@@ -191,10 +193,11 @@ public class WebloggerConfig {
         // get the value first, then convert
         String value = WebloggerConfig.getProperty(name);
 
-        if (value == null)
+        if (value == null) {
             return defaultValue;
+        }
 
-        return (new Integer(value)).intValue();
+        return Integer.valueOf(value);
     }
 
     /**
@@ -230,8 +233,9 @@ public class WebloggerConfig {
      */
     public static void setUploadsDir(String path) {
         // only do this if the user wants to use the webapp context
-        if("${webapp.context}".equals(config.getProperty("uploads.dir")))
+        if("${webapp.context}".equals(config.getProperty("uploads.dir"))) {
             config.setProperty("uploads.dir", path);
+        }
     }
     
     /**
@@ -245,8 +249,9 @@ public class WebloggerConfig {
      */
     public static void setThemesDir(String path) {
         // only do this if the user wants to use the webapp context
-        if("${webapp.context}".equals(config.getProperty("themes.dir")))
+        if("${webapp.context}".equals(config.getProperty("themes.dir"))) {
             config.setProperty("themes.dir", path);
+        }
     }
     
 }

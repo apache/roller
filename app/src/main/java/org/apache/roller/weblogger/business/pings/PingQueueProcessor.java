@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public class PingQueueProcessor {
     
-    private static final Log logger = LogFactory.getLog(PingQueueProcessor.class);
+    private static final Log LOGGER = LogFactory.getLog(PingQueueProcessor.class);
     
     private static PingQueueProcessor theInstance;
     
@@ -62,11 +62,13 @@ public class PingQueueProcessor {
      */
     public static synchronized void init() throws WebloggerException {
         if (theInstance != null) {
-            logger.warn("Ignoring duplicate initialization of PingQueueProcessor!");
+            LOGGER.warn("Ignoring duplicate initialization of PingQueueProcessor!");
             return;
         }
         theInstance = new PingQueueProcessor();
-        if (logger.isDebugEnabled()) logger.debug("Ping queue processor initialized.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Ping queue processor initialized.");
+        }
     }
     
     
@@ -77,13 +79,13 @@ public class PingQueueProcessor {
      */
     public synchronized void processQueue() {
         if (PingConfig.getSuspendPingProcessing()) {
-            logger.info("Ping processing has been suspended.  Skipping current round of ping queue processing.");
+            LOGGER.info("Ping processing has been suspended.  Skipping current round of ping queue processing.");
             return;
         }
         
         String absoluteContextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         if (absoluteContextUrl == null) {
-            logger.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
+            LOGGER.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
             return;
         }
         
@@ -93,7 +95,9 @@ public class PingQueueProcessor {
         // that.
         
         try {
-            if (logger.isDebugEnabled()) logger.debug("Started processing ping queue.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Started processing ping queue.");
+            }
             // Get all of the entries
             List entries = pingQueueMgr.getAllQueueEntries();
             
@@ -102,9 +106,11 @@ public class PingQueueProcessor {
                 PingQueueEntry pingQueueEntry = (PingQueueEntry) i.next();
                 processQueueEntry(pingQueueEntry);
             }
-            if (logger.isDebugEnabled()) logger.debug("Finished processing ping queue.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Finished processing ping queue.");
+            }
         } catch (Exception ex) {
-            logger.error("Unexpected exception processing ping queue!  Aborting this pass of ping queue processing.", ex);
+            LOGGER.error("Unexpected exception processing ping queue!  Aborting this pass of ping queue processing.", ex);
         }
     }
     
@@ -117,14 +123,16 @@ public class PingQueueProcessor {
      *                         handled, not thrown.
      */
     private void processQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException {
-        if (logger.isDebugEnabled()) logger.debug("Processing ping queue entry: " + pingQueueEntry);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Processing ping queue entry: " + pingQueueEntry);
+        }
         
         PingTarget pingTarget = pingQueueEntry.getPingTarget();
         Weblog website = pingQueueEntry.getWebsite();
         boolean pingSucceeded = false;
         if (PingConfig.getLogPingsOnly()) {
             // Just log the ping and pretend it succeeded.
-            logger.info("Logging simulated ping for ping queue entry " + pingQueueEntry);
+            LOGGER.info("Logging simulated ping for ping queue entry " + pingQueueEntry);
             pingSucceeded = true;
         } else {
             // Actually process the ping
@@ -141,7 +149,9 @@ public class PingQueueProcessor {
         }
         // We do this outside of the previous try-catch because we don't want an exception here to be considered a ping error.
         if (pingSucceeded) {
-            if (logger.isDebugEnabled()) logger.debug("Processed ping: " + pingQueueEntry);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Processed ping: " + pingQueueEntry);
+            }
             pingQueueMgr.removeQueueEntry(pingQueueEntry);
         }
     }
@@ -160,13 +170,13 @@ public class PingQueueProcessor {
         if ((pingQueueEntry.incrementAttempts() < PingConfig.getMaxPingAttempts()) && WeblogUpdatePinger.shouldRetry(ex)) {
             // We have attempts remaining, and it looks like we should retry,
             // so requeue the entry for processing on subsequent rounds
-            logger.debug("Error on ping attempt (" + pingQueueEntry.getAttempts() + ") for " + pingQueueEntry + ": [" + ex.getMessage() + "]. Will re-queue for later attempts.");
-            logger.debug("Error on last ping attempt was: ", ex);
+            LOGGER.debug("Error on ping attempt (" + pingQueueEntry.getAttempts() + ") for " + pingQueueEntry + ": [" + ex.getMessage() + "]. Will re-queue for later attempts.");
+            LOGGER.debug("Error on last ping attempt was: ", ex);
             pingQueueMgr.saveQueueEntry(pingQueueEntry);
         } else {
             // Remove the entry
-            logger.warn("Error on ping attempt (" + pingQueueEntry.getAttempts() + ") for " + pingQueueEntry + ": [" + ex.getMessage() + "].  Entry will be REMOVED from ping queue.");
-            logger.debug("Error on last ping attempt was: ", ex);
+            LOGGER.warn("Error on ping attempt (" + pingQueueEntry.getAttempts() + ") for " + pingQueueEntry + ": [" + ex.getMessage() + "].  Entry will be REMOVED from ping queue.");
+            LOGGER.debug("Error on last ping attempt was: ", ex);
             pingQueueMgr.removeQueueEntry(pingQueueEntry);
             // TODO: mark ping target invalid?
         }

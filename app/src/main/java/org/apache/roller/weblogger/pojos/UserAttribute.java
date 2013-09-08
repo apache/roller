@@ -112,7 +112,7 @@ public class UserAttribute implements Serializable {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof UserRole)) {
+        if (!(other instanceof UserAttribute)) {
             return false;
         }
         UserAttribute o = (UserAttribute)other;

@@ -84,13 +84,8 @@ public class PreviewServlet extends HttpServlet {
         
         WeblogPreviewRequest previewRequest = null;
 
-        String type = null;
-
         try {
             previewRequest = new WeblogPreviewRequest(request);
-
-            // type of the page we are going to preview
-            type = previewRequest.getType();
 
             // lookup weblog specified by preview request
             weblog = previewRequest.getWeblog();
@@ -185,7 +180,9 @@ public class PreviewServlet extends HttpServlet {
         
         // Still no page?  Then that is a 404
         if (page == null) {
-            if(!response.isCommitted()) response.reset();
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -227,7 +224,7 @@ public class PreviewServlet extends HttpServlet {
             ModelLoader.loadModels(pageModels, model, initData, true);
             
             // Load special models for site-wide blog
-            if(WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
@@ -238,7 +235,9 @@ public class PreviewServlet extends HttpServlet {
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
             
-            if(!response.isCommitted()) response.reset();
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -253,7 +252,9 @@ public class PreviewServlet extends HttpServlet {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+page.getId(), e);
             
-            if(!response.isCommitted()) response.reset();
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -271,7 +272,9 @@ public class PreviewServlet extends HttpServlet {
             // bummer, error during rendering
             log.error("Error during rendering for page "+page.getId(), e);
             
-            if(!response.isCommitted()) response.reset();
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
