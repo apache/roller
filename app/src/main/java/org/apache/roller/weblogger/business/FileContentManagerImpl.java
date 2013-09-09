@@ -44,25 +44,27 @@ public class FileContentManagerImpl implements FileContentManager {
 	
     private static Log log = LogFactory.getLog(FileContentManagerImpl.class);
     
-    private String storage_dir = null;
+    private String storageDir = null;
 
     /**
      * Create file content manager.
      */
     public FileContentManagerImpl() {
         
-        String storagedir = WebloggerConfig.getProperty("mediafiles.storage.dir");
+        String inStorageDir = WebloggerConfig.getProperty("mediafiles.storage.dir");
         
         // Note: System property expansion is now handled by WebloggerConfig.
         
-        if (storagedir == null || storagedir.trim().length() < 1)
-            storagedir = System.getProperty("user.home")
-                + File.separator+"roller_data"+File.separator+"mediafiles";
+        if (inStorageDir == null || inStorageDir.trim().length() < 1) {
+            inStorageDir = System.getProperty("user.home")
+                    + File.separator+"roller_data"+File.separator+"mediafiles";
+        }
         
-        if (! storagedir.endsWith(File.separator))
-            storagedir += File.separator;
+        if (!inStorageDir.endsWith(File.separator)) {
+            inStorageDir += File.separator;
+        }
         
-        this.storage_dir = storagedir.replace('/',File.separatorChar);
+        this.storageDir = inStorageDir.replace('/',File.separatorChar);
     }
     
     public void initialize() {
@@ -72,7 +74,7 @@ public class FileContentManagerImpl implements FileContentManager {
 
 
     /**
-     * @see org.apache.roller.weblogger.model.FileContentManager#getFileContent(weblog, java.lang.String)
+     * @see org.apache.roller.weblogger.business.FileContentManager#getFileContent(Weblog, String)
      */
     public FileContent getFileContent(Weblog weblog, String fileId) 
             throws FileNotFoundException, FilePathException {
@@ -91,8 +93,8 @@ public class FileContentManagerImpl implements FileContentManager {
     }
     
     /**
-     * @see org.apache.roller.weblogger.model.FileContentManager#saveFileContent(weblog, java.lang.String, 
-     * java.lang.String, java.io.InputStream, boolean)
+     * @see org.apache.roller.weblogger.business.FileContentManager#saveFileContent(Weblog, String,
+     * java.io.InputStream)
      */
     public void saveFileContent(Weblog weblog, 
                          String fileId, 
@@ -128,7 +130,7 @@ public class FileContentManagerImpl implements FileContentManager {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.FileContentManager#deleteFile(weblog, java.lang.String)
+     * @see org.apache.roller.weblogger.business.FileContentManager#deleteFile(Weblog, String)
      */
     public void deleteFile(Weblog weblog, String fileId) 
             throws FileNotFoundException, FilePathException, FileIOException {
@@ -149,15 +151,15 @@ public class FileContentManagerImpl implements FileContentManager {
     }
     
     /**
-     * @see org.apache.roller.weblogger.model.FileContentManager#overQuota(weblog)
+     * @see org.apache.roller.weblogger.business.FileContentManager#overQuota(Weblog)
      */
     public boolean overQuota(Weblog weblog) {
         
         String maxDir = WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize");
         String maxFile = WebloggerRuntimeConfig.getProperty("uploads.file.maxsize");
-        BigDecimal maxDirSize = new BigDecimal(maxDir); // in megabytes
-        BigDecimal maxFileSize = new BigDecimal(maxFile); // in megabytes
-        
+        // maxDirSize in megabytes
+        BigDecimal maxDirSize = new BigDecimal(maxDir);
+
         long maxDirBytes = (long)(1024000 * maxDirSize.doubleValue());
         
         try {
@@ -178,8 +180,8 @@ public class FileContentManagerImpl implements FileContentManager {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.FileContentManager#canSave(
-     * weblog, java.lang.String, java.lang.String, long, messages)
+     * @see org.apache.roller.weblogger.business.FileContentManager#canSave(
+     * Weblog, String, String, long, RollerMessages)
      */
     public boolean canSave(Weblog weblog,
     		           String fileName,
@@ -297,7 +299,9 @@ public class FileContentManagerImpl implements FileContentManager {
         if (allowFiles != null && allowFiles.length > 0) {
             for (int y=0; y<allowFiles.length; y++) {
                 // oops, this allowed rule is a content-type, skip it
-                if (allowFiles[y].indexOf('/') != -1) continue;
+                if (allowFiles[y].indexOf('/') != -1) {
+                    continue;
+                }
                 if (fileName.toLowerCase().endsWith(
                         allowFiles[y].toLowerCase())) {
                     allowFile = true;
@@ -310,7 +314,9 @@ public class FileContentManagerImpl implements FileContentManager {
         if (allowFiles != null && allowFiles.length > 0) {
             for (int y=0; y<allowFiles.length; y++) {
                 // oops, this allowed rule is NOT a content-type, skip it
-                if (allowFiles[y].indexOf('/') == -1) continue;
+                if (allowFiles[y].indexOf('/') == -1) {
+                    continue;
+                }
                 if (matchContentType(allowFiles[y], contentType)) {
                     allowFile = true;
                     break;
@@ -324,7 +330,9 @@ public class FileContentManagerImpl implements FileContentManager {
         if (forbidFiles != null && forbidFiles.length > 0) {
             for (int x=0; x<forbidFiles.length; x++) {
                 // oops, this forbid rule is a content-type, skip it
-                if (forbidFiles[x].indexOf('/') != -1) continue;
+                if (forbidFiles[x].indexOf('/') != -1) {
+                    continue;
+                }
                 if (fileName.toLowerCase().endsWith(
                         forbidFiles[x].toLowerCase())) {
                     allowFile = false;
@@ -338,7 +346,9 @@ public class FileContentManagerImpl implements FileContentManager {
         if (forbidFiles != null && forbidFiles.length > 0) {
             for (int x=0; x<forbidFiles.length; x++) {
                 // oops, this forbid rule is NOT a content-type, skip it
-                if (forbidFiles[x].indexOf('/') == -1) continue;
+                if (forbidFiles[x].indexOf('/') == -1) {
+                    continue;
+                }
                 if (matchContentType(forbidFiles[x], contentType)) {
                     allowFile = false;
                     break;
@@ -354,12 +364,17 @@ public class FileContentManagerImpl implements FileContentManager {
      * Super simple contentType range rule matching
      */
     private boolean matchContentType(String rangeRule, String contentType) {
-        if (rangeRule.equals("*/*")) return true;
-        if (rangeRule.equals(contentType)) return true;
+        if (rangeRule.equals("*/*")) {
+            return true;
+        }
+        if (rangeRule.equals(contentType)) {
+            return true;
+        }
         String ruleParts[] = rangeRule.split("/");
         String typeParts[] = contentType.split("/");
-        if (ruleParts[0].equals(typeParts[0]) && ruleParts[1].equals("*")) 
+        if (ruleParts[0].equals(typeParts[0]) && ruleParts[1].equals("*")) {
             return true;
+        }
         
         return false;
     }
@@ -372,7 +387,7 @@ public class FileContentManagerImpl implements FileContentManager {
             throws FileNotFoundException, FilePathException {
         
         // make sure uploads area exists for this weblog
-        File weblogDir = new File(this.storage_dir + weblog.getHandle());
+        File weblogDir = new File(this.storageDir + weblog.getHandle());
         if(!weblogDir.exists()) {
             weblogDir.mkdirs();
         }

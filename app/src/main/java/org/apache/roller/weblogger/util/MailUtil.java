@@ -87,7 +87,6 @@ public class MailUtil {
         }
         
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             String userName = entry.getCreator().getUserName();
@@ -159,9 +158,6 @@ public class MailUtil {
         }
         
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            
-            String userName = user.getUserName();
             String from = website.getEmailAddress();
             String cc[] = new String[] {from};
             String bcc[] = new String[0];
@@ -302,21 +298,18 @@ public class MailUtil {
             List comments = entry.getComments(true, true);
             for (Iterator it = comments.iterator(); it.hasNext();) {
                 WeblogEntryComment comment = (WeblogEntryComment) it.next();
-                if (!StringUtils.isEmpty(comment.getEmail())) {
-                    // If user has commented twice,
-                    // count the most recent notify setting
-                    if (commentObject.getApproved()) {
-                        if (comment.getNotify().booleanValue()) {
-                            // only add those with valid email
-                            if (comment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
-                                log.info("Add to subscribers list : " + comment.getEmail());
-                                subscribers.add(comment.getEmail());
-                            }
-                        } else {
-                            // remove user who doesn't want to be notified
-                            log.info("Remove from subscribers list : " + comment.getEmail());
-                            subscribers.remove(comment.getEmail());
+                if (!StringUtils.isEmpty(comment.getEmail()) && commentObject.getApproved()) {
+                    // If user has commented twice, count the most recent notify setting
+                    if (comment.getNotify()) {
+                        // only add those with valid email
+                        if (comment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
+                            log.info("Add to subscribers list : " + comment.getEmail());
+                            subscribers.add(comment.getEmail());
                         }
+                    } else {
+                        // remove user who doesn't want to be notified
+                        log.info("Remove from subscribers list : " + comment.getEmail());
+                        subscribers.remove(comment.getEmail());
                     }
                 }
             }
@@ -612,7 +605,9 @@ public class MailUtil {
         if (! StringUtils.isEmpty(from)) {
             InternetAddress sentFrom = new InternetAddress(from);
             message.setFrom(sentFrom);
-            if (log.isDebugEnabled()) log.debug("e-mail from: " + sentFrom);
+            if (log.isDebugEnabled()) {
+                log.debug("e-mail from: " + sentFrom);
+            }
         }
         
         if (to!=null) {
@@ -620,7 +615,9 @@ public class MailUtil {
             
             for (int i = 0; i < to.length; i++) {
                 sendTo[i] = new InternetAddress(to[i]);
-                if (log.isDebugEnabled()) log.debug("sending e-mail to: " + to[i]);
+                if (log.isDebugEnabled()) {
+                    log.debug("sending e-mail to: " + to[i]);
+                }
             }
             message.setRecipients(Message.RecipientType.TO, sendTo);
         }
@@ -630,7 +627,9 @@ public class MailUtil {
             
             for (int i = 0; i < cc.length; i++) {
                 copyTo[i] = new InternetAddress(cc[i]);
-                if (log.isDebugEnabled()) log.debug("copying e-mail to: " + cc[i]);
+                if (log.isDebugEnabled()) {
+                    log.debug("copying e-mail to: " + cc[i]);
+                }
             }
             message.setRecipients(Message.RecipientType.CC, copyTo);
         }
@@ -640,7 +639,9 @@ public class MailUtil {
             
             for (int i = 0; i < bcc.length; i++) {
                 copyTo[i] = new InternetAddress(bcc[i]);
-                if (log.isDebugEnabled()) log.debug("blind copying e-mail to: " + bcc[i]);
+                if (log.isDebugEnabled()) {
+                    log.debug("blind copying e-mail to: " + bcc[i]);
+                }
             }
             message.setRecipients(Message.RecipientType.BCC, copyTo);
         }
@@ -680,7 +681,9 @@ public class MailUtil {
             transport.close();
         }
         
-        if (bFailedToSome) throw sendex;
+        if (bFailedToSome) {
+            throw sendex;
+        }
     }
     
     
@@ -728,7 +731,9 @@ public class MailUtil {
             )
             throws MessagingException {
         String[] recipient = null;
-        if (to!=null) recipient = new String[] {to};
+        if (to != null) {
+            recipient = new String[] {to};
+        }
         
         sendMessage(from, recipient, cc, bcc, subject, content, "text/plain; charset=utf-8");
     }
@@ -760,9 +765,15 @@ public class MailUtil {
         String[] copy = null;
         String[] bcopy = null;
         
-        if (to!=null) recipient = new String[] {to};
-        if (cc!=null) copy = new String[] {cc};
-        if (bcc!=null) bcopy = new String[] {bcc};
+        if (to!=null) {
+            recipient = new String[] {to};
+        }
+        if (cc!=null) {
+            copy = new String[] {cc};
+        }
+        if (bcc!=null) {
+            bcopy = new String[] {bcc};
+        }
         
         sendMessage(from, recipient, copy, bcopy, subject, content, "text/plain; charset=utf-8");
     }
@@ -815,9 +826,15 @@ public class MailUtil {
         String[] copy = null;
         String[] bcopy = null;
         
-        if (to!=null) recipient = new String[] {to};
-        if (cc!=null) copy = new String[] {cc};
-        if (bcc!=null) bcopy = new String[] {bcc};
+        if (to != null) {
+            recipient = new String[] {to};
+        }
+        if (cc != null) {
+            copy = new String[] {cc};
+        }
+        if (bcc != null) {
+            bcopy = new String[] {bcc};
+        }
         
         sendMessage(from, recipient, copy, bcopy, subject, content, "text/html; charset=utf-8");
     }
@@ -845,7 +862,9 @@ public class MailUtil {
             )
             throws MessagingException {
         String[] recipient = null;
-        if (to!=null) recipient = new String[] {to};
+        if (to != null) {
+            recipient = new String[] {to};
+        }
         
         sendMessage(from, recipient, cc, bcc, subject, content, "text/html; charset=utf-8");
     }

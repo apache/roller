@@ -92,8 +92,8 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 public class RollerAtomHandler implements AtomHandler {
     protected Weblogger roller = null;
     protected User user = null;
-    protected int  maxEntries = 20;
-    protected      String atomURL = null;
+    protected int maxEntries = 20;
+    protected String atomURL = null;
     
     protected static boolean throttle = true;
     
@@ -301,7 +301,9 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public boolean isAtomServiceURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length==0) return true;
+        if (pathInfo.length==0) {
+            return true;
+        }
         return false;
     }
     
@@ -310,8 +312,12 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public boolean isEntryURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length > 2 && pathInfo[1].equals("entry")) return true;
-        if (pathInfo.length > 2 && pathInfo[1].equals("resource") && pathInfo[pathInfo.length-1].endsWith(".media-link")) return true;
+        if (pathInfo.length > 2 && pathInfo[1].equals("entry")) {
+            return true;
+        }
+        if (pathInfo.length > 2 && pathInfo[1].equals("resource") && pathInfo[pathInfo.length-1].endsWith(".media-link")) {
+            return true;
+        }
         return false;
     }
         
@@ -320,7 +326,9 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public boolean isMediaEditURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length > 1 && pathInfo[1].equals("resource")) return true;
+        if (pathInfo.length > 1 && pathInfo[1].equals("resource")) {
+            return true;
+        }
         return false;
     }
         
@@ -329,9 +337,15 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public boolean isCollectionURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length > 1 && pathInfo[1].equals("entries")) return true;
-        if (pathInfo.length > 1 && pathInfo[1].equals("resources")) return true;
-        if (pathInfo.length > 1 && pathInfo[1].equals("categories")) return true;
+        if (pathInfo.length > 1 && pathInfo[1].equals("entries")) {
+            return true;
+        }
+        if (pathInfo.length > 1 && pathInfo[1].equals("resources")) {
+            return true;
+        }
+        if (pathInfo.length > 1 && pathInfo[1].equals("categories")) {
+            return true;
+        }
         return false;
     }
     
@@ -388,7 +402,9 @@ public class RollerAtomHandler implements AtomHandler {
      */
     protected String authenticateWSSE(HttpServletRequest request) {
         String wsseHeader = request.getHeader("X-WSSE");
-        if (wsseHeader == null) return null;
+        if (wsseHeader == null) {
+            return null;
+        }
         
         String ret = null;
         String userName = null;
@@ -415,11 +431,11 @@ public class RollerAtomHandler implements AtomHandler {
         }
         String digest = null;
         try {
-            User user = roller.getUserManager().getUserByUserName(userName);
+            User inUser = roller.getUserManager().getUserByUserName(userName);
             digest = WSSEUtilities.generateDigest(
                     WSSEUtilities.base64Decode(nonce),
                     created.getBytes("UTF-8"),
-                    user.getPassword().getBytes("UTF-8"));
+                    inUser.getPassword().getBytes("UTF-8"));
             if (digest.equals(passwordDigest)) {
                 ret = userName;
             }
@@ -448,8 +464,8 @@ public class RollerAtomHandler implements AtomHandler {
                         int p = userPass.indexOf(':');
                         if (p != -1) {
                             userID = userPass.substring(0, p);
-                            User user = roller.getUserManager().getUserByUserName(userID);
-                            boolean enabled = user.getEnabled().booleanValue();
+                            User inUser = roller.getUserManager().getUserByUserName(userID);
+                            boolean enabled = inUser.getEnabled();
                             if (enabled) {
                                 // are passwords encrypted?
                                 String encrypted =
@@ -459,7 +475,7 @@ public class RollerAtomHandler implements AtomHandler {
                                     password = Utilities.encodePassword(password,
                                             WebloggerConfig.getProperty("passwds.encryption.algorithm"));
                                 }
-                                valid = user.getPassword().equals(password);
+                                valid = inUser.getPassword().equals(password);
                             }
                         }
                     }
@@ -468,7 +484,9 @@ public class RollerAtomHandler implements AtomHandler {
         } catch (Exception e) {
             log.debug(e);
         }
-        if (valid) return userID;
+        if (valid) {
+            return userID;
+        }
         return null;
     }
 
@@ -499,11 +517,13 @@ public class RollerAtomHandler implements AtomHandler {
     public static void oneSecondThrottle() {
         // Throttle one entry per second per weblog because time-
         // stamp in MySQL and other DBs has only 1 sec resolution
-        if (throttle) try { 
-            synchronized (RollerAtomHandler.class) { 
-                Thread.sleep(1000); 
-            }  
-        } catch (Exception ignored) {} 
+        if (throttle) {
+            try {
+                synchronized (RollerAtomHandler.class) {
+                    Thread.sleep(1000);
+                }
+            } catch (Exception ignored) {}
+        }
     }
 
 }

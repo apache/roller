@@ -124,8 +124,9 @@ public final class TestUtils {
         // query for the user to make sure we return the persisted object
         User user = mgr.getUserByUserName(userName);
 
-        if (user == null)
+        if (user == null) {
             throw new WebloggerException("error inserting new user");
+        }
 
         return user;
     }
@@ -176,8 +177,9 @@ public final class TestUtils {
         // query for the new weblog and return it
         Weblog weblog = mgr.getWeblogByHandle(handle);
 
-        if (weblog == null)
+        if (weblog == null) {
             throw new WebloggerException("error setting up weblog");
+        }
 
         return weblog;
     }
@@ -237,8 +239,9 @@ public final class TestUtils {
         // query for object
         WeblogCategory cat = mgr.getWeblogCategory(testCat.getId());
 
-        if (cat == null)
+        if (cat == null) {
             throw new WebloggerException("error setting up weblog category");
+        }
 
         return cat;
     }
@@ -291,8 +294,9 @@ public final class TestUtils {
         // query for object
         WeblogEntry entry = mgr.getWeblogEntry(testEntry.getId());
 
-        if (entry == null)
+        if (entry == null) {
             throw new WebloggerException("error setting up weblog entry");
+        }
 
         return entry;
     }
@@ -342,8 +346,9 @@ public final class TestUtils {
         // query for object
         WeblogEntryComment comment = mgr.getComment(testComment.getId());
 
-        if (comment == null)
+        if (comment == null) {
             throw new WebloggerException("error setting up comment");
+        }
 
         return comment;
     }
@@ -386,8 +391,9 @@ public final class TestUtils {
         // query for it
         PingTarget ping = pingMgr.getPingTarget(testPing.getId());
 
-        if (ping == null)
+        if (ping == null) {
             throw new WebloggerException("error setting up ping target");
+        }
 
         return ping;
     }
@@ -428,8 +434,9 @@ public final class TestUtils {
         // query for it
         autoPing = mgr.getAutoPing(autoPing.getId());
 
-        if (autoPing == null)
+        if (autoPing == null) {
             throw new WebloggerException("error setting up auto ping");
+        }
 
         return autoPing;
     }
@@ -472,8 +479,9 @@ public final class TestUtils {
         // query for it
         testCount = mgr.getHitCount(testCount.getId());
 
-        if (testCount == null)
+        if (testCount == null) {
             throw new WebloggerException("error setting up hit count");
+        }
 
         return testCount;
     }
@@ -503,11 +511,12 @@ public final class TestUtils {
 
         BookmarkManager mgr = WebloggerFactory.getWeblogger()
                 .getBookmarkManager();
-        WeblogBookmarkFolder root = mgr.getRootFolder(weblog);
 
-        WeblogBookmarkFolder folderParent = root;
+        WeblogBookmarkFolder folderParent;
         if (parent != null) {
             folderParent = parent;
+        } else {
+            folderParent = mgr.getRootFolder(weblog);
         }
         WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(
                 folderParent, name, null, weblog);
@@ -516,11 +525,8 @@ public final class TestUtils {
         // flush to db
         WebloggerFactory.getWeblogger().flush();
 
-        // query for object
-        WeblogBookmarkFolder cat = mgr.getFolder(testFolder.getId());
-
-        if (testFolder == null)
-            throw new WebloggerException("error setting up weblog folder");
+        // query to make sure we return the persisted object
+        testFolder = mgr.getFolder(testFolder.getId());
 
         return testFolder;
     }
@@ -594,8 +600,9 @@ public final class TestUtils {
         // query to make sure we return the persisted object
         Planet planet = mgr.getWeblogger(handle);
 
-        if (planet == null)
+        if (planet == null) {
             throw new WebloggerException("error inserting new planet");
+        }
 
         return planet;
     }
@@ -639,8 +646,9 @@ public final class TestUtils {
         // query to make sure we return the persisted object
         PlanetGroup group = mgr.getGroupById(testGroup.getId());
 
-        if (group == null)
+        if (group == null) {
             throw new WebloggerException("error inserting new group");
+        }
 
         return group;
     }
@@ -682,8 +690,9 @@ public final class TestUtils {
         // query to make sure we return the persisted object
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
 
-        if (sub == null)
+        if (sub == null) {
             throw new WebloggerException("error inserting new subscription");
+        }
 
         return sub;
     }
@@ -731,8 +740,9 @@ public final class TestUtils {
         // query to make sure we return the persisted object
         SubscriptionEntry entry = mgr.getEntryById(testEntry.getId());
 
-        if (entry == null)
+        if (entry == null) {
             throw new WebloggerException("error inserting new entry");
+        }
 
         return entry;
     }

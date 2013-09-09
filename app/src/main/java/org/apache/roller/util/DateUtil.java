@@ -35,22 +35,22 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class DateUtil {
     
-    public static final long millisInDay = 86400000;
+    public static final long MILLIS_IN_DAY = 86400000;
     
     // a bunch of date formats
-    private static final String formatDefaultDate = "dd.MM.yyyy";
-    private static final String formatDefaultDateMinimal = "d.M.yy";
-    private static final String formatDefaultTimestamp = "yyyy-MM-dd HH:mm:ss.SSS";
+    private static final String FORMAT_DEFAULT_DATE = "dd.MM.yyyy";
+    private static final String FORMAT_DEFAULT_DATE_MINIMAL = "d.M.yy";
+    private static final String FORMAT_DEFAULT_TIMESTAMP = "yyyy-MM-dd HH:mm:ss.SSS";
     
-    private static final String formatFriendlyTimestamp = "dd.MM.yyyy HH:mm:ss";
+    private static final String FORMAT_FRIENDLY_TIMESTAMP = "dd.MM.yyyy HH:mm:ss";
     
-    private static final String format6chars = "yyyyMM";
-    private static final String format8chars = "yyyyMMdd";
+    private static final String FORMAT_6CHARS = "yyyyMM";
+    private static final String FORMAT_8CHARS = "yyyyMMdd";
     
-    private static final String formatIso8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
-    private static final String formatIso8601Day = "yyyy-MM-dd";
+    private static final String FORMAT_ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
+    private static final String FORMAT_ISO_8601_DAY = "yyyy-MM-dd";
     
-    private static final String formatRfc822 = "EEE, d MMM yyyy HH:mm:ss Z";
+    private static final String FORMAT_RFC_822 = "EEE, d MMM yyyy HH:mm:ss Z";
     
     
     /**
@@ -69,7 +69,9 @@ public abstract class DateUtil {
      * midnight (00m 00h 00s)
      */
     public static Date getStartOfDay(Date day, Calendar cal) {
-        if (day == null) day = new Date();
+        if (day == null) {
+            day = new Date();
+        }
         cal.setTime(day);
         cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY));
         cal.set(Calendar.MINUTE,      cal.getMinimum(Calendar.MINUTE));
@@ -90,7 +92,9 @@ public abstract class DateUtil {
     
     
     public static Date getEndOfDay(Date day,Calendar cal) {
-        if (day == null) day = new Date();
+        if (day == null) {
+            day = new Date();
+        }
         cal.setTime(day);
         cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
         cal.set(Calendar.MINUTE,      cal.getMaximum(Calendar.MINUTE));
@@ -114,7 +118,9 @@ public abstract class DateUtil {
      * If a null day is passed in, a new Date is created.
      */
     public static Date getStartOfHour(Date day, Calendar cal) {
-        if (day == null) day = new Date();
+        if (day == null) {
+            day = new Date();
+        }
         cal.setTime(day);
         cal.set(Calendar.MINUTE,      cal.getMinimum(Calendar.MINUTE));
         cal.set(Calendar.SECOND,      cal.getMinimum(Calendar.SECOND));
@@ -160,7 +166,9 @@ public abstract class DateUtil {
      * If a null day is passed in, a new Date is created.
      */
     public static Date getStartOfMinute(Date day, Calendar cal) {
-        if (day == null) day = new Date();
+        if (day == null) {
+            day = new Date();
+        }
         cal.setTime(day);
         cal.set(Calendar.SECOND,      cal.getMinimum(Calendar.SECOND));
         cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
@@ -200,7 +208,9 @@ public abstract class DateUtil {
     
     
     public static Date getStartOfMonth(Date day, Calendar cal) {
-        if (day == null) day = new Date();
+        if (day == null) {
+            day = new Date();
+        }
         cal.setTime(day);
         
         // set time to start of day
@@ -227,7 +237,9 @@ public abstract class DateUtil {
     
     
     public static Date getEndOfMonth(Date day,Calendar cal) {
-        if (day == null) day = new Date();
+        if (day == null) {
+            day = new Date();
+        }
         cal.setTime(day);
         
         // set time to end of day
@@ -252,10 +264,12 @@ public abstract class DateUtil {
     /**
      * Returns a Date set just to Noon, to the closest possible millisecond
      * of the day. If a null day is passed in, a new Date is created.
-     * nnoon (00m 12h 00s)
+     * noon (00m 12h 00s)
      */
     public static Date getNoonOfDay(Date day, Calendar cal) {
-        if (day == null) day = new Date();
+        if (day == null) {
+            day = new Date();
+        }
         cal.setTime(day);
         cal.set(Calendar.HOUR_OF_DAY, 12);
         cal.set(Calendar.MINUTE,      cal.getMinimum(Calendar.MINUTE));
@@ -357,46 +371,46 @@ public abstract class DateUtil {
      **/
     public static SimpleDateFormat friendlyDateFormat(boolean minimalFormat) {
         if (minimalFormat) {
-            return new SimpleDateFormat(formatDefaultDateMinimal);
+            return new SimpleDateFormat(FORMAT_DEFAULT_DATE_MINIMAL);
         }
         
-        return new SimpleDateFormat(formatDefaultDate);
+        return new SimpleDateFormat(FORMAT_DEFAULT_DATE);
     }
     
     
     // returns full timestamp format
     public static SimpleDateFormat defaultTimestampFormat() {
-        return new SimpleDateFormat(formatDefaultTimestamp);
+        return new SimpleDateFormat(FORMAT_DEFAULT_TIMESTAMP);
     }
     
     
     // convenience method returns long friendly timestamp format
     public static SimpleDateFormat friendlyTimestampFormat() {
-        return new SimpleDateFormat(formatFriendlyTimestamp);
+        return new SimpleDateFormat(FORMAT_FRIENDLY_TIMESTAMP);
     }
     
     
     // convenience method returns minimal date format
     public static SimpleDateFormat get8charDateFormat() {
-        return new SimpleDateFormat(format8chars);
+        return new SimpleDateFormat(FORMAT_8CHARS);
     }
     
     
     // convenience method returns minimal date format
     public static SimpleDateFormat get6charDateFormat() {
-        return new SimpleDateFormat(format6chars);
+        return new SimpleDateFormat(FORMAT_6CHARS);
     }
     
     
     // convenience method returns minimal date format
     public static SimpleDateFormat getIso8601DateFormat() {
-        return new SimpleDateFormat(formatIso8601);
+        return new SimpleDateFormat(FORMAT_ISO_8601);
     }
     
     
     // convenience method returns minimal date format
     public static SimpleDateFormat getIso8601DayDateFormat() {
-        return new SimpleDateFormat(formatIso8601Day);
+        return new SimpleDateFormat(FORMAT_ISO_8601_DAY);
     }
     
     
@@ -404,7 +418,7 @@ public abstract class DateUtil {
     public static SimpleDateFormat getRfc822DateFormat() {
         // http://www.w3.org/Protocols/rfc822/Overview.html#z28
         // Using Locale.US to fix ROL-725 and ROL-628
-        return new SimpleDateFormat(formatRfc822, Locale.US);
+        return new SimpleDateFormat(FORMAT_RFC_822, Locale.US);
     }
     
     
@@ -476,7 +490,9 @@ public abstract class DateUtil {
     
     // This is a hack, but it seems to work
     public static String formatIso8601(Date date) {
-        if (date == null) return "";
+        if (date == null) {
+            return "";
+        }
         
         // Add a colon 2 chars before the end of the string
         // to make it a valid ISO-8601 date.

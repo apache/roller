@@ -80,7 +80,11 @@ public class DatabaseInstaller {
         } catch (Exception e) {
             throw new RuntimeException("Error checking for tables", e);
         } finally {
-            try { if (con != null) con.close(); } catch (Exception ignored) {}
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (Exception ignored) {}
         }
         
         return true;
@@ -178,7 +182,11 @@ public class DatabaseInstaller {
             throw new StartupException("Error running SQL script", ioe);
 
         } finally {
-            try { if (con != null) con.close(); } catch (Exception ignored) {}
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (Exception ignored) {}
         }
     }
     
@@ -237,7 +245,11 @@ public class DatabaseInstaller {
         } catch (SQLException e) {
             throw new StartupException("ERROR obtaining connection");
         } finally {
-            try { if (con != null) con.close(); } catch (Exception ignored) {}
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (Exception ignored) {}
         }
     }
 
@@ -261,7 +273,9 @@ public class DatabaseInstaller {
             }
         } catch(Exception ex) {
             log.error("ERROR running 400 database upgrade script", ex);
-            if (runner != null) messages.addAll(runner.getMessages());
+            if (runner != null) {
+                messages.addAll(runner.getMessages());
+            }
             
             errorMessage("Problem upgrading database to version 400", ex);
             throw new StartupException("Problem upgrading database to version 400", ex);
@@ -317,7 +331,9 @@ public class DatabaseInstaller {
                 updateParent.executeUpdate();
             }
             
-            if (!con.getAutoCommit()) con.commit();
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
            
             successMessage("Done populating parentid columns.");
             
@@ -466,7 +482,9 @@ public class DatabaseInstaller {
                 log.debug("Updated "+folderNumUpdated+" Lx folder paths");
             } while(folderNumUpdated > 0);
             
-            if (!con.getAutoCommit()) con.commit();
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
            
             successMessage("Done populating path columns.");
             
@@ -521,7 +539,9 @@ public class DatabaseInstaller {
                 renameExternalGroup.executeUpdate();
             }
             
-            if (!con.getAutoCommit()) con.commit();
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
            
             successMessage("Planet group 'external' merged into group 'all'.");
             
@@ -568,7 +588,9 @@ public class DatabaseInstaller {
             }
             }
             
-            if (!con.getAutoCommit()) con.commit();
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
            
             successMessage("Comments successfully updated to use new comment plugins.");
             
@@ -658,7 +680,9 @@ public class DatabaseInstaller {
             updateCommentsPlugins.setString(1, plugins);
             updateCommentsPlugins.executeUpdate();
             
-            if (!con.getAutoCommit()) con.commit();
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
            
             successMessage("Comments successfully updated to use new comment plugins.");
             
@@ -690,7 +714,9 @@ public class DatabaseInstaller {
             }
         } catch(Exception ex) {
             log.error("ERROR running 500 database upgrade script", ex);
-            if (runner != null) messages.addAll(runner.getMessages());
+            if (runner != null) {
+                messages.addAll(runner.getMessages());
+            }
             
             errorMessage("Problem upgrading database to version 500", ex);
             throw new StartupException("Problem upgrading database to version 500", ex);
@@ -712,7 +738,9 @@ public class DatabaseInstaller {
             }
         } catch(Exception ex) {
             log.error("ERROR running 510 database upgrade script", ex);
-            if (runner != null) messages.addAll(runner.getMessages());
+            if (runner != null) {
+                messages.addAll(runner.getMessages());
+            }
             
             errorMessage("Problem upgrading database to version 510", ex);
             throw new StartupException("Problem upgrading database to version 510", ex);
@@ -783,8 +811,9 @@ public class DatabaseInstaller {
                 // we have someone upgrading from 1.2.x
                 rs = stmt.executeQuery("select count(*) from roller_properties");
                 if(rs.next()) {
-                    if(rs.getInt(1) > 0)
+                    if(rs.getInt(1) > 0) {
                         dbversion = 120;
+                    }
                 }
             }
             
@@ -792,7 +821,11 @@ public class DatabaseInstaller {
             // that's strange ... hopefully we didn't need to upgrade
             log.error("Couldn't lookup current database version", e);           
         } finally {
-            try { if (con != null) con.close(); } catch (Exception ignored) {}
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (Exception ignored) {}
         }       
         return dbversion;
     }
@@ -807,14 +840,18 @@ public class DatabaseInstaller {
         // strip out non-digits
         vstring = vstring.replaceAll("\\Q.\\E", "");
         vstring = vstring.replaceAll("\\D", "");
-        if(vstring.length() > 3)
+        if(vstring.length() > 3) {
             vstring = vstring.substring(0, 3);
+        }
         
         // parse to an int
         try {
             int parsed = Integer.parseInt(vstring);            
-            if(parsed < 100) myversion = parsed * 10;
-            else myversion = parsed;
+            if(parsed < 100) {
+                myversion = parsed * 10;
+            } else {
+                myversion = parsed;
+            }
         } catch(Exception e) {}  
         
         return myversion;

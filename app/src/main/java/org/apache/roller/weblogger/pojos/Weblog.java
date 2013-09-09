@@ -87,7 +87,7 @@ public class Weblog implements Serializable {
     private Boolean moderateComments = Boolean.FALSE;
     private int     entryDisplayCount = 15;
     private Date    lastModified     = new Date();
-    private String  pageModels       = new String();
+    private String  pageModels;
     private boolean enableMultiLang  = false;
     private boolean showAllLangs     = true;
     private String  customStylesheetPath = null;
@@ -95,9 +95,7 @@ public class Weblog implements Serializable {
     private String  about            = null;
     private String  creator          = null;
 
-    
     // Associated objects
-    private List           permissions = new ArrayList();
     private WeblogCategory bloggerCategory = null;
     private WeblogCategory defaultCategory = null;
     
@@ -131,7 +129,7 @@ public class Weblog implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
         buf.append(", ").append(getHandle());
@@ -144,8 +142,12 @@ public class Weblog implements Serializable {
     }
 
     public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof Weblog != true) return false;
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof Weblog)) {
+            return false;
+        }
         Weblog o = (Weblog)other;
         return new EqualsBuilder()
             .append(getHandle(), o.getHandle()) 
@@ -638,15 +640,10 @@ public class Weblog implements Serializable {
      */
     public TimeZone getTimeZoneInstance() {
         if (getTimeZone() == null) {
-            if (TimeZone.getDefault() != null) {
-                this.setTimeZone( TimeZone.getDefault().getID() );
-            } else {
-                this.setTimeZone("America/New_York");
-            }
+            this.setTimeZone( TimeZone.getDefault().getID() );
         }
         return TimeZone.getTimeZone(getTimeZone());
     }
-    
     
     /**
      * Returns true if user has all permission action specified.
@@ -680,7 +677,7 @@ public class Weblog implements Serializable {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             Iterator iter = umgr.getWeblogPermissions(this).iterator();
             while (iter.hasNext()) {
-                WeblogPermission perm = (WeblogPermission) iter.next();
+                iter.next();
                 count++;
             }
             
@@ -696,7 +693,7 @@ public class Weblog implements Serializable {
     public void setUserCount(int userCount) {
         // no-op
     }
-    
+
     public int getAdminUserCount() {
         int count = 0;
         try {
@@ -721,8 +718,7 @@ public class Weblog implements Serializable {
     public void setAdminUserCount(int adminUserCount) {
         // no-op
     }
-    
-    
+
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -958,14 +954,8 @@ public class Weblog implements Serializable {
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogCategory"
      */
     public Set getWeblogCategories() {
-        Set ret = new HashSet();
-//        try {           
-            WeblogCategory category = this.getDefaultCategory();
-            ret = category.getWeblogCategories();
-//        } catch (WebloggerException e) {
-//            log.error("ERROR: fetching categories", e);
-//        }
-        return ret;
+        WeblogCategory category = this.getDefaultCategory();
+        return category.getWeblogCategories();
     }
     
     
@@ -1024,10 +1014,16 @@ public class Weblog implements Serializable {
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryData"
      */
     public List getRecentWeblogEntries(String cat, int length) {  
-        if (cat != null && "nil".equals(cat)) cat = null;
-        if (length > 100) length = 100;
+        if (cat != null && "nil".equals(cat)) {
+            cat = null;
+        }
+        if (length > 100) {
+            length = 100;
+        }
         List recentEntries = new ArrayList();
-        if (length < 1) return recentEntries;
+        if (length < 1) {
+            return recentEntries;
+        }
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             recentEntries = wmgr.getWeblogEntries(
@@ -1059,14 +1055,20 @@ public class Weblog implements Serializable {
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryData"
      */
     public List getRecentWeblogEntriesByTag(String tag, int length) {  
-        if (tag != null && "nil".equals(tag)) tag = null;
-        if (length > 100) length = 100;
+        if (tag != null && "nil".equals(tag)) {
+            tag = null;
+        }
+        if (length > 100) {
+            length = 100;
+        }
         List recentEntries = new ArrayList();
         List tags = new ArrayList();
         if (tag != null) {
             tags.add(tag);
         }
-        if (length < 1) return recentEntries;
+        if (length < 1) {
+            return recentEntries;
+        }
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             recentEntries = wmgr.getWeblogEntries(
@@ -1097,9 +1099,13 @@ public class Weblog implements Serializable {
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryComment"
      */
     public List getRecentComments(int length) {   
-        if (length > 100) length = 100;
+        if (length > 100) {
+            length = 100;
+        }
         List recentComments = new ArrayList();
-        if (length < 1) return recentComments;
+        if (length < 1) {
+            return recentComments;
+        }
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             recentComments = wmgr.getComments(
@@ -1148,16 +1154,14 @@ public class Weblog implements Serializable {
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogReferrer"
      */
     public List getTodaysReferrers() {
-        List referers = null;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             RefererManager rmgr = roller.getRefererManager();
             return rmgr.getTodaysReferers(this);
-            
         } catch (WebloggerException e) {
             log.error("PageModel getTodaysReferers()", e);
         }
-        return (referers == null ? Collections.EMPTY_LIST : referers);        
+        return Collections.EMPTY_LIST;
     }
     
     /** No-op method to please XDoclet */
@@ -1261,9 +1265,10 @@ public class Weblog implements Serializable {
         try {
             //get Theme Associativity object so we can get the ThemeName for the type given
             themeAssoc = WebloggerFactory.getWeblogger().getWeblogManager().getThemeAssoc(this ,type);
-            if(themeAssoc != null)
+            if (themeAssoc != null) {
                 // get the Theme from theme manager
-              theme = WebloggerFactory.getWeblogger().getThemeManager().getTheme(themeAssoc.getName());
+                theme = WebloggerFactory.getWeblogger().getThemeManager().getTheme(themeAssoc.getName());
+            }
         } catch (WebloggerException e) {
             log.error("Error getting Weblog Theme type -"+type+"for weblog "+getHandle(),e);
         }

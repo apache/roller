@@ -56,7 +56,7 @@ public class JPARefererManagerImpl implements RefererManager {
     protected static final String DAYHITS = "dayHits";
     protected static final String TOTALHITS = "totalHits";
     
-    private static final Comparator statCountCountReverseComparator = 
+    private static final Comparator STAT_COUNT_COUNT_REVERSE_COMPARATOR =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
     /** The strategy for this manager. */
@@ -109,7 +109,9 @@ public class JPARefererManagerImpl implements RefererManager {
         String spamwords = WebloggerRuntimeConfig.getProperty("spam.blacklist");
         String[] blacklist = StringUtils.split(
                 StringUtils.deleteWhitespace(spamwords),",");
-        if (blacklist.length == 0) return;
+        if (blacklist.length == 0) {
+            return;
+        }
         List referers = getBlackListedReferer(blacklist);
         for (Iterator iterator = referers.iterator(); iterator.hasNext();) {
             WeblogReferrer referer= (WeblogReferrer) iterator.next();
@@ -122,12 +124,18 @@ public class JPARefererManagerImpl implements RefererManager {
      */
     public void applyRefererFilters(Weblog website)
             throws WebloggerException {
-        if (null == website) throw new WebloggerException("website is null");
-        if (null == website.getBlacklist()) return;
+        if (null == website) {
+            throw new WebloggerException("website is null");
+        }
+        if (null == website.getBlacklist()) {
+            return;
+        }
         
         String[] blacklist = StringUtils.split(
                 StringUtils.deleteWhitespace(website.getBlacklist()),",");
-        if (blacklist.length == 0) return;
+        if (blacklist.length == 0) {
+            return;
+        }
         List referers = getBlackListedReferer(website, blacklist);
         for (Iterator iterator = referers.iterator(); iterator.hasNext();) {
             WeblogReferrer referer= (WeblogReferrer) iterator.next();
@@ -167,8 +175,10 @@ public class JPARefererManagerImpl implements RefererManager {
      */
     public List getHotWeblogs(int sinceDays, int offset, int length)
             throws WebloggerException {
-        
-        String msg = "Getting hot weblogs";
+
+        if (log.isDebugEnabled()) {
+            log.debug("Getting hot weblogs");
+        }
         List results = new ArrayList();
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -206,7 +216,7 @@ public class JPARefererManagerImpl implements RefererManager {
         }
         // Original query ordered by desc hits.
         // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
-        Collections.sort(results, statCountCountReverseComparator);
+        Collections.sort(results, STAT_COUNT_COUNT_REVERSE_COMPARATOR);
 
         return results;
     }
@@ -277,11 +287,13 @@ public class JPARefererManagerImpl implements RefererManager {
     public List getReferersToDate(Weblog website, String date)
             throws WebloggerException {
 
-        if (website==null )
+        if (website==null) {
             throw new WebloggerException("website is null");
+        }
         
-        if (date==null )
+        if (date==null) {
             throw new WebloggerException("Date is null");
+        }
         
         Query q = strategy.getNamedQuery(
             "WeblogReferrer.getByWebsite&DateString&DuplicateOrderByTotalHitsDesc");
@@ -298,8 +310,9 @@ public class JPARefererManagerImpl implements RefererManager {
      * @throws org.apache.roller.weblogger.WebloggerException
      */
     public List getReferersToEntry(String entryid) throws WebloggerException {
-        if (null == entryid)
+        if (null == entryid) {
             throw new WebloggerException("entryid is null");
+        }
         //TODO: DataMapperPort: Change calling code to pass WeblogEntry instead of id
         // we should change calling code to pass instance of WeblogEntry instead
         // of extracting and passing id. Once that is done, change the code below to
@@ -368,17 +381,19 @@ public class JPARefererManagerImpl implements RefererManager {
         log.debug("processing referrer ["+referrerUrl+
                 "] accessing ["+requestUrl+"]");
 
-        if (weblogHandle == null)
+        if (weblogHandle == null) {
             return;
+        }
 
-        String selfSiteFragment = "/"+weblogHandle;
         Weblog weblog = null;
         WeblogEntry entry = null;
 
         // lookup the weblog now
         try {
             weblog = roller.getWeblogManager().getWeblogByHandle(weblogHandle);
-            if (weblog == null) return;
+            if (weblog == null) {
+                return;
+            }
 
             // now lookup weblog entry if possible
             if (entryAnchor != null) {
@@ -428,8 +443,8 @@ public class JPARefererManagerImpl implements RefererManager {
                 // Referer was found in database, so bump up hit count
                 WeblogReferrer ref = (WeblogReferrer)matchRef.get(0);
 
-                ref.setDayHits(new Integer(ref.getDayHits().intValue() + 1));
-                ref.setTotalHits(new Integer(ref.getTotalHits().intValue() + 1));
+                ref.setDayHits(ref.getDayHits() + 1);
+                ref.setTotalHits(ref.getTotalHits() + 1);
 
                 log.debug("Incrementing hit count on existing referer: " +
                     referrerUrl);
@@ -439,7 +454,7 @@ public class JPARefererManagerImpl implements RefererManager {
             } else if (matchRef.size() == 0) {
 
                 // Referer was not found in database, so new Referer object
-                Integer one = new Integer(1);
+                Integer one = 1;
                 WeblogReferrer ref =
                         new WeblogReferrer(
                         null,
@@ -583,7 +598,7 @@ public class JPARefererManagerImpl implements RefererManager {
                                 maxweight = weight;
                             }
 
-                            if (referer.getVisible().booleanValue()) {
+                            if (referer.getVisible()) {
                                 // If any are visible then chosen
                                 // replacement must be visible as well.
                                 visible = Boolean.TRUE;
@@ -596,7 +611,7 @@ public class JPARefererManagerImpl implements RefererManager {
                         for (Iterator rdItr = refs.iterator();rdItr.hasNext();) {
                             WeblogReferrer referer = (WeblogReferrer) rdItr.next();
 
-                            if (referer != chosen) {
+                            if (!referer.equals(chosen)) {
                                 referer.setDuplicate(Boolean.TRUE);
                             } else {
                                 referer.setDuplicate(Boolean.FALSE);
@@ -667,16 +682,16 @@ public class JPARefererManagerImpl implements RefererManager {
         assert blacklist.length > 0;
         StringBuffer queryString = new StringBuffer("SELECT r FROM WeblogReferrer r WHERE (");
         //Search for any matching entry from blacklist[]
-        final String OR = " OR ";
+        final String orKeyword = " OR ";
         for (int i = 0; i < blacklist.length; i++) {
             String ignoreWord = blacklist[i];
             //TODO: DataMapper port: original code use "like ignore case" as follows
             // or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
             // There is no equivalent for it in JPA
-            queryString.append("r.refererUrl like '%").append(ignoreWord.trim()).append("%'").append(OR);
+            queryString.append("r.refererUrl like '%").append(ignoreWord.trim()).append("%'").append(orKeyword);
         }
         // Get rid of last OR
-        queryString.delete(queryString.length() - OR.length(), queryString.length());
+        queryString.delete(queryString.length() - orKeyword.length(), queryString.length());
         queryString.append(" ) ");
         return queryString;
     }

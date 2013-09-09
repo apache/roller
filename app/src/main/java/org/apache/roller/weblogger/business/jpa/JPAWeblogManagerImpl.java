@@ -67,7 +67,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /** The logger instance for this class. */
     private static Log log = LogFactory.getLog(JPAWeblogManagerImpl.class);
     
-    private static final Comparator statCountCountReverseComparator =
+    private static final Comparator STAT_COUNT_COUNT_REVERSE_COMPARATOR =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
     private final Weblogger roller;
@@ -75,11 +75,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     // cached mapping of weblogHandles -> weblogIds
     private Map weblogHandleToIdMap = new Hashtable();
-    
-    // cached mapping of userNames -> userIds
-    private Map userNameToIdMap = new Hashtable();
-    
-    
+
     @com.google.inject.Inject
     protected JPAWeblogManagerImpl(Weblogger roller, JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA Weblog Manager");
@@ -118,10 +114,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     throws  WebloggerException {
         
         UserManager        umgr = roller.getUserManager();
-        WeblogManager      wmgr = roller.getWeblogManager();
         WeblogEntryManager emgr = roller.getWeblogEntryManager();
         BookmarkManager    bmgr = roller.getBookmarkManager();
-        MediaFileManager   mmgr = roller.getMediaFileManager();
 
         //remove theme Assocs
 
@@ -160,9 +154,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // delete all bad counts
         Query removeCounts = strategy.getNamedUpdate(
                 "WeblogEntryTagAggregate.removeByTotalLessEqual");
-        removeCounts.setParameter(1, new Integer(0));
+        removeCounts.setParameter(1, 0);
         removeCounts.executeUpdate();
-        
         
         // Remove the website's ping queue entries
         Query q = strategy.getNamedQuery("PingQueueEntry.getByWebsite");
@@ -272,7 +265,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     /**
-     * @see org.apache.roller.weblogger.model.UserManager#storePage(org.apache.roller.weblogger.pojos.WeblogTemplate)
+     * @see org.apache.roller.weblogger.business.WeblogManager#savePage(WeblogTemplate)
      */
     public void savePage(WeblogTemplate page) throws WebloggerException {
         this.strategy.store(page);
@@ -331,7 +324,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                         splitcats[i],    // name
                         splitcats[i],    // description
                         null );          // image
-                if (i == 0) firstCat = c;
+                if (i == 0) {
+                    firstCat = c;
+                }
                 rootCat.getWeblogCategories().add(c);
                 this.strategy.store(c);
             }
@@ -350,7 +345,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 null, "root", "root", newWeblog);
         this.strategy.store(root);
         
-        Integer zero = new Integer(0);
+        Integer zero = 0;
         String blogroll = WebloggerConfig.getProperty("newuser.blogroll");
         if (blogroll != null) {
             String[] splitroll = blogroll.split(",");
@@ -409,8 +404,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public Weblog getWeblogByHandle(String handle, Boolean enabled)
     throws WebloggerException {
         
-        if (handle==null )
+        if (handle==null ) {
             throw new WebloggerException("Handle cannot be null");
+        }
         
         // check cache first
         // NOTE: if we ever allow changing handles then this needs updating
@@ -471,23 +467,31 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         if (startDate != null) {
             Timestamp start = new Timestamp(startDate.getTime());
-            if (whereClause.length() > 0) whereClause.append(" AND ");
+            if (whereClause.length() > 0) {
+                whereClause.append(" AND ");
+            }
             params.add(size++, start);
             whereClause.append(" w.dateCreated > ?" + size);
         }
         if (endDate != null) {
             Timestamp end = new Timestamp(endDate.getTime());
-            if (whereClause.length() > 0) whereClause.append(" AND ");
+            if (whereClause.length() > 0) {
+                whereClause.append(" AND ");
+            }
             params.add(size++, end);
             whereClause.append(" w.dateCreated < ?" + size);
         }
         if (enabled != null) {
-            if (whereClause.length() > 0) whereClause.append(" AND ");
+            if (whereClause.length() > 0) {
+                whereClause.append(" AND ");
+            }
             params.add(size++, enabled);
             whereClause.append(" w.enabled = ?" + size);
         }
         if (active != null) {
-            if (whereClause.length() > 0) whereClause.append(" AND ");
+            if (whereClause.length() > 0) {
+                whereClause.append(" AND ");
+            }
             params.add(size++, active);
             whereClause.append(" w.active = ?" + size);
         }      
@@ -562,7 +566,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     public WeblogTemplate getPage(String id) throws WebloggerException {
         // Don't hit database for templates stored on disk
-        if (id != null && id.endsWith(".vm")) return null;
+        if (id != null && id.endsWith(".vm")) {
+            return null;
+        }
         
         return (WeblogTemplate)this.strategy.load(WeblogTemplate.class,id);
     }
@@ -573,12 +579,14 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public WeblogTemplate getPageByLink(Weblog website, String pagelink)
     throws WebloggerException {
         
-        if (website == null)
+        if (website == null) {
             throw new WebloggerException("userName is null");
-        
-        if (pagelink == null)
+        }
+
+        if (pagelink == null) {
             throw new WebloggerException("Pagelink is null");
-        
+        }
+
         Query query = strategy.getNamedQuery("WeblogTemplate.getByWebsite&Link");
         query.setParameter(1, website);
         query.setParameter(2, pagelink);
@@ -590,17 +598,18 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     /**
-     * @see org.apache.roller.weblogger.model.UserManager#getPageByAction(Weblog, java.lang.String)
+     * @see org.apache.roller.weblogger.business.WeblogManager#getPageByAction(Weblog, String)
      */
     public WeblogTemplate getPageByAction(Weblog website, String action)
             throws WebloggerException {
         
-        if (website == null)
+        if (website == null) {
             throw new WebloggerException("website is null");
-        
-        if (action == null)
+        }
+
+        if (action == null) {
             throw new WebloggerException("Action name is null");
-        
+        }
         
         Query query = strategy.getNamedQuery("WeblogTemplate.getByAction"); 
         query.setParameter(1, website);
@@ -613,16 +622,18 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     /**
-     * @see org.apache.roller.weblogger.model.UserManager#getPageByName(Weblog, java.lang.String)
+     * @see org.apache.roller.weblogger.business.WeblogManager#getPageByName(Weblog, java.lang.String)
      */
     public WeblogTemplate getPageByName(Weblog website, String pagename)
     throws WebloggerException {
         
-        if (website == null)
+        if (website == null) {
             throw new WebloggerException("website is null");
+        }
         
-        if (pagename == null)
+        if (pagename == null) {
             throw new WebloggerException("Page name is null");
+        }
         
         Query query = strategy.getNamedQuery("WeblogTemplate.getByWebsite&Name");
         query.setParameter(1, website);
@@ -635,11 +646,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     public WeblogThemeTemplateCode getTemplateCodeByType(String templateId, String type) throws WebloggerException{
-         if(templateId == null)
-             throw new WebloggerException("Template Name is null");
+        if(templateId == null) {
+            throw new WebloggerException("Template Name is null");
+        }
 
-        if(type == null){
-            throw  new WebloggerException("Type is null");
+        if (type == null) {
+            throw new WebloggerException("Type is null");
         }
 
         Query query = strategy.getNamedQuery("WeblogThemeTemplateCode.getTemplateCodeByType");
@@ -653,11 +665,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * @see org.apache.roller.weblogger.model.UserManager#getPages(Weblog)
+     * @see org.apache.roller.weblogger.business.WeblogManager#getPages(Weblog)
      */
     public List getPages(Weblog website) throws WebloggerException {
-        if (website == null)
+        if (website == null) {
             throw new WebloggerException("website is null");
+        }
         Query q = strategy.getNamedQuery(
                 "WeblogTemplate.getByWebsiteOrderByName");
         q.setParameter(1, website);
@@ -700,7 +713,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         Query query = null;
         
-        if (endDate == null) endDate = new Date();
+        if (endDate == null) {
+            endDate = new Date();
+        }
         
         if (startDate != null) {
             Timestamp start = new Timestamp(startDate.getTime());
@@ -736,7 +751,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         // Original query ordered by desc # comments.
         // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
-        Collections.sort(results, statCountCountReverseComparator);
+        Collections.sort(results, STAT_COUNT_COUNT_REVERSE_COMPARATOR);
         
         return results;
     }
@@ -749,7 +764,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List results = strategy.getNamedQuery(
                 "Weblog.getCountAllDistinct").getResultList();
         
-        ret = ((Long)results.get(0)).longValue();
+        ret = (Long)results.get(0);
         
         return ret;
     }

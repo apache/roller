@@ -174,14 +174,16 @@ public class Utilities {
                 ret.append(str.substring(start, beginTag));
                 
                 // replace each tag with a space (looks better)
-                if (addSpace) ret.append(" ");
+                if (addSpace) {
+                    ret.append(" ");
+                }
             }
             endTag = str.indexOf('>', beginTag);
             
             // if endTag found move "cursor" forward
             if (endTag > -1) {
                 start = endTag + 1;
-                beginTag = str.indexOf("<", start);
+                beginTag = str.indexOf('<', start);
             }
             // if no endTag found, get rest of str and break
             else {
@@ -202,8 +204,12 @@ public class Utilities {
      * @return String with HTML removed and HTML special characters escaped.
      */
     public static String removeAndEscapeHTML( String s ) {
-        if ( s==null ) return "";
-        else return Utilities.escapeHTML( Utilities.removeHTML(s) );
+        if ( s==null ) {
+            return "";
+        }
+        else {
+            return Utilities.escapeHTML( Utilities.removeHTML(s) );
+        }
     }
     
     //------------------------------------------------------------------------
@@ -211,8 +217,7 @@ public class Utilities {
      * Autoformat.
      */
     public static String autoformat(String s) {
-        String ret = StringUtils.replace(s, "\n", "<br />");
-        return ret;
+        return StringUtils.replace(s, "\n", "<br />");
     }
     
     
@@ -292,10 +297,12 @@ public class Utilities {
     public static String stringArrayToString(String[] stringArray, String delim) {
         String ret = "";
         for (int i = 0; i < stringArray.length; i++) {
-            if (ret.length() > 0)
+            if (ret.length() > 0) {
                 ret = ret + delim + stringArray[i];
-            else
+            }
+            else {
                 ret = stringArray[i];
+            }
         }
         return ret;
     }
@@ -305,10 +312,12 @@ public class Utilities {
     public static String stringListToString(List<String> stringList, String delim) {
         String ret = "";
         for (String s : stringList) {
-            if (ret.length() > 0)
+            if (ret.length() > 0) {
                 ret = ret + delim + s;
-            else
+            }
+            else {
                 ret = s;
+            }
         }
         return ret;
     }
@@ -350,7 +359,7 @@ public class Utilities {
         while (toker.hasMoreTokens()) {
             String sInt = toker.nextToken();
             int nInt = Integer.parseInt(sInt);
-            intArray[i++] = new Integer(nInt).intValue();
+            intArray[i++] = nInt;
         }
         return intArray;
     }
@@ -360,10 +369,12 @@ public class Utilities {
     public static String intArrayToString(int[] intArray) {
         String ret = "";
         for (int i = 0; i < intArray.length; i++) {
-            if (ret.length() > 0)
+            if (ret.length() > 0) {
                 ret = ret + "," + Integer.toString(intArray[i]);
-            else
+            }
+            else {
                 ret = Integer.toString(intArray[i]);
+            }
         }
         return ret;
     }
@@ -448,8 +459,9 @@ public class Utilities {
                         "Reading input stream, " + ex.getMessage());
             }
             
-            if (bytes < 0)
+            if (bytes < 0) {
                 break;
+            }
             
             length -= bytes;
             
@@ -484,8 +496,9 @@ public class Utilities {
         byte buffer[] = new byte[8192];
         for (int count = 0; count != -1;) {
             count = in.read(buffer, 0, 8192);
-            if (count != -1)
+            if (count != -1) {
                 out.write(buffer, 0, count);
+            }
         }
         
         try {
@@ -599,7 +612,6 @@ public class Utilities {
             } else {
                 // no it wasnt, so we'll cut it off at the upper limit
                 str2 = str2.substring(0, upper);
-                loc = upper;
             }
             
             // the string was truncated, so we append the appendToEnd String
@@ -688,8 +700,7 @@ public class Utilities {
     public static String truncateText(String str, int lower, int upper, String appendToEnd) {
         // strip markup from the string
         String str2 = removeHTML(str, false);
-        boolean diff = (str2.length() < str.length());
-        
+
         // quickly adjust the upper if it is set lower than 'lower'
         if(upper < lower) {
             upper = lower;
@@ -711,7 +722,6 @@ public class Utilities {
             } else {
                 // no it wasnt, so we'll cut it off at the upper limit
                 str2 = str2.substring(0, upper);
-                loc = upper;
             }
             // the string was truncated, so we append the appendToEnd String
             str = str2 + appendToEnd;
@@ -779,7 +789,7 @@ public class Utilities {
             // could this be better done with a regular expression?
             String closeTag = "</"+openCloseTags[j]+">";
             int lastStringIndex = 0;
-            while ( (stringIndex = lcresult.indexOf( "<"+openCloseTags[j], lastStringIndex)) > -1) {
+            while ((stringIndex = lcresult.indexOf( "<"+openCloseTags[j], lastStringIndex)) > -1) {
                 lastStringIndex = stringIndex;
                 // Try to find the matching closing tag  (ignores possible nesting!)
                 int endIndex = lcresult.indexOf(closeTag, stringIndex);
@@ -795,7 +805,6 @@ public class Utilities {
                         // Looks like it, so remove it.
                         result.delete(stringIndex, endIndex + 1);
                         lcresult.delete(stringIndex, endIndex + 1);
-                        
                     }
                 }
             }
@@ -810,13 +819,16 @@ public class Utilities {
      * @return
      */
     public static String extractHTML(String str) {
-        if (str == null) return "";
+        if (str == null) {
+            return "";
+        }
         StringBuffer ret = new StringBuffer(str.length());
         int start = 0;
         int beginTag = str.indexOf('<');
         int endTag = 0;
-        if (beginTag == -1)
+        if (beginTag == -1) {
             return str;
+        }
         
         while (beginTag >= start) {
             endTag = str.indexOf('>', beginTag);
@@ -839,7 +851,9 @@ public class Utilities {
     
     
     public static String hexEncode(String str) {
-        if (StringUtils.isEmpty(str)) return str;
+        if (StringUtils.isEmpty(str)) {
+            return str;
+        }
         
         return RegexUtil.encode(str);
     }
@@ -855,10 +869,12 @@ public class Utilities {
      */
     public static final String encode(String s) {
         try {
-            if (s != null)
+            if (s != null) {
                 return URLEncoder.encode(s, "UTF-8");
-            else
+            }
+            else {
                 return s;
+            }
         } catch (UnsupportedEncodingException e) {
             // Java Spec requires UTF-8 be in all Java environments, so this should not happen
             return s;
@@ -872,10 +888,12 @@ public class Utilities {
      */
     public static final String decode(String s) {
         try {
-            if (s != null)
+            if (s != null) {
                 return URLDecoder.decode(s, "UTF-8");
-            else
+            }
+            else {
                 return s;
+            }
         } catch (UnsupportedEncodingException e) {
             // Java Spec requires UTF-8 be in all Java environments, so this should not happen
             return s;
@@ -888,7 +906,7 @@ public class Utilities {
      */
     public static int stringToInt(String string) {
         try {
-            return Integer.valueOf(string).intValue();
+            return Integer.valueOf(string);
         } catch (NumberFormatException e) {
             mLogger.debug("Invalid Integer:" + string);
         }
@@ -900,7 +918,7 @@ public class Utilities {
      */
     public static String toBase64(byte[] aValue) {
         
-        final String m_strBase64Chars =
+        final String strBase64Chars =
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         
         int byte1;
@@ -916,10 +934,10 @@ public class Utilities {
             byte2 = (bByte2) ? (aValue[i + 1] & 0xFF) : 0;
             byte3 = (bByte3) ? (aValue[i + 2] & 0xFF) : 0;
             
-            tt.append(m_strBase64Chars.charAt(byte1 / 4));
-            tt.append(m_strBase64Chars.charAt((byte2 / 16) + ((byte1 & 0x3) * 16)));
-            tt.append(((bByte2) ? m_strBase64Chars.charAt((byte3 / 64) + ((byte2 & 0xF) * 4)) : '='));
-            tt.append(((bByte3) ? m_strBase64Chars.charAt(byte3 & 0x3F) : '='));
+            tt.append(strBase64Chars.charAt(byte1 / 4));
+            tt.append(strBase64Chars.charAt((byte2 / 16) + ((byte1 & 0x3) * 16)));
+            tt.append(((bByte2) ? strBase64Chars.charAt((byte3 / 64) + ((byte2 & 0xF) * 4)) : '='));
+            tt.append(((bByte3) ? strBase64Chars.charAt(byte3 & 0x3F) : '='));
         }
         
         return tt.toString();
@@ -930,8 +948,9 @@ public class Utilities {
      * @return
      */
     public static String stripInvalidTagCharacters(String tag) {
-        if (tag == null)
+        if (tag == null) {
             throw new NullPointerException();
+        }
 
         StringBuffer sb = new StringBuffer();
         char[] charArray = tag.toCharArray();
@@ -964,8 +983,9 @@ public class Utilities {
      */
     public static List splitStringAsTags(String tags)  {
         String[] tagsarr = StringUtils.split(tags, TAG_SPLIT_CHARS);
-        if(tagsarr == null)
+        if(tagsarr == null) {
             return Collections.EMPTY_LIST;
+        }
         return Arrays.asList(tagsarr);
     }
     
@@ -1060,8 +1080,9 @@ public class Utilities {
      * {@link javax.mail.internet.InternetAddress}, but almost always undesired.
      */
     public static boolean isValidEmailAddress(String aEmailAddress) {
-        if (aEmailAddress == null)
+        if (aEmailAddress == null) {
             return false;
+        }
         boolean result = true;
         try {
             // See if its valid
