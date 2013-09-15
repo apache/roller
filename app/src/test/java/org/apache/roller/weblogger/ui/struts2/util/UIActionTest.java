@@ -34,38 +34,33 @@ public class UIActionTest extends TestCase {
     }
 
     public void testCleanTextEmpty() {
-        assertEquals(null,UIAction.cleanText(null));
-        assertEquals("",UIAction.cleanText(""));
+        assertEquals(null,UIAction.cleanTextKey(null));
+        assertEquals("",UIAction.cleanTextKey(""));
+        assertEquals(null,UIAction.cleanTextArg(null));
+        assertEquals("",UIAction.cleanTextArg(""));
     }
 
-    public void testCleanExpressions() {
-        assertEquals(null,UIAction.cleanText(null));
-        assertEquals("",UIAction.cleanText(""));
-        assertEquals("a",UIAction.cleanText("a"));
-        assertEquals("$",UIAction.cleanText("$"));
-        assertEquals("%",UIAction.cleanText("%"));
-        assertEquals("%$",UIAction.cleanText("%$"));
-        assertEquals("{",UIAction.cleanText("{"));
-        assertEquals("}",UIAction.cleanText("}"));
-        assertEquals("",UIAction.cleanText("${"));
-        assertEquals("",UIAction.cleanText("%{"));
-        assertEquals("text$",UIAction.cleanText("text$"));
-        assertEquals("text%",UIAction.cleanText("text%"));
-        assertEquals("text something   more", UIAction.cleanText("text something ${ more } ${ and more } more"));
-        assertEquals("text something   more", UIAction.cleanText("text something %{ more } %{ and more } more"));
-        assertEquals("text  more", UIAction.cleanText("text %{ something ${ more } ${ and more } } more"));
-        assertEquals("text {1} text {2} more", UIAction.cleanText("text {1} text${2} {2} more"));
-        assertEquals("text  text {2} more", UIAction.cleanText("text %{1} text${2} {2} more"));
-        assertEquals("already { clean }", UIAction.cleanText("already { clean }"));
-        assertEquals("$signs but not immediately followed by { braces }", UIAction.cleanText("$signs but not immediately followed by { braces }"));
-        assertEquals("%signs but not immediately followed by { braces }", UIAction.cleanText("%signs but not immediately followed by { braces }"));
-        assertEquals("clean", UIAction.cleanText("${part %{ } }clean${%anything}"));
-        assertEquals("clean", UIAction.cleanText("%{part ${} }clean${%anything}"));
+    public void testCleanTextKey() {
+        assertEquals(null,UIAction.cleanTextKey(null));
+        assertEquals("",UIAction.cleanTextKey(""));
+        assertEquals("a",UIAction.cleanTextKey("a"));
+        assertEquals("$",UIAction.cleanTextKey("$"));
+        assertEquals("%",UIAction.cleanTextKey("%"));
+        assertEquals("%$",UIAction.cleanTextKey("%$"));
+        assertEquals("{",UIAction.cleanTextKey("{"));
+        assertEquals("}",UIAction.cleanTextKey("}"));
+        assertEquals("",UIAction.cleanTextKey("${"));
+        assertEquals("",UIAction.cleanTextKey("%{"));
+        assertEquals("text$",UIAction.cleanTextKey("text$"));
+        assertEquals("text%",UIAction.cleanTextKey("text%"));
+        assertEquals("", UIAction.cleanTextKey("something ${foo} more"));
+        assertEquals("", UIAction.cleanTextKey("something %{foo} more"));
+        assertEquals("", UIAction.cleanTextKey("something %{foo} more"));
     }
 
-    public void testCleanTextHtml() {
-        assertEquals("&lt;i&gt;some text&lt;/i&gt;",UIAction.cleanText("<i>some text</i>"));
-        assertEquals("&lt;i&gt;some &lt;/i&gt;",UIAction.cleanText("<i>some ${text}</i>"));   // combined
+    public void testCleanTextArg() {
+        assertEquals("&lt;i&gt;some text&lt;/i&gt;",UIAction.cleanTextArg("<i>some text</i>"));
+        assertEquals("&lt;i&gt;some ${text}&lt;/i&gt;",UIAction.cleanTextArg("<i>some ${text}</i>"));
     }
 
 }

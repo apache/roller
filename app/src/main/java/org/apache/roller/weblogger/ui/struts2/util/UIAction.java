@@ -176,53 +176,53 @@ public abstract class UIAction extends ActionSupport
 
     @Override
     public String getText(String aTextName) {
-        return super.getText(cleanText(aTextName));
+        return super.getText(cleanTextKey(aTextName));
     }
 
     @Override
     public String getText(String aTextName, String defaultValue) {
-        return super.getText(cleanText(aTextName), cleanText(defaultValue));
+        return super.getText(cleanTextKey(aTextName), cleanTextKey(defaultValue));
     }
 
     @Override
     public String getText(String aTextName, String defaultValue, String obj) {
-        return super.getText(cleanText(aTextName), cleanText(defaultValue), cleanText(obj));
+        return super.getText(cleanTextKey(aTextName), cleanTextKey(defaultValue), cleanTextArg(obj));
     }
 
     @Override
     public String getText(String aTextName, List<?> args) {
         List<Object> cleanedArgs = new ArrayList<Object>(args.size());
         for (Object el : args) {
-            cleanedArgs.add(el instanceof String ? cleanText((String) el) : el);
+            cleanedArgs.add(el instanceof String ? cleanTextArg((String) el) : el);
         }
-        return super.getText(cleanText(aTextName), cleanedArgs);
+        return super.getText(cleanTextKey(aTextName), cleanedArgs);
     }
 
     @Override
     public String getText(String key, String[] args) {
         String[] cleanedArgs = new String[args.length];
         for (int i = 0; i < args.length; ++i) {
-            cleanedArgs[i] = cleanText(args[i]);
+            cleanedArgs[i] = cleanTextArg(args[i]);
         }
-        return super.getText(cleanText(key), cleanedArgs);
+        return super.getText(cleanTextKey(key), cleanedArgs);
     }
 
     @Override
     public String getText(String aTextName, String defaultValue, List<?> args) {
         List<Object> cleanedArgs = new ArrayList<Object>(args.size());
         for (Object el : args) {
-            cleanedArgs.add(el instanceof String ? cleanText((String) el) : el);
+            cleanedArgs.add(el instanceof String ? cleanTextArg((String) el) : el);
         }
-        return super.getText(cleanText(aTextName), cleanText(defaultValue), cleanedArgs);
+        return super.getText(cleanTextKey(aTextName), cleanTextKey(defaultValue), cleanedArgs);
     }
 
     @Override
     public String getText(String key, String defaultValue, String[] args) {
         String[] cleanedArgs = new String[args.length];
         for (int i = 0; i < args.length; ++i) {
-            cleanedArgs[i] = cleanText(args[i]);
+            cleanedArgs[i] = cleanTextArg(args[i]);
         }
-        return super.getText(cleanText(key), cleanText(defaultValue), cleanedArgs);
+        return super.getText(cleanTextKey(key), cleanTextKey(defaultValue), cleanedArgs);
     }
 
     public void addError(String errorKey) {
@@ -374,69 +374,36 @@ public abstract class UIAction extends ActionSupport
         
         List opts = new ArrayList();
         
-        opts.add(new KeyValueObject(0, getText("weblogEdit.unlimitedCommentDays")));
-        opts.add(new KeyValueObject(1, getText("weblogEdit.days1")));
-        opts.add(new KeyValueObject(2, getText("weblogEdit.days2")));
-        opts.add(new KeyValueObject(3, getText("weblogEdit.days3")));
-        opts.add(new KeyValueObject(4, getText("weblogEdit.days4")));
-        opts.add(new KeyValueObject(5, getText("weblogEdit.days5")));
-        opts.add(new KeyValueObject(7, getText("weblogEdit.days7")));
-        opts.add(new KeyValueObject(10, getText("weblogEdit.days10")));
-        opts.add(new KeyValueObject(20, getText("weblogEdit.days20")));
-        opts.add(new KeyValueObject(30, getText("weblogEdit.days30")));
-        opts.add(new KeyValueObject(60, getText("weblogEdit.days60")));
-        opts.add(new KeyValueObject(90, getText("weblogEdit.days90")));
+        opts.add(new KeyValueObject(new Integer(0), getText("weblogEdit.unlimitedCommentDays")));
+        opts.add(new KeyValueObject(new Integer(1), getText("weblogEdit.days1")));
+        opts.add(new KeyValueObject(new Integer(2), getText("weblogEdit.days2")));
+        opts.add(new KeyValueObject(new Integer(3), getText("weblogEdit.days3")));
+        opts.add(new KeyValueObject(new Integer(4), getText("weblogEdit.days4")));
+        opts.add(new KeyValueObject(new Integer(5), getText("weblogEdit.days5")));
+        opts.add(new KeyValueObject(new Integer(7), getText("weblogEdit.days7")));
+        opts.add(new KeyValueObject(new Integer(10), getText("weblogEdit.days10")));
+        opts.add(new KeyValueObject(new Integer(20), getText("weblogEdit.days20")));
+        opts.add(new KeyValueObject(new Integer(30), getText("weblogEdit.days30")));
+        opts.add(new KeyValueObject(new Integer(60), getText("weblogEdit.days60")));
+        opts.add(new KeyValueObject(new Integer(90), getText("weblogEdit.days90")));
         
         return opts;
     }
 
-    private static final Set OPEN_CHARS = new HashSet(Arrays.asList('$', '%'));
+    private static Set OPEN_CHARS = new HashSet(Arrays.asList('$', '%'));
 
     private static String cleanExpressions(String s) {
-        StringBuilder cleaned = new StringBuilder(s.length());
-        boolean skipping = false;
-        int braceDepth = 0;
-        int p = 0;
-        Character prior = ' ';
-        while (p < s.length()) {
-            boolean priorIsOpenChar = OPEN_CHARS.contains(prior);
-            char c = s.charAt(p);
-            switch (c) {
-                case '{':
-                    ++braceDepth;
-                    skipping = skipping || priorIsOpenChar;
-                    break;
-                case '}':
-                    if (braceDepth > 0) {
-                        --braceDepth;
-                    }
-                    break;
-                default:
-            }
-            if (!skipping) {
-                if (priorIsOpenChar) {
-                    cleaned.append(prior);
-                }
-                if (!OPEN_CHARS.contains(c)) {
-                    cleaned.append(c);
-                }
-            }
-            skipping = skipping && (braceDepth > 0);
-            prior = c;
-            ++p;
-        }
-        if (OPEN_CHARS.contains(prior)) {
-            // string had final open character held in prior
-            cleaned.append(prior);
-        }
-        return cleaned.toString();
+        return (s == null || s.contains("${") || s.contains("%{")) ? "" : s;
     }
 
-    public static String cleanText(String s) {
-        if (s == null || s.isEmpty()) {
-            return s;
-        }
+    public static String cleanTextKey(String s) {
+        if (s == null || s.isEmpty()) return s;
         // escape HTML
         return StringEscapeUtils.escapeHtml(cleanExpressions(s));
+    }
+
+    public static String cleanTextArg(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return StringEscapeUtils.escapeHtml(s);
     }
 }
