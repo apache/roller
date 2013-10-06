@@ -35,9 +35,12 @@ import org.apache.struts2.interceptor.RequestAware;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
@@ -56,7 +59,7 @@ public abstract class UIAction extends ActionSupport
     
     // a common result name used to indicate the result should list some data
     public static final String LIST = "list";
-    
+
     // the authenticated user accessing this action, or null if client is not logged in
     private User authenticatedUser = null;
     
@@ -168,58 +171,58 @@ public abstract class UIAction extends ActionSupport
             value = WebloggerRuntimeConfig.getProperty(key);
         }
         
-        return (value == null) ? 0 : new Integer(value);
+        return (value == null) ? 0 : Integer.valueOf(value);
     }
 
     @Override
     public String getText(String aTextName) {
-        return super.getText(cleanText(aTextName));
+        return super.getText(cleanTextKey(aTextName));
     }
 
     @Override
     public String getText(String aTextName, String defaultValue) {
-        return super.getText(cleanText(aTextName), cleanText(defaultValue));
+        return super.getText(cleanTextKey(aTextName), cleanTextKey(defaultValue));
     }
 
     @Override
     public String getText(String aTextName, String defaultValue, String obj) {
-        return super.getText(cleanText(aTextName), cleanText(defaultValue), cleanText(obj));
+        return super.getText(cleanTextKey(aTextName), cleanTextKey(defaultValue), cleanTextArg(obj));
     }
 
     @Override
     public String getText(String aTextName, List<?> args) {
         List<Object> cleanedArgs = new ArrayList<Object>(args.size());
         for (Object el : args) {
-            cleanedArgs.add(el instanceof String ? cleanText((String) el) : el);
+            cleanedArgs.add(el instanceof String ? cleanTextArg((String) el) : el);
         }
-        return super.getText(cleanText(aTextName), cleanedArgs);
+        return super.getText(cleanTextKey(aTextName), cleanedArgs);
     }
 
     @Override
     public String getText(String key, String[] args) {
         String[] cleanedArgs = new String[args.length];
         for (int i = 0; i < args.length; ++i) {
-            cleanedArgs[i] = cleanText(args[i]);
+            cleanedArgs[i] = cleanTextArg(args[i]);
         }
-        return super.getText(cleanText(key), cleanedArgs);
+        return super.getText(cleanTextKey(key), cleanedArgs);
     }
 
     @Override
     public String getText(String aTextName, String defaultValue, List<?> args) {
         List<Object> cleanedArgs = new ArrayList<Object>(args.size());
         for (Object el : args) {
-            cleanedArgs.add(el instanceof String ? cleanText((String) el) : el);
+            cleanedArgs.add(el instanceof String ? cleanTextArg((String) el) : el);
         }
-        return super.getText(cleanText(aTextName), cleanText(defaultValue), cleanedArgs);
+        return super.getText(cleanTextKey(aTextName), cleanTextKey(defaultValue), cleanedArgs);
     }
 
     @Override
     public String getText(String key, String defaultValue, String[] args) {
         String[] cleanedArgs = new String[args.length];
         for (int i = 0; i < args.length; ++i) {
-            cleanedArgs[i] = cleanText(args[i]);
+            cleanedArgs[i] = cleanTextArg(args[i]);
         }
-        return super.getText(cleanText(key), cleanText(defaultValue), cleanedArgs);
+        return super.getText(cleanTextKey(key), cleanTextKey(defaultValue), cleanedArgs);
     }
 
     public void addError(String errorKey) {
@@ -387,40 +390,20 @@ public abstract class UIAction extends ActionSupport
         return opts;
     }
 
-    private static String cleanDollarExpressions(String s) {
-        // Remove ${ } expressions; handcoded automaton
-        StringBuilder cleaned = new StringBuilder(s.length());
-        boolean skipping = false;
-        int braceDepth = 0;
-        int p = 0;
-        char prior = ' ';
-        while (p < s.length()) {
-            char c = s.charAt(p);
-            switch (c) {
-                case '{':
-                    ++braceDepth;
-                    skipping = skipping || (prior == '$');
-                    break;
-                case '}':
-                    if (braceDepth > 0) --braceDepth;
-                    break;
-                default:
-            }
-            if (!skipping) {
-                if (prior == '$') cleaned.append(prior);
-                if (c != '$')  cleaned.append(c);
-            }
-            skipping = skipping && (braceDepth > 0);
-            prior = c;
-            ++p;
-        }
-        if (prior == '$') cleaned.append(prior);  // string had final $ held in prior
-        return cleaned.toString();
+    private static Set OPEN_CHARS = new HashSet(Arrays.asList('$', '%'));
+
+    private static String cleanExpressions(String s) {
+        return (s == null || s.contains("${") || s.contains("%{")) ? "" : s;
     }
 
-    public static String cleanText(String s) {
+    public static String cleanTextKey(String s) {
         if (s == null || s.isEmpty()) return s;
         // escape HTML
-        return StringEscapeUtils.escapeHtml(cleanDollarExpressions(s));
+        return StringEscapeUtils.escapeHtml(cleanExpressions(s));
+    }
+
+    public static String cleanTextArg(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return StringEscapeUtils.escapeHtml(s);
     }
 }
