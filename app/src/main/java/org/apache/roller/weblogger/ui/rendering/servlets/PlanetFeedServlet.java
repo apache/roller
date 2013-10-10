@@ -21,11 +21,13 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +40,7 @@ import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
+import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.weblogger.ui.rendering.util.cache.PlanetCache;
 import org.apache.roller.weblogger.ui.rendering.util.PlanetRequest;
@@ -118,8 +121,7 @@ public class PlanetFeedServlet extends HttpServlet {
 
 
         // looks like we need to render content
-        @SuppressWarnings("unchecked")
-        HashMap<String, Object> model = new HashMap();
+        HashMap<String, Object> model = new HashMap<String, Object>();
         try {
             // populate the rendering model
             if (request.getParameter("group") != null) {
