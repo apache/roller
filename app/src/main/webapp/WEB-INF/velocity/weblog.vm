@@ -26,6 +26,7 @@ These are the documented macros in order defined in this file:
 
     #showWeblogEntriesPager($pager)
     #showNextPrevEntriesControl($pager)
+    #showMobileNextPrevEntriesControl($pager)
 
     #showWeblogEntryComments($entry)
     #showWeblogEntryCommentForm($entry)
@@ -33,6 +34,7 @@ These are the documented macros in order defined in this file:
     #showWeblogEntryLinksList($entries)
     #showBookmarkLinksList($folderObj $expanding $subfolders)
     #showWeblogCategoryLinksList($categoryObj $expanding $subcats)
+    #showMobileCategoryLinksList($categoryObj)
     #showReferrersList($weblog)
     #showAtomFeedsList($weblog)
     #showRSSFeedsList($weblog)
@@ -43,8 +45,13 @@ These are the documented macros in order defined in this file:
     #showAuthorMenu($vertical)
 
     #showWeblogSearchForm($weblog)
+    #showMobileSearchForm($weblog)
     #showWeblogSearchAgainForm($weblog)
+    #showMobileSearchAgainForm($weblog)
     #showNextPrevSearchControl($pager)
+    #showMobileNextPrevSearchControl($pager)
+    
+    #showMobilePopupDialog($id $header $message)
 
     #_showCommonJavaScript()
     
@@ -161,7 +168,7 @@ Shows weblog entries pager via default day template
         #set($nextName = $pager.nextCollectionName)
     #end
     #if ($prevLink)
-        &laquo; <a href="$prevLink">$prevName</a> |  
+        &laquo; <a href="$prevLink">$prevName</a> | 
     #end
     #if ($prevLink || $nextLink)
         <a href="$pager.getHomeLink()">$pager.getHomeName()</a>
@@ -169,6 +176,54 @@ Shows weblog entries pager via default day template
     #if ($nextLink)
         | <a href="$nextLink">$nextName</a> &raquo;
     #end
+#end
+## Mobile Version
+#macro(showMobileNextPrevEntriesControl $pager)
+    #set($prevLink = false)
+    #set($nextLink = false)
+    #if ($pager.prevLink)
+        #set($prevLink = $pager.prevLink)
+        #set($prevName = $pager.prevName)
+    #elseif ($pager.prevCollectionLink)
+        #set($prevLink = $pager.prevCollectionLink)
+        #set($prevName = $pager.prevCollectionName)
+    #end
+    #if ($pager.nextLink)
+        #set($nextLink = $pager.nextLink)
+        #set($nextName = $pager.nextName)
+    #elseif ($pager.nextCollectionLink)
+        #set($nextLink = $pager.nextCollectionLink)
+        #set($nextName = $pager.nextCollectionName)
+    #end
+    #if ($prevLink || $nextLink)
+    <div data-role="navbar" data-iconpos="top">
+      <ul>
+        #if ($prevLink)
+          <li>
+            <a href="$prevLink" data-transition="fade" data-theme="c" data-icon="arrow-l">
+              $prevName
+            </a>
+          </li>
+        #end
+        ## We do not want the home link on the first page >> || $nextLink
+        #if ($prevLink)
+          <li>
+            <a href="$pager.getHomeLink()" data-transition="fade" data-theme="c" data-icon="home">
+              $pager.getHomeName()
+            </a>
+          </li>
+        #end
+        #if ($nextLink)
+          <li>
+            <a href="$nextLink" data-transition="fade" data-theme="c" data-icon="arrow-r">
+              $nextName
+            </a>
+          </li>
+        #end
+      </ul>
+    </div>
+  #end
+    
 #end
 
 
@@ -462,7 +517,32 @@ Show weblog's categories in specified parent category.
         </ul>
     #end
 #end
-
+## Mobile version
+#macro(showMobileCategoryLinksList $categoryObject)
+    <a href="#categories" data-rel="popup" data-role="button">Categories</a>
+    <div data-role="popup" id="categories" data-theme="none">
+      <div data-role="collapsible-set" data-theme="b" data-content-theme="c" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" style="margin:0; width:250px;">
+        <div data-role="collapsible" data-collapsed="false" data-inset="false">
+          <h2>Categories</h2>
+          <ul data-role="listview">
+            #if ($model.weblogCategory || $model.permalink)
+              <li><a href="$url.category($categoryObject.path)" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
+            #else
+              <li class="ui-btn-active"><a href="$url.category($categoryObject.path)" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
+            #end
+            #set($cats = $categoryObject.getWeblogCategories())
+            #foreach($cat in $cats)
+              #if ($model.weblogCategory && $model.weblogCategory.path == $cat.path || ($model.permalink && $model.weblogEntry.category.path == $cat.path))
+                <li class="ui-btn-active"><a href="$url.category($cat.path)" data-transition="fade">$cat.name</a></li>
+              #else
+                <li><a href="$url.category($cat.path)" data-transition="fade">$cat.name</a></li>
+              #end
+            #end
+          </ul>
+        </div>
+      </div>
+    </div>
+#end
 
 #**
 Recursively display a bookmark folder and children as HTML ul list (undocumented).
@@ -708,11 +788,9 @@ Show weblog author menu with vertical or horizontal orientation.
 Show search form for a weblog.
 *#
 #macro(showWeblogSearchForm $weblog $showCatChooser)
-    <form id="searchForm" method="get" action="$url.search"
-        style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
+    <form id="searchForm" method="get" action="$url.search" style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
         <p>
-          <input type="text" id="q" name="q" size="10" class="text small"
-              maxlength="255" value="#if($model.term)$model.term#end" />
+          <input type="text" id="q" name="q" size="10" class="text small" maxlength="255" value="#if($model.term)$model.term#end" />
           #if( $showCatChooser )
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
             <select name="cat">
@@ -736,6 +814,38 @@ Show search form for a weblog.
         }
     </script>
 #end
+## Mobile Version
+#macro(showMobileSearchForm $weblog $showCatChooser)
+    <form id="searchForm" method="get" action="$url.search" onsubmit="return validateSearch(this)">
+        <p>
+          <input type="search" id="q" name="q" placeholder="Search..." maxlength="255" value="#if($model.term)$model.term#end" />
+          #if( $showCatChooser )
+            #set( $cats = $model.weblog.getWeblogCategories("nil") )
+            <select name="cat">
+            <option value="">- $text.get("mainPage.category") -</option>
+            #foreach( $cat in $cats )
+              <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
+            #end
+            </select>
+          #end
+          <input type="submit" id="searchbutton" data-role="button" data-theme="e" value="$text.get( "macro.weblog.searchbutton" )" />
+        </p>
+    </form>
+    <script type="text/javascript">
+        function validateSearch(form) {
+            if (form.q.value == "") {
+                $("#searchDialog").popup('open').focus();
+                $("#searchDialog").popup({ afterclose: function( event, ui ) {
+                    form.q.focus();
+                    }
+                });
+                return false;
+            }
+            return true;
+        }
+    </script>
+    #showMobilePopupDialog('searchDialog','Search', $text.get("macro.weblog.searchalert"))
+#end
 
 
 #** 
@@ -746,10 +856,7 @@ Show search again form for a weblog.
         $text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
         $text.get( "macro.weblog.searchhits", [$model.hits])
         <form method="get" action="$url.search" style="margin: 5px">
-            <input type="text" id="q" name="q" class="text medium"
-                maxlength="255" value="$model.term"
-                style="padding-left: 1px" /><br />
-
+            <input type="text" id="q" name="q" class="text medium" maxlength="255" value="$model.term" style="padding-left: 1px" /><br />
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
             <select name="cat" class="select">
             <option value="">$text.get( "macro.searchresults.incategory" )</option>
@@ -762,6 +869,26 @@ Show search again form for a weblog.
         </form>
 
         $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${website.handle}] )
+    </div>
+#end
+## Mobile Version
+#macro(showMobileSearchAgainForm $weblog)
+    <div id="searchAgain">
+        $text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
+        $text.get( "macro.weblog.searchhits", [$model.hits])
+        <form method="get" action="$url.search" style="margin: 5px">
+            <input type="search" id="q" name="q" placeholder="Search..." maxlength="255" value="$model.term" />
+            #set( $cats = $model.weblog.getWeblogCategories("nil") )
+            <select name="cat" class="select">
+            <option value="">$text.get( "macro.searchresults.incategory" )</option>
+            #foreach( $cat in $cats )
+              <option #if($cat.name == $model.weblogCategory.name)selected="selected"#end>$cat.name</option>
+            #end
+            </select>
+
+            <input type="submit" data-role="button" data-theme="e" value="$text.get( "macro.weblog.searchagain" )" />
+        </form>
+
     </div>
 #end
 
@@ -797,7 +924,71 @@ Show next/prev pager for search results.
         | <a href="$nextLink">$nextName</a> &raquo;
     #end
 #end
+## Mobile Version
+#macro(showMobileNextPrevSearchControl $pager)
+    #set( $min = $model.offset + 1 )
+    #set( $max = $model.offset + $model.limit )
+    #if( $max > $model.hits )#set( $max = $model.hits )#end
+    <h3>
+       $text.get("searchSummary.text", [$min, $max, $model.hits])
+    </h3>
+    #set($prevLink = false)
+    #set($nextLink = false)
+    #if ($pager.prevLink)
+        #set($prevLink = $pager.prevLink)
+        #set($prevName = $pager.prevName)
+    #end
+    #if ($pager.nextLink)
+        #set($nextLink = $pager.nextLink)
+        #set($nextName = $pager.nextName)
+    #end
 
+    ## Show the pager
+    #if ($prevLink || $nextLink)
+      <div data-role="navbar" data-iconpos="top">
+        <ul>
+          #if ($prevLink)
+            <li>
+              <a href="$prevLink" data-transition="fade" data-theme="c" data-icon="arrow-l">
+                $prevName
+              </a>
+            </li>
+          #end
+          ## We do not want the home link on the first page >> || $nextLink
+          #if ($prevLink)
+            <li>
+              <a href="$pager.getHomeLink()" data-transition="fade" data-theme="c" data-icon="home">
+                $pager.getHomeName()
+              </a>
+            </li>
+          #end
+          #if ($nextLink)
+            <li>
+              <a href="$nextLink" data-transition="fade" data-theme="c" data-icon="arrow-r">
+                $nextName
+              </a>
+            </li>
+          #end
+        </ul>
+      </div>
+    #end
+#end
+
+
+#** 
+Show mobile alert popup.
+*#
+#macro(showMobilePopupDialog $id $header $message)
+ <div data-role="popup" id="$id" data-dismissible="false" style="white-space: normal" class="ui-corner-all">
+    <div data-role="footer" data-theme="b" class="ui-corner-top">
+      <h1>$header</h1>
+    </div>
+    <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
+      <h3 class="wrap ui-title">$message</h3>
+      <a href="#" data-role="button" data-inline="true" data-rel="back" data-transition="fade" data-theme="c">OK</a>
+    </div>
+  </div>
+#end
 
 #**
 Include Javascript code needed for expanding folder macros (undocumented).
