@@ -41,126 +41,124 @@ import org.apache.roller.weblogger.util.cache.CachedContent;
 
 /**
  * Generates Really Simple Discovery (RSD) listing for a given weblog allowing
- * blog writing clients to see API services provided by Roller.  The list of
+ * blog writing clients to see API services provided by Roller. The list of
  * services is maintained in Roller velocity file rsd.vm.
- *
+ * 
  * Spec: http://cyber.law.harvard.edu/blogs/gems/tech/rsd.html
- *
+ * 
  * This servlet supports 304 If-Modified-Since checking, but does not do any
  * level of content caching.
  */
 public class RSDServlet extends HttpServlet {
-    
+
     private static Log log = LogFactory.getLog(RSDServlet.class);
-    
-    
+
     /**
      * Init method for this servlet
      */
     public void init(ServletConfig servletConfig) throws ServletException {
-        
+
         super.init(servletConfig);
-        
+
         log.info("Initializing RSDServlet");
     }
-    
-    
+
     /**
      * Handle GET requests for weblog pages.
      */
-    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         log.debug("Entering");
-        
+
         Weblog weblog = null;
-        
+
         WeblogRequest weblogRequest = null;
         try {
             weblogRequest = new WeblogRequest(request);
-            
+
             // now make sure the specified weblog really exists
             weblog = weblogRequest.getWeblog();
-            if(weblog == null) {
-                throw new WebloggerException("Unable to lookup weblog: "+
-                        weblogRequest.getWeblogHandle());
+            if (weblog == null) {
+                throw new WebloggerException("Unable to lookup weblog: "
+                        + weblogRequest.getWeblogHandle());
             }
-            
-        } catch(Exception e) {
+
+        } catch (Exception e) {
             // invalid rsd request format or weblog doesn't exist
             log.debug("error creating weblog request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
 
         // Respond with 304 Not Modified if it is not modified.
         long lastModified = System.currentTimeMillis();
         if (weblog.getLastModified() != null) {
             lastModified = weblog.getLastModified().getTime();
         }
-        if (ModDateHeaderUtil.respondIfNotModified(request,response,lastModified)) {
+        if (ModDateHeaderUtil.respondIfNotModified(request, response,
+                lastModified, weblogRequest.getDeviceType())) {
             return;
         }
 
         // set last-modified date
-        ModDateHeaderUtil.setLastModifiedHeader(response,lastModified);
+        ModDateHeaderUtil.setLastModifiedHeader(response, lastModified,
+                weblogRequest.getDeviceType());
 
         // set the content type
         response.setContentType("application/rsd+xml; charset=utf-8");
-        
+
         // populate the model
         HashMap model = new HashMap();
         model.put("website", weblog);
         model.put("absBaseURL", WebloggerRuntimeConfig.getAbsoluteContextURL());
 
-        
         // lookup Renderer we are going to use
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate("weblog/rsd.vm", "velocity");
-            renderer = RendererManager.getRenderer(template, DeviceType.standard); 
-        } catch(Exception e) {
+            renderer = RendererManager.getRenderer(template,
+                    DeviceType.standard);
+        } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);
-            
+
             if (!response.isCommitted()) {
                 response.reset();
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // render content
         CachedContent rendererOutput = new CachedContent(4096);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());
-            
+
             // flush rendered output and close
             rendererOutput.flush();
             rendererOutput.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             // bummer, error during rendering
             log.error("Error during rendering for rsd template", e);
-            
+
             if (!response.isCommitted()) {
                 response.reset();
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         // post rendering process
-        
+
         // flush rendered content to response
         log.debug("Flushing response output");
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
-        
+
         log.debug("Exiting");
     }
-    
+
 }
