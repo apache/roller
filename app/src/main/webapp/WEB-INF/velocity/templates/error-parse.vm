@@ -18,28 +18,47 @@
 #*
  Velocity #parse error include page
 *#
+<style>
+    span.error {
+    display: block;
+    background-color: #fcc;
+    color: #c00;
+    border: 1px solid red;
+    margin: 5px 10px 5px 10px;
+    padding: 10px;
+    font-weight: bold;
+  }
+  span.error ul {
+    list-style-type: none;
+    margin-top: 0px;
+    margin-left: 0;
+    margin-bottom: 0;
+    padding: 3px;
+  }
+  .dottedtable {border: 1px dotted #CCCCCC;}
+</style>
 <span class="error">
   <ul>
     <li>Velocity template error</li>
   </ul>
 </span>
 <div style="padding: 15px 25px 25px 25px">
-  <table width="80%" border="1px" style="border-collapse: collapse; border: 1px dotted #CCCCCC">
+  <table width="80%" border="1px" class="dottedtable" style="border-collapse: collapse;">
     <tr>
-      <td style="border: 1px dotted #CCCCCC" width="20%">Exception</td>
-      <td style="border: 1px dotted #CCCCCC">Velocity template error : $exceptionDevice</td>
+      <td class="dottedtable" width="20%">Exception</td>
+      <td class="dottedtable">Velocity template error : $exceptionDevice</td>
     </tr>
     <tr>
-      <td style="border: 1px dotted #CCCCCC" width="20%">Message</td>
-      <td style="border: 1px dotted #CCCCCC">$utils.autoformat($utils.escapeHTML($exception.getMessage()))</td>
+      <td class="dottedtable" width="20%">Message</td>
+      <td class="dottedtable">$utils.autoformat($utils.escapeHTML($exception.getMessage()))</td>
     </tr>
     <tr>
-      <td style="border: 1px dotted #CCCCCC"" width="20%">Type</td>
-      <td style="border: 1px dotted #CCCCCC">$exceptionSource</td>
+      <td class="dottedtable" width="20%">Type</td>
+      <td class="dottedtable">$exceptionSource</td>
     </tr>
     <tr>
-      <td style="border: 1px dotted #CCCCCC" width="20%">Exception</td>
-      <td style="border: 1px dotted #CCCCCC">$!exception.getClass().getName()</td>
+      <td class="dottedtable" width="20%">Exception</td>
+      <td class="dottedtable">$!exception.getClass().getName()</td>
     </tr>
   </table>
 </div>

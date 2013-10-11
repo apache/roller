@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>$model.weblogEntry.title : $model.weblog.name</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+  <link rel="stylesheet" type="text/css" href="$model.weblog.stylesheet">
+  <link rel="stylesheet" type="text/css" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 
   <script type="text/javascript">
@@ -17,6 +19,7 @@
 
   <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
 </head>
+<!-- permalink-mobile -->
 <body>
 
   <div data-role="page" data-theme="b">
@@ -24,7 +27,7 @@
     <div data-role="header" data-theme="b">
       <h1>$model.weblogEntry.title : $model.weblog.name</h1>
       ##<a data-rel="back" data-icon="back" data-theme="a">Go back</a>
-      <a href=$url.home data-icon="home" data-theme = "a">Home</a>
+      <a href=$url.home data-icon="home" data-theme = "a">Weblog</a>
     </div>
 
     <div data-role="content" data-theme="c">
@@ -41,11 +44,21 @@
       ## show entry
       #showWeblogEntriesPager($pager)
 
-      ## show comments and comment form
-      ## TODO
-      #showWeblogEntryComments($model.weblogEntry)
-      ## TODO
-      ##showWeblogEntryCommentForm($model.weblogEntry)
+      ## show comments
+      #showMobileWeblogEntryComments($model.weblogEntry)
+      
+      ## show comment form
+      
+      <ul data-role="listview" data-divider-theme="b" data-inset="true">
+        <li data-role="list-divider">
+          Comment
+        </li>
+        ##<li data-role="list-divider" data-theme="c">
+        ##</li>
+        <li data-theme="c">
+          #showWeblogEntryCommentForm($model.weblogEntry)
+        </li>
+      <ul>
     
     </div>
 

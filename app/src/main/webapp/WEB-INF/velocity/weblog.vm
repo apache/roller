@@ -29,6 +29,7 @@ These are the documented macros in order defined in this file:
     #showMobileNextPrevEntriesControl($pager)
 
     #showWeblogEntryComments($entry)
+    #showMobileWeblogEntryComments($entry)
     #showWeblogEntryCommentForm($entry)
 
     #showWeblogEntryLinksList($entries)
@@ -65,8 +66,9 @@ Parse and include page template from weblog.
 #macro(includeTemplate $weblog $pageName)
     #set($pageArg = false)## This is required for such constructs; see Velocity docs and ROL-689
     #set($pageArg = $weblog.getPageByName($pageName))
-    #if ($pageArg) 
-       #parse($pageArg.id "|" $model.deviceType)
+    #if ($pageArg)
+       #set($pageId = $pageArg.id+'|'+$model.deviceType)
+       #parse($pageId)
     #end
 #end
 
@@ -143,8 +145,9 @@ Shows weblog entries pager via default day template
     #set($dayPage = $model.weblog.getPageByName("_day"))
     #set($map = $pager.getEntries())
     #foreach($day in $map.keySet())
-        #set($entries = $map.get($day))   
-        #parse($dayPage.id "|" $model.deviceType)
+        #set($entries = $map.get($day))
+        #set($pageId = $dayPage.id+'|'+$model.deviceType)
+        #parse($pageId)
     #end
 #end
 
@@ -205,8 +208,8 @@ Shows weblog entries pager via default day template
             </a>
           </li>
         #end
-        ## We do not want the home link on the first page >> || $nextLink
-        #if ($prevLink)
+        ## If we do not want the home link on the first page remove >> || $nextLink
+        #if ($prevLink || $nextLink)
           <li>
             <a href="$pager.getHomeLink()" data-transition="fade" data-theme="c" data-icon="home">
               $pager.getHomeName()
@@ -274,6 +277,52 @@ Show comments for weblog entry according to Roller configuration.
     #end
     </div>
 #end
+## Mobile Version
+#macro(showMobileWeblogEntryComments $entry)
+    <!-- showMobileWeblogEntryComments -->
+    #if($model.commentForm.preview)
+      #set($comments = [$model.commentForm.previewComment])
+      #set( $heading = $text.get( "macro.weblog.preview" ))
+    #else
+      #set($comments = $entry.getComments(true, true))
+      #set( $heading = $text.get( "macro.weblog.comments" ))
+    #end
+    #if($comments.size() > 0)
+      <ul data-role="listview" data-divider-theme="b" data-inset="true">
+        <li data-role="list-divider">
+          $heading
+        </li>
+        #foreach( $comment in $comments )
+          #if($comment.approved || $model.commentForm.preview)
+            ##<li data-role="list-divider" data-theme="c">
+              ## TODO
+            ##<a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
+            ##</li>
+            <li data-theme="c">
+              <p class="ui-li-desc content-textbox">
+                 $comment.content
+              </p>
+              <p class="ui-li-desc content-textbox">
+                $text.get("macro.weblog.postedby")
+                #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
+                   <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
+                #elseif (!$utils.isEmpty($comment.name))
+                   <b>$comment.name</b>
+                #elseif ($comment.remoteHost)
+                   <b>$comment.remoteHost</b>
+                #else
+                   <b>$text.get("macro.weblog.comment.unknown")</b>
+                #end
+
+                $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
+                ##<a href="$url.comment($entry.anchor, $comment.timestamp)" title="$text.get( "macro.weblog.commentpermalink.title" )" data-role="button" data-inline="true" data-mini="true">#</a>
+              </p>
+            </li>
+          #end
+        #end
+      </ul>
+    #end
+#end
 
 
 #** 
@@ -294,8 +343,7 @@ Show comments form for weblog entry.
         <span class="status">$cform.message</span>
     #end
 
-    <form method="post" action="$url.entry($entry.anchor)" focus="name" 
-        name="commentForm" onsubmit="fixURL(this); return validateComments(this)">    
+    <form method="post" action="$url.entry($entry.anchor)" focus="name" name="commentForm" onsubmit="fixURL(this); return validateComments(this)">
         <input type="hidden" name="method" value="post" />
 
         <ul>
@@ -312,20 +360,18 @@ Show comments form for weblog entry.
                 <input type="text" name="url" class="text large" value="$cform.url" size="50" maxlength="255" />
             </li>
 
-        #if ($config.commentEmailNotify)
-            <li><input type="checkbox" class="checkbox" id="notify" name="notify" #if($cform.notify)CHECKED #end/>
-                <label for="notify" class="choice">$text.get( "macro.weblog.notifyMeOfComments" )</label>
-            </li>
-        #end
+            #if ($config.commentEmailNotify)
+                <li><input type="checkbox" class="checkbox" id="notify" name="notify" #if($cform.notify)CHECKED #end/>
+                    <label for="notify" class="choice">$text.get( "macro.weblog.notifyMeOfComments" )</label>
+                </li>
+            #end
             <li>
                 <input type="checkbox" class="checkbox" id="rememberInfo" name="rememberInfo" />
                 <label for="rememberInfo" class="choice">$text.get( "macro.weblog.rememberinfo" )</label>
             </li>
             <li>
                 <label class="desc">$text.get( "macro.weblog.yourcomment" )</label>
-             
-            <textarea name="content" class="textarea large" cols="40" rows="10">$cform.content</textarea>
-
+                <textarea name="content" class="textarea large" cols="40" rows="10">$cform.content</textarea>
             </li>
             <li class="info">
                 <span class="comments-syntax-indicator">
@@ -402,7 +448,6 @@ Show comments form for weblog entry.
 #else
     <span class="status">$text.get( "comments.disabled" )</span>
 #end
-
     </div>
 #end
 
@@ -519,7 +564,7 @@ Show weblog's categories in specified parent category.
 #end
 ## Mobile version
 #macro(showMobileCategoryLinksList $categoryObject)
-    <a href="#categories" data-rel="popup" data-role="button">Categories</a>
+    <!-- showMobileCategoryLinksList -->
     <div data-role="popup" id="categories" data-theme="none">
       <div data-role="collapsible-set" data-theme="b" data-content-theme="c" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" style="margin:0; width:250px;">
         <div data-role="collapsible" data-collapsed="false" data-inset="false">
@@ -530,10 +575,12 @@ Show weblog's categories in specified parent category.
             #else
               <li class="ui-btn-active"><a href="$url.category($categoryObject.path)" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
             #end
+            #set($active = $text.get("macro.weblog.allcategories"))
             #set($cats = $categoryObject.getWeblogCategories())
             #foreach($cat in $cats)
               #if ($model.weblogCategory && $model.weblogCategory.path == $cat.path || ($model.permalink && $model.weblogEntry.category.path == $cat.path))
                 <li class="ui-btn-active"><a href="$url.category($cat.path)" data-transition="fade">$cat.name</a></li>
+                #set($active = $cat.name)
               #else
                 <li><a href="$url.category($cat.path)" data-transition="fade">$cat.name</a></li>
               #end
@@ -542,6 +589,7 @@ Show weblog's categories in specified parent category.
         </div>
       </div>
     </div>
+    <a href="#categories" data-rel="popup" data-role="button">Categories - $active</a>
 #end
 
 #**
@@ -954,8 +1002,8 @@ Show next/prev pager for search results.
               </a>
             </li>
           #end
-          ## We do not want the home link on the first page >> || $nextLink
-          #if ($prevLink)
+          ## If we do not want the home link on the first page remove >> || $nextLink
+          #if ($prevLink || $nextLink)
             <li>
               <a href="$pager.getHomeLink()" data-transition="fade" data-theme="c" data-icon="home">
                 $pager.getHomeName()

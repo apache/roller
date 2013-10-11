@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>$model.weblog.name</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+
+  <link rel="stylesheet" type="text/css" href="$model.weblog.stylesheet">
+  <link rel="stylesheet" type="text/css" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-  
+
   <script type="text/javascript">
 
     $(document).bind("mobileinit", function(){
@@ -16,6 +19,7 @@
 
   <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
 </head>
+<!-- weblog-mobile -->
 <body>
 
   <script type="text/javascript">
@@ -41,7 +45,7 @@
   <div data-role="page" id ="home">
 
     <div data-role="header" data-theme="b">
-      <h1>$model.weblog.name </h1>
+      <h1>$model.weblog.name</h1>
       <a href=$url.absoluteSite data-icon="home" data-theme="a">Home</a>
       <a href="#home" id="btnStandard" data-role="button">View Standard</a>
     </div>
@@ -61,7 +65,19 @@
       </div>
 
       ## Show entries
-      #showWeblogEntriesPager($pager)
+      #if($pager.entries.size() > 0)
+        #showWeblogEntriesPager($pager)
+      #else
+        ## No entries.
+        <ul data-role="listview" data-divider-theme="b" data-inset="true">
+          <li data-role="list-divider">$utils.formatDate($utils.now, "EEEE MMM dd, yyyy")</li>
+          <li data-theme="c">
+            <span class="ui-li-desc content-textbox">
+              <h3>$text.get("macro.weblog.noEntriesForCategory")</h3>
+            </span>
+          </li>
+        </ul>
+      #end
 
     </div>
 

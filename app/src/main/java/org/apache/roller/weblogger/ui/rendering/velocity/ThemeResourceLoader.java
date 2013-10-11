@@ -47,96 +47,99 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
  */
 public class ThemeResourceLoader extends ResourceLoader {
 
-	private static Log logger = LogFactory.getFactory().getInstance(
-			ThemeResourceLoader.class);
+    private static Log logger = LogFactory.getFactory().getInstance(
+            ThemeResourceLoader.class);
 
-	public void init(ExtendedProperties configuration) {
-		logger.debug(configuration);
-	}
+    public void init(ExtendedProperties configuration) {
+        logger.debug(configuration);
+    }
 
-	public InputStream getResourceStream(String name)
-			throws ResourceNotFoundException {
+    public InputStream getResourceStream(String name)
+            throws ResourceNotFoundException {
 
-		logger.debug("Looking for: " + name);
+        if (log.isDebugEnabled())
+            logger.debug("Looking for: " + name);
 
-		if (name == null || name.length() < 1) {
-			throw new ResourceNotFoundException(
-					"Need to specify a template name!");
-		}
+        if (name == null || name.length() < 1) {
+            throw new ResourceNotFoundException(
+                    "Need to specify a template name!");
+        }
 
-		String deviceType = "standard";
-		if (name.contains("|")) {
-			String[] pair = name.split("\\|");
-			name = pair[0];
-			deviceType = pair[1];
-		}
+        String deviceType = "standard";
+        if (name.contains("|")) {
+            String[] pair = name.split("\\|");
+            name = pair[0];
+            deviceType = pair[1];
+        }
 
-		try {
-			// parse the name ... theme templates name are
-			// <theme>:<template>|<deviceType>
-			String[] split = name.split(":", 2);
-			if (split.length < 2) {
-				throw new ResourceNotFoundException("Invalid ThemeRL key "
-						+ name);
+        try {
+            // parse the name ... theme templates name are
+            // <theme>:<template>|<deviceType>
+            String[] split = name.split(":", 2);
+            if (split.length < 2) {
+                throw new ResourceNotFoundException("Invalid ThemeRL key "
+                        + name);
             }
 
-			// lookup the template from the proper theme
-			ThemeManager themeMgr = WebloggerFactory.getWeblogger()
-					.getThemeManager();
-			Theme theme = themeMgr.getTheme(split[0]);
-			ThemeTemplate template = theme.getTemplateByName(split[1]);
+            // lookup the template from the proper theme
+            ThemeManager themeMgr = WebloggerFactory.getWeblogger()
+                    .getThemeManager();
+            Theme theme = themeMgr.getTheme(split[0]);
+            ThemeTemplate template = theme.getTemplateByName(split[1]);
 
-			if (template == null) {
-				throw new ResourceNotFoundException("Template [" + split[1]
-						+ "] doesn't seem to be part of theme [" + split[0]
-						+ "]");
+            if (template == null) {
+                throw new ResourceNotFoundException("Template [" + split[1]
+                        + "] doesn't seem to be part of theme [" + split[0]
+                        + "]");
             }
 
-			final String contents;
-			if (template.getTemplateCode(deviceType) != null) {
-				contents = template.getTemplateCode(deviceType).getTemplate();
-			} else {
-				contents = template.getContents();
-			}
-			logger.debug("Resource found!");
+            final String contents;
+            if (template.getTemplateCode(deviceType) != null) {
+                contents = template.getTemplateCode(deviceType).getTemplate();
+            } else {
+                contents = template.getContents();
+            }
 
-			// return the input stream
-			return new ByteArrayInputStream(contents.getBytes("UTF-8"));
+            if (log.isDebugEnabled())
+                logger.debug("Resource found!");
 
-		} catch (UnsupportedEncodingException uex) {
-			// We expect UTF-8 in all JRE installation.
-			// This rethrows as a Runtime exception after logging.
-			logger.error(uex);
-			throw new RuntimeException(uex);
+            // return the input stream
+            return new ByteArrayInputStream(contents.getBytes("UTF-8"));
 
-		} catch (ThemeNotFoundException tnfe) {
-			String msg = "ThemeResourceLoader Error: " + tnfe.getMessage();
-			logger.error(msg, tnfe);
-			throw new ResourceNotFoundException(msg);
+        } catch (UnsupportedEncodingException uex) {
+            // We expect UTF-8 in all JRE installation.
+            // This rethrows as a Runtime exception after logging.
+            logger.error(uex);
+            throw new RuntimeException(uex);
 
-		} catch (WebloggerException re) {
-			String msg = "RollerResourceLoader Error: " + re.getMessage();
-			logger.error(msg, re);
-			throw new ResourceNotFoundException(msg);
-		}
-	}
+        } catch (ThemeNotFoundException tnfe) {
+            String msg = "ThemeResourceLoader Error: " + tnfe.getMessage();
+            logger.error(msg, tnfe);
+            throw new ResourceNotFoundException(msg);
 
-	/**
-	 * Files loaded by this resource loader are not reloadable here, as they are
-	 * stored in shared themes and there is no way velocity can trigger a
-	 * reload.
-	 * 
-	 * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#isSourceModified(org.apache.velocity.runtime.resource.Resource)
-	 */
-	public boolean isSourceModified(Resource resource) {
-		return false;
-	}
+        } catch (WebloggerException re) {
+            String msg = "RollerResourceLoader Error: " + re.getMessage();
+            logger.error(msg, re);
+            throw new ResourceNotFoundException(msg);
+        }
+    }
 
-	/**
-	 * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#getLastModified(org.apache.velocity.runtime.resource.Resource)
-	 */
-	public long getLastModified(Resource resource) {
-		return 0;
-	}
+    /**
+     * Files loaded by this resource loader are not reloadable here, as they are
+     * stored in shared themes and there is no way velocity can trigger a
+     * reload.
+     * 
+     * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#isSourceModified(org.apache.velocity.runtime.resource.Resource)
+     */
+    public boolean isSourceModified(Resource resource) {
+        return false;
+    }
+
+    /**
+     * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#getLastModified(org.apache.velocity.runtime.resource.Resource)
+     */
+    public long getLastModified(Resource resource) {
+        return 0;
+    }
 
 }

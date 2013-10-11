@@ -20,6 +20,12 @@
 			<contentsFile>basic-custom.css</contentsFile>
 			<type>standard</type>
 		</templateCode>
+		<templateCode>
+			<templateLanguage>velocity</templateLanguage>
+			<contentType>text/html</contentType>
+			<contentsFile>basic-mobile-custom.css</contentsFile>
+			<type>mobile</type>
+		</templateCode>
 	</stylesheet>
     
     <!-- templates -->

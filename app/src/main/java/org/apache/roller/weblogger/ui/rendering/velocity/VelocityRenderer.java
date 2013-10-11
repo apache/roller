@@ -35,6 +35,7 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.VelocityException;
 
 /**
  * Renderer that renders using the Velocity template engine.
@@ -100,6 +101,16 @@ public class VelocityRenderer implements Renderer {
 
             // in the case of a invocation error we want to render an
             // error page instead so the user knows what was wrong
+            velocityException = ex;
+
+            // need to lookup error page template
+            velocityTemplate = RollerVelocity.getTemplate("error-page.vm",
+                    deviceType);
+
+        } catch (VelocityException ex) {
+
+            // in the case of a parsing error including a macro we want to
+            // render an error page instead so the user knows what was wrong
             velocityException = ex;
 
             // need to lookup error page template
@@ -187,6 +198,18 @@ public class VelocityRenderer implements Renderer {
 
             // in the case of a parsing error including a page we want to render
             // an error on the page instead so the user knows what was wrong
+            velocityException = ex;
+
+            // need to lookup parse error template
+            renderException(model, out, "error-parse.vm");
+
+            // and we're done
+            return;
+
+        } catch (VelocityException ex) {
+
+            // in the case of a parsing error including a macro we want to
+            // render an error page instead so the user knows what was wrong
             velocityException = ex;
 
             // need to lookup parse error template
