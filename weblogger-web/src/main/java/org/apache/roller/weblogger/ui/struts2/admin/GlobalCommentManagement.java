@@ -122,8 +122,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
-            // TODO: i18n
-            addError("Error looking up comments");
+            addError("commentManagement.lookupError");
         }
         
         // build comments pager
@@ -201,8 +200,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             
         } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
-            // TODO: i18n
-            addError("Error looking up comments");
+            addError("commentManagement.lookupError");
         }
         
         return LIST;
@@ -224,8 +222,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
                     getBean().getEndDate(),
                     getBean().getStatus());
             
-            // TODO: i18n
-            addMessage("Successfully deleted "+deleted+" comments");
+            addMessage("commentManagement.deleteSuccess",Integer.toString(deleted));
             
             // reset form and load fresh comments list
             setBean(new GlobalCommentManagementBean());
@@ -234,8 +231,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             
         } catch (WebloggerException ex) {
             log.error("Error doing bulk delete", ex);
-            // TODO: i18n
-            addError("Bulk delete failed due to unexpected error");
+            addError("commentManagement.deleteError");
         }
         
         return LIST;

@@ -58,13 +58,11 @@ public abstract class PingTargetEditBase extends UIAction {
             }
             
             if(getPingTarget() == null) {
-                // TODO: i18n
-                addError("No such ping target id: " + getBean().getId());
+                addError("pingTarget.notFound", getBean().getId());
             }
             
         } else {
-            // TODO: i18n
-            addError("Missing ping target id: " + getBean().getId());
+            addError("pingTarget.unspecified");
         }
     }
     

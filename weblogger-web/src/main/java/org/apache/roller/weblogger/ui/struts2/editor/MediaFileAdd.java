@@ -186,9 +186,9 @@ public class MediaFileAdd extends MediaFileBase {
                         uploaded.add(mediaFile);
 
                     } catch (Exception e) {
-                        log.error("Error saving new entry", e);
+                        log.error("Error uploading media file", e);
                         // TODO: i18n
-                        addError("Error reading uploaded file - " + bean.getName());
+                        addError("mediaFileAdd.errorUploading", bean.getName());
                     }
                 }
 

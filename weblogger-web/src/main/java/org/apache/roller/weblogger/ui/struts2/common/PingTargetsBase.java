@@ -88,8 +88,7 @@ public abstract class PingTargetsBase extends UIAction {
             
             return "confirm";
         } else {
-            // TODO: i18n
-            addError("Cannot delete ping target: " + getPingTargetId());
+            addError("pingTarget.notFound",getPingTargetId());
         }
         
         return LIST;
@@ -111,17 +110,14 @@ public abstract class PingTargetsBase extends UIAction {
                 // remove deleted target from list
                 getPingTargets().remove(getPingTarget());
                 
-                // TODO: i18n
-                addMessage("Successfully deleted ping target: "+getPingTarget().getName());
+                addMessage("pingTarget.successfullyDeleted", getPingTarget().getName());
                 
             } catch (WebloggerException ex) {
                 getLogger().error("Error deleting ping target - "+getPingTargetId(), ex);
-                // TODO: i18n
-                addError("Error deleting ping target - "+getPingTargetId());
+                addError("pingTarget.errorDeleting", getPingTargetId());
             }
         } else {
-            // TODO: i18n
-            addError("Cannot delete ping target: " + getPingTargetId());
+            addError("pingTarget.notFound", getPingTargetId());
         }
         
         return LIST;

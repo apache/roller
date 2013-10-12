@@ -130,15 +130,14 @@ public class Members extends UIAction implements ParameterAware {
             
         } catch (Exception ex) {
             log.error("Error saving permissions on weblog - "+getActionWeblog().getHandle(), ex);
-            // TODO: i18n
-            addError("Error saving permissions");
+            addError("memberPermissions.saveError");
         }
         
         if (removed > 0) {
-            addMessage("memberPermissions.membersRemoved", ""+removed);
+            addMessage("memberPermissions.membersRemoved", Integer.toString(removed));
         }
         if (changed > 0) {
-            addMessage("memberPermissions.membersChanged", ""+changed);
+            addMessage("memberPermissions.membersChanged", Integer.toString(changed));
         }
         
         return LIST;

@@ -65,8 +65,7 @@ public class CommonPingTargets extends PingTargetsBase {
             setPingTargets(pingTargetMgr.getCommonPingTargets());
         } catch (WebloggerException ex) {
             log.error("Error loading common ping targets", ex);
-            // TODO: i18n
-            addError("Error loading common ping targets");
+            addError("commonPingTargets.error.loading");
         }
     }
     
@@ -85,12 +84,10 @@ public class CommonPingTargets extends PingTargetsBase {
                 WebloggerFactory.getWeblogger().flush();
             } catch (Exception ex) {
                 getLogger().error("Error saving ping target", ex);
-                // TODO: i18n
-                addError("Error saving ping target.");
+                addError("commonPingTargets.error.saving");
             }
         } else {
-            // TODO: i18n
-            addError("Cannot enable ping target - "+getPingTargetId());
+            addError("commonPingTargets.error.enabling");
         }
         
         return LIST;
@@ -111,12 +108,10 @@ public class CommonPingTargets extends PingTargetsBase {
                 WebloggerFactory.getWeblogger().flush();
             } catch (Exception ex) {
                 getLogger().error("Error saving ping target", ex);
-                // TODO: i18n
-                addError("Error saving ping target.");
+                addError("commonPingTargets.error.saving");
             }
         } else {
-            // TODO: i18n
-            addError("Cannot disable ping target - "+getPingTargetId());
+            addError("commonPingTargets.error.disabling");
         }
         
         return LIST;

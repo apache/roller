@@ -62,8 +62,7 @@ public class MediaFileBase extends UIAction {
             addMessage("mediaFile.delete.success");
         } catch (WebloggerException e) {
             log.error("Error deleting media file", e);
-            // TODO: i18n
-            addError("Error deleting media file - " + this.mediaFileId);
+            addError("mediaFile.delete.error",this.mediaFileId);
         }
     }
 
@@ -83,8 +82,7 @@ public class MediaFileBase extends UIAction {
             addMessage("mediaFile.includeInGallery.success");
         } catch (WebloggerException e) {
             log.error("Error including media file in gallery", e);
-            // TODO: i18n
-            addError("Error including media file in gallery - " + this.mediaFileId);
+            addError("mediaFile.includeInGallery.error",this.mediaFileId);
         }
     }
 
@@ -123,8 +121,7 @@ public class MediaFileBase extends UIAction {
 
         } catch (WebloggerException e) {
             log.error("Error deleting selected media files", e);
-            // TODO: i18n
-            addError("Error deleting selected media files");
+            addError("mediaFile.delete.error");
         }
     }
 
@@ -165,8 +162,7 @@ public class MediaFileBase extends UIAction {
 
         } catch (WebloggerException e) {
             log.error("Error moving selected media files", e);
-            // TODO: i18n
-            addError("Error moving selected media files");
+            addError("mediaFile.move.errors");
         }
     }
 
