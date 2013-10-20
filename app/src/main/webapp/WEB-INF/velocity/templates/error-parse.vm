@@ -18,47 +18,31 @@
 #*
  Velocity #parse error include page
 *#
-<style>
-    span.error {
-    display: block;
-    background-color: #fcc;
-    color: #c00;
-    border: 1px solid red;
-    margin: 5px 10px 5px 10px;
-    padding: 10px;
-    font-weight: bold;
-  }
-  span.error ul {
-    list-style-type: none;
-    margin-top: 0px;
-    margin-left: 0;
-    margin-bottom: 0;
-    padding: 3px;
-  }
-  .dottedtable {border: 1px dotted #CCCCCC;}
-</style>
-<span class="error">
-  <ul>
-    <li>Velocity template error</li>
-  </ul>
-</span>
-<div style="padding: 15px 25px 25px 25px">
-  <table width="80%" border="1px" class="dottedtable" style="border-collapse: collapse;">
+<!-- error-parse -->
+<div style="padding: 10px;white-space: normal;">
+  <h2 style="background-color: inherit;color: #CC0000;margin: 0;padding: 0;">Velocity Template Error</h2>
+  <span style="display: block;background-color: #fcc;color: #c00;border: 1px solid red;margin: 15px 0px;padding: 10px;font-weight: bold;">
+    <ul style="list-style-type: none;margin-top: 0;margin-left: 0;margin-bottom: 0;padding: 3px;">
+      <li>$text.get("errorPage.title")</li>
+      <li>$text.get("errorPage.message")</li>
+    </ul>
+  </span>
+  <table width="100%" style="border-collapse: collapse; border: 1px dotted #CCCCCC;">
     <tr>
-      <td class="dottedtable" width="20%">Exception</td>
-      <td class="dottedtable">Velocity template error : $exceptionDevice</td>
+      <td style="border: 1px dotted #CCCCCC;" width="25%">Exception</td>
+      <td style="border: 1px dotted #CCCCCC;">Velocity template error : $exceptionDevice</td>
     </tr>
     <tr>
-      <td class="dottedtable" width="20%">Message</td>
-      <td class="dottedtable">$utils.autoformat($utils.escapeHTML($exception.getMessage()))</td>
+      <td style="border: 1px dotted #CCCCCC;" width="25%">Message</td>
+      <td style="border: 1px dotted #CCCCCC;">$utils.autoformat($utils.escapeHTML($exception.getMessage()))</td>
     </tr>
     <tr>
-      <td class="dottedtable" width="20%">Type</td>
-      <td class="dottedtable">$exceptionSource</td>
+      <td style="border: 1px dotted #CCCCCC;" width="25%">Type</td>
+      <td style="border: 1px dotted #CCCCCC;">$exceptionSource</td>
     </tr>
     <tr>
-      <td class="dottedtable" width="20%">Exception</td>
-      <td class="dottedtable">$!exception.getClass().getName()</td>
+      <td style="border: 1px dotted #CCCCCC;" width="25%">Exception</td>
+      <td style="border: 1px dotted #CCCCCC;">$!exception.getClass().getName()</td>
     </tr>
   </table>
 </div>

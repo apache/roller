@@ -33,14 +33,17 @@
       .bannerStatusBox a {color: white;}
       .bannerStatusBox a:link {color: white;}
       .bannerStatusBox a:visited {color: white;}
+      span.error {display: block;background-color: #fcc;color: #c00;border: 1px solid red;margin: 25px 0px;padding: 10px;font-weight: bold;}
+      span.error ul {list-style-type: none;margin-top: 0px;margin-left: 0;margin-bottom: 0;padding: 3px;}
       .dottedtable {border: 1px dotted #CCCCCC;}
     </style
   </head>
+  <!-- error-page -->
   <body>
-  
-  <div id="banner">
-    <div id="bannerStatusBox">
-        <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
+
+    <div id="banner">
+      <div id="bannerStatusBox">
+          <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
             <tr>
                 <td class="bannerLeft"></td>
                 <td class="bannerRight">
@@ -48,13 +51,18 @@
                 </td>
             </tr>
         </table>
-    </div>
+      </div>
     </div>
 
     <div style="padding: 15px 25px 25px 25px">
-      <h2 class="error">Velocity template error</h2>
-
-      <table width="80%" border="1px" class="dottedtable" style="border-collapse: collapse;">
+      <h2 class="error">Velocity Template Error</h2>
+      <span class="error">
+        <ul>
+          <li>$text.get("errorPage.title")</li>
+          <li>$text.get("errorPage.message")</li>
+        </ul>
+      </span>
+      <table width="80%" class="dottedtable" style="border-collapse: collapse;">
         <tr>
           <td class="dottedtable" width="20%">Velocity Exception</td>
           <td class="dottedtable">Velocity template error : $exceptionDevice</td>
@@ -71,8 +79,8 @@
           <td class="dottedtable" width="20%">Exception</td>
           <td class="dottedtable">$!exception.getClass().getName()</td>
         </tr>
-     </table>
-   </div>
+      </table>
+    </div>
 
   </body>
 </html>
