@@ -273,7 +273,9 @@ public class WeblogCalendarModel implements CalendarModel {
         String url = null;
         // get the 8 char YYYYMMDD datestring for day
         String dateString = (String)monthMap.get(day);
-        if (dateString == null && !alwaysURL) return null;
+        if (dateString == null && !alwaysURL) {
+            return null;
+        }
         else if (dateString == null && !monthURL) {
             dateString = DateUtil.format8chars(day);
         	dateString = format8chars(day,getCalendar());

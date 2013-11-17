@@ -37,12 +37,12 @@ import java.util.regex.Pattern;
  * @version 2.1
  */
 public class WikipediaLinkPlugin extends SearchPluginBase implements WeblogEntryPlugin {
-    private static final String version = "2.1";
-    private static final Pattern pattern = Pattern.compile("wikipedia([:!])\"(.*?)\"(?:\\{(.*?)\\})?");
-    private static final MessageFormat linkFormat = new MessageFormat("<a href=\"http://www.wikipedia.org/wiki/Special:Search?search={3}\">{2}</a>");
-    private static final MessageFormat luckyLinkFormat = new MessageFormat("<a href=\"http://www.wikipedia.org/wiki/Special:Search?search={3}&go=Go\">{2}</a>");
+    private static final String VERSION = "2.1";
+    private static final Pattern PATTERN = Pattern.compile("wikipedia([:!])\"(.*?)\"(?:\\{(.*?)\\})?");
+    private static final MessageFormat LINK_FORMAT = new MessageFormat("<a href=\"http://www.wikipedia.org/wiki/Special:Search?search={3}\">{2}</a>");
+    private static final MessageFormat LUCKY_LINK_FORMAT = new MessageFormat("<a href=\"http://www.wikipedia.org/wiki/Special:Search?search={3}&go=Go\">{2}</a>");
 
-    private static final Log mLogger = LogFactory.getFactory().getInstance(WikipediaLinkPlugin.class);
+    private static final Log LOG = LogFactory.getFactory().getInstance(WikipediaLinkPlugin.class);
 
     public WikipediaLinkPlugin() {
     }
@@ -56,22 +56,22 @@ public class WikipediaLinkPlugin extends SearchPluginBase implements WeblogEntry
     }
 
     public String getVersion() {
-        return version;
+        return VERSION;
     }
 
     public Pattern getPattern() {
-        return pattern;
+        return PATTERN;
     }
 
     public MessageFormat getLinkFormat() {
-        return linkFormat;
+        return LINK_FORMAT;
     }
 
     public MessageFormat getLuckyLinkFormat() {
-        return luckyLinkFormat;
+        return LUCKY_LINK_FORMAT;
     }
 
     public Log getLogger() {
-        return mLogger;
+        return LOG;
     }
 }

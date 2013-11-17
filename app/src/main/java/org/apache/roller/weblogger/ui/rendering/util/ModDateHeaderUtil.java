@@ -102,8 +102,9 @@ public class ModDateHeaderUtil {
 				|| (eTag == null || previousToken == null)
 				&& lastModifiedTimeMillis <= sinceDate) {
 
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				log.debug("NOT MODIFIED " + request.getRequestURL());
+            }
 
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 

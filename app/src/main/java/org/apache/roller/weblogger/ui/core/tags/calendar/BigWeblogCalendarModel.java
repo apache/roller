@@ -39,10 +39,10 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     
     private static Log mLogger = LogFactory.getLog(BigWeblogCalendarModel.class);
     
-    protected static final SimpleDateFormat mStarDateFormat =
+    protected static final SimpleDateFormat STAR_DATE_FORMAT =
             DateUtil.get8charDateFormat();
     
-    protected static final SimpleDateFormat mSingleDayFormat =
+    protected static final SimpleDateFormat SINGLE_DAY_FORMAT =
             new SimpleDateFormat("dd");
     
     
@@ -80,7 +80,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             String dateString = null;
             List entries = (List)monthMap.get(day);
             if ( entries != null ) {
-                dateString = mStarDateFormat.format(
+                dateString = STAR_DATE_FORMAT.format(
                         ((WeblogEntry)entries.get(0)).getPubTime());
                 
                 // append 8 char date string on end of selfurl
@@ -90,7 +90,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                 sb.append("<a href=\"");
                 sb.append( dayUrl );
                 sb.append("\">");
-                sb.append( mSingleDayFormat.format( day ) );
+                sb.append(SINGLE_DAY_FORMAT.format(day));
                 sb.append("</a></div>");
                 
                 for ( int i=0; i<entries.size(); i++ ) {
@@ -113,7 +113,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                 
             } else {
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
-                sb.append( mSingleDayFormat.format( day ) );
+                sb.append(SINGLE_DAY_FORMAT.format(day));
                 sb.append("</div>");
                 sb.append("<div class=\"bCalendarDayContentBig\"/>");
             }
@@ -139,9 +139,11 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         List entries = (List)monthMap.get( day );
         if ( entries != null && day != null ) {
             WeblogEntry entry = (WeblogEntry)entries.get(0);
-            dateString = mStarDateFormat.format(entry.getPubTime());
+            dateString = STAR_DATE_FORMAT.format(entry.getPubTime());
         }
-        if (dateString == null && !alwaysURL) return null;
+        if (dateString == null && !alwaysURL) {
+            return null;
+        }
         else if (dateString == null && !nextPrevMonthURL) {
             dateString = DateUtil.format8chars(day);
         } else if (dateString == null && nextPrevMonthURL) {

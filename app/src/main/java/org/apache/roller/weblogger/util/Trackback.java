@@ -48,7 +48,7 @@ import org.jdom.input.SAXBuilder;
  */
 public class Trackback {
     
-    private static final Log log = LogFactory.getLog(Trackback.class);
+    private static final Log LOG = LogFactory.getLog(Trackback.class);
     
     private final WeblogEntry entry;
     private final String trackbackURL;
@@ -100,7 +100,7 @@ public class Trackback {
         
         RollerMessages messages = new RollerMessages();
         
-        log.debug("Sending trackback to url - "+trackbackURL);
+        LOG.debug("Sending trackback to url - " + trackbackURL);
         
         // Construct data
         String title = entry.getTitle();
@@ -116,7 +116,7 @@ public class Trackback {
         params.put("blog_name", URLUtilities.encode(blog_name));
         String queryString = URLUtilities.getQueryString(params);
         
-        log.debug("query string - "+queryString);
+        LOG.debug("query string - " + queryString);
         
         // prepare http request
         HttpClient client = new HttpClient();
@@ -132,8 +132,8 @@ public class Trackback {
             byte[] response = method.getResponseBody();
             String responseString = Utilities.escapeHTML(new String(response, "UTF-8"));
             
-            log.debug("result = "+statusCode+" "+method.getStatusText());
-            log.debug("response:\n"+responseString);
+            LOG.debug("result = " + statusCode + " " + method.getStatusText());
+            LOG.debug("response:\n" + responseString);
             
             if(statusCode == HttpStatus.SC_OK) {
                 // trackback request succeeded, message will give details
@@ -155,7 +155,7 @@ public class Trackback {
             
         } catch (IOException e) {
             // some kind of transport error sending trackback post
-            log.debug("Error sending trackback", e);
+            LOG.debug("Error sending trackback", e);
             messages.addError("weblogEdit.trackbackErrorTransport");
         } finally {
             // release used connection

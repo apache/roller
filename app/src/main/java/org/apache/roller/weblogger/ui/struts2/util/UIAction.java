@@ -397,13 +397,17 @@ public abstract class UIAction extends ActionSupport
     }
 
     public static String cleanTextKey(String s) {
-        if (s == null || s.isEmpty()) return s;
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
         // escape HTML
         return StringEscapeUtils.escapeHtml(cleanExpressions(s));
     }
 
     public static String cleanTextArg(String s) {
-        if (s == null || s.isEmpty()) return s;
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
         return StringEscapeUtils.escapeHtml(s);
     }
 }

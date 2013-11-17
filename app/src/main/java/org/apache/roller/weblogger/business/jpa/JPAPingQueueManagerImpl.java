@@ -25,7 +25,6 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
@@ -43,16 +42,14 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
         JPAPingQueueManagerImpl.class);
 
     /** The strategy for this manager. */
-    private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
-    
+
 
     /**
      * Creates a new instance of JPAPingQueueManagerImpl
      */
     @com.google.inject.Inject
-    protected JPAPingQueueManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
-        this.roller = roller;
+    protected JPAPingQueueManagerImpl(JPAPersistenceStrategy strategy) {
         this.strategy =  strategy;
     }
 

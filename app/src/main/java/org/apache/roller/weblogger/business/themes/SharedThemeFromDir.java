@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.roller.weblogger.pojos.TemplateCode;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

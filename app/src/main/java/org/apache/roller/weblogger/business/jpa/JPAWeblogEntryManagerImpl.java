@@ -1428,15 +1428,15 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         //Append tags as parameter markers to avoid potential escaping issues
         //The IN clause would be of form (?1, ?2, ?3, ..)
         ArrayList params = new ArrayList(tags.size() + 1);
-        final String PARAM_SEPARATOR = ", ";
+        final String paramSeparator = ", ";
         int i;
         for (i=0; i < tags.size(); i++) {
-            queryString.append('?').append(i+1).append(PARAM_SEPARATOR);
+            queryString.append('?').append(i+1).append(paramSeparator);
             params.add(tags.get(i));
         }
         
-        // Remove the trailing PARAM_SEPARATOR
-        queryString.delete(queryString.length() - PARAM_SEPARATOR.length(),
+        // Remove the trailing paramSeparator
+        queryString.delete(queryString.length() - paramSeparator.length(),
                 queryString.length());
         // Close the brace of IN clause
         queryString.append(')');

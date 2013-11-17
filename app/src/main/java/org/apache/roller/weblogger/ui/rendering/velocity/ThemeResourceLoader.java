@@ -57,8 +57,9 @@ public class ThemeResourceLoader extends ResourceLoader {
     public InputStream getResourceStream(String name)
             throws ResourceNotFoundException {
 
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             logger.debug("Looking for: " + name);
+        }
 
         if (name == null || name.length() < 1) {
             throw new ResourceNotFoundException(
@@ -100,8 +101,9 @@ public class ThemeResourceLoader extends ResourceLoader {
                 contents = template.getContents();
             }
 
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 logger.debug("Resource found!");
+            }
 
             // return the input stream
             return new ByteArrayInputStream(contents.getBytes("UTF-8"));

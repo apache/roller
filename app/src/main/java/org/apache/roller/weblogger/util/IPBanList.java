@@ -185,11 +185,7 @@ public class IPBanList {
         }
 
         public boolean hasChanged() {
-            if(lastModified() != myLastModified) {
-                return true;
-            } else {
-                return false;
-            }
+            return lastModified() != myLastModified;
         }
         
         public void clearChanged() {

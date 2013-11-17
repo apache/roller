@@ -34,8 +34,7 @@ public class PreviewURLModel extends URLModel {
     
     private WeblogPreviewRequest previewRequest = null;
     private Weblog weblog = null;
-    private String locale = null;
-    
+
     private URLStrategy urlStrategy = null;
     
     

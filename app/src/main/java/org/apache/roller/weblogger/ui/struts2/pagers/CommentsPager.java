@@ -32,8 +32,6 @@ import org.apache.roller.weblogger.util.URLUtilities;
  */
 public class CommentsPager {
     
-    private static final Log log = LogFactory.getLog(CommentsPager.class);
-    
     // the collection for the pager
     private final List<WeblogEntryComment> items;
     
@@ -58,7 +56,7 @@ public class CommentsPager {
     public String getNextLink() {
         if(isMoreItems()) {
             int nextPage = pageNum + 1;
-            Map<String, String> params = new HashMap();
+            Map<String, String> params = new HashMap<String, String>();
             params.put("bean.page", ""+nextPage);
             return createURL(baseUrl, params);
         }
@@ -69,7 +67,7 @@ public class CommentsPager {
     public String getPrevLink() {
         if (pageNum > 0) {
             int prevPage = pageNum - 1;
-            Map<String, String> params = new HashMap();
+            Map<String, String> params = new HashMap<String, String>();
             params.put("bean.page", ""+prevPage);
             return createURL(baseUrl, params);
         }

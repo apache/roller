@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public class AcronymsPlugin implements WeblogEntryPlugin {
     
-    private static final Log mLogger = LogFactory.getLog(AcronymsPlugin.class);
+    private static final Log LOG = LogFactory.getLog(AcronymsPlugin.class);
     
     protected String name = "Acronyms";
     protected String description = "Expands acronyms defined in _acronym page. " +
@@ -56,7 +56,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     
     public AcronymsPlugin() {
         super();
-        mLogger.debug("AcronymsPlugin instantiated.");
+        LOG.debug("AcronymsPlugin instantiated.");
     }
     
     
@@ -76,15 +76,15 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     public String render(WeblogEntry entry, String str) {
         String text = str;
         
-        if (mLogger.isDebugEnabled()) {
-            mLogger.debug("render(entry = "+entry.getId()+")");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("render(entry = "+entry.getId()+")");
         }
         
         /*
          * Get acronyms Properties.
          */
         Properties acronyms = loadAcronyms(entry.getWebsite());
-        mLogger.debug("acronyms.size()=" + acronyms.size());
+        LOG.debug("acronyms.size()=" + acronyms.size());
         if (acronyms.size() == 0) {
             return text;
         }
@@ -98,7 +98,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         for (Iterator iter = acronyms.keySet().iterator(); iter.hasNext();) {
             String acronym = (String) iter.next();
             acronymPatterns[count] = Pattern.compile("\\b" + acronym + "\\b");
-            mLogger.debug("match '" + acronym + "'");
+            LOG.debug("match '" + acronym + "'");
             acronymTags[count] =
                     "<acronym title=\""
                     + acronyms.getProperty(acronym)
@@ -134,7 +134,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
             }
         } catch (WebloggerException e) {
             // not much we can do about it
-            mLogger.warn(e);
+            LOG.warn(e);
         }
         return acronyms;
     }
@@ -149,8 +149,8 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
      * @return entry text with acronym explanations
      */
     private String matchAcronyms(String text, Pattern[] acronymPatterns, String[] acronymTags) {
-        if (mLogger.isDebugEnabled()) {
-            mLogger.debug("matchAcronyms("+text+")");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("matchAcronyms("+text+")");
         }
         
         Matcher matcher = null;
@@ -171,8 +171,8 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     private Properties parseAcronymPage(WeblogTemplate acronymPage, Properties acronyms) {
         String rawAcronyms = acronymPage.getContents();
         
-        if (mLogger.isDebugEnabled()) {
-            mLogger.debug("parsing _acronyms template: \n'"+rawAcronyms+"'");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("parsing _acronyms template: \n'"+rawAcronyms+"'");
         }
         
         String regex = "\n"; // end of line

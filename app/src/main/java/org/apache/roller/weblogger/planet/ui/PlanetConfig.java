@@ -125,10 +125,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
                 if( updProp.getValue() != null // null check needed w/Oracle
                         && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
                     
-                    if(incomingProp == null || !incomingProp.equals("on"))
-                        incomingProp = "false";
-                    else
-                        incomingProp = "true";
+                    incomingProp = (incomingProp == null || !incomingProp.equals("on")) ? "false" : "true";
                 }
                 
                 // only work on props that were submitted with the request

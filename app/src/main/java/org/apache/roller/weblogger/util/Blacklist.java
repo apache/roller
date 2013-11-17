@@ -70,7 +70,7 @@ public class Blacklist {
     private static final String LAST_UPDATE_STR = "Last update:";
 
     /** We no longer have a blacklist update URL */
-    private static final String blacklistURL = null; 
+    private static final String BLACKLIST_URL = null;
 
     private Date lastModified = null;
     private List blacklistStr = new LinkedList();
@@ -99,7 +99,7 @@ public class Blacklist {
     
     /** Non-Static update method. */
     public void update() {
-        if (blacklistURL != null) {
+        if (BLACKLIST_URL != null) {
             boolean blacklist_updated = this.downloadBlacklist();
             if (blacklist_updated) {
                 this.loadBlacklistFromFile(null);
@@ -114,7 +114,7 @@ public class Blacklist {
         try {
             mLogger.debug("Attempting to download MT blacklist");
             
-            URL url = new URL(blacklistURL);
+            URL url = new URL(BLACKLIST_URL);
             HttpURLConnection connection = 
                     (HttpURLConnection) url.openConnection();
             
@@ -256,7 +256,9 @@ public class Blacklist {
             mLogger.error(e);
         } finally {
             try {
-                if (in != null) in.close();
+                if (in != null) {
+                    in.close();
+                }
             } catch (IOException e1) {
                 mLogger.error(e1);
             }

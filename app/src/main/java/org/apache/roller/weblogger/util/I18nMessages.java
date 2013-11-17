@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class I18nMessages {
     
-    private static final Log log = LogFactory.getLog(I18nMessages.class);
+    private static final Log LOG = LogFactory.getLog(I18nMessages.class);
     
     // locale and bundle we are using for messaging
     private final Locale locale;
@@ -65,7 +65,7 @@ public class I18nMessages {
      */
     public static I18nMessages getMessages(String locale) {
         
-        log.debug("request for messages in locale = "+locale);
+        LOG.debug("request for messages in locale = " + locale);
         
         // check if we already have a message utils created for that locale
         I18nMessages messages = messagesMap.get(locale);
@@ -87,7 +87,7 @@ public class I18nMessages {
      */
     public static I18nMessages getMessages(Locale locale) {
         
-        log.debug("request for messages in locale = "+locale.toString());
+        LOG.debug("request for messages in locale = " + locale.toString());
         
         // check if we already have a message utils created for that locale
         I18nMessages messages = messagesMap.get(locale);
@@ -121,7 +121,7 @@ public class I18nMessages {
             return bundle.getString(key);
         } catch (Exception e) {
             // send a warning in the logs
-            log.warn("Error getting key "+key);
+            LOG.warn("Error getting key " + key);
             return key;
         }
     }
@@ -138,7 +138,7 @@ public class I18nMessages {
             return MessageFormat.format(msg, args.toArray());
         } catch (Exception e) {
             // send a warning in the logs
-            log.warn("Error getting key "+key, e);
+            LOG.warn("Error getting key " + key, e);
             return key;
         }
     }
@@ -155,7 +155,7 @@ public class I18nMessages {
             return MessageFormat.format(msg, args);
         } catch (Exception e) {
             // send a warning in the logs
-            log.warn("Error getting key "+key, e);
+            LOG.warn("Error getting key " + key, e);
             return key;
         }
     }
@@ -184,7 +184,7 @@ public class I18nMessages {
 			messagesMap.remove(key);
 
 		} catch (Exception e) {
-			log.error("Error clearing message resource bundles", e);
+			LOG.error("Error clearing message resource bundles", e);
 		}
 
 	}
@@ -205,13 +205,13 @@ public class I18nMessages {
 					.getName())) {
 				clearMap(cl, loader, "resourceEntries");
 			} else {
-				if (log.isDebugEnabled()) {
-					log.debug("class loader " + cl.getName()
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("class loader " + cl.getName()
 							+ " is not tomcat loader.");
 				}
 			}
 		} catch (Exception e) {
-			log.warn("couldn't clear tomcat cache", e);
+			LOG.warn("couldn't clear tomcat cache", e);
 		}
 	}
 

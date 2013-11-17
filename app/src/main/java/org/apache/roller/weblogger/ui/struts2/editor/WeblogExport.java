@@ -63,7 +63,7 @@ public final class WeblogExport extends UIAction
         implements ServletResponseAware {
 
     // Static Variables --------------------------------------------------------
-    private static final Log log = LogFactory.getLog(WeblogExport.class);
+    private static final Log LOG = LogFactory.getLog(WeblogExport.class);
 
     private static final Pattern SC_TAG_PATTERN =
             Pattern.compile("(([\\S])(/>))");
@@ -265,9 +265,9 @@ public final class WeblogExport extends UIAction
                 outputStream.close();
             }
         } catch (WebloggerException e) {
-            log.error("Error looking up entries: ", e);
+            LOG.error("Error looking up entries: ", e);
         } catch (IOException e) {
-            log.error("Error getting output stream: ", e);
+            LOG.error("Error getting output stream: ", e);
         }
     }
 
@@ -338,7 +338,7 @@ public final class WeblogExport extends UIAction
                 zipOutput.flush();
                 zipOutput.close();
             } catch (Exception e) {
-                log.error("Error exporting resources: " + e.getMessage());
+                LOG.error("Error exporting resources: " + e.getMessage());
             }
         }
     }
@@ -363,7 +363,7 @@ public final class WeblogExport extends UIAction
             hostname = absoluteUrl.getHost();
         }
         catch (MalformedURLException e) {
-            log.error("Unable to parse the absolute URL: " + e.getMessage());
+            LOG.error("Unable to parse the absolute URL: " + e.getMessage());
             hostname = "unknown";
         }
 
@@ -456,7 +456,7 @@ public final class WeblogExport extends UIAction
                                     "att_mediacast_length"));
                 }
                 catch (NumberFormatException e) {
-                    log.error("Unable to parse 'att_mediacast_length': " +
+                    LOG.error("Unable to parse 'att_mediacast_length': " +
                             e.getMessage());
                     enclosureLength = (long) 0;
                 }
@@ -693,7 +693,7 @@ public final class WeblogExport extends UIAction
             try {
                 result = baseUrlMatcher.replaceAll("$1" + baseUrl);
             } catch (IllegalArgumentException e) {
-                log.error("Invalid base URL submitted: " + baseUrl + ": " +
+                LOG.error("Invalid base URL submitted: " + baseUrl + ": " +
                         e.getMessage());
             }
         }
@@ -713,7 +713,7 @@ public final class WeblogExport extends UIAction
             // Load the non-directory files
             mfiles.addAll(mdir.getMediaFiles());
         } catch (Exception e) {
-            log.error("Error loading resources: " + e.getMessage());
+            LOG.error("Error loading resources: " + e.getMessage());
         }
     }
 }

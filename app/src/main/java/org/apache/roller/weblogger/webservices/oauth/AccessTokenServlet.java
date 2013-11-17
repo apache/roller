@@ -47,12 +47,6 @@ public class AccessTokenServlet extends HttpServlet {
             LogFactory.getFactory().getInstance(AccessTokenServlet.class);
     
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        // nothing at this point
-    }
-    
-    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         processRequest(request, response);

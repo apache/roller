@@ -32,8 +32,6 @@ import org.apache.roller.weblogger.util.URLUtilities;
  */
 public class EntriesPager {
     
-    private static final Log log = LogFactory.getLog(EntriesPager.class);
-    
     // the collection for the pager
     private final List<WeblogEntry> items;
     
@@ -58,7 +56,7 @@ public class EntriesPager {
     public String getNextLink() {
         if(isMoreItems()) {
             int nextPage = pageNum + 1;
-            Map<String, String> params = new HashMap();
+            Map<String, String> params = new HashMap<String, String>();
             params.put("bean.page", ""+nextPage);
             return createURL(baseUrl, params);
         }

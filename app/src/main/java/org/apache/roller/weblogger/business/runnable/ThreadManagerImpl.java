@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.pojos.TaskLock;
 @com.google.inject.Singleton
 public abstract class ThreadManagerImpl implements ThreadManager {
     
-    private static final Log log = LogFactory.getLog(ThreadManagerImpl.class);
+    private static final Log LOG = LogFactory.getLog(ThreadManagerImpl.class);
     
     // our own scheduler thread
     private Thread schedulerThread = null;
@@ -50,7 +50,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     
     public ThreadManagerImpl() {
         
-        log.info("Instantiating Thread Manager");
+        LOG.info("Instantiating Thread Manager");
         
         serviceScheduler = Executors.newCachedThreadPool();
     }
@@ -66,7 +66,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
             
             String taskClassName = WebloggerConfig.getProperty("tasks."+taskName+".class");
             if(taskClassName != null) {
-                log.info("Initializing task: "+taskName);
+                LOG.info("Initializing task: " + taskName);
                 
                 try {
                     Class taskClass = Class.forName(taskClassName);
@@ -76,7 +76,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
                     // make sure there is a tasklock record in the db
                     TaskLock taskLock = getTaskLockByName(task.getName());
                     if (taskLock == null) {
-                        log.debug("Task record does not exist, inserting empty record to start with");
+                        LOG.debug("Task record does not exist, inserting empty record to start with");
 
                         // insert an empty record
                         taskLock = new TaskLock();
@@ -93,11 +93,11 @@ public abstract class ThreadManagerImpl implements ThreadManager {
                     webloggerTasks.add(task);
                     
                 } catch (ClassCastException ex) {
-                    log.warn("Task does not extend RollerTask class", ex);
+                    LOG.warn("Task does not extend RollerTask class", ex);
                 } catch (WebloggerException ex) {
-                    log.error("Error scheduling task", ex);
+                    LOG.error("Error scheduling task", ex);
                 } catch (Exception ex) {
-                    log.error("Error instantiating task", ex);
+                    LOG.error("Error instantiating task", ex);
                 }
             }
         }
@@ -107,7 +107,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
         
         // start scheduler thread, but only if it's not already running
         if (schedulerThread == null && scheduler != null) {
-            log.debug("Starting scheduler thread");
+            LOG.debug("Starting scheduler thread");
             schedulerThread = new Thread(scheduler, "Roller Weblogger Task Scheduler");
             // set thread priority between MAX and NORM so we get slightly preferential treatment
             schedulerThread.setPriority((Thread.MAX_PRIORITY + Thread.NORM_PRIORITY)/2);
@@ -137,14 +137,14 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     
     public void shutdown() {
         
-        log.debug("starting shutdown sequence");
+        LOG.debug("starting shutdown sequence");
         
         // trigger an immediate shutdown of any backgrounded tasks
         serviceScheduler.shutdownNow();
         
         // only stop if we are already running
         if(schedulerThread != null) {
-            log.debug("Stopping scheduler");
+            LOG.debug("Stopping scheduler");
             schedulerThread.interrupt();
         }
     }

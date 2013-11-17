@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  */
 public class Setup extends UIAction {
     
-    private static final Log log = LogFactory.getLog(Setup.class);
+    private static final Log LOG = LogFactory.getLog(Setup.class);
     
     private long userCount = 0;
     private long blogCount = 0;
@@ -66,7 +66,7 @@ public class Setup extends UIAction {
             WeblogManager mgr =  WebloggerFactory.getWeblogger().getWeblogManager();
             setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
         } catch (WebloggerException ex) {
-            log.error("Error getting weblogs", ex);
+            LOG.error("Error getting weblogs", ex);
             addError("frontpageConfig.weblogs.error");
         }
 
@@ -74,7 +74,7 @@ public class Setup extends UIAction {
             setUserCount(WebloggerFactory.getWeblogger().getUserManager().getUserCount());
             setBlogCount(WebloggerFactory.getWeblogger().getWeblogManager().getWeblogCount());
         } catch (WebloggerException ex) {
-            log.error("Error getting user/weblog counts", ex);
+            LOG.error("Error getting user/weblog counts", ex);
         }
         
         return SUCCESS;
@@ -96,7 +96,7 @@ public class Setup extends UIAction {
             addMessage("frontpageConfig.values.saved");
 
         } catch (WebloggerException ex) {
-            log.error("ERROR saving frontpage configuration", ex);
+            LOG.error("ERROR saving frontpage configuration", ex);
             addError("frontpageConfig.values.error");
         }
         return "home";
