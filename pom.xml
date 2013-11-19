@@ -9,11 +9,10 @@
     <packaging>pom</packaging>
 
     <prerequisites>
-        <!-- 3.0.5 required by inmemdb-maven-plugin V1.3.0 -->
         <maven>3.0.5</maven>
     </prerequisites>
 
-    <name>Roller project</name>
+    <name>Apache Roller</name>
     <description>
         Roller is an open source blog server built with open source Java
         libraries including Spring, Struts2, Velocity and Commons.
