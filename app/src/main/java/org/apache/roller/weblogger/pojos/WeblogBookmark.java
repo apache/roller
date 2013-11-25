@@ -71,19 +71,10 @@ public class WeblogBookmark implements Serializable, Comparable {
     
     //------------------------------------------------------------- Attributes
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.id column="id"
-     *     generator-class="assigned"
-     */
     public String getId() {
         return this.id;
     }
     
-    /** @ejb:persistent-field */
     public void setId(String id) {
         this.id = id;
     }
@@ -91,56 +82,35 @@ public class WeblogBookmark implements Serializable, Comparable {
     /**
      * Name of bookmark.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator-args arg0resource="bookmarkForm.name"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.property column="name" non-null="true" unique="false"
      */
     public String getName() {
         return this.name;
     }
     
-    /** @ejb:persistent-field */
     public void setName(String name) {
         this.name = name;
     }
     
     /**
      * Description of bookmark.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.property column="description" non-null="true" unique="false"
      */
     public String getDescription() {
         return this.description;
     }
     
-    /** @ejb:persistent-field */
     public void setDescription(String description) {
         this.description = description;
     }
     
     /**
      * URL of bookmark.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.property column="url" non-null="true" unique="false"
      */
     public String getUrl() {
         return this.url;
     }
     
-    /** @ejb:persistent-field */
     public void setUrl(String url) {
         this.url = url;
     }
@@ -148,21 +118,14 @@ public class WeblogBookmark implements Serializable, Comparable {
     /**
      * Weight indicates prominence of link
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator type="integer" msgkey="errors.integer"
      * @struts.validator-args arg0resource="bookmarkForm.weight"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.property column="weight" non-null="true" unique="false"
      */
     public java.lang.Integer getWeight() {
         return this.weight;
     }
     
-    /** @ejb:persistent-field */
     public void setWeight(java.lang.Integer weight) {
         this.weight = weight;
     }
@@ -170,69 +133,40 @@ public class WeblogBookmark implements Serializable, Comparable {
     /**
      * Priority determines order of display
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator type="integer" msgkey="errors.integer"
      * @struts.validator-args arg0resource="bookmarkForm.priority"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.property column="priority" non-null="true" unique="false"
      */
     public java.lang.Integer getPriority() {
         return this.priority;
     }
     
-    /** @ejb:persistent-field */
     public void setPriority(java.lang.Integer priority) {
         this.priority = priority;
     }
     
-    /**
-     * @ejb:persistent-field
-     *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @hibernate.property column="image" non-null="true" unique="false"
-     */
     public String getImage() {
         return this.image;
     }
     
-    /** @ejb:persistent-field */
     public void setImage(String image) {
         this.image = image;
     }
     
-    /**
-     * @ejb:persistent-field
-     *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @hibernate.property column="feedurl" non-null="true" unique="false"
-     */
     public String getFeedUrl() {
         return this.feedUrl;
     }
     
-    /** @ejb:persistent-field */
     public void setFeedUrl(String feedUrl) {
         this.feedUrl = feedUrl;
     }
     
     //---------------------------------------------------------- Relationships
-    
-    /**
-     * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="folderid" cascade="none" not-null="true"
-     */
+
     public org.apache.roller.weblogger.pojos.WeblogBookmarkFolder getFolder() {
         return this.folder;
     }
     
-    /** @ejb:persistent-field */
     public void setFolder(org.apache.roller.weblogger.pojos.WeblogBookmarkFolder folder) {
         this.folder = folder;
     }

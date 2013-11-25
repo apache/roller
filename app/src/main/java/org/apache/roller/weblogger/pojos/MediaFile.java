@@ -84,8 +84,6 @@ public class MediaFile implements Serializable {
 
     /**
      * Database surrogate key.
-     * 
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getId() {
         return id;

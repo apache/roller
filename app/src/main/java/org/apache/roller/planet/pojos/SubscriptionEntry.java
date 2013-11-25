@@ -223,7 +223,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
        
     /**
      * Return first entry in category collection.
-     * @roller.wrapPojoMethod type="pojo"
      */
     public Category getCategory() {
         Category cat = null;
@@ -249,7 +248,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     
     /** 
      * Returns creator as a UserData object.
-     * @roller.wrapPojoMethod type="pojo"
      * TODO: make planet model entry author name, email, and uri
      */
     public Author getCreator() {
@@ -264,7 +262,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     
     /**
      * Returns summary (always null for planet entry)
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getSummary() {
         return null;
@@ -273,7 +270,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
 
     /**
      * Read-only synomym for getSubscription()
-     * @roller.wrapPojoMethod type="pojo"
      */
     public Subscription getWebsite() {
         return getSubscription();

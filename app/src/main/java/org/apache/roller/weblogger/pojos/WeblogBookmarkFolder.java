@@ -133,11 +133,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     /**
      * Database surrogate key.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @hibernate.id column="id"
-     *     generator-class="assigned"  
      */
     public String getId() {
         return this.id;
@@ -155,14 +150,10 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     /**
      * The short name for this folder.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator type="mask" msgkey="errors.noslashes"
      * @struts.validator-var name="mask" value="${noslashes}"
      * @struts.validator-args arg0resource="folderForm.name"
-     *
-     * @hibernate.property column="name" non-null="true" unique="false"
      */
     public String getName() {
         return this.name;
@@ -175,10 +166,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     /**
      * A full description for this folder.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @hibernate.property column="description" non-null="true" unique="false"
      */
     public String getDescription() {
         return this.description;
@@ -187,14 +174,9 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
+
     /**
      * The full path to this folder in the hierarchy.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @hibernate.property column="path" non-null="true" unique="false"
      */
     public String getPath() {
         return this.path;
@@ -203,14 +185,9 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     public void setPath(String path) {
         this.path = path;
     }
-    
-    
+
     /**
      * Get the weblog which owns this folder.
-     *
-     * @roller.wrapPojoMethod type="pojo"
-     *
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
     public Weblog getWebsite() {
         return website;
@@ -219,14 +196,9 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     public void setWebsite( Weblog website ) {
         this.website = website;
     }
-    
-    
+
     /**
      * Return parent folder, or null if folder is root of hierarchy.
-     *
-     * @roller.wrapPojoMethod type="pojo"
-     *
-     * @hibernate.many-to-one column="parentid" cascade="none" not-null="false"
      */
     public WeblogBookmarkFolder getParent() {
         return this.parentFolder;
@@ -239,12 +211,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     /**
      * Get child folders of this folder.
-     *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"
-     *
-     * @hibernate.set lazy="true" inverse="true" cascade="delete" 
-     * @hibernate.collection-key column="parentid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"
      */
     public Set getFolders() {
         return this.childFolders;
@@ -257,12 +223,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     /**
      * Get bookmarks contained in this folder.
-     *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogBookmark"
-     *
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all"
-     * @hibernate.collection-key column="folderid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogBookmark"
      */
     public Set getBookmarks() {
         return this.bookmarks;
@@ -307,8 +267,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     
     /**
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogBookmark"
-     *
      * @param subfolders
      */
     public List retrieveBookmarks(boolean subfolders) throws WebloggerException {
@@ -338,8 +296,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     /**
      * Is this folder a descendent of the other folder?
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public boolean descendentOf(WeblogBookmarkFolder ancestor) {
         

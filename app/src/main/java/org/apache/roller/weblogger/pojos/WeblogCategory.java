@@ -35,9 +35,6 @@ import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Weblog Category.
- * 
- * @hibernate.cache usage="read-write"
- * @hibernate.class lazy="true" table="weblogcategory"
  */
 public class WeblogCategory implements Serializable, Comparable {
     
@@ -131,8 +128,6 @@ public class WeblogCategory implements Serializable, Comparable {
     
     /**
      * Database surrogate key.
-     *
-     * @hibernate.id column="id" generator-class="assigned"  
      */
     public String getId() {
         return this.id;
@@ -145,8 +140,6 @@ public class WeblogCategory implements Serializable, Comparable {
     
     /**
      * The display name for this category.
-     *
-     * @hibernate.property column="name" non-null="true" unique="false"
      */
     public String getName() {
         return this.name;
@@ -159,8 +152,6 @@ public class WeblogCategory implements Serializable, Comparable {
     
     /**
      * A full description for this category.
-     *
-     * @hibernate.property column="description" non-null="true" unique="false"
      */
     public String getDescription() {
         return this.description;
@@ -173,8 +164,6 @@ public class WeblogCategory implements Serializable, Comparable {
     
     /**
      * An image icon to represent this category.
-     *
-     * @hibernate.property column="image" non-null="true" unique="false"
      */
     public String getImage() {
         return this.image;
@@ -187,8 +176,6 @@ public class WeblogCategory implements Serializable, Comparable {
     
     /**
      * The full path to this category in the hierarchy.
-     *
-     * @hibernate.property column="path" non-null="true" unique="false"
      */
     public String getPath() {
         return this.path;
@@ -201,8 +188,6 @@ public class WeblogCategory implements Serializable, Comparable {
     
     /**
      * Get the weblog which owns this category.
-     *
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
     public Weblog getWebsite() {
         return website;
@@ -215,8 +200,6 @@ public class WeblogCategory implements Serializable, Comparable {
     
     /**
      * Get parent category, or null if category is root of hierarchy.
-     *
-     * @hibernate.many-to-one column="parentid" cascade="none" not-null="false"
      */
     public WeblogCategory getParent() {
         return this.parentCategory;
@@ -229,10 +212,6 @@ public class WeblogCategory implements Serializable, Comparable {
     
     /**
      * Get child categories of this category.
-     * 
-     * @hibernate.collection-key column="parentid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogCategory"
-     * @hibernate.set lazy="true" inverse="true" cascade="delete" order-by="name"
      */
     public Set getWeblogCategories() {
         return this.childCategories;

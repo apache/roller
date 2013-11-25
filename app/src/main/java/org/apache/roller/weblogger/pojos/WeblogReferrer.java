@@ -96,9 +96,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * ID of website that this referer refers to.
-     *
-     * @roller.wrapPojoMethod type="pojo"
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
     public org.apache.roller.weblogger.pojos.Weblog getWebsite() {
         return this.website;
@@ -108,10 +105,6 @@ public class WeblogReferrer implements Serializable {
         this.website = website;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="pojo"
-     * @hibernate.many-to-one column="entryid" cascade="none"
-     */
     public org.apache.roller.weblogger.pojos.WeblogEntry getWeblogEntry() {
         return weblogEntry;
     }
@@ -125,9 +118,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * Date string in YYYYMMDD format.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="datestr" non-null="true" unique="false"
      */
     public String getDateString() {
         return this.dateString;
@@ -139,9 +129,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * URL of the refering page.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="refurl" non-null="true" unique="false"
      */
     public String getRefererUrl() {
         return this.refererUrl;
@@ -156,9 +143,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * Requested URL, the URL linked to by the refering page.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="refpermalink" non-null="true" unique="false"
      */
     public String getRefererPermalink() {
         return this.refererPermalink;
@@ -170,9 +154,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * Requested URL, the URL linked to by the refering page.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="requrl" non-null="true" unique="false"
      */
     public String getRequestUrl() {
         return this.requestUrl;
@@ -184,9 +165,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * The text on the refering page that surrounds the refering link.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="title" non-null="true" unique="false"
      */
     public String getTitle() {
         return this.title;
@@ -198,9 +176,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * The text on the refering page that surrounds the refering link.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="excerpt" non-null="true" unique="false"
      */
     public String getExcerpt() {
         return this.excerpt;
@@ -212,9 +187,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * Should this referer be displayed?
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="visible" non-null="true" unique="false"
      */
     public Boolean getVisible() {
         return this.visible;
@@ -226,9 +198,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * Is this referer a duplicate?
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="duplicate" non-null="true" unique="false"
      */
     public Boolean getDuplicate() {
         return this.duplicate;
@@ -240,9 +209,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * Hits received today from this referer.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="dayhits" non-null="true" unique="false"
      */
     public Integer getDayHits() {
         return this.dayHits;
@@ -254,9 +220,6 @@ public class WeblogReferrer implements Serializable {
     
     /**
      * Total hits received from this referer.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="totalhits" non-null="true" unique="false"
      */
     public Integer getTotalHits() {
         return this.totalHits;
@@ -266,11 +229,6 @@ public class WeblogReferrer implements Serializable {
         this.totalHits = totalHits;
     }
     
-    //-------------------------------------------------------------------------
-    
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
     public String getDisplayUrl(int maxWidth, boolean includeHits) {
         StringBuffer sb = new StringBuffer();
         
@@ -318,11 +276,6 @@ public class WeblogReferrer implements Serializable {
         return sb.toString();
     }
     
-    //-------------------------------------------------------------------------
-    
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
     public String getUrl() {
         if (getRefererPermalink() != null) {
             return getRefererPermalink();
@@ -331,11 +284,6 @@ public class WeblogReferrer implements Serializable {
         }
     }
     
-    //-------------------------------------------------------------------------
-    
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
     public String getDisplayUrl() {
         return getDisplayUrl(50, false);
     }
