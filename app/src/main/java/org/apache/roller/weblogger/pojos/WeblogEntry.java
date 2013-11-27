@@ -50,6 +50,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
@@ -70,7 +71,10 @@ public class WeblogEntry implements Serializable {
     public static final String PUBLISHED = "PUBLISHED";
     public static final String PENDING   = "PENDING";
     public static final String SCHEDULED = "SCHEDULED";
-    
+
+    private static final char TITLE_SEPARATOR =
+        WebloggerConfig.getBooleanProperty("weblogentry.title.useUnderscoreSeparator") ? '_' : '-';
+
     // Simple properies
     private String    id            = UUIDGenerator.generateUUID();
     private String    title         = null;
@@ -84,7 +88,7 @@ public class WeblogEntry implements Serializable {
     private Timestamp updateTime    = null;
     private String    plugins       = null;
     private Boolean   allowComments = Boolean.TRUE;
-    private Integer   commentDays   = new Integer(7);
+    private Integer   commentDays   = 7;
     private Boolean   rightToLeft   = Boolean.FALSE;
     private Boolean   pinnedToMain  = Boolean.FALSE;
     private String    status        = DRAFT;
@@ -880,7 +884,7 @@ public class WeblogEntry implements Serializable {
             while (toker.hasMoreTokens() && count < 5) {
                 String s = toker.nextToken();
                 s = s.toLowerCase();
-                tmp = (tmp == null) ? s : tmp + "_" + s;
+                tmp = (tmp == null) ? s : tmp + TITLE_SEPARATOR + s;
                 count++;
             }
             base = tmp;
