@@ -195,7 +195,7 @@ public class SubscriptionEntry implements Serializable, Comparable {
         Iterator cats = getCategories().iterator();
         while (cats.hasNext()) {
             String catName = ((String)cats.next()).toLowerCase();
-            if (catName.indexOf(category.toLowerCase()) != -1) {
+            if (catName.contains(category.toLowerCase())) {
                 return true;
             }
         }

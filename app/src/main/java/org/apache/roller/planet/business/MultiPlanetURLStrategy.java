@@ -21,7 +21,6 @@ package org.apache.roller.planet.business;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.Map;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -41,10 +40,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
-        
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        
+        StringBuilder url = new StringBuilder();
         url.append(WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
         url.append("/").append(planet).append("/");
         
@@ -61,7 +57,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         url.append(getPlanetURL(planet));
         url.append("group/").append(group).append("/");
@@ -84,8 +80,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
-        
+        StringBuilder url = new StringBuilder();
         url.append(getPlanetGroupURL(planet, group, -1));
         url.append("feed/").append(format);
         
@@ -102,8 +97,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
-        
+        StringBuilder url = new StringBuilder();
         url.append(getPlanetGroupURL(planet, group, -1));
         url.append("opml");
         
@@ -120,10 +114,9 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
             return null;
         }
         
-        StringBuffer queryString = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
         
-        for(Iterator keys = params.keySet().iterator(); keys.hasNext();) {
-            String key = (String) keys.next();
+        for(Object key : params.keySet()) {
             String value = (String) params.get(key);
             
             if (queryString.length() == 0) {

@@ -205,16 +205,14 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public List getGroupHandles(Planet planet) throws RollerException {
-        List handles = new ArrayList();
-        Iterator list = getGroups(planet).iterator();
-        while (list.hasNext()) {
-            PlanetGroup group = (PlanetGroup) list.next();
+        List<String> handles = new ArrayList<String>();
+        for (PlanetGroup group : getGroups(planet)) {
             handles.add(group.getHandle());
         }
         return handles;
     }
     
-    public List getGroups(Planet planet) throws RollerException {
+    public List<PlanetGroup> getGroups(Planet planet) throws RollerException {
         Query q = strategy.getNamedQuery("PlanetGroup.getByPlanet");
         q.setParameter(1, planet.getHandle());
         return q.getResultList();
@@ -237,12 +235,10 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     
     public void deleteEntries(Subscription sub) 
         throws RollerException {
-        Iterator entries = sub.getEntries().iterator();
-        while(entries.hasNext()) {
-            strategy.remove(entries.next());
+        for (Object entry : sub.getEntries()) {
+            strategy.remove(entry);
         }
-        
-        // make sure and clear the other side of the assocation
+        // make sure and clear the other side of the association
         sub.getEntries().clear();
     }
     
