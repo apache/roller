@@ -235,7 +235,7 @@ public class Utilities {
             int end = m.end();
             String link = html.substring(start, end);
             buf.append(html.substring(0, start));
-            if (link.indexOf("rel=\"nofollow\"") == -1) {
+            if (link.contains("rel=\"nofollow\"")) {
                 buf.append(
                         link.substring(0, link.length() - 1) + " rel=\"nofollow\">");
             } else {

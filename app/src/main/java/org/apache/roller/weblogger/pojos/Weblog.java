@@ -616,7 +616,7 @@ public class Weblog implements Serializable {
      * Returns true if comment moderation is required by website or config.
      */ 
     public boolean getCommentModerationRequired() { 
-        return (getModerateComments().booleanValue()
+        return (getModerateComments()
          || WebloggerRuntimeConfig.getBooleanProperty("users.moderation.required"));
     }
     

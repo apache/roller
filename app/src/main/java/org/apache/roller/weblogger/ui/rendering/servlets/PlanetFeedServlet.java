@@ -100,7 +100,7 @@ public class PlanetFeedServlet extends HttpServlet {
         String accepts = request.getHeader("Accept");
         String userAgent = request.getHeader("User-Agent");
         if (accepts != null && userAgent != null
-                && accepts.indexOf("*/*") != -1
+                && accepts.contains("*/*")
                 && userAgent.startsWith("Mozilla")) {
             // client is a browser and now that we offer styled feeds we want
             // browsers to load the page rather than popping up the download
@@ -153,8 +153,8 @@ public class PlanetFeedServlet extends HttpServlet {
             }
             model.put(
                     "feedStyle",
-                    new Boolean(WebloggerRuntimeConfig
-                            .getBooleanProperty("site.newsfeeds.styledFeeds")));
+                    WebloggerRuntimeConfig
+                            .getBooleanProperty("site.newsfeeds.styledFeeds"));
 
             int numEntries = WebloggerRuntimeConfig
                     .getIntProperty("site.newsfeeds.defaultEntries");
@@ -173,7 +173,7 @@ public class PlanetFeedServlet extends HttpServlet {
                     entryCount = 0;
                 }
             }
-            model.put("entryCount", new Integer(entryCount));
+            model.put("entryCount", entryCount);
         } catch (Exception ex) {
             log.error("Error loading model objects for page", ex);
 

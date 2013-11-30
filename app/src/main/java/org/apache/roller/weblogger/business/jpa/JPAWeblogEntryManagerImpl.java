@@ -676,7 +676,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         query.setParameter(1, Boolean.TRUE);
         query.setParameter(2, WeblogEntry.PUBLISHED);
         if (max != null) {
-            query.setMaxResults(max.intValue());
+            query.setMaxResults(max);
         }
         return query.getResultList();
     }
@@ -1216,7 +1216,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                     (String)row[2],                             // entry anchor
                     (String)row[3],                             // entry title
                     "statCount.weblogEntryCommentCountType",    // stat desc
-                    ((Long)row[0]).longValue());                // count
+                    ((Long)row[0]));                            // count
             sc.setWeblogHandle((String)row[1]);
             results.add(sc);
         }
@@ -1679,7 +1679,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 "WeblogEntryComment.getCountAllDistinctByStatus");
         q.setParameter(1, WeblogEntryComment.APPROVED);
         List results = q.getResultList();
-        return ((Long)results.get(0)).longValue();
+        return ((Long)results.get(0));
     }
     
     /**
@@ -1691,7 +1691,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         q.setParameter(1, website);
         q.setParameter(2, WeblogEntryComment.APPROVED);
         List results = q.getResultList();
-        return ((Long)results.get(0)).longValue();
+        return ((Long)results.get(0));
     }
     
     /**
@@ -1702,7 +1702,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 "WeblogEntry.getCountDistinctByStatus");
         q.setParameter(1, "PUBLISHED");
         List results = q.getResultList();
-        return ((Long)results.get(0)).longValue();
+        return ((Long)results.get(0));
     }
     
     /**
@@ -1714,7 +1714,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         q.setParameter(1, "PUBLISHED");
         q.setParameter(2, website);
         List results = q.getResultList();
-        return ((Long)results.get(0)).longValue();
+        return ((Long)results.get(0));
     }
     
     /**

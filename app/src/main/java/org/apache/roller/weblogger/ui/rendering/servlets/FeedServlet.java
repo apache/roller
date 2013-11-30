@@ -133,7 +133,7 @@ public class FeedServlet extends HttpServlet {
         if (WebloggerRuntimeConfig
                 .getBooleanProperty("site.newsfeeds.styledFeeds")
                 && accepts != null
-                && accepts.indexOf("*/*") != -1
+                && accepts.contains("*/*")
                 && userAgent != null && userAgent.startsWith("Mozilla")) {
             // client is a browser and feed style is enabled so we want
             // browsers to load the page rather than popping up the download

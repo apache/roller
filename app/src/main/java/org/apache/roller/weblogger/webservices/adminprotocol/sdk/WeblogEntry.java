@@ -128,7 +128,7 @@ public class WeblogEntry extends Entry {
         // created
         Element createdElement = e.getChild(Tags.DATE_CREATED, Service.NAMESPACE);
         if (createdElement != null) {
-            setDateCreated(new Date(Long.valueOf(createdElement.getText()).longValue()));
+            setDateCreated(new Date(Long.valueOf(createdElement.getText())));
         }
         
         // APP entries URL

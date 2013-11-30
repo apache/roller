@@ -59,7 +59,7 @@ public final class WeblogUpdatePinger {
         String message;
 
         public PingResult(Boolean error, String message) {
-            this.error = error != null ? error.booleanValue() : false;
+            this.error = error != null && error;
             this.message = message != null ? message : "";
         }
 

@@ -616,7 +616,7 @@ public class PageServlet extends HttpServlet {
 
         // if this came from persons own blog then don't process it
         String selfSiteFragment = "/" + pageRequest.getWeblogHandle();
-        if (referrerUrl != null && referrerUrl.indexOf(selfSiteFragment) != -1) {
+        if (referrerUrl != null && referrerUrl.contains(selfSiteFragment)) {
             log.debug("skipping referrer from own blog");
             return false;
         }

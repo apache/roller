@@ -54,7 +54,7 @@ public class WeblogEntryCommentForm {
         this.email = comment.getEmail();
         this.url = comment.getUrl();
         this.content = comment.getContent();
-        this.notify = comment.getNotify().booleanValue();
+        this.notify = comment.getNotify();
     }
     
     public void setError(String errorMessage) {

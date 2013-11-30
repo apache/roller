@@ -539,8 +539,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(user);
         for (WeblogPermission perm : perms) {
             Weblog weblog = perm.getWeblog();
-            if (!enabledOnly || weblog.getEnabled().booleanValue()) {
-                if (weblog.getActive() != null && weblog.getActive().booleanValue()) {
+            if (!enabledOnly || weblog.getEnabled()) {
+                if (weblog.getActive() != null && weblog.getActive()) {
                     weblogs.add(weblog);
                 }
             }
@@ -557,7 +557,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 log.error("ERROR user is null, userName:" + perm.getUserName());
                 continue;
             }
-            if (!enabledOnly || user.getEnabled().booleanValue()) {
+            if (!enabledOnly || user.getEnabled()) {
                 users.add(user);
             }
         }
@@ -745,7 +745,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                     (String)row[2],                     // website handle
                     (String)row[3],                     // website name
                     "statCount.weblogCommentCountType", // stat type
-                    ((Long)row[0]).longValue());        // # comments
+                    ((Long)row[0]));        // # comments
             sc.setWeblogHandle((String)row[2]);
             results.add(sc);
         }

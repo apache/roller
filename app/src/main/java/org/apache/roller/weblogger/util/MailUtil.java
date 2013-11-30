@@ -268,7 +268,7 @@ public class MailUtil {
         
         // Only send email if email notificaiton is enabled
         boolean notify = WebloggerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-        if (!notify || !weblog.getEmailComments().booleanValue()) {
+        if (!notify || !weblog.getEmailComments()) {
             // notifications disabled, just bail
             return;
         }
@@ -523,7 +523,7 @@ public class MailUtil {
         
         // Only send email if email notificaiton is enabled
         boolean notify = WebloggerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-        if (!notify || !weblog.getEmailComments().booleanValue()) {
+        if (!notify || !weblog.getEmailComments()) {
             // notifications disabled, just bail
             return;
         }

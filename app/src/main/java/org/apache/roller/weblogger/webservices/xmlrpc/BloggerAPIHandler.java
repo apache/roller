@@ -335,7 +335,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
                 entry.setText(content);
                 entry.setUpdateTime(current);
-                if (Boolean.valueOf(publish).booleanValue()) {
+                if (publish) {
                     entry.setStatus(WeblogEntry.PUBLISHED);
                 } else {
                     entry.setStatus(WeblogEntry.DRAFT);
@@ -387,7 +387,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         // extract the title from the content
         String title = "";
         
-        if (content.indexOf("<title>") != -1) {
+        if (content.contains("<title>")) {
             title =
                     content.substring(content.indexOf("<title>") + 7,
                     content.indexOf("</title>"));
@@ -413,8 +413,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entry.setCreatorUserName(user.getUserName());
             entry.setWebsite(website);
             entry.setCategory(website.getBloggerCategory());
-            entry.setCommentDays(new Integer(website.getDefaultCommentDays()));
-            if (Boolean.valueOf(publish).booleanValue()) {
+            entry.setCommentDays(website.getDefaultCommentDays());
+            if (publish) {
                 entry.setStatus(WeblogEntry.PUBLISHED);
             } else {
                 entry.setStatus(WeblogEntry.DRAFT);

@@ -110,7 +110,7 @@ public class RollerSession
                         }
                     }
                     // only set authenticated user if user is enabled
-                    if (user != null && user.getEnabled().booleanValue()) {
+                    if (user != null && user.getEnabled()) {
                         rollerSession.setAuthenticatedUser(user);
                     }
                     

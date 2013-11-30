@@ -329,7 +329,7 @@ public class PingConfig {
             }
             return defaultValue;
         }
-        return Boolean.valueOf(configuredVal).booleanValue();
+        return Boolean.valueOf(configuredVal);
     }
 
 

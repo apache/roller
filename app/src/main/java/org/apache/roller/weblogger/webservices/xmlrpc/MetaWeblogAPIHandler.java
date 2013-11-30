@@ -164,7 +164,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             }
             entry.setText(description);
             entry.setUpdateTime(current);
-            if (Boolean.valueOf(publish).booleanValue()) {
+            if (publish) {
                 entry.setStatus(WeblogEntry.PUBLISHED);
             } else {
                 entry.setStatus(WeblogEntry.DRAFT);
@@ -262,7 +262,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             entry.setUpdateTime(current);
             entry.setWebsite(website);
             entry.setCreatorUserName(user.getUserName());
-            entry.setCommentDays(new Integer(website.getDefaultCommentDays()));
+            entry.setCommentDays(website.getDefaultCommentDays());
             entry.setAllowComments(website.getDefaultAllowComments());
         
             // apply weblog default plugins
@@ -270,7 +270,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                 entry.setPlugins(website.getDefaultPlugins());
             }
             
-            if (Boolean.valueOf(publish).booleanValue()) {
+            if (publish) {
                 entry.setStatus(WeblogEntry.PUBLISHED);
             } else {
                 entry.setStatus(WeblogEntry.DRAFT);

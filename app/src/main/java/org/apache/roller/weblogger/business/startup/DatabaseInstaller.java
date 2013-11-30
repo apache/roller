@@ -758,19 +758,19 @@ public class DatabaseInstaller {
         
         String productName = con.getMetaData().getDatabaseProductName();
         String handle = "mysql";
-        if (       productName.toLowerCase().indexOf("mysql") != -1) {
+        if (       productName.toLowerCase().contains("mysql")) {
             handle =  "mysql";
-        } else if (productName.toLowerCase().indexOf("derby") != -1) {
+        } else if (productName.toLowerCase().contains("derby")) {
             handle =  "derby";
-        } else if (productName.toLowerCase().indexOf("hsql") != -1) {
+        } else if (productName.toLowerCase().contains("hsql")) {
             handle =  "hsqldb";
-        } else if (productName.toLowerCase().indexOf("postgres") != -1) {
+        } else if (productName.toLowerCase().contains("postgres")) {
             handle =  "postgresql";
-        } else if (productName.toLowerCase().indexOf("oracle") != -1) {
+        } else if (productName.toLowerCase().contains("oracle")) {
             handle =  "oracle";
-        } else if (productName.toLowerCase().indexOf("microsoft") != -1) {
+        } else if (productName.toLowerCase().contains("microsoft")) {
             handle =  "mssql";
-        } else if (productName.toLowerCase().indexOf("db2") != -1) {   
+        } else if (productName.toLowerCase().contains("db2")) {
             handle =  "db2";
         }
         
