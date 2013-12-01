@@ -22,11 +22,8 @@ import java.util.Set;
 import org.apache.roller.util.UUIDGenerator;
 import java.util.TreeSet;
 
-
 /**
  * A Roller "Planet".
- * 
- * @hibernate.class lazy="true" table="rag_planet"
  */
 public class Planet implements Comparable {
     
@@ -56,10 +53,6 @@ public class Planet implements Comparable {
         return getTitle().compareTo(other.getTitle());
     }
     
-    
-    /**
-     * @hibernate.id column="id" generator-class="assigned"
-     */
     public String getId() {
         return id;
     }
@@ -68,10 +61,6 @@ public class Planet implements Comparable {
         this.id = id;
     }
     
-    
-    /**
-     * @hibernate.property column="handle" non-null="true" unique="true"
-     */
     public String getHandle() {
         return handle;
     }
@@ -80,10 +69,6 @@ public class Planet implements Comparable {
         this.handle = handle;
     }
     
-       
-    /**
-     * @hibernate.property column="title" non-null="true" unique="false"
-     */
     public String getTitle() {
         return title;
     }
@@ -92,10 +77,6 @@ public class Planet implements Comparable {
         this.title = title;
     }
     
-    
-    /**
-     * @hibernate.property column="description" non-null="false" unique="false"
-     */
     public String getDescription() {
         return description;
     }
@@ -104,12 +85,6 @@ public class Planet implements Comparable {
         this.description = description;
     }
 
-    
-    /** 
-     * @hibernate.set lazy="true" inverse="true" cascade="all" sort="natural"
-     * @hibernate.collection-key column="planet_id"
-     * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetGroup"
-     */
     public Set getGroups() {
         return groups;
     }

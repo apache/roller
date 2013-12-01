@@ -50,6 +50,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.I18nMessages;
@@ -58,10 +59,7 @@ import org.apache.roller.weblogger.util.Utilities;
 /**
  * Represents a Weblog Entry.
  *
- * @ejb:bean name="WeblogEntry"
  * @struts.form include-all="true"
- * @hibernate.class lazy="true" table="weblogentry"
- * @hibernate.cache usage="read-write"
  */
 public class WeblogEntry implements Serializable {
     private static Log mLogger =
@@ -73,7 +71,10 @@ public class WeblogEntry implements Serializable {
     public static final String PUBLISHED = "PUBLISHED";
     public static final String PENDING   = "PENDING";
     public static final String SCHEDULED = "SCHEDULED";
-    
+
+    private static final char TITLE_SEPARATOR =
+        WebloggerConfig.getBooleanProperty("weblogentry.title.useUnderscoreSeparator") ? '_' : '-';
+
     // Simple properies
     private String    id            = UUIDGenerator.generateUUID();
     private String    title         = null;
@@ -87,7 +88,7 @@ public class WeblogEntry implements Serializable {
     private Timestamp updateTime    = null;
     private String    plugins       = null;
     private Boolean   allowComments = Boolean.TRUE;
-    private Integer   commentDays   = new Integer(7);
+    private Integer   commentDays   = 7;
     private Boolean   rightToLeft   = Boolean.FALSE;
     private Boolean   pinnedToMain  = Boolean.FALSE;
     private String    status        = DRAFT;
@@ -204,16 +205,10 @@ public class WeblogEntry implements Serializable {
     
    //------------------------------------------------------ Simple properties
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="assigned"  
-     */
     public String getId() {
         return this.id;
     }
     
-    /** @ejb:persistent-field */
     public void setId(String id) {
         // Form bean workaround: empty string is never a valid id
         if (id != null && id.trim().length() == 0) {
@@ -222,16 +217,10 @@ public class WeblogEntry implements Serializable {
         this.id = id;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="categoryid" cascade="none" not-null="true"
-     */
     public WeblogCategory getCategory() {
         return this.category;
     }
     
-    /** @ejb:persistent-field */
     public void setCategory(WeblogCategory category) {
         this.category = category;
     }
@@ -239,8 +228,6 @@ public class WeblogEntry implements Serializable {
     /**
      * Return collection of WeblogCategory objects of this entry.
      * Added for symetry with PlanetEntryData object.
-     * 
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogCategory"
      */
     public List getCategories() {
         List cats = new ArrayList();
@@ -253,23 +240,14 @@ public class WeblogEntry implements Serializable {
         // no-op
     }
     
-    /**
-     * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
-     */
     public Weblog getWebsite() {
         return this.website;
     }
     
-    /** @ejb:persistent-field */
     public void setWebsite(Weblog website) {
         this.website = website;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
     public User getCreator() {
         try {
             return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
@@ -287,25 +265,16 @@ public class WeblogEntry implements Serializable {
         this.creatorUserName = creatorUserName;
     }   
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="title" non-null="true" unique="false"
-     */
     public String getTitle() {
         return this.title;
     }
     
-    /** @ejb:persistent-field */
     public void setTitle(String title) {
         this.title = title;
     }
     
     /**
      * Get summary for weblog entry (maps to RSS description and Atom summary).
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="summary" non-null="false" unique="false"
      */
     public String getSummary() {
         return summary;
@@ -313,7 +282,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Set summary for weblog entry (maps to RSS description and Atom summary).
-     * @ejb:persistent-field
      */
     public void setSummary(String summary) {
         this.summary = summary;
@@ -321,9 +289,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Get search description for weblog entry.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="search_description" non-null="false" unique="false"
      */
     public String getSearchDescription() {
         return searchDescription;
@@ -331,7 +296,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Set search description for weblog entry
-     * @ejb:persistent-field
      */
     public void setSearchDescription(String searchDescription) {
         this.searchDescription = searchDescription;
@@ -339,9 +303,6 @@ public class WeblogEntry implements Serializable {
 
     /**
      * Get content text for weblog entry (maps to RSS content:encoded and Atom content).
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="text" non-null="true" unique="false"
      */
     public String getText() {
         return this.text;
@@ -349,7 +310,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Set content text for weblog entry (maps to RSS content:encoded and Atom content).
-     * @ejb:persistent-field
      */
     public void setText(String text) {
         this.text = text;
@@ -357,9 +317,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Get content type (text, html, xhtml or a MIME content type)
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="content_type" non-null="false" unique="false"
      */
     public String getContentType() {
         return contentType;
@@ -367,7 +324,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Set content type (text, html, xhtml or a MIME content type)
-     * @ejb:persistent-field
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
@@ -375,9 +331,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Get URL for out-of-line content.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="content_src" non-null="false" unique="false"
      */
     public String getContentSrc() {
         return contentSrc;
@@ -385,22 +338,15 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Set URL for out-of-line content.
-     * @ejb:persistent-field
      */
     public void setContentSrc(String contentSrc) {
         this.contentSrc = contentSrc;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="anchor" non-null="true" unique="false"
-     */
     public String getAnchor() {
         return this.anchor;
     }
     
-    /** @ejb:persistent-field */
     public void setAnchor(String anchor) {
         this.anchor = anchor;
     }
@@ -408,26 +354,17 @@ public class WeblogEntry implements Serializable {
     //-------------------------------------------------------------------------
     /**
      * Map attributes as set because XDoclet 1.2b4 map support is broken.
-     *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryAttribute"
-     * @ejb:persistent-field
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all"
-     * @hibernate.collection-key column="entryid" type="String"
-     * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogEntryAttribute"
      */
     public Set getEntryAttributes() {
         return attSet;
     }
-    /** @ejb:persistent-field */
+
     public void setEntryAttributes(Set atts) {
         this.attSet = atts;
     }
     
-    
     /**
      * Would be named getEntryAttribute, but that would set off XDoclet
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public String findEntryAttribute(String name) {
         if (getEntryAttributes() != null) {
@@ -473,16 +410,11 @@ public class WeblogEntry implements Serializable {
      *
      * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on
      * MySQL has only a one-second resolution.</p>
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="pubtime" non-null="true" unique="false"
      */
     public Timestamp getPubTime() {
         return this.pubTime;
     }
     
-    /** @ejb:persistent-field */
     public void setPubTime(Timestamp pubTime) {
         this.pubTime = pubTime;
     }
@@ -497,30 +429,19 @@ public class WeblogEntry implements Serializable {
      *
      * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on
      * MySQL has only a one-second resolution.</p>
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="updatetime" non-null="true" unique="false"
      */
     public Timestamp getUpdateTime() {
         return this.updateTime;
     }
     
-    /** @ejb:persistent-field */
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="status" non-null="true" unique="false"
-     */
     public String getStatus() {
         return this.status;
     }
     
-    /** @ejb:persistent-field */
     public void setStatus(String status) {
         this.status = status;
     }
@@ -528,17 +449,12 @@ public class WeblogEntry implements Serializable {
     /**
      * Some weblog entries are about one specific link.
      * @return Returns the link.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="link" non-null="false" unique="false"
      */
     public String getLink() {
         return link;
     }
     
     /**
-     * @ejb:persistent-field
      * @param link The link to set.
      */
     public void setLink(String link) {
@@ -547,34 +463,23 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Comma-delimited list of this entry's Plugins.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="plugins" non-null="false" unique="false"
      */
     public String getPlugins() {
         return plugins;
     }
     
-    /** @ejb:persistent-field */
     public void setPlugins(String string) {
         plugins = string;
     }
-    
-    
+
     /**
      * True if comments are allowed on this weblog entry.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="allowcomments" non-null="true" unique="false"
      */
     public Boolean getAllowComments() {
         return allowComments;
     }
     /**
      * True if comments are allowed on this weblog entry.
-     * @ejb:persistent-field
      */
     public void setAllowComments(Boolean allowComments) {
         this.allowComments = allowComments;
@@ -582,17 +487,12 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Number of days after pubTime that comments should be allowed, or 0 for no limit.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="commentdays" non-null="true" unique="false"
      */
     public Integer getCommentDays() {
         return commentDays;
     }
     /**
      * Number of days after pubTime that comments should be allowed, or 0 for no limit.
-     * @ejb:persistent-field
      */
     public void setCommentDays(Integer commentDays) {
         this.commentDays = commentDays;
@@ -600,17 +500,12 @@ public class WeblogEntry implements Serializable {
     
     /**
      * True if this entry should be rendered right to left.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="righttoleft" non-null="true" unique="false"
      */
     public Boolean getRightToLeft() {
         return rightToLeft;
     }
     /**
      * True if this entry should be rendered right to left.
-     * @ejb:persistent-field
      */
     public void setRightToLeft(Boolean rightToLeft) {
         this.rightToLeft = rightToLeft;
@@ -619,10 +514,6 @@ public class WeblogEntry implements Serializable {
     /**
      * True if story should be pinned to the top of the Roller site main blog.
      * @return Returns the pinned.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="pinnedtomain" non-null="true" unique="false"
      */
     public Boolean getPinnedToMain() {
         return pinnedToMain;
@@ -630,37 +521,22 @@ public class WeblogEntry implements Serializable {
     /**
      * True if story should be pinned to the top of the Roller site main blog.
      * @param pinnedToMain The pinned to set.
-     *
-     * @ejb:persistent-field
      */
     public void setPinnedToMain(Boolean pinnedToMain) {
         this.pinnedToMain = pinnedToMain;
     }
-    
-    
+
     /**
      * The locale string that defines the i18n approach for this entry.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="locale" non-null="false" unique="false"
      */
     public String getLocale() {
         return locale;
     }
-    
-    
+
     public void setLocale(String locale) {
         this.locale = locale;
     }
     
-    /**
-     * @ejb:persistent-field 
-     * 
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all"
-     * @hibernate.collection-key column="entryid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogEntryTag"
-     */
      public Set<WeblogEntryTag> getTags()
      {
          return tagSet;
@@ -753,11 +629,8 @@ public class WeblogEntry implements Serializable {
         }
     }
    
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
     public String getTagsAsString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // Sort by name
         Set<WeblogEntryTag> tmp = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
         tmp.addAll(getTags());
@@ -786,21 +659,19 @@ public class WeblogEntry implements Serializable {
      * True if comments are still allowed on this entry considering the
      * allowComments and commentDays fields as well as the website and 
      * site-wide configs.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public boolean getCommentsStillAllowed() {
         if (!WebloggerRuntimeConfig.getBooleanProperty("users.comments.enabled")) {
             return false;
         }
-        if (getWebsite().getAllowComments() != null && !getWebsite().getAllowComments().booleanValue()) {
+        if (getWebsite().getAllowComments() != null && !getWebsite().getAllowComments()) {
             return false;
         }
-        if (getAllowComments() != null && !getAllowComments().booleanValue()) {
+        if (getAllowComments() != null && !getAllowComments()) {
             return false;
         }
         boolean ret = false;
-        if (getCommentDays() == null || getCommentDays().intValue() == 0) {
+        if (getCommentDays() == null || getCommentDays() == 0) {
             ret = true;
         } else {
             // we want to use pubtime for calculating when comments expire, but
@@ -813,7 +684,7 @@ public class WeblogEntry implements Serializable {
             Calendar expireCal = Calendar.getInstance(
                     getWebsite().getLocaleInstance());
             expireCal.setTime(inPubTime);
-            expireCal.add(Calendar.DATE, getCommentDays().intValue());
+            expireCal.add(Calendar.DATE, getCommentDays());
             Date expireDay = expireCal.getTime();
             Date today = new Date();
             if (today.before(expireDay)) {
@@ -833,7 +704,6 @@ public class WeblogEntry implements Serializable {
      * Format the publish time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
      *
-     * @roller.wrapPojoMethod type="simple"
      * @see java.text.SimpleDateFormat
      * @return Publish time formatted according to pattern.
      */
@@ -856,7 +726,6 @@ public class WeblogEntry implements Serializable {
      * Format the update time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
      *
-     * @roller.wrapPojoMethod type="simple"
      * @see java.text.SimpleDateFormat
      * @return Update time formatted according to pattern.
      */
@@ -874,16 +743,11 @@ public class WeblogEntry implements Serializable {
     
     //------------------------------------------------------------------------
     
-    /**
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryComment"
-     */
     public List getComments() {
         return getComments(true, true);
     }
     
     /**
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryComment"
-     *
      * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
     public List getComments(boolean ignoreSpam, boolean approvedOnly) {
@@ -904,9 +768,6 @@ public class WeblogEntry implements Serializable {
         return list;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */    
     public int getCommentCount() {
         List comments = getComments(true, true);
         return comments.size();
@@ -917,11 +778,6 @@ public class WeblogEntry implements Serializable {
         // no-op
     }
     
-    //------------------------------------------------------------------------
-    
-    /**
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.RefererData"
-     */
     public List getReferers() {
         List referers = null;
         try {
@@ -944,7 +800,6 @@ public class WeblogEntry implements Serializable {
     /**
      * Returns entry permalink, relative to Roller context.
      * @deprecated Use getPermalink() instead.
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getPermaLink() {
         String lAnchor = this.getAnchor();        
@@ -958,7 +813,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Get relative URL to comments page.
-     * @roller.wrapPojoMethod type="simple"
      * @deprecated Use commentLink() instead
      */
     public String getCommentsLink() {
@@ -976,7 +830,6 @@ public class WeblogEntry implements Serializable {
      * Return the Title of this post, or the first 255 characters of the
      * entry's text.
      *
-     * @roller.wrapPojoMethod type="simple"
      * @return String
      */
     public String getDisplayTitle() {
@@ -988,8 +841,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Return RSS 09x style description (escaped HTML version of entry text)
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getRss09xDescription() {
         return getRss09xDescription(-1);
@@ -997,8 +848,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Return RSS 09x style description (escaped HTML version of entry text)
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getRss09xDescription(int maxLength) {
         String ret = StringEscapeUtils.escapeHtml(getText());
@@ -1035,7 +884,7 @@ public class WeblogEntry implements Serializable {
             while (toker.hasMoreTokens() && count < 5) {
                 String s = toker.nextToken();
                 s = s.toLowerCase();
-                tmp = (tmp == null) ? s : tmp + "_" + s;
+                tmp = (tmp == null) ? s : tmp + TITLE_SEPARATOR + s;
                 count++;
             }
             base = tmp;
@@ -1078,8 +927,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Convenience method to transform mPlugins to a List
-     *
-     * @roller.wrapPojoMethod type="simple"
      * @return
      */
     public List getPluginsList() {
@@ -1115,7 +962,6 @@ public class WeblogEntry implements Serializable {
   
     /**
      * Get entry text, transformed by plugins enabled for entry.
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getTransformedText() {
         return render(getText());
@@ -1129,7 +975,6 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Get entry summary, transformed by plugins enabled for entry.
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getTransformedSummary() {
         return render(getSummary());
@@ -1218,8 +1063,6 @@ public class WeblogEntry implements Serializable {
      * prefer summary over content and we include a "Read More" link at the
      * end of the summary if it exists.  Otherwise, if the readMoreLink is
      * empty or null then we assume the caller prefers content over summary.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public String displayContent(String readMoreLink) {
         
@@ -1260,17 +1103,11 @@ public class WeblogEntry implements Serializable {
     
     /**
      * Get the right transformed display content.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getDisplayContent() { 
         return displayContent(null);
     }
-    
-    
+
     /** No-op method to please XDoclet */
     public void setDisplayContent(String ignored) {}
-
-
-    
 }

@@ -141,7 +141,7 @@ public class CreateUserBean {
         dataHolder.setEmailAddress(this.emailAddress);
         dataHolder.setLocale(this.locale);
         dataHolder.setTimeZone(this.timeZone);
-        dataHolder.setEnabled(new Boolean(this.enabled));
+        dataHolder.setEnabled(this.enabled);
         dataHolder.setActivationCode(this.activationCode);
     }
     

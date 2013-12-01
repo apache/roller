@@ -51,7 +51,7 @@ import org.apache.roller.weblogger.util.I18nUtils;
 /**
  * Website has many-to-many association with users. Website has one-to-many and
  * one-direction associations with weblog entries, weblog categories, folders and
- * other objects. Use UserManager to create, fetch, update and retreive websites.
+ * other objects. Use UserManager to create, fetch, update and retrieve websites.
  *
  * @author David M Johnson
  */
@@ -160,12 +160,6 @@ public class Weblog implements Serializable {
             .toHashCode();
     } 
     
-    /**
-     * @hibernate.bag lazy="true" inverse="true" cascade="delete"
-     * @hibernate.collection-key column="website_id"
-     * @hibernate.collection-one-to-many
-     *    class="org.apache.roller.weblogger.pojos.WeblogPermission"
-     */
     /*public List getPermissions() {
         return permissions;
     }
@@ -208,48 +202,33 @@ public class Weblog implements Serializable {
     
     /**
      * Id of the Website.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.id column="id"
-     *  generator-class="assigned"  
      */
     public String getId() {
         return this.id;
     }
     
-    /** @ejb:persistent-field */
     public void setId(String id) {
         this.id = id;
     }
     
     /**
      * Short URL safe string that uniquely identifies the website.
-     * @ejb:persistent-field
-     * @hibernate.property column="handle" non-null="true" unique="true"
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getHandle() {
         return this.handle;
     }
     
-    /** @ejb:persistent-field */
     public void setHandle(String handle) {
         this.handle = handle;
     }
     
     /**
      * Name of the Website.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="name" non-null="true" unique="false"
      */
     public String getName() {
         return this.name;
     }
     
-    /** @ejb:persistent-field */
     public void setName(String name) {
         this.name = name;
     }
@@ -257,22 +236,17 @@ public class Weblog implements Serializable {
     /**
      * Description
      *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="description" non-null="true" unique="false"
      */
     public String getDescription() {
         return this.description;
     }
     
-    /** @ejb:persistent-field */
     public void setDescription(String description) {
         this.description = description;
     }
     
     /**
      * Original creator of website.
-     * @roller.wrapPojoMethod type="pojo"
      */
     public org.apache.roller.weblogger.pojos.User getCreator() {
         try {
@@ -285,7 +259,6 @@ public class Weblog implements Serializable {
     
     /**
      * Username of original creator of website.
-     * @roller.wrapPojoMethod type="pojo"
      */
     public String getCreatorUserName() {
         return creator;
@@ -295,27 +268,16 @@ public class Weblog implements Serializable {
         creator = creatorUserName;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="defaultpageid" non-null="true" unique="false"
-     */
     public String getDefaultPageId() {
         return this.defaultPageId;
     }
     
-    /**
-     * @ejb:persistent-field
-     */
     public void setDefaultPageId(String defaultPageId) {
         this.defaultPageId = defaultPageId;
     }
     
     /**
-     * @roller.wrapPojoMethod type="simple"
      * @deprecated
-     * @ejb:persistent-field
-     * @hibernate.property column="weblogdayid" non-null="true" unique="false"
      */
     public String getWeblogDayPageId() {
         return this.weblogDayPageId;
@@ -323,36 +285,23 @@ public class Weblog implements Serializable {
     
     /**
      * @deprecated
-     * @ejb:persistent-field
      */
     public void setWeblogDayPageId(String weblogDayPageId) {
         this.weblogDayPageId = weblogDayPageId;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="enablebloggerapi" non-null="true" unique="false"
-     */
     public Boolean getEnableBloggerApi() {
         return this.enableBloggerApi;
     }
     
-    /** @ejb:persistent-field */
     public void setEnableBloggerApi(Boolean enableBloggerApi) {
         this.enableBloggerApi = enableBloggerApi;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="bloggercatid" non-null="false" cascade="none"
-     */
     public WeblogCategory getBloggerCategory() {
         return bloggerCategory;
     }
     
-    /** @ejb:persistent-field */
     public void setBloggerCategory(WeblogCategory bloggerCategory) {
         this.bloggerCategory = bloggerCategory;
     }
@@ -361,199 +310,120 @@ public class Weblog implements Serializable {
      * By default,the default category for a weblog is the root and all macros
      * work with the top level categories that are immediately under the root.
      * Setting a different default category allows you to partition your weblog.
-     *
-     * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="defaultcatid" non-null="false" cascade="none"
      */
     public WeblogCategory getDefaultCategory() {
         return defaultCategory;
     }
     
-    /** @ejb:persistent-field */
     public void setDefaultCategory(WeblogCategory defaultCategory) {
         this.defaultCategory = defaultCategory;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="editorpage" non-null="true" unique="false"
-     */
     public String getEditorPage() {
         return this.editorPage;
     }
     
-    /** @ejb:persistent-field */
     public void setEditorPage(String editorPage) {
         this.editorPage = editorPage;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="blacklist" non-null="true" unique="false"
-     */
     public String getBlacklist() {
         return this.blacklist;
     }
     
-    /** @ejb:persistent-field */
     public void setBlacklist(String blacklist) {
         this.blacklist = blacklist;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="allowcomments" non-null="true" unique="false"
-     */
     public Boolean getAllowComments() {
         return this.allowComments;
     }
     
-    /** @ejb:persistent-field */
     public void setAllowComments(Boolean allowComments) {
         this.allowComments = allowComments;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="defaultallowcomments" non-null="true" unique="false"
-     */
     public Boolean getDefaultAllowComments() {
         return defaultAllowComments;
     }
     
-    /** @ejb:persistent-field */
     public void setDefaultAllowComments(Boolean defaultAllowComments) {
         this.defaultAllowComments = defaultAllowComments;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="defaultcommentdays" non-null="true" unique="false"
-     */
     public int getDefaultCommentDays() {
         return defaultCommentDays;
     }
     
-    /** @ejb:persistent-field */
     public void setDefaultCommentDays(int defaultCommentDays) {
         this.defaultCommentDays = defaultCommentDays;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="commentmod" non-null="true" unique="false"
-     */
     public Boolean getModerateComments() {
         return moderateComments;
     }
     
-    /** @ejb:persistent-field */
     public void setModerateComments(Boolean moderateComments) {
         this.moderateComments = moderateComments;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="emailcomments" non-null="true" unique="false"
-     */
     public Boolean getEmailComments() {
         return this.emailComments;
     }
     
-    /** @ejb:persistent-field */
     public void setEmailComments(Boolean emailComments) {
         this.emailComments = emailComments;
     }
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="emailfromaddress" non-null="true" unique="false"
-     */
     public String getEmailFromAddress() {
         return this.emailFromAddress;
     }
     
-    /** @ejb:persistent-field */
     public void setEmailFromAddress(String emailFromAddress) {
         this.emailFromAddress = emailFromAddress;
     }
     
-    /**
-     * @ejb:persistent-field
-     * @roller.wrapPojoMethod type="simple"
-     * @hibernate.property column="emailaddress" non-null="true" unique="false"
-     */
     public String getEmailAddress() {
         return this.emailAddress;
     }
     
-    /** @ejb:persistent-field */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
     
     /**
      * EditorTheme of the Website.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="editortheme" non-null="true" unique="false"
      */
     public String getEditorTheme() {
         return this.editorTheme;
     }
     
-    /** @ejb:persistent-field */
     public void setEditorTheme(String editorTheme) {
         this.editorTheme = editorTheme;
     }
     
     /**
      * Locale of the Website.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="locale" non-null="true" unique="false"
      */
     public String getLocale() {
         return this.locale;
     }
     
-    /** @ejb:persistent-field */
     public void setLocale(String locale) {
         this.locale = locale;
     }
     
     /**
      * Timezone of the Website.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="timeZone" non-null="true" unique="false"
      */
     public String getTimeZone() {
         return this.timeZone;
     }
     
-    /** @ejb:persistent-field */
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="datecreated" non-null="true" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
     public Date getDateCreated() {
         if (dateCreated == null) {
             return null;
@@ -561,7 +431,7 @@ public class Weblog implements Serializable {
             return (Date)dateCreated.clone();
         }
     }
-    /** @ejb:persistent-field */
+
     public void setDateCreated(final Date date) {
         if (date != null) {
             dateCreated = (Date)date.clone();
@@ -572,21 +442,15 @@ public class Weblog implements Serializable {
     
     /**
      * Comma-delimited list of user's default Plugins.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="defaultplugins" non-null="false" unique="false"
      */
     public String getDefaultPlugins() {
         return defaultPlugins;
     }
     
-    /** @ejb:persistent-field */
     public void setDefaultPlugins(String string) {
         defaultPlugins = string;
     }
-    
-    
+
     /**
      * Set bean properties based on other bean.
      */
@@ -634,8 +498,6 @@ public class Weblog implements Serializable {
     /**
      * Return TimeZone instance for value of timeZone,
      * otherwise return system default instance.
-     *
-     * @roller.wrapPojoMethod type="simple"
      * @return TimeZone
      */
     public TimeZone getTimeZoneInstance() {
@@ -719,34 +581,21 @@ public class Weblog implements Serializable {
         // no-op
     }
 
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="displaycnt" not-null="true"
-     */
     public int getEntryDisplayCount() {
         return entryDisplayCount;
     }
     
-    /**
-     * @ejb:persistent-field
-     */
     public void setEntryDisplayCount(int entryDisplayCount) {
         this.entryDisplayCount = entryDisplayCount;
     }
     
     /**
      * Set to FALSE to completely disable and hide this weblog from public view.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="isenabled" non-null="true" unique="false"
      */
     public Boolean getEnabled() {
         return this.enabled;
     }
     
-    /** @ejb:persistent-field */
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
@@ -754,10 +603,6 @@ public class Weblog implements Serializable {
     /**
      * Set to FALSE to exclude this weblog from community areas such as the
      * front page and the planet page.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="isactive" not-null="true"
      */
     public Boolean getActive() {
         return active;
@@ -771,7 +616,7 @@ public class Weblog implements Serializable {
      * Returns true if comment moderation is required by website or config.
      */ 
     public boolean getCommentModerationRequired() { 
-        return (getModerateComments().booleanValue()
+        return (getModerateComments()
          || WebloggerRuntimeConfig.getBooleanProperty("users.moderation.required"));
     }
     
@@ -788,9 +633,6 @@ public class Weblog implements Serializable {
      * affect visible changes to a weblog, and referrers change so often that
      * it would diminish the usefulness of the attribute.
      *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="lastmodified" not-null="true"
      */
     public Date getLastModified() {
         return lastModified;
@@ -805,10 +647,6 @@ public class Weblog implements Serializable {
      * Is multi-language blog support enabled for this weblog?
      *
      * If false then urls with various locale restrictions should fail.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="enablemultilang" not-null="true"
      */
     public boolean isEnableMultiLang() {
         return enableMultiLang;
@@ -824,10 +662,6 @@ public class Weblog implements Serializable {
      *
      * If false then the default weblog view only shows entry from the
      * default locale chosen for this weblog.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="showalllangs" not-null="true"
      */
     public boolean isShowAllLangs() {
         return showAllLangs;
@@ -837,28 +671,17 @@ public class Weblog implements Serializable {
         this.showAllLangs = showAllLangs;
     }
     
-    
-    /** 
-     * @roller.wrapPojoMethod type="simple"
-     */
     public String getURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, false);
     }
 
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
     public String getAbsoluteURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, true);
     }
-    
-    
+
     /**
      * Comma-separated list of additional page models to be created when this
      * weblog is rendered.
-     *
-     * @ejb:persistent-field
-     * @hibernate.property column="pagemodels" not-null="false"
      */
     public String getPageModels() {
         return pageModels;
@@ -870,8 +693,6 @@ public class Weblog implements Serializable {
     
     /**
      * The path under the weblog's resources to a stylesheet override.
-     *
-     * @hibernate.property column="customstylesheet" not-null="false"
      */
     public String getCustomStylesheetPath() {
         return customStylesheetPath;
@@ -884,8 +705,6 @@ public class Weblog implements Serializable {
     
     /**
      * The path under the weblog's resources to an icon image.
-     *
-     * @hibernate.property column="icon" not-null="false"
      */
     public String getIconPath() {
         return iconPath;
@@ -903,7 +722,6 @@ public class Weblog implements Serializable {
      * description is meant to hold more of a tagline, while this attribute is
      * more of a full paragraph (or two) about section.
      *
-     * @hibernate.property column="about" not-null="false"
      */
     public String getAbout() {
         return about;
@@ -934,7 +752,6 @@ public class Weblog implements Serializable {
      * Get weblog entry specified by anchor or null if no such entry exists.
      * @param anchor Weblog entry anchor
      * @return Weblog entry specified by anchor
-     * @roller.wrapPojoMethod type="simple"
      */
     public WeblogEntry getWeblogEntry(String anchor) {
         WeblogEntry entry = null;
@@ -950,8 +767,6 @@ public class Weblog implements Serializable {
     
     /**
      * Returns categories under the default category of the weblog.
-     * 
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogCategory"
      */
     public Set getWeblogCategories() {
         WeblogCategory category = this.getDefaultCategory();
@@ -959,11 +774,6 @@ public class Weblog implements Serializable {
     }
     
     
-    /**
-     * 
-     * 
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojosWeblogCategorya"
-     */
     public Set getWeblogCategories(String categoryPath) {
         Set ret = new HashSet();
         try {
@@ -982,12 +792,6 @@ public class Weblog implements Serializable {
         return ret;
     }
 
-    
-    /**
-     * 
-     * 
-     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.weblogger.pojosWeblogCategorya"
-     */
     public WeblogCategory getWeblogCategory(String categoryPath) {
         WeblogCategory category = null;
         try {
@@ -1010,8 +814,6 @@ public class Weblog implements Serializable {
      * @param cat Category path or null for no category restriction
      * @param length Max entries to return (1-100)
      * @return List of weblog entry objects.
-     *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryData"
      */
     public List getRecentWeblogEntries(String cat, int length) {  
         if (cat != null && "nil".equals(cat)) {
@@ -1051,8 +853,6 @@ public class Weblog implements Serializable {
      * @param tag Blog entry tag to query by
      * @param length Max entries to return (1-100)
      * @return List of weblog entry objects.
-     *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryData"
      */
     public List getRecentWeblogEntriesByTag(String tag, int length) {  
         if (tag != null && "nil".equals(tag)) {
@@ -1095,8 +895,6 @@ public class Weblog implements Serializable {
      * Get up to 100 most recent approved and non-spam comments in weblog.
      * @param length Max entries to return (1-100)
      * @return List of comment objects.
-     *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryComment"
      */
     public List getRecentComments(int length) {   
         if (length > 100) {
@@ -1129,8 +927,6 @@ public class Weblog implements Serializable {
      * Get bookmark folder by name.
      * @param folderName Name or path of bookmark folder to be returned (null for root)
      * @return Folder object requested.
-     *
-     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"
      */
     public WeblogBookmarkFolder getBookmarkFolder(String folderName) {
         WeblogBookmarkFolder ret = null;
@@ -1151,7 +947,6 @@ public class Weblog implements Serializable {
     
     /** 
      * Return collection of referrers for current day.
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogReferrer"
      */
     public List getTodaysReferrers() {
         try {
@@ -1169,7 +964,6 @@ public class Weblog implements Serializable {
     
     /**
      * Get number of hits counted today.
-     * @roller.wrapPojoMethod type="simple"
      */
     public int getTodaysHits() {
         try {
@@ -1195,8 +989,6 @@ public class Weblog implements Serializable {
      * @param sinceDays Number of days into past (or -1 for all days)
      * @param length    Max number of tags to return.
      * @return          Collection of WeblogEntryTag objects
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public List getPopularTags(int sinceDays, int length) {
         List results = new ArrayList();
@@ -1217,9 +1009,6 @@ public class Weblog implements Serializable {
         return results;
     }      
 
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
     public long getCommentCount() {
         long count = 0;
         try {
@@ -1235,9 +1024,6 @@ public class Weblog implements Serializable {
     /** No-op method to please XDoclet */
     public void setCommentCount(int ignored) {}
     
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
     public long getEntryCount() {
         long count = 0;
         try {
@@ -1253,12 +1039,9 @@ public class Weblog implements Serializable {
     /** No-op method to please XDoclet */
     public void setEntryCount(int ignored) {}
 
-
     /**
-     *
      * @return  mobileTheme
      */
-
     public Theme getTheme(String type){
         WeblogThemeAssoc themeAssoc;
         Theme theme = null;

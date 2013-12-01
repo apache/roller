@@ -30,17 +30,17 @@ import org.apache.commons.codec.binary.Hex;
  */
 public final class RegexUtil {
     
-    public static final Pattern mailtoPattern = 
+    public static final Pattern MAILTO_PATTERN =
             Pattern.compile("mailto:([a-zA-Z0-9\\.]+@[a-zA-Z0-9\\.]+\\.[a-zA-Z0-9]+)");
     
-    public static final Pattern emailPattern = 
+    public static final Pattern EMAIL_PATTERN =
             Pattern.compile("\\b[a-zA-Z0-9\\.]+(@)([a-zA-Z0-9\\.]+)(\\.)([a-zA-Z0-9]+)\\b");
     
     
     public static String encodeEmail(String str) {
         // obfuscate mailto's: turns them into hex encoded,
         // so that browsers can still understand the mailto link
-        Matcher mailtoMatch = mailtoPattern.matcher(str);
+        Matcher mailtoMatch = MAILTO_PATTERN.matcher(str);
         while (mailtoMatch.find()) {
             String email = mailtoMatch.group(1);
             //System.out.println("email=" + email);
@@ -58,7 +58,7 @@ public final class RegexUtil {
      * machines to parse however.
      */
     public static String obfuscateEmail(String str) {
-        Matcher emailMatch = emailPattern.matcher(str);
+        Matcher emailMatch = EMAIL_PATTERN.matcher(str);
         while (emailMatch.find()) {
             String at = emailMatch.group(1);
             //System.out.println("at=" + at);
@@ -100,7 +100,7 @@ public final class RegexUtil {
      * @return
      */
     public static String encode(String email) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         try {
             char[] hexString = Hex.encodeHex(email.getBytes("UTF-8"));
             for (int i = 0; i < hexString.length; i++) {

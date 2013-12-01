@@ -260,7 +260,7 @@ public class MediaFileDirectory {
         if (other == this) {
             return true;
         }
-        if (other instanceof MediaFileDirectory != true) {
+        if (!(other instanceof MediaFileDirectory)) {
             return false;
         }
         MediaFileDirectory o = (MediaFileDirectory) other;

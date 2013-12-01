@@ -75,7 +75,7 @@ public class RollerMessages
     }
     public String toString() 
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Iterator msgs = mMessages.iterator();
         while (msgs.hasNext())
         {

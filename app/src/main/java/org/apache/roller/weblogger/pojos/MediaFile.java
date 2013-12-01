@@ -84,8 +84,6 @@ public class MediaFile implements Serializable {
 
     /**
      * Database surrogate key.
-     * 
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getId() {
         return id;
@@ -290,7 +288,7 @@ public class MediaFile implements Serializable {
     }
 
     public String getTagsAsString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Iterator it = getTags().iterator(); it.hasNext();) {
             sb.append(((MediaFileTag) it.next()).getName()).append(" ");
         }

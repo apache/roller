@@ -40,7 +40,7 @@ import org.apache.roller.weblogger.pojos.User;
  */
 public class CustomUserRegistry {
     
-    private static final Log log = LogFactory.getLog(CustomUserRegistry.class);
+    private static final Log LOG = LogFactory.getLog(CustomUserRegistry.class);
 
     private static final String DEFAULT_SNAME_LDAP_ATTRIBUTE = "screenname";
     private static final String DEFAULT_UID_LDAP_ATTRIBUTE = "uid";
@@ -60,7 +60,7 @@ public class CustomUserRegistry {
 
         boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
         if(!usingSSO) {
-            log.info("SSO is not enabled. Skipping CustomUserRegistry functionality.");
+            LOG.info("SSO is not enabled. Skipping CustomUserRegistry functionality.");
             return null;
         }
         
@@ -100,7 +100,7 @@ public class CustomUserRegistry {
             if (userName == null && fullName == null && screenName == null &&
                     email == null && locale == null && timezone == null) {
 
-                log.warn("No Authentication found in SecurityContextHolder and HttpServletRequest.");
+                LOG.warn("No Authentication found in SecurityContextHolder and HttpServletRequest.");
                 return null;
             } else {
                 enabled = true;
@@ -110,12 +110,12 @@ public class CustomUserRegistry {
             Object oPrincipal = authentication.getPrincipal();
         
             if(oPrincipal == null) {
-                log.warn("Principal is null. Skipping auto-registration.");
+                LOG.warn("Principal is null. Skipping auto-registration.");
                 return null;
             }
         
             if (!(oPrincipal instanceof UserDetails)) {
-                log.warn("Unsupported Principal type in Authentication. Skipping auto-registration.");
+                LOG.warn("Unsupported Principal type in Authentication. Skipping auto-registration.");
                 return null;
             }
         

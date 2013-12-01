@@ -73,9 +73,9 @@ public class HitCountProcessingJob implements Job {
             
             Long count = (Long) hitsTally.get(weblogHandle);
             if(count == null) {
-                count = new Long(1);
+                count = 1L;
             } else {
-                count = new Long(count.longValue()+1);
+                count = count + 1;
             }
             hitsTally.put(weblogHandle, count);
         }

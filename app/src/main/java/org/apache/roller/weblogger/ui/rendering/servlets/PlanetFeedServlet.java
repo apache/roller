@@ -21,11 +21,13 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +45,6 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.PlanetCache;
 import org.apache.roller.weblogger.ui.rendering.util.PlanetRequest;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.weblogger.util.cache.CachedContent;
-
 
 /**
  * Planet Roller RSS feed.
@@ -68,11 +69,13 @@ public class PlanetFeedServlet extends HttpServlet {
     /**
      * Handle GET requests for weblog pages.
      */
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         log.debug("Entering");
 
-        PlanetManager planet = WebloggerFactory.getWeblogger().getPlanetManager();
+        PlanetManager planet = WebloggerFactory.getWeblogger()
+                .getPlanetManager();
 
         PlanetRequest planetRequest = null;
         try {
@@ -88,14 +91,17 @@ public class PlanetFeedServlet extends HttpServlet {
         Date lastModified = planetCache.getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
-        if (ModDateHeaderUtil.respondIfNotModified(request, response, lastModified.getTime())) {
+        if (ModDateHeaderUtil.respondIfNotModified(request, response,
+                lastModified.getTime(), planetRequest.getDeviceType())) {
             return;
         }
 
         // set content type
         String accepts = request.getHeader("Accept");
         String userAgent = request.getHeader("User-Agent");
-        if (accepts != null && userAgent != null && accepts.indexOf("*/*") != -1 && userAgent.startsWith("Mozilla")) {
+        if (accepts != null && userAgent != null
+                && accepts.contains("*/*")
+                && userAgent.startsWith("Mozilla")) {
             // client is a browser and now that we offer styled feeds we want
             // browsers to load the page rather than popping up the download
             // dialog, so we provide a content-type that browsers will display
@@ -105,10 +111,12 @@ public class PlanetFeedServlet extends HttpServlet {
         }
 
         // set last-modified date
-        ModDateHeaderUtil.setLastModifiedHeader(response, lastModified.getTime());
+        ModDateHeaderUtil.setLastModifiedHeader(response,
+                lastModified.getTime(), planetRequest.getDeviceType());
 
         // cached content checking
-        String cacheKey = PlanetCache.CACHE_ID + ":" + this.generateKey(planetRequest);
+        String cacheKey = PlanetCache.CACHE_ID + ":"
+                + this.generateKey(planetRequest);
         CachedContent entry = (CachedContent) planetCache.get(cacheKey);
         if (entry != null) {
             response.setContentLength(entry.getContent().length);
@@ -116,30 +124,40 @@ public class PlanetFeedServlet extends HttpServlet {
             return;
         }
 
-
         // looks like we need to render content
-        @SuppressWarnings("unchecked")
-        HashMap<String, Object> model = new HashMap();
+        HashMap<String, Object> model = new HashMap<String, Object>();
         try {
             // populate the rendering model
             if (request.getParameter("group") != null) {
                 Planet planetObject = planet.getWeblogger("default");
-                model.put("group", planet.getGroup(planetObject, request.getParameter("group")));
+                model.put(
+                        "group",
+                        planet.getGroup(planetObject,
+                                request.getParameter("group")));
             }
             model.put("planet", planet);
             model.put("date", new Date());
             model.put("utils", new UtilitiesModel());
-            model.put("siteName", WebloggerRuntimeConfig.getProperty("site.name"));
-            model.put("siteDescription", WebloggerRuntimeConfig.getProperty("site.description"));
+            model.put("siteName",
+                    WebloggerRuntimeConfig.getProperty("site.name"));
+            model.put("siteDescription",
+                    WebloggerRuntimeConfig.getProperty("site.description"));
             model.put("lastModified", lastModified);
-            if (StringUtils.isNotEmpty(WebloggerRuntimeConfig.getProperty("site.absoluteurl"))) {
-                model.put("absoluteSite", WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
+            if (StringUtils.isNotEmpty(WebloggerRuntimeConfig
+                    .getProperty("site.absoluteurl"))) {
+                model.put("absoluteSite",
+                        WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
             } else {
-                model.put("absoluteSite", WebloggerRuntimeConfig.getAbsoluteContextURL());
+                model.put("absoluteSite",
+                        WebloggerRuntimeConfig.getAbsoluteContextURL());
             }
-            model.put("feedStyle", new Boolean(WebloggerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds")));
+            model.put(
+                    "feedStyle",
+                    WebloggerRuntimeConfig
+                            .getBooleanProperty("site.newsfeeds.styledFeeds"));
 
-            int numEntries = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+            int numEntries = WebloggerRuntimeConfig
+                    .getIntProperty("site.newsfeeds.defaultEntries");
             int entryCount = numEntries;
             String sCount = request.getParameter("count");
             if (sCount != null) {
@@ -155,7 +173,7 @@ public class PlanetFeedServlet extends HttpServlet {
                     entryCount = 0;
                 }
             }
-            model.put("entryCount", new Integer(entryCount));
+            model.put("entryCount", entryCount);
         } catch (Exception ex) {
             log.error("Error loading model objects for page", ex);
 
@@ -166,12 +184,12 @@ public class PlanetFeedServlet extends HttpServlet {
             return;
         }
 
-
         // lookup Renderer we are going to use
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate("templates/planet/planetrss.vm", "velocity");
+            Template template = new StaticTemplate(
+                    "templates/planet/planetrss.vm", "velocity");
             renderer = RendererManager.getRenderer(template, DeviceType.mobile);
         } catch (Exception e) {
             // nobody wants to render my content :(
@@ -184,7 +202,7 @@ public class PlanetFeedServlet extends HttpServlet {
             return;
         }
 
-        // render content.  use default size of about 24K for a standard page
+        // render content. use default size of about 24K for a standard page
         CachedContent rendererOutput = new CachedContent(24567);
         try {
             log.debug("Doing rendering");
@@ -204,7 +222,6 @@ public class PlanetFeedServlet extends HttpServlet {
             return;
         }
 
-
         // post rendering process
         // flush rendered content to response
         log.debug("Flushing response output");
@@ -218,23 +235,21 @@ public class PlanetFeedServlet extends HttpServlet {
     }
 
     /**
-     * Generate a cache key from a parsed planet request.
-     * This generates a key of the form ...
-     *
-     * <context>/<type>/<language>[/user]
-     *   or
+     * Generate a cache key from a parsed planet request. This generates a key
+     * of the form ...
+     * 
+     * <context>/<type>/<language>[/user] or
      * <context>/<type>[/flavor]/<language>[/excerpts]
-     *
-     *
+     * 
+     * 
      * examples ...
-     *
-     * planet/page/en
-     * planet/feed/rss/en/excerpts
-     *
+     * 
+     * planet/page/en planet/feed/rss/en/excerpts
+     * 
      */
     private String generateKey(PlanetRequest planetRequest) {
 
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         key.append(planetRequest.getContext());
         key.append("/");
         key.append(planetRequest.getType());

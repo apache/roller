@@ -49,6 +49,10 @@ public interface URLStrategy {
      */
     String getLogoutURL(boolean absolute);
     
+    /**
+     * Url to register page.
+     */
+    String getRegisterURL(boolean absolute);
     
     /**
      * Get a url to a UI action in a given namespace, optionally specifying

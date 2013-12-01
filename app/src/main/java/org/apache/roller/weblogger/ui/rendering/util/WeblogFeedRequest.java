@@ -139,7 +139,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         }        
         
         if(request.getParameter("excerpts") != null) {
-            this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
+            this.excerpts = Boolean.valueOf(request.getParameter("excerpts"));
         }
         
         if(request.getParameter("page") != null) {

@@ -29,8 +29,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
  * Planet Group.
- *
- * @hibernate.class lazy="true" table="rag_group"
  */
 public class PlanetGroup implements Serializable, Comparable {
 
@@ -61,7 +59,6 @@ public class PlanetGroup implements Serializable, Comparable {
         this.description = desc;
     }
     
-    
     /**
      * For comparing groups and sorting, ordered by Title.
      */
@@ -70,10 +67,6 @@ public class PlanetGroup implements Serializable, Comparable {
         return getTitle().compareTo(other.getTitle());
     }
     
-    
-    /**
-     * @hibernate.id column="id" generator-class="assigned"
-     */
     public String getId() {
         return id;
     }
@@ -82,10 +75,6 @@ public class PlanetGroup implements Serializable, Comparable {
         this.id = id;
     }
     
-    
-    /**
-     * @hibernate.property column="handle" non-null="false" unique="false"
-     */
     public String getHandle() {
         return handle;
     }
@@ -94,10 +83,6 @@ public class PlanetGroup implements Serializable, Comparable {
         this.handle = handle;
     }
     
-    
-    /**
-     * @hibernate.property column="title" non-null="false" unique="false"
-     */
     public String getTitle() {
         return title;
     }
@@ -106,10 +91,6 @@ public class PlanetGroup implements Serializable, Comparable {
         this.title = title;
     }
     
-    
-    /**
-     * @hibernate.property column="description" non-null="false" unique="false"
-     */
     public String getDescription() {
         return description;
     }
@@ -118,10 +99,6 @@ public class PlanetGroup implements Serializable, Comparable {
         this.description = description;
     }
     
-    
-    /**
-     * @hibernate.property column="max_feed_entries" non-null="false" unique="false"
-     */
     public int getMaxFeedEntries() {
         return maxFeedEntries;
     }
@@ -130,10 +107,6 @@ public class PlanetGroup implements Serializable, Comparable {
         this.maxFeedEntries = maxFeedEntries;
     }
     
-    
-    /**
-     * @hibernate.property column="max_page_entries" non-null="false" unique="false"
-     */
     public int getMaxPageEntries() {
         return maxPageEntries;
     }
@@ -142,10 +115,6 @@ public class PlanetGroup implements Serializable, Comparable {
         this.maxPageEntries = maxPageEntries;
     }
     
-    
-    /**
-     * @hibernate.property column="cat_restriction" non-null="false" unique="false"
-     */
     public String getCategoryRestriction() {
         return categoryRestriction;
     }
@@ -155,10 +124,6 @@ public class PlanetGroup implements Serializable, Comparable {
         catArray = null;
     }
     
-    
-    /**
-     * @hibernate.many-to-one column="planet_id" cascade="none" non-null="false"
-     */
     public Planet getPlanet() {
         return planet;
     }
@@ -167,12 +132,6 @@ public class PlanetGroup implements Serializable, Comparable {
         this.planet = planet;
     }
     
-    
-    /**
-     * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="none" sort="natural"
-     * @hibernate.collection-key column="group_id"
-     * @hibernate.collection-many-to-many column="subscription_id" class="org.apache.roller.planet.pojos.Subscription"
-     */
     public Set getSubscriptions() {
         return subscriptions;
     }

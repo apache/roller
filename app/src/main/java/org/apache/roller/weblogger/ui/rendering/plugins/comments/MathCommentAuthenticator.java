@@ -46,9 +46,9 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
             int value1 = (int)(Math.random()*10.0);
             int value2 = (int)(Math.random()*100.0);
             int sum = value1 + value2;
-            session.setAttribute("mathValue1", new Integer(value1));
-            session.setAttribute("mathValue2", new Integer(value2));
-            session.setAttribute("mathAnswer", new Integer(sum));
+            session.setAttribute("mathValue1", value1);
+            session.setAttribute("mathValue2", value2);
+            session.setAttribute("mathAnswer", sum);
         } else {
             // preserve user's answer
             answer = request.getParameter("answer");
@@ -59,7 +59,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         Integer value1o = (Integer)request.getSession().getAttribute("mathValue1");
         Integer value2o = (Integer)request.getSession().getAttribute("mathValue2");
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         sb.append("<p>");
         sb.append(bundle.getString("comments.mathAuthenticatorQuestion"));
@@ -88,7 +88,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
                 int answer = Integer.parseInt(answerString);
                 Integer sum = (Integer) session.getAttribute("mathAnswer");
                 
-                if (sum != null && answer == sum.intValue()) {
+                if (sum != null && answer == sum) {
                     authentic = true;
                     session.removeAttribute("mathAnswer");
                     session.removeAttribute("mathValue1");

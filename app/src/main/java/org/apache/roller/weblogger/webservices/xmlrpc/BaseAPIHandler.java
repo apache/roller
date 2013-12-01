@@ -121,13 +121,13 @@ public class BaseAPIHandler implements Serializable {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
             user = userMgr.getUserByUserName(username);
-            userEnabled = user.getEnabled().booleanValue();
+            userEnabled = user.getEnabled();
             
             website = weblogMgr.getWeblogByHandle(blogid);
             if (website != null) {
                 weblogFound = true;
-                weblogEnabled = website.getEnabled().booleanValue();
-                apiEnabled = website.getEnableBloggerApi().booleanValue() 
+                weblogEnabled = website.getEnabled();
+                apiEnabled = website.getEnableBloggerApi()
                 	&& WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc");
             }
             
@@ -181,7 +181,7 @@ public class BaseAPIHandler implements Serializable {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             user = userMgr.getUserByUserName(username);
             
-            enabled = user.getEnabled().booleanValue();
+            enabled = user.getEnabled();
             if (enabled) {
                 // are passwords encrypted?
                 String encrypted =

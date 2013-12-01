@@ -44,7 +44,7 @@ public final class URLUtilities {
             return null;
         }
         
-        StringBuffer queryString = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
         
         for(Iterator keys = params.keySet().iterator(); keys.hasNext();) {
             String key = (String) keys.next();
@@ -94,7 +94,7 @@ public final class URLUtilities {
     
     
     public static String getEncodedTagsString(List tags) {
-        StringBuffer tagsString = new StringBuffer();
+        StringBuilder tagsString = new StringBuilder();
         if(tags != null && tags.size() > 0) {
             String tag = null;
             Iterator tagsIT = tags.iterator();
@@ -119,7 +119,7 @@ public final class URLUtilities {
      */
     public static String encodePath(String path) {
         int i = path.indexOf('/');
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (i != -1) {
             sb.append(encode(path.substring(0, i))).append('/');
             path = path.substring(i + 1);

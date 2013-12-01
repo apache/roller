@@ -419,8 +419,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
-        StringBuffer whereClause = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
+        StringBuilder whereClause = new StringBuilder();
         queryString.append("SELECT e FROM WeblogEntry e WHERE ");
                      
         params.add(size++, current.getWebsite());
@@ -553,7 +553,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
         
         //queryString.append("SELECT e FROM WeblogEntry e WHERE ");
         if (tags == null || tags.size()==0) {
@@ -676,7 +676,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         query.setParameter(1, Boolean.TRUE);
         query.setParameter(2, WeblogEntry.PUBLISHED);
         if (max != null) {
-            query.setMaxResults(max.intValue());
+            query.setMaxResults(max);
         }
         return query.getResultList();
     }
@@ -891,10 +891,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT c FROM WeblogEntryComment c ");
         
-        StringBuffer whereClause = new StringBuffer();
+        StringBuilder whereClause = new StringBuilder();
         if (entry != null) {
             params.add(size++, entry);
             whereClause.append("c.weblogEntry = ?").append(size);
@@ -1216,7 +1216,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                     (String)row[2],                             // entry anchor
                     (String)row[3],                             // entry title
                     "statCount.weblogEntryCommentCountType",    // stat desc
-                    ((Long)row[0]).longValue());                // count
+                    ((Long)row[0]));                            // count
             sc.setWeblogHandle((String)row[1]);
             results.add(sc);
         }
@@ -1358,7 +1358,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();            
+        StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE ");
                 
         if (website != null) {
@@ -1421,22 +1421,22 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             return false;
         }
         
-        StringBuffer queryString = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT DISTINCT w.name ");
         queryString.append("FROM WeblogEntryTagAggregate w WHERE w.name IN (");
         //?1) AND w.weblog = ?2");
         //Append tags as parameter markers to avoid potential escaping issues
         //The IN clause would be of form (?1, ?2, ?3, ..)
         ArrayList params = new ArrayList(tags.size() + 1);
-        final String PARAM_SEPARATOR = ", ";
+        final String paramSeparator = ", ";
         int i;
         for (i=0; i < tags.size(); i++) {
-            queryString.append('?').append(i+1).append(PARAM_SEPARATOR);
+            queryString.append('?').append(i+1).append(paramSeparator);
             params.add(tags.get(i));
         }
         
-        // Remove the trailing PARAM_SEPARATOR
-        queryString.delete(queryString.length() - PARAM_SEPARATOR.length(),
+        // Remove the trailing paramSeparator
+        queryString.delete(queryString.length() - paramSeparator.length(),
                 queryString.length());
         // Close the brace of IN clause
         queryString.append(')');
@@ -1679,7 +1679,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 "WeblogEntryComment.getCountAllDistinctByStatus");
         q.setParameter(1, WeblogEntryComment.APPROVED);
         List results = q.getResultList();
-        return ((Long)results.get(0)).longValue();
+        return ((Long)results.get(0));
     }
     
     /**
@@ -1691,7 +1691,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         q.setParameter(1, website);
         q.setParameter(2, WeblogEntryComment.APPROVED);
         List results = q.getResultList();
-        return ((Long)results.get(0)).longValue();
+        return ((Long)results.get(0));
     }
     
     /**
@@ -1702,7 +1702,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 "WeblogEntry.getCountDistinctByStatus");
         q.setParameter(1, "PUBLISHED");
         List results = q.getResultList();
-        return ((Long)results.get(0)).longValue();
+        return ((Long)results.get(0));
     }
     
     /**
@@ -1714,7 +1714,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         q.setParameter(1, "PUBLISHED");
         q.setParameter(2, website);
         List results = q.getResultList();
-        return ((Long)results.get(0)).longValue();
+        return ((Long)results.get(0));
     }
     
     /**
@@ -1725,7 +1725,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @param expression The given expression
      * @return the whereClause.
      */
-    private static StringBuffer appendConjuctionToWhereclause(StringBuffer whereClause,
+    private static StringBuilder appendConjuctionToWhereclause(StringBuilder whereClause,
             String expression) {
         if(whereClause.length() != 0 && expression.length() != 0) {
             whereClause.append(" AND ");

@@ -104,27 +104,28 @@ public abstract class IndexOperation implements Runnable {
         Document doc = new Document();
 
         // keyword
-        doc.add(new StringField(FieldConstants.ID, data.getId(), Field.Store.YES));
+        doc.add(new StringField(FieldConstants.ID, data.getId(),
+                Field.Store.YES));
 
         // keyword
-        doc.add(new StringField(FieldConstants.WEBSITE_HANDLE, data.getWebsite()
-                .getHandle(), Field.Store.YES));
+        doc.add(new StringField(FieldConstants.WEBSITE_HANDLE, data
+                .getWebsite().getHandle(), Field.Store.YES));
 
         // text, don't index deleted/disabled users of a group blog
         if (data.getCreator() != null) {
-            doc.add(new TextField(FieldConstants.USERNAME, data.getCreator().getUserName(),
-                    Field.Store.YES));
+            doc.add(new TextField(FieldConstants.USERNAME, data.getCreator()
+                    .getUserName().toLowerCase(), Field.Store.YES));
         }
 
         // text
         doc.add(new TextField(FieldConstants.TITLE, data.getTitle(),
                 Field.Store.YES));
 
-        // keyword
-        doc.add(new StringField(FieldConstants.LOCALE, data.getLocale(),
-                Field.Store.YES));
+        // keyword needs to be in lower case as we are used in a term
+        doc.add(new StringField(FieldConstants.LOCALE, data.getLocale()
+                .toLowerCase(), Field.Store.YES));
 
-        // index the entry text, but don't store it - moved to end of block
+        // index the entry text, but don't store it
         doc.add(new TextField(FieldConstants.CONTENT, data.getText(),
                 Field.Store.NO));
 
@@ -136,11 +137,11 @@ public abstract class IndexOperation implements Runnable {
         doc.add(new StringField(FieldConstants.PUBLISHED, data.getPubTime()
                 .toString(), Field.Store.YES));
 
-        // index Category
+        // index Category, needs to be in lower case as we are used in a term
         WeblogCategory categorydata = data.getCategory();
         if (categorydata != null) {
-            doc.add(new StringField(FieldConstants.CATEGORY, categorydata.getName(),
-                    Field.Store.YES));
+            doc.add(new StringField(FieldConstants.CATEGORY, categorydata
+                    .getName().toLowerCase(), Field.Store.YES));
         }
 
         // index Comments, unstored
@@ -148,10 +149,12 @@ public abstract class IndexOperation implements Runnable {
                 Field.Store.NO));
 
         // keyword
-        doc.add(new StringField(FieldConstants.C_EMAIL, commentEmail, Field.Store.YES));
+        doc.add(new StringField(FieldConstants.C_EMAIL, commentEmail,
+                Field.Store.YES));
 
         // keyword
-        doc.add(new StringField(FieldConstants.C_NAME, commentName, Field.Store.YES));
+        doc.add(new StringField(FieldConstants.C_NAME, commentName,
+                Field.Store.YES));
 
         return doc;
     }

@@ -195,7 +195,7 @@ public class SubscriptionEntry implements Serializable, Comparable {
         Iterator cats = getCategories().iterator();
         while (cats.hasNext()) {
             String catName = ((String)cats.next()).toLowerCase();
-            if (catName.indexOf(category.toLowerCase()) != -1) {
+            if (catName.contains(category.toLowerCase())) {
                 return true;
             }
         }
@@ -223,7 +223,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
        
     /**
      * Return first entry in category collection.
-     * @roller.wrapPojoMethod type="pojo"
      */
     public Category getCategory() {
         Category cat = null;
@@ -235,7 +234,7 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
 
     public void setCategoriesString(List categories) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Iterator cats = categories.iterator();
         while (cats.hasNext()) {
             String cat = (String)cats.next();
@@ -249,7 +248,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     
     /** 
      * Returns creator as a UserData object.
-     * @roller.wrapPojoMethod type="pojo"
      * TODO: make planet model entry author name, email, and uri
      */
     public Author getCreator() {
@@ -264,7 +262,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     
     /**
      * Returns summary (always null for planet entry)
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getSummary() {
         return null;
@@ -273,7 +270,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
 
     /**
      * Read-only synomym for getSubscription()
-     * @roller.wrapPojoMethod type="pojo"
      */
     public Subscription getWebsite() {
         return getSubscription();

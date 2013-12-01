@@ -122,7 +122,7 @@ public class LinkbackExtractor
         }).getParser();
 
         // Read HTML file into string
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         try
@@ -181,10 +181,10 @@ public class LinkbackExtractor
         {
             count++;
             SyndEntry item = (SyndEntry) itemIter.next();
-            if (item.getDescription().getValue().indexOf(requestURL) != -1)
+            if (item.getDescription().getValue().contains(requestURL))
             {
                 mFound = true;
-                mPermalink = item.getLink().toString();
+                mPermalink = item.getLink();
                 if (feedTitle != null && feedTitle.trim().length() > 0)
                 {
                     mTitle = feedTitle + ": " + item.getTitle();

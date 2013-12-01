@@ -112,8 +112,6 @@ public class WeblogEntryWrapper {
     }
     
     /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
      * Simply returns the same value that the pojo would have returned.
      */
     public String getText() {

@@ -34,13 +34,13 @@ import org.apache.roller.weblogger.util.Utilities;
  * Contributed by Matthew Montgomery.
  */
 public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
-    private static final Log log = LogFactory.getLog(LinkMarkupPlugin.class);
+    private static final Log LOG = LogFactory.getLog(LinkMarkupPlugin.class);
 
     private static final Pattern pattern = Pattern.compile(
             "http[s]?://[^/][\\S]+", Pattern.CASE_INSENSITIVE);  
     
     public LinkMarkupPlugin() {
-        log.debug("Instantiating LinkMarkupPlugin");
+        LOG.debug("Instantiating LinkMarkupPlugin");
     }
     
     /**

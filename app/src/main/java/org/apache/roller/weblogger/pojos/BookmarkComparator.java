@@ -29,8 +29,8 @@ public class BookmarkComparator implements Comparator, Serializable
     {
         WeblogBookmark bd1 = (WeblogBookmark)val1;
         WeblogBookmark bd2 = (WeblogBookmark)val2;
-        int priority1 = bd1.getPriority().intValue();
-        int priority2 = bd2.getPriority().intValue();
+        int priority1 = bd1.getPriority();
+        int priority2 = bd2.getPriority();
 
         if (priority1 > priority2)
         {

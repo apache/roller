@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
  */
 public class AutoformatPlugin implements WeblogEntryCommentPlugin {
     
-    private static final Log log = LogFactory.getLog(AutoformatPlugin.class);
+    private static final Log LOG = LogFactory.getLog(AutoformatPlugin.class);
     
     
     public AutoformatPlugin() {
@@ -59,7 +59,7 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
     
     public String render(final WeblogEntryComment comment, String text) {
         
-        log.debug("starting value:\n"+text);
+        LOG.debug("starting value:\n" + text);
         
         /* 
          * setup a buffered reader and iterate through each line
@@ -67,7 +67,7 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
          *
          * NOTE: we consider a paragraph to be 2 endlines with no text between them
          */
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new StringReader(text));
             
@@ -98,10 +98,10 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
             }
             
         } catch(Exception e) {
-            log.warn("trouble rendering text.", e);
+            LOG.warn("trouble rendering text.", e);
         }
         
-        log.debug("ending value:\n"+buf.toString());
+        LOG.debug("ending value:\n" + buf.toString());
         
         return buf.toString();
     }

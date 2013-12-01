@@ -51,7 +51,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -87,8 +87,8 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         if(weblog == null) {
             return null;
         }
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -128,8 +128,8 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         if(weblog == null) {
             return null;
         }
-        
-        StringBuffer pathinfo = new StringBuffer();
+
+        StringBuilder pathinfo = new StringBuilder();
         Map params = new HashMap();
         
         if(absolute) {
@@ -198,7 +198,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return null;
         }
         
-        StringBuffer pathinfo = new StringBuffer();
+        StringBuilder pathinfo = new StringBuilder();
         Map params = new HashMap();
         
         if(absolute) {
@@ -252,7 +252,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return null;
         }
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());

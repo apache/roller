@@ -105,7 +105,7 @@ public class LRUCache2
             String key = (String) keys.next();
             for (int i = 0; i < patterns.length; i++)
             {
-                if (key.indexOf(patterns[i]) != -1)
+                if (key.contains(patterns[i]))
                 {
                     purgeList.add(key);
                     break;

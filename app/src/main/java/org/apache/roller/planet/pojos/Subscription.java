@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import org.apache.roller.util.UUIDGenerator;
 
@@ -197,10 +196,9 @@ public class Subscription implements Serializable, Comparable {
     /**
      * Add a collection of SubscriptionEntry to this Subscription.
      */
-    public void addEntries(Collection newEntries) {
+    public void addEntries(Collection<SubscriptionEntry> newEntries) {
         // bi-directional one-to-many
-        for (Iterator it = newEntries.iterator(); it.hasNext();) {
-            SubscriptionEntry entry = (SubscriptionEntry) it.next();
+        for (SubscriptionEntry entry : newEntries) {
             entry.setSubscription(this);
         }
         this.getEntries().addAll(newEntries);

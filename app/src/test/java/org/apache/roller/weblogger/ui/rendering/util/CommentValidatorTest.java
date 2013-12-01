@@ -70,7 +70,7 @@ public class CommentValidatorTest extends TestCase {
         WeblogEntryComment comment = createEmptyComment();
 
         // string that exceeds default excess size threshold of 1000
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i=0; i<101; i++) {
             sb.append("0123456789");
         }

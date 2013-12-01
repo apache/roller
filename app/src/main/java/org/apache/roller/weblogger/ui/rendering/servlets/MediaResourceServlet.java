@@ -38,23 +38,22 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogMediaResourceRequest;
 
-
 /**
  * Serves media files uploaded by users.
- *
- * Since we keep resources in a location outside of the webapp
- * context we need a way to serve them up.  This servlet assumes that
- * resources are stored on a filesystem in the "uploads.dir" directory.
+ * 
+ * Since we keep resources in a location outside of the webapp context we need a
+ * way to serve them up. This servlet assumes that resources are stored on a
+ * filesystem in the "uploads.dir" directory.
  */
 public class MediaResourceServlet extends HttpServlet {
 
     private static Log log = LogFactory.getLog(MediaResourceServlet.class);
-    
+
     public void init(ServletConfig config) throws ServletException {
 
         super.init(config);
         log.info("Initializing ResourceServlet");
-        
+
     }
 
     /**
@@ -62,8 +61,9 @@ public class MediaResourceServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        MediaFileManager mfMgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+
+        MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
+                .getMediaFileManager();
 
         Weblog weblog = null;
         String ctx = request.getContextPath();
@@ -76,26 +76,27 @@ public class MediaResourceServlet extends HttpServlet {
             resourceRequest = new WeblogMediaResourceRequest(request);
 
             weblog = resourceRequest.getWeblog();
-            if(weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: "+
-                        resourceRequest.getWeblogHandle());
+            if (weblog == null) {
+                throw new WebloggerException("unable to lookup weblog: "
+                        + resourceRequest.getWeblogHandle());
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             // invalid resource request or weblog doesn't exist
             log.debug("error creating weblog resource request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-    
+
         long resourceLastMod = 0;
         InputStream resourceStream = null;
         MediaFile mediaFile = null;
-        
+
         try {
-            mediaFile = mfMgr.getMediaFile(resourceRequest.getResourceId(), true);
+            mediaFile = mfMgr.getMediaFile(resourceRequest.getResourceId(),
+                    true);
             resourceLastMod = mediaFile.getLastModified();
-            
+
         } catch (Exception ex) {
             // still not found? then we don't have it, 404.
             log.debug("Unable to get resource", ex);
@@ -104,13 +105,14 @@ public class MediaResourceServlet extends HttpServlet {
         }
 
         // Respond with 304 Not Modified if it is not modified.
-        if (ModDateHeaderUtil.respondIfNotModified(request, response, resourceLastMod)) {
+        if (ModDateHeaderUtil.respondIfNotModified(request, response,
+                resourceLastMod, resourceRequest.getDeviceType())) {
             return;
         } else {
             // set last-modified date
-            ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod);
+            ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod,
+                    resourceRequest.getDeviceType());
         }
-        
 
         // set the content type based on whatever is in our web.xml mime defs
         if (resourceRequest.isThumbnail()) {
@@ -119,7 +121,9 @@ public class MediaResourceServlet extends HttpServlet {
                 resourceStream = mediaFile.getThumbnailInputStream();
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    log.debug("ERROR loading thumbnail for " + mediaFile.getId(), e);
+                    log.debug(
+                            "ERROR loading thumbnail for " + mediaFile.getId(),
+                            e);
                 } else {
                     log.warn("ERROR loading thumbnail for " + mediaFile.getId());
                 }
@@ -137,16 +141,16 @@ public class MediaResourceServlet extends HttpServlet {
             byte[] buf = new byte[8192];
             int length = 0;
             out = response.getOutputStream();
-            while((length = resourceStream.read(buf)) > 0) {
+            while ((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
-            
+
             // close output stream
             out.close();
-            
+
         } catch (Exception ex) {
-            log.error("ERROR",ex);
-            if(!response.isCommitted()) {
+            log.error("ERROR", ex);
+            if (!response.isCommitted()) {
                 response.reset();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }

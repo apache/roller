@@ -53,7 +53,7 @@ public class AkismetCommentValidator implements CommentValidator {
     }
 
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("blog=").append(
             WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(comment.getWeblogEntry().getWebsite(), null, true)).append("&");
         sb.append("user_ip="        ).append(comment.getRemoteHost()).append("&");
@@ -86,7 +86,9 @@ public class AkismetCommentValidator implements CommentValidator {
                 messages.addError("comment.validator.akismetMessage");
                 return 0;
             }
-            else return 100;
+            else {
+                return 100;
+            }
         } catch (Exception e) {
             log.error("ERROR checking comment against Akismet", e);
         }

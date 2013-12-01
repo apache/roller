@@ -498,7 +498,7 @@ public abstract class DateUtil {
         // to make it a valid ISO-8601 date.
         
         String str = format(date, getIso8601DateFormat());
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append( str.substring(0,str.length()-2) );
         sb.append( ":" );
         sb.append( str.substring(str.length()-2) );

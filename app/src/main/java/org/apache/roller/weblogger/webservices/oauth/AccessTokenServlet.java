@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.webservices.oauth;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,12 +44,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 public class AccessTokenServlet extends HttpServlet {
     protected static Log log =
             LogFactory.getFactory().getInstance(AccessTokenServlet.class);
-    
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        // nothing at this point
-    }
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)

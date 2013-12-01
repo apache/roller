@@ -65,6 +65,7 @@ public class RollerVelocity {
             // Override for theme reloading
             if (themeReload) {
                 velocityProps.setProperty("class.resource.loader.cache", "false");
+                velocityProps.setProperty("class.resource.loader.modificationCheckInterval", "2");
                 velocityProps.setProperty("webapp.resource.loader.cache", "false");
                 velocityProps.setProperty("webapp.resource.loader.modificationCheckInterval", "2");
                 velocityProps.setProperty("velocimacro.library.autoreload", "true");
