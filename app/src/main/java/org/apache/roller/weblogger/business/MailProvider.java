@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  */
 public class MailProvider {
     
-    private static final Log log = LogFactory.getLog(MailProvider.class);
+    private static final Log LOG = LogFactory.getLog(MailProvider.class);
     
     private enum ConfigurationType {JNDI_NAME, MAIL_PROPERTIES; }
     
@@ -45,7 +45,6 @@ public class MailProvider {
     
     private ConfigurationType type = ConfigurationType.JNDI_NAME;
     
-    private String jndiName = null;
     private String mailHostname = null;
     private int    mailPort = -1;
     private String mailUsername = null;
@@ -58,7 +57,7 @@ public class MailProvider {
         if ("properties".equals(connectionTypeString)) {
             type = ConfigurationType.MAIL_PROPERTIES;
         }
-        jndiName =     WebloggerConfig.getProperty("mail.jndi.name");
+        String jndiName =     WebloggerConfig.getProperty("mail.jndi.name");
         mailHostname = WebloggerConfig.getProperty("mail.hostname");
         mailUsername = WebloggerConfig.getProperty("mail.username");
         mailPassword = WebloggerConfig.getProperty("mail.password");
@@ -68,7 +67,7 @@ public class MailProvider {
                 mailPort = Integer.parseInt(portString);
             }
         } catch (Exception e) {
-            log.warn("mail server port not a valid integer, ignoring");
+            LOG.warn("mail server port not a valid integer, ignoring");
         }
         
         // init and connect now so we fail early

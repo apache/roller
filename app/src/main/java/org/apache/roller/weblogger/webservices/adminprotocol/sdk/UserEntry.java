@@ -129,7 +129,7 @@ public class UserEntry extends Entry {
         // created (optional)
         Element createdElement = e.getChild(Tags.DATE_CREATED, Service.NAMESPACE);
         if (createdElement != null) {
-            setDateCreated(new Date(Long.valueOf(createdElement.getText()).longValue()));
+            setDateCreated(new Date(Long.valueOf(createdElement.getText())));
         }
         
         // enabled

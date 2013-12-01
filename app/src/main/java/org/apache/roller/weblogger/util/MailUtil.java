@@ -41,7 +41,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MailProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -118,7 +117,7 @@ public class MailUtil {
             
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", entry.getWebsite().getLocaleInstance());
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(
                     MessageFormat.format(
                     resources.getString("weblogEntry.pendingEntrySubject"),
@@ -127,7 +126,7 @@ public class MailUtil {
                 entry.getWebsite().getHandle()
             }));
             subject = sb.toString();
-            sb = new StringBuffer();
+            sb = new StringBuilder();
             sb.append(
                     MessageFormat.format(
                     resources.getString("weblogEntry.pendingEntryContent"),
@@ -172,7 +171,7 @@ public class MailUtil {
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources",
                     website.getLocaleInstance());
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(MessageFormat.format(
                     resources.getString("inviteMember.notificationSubject"),
                     new Object[] {
@@ -180,7 +179,7 @@ public class MailUtil {
                 website.getHandle()})
                 );
             subject = sb.toString();
-            sb = new StringBuffer();
+            sb = new StringBuilder();
             sb.append(MessageFormat.format(
                     resources.getString("inviteMember.notificationContent"),
                     new Object[] {
@@ -229,7 +228,7 @@ public class MailUtil {
             
             String rootURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
             
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             
             // activationURL=
             String activationURL = rootURL
@@ -269,7 +268,7 @@ public class MailUtil {
         
         // Only send email if email notificaiton is enabled
         boolean notify = WebloggerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-        if (!notify || !weblog.getEmailComments().booleanValue()) {
+        if (!notify || !weblog.getEmailComments()) {
             // notifications disabled, just bail
             return;
         }
@@ -325,8 +324,8 @@ public class MailUtil {
         // Build separate owner and commenter (aka subscriber) messages
         
         // Determine with mime type to use for e-mail
-        StringBuffer msg = new StringBuffer();
-        StringBuffer ownermsg = new StringBuffer();
+        StringBuilder msg = new StringBuilder();
+        StringBuilder ownermsg = new StringBuilder();
         boolean escapeHtml = !WebloggerRuntimeConfig.getBooleanProperty("users.comments.htmlenabled");
         
         // first the commenter message
@@ -524,7 +523,7 @@ public class MailUtil {
         
         // Only send email if email notificaiton is enabled
         boolean notify = WebloggerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-        if (!notify || !weblog.getEmailComments().booleanValue()) {
+        if (!notify || !weblog.getEmailComments()) {
             // notifications disabled, just bail
             return;
         }
@@ -541,7 +540,7 @@ public class MailUtil {
         // form the message to be sent
         String subject = resources.getString("email.comment.commentApproved");
         
-        StringBuffer msg = new StringBuffer();
+        StringBuilder msg = new StringBuilder();
         msg.append(resources.getString("email.comment.commentApproved"));
         msg.append("\n\n");
         msg.append(WebloggerFactory.getWeblogger().getUrlStrategy()

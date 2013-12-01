@@ -176,8 +176,9 @@ public class Bookmarks extends UIAction {
                             + " bookmarks.");
                 }
 				for (int j = 0; j < bookmarks.length; j++) {
-					if (log.isDebugEnabled())
+					if (log.isDebugEnabled()) {
 						log.debug("Deleting bookmark - " + bookmarks[j]);
+                    }
 					bookmark = bmgr.getBookmark(bookmarks[j]);
 					if (bookmark != null) {
 						bmgr.removeBookmark(bookmark);

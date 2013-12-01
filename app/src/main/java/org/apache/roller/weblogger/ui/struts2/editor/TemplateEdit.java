@@ -126,7 +126,7 @@ public class TemplateEdit extends UIAction {
                 templateToSave.setLastModified(new Date());
 
                 if (getBean().getAutoContentType() == null ||
-                        !getBean().getAutoContentType().booleanValue()) {
+                        !getBean().getAutoContentType()) {
                     templateToSave.setOutputContentType(getBean().getManualContentType());
                 } else {
                     // empty content-type indicates that template uses auto content-type detection

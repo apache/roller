@@ -30,10 +30,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
  * Permission for one specific weblog
- * @ejb:bean name="WeblogPermission"
  * @struts.form include-all="true"
- * @hibernate.class lazy="true" table="roller_user_permissions"
- * @hibernate.cache usage="read-write"
  *
  * @author Dave Johnson
  */
@@ -152,7 +149,3 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
                 .toHashCode();
     }
 }
-
-
-
-

@@ -26,8 +26,12 @@
                 <td class="bannerRight">
                    <a href="$url.absoluteSite">$config.siteName</a> |
                    <a href="$url.absoluteSite/roller-ui/menu.rol">Main Menu</a> |
-                   <a href="$url.login">Login</a> |
-                   <a href="$url.register">Register</a>
+                   #if(!$utils.isUserAuthenticated())
+                      <a href="$url.login">Login</a> |
+                     <a href="$url.register">Register</a>
+                   #else
+                     <a href="$url.logout">Logout</a>
+                   #end
                 </td>
             </tr>
         </table>

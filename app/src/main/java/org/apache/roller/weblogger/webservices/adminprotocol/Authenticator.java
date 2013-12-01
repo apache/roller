@@ -71,7 +71,7 @@ abstract class Authenticator {
             if (!WebloggerFactory.getWeblogger().getUserManager().checkPermission(adminPerm, ud)) {
                 throw new UnauthorizedException("ERROR: User must have the admin role to use the RAP endpoint: " + userName);
             }
-            if (!ud.getEnabled().booleanValue()) {
+            if (!ud.getEnabled()) {
                 throw new UnauthorizedException("ERROR: User is disabled: " + userName);
             }
         } catch (WebloggerException ex) {

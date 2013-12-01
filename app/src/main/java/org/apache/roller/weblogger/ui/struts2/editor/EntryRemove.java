@@ -68,7 +68,7 @@ public class EntryRemove extends EntryBase {
 
 	public String remove() {
 
-		if (getRemoveEntry() != null)
+		if (getRemoveEntry() != null) {
 			try {
 
 				WeblogEntry entry = getRemoveEntry();
@@ -110,7 +110,7 @@ public class EntryRemove extends EntryBase {
 				// TODO: i18n
 				addError("Error removing entry");
 			}
-		else {
+        } else {
 			addError("weblogEntry.notFound");
 			return ERROR;
 		}

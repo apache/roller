@@ -30,8 +30,8 @@ public class BookmarkBean {
     private String name = null;
     private String description = null;
     private String url = null;
-    private Integer weight = new Integer(0);
-    private Integer priority = new Integer(0);
+    private Integer weight = 0;
+    private Integer priority = 0;
     private String image = null;
     private String feedUrl = null;
     

@@ -14,20 +14,73 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
-*#<html>
-<body>
+*#
+</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>$text.get("errorPage.title")</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+      a {text-decoration: none;}
+      .bannerStatusBox a, .bannerStatusBox a {font-weight: bold;}
+      .bannerLeft {padding: 4px 15px 4px 10px;}
+      .bannerRight {padding: 4px 10px 4px 15px;text-align: right;}
+      .bannerBox {width: 100%;background: #f00;} 
+      #banner {margin: 0px;padding: 0px 0px 0px 0px;}
+      .bannerStatusBox {width: 100%;border: grey 1px solid;}
+      .bannerStatusBox {background: none repeat scroll 0 0 #AD3431;color: white;}
+      .bannerStatusBox a {color: white;}
+      .bannerStatusBox a:link {color: white;}
+      .bannerStatusBox a:visited {color: white;}
+      span.error {display: block;background-color: #fcc;color: #c00;border: 1px solid red;margin: 25px 0px;padding: 10px;font-weight: bold;}
+      span.error ul {list-style-type: none;margin-top: 0px;margin-left: 0;margin-bottom: 0;padding: 3px;}
+      .dottedtable {border: 1px dotted #CCCCCC;}
+    </style
+  </head>
+  <!-- error-page -->
+  <body>
 
-<h1>Velocity template error</h1>
+    <div id="banner">
+      <div id="bannerStatusBox">
+          <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="bannerLeft"></td>
+                <td class="bannerRight">
+                   <a href="$url.absoluteSite">$config.siteName</a>
+                </td>
+            </tr>
+        </table>
+      </div>
+    </div>
 
-<p><b>EXCEPTION</b>: [$!exception.getClass().getName()]</p>
+    <div style="padding: 15px 25px 25px 25px">
+      <h2 class="error">Velocity Template Error</h2>
+      <span class="error">
+        <ul>
+          <li>$text.get("errorPage.title")</li>
+          <li>$text.get("errorPage.message")</li>
+        </ul>
+      </span>
+      <table width="80%" class="dottedtable" style="border-collapse: collapse;">
+        <tr>
+          <td class="dottedtable" width="20%">Velocity Exception</td>
+          <td class="dottedtable">Velocity template error : $exceptionDevice</td>
+        </tr>
+        <tr>
+          <td class="dottedtable" width="20%">Message</td>
+          <td class="dottedtable">$utils.autoformat($utils.escapeHTML($exception.getMessage()))</td>
+        </tr>
+        <tr>
+          <td class="dottedtable" width="20%">Type</td>
+          <td class="dottedtable">$exceptionSource</td>
+        </tr>
+        <tr>
+          <td class="dottedtable" width="20%">Exception</td>
+          <td class="dottedtable">$!exception.getClass().getName()</td>
+        </tr>
+      </table>
+    </div>
 
-<p><b>EXCEPTION SOURCE</b>: [$exceptionSource]</p> 
-
-<p><b>EXCEPTION MESSAGE</b>:</p> 
-
-#if ($exception.getMessage())
-    $utils.autoformat($exception.getMessage())
-#end
-
-</body>
+  </body>
 </html>

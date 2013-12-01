@@ -96,11 +96,11 @@ public class PreviewThemeImageServlet extends HttpServlet {
         }
         
         // Respond with 304 Not Modified if it is not modified.
-        if (ModDateHeaderUtil.respondIfNotModified(request, response, resourceLastMod)) {
+        if (ModDateHeaderUtil.respondIfNotModified(request, response, resourceLastMod, null)) {
             return;
         } else {
             // set last-modified date
-            ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod);
+            ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod, null);
         }
         
         log.debug("Everything is cool, sending image");

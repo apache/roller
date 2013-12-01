@@ -191,7 +191,7 @@ public final class PlanetCache {
      */
     public String generateKey(PlanetRequest planetRequest) {
         
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         
         key.append(this.CACHE_ID).append(":");
         key.append(planetRequest.getContext());

@@ -82,7 +82,7 @@ public class PlanetRequest extends ParsedRequest {
          *   group - specifies the aggregation group to include
          */
         if (request.getParameter("excerpts") != null) {
-            this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
+            this.excerpts = Boolean.valueOf(request.getParameter("excerpts"));
         }
         
         if (request.getParameter("group") != null) {

@@ -223,7 +223,7 @@ public class TrackbackServlet extends HttpServlet {
     
     private String getSuccessResponse(String message) {
         
-        StringBuffer output = new StringBuffer();
+        StringBuilder output = new StringBuilder();
         
         output.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
         output.append("<response>");
@@ -239,7 +239,7 @@ public class TrackbackServlet extends HttpServlet {
     
     private String getErrorResponse(String message) {
         
-        StringBuffer output = new StringBuffer();
+        StringBuilder output = new StringBuilder();
         
         output.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
         output.append("<response>");

@@ -20,8 +20,6 @@ package org.apache.roller.weblogger.webservices.adminprotocol;
 import java.io.IOException;
 import java.io.Reader;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -45,7 +43,13 @@ import org.jdom2.input.SAXBuilder;
  */
 abstract class Handler {
     protected static final String ENDPOINT = "/rap";
-    
+
+    private HttpServletRequest request;
+    private Weblogger roller;
+    private String userName;
+    private URI uri;
+    private String urlPrefix;
+
     static class URI {
         private static Pattern PATHINFO_PATTERN = Pattern.compile("^/(users|weblogs|members)(?:/(.*))?$");
         
@@ -89,15 +93,7 @@ abstract class Handler {
             return getEntryId() != null && type != null;
         }
     }
-    
-    protected static final Log logger = LogFactory.getFactory().getInstance(Handler.class);
-    
-    private HttpServletRequest request;
-    private Weblogger roller;
-    private String userName;
-    private URI uri;
-    private String urlPrefix;
-    
+
     /** Get a Handler object implementation based on the given request. */
     public static Handler getHandler(HttpServletRequest req) throws HandlerException {
         boolean enabled = WebloggerConfig.getBooleanProperty("webservices.adminprotocol.enabled");

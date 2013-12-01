@@ -57,6 +57,9 @@ import org.apache.roller.weblogger.util.cache.CachedContent;
  * Handles search queries for weblogs.
  */
 public class SearchServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 6246730804167411636L;
+
     private static Log log = LogFactory.getLog(SearchServlet.class);
 
     // Development theme reloading
@@ -102,6 +105,33 @@ public class SearchServlet extends HttpServlet {
             log.debug("error creating weblog search request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        }
+
+        // Development only. Reload if theme has been modified
+        if (themeReload
+                && !weblog.getEditorTheme()
+                        .equals(WeblogTemplate.ACTION_CUSTOM)
+                && (searchRequest.getPathInfo() == null || searchRequest
+                        .getPathInfo() != null)) {
+
+            try {
+                ThemeManager manager = WebloggerFactory.getWeblogger()
+                        .getThemeManager();
+                boolean reloaded = manager.reLoadThemeFromDisk(weblog
+                        .getEditorTheme());
+                if (reloaded) {
+                    if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest
+                            .getWeblogHandle())) {
+                        SiteWideCache.getInstance().clear();
+                    } else {
+                        WeblogPageCache.getInstance().clear();
+                    }
+                    I18nMessages.reloadBundle(weblog.getLocaleInstance());
+                }
+
+            } catch (Exception ex) {
+                log.error("ERROR - reloading theme " + ex);
+            }
         }
 
         // Get the deviceType from user agent
@@ -193,6 +223,7 @@ public class SearchServlet extends HttpServlet {
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
 
+            // TODO This causes another search, remove.
             // manually add search model again to support pre-3.0 weblogs
             Model searchModel = new SearchResultsModel();
             searchModel.init(initData);
@@ -206,33 +237,6 @@ public class SearchServlet extends HttpServlet {
             }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
-        }
-
-        // Development only. Reload if theme has been modified
-        if (themeReload
-                && !weblog.getEditorTheme()
-                        .equals(WeblogTemplate.ACTION_CUSTOM)
-                && (searchRequest.getPathInfo() == null || searchRequest
-                        .getPathInfo() != null)) {
-
-            try {
-                ThemeManager manager = WebloggerFactory.getWeblogger()
-                        .getThemeManager();
-                boolean reloaded = manager.reLoadThemeFromDisk(weblog
-                        .getEditorTheme());
-                if (reloaded) {
-                    if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest
-                            .getWeblogHandle())) {
-                        SiteWideCache.getInstance().clear();
-                    } else {
-                        WeblogPageCache.getInstance().clear();
-                    }
-                    I18nMessages.reloadBundle(weblog.getLocaleInstance());
-                }
-
-            } catch (Exception ex) {
-                log.error("ERROR - reloading theme " + ex);
-            }
         }
 
         // lookup Renderer we are going to use

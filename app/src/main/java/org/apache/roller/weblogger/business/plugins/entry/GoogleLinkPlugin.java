@@ -37,12 +37,12 @@ import java.util.regex.Pattern;
  * @version 2.1
  */
 public class GoogleLinkPlugin extends SearchPluginBase implements WeblogEntryPlugin {
-    private static final String version = "2.1";
-    private static final Pattern pattern = Pattern.compile("google([:!])\"(.*?)\"(?:\\{(.*?)\\})?");
-    private static final MessageFormat linkFormat = new MessageFormat("<a href=\"http://www.google.com/search?ie=UTF-8&q={3}\">{2}</a>");
-    private static final MessageFormat luckyLinkFormat = new MessageFormat("<a href=\"http://www.google.com/search?ie=UTF-8&q={3}&btnI=on\">{2}</a>");
+    private static final String VERSION = "2.1";
+    private static final Pattern PATTERN = Pattern.compile("google([:!])\"(.*?)\"(?:\\{(.*?)\\})?");
+    private static final MessageFormat LINK_FORMAT = new MessageFormat("<a href=\"http://www.google.com/search?ie=UTF-8&q={3}\">{2}</a>");
+    private static final MessageFormat LUCKY_LINK_FORMAT = new MessageFormat("<a href=\"http://www.google.com/search?ie=UTF-8&q={3}&btnI=on\">{2}</a>");
 
-    private static final Log mLogger = LogFactory.getFactory().getInstance(GoogleLinkPlugin.class);
+    private static final Log LOG = LogFactory.getFactory().getInstance(GoogleLinkPlugin.class);
 
     public GoogleLinkPlugin() {
     }
@@ -56,22 +56,22 @@ public class GoogleLinkPlugin extends SearchPluginBase implements WeblogEntryPlu
     }
 
     public String getVersion() {
-        return version;
+        return VERSION;
     }
 
     public Pattern getPattern() {
-        return pattern;
+        return PATTERN;
     }
 
     public MessageFormat getLinkFormat() {
-        return linkFormat;
+        return LINK_FORMAT;
     }
 
     public MessageFormat getLuckyLinkFormat() {
-        return luckyLinkFormat;
+        return LUCKY_LINK_FORMAT;
     }
 
     public Log getLogger() {
-        return mLogger;
+        return LOG;
     }
 }

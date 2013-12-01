@@ -93,57 +93,61 @@ public class FeedServlet extends HttpServlet {
             feedRequest = new WeblogFeedRequest(request);
 
             weblog = feedRequest.getWeblog();
-            if(weblog == null) {
-                throw new WebloggerException("unable to lookup weblog: "+
-                        feedRequest.getWeblogHandle());
+            if (weblog == null) {
+                throw new WebloggerException("unable to lookup weblog: "
+                        + feedRequest.getWeblogHandle());
             }
 
             // is this the site-wide weblog?
-            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(feedRequest.getWeblogHandle());
+            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(feedRequest
+                    .getWeblogHandle());
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             // invalid feed request format or weblog doesn't exist
             log.debug("error creating weblog feed request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-
         // determine the lastModified date for this content
         long lastModified = System.currentTimeMillis();
-        if(isSiteWide) {
+        if (isSiteWide) {
             lastModified = siteWideCache.getLastModified().getTime();
         } else if (weblog.getLastModified() != null) {
             lastModified = weblog.getLastModified().getTime();
         }
 
         // Respond with 304 Not Modified if it is not modified.
-        if (ModDateHeaderUtil.respondIfNotModified(request,response,lastModified)) {
+        if (ModDateHeaderUtil.respondIfNotModified(request, response,
+                lastModified, feedRequest.getDeviceType())) {
             return;
         }
 
         // set last-modified date
-        ModDateHeaderUtil.setLastModifiedHeader(response, lastModified);
+        ModDateHeaderUtil.setLastModifiedHeader(response, lastModified,
+                feedRequest.getDeviceType());
 
         // set content type
         String accepts = request.getHeader("Accept");
         String userAgent = request.getHeader("User-Agent");
-        if (WebloggerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds") &&
-            accepts != null && accepts.indexOf("*/*") != -1 &&
-            userAgent != null && userAgent.startsWith("Mozilla")) {
-            // client is a browser and feed style is enabled so we want 
-            // browsers to load the page rather than popping up the download 
+        if (WebloggerRuntimeConfig
+                .getBooleanProperty("site.newsfeeds.styledFeeds")
+                && accepts != null
+                && accepts.contains("*/*")
+                && userAgent != null && userAgent.startsWith("Mozilla")) {
+            // client is a browser and feed style is enabled so we want
+            // browsers to load the page rather than popping up the download
             // dialog, so we provide a content-type that browsers will display
             response.setContentType("text/xml");
-        } else if("rss".equals(feedRequest.getFormat())) {
+        } else if ("rss".equals(feedRequest.getFormat())) {
             response.setContentType("application/rss+xml; charset=utf-8");
-        } else if("atom".equals(feedRequest.getFormat())) {
+        } else if ("atom".equals(feedRequest.getFormat())) {
             response.setContentType("application/atom+xml; charset=utf-8");
         }
 
         // generate cache key
         String cacheKey = null;
-        if(isSiteWide) {
+        if (isSiteWide) {
             cacheKey = siteWideCache.generateKey(feedRequest);
         } else {
             cacheKey = weblogFeedCache.generateKey(feedRequest);
@@ -151,78 +155,86 @@ public class FeedServlet extends HttpServlet {
 
         // cached content checking
         CachedContent cachedContent = null;
-        if(isSiteWide) {
+        if (isSiteWide) {
             cachedContent = (CachedContent) siteWideCache.get(cacheKey);
         } else {
-            cachedContent = (CachedContent) weblogFeedCache.get(cacheKey, lastModified);
+            cachedContent = (CachedContent) weblogFeedCache.get(cacheKey,
+                    lastModified);
         }
 
-        if(cachedContent != null) {
-            log.debug("HIT "+cacheKey);
+        if (cachedContent != null) {
+            log.debug("HIT " + cacheKey);
 
             response.setContentLength(cachedContent.getContent().length);
             response.getOutputStream().write(cachedContent.getContent());
             return;
 
         } else {
-            log.debug("MISS "+cacheKey);
+            log.debug("MISS " + cacheKey);
         }
 
-        // validation.  make sure that request input makes sense.
+        // validation. make sure that request input makes sense.
         boolean invalid = false;
         if (feedRequest.getLocale() != null
                 && !feedRequest.getWeblog().isEnableMultiLang()) {
             invalid = true;
         }
-        if(feedRequest.getWeblogCategoryName() != null) {
-            
-            // category specified.  category must exist.
-            if(feedRequest.getWeblogCategory() == null) {
+        if (feedRequest.getWeblogCategoryName() != null) {
+
+            // category specified. category must exist.
+            if (feedRequest.getWeblogCategory() == null) {
                 invalid = true;
             }
-            
-        } else if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
-            
+
+        } else if (feedRequest.getTags() != null
+                && feedRequest.getTags().size() > 0) {
+
             try {
-                // tags specified.  make sure they exist.
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                invalid = !wmgr.getTagComboExists(feedRequest.getTags(), (isSiteWide) ? null : weblog);
+                // tags specified. make sure they exist.
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
+                        .getWeblogEntryManager();
+                invalid = !wmgr.getTagComboExists(feedRequest.getTags(),
+                        (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
             }
         }
-        
-        if(invalid) {
+
+        if (invalid) {
             if (!response.isCommitted()) {
                 response.reset();
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        
+
         // do we need to force a specific locale for the request?
-        if(feedRequest.getLocale() == null && !weblog.isShowAllLangs()) {
+        if (feedRequest.getLocale() == null && !weblog.isShowAllLangs()) {
             feedRequest.setLocale(weblog.getLocale());
         }
-        
+
         // looks like we need to render content
         HashMap model = new HashMap();
         String pageId = null;
         try {
             // determine what template to render with
-            boolean siteWide = WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle());
-           if (siteWide && "entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
+            boolean siteWide = WebloggerRuntimeConfig.isSiteWideWeblog(weblog
+                    .getHandle());
+            if (siteWide && "entries".equals(feedRequest.getType())
+                    && feedRequest.getTerm() != null) {
                 pageId = "site-search-atom.vm";
 
-           } else if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
+            } else if ("entries".equals(feedRequest.getType())
+                    && feedRequest.getTerm() != null) {
                 pageId = "feeds/weblog-search-atom.vm";
 
             } else if (siteWide) {
-                pageId = "site-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
+                pageId = "site-" + feedRequest.getType() + "-"
+                        + feedRequest.getFormat() + ".vm";
 
             } else {
-                pageId = "weblog-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
+                pageId = "weblog-" + feedRequest.getType() + "-"
+                        + feedRequest.getFormat() + ".vm";
             }
 
             // populate the rendering model
@@ -230,45 +242,50 @@ public class FeedServlet extends HttpServlet {
             initData.put("parsedRequest", feedRequest);
 
             // define url strategy
-            initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());
+            initData.put("urlStrategy", WebloggerFactory.getWeblogger()
+                    .getUrlStrategy());
 
             // Load models for feeds
-            String feedModels = WebloggerConfig.getProperty("rendering.feedModels");
+            String feedModels = WebloggerConfig
+                    .getProperty("rendering.feedModels");
             ModelLoader.loadModels(feedModels, model, initData, true);
 
             // Load special models for site-wide blog
 
             if (siteWide) {
-                String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
+                String siteModels = WebloggerConfig
+                        .getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
 
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
-            
+
             // Load search models if search feed
-            if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {               
-                ModelLoader.loadModels(SearchResultsFeedModel.class.getName(), model, initData, true);
-            }                        
+            if ("entries".equals(feedRequest.getType())
+                    && feedRequest.getTerm() != null) {
+                ModelLoader.loadModels(SearchResultsFeedModel.class.getName(),
+                        model, initData, true);
+            }
 
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
 
-            if(!response.isCommitted()) {
+            if (!response.isCommitted()) {
                 response.reset();
             }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
 
-
         // lookup Renderer we are going to use
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate(pageId, "velocity");
-            renderer = RendererManager.getRenderer(template, MobileDeviceRepository.DeviceType.standard);
-        } catch(Exception e) {
+            renderer = RendererManager.getRenderer(template,
+                    MobileDeviceRepository.DeviceType.standard);
+        } catch (Exception e) {
             // nobody wants to render my content :(
 
             // TODO: this log message has been disabled because it fills up
@@ -278,7 +295,7 @@ public class FeedServlet extends HttpServlet {
             // at some point we should have better validation on the input so
             // that we can quickly dispatch invalid feed requests and only
             // get this far if we expect the template to be found
-            //log.error("Couldn't find renderer for page "+pageId, e);
+            // log.error("Couldn't find renderer for page "+pageId, e);
 
             if (!response.isCommitted()) {
                 response.reset();
@@ -287,7 +304,7 @@ public class FeedServlet extends HttpServlet {
             return;
         }
 
-        // render content.  use default size of about 24K for a standard page
+        // render content. use default size of about 24K for a standard page
         CachedContent rendererOutput = new CachedContent(24567);
         try {
             log.debug("Doing rendering");
@@ -298,7 +315,7 @@ public class FeedServlet extends HttpServlet {
             rendererOutput.close();
         } catch (Exception e) {
             // bummer, error during rendering
-            log.error("Error during rendering for page "+pageId, e);
+            log.error("Error during rendering for page " + pageId, e);
 
             if (!response.isCommitted()) {
                 response.reset();
@@ -307,7 +324,6 @@ public class FeedServlet extends HttpServlet {
             return;
         }
 
-
         // post rendering process
 
         // flush rendered content to response
@@ -315,9 +331,9 @@ public class FeedServlet extends HttpServlet {
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
 
-        // cache rendered content.  only cache if user is not logged in?
-        log.debug("PUT "+cacheKey);
-        if(isSiteWide) {
+        // cache rendered content. only cache if user is not logged in?
+        log.debug("PUT " + cacheKey);
+        if (isSiteWide) {
             siteWideCache.put(cacheKey, rendererOutput);
         } else {
             weblogFeedCache.put(cacheKey, rendererOutput);

@@ -281,9 +281,13 @@ class RollerMemberHandler extends Handler {
     
     private List<String> toActionList(String perm) throws HandlerException {
         List<String> actions = new ArrayList<String>();
-        if ("ADMIN".equals(perm))       actions.add(WeblogPermission.ADMIN);
-        else if ("AUTHOR".equals(perm)) actions.add(WeblogPermission.POST);
-        else                            actions.add(WeblogPermission.EDIT_DRAFT);
+        if ("ADMIN".equals(perm)) {
+            actions.add(WeblogPermission.ADMIN);
+        } else if ("AUTHOR".equals(perm)) {
+            actions.add(WeblogPermission.POST);
+        } else {
+            actions.add(WeblogPermission.EDIT_DRAFT);
+        }
         return actions;       
     }
     

@@ -22,7 +22,7 @@
                 <a href="$url.editEntry($entry.anchor)">$text.get("macro.weblog.entrypermalink.edit")</a> &nbsp;|&nbsp;
             #end
             #set($commentCount = $entry.commentCount)
-            #if($entry.commentsStillAllowed || $commentCount > 0)  
+            #if($entry.commentsStillAllowed || $commentCount > 0)
                 #set($link = "$url.comments($entry.anchor)" )
                 <a href="$link" class="commentsLink">$text.get("macro.weblog.comments") [$commentCount]</a>
             #end

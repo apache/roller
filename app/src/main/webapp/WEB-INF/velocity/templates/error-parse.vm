@@ -1,0 +1,48 @@
+#**
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+*#
+#*
+ Velocity #parse error include page
+*#
+<!-- error-parse -->
+<div style="padding: 10px;white-space: normal;">
+  <h2 style="background-color: inherit;color: #CC0000;margin: 0;padding: 0;">Velocity Template Error</h2>
+  <span style="display: block;background-color: #fcc;color: #c00;border: 1px solid red;margin: 15px 0px;padding: 10px;font-weight: bold;">
+    <ul style="list-style-type: none;margin-top: 0;margin-left: 0;margin-bottom: 0;padding: 3px;">
+      <li>$text.get("errorPage.title")</li>
+      <li>$text.get("errorPage.message")</li>
+    </ul>
+  </span>
+  <table width="100%" style="border-collapse: collapse; border: 1px dotted #CCCCCC;">
+    <tr>
+      <td style="border: 1px dotted #CCCCCC;" width="25%">Exception</td>
+      <td style="border: 1px dotted #CCCCCC;">Velocity template error : $exceptionDevice</td>
+    </tr>
+    <tr>
+      <td style="border: 1px dotted #CCCCCC;" width="25%">Message</td>
+      <td style="border: 1px dotted #CCCCCC;">$utils.autoformat($utils.escapeHTML($exception.getMessage()))</td>
+    </tr>
+    <tr>
+      <td style="border: 1px dotted #CCCCCC;" width="25%">Type</td>
+      <td style="border: 1px dotted #CCCCCC;">$exceptionSource</td>
+    </tr>
+    <tr>
+      <td style="border: 1px dotted #CCCCCC;" width="25%">Exception</td>
+      <td style="border: 1px dotted #CCCCCC;">$!exception.getClass().getName()</td>
+    </tr>
+  </table>
+</div>

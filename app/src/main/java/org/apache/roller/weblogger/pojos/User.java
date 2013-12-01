@@ -33,9 +33,6 @@ import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * User bean.
- *
- * @hibernate.cache usage="read-write"
- * @hibernate.class lazy="true" table="rolleruser"
  */
 public class User implements Serializable {
     
@@ -76,8 +73,6 @@ public class User implements Serializable {
     
     /**
      * Id of the User.
-     *
-     * @hibernate.id column="id" generator-class="assigned"
      */
     public String getId() {
         return this.id;
@@ -90,7 +85,6 @@ public class User implements Serializable {
     
     /**
      * User name of the user.
-     * @hibernate.property column="username" non-null="true" unique="true"
      */
     public String getUserName() {
         return this.userName;
@@ -103,8 +97,6 @@ public class User implements Serializable {
     /**
      * Get password.
      * If password encryption is enabled, will return encrypted password.
-     *
-     * @hibernate.property column="passphrase" non-null="true"
      */
     public String getPassword() {
         return this.password;
@@ -137,8 +129,6 @@ public class User implements Serializable {
     
     /**
      * Screen name of the user.
-     *
-     * @hibernate.property column="screenname" non-null="true" unique="true"
      */
     public String getScreenName() {
         return this.screenName;
@@ -148,11 +138,8 @@ public class User implements Serializable {
         this.screenName = screenName;
     }
     
-    
     /**
      * Full name of the user.
-     *
-     * @hibernate.property column="fullname" non-null="true" unique="true"
      */
     public String getFullName() {
         return this.fullName;
@@ -161,12 +148,9 @@ public class User implements Serializable {
     public void setFullName( String fullName ) {
         this.fullName = fullName;
     }
-    
-    
+
     /**
      * E-mail address of the user.
-     *
-     * @hibernate.property column="emailaddress" non-null="true" unique="true"
      */
     public String getEmailAddress() {
         return this.emailAddress;
@@ -179,8 +163,6 @@ public class User implements Serializable {
     
     /**
      * The date the user was created.
-     *
-     * @hibernate.property column="datecreated" non-null="true" unique="false"
      */
     public Date getDateCreated() {
         if (dateCreated == null) {
@@ -197,12 +179,9 @@ public class User implements Serializable {
             dateCreated = null;
         }
     }
-    
-    
+
     /**
      * Locale of the user.
-     *
-     * @hibernate.property column="locale" non-null="true" unique="false"
      */
     public String getLocale() {
         return this.locale;
@@ -211,12 +190,9 @@ public class User implements Serializable {
     public void setLocale(String locale) {
         this.locale = locale;
     }
-    
-    
+
     /**
      * Timezone of the user.
-     *
-     * @hibernate.property column="timeZone" non-null="true" unique="false"
      */
     public String getTimeZone() {
         return this.timeZone;
@@ -229,8 +205,6 @@ public class User implements Serializable {
     
     /**
      * Is this user account enabled?  Disabled accounts cannot login.
-     *
-     * @hibernate.property column="isenabled" non-null="true" unique="false"
      */
     public Boolean getEnabled() {
         return this.enabled;
@@ -240,12 +214,6 @@ public class User implements Serializable {
         this.enabled = enabled;
     }
     
-    
-    /** 
-     * Activation code.
-     *
-     * @hibernate.property column="activationcode" non-null="false"
-     */
     public String getActivationCode() {
         return activationCode;
     }

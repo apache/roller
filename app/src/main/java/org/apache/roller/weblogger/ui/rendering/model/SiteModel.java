@@ -522,7 +522,7 @@ public class SiteModel implements Model {
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            List weblogs = wmgr.getWeblogEntriesPinnedToMain(new Integer(length));
+            List weblogs = wmgr.getWeblogEntriesPinnedToMain(length);
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
                 WeblogEntry entry = (WeblogEntry) it.next();
                 results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));

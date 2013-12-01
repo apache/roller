@@ -36,7 +36,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
@@ -227,10 +226,8 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         // copy categories
         if (romeEntry.getCategories().size() > 0) {
             List list = new ArrayList();
-            Iterator cats = romeEntry.getCategories().iterator();
-            while (cats.hasNext()) {
-                SyndCategory cat = (SyndCategory)cats.next();
-                list.add(cat.getName());
+            for (Object cat : romeEntry.getCategories()) {
+                list.add(((SyndCategory) cat).getName());
             }
             newEntry.setCategoriesString(list);
         }

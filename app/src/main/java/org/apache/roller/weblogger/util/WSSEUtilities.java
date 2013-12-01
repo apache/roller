@@ -39,7 +39,7 @@ public class WSSEUtilities {
             digester.update(created);
             digester.update(password);
             byte[] digest = digester.digest();
-            result = new String(base64Encode(digest));
+            result = base64Encode(digest);
         }
         catch (NoSuchAlgorithmException e) {
             result = null;
@@ -56,7 +56,7 @@ public class WSSEUtilities {
     throws UnsupportedEncodingException {  
        
         byte[] nonceBytes = Long.toString(new Date().getTime()).getBytes();
-        String nonce = new String(WSSEUtilities.base64Encode(nonceBytes));
+        String nonce = WSSEUtilities.base64Encode(nonceBytes);
         
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         String created = sdf.format(new Date());
@@ -64,7 +64,7 @@ public class WSSEUtilities {
         String digest = WSSEUtilities.generateDigest(
                 nonceBytes, created.getBytes("UTF-8"), password.getBytes("UTF-8"));
         
-        StringBuffer header = new StringBuffer("UsernameToken Username=\"");
+        StringBuilder header = new StringBuilder("UsernameToken Username=\"");
         header.append(userName);
         header.append("\", ");
         header.append("PasswordDigest=\"");

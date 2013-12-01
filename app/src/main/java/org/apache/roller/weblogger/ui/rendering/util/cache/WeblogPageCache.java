@@ -167,7 +167,7 @@ public final class WeblogPageCache {
      */
     public String generateKey(WeblogPageRequest pageRequest) {
         
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         
         key.append(this.CACHE_ID).append(":");
         key.append(pageRequest.getWeblogHandle());
@@ -249,7 +249,7 @@ public final class WeblogPageCache {
             return null;
         }
         
-        StringBuffer string = new StringBuffer();
+        StringBuilder string = new StringBuilder();
         
         String key = null;
         String[] value = null;
