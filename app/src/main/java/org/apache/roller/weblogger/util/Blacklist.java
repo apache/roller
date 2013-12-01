@@ -236,7 +236,7 @@ public class Blacklist {
      */
     private String readFromStream(InputStream txtStream, boolean saveStream) {
         String line;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         BufferedReader in = null;
         try {
             in = new BufferedReader(
@@ -464,7 +464,7 @@ public class Blacklist {
         
     /** Return pretty list of String and RegEx rules. */
     public String toString() {
-        StringBuffer buf = new StringBuffer("blacklist ");
+        StringBuilder buf = new StringBuilder("blacklist ");
         buf.append(blacklistStr).append("\n");
         buf.append("Regex blacklist ").append(blacklistRegex);
         return buf.toString();

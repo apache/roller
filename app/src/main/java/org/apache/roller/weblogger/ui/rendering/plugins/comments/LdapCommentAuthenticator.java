@@ -75,7 +75,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 			ldapPass = ldapPassTemp != null ? ldapPassTemp : "";
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("<p>");
 		sb.append(bundle.getString("comments.ldapAuthenticatorUserName"));

@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * A set of String library static methods. While extending String or 
- * StringBuffer would have been the nicest solution, that is not 
+ * StringBuilder would have been the nicest solution, that is not
  * possible, so a simple set of static methods seems the most workable.
  *
  * Method ideas have so far been taken from the PHP4, Ruby and .NET languages.
@@ -42,7 +42,7 @@ public final class StringW {
         // class. so must be done by hand
         char[] chrs = str.toCharArray();
         int sz = chrs.length;
-        StringBuffer buffer = new StringBuffer(2*sz);
+        StringBuilder buffer = new StringBuilder(2*sz);
         for(int i=0; i<sz; i++) {
             switch(chrs[i]) {
               case '[' :
@@ -113,7 +113,7 @@ public final class StringW {
         width++;
 
         // our best guess as to an initial size
-        StringBuffer buffer = new StringBuffer(sz/width*delim.length()+sz);
+        StringBuilder buffer = new StringBuilder(sz/width*delim.length()+sz);
 
         // every line might include a delim on the end
         //        System.err.println( "width before: "+ width );

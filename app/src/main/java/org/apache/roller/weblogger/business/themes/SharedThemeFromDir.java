@@ -151,7 +151,7 @@ public class SharedThemeFromDir extends SharedTheme {
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(name);
         sb.append("\n");
 

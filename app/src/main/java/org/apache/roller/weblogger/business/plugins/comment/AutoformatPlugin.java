@@ -67,7 +67,7 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
          *
          * NOTE: we consider a paragraph to be 2 endlines with no text between them
          */
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new StringReader(text));
             

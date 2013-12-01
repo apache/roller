@@ -97,7 +97,7 @@ public class CustomOpenIDAuthenticationProcessingFilter
                 URL url = new URL(returnToUrl);
                 int port = url.getPort();
 
-                StringBuffer realmBuffer = new StringBuffer(returnToUrl.length())
+                StringBuilder realmBuffer = new StringBuilder(returnToUrl.length())
                         .append(url.getProtocol())
                         .append("://")
                         .append(url.getHost());

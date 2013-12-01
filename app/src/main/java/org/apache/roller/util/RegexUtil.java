@@ -100,7 +100,7 @@ public final class RegexUtil {
      * @return
      */
     public static String encode(String email) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         try {
             char[] hexString = Hex.encodeHex(email.getBytes("UTF-8"));
             for (int i = 0; i < hexString.length; i++) {

@@ -460,8 +460,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                       
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
-        StringBuffer whereClause = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
+        StringBuilder whereClause = new StringBuilder();
         
         queryString.append("SELECT w FROM Weblog w WHERE ");
 

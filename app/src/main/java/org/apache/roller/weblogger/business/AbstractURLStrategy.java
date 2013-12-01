@@ -37,8 +37,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
      * Url to login page.
      */
     public String getLoginURL(boolean absolute) {
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -56,8 +56,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
      * Url to logout page.
      */
     public String getLogoutURL(boolean absolute) {
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -74,8 +74,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
      * Url to register page.
      */
     public String getRegisterURL(boolean absolute) {
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -98,8 +98,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
                                             String weblogHandle,
                                             Map<String, String> parameters,
                                             boolean absolute) {
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -111,7 +111,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
         url.append("/").append(action).append(".rol");
         
         // put weblog handle parameter, if necessary
-        Map<String, String> params = new HashMap();
+        Map<String, String> params = new HashMap<String, String>();
         if(weblogHandle != null) {
             params.put("weblog", weblogHandle);
         }
@@ -134,8 +134,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
      */
     public String getEntryAddURL(String weblogHandle,
                                               boolean absolute) {
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -158,8 +158,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     public String getEntryEditURL(String weblogHandle,
                                                String entryId,
                                                boolean absolute) {
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -182,8 +182,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
      */
     public String getWeblogConfigURL(String weblogHandle,
                                                   boolean absolute) {
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -201,8 +201,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     
     
     public String getXmlrpcURL(boolean absolute) {
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -217,8 +217,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     
     
     public String getAtomProtocolURL(boolean absolute) {
-        
-        StringBuffer url = new StringBuffer();
+
+        StringBuilder url = new StringBuilder();
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());

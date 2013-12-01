@@ -230,7 +230,7 @@ public class WeblogReferrer implements Serializable {
     }
     
     public String getDisplayUrl(int maxWidth, boolean includeHits) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         String url = StringEscapeUtils.escapeHtml(getUrl());
         String displayUrl = url.trim();

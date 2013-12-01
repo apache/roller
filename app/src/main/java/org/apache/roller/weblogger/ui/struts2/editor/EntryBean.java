@@ -391,7 +391,7 @@ public class EntryBean {
     
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         
         //title,locale,catId,tags,text,summary,dateString,status,comments,plugins
         buf.append("title = ").append(getTitle()).append("\n");

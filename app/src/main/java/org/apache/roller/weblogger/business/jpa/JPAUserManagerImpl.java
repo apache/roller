@@ -206,8 +206,8 @@ public class JPAUserManagerImpl implements UserManager {
 
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
-        StringBuffer whereClause = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
+        StringBuilder whereClause = new StringBuilder();
 
         if (weblog != null) {
             queryString.append("SELECT u FROM User u JOIN u.permissions p ");

@@ -419,8 +419,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
-        StringBuffer whereClause = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
+        StringBuilder whereClause = new StringBuilder();
         queryString.append("SELECT e FROM WeblogEntry e WHERE ");
                      
         params.add(size++, current.getWebsite());
@@ -553,7 +553,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
         
         //queryString.append("SELECT e FROM WeblogEntry e WHERE ");
         if (tags == null || tags.size()==0) {
@@ -891,10 +891,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT c FROM WeblogEntryComment c ");
         
-        StringBuffer whereClause = new StringBuffer();
+        StringBuilder whereClause = new StringBuilder();
         if (entry != null) {
             params.add(size++, entry);
             whereClause.append("c.weblogEntry = ?").append(size);
@@ -1358,7 +1358,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 
         List params = new ArrayList();
         int size = 0;
-        StringBuffer queryString = new StringBuffer();            
+        StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE ");
                 
         if (website != null) {
@@ -1421,7 +1421,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             return false;
         }
         
-        StringBuffer queryString = new StringBuffer();
+        StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT DISTINCT w.name ");
         queryString.append("FROM WeblogEntryTagAggregate w WHERE w.name IN (");
         //?1) AND w.weblog = ?2");
@@ -1725,7 +1725,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @param expression The given expression
      * @return the whereClause.
      */
-    private static StringBuffer appendConjuctionToWhereclause(StringBuffer whereClause,
+    private static StringBuilder appendConjuctionToWhereclause(StringBuilder whereClause,
             String expression) {
         if(whereClause.length() != 0 && expression.length() != 0) {
             whereClause.append(" AND ");

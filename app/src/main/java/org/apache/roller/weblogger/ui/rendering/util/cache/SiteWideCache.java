@@ -195,7 +195,7 @@ public class SiteWideCache implements CacheHandler {
      */
     public String generateKey(WeblogPageRequest pageRequest) {
         
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         
         key.append(this.CACHE_ID).append(":");
         key.append("page/");
@@ -285,7 +285,7 @@ public class SiteWideCache implements CacheHandler {
      */
     public String generateKey(WeblogFeedRequest feedRequest) {
         
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         
         key.append(this.CACHE_ID).append(":");
         key.append("feed/");
@@ -427,7 +427,7 @@ public class SiteWideCache implements CacheHandler {
             return null;
         }
         
-        StringBuffer string = new StringBuffer();
+        StringBuilder string = new StringBuilder();
         
         String key = null;
         String[] value = null;

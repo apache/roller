@@ -59,7 +59,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         Integer value1o = (Integer)request.getSession().getAttribute("mathValue1");
         Integer value2o = (Integer)request.getSession().getAttribute("mathValue2");
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         sb.append("<p>");
         sb.append(bundle.getString("comments.mathAuthenticatorQuestion"));

@@ -52,7 +52,7 @@ public final class XmlW {
      */
     public static String removeXml(String str) {
         int sz = str.length();
-        StringBuffer buffer = new StringBuffer(sz);
+        StringBuilder buffer = new StringBuilder(sz);
         boolean inString = false;
         boolean inTag = false;
         for(int i=0; i<sz; i++) {

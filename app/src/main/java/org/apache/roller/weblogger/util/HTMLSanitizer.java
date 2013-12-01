@@ -499,7 +499,7 @@ public class HTMLSanitizer {
 	}
 
 	public static final String replaceAllNoRegex(String source, String search, String replace) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (source != null) {
 			if (search.length() == 0) {
 				return source;

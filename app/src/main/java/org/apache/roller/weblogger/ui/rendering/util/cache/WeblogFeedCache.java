@@ -162,7 +162,7 @@ public final class WeblogFeedCache {
      */
     public String generateKey(WeblogFeedRequest feedRequest) {
         
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         
         key.append(this.CACHE_ID).append(":");
         key.append(feedRequest.getWeblogHandle());

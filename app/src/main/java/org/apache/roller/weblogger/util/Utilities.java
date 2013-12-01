@@ -161,7 +161,7 @@ public class Utilities {
         if (str == null) {
             return "";
         }
-        StringBuffer ret = new StringBuffer(str.length());
+        StringBuilder ret = new StringBuilder(str.length());
         int start = 0;
         int beginTag = str.indexOf('<');
         int endTag = 0;
@@ -229,7 +229,7 @@ public class Utilities {
             return html;
         }
         Matcher m = mLinkPattern.matcher(html);
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         while (m.find()) {
             int start = m.start();
             int end = m.end();
@@ -263,7 +263,7 @@ public class Utilities {
      * supplied char.
      */
     public static String replaceNonAlphanumeric(String str, char subst) {
-        StringBuffer ret = new StringBuffer(str.length());
+        StringBuilder ret = new StringBuilder(str.length());
         char[] testChars = str.toCharArray();
         for (int i = 0; i < testChars.length; i++) {
             if (Character.isLetterOrDigit(testChars[i])) {
@@ -280,7 +280,7 @@ public class Utilities {
      * Remove occurences of non-alphanumeric characters.
      */
     public static String removeNonAlphanumeric(String str) {
-        StringBuffer ret = new StringBuffer(str.length());
+        StringBuilder ret = new StringBuilder(str.length());
         char[] testChars = str.toCharArray();
         for (int i = 0; i < testChars.length; i++) {
             // MR: Allow periods in page links
@@ -415,7 +415,7 @@ public class Utilities {
      * Reads an inputstream into a string
      */
     public static String streamToString(InputStream is) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
         String line;
         while ((line = in.readLine()) != null) {
@@ -542,7 +542,7 @@ public class Utilities {
         // now calculate the hash
         byte[] encodedPassword = md.digest();
         
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         
         for (int i = 0; i < encodedPassword.length; i++) {
             if ((encodedPassword[i] & 0xff) < 0x10) {
@@ -758,8 +758,8 @@ public class Utilities {
      */
     private static String removeVisibleHTMLTags(String str) {
         str = stripLineBreaks(str);
-        StringBuffer result = new StringBuffer(str);
-        StringBuffer lcresult = new StringBuffer(str.toLowerCase());
+        StringBuilder result = new StringBuilder(str);
+        StringBuilder lcresult = new StringBuilder(str.toLowerCase());
         
         // <img should take care of smileys
         String[] visibleTags = {"<img"}; // are there others to add?
@@ -822,7 +822,7 @@ public class Utilities {
         if (str == null) {
             return "";
         }
-        StringBuffer ret = new StringBuffer(str.length());
+        StringBuilder ret = new StringBuilder(str.length());
         int start = 0;
         int beginTag = str.indexOf('<');
         int endTag = 0;
@@ -925,7 +925,7 @@ public class Utilities {
         int byte2;
         int byte3;
         int iByteLen = aValue.length;
-        StringBuffer tt = new StringBuffer();
+        StringBuilder tt = new StringBuilder();
         
         for (int i = 0; i < iByteLen; i += 3) {
             boolean bByte2 = (i + 1) < iByteLen;
@@ -952,7 +952,7 @@ public class Utilities {
             throw new NullPointerException();
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         char[] charArray = tag.toCharArray();
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];

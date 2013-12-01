@@ -657,14 +657,14 @@ public class JPARefererManagerImpl implements RefererManager {
 
     protected List getBlackListedReferer(String[] blacklist) throws
             WebloggerException {
-        StringBuffer queryString = getQueryStringForBlackList(blacklist);
+        StringBuilder queryString = getQueryStringForBlackList(blacklist);
         Query query = strategy.getDynamicQuery(queryString.toString());
         return (List) query.getResultList();
     }
 
     protected List getBlackListedReferer(Weblog website, String[] blacklist) 
             throws WebloggerException {
-        StringBuffer queryString = getQueryStringForBlackList(blacklist);
+        StringBuilder queryString = getQueryStringForBlackList(blacklist);
         queryString.append(" AND r.website = ?1 ");
         Query query = strategy.getDynamicQuery(queryString.toString());
         query.setParameter(1, website);
@@ -678,9 +678,9 @@ public class JPARefererManagerImpl implements RefererManager {
      * @param blacklist
      * @return
      */
-    private StringBuffer getQueryStringForBlackList(String[] blacklist) {
+    private StringBuilder getQueryStringForBlackList(String[] blacklist) {
         assert blacklist.length > 0;
-        StringBuffer queryString = new StringBuffer("SELECT r FROM WeblogReferrer r WHERE (");
+        StringBuilder queryString = new StringBuilder("SELECT r FROM WeblogReferrer r WHERE (");
         //Search for any matching entry from blacklist[]
         final String orKeyword = " OR ";
         for (int i = 0; i < blacklist.length; i++) {

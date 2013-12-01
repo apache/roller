@@ -234,7 +234,7 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
 
     public void setCategoriesString(List categories) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Iterator cats = categories.iterator();
         while (cats.hasNext()) {
             String cat = (String)cats.next();

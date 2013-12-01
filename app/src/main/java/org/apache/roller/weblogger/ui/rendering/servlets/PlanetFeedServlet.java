@@ -249,7 +249,7 @@ public class PlanetFeedServlet extends HttpServlet {
      */
     private String generateKey(PlanetRequest planetRequest) {
 
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         key.append(planetRequest.getContext());
         key.append("/");
         key.append(planetRequest.getType());

@@ -280,7 +280,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         try {
             long startTime = System.currentTimeMillis();
             
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             List params = new ArrayList();
             int size = 0;
             sb.append("SELECT e FROM SubscriptionEntry e ");

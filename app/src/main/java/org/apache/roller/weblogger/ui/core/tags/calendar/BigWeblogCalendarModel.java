@@ -73,7 +73,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     public String getContent(Date day) {
         String content = null;
         try {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             
             // get the 8 char YYYYMMDD datestring for day, returns null
             // if no weblog entry on that day

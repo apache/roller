@@ -123,7 +123,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
      */
     private String htmlEscape(String smiley) {
         char[] chars = smiley.toCharArray();
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i=0; i<chars.length; i++) {
             if (chars[i] == '"') {
                 buf.append("&quot;");
@@ -151,7 +151,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     
     private String regexEscape(String smiley) {
         char[] chars = smiley.toCharArray();
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i=0; i<chars.length; i++) {
             for (int x=0; x<escape_regex.length; x++) {
                 if (escape_regex[x] == chars[i]) {

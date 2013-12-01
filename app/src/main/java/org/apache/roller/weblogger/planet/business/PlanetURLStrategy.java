@@ -36,7 +36,7 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      */
     public String getPlanetURL(String planet) {
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
@@ -54,7 +54,7 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      */
     public String getPlanetGroupURL(String planet, String group, int pageNum) {
 
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         String sep = "?";
         
         url.append(getPlanetURL(planet));
@@ -83,7 +83,7 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      */
     public String getPlanetGroupFeedURL(String planet, String group, String format) {
         
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         String sep = "?";
         
         url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());

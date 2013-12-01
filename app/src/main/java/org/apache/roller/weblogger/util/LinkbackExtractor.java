@@ -122,7 +122,7 @@ public class LinkbackExtractor
         }).getParser();
 
         // Read HTML file into string
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         try

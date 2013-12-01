@@ -348,7 +348,7 @@ public class BookmarkTest extends TestCase {
     private String fileToString( InputStream is ) throws java.io.IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         String s = null;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while ( (s=br.readLine()) != null ) {
             sb.append( s );
         }

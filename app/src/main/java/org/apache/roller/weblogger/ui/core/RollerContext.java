@@ -144,7 +144,7 @@ public class RollerContext extends ContextLoaderListener
         // if preparation failed or is incomplete then we are done,
         // otherwise try to bootstrap the business tier
         if (!WebloggerStartup.isPrepared()) {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             buf.append("\n--------------------------------------------------------------");
             buf.append("\nRoller Weblogger startup INCOMPLETE, user interaction required");
             buf.append("\n--------------------------------------------------------------");
