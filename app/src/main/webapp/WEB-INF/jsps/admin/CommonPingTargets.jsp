@@ -51,10 +51,10 @@
     <!-- TODO: Use icons here -->
     <td class="rollertable" align="center" >
         <s:if test="#pingTarget.autoEnabled">
-            <span style="{color: #00aa00; font-weight: bold;}"><s:text name="pingTarget.enabled"/></span>&nbsp;
+            <span style="color: #00aa00; font-weight: bold;"><s:text name="pingTarget.enabled"/></span>&nbsp;
         </s:if>
         <s:else>
-            <span style="{color: #aaaaaa; font-weight: bold;}"><s:text name="pingTarget.disabled"/></span>&nbsp;
+            <span style="color: #aaaaaa; font-weight: bold;"><s:text name="pingTarget.disabled"/></span>&nbsp;
         </s:else>
     </td>
     
