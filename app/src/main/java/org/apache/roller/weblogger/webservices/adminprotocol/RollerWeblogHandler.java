@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.*;
-import org.jdom.Document;
+import org.jdom2.Document;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Reader;

@@ -34,9 +34,9 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.UnexpectedRootElementException;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 /**
  * This class is the abstract notion of an RAP request handler.

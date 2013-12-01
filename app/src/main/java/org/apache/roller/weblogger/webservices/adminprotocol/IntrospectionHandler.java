@@ -26,7 +26,7 @@ import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Service;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.UnexpectedRootElementException;
-import org.jdom.Document;
+import org.jdom2.Document;
 
 /**
  * This class handles requests for the RAP introspection document.

@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * This class is the abstract notion of a set of entries.

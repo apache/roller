@@ -23,12 +23,13 @@ import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.feed.atom.Person;
-import com.sun.syndication.propono.atom.common.rome.AppModule;
-import com.sun.syndication.propono.atom.common.rome.AppModuleImpl;
-import com.sun.syndication.propono.atom.server.AtomException;
-import com.sun.syndication.propono.atom.server.AtomNotAuthorizedException;
-import com.sun.syndication.propono.atom.server.AtomNotFoundException;
-import com.sun.syndication.propono.atom.server.AtomRequest;
+import com.sun.syndication.feed.synd.SyndPerson;
+import org.rometools.propono.atom.common.rome.AppModule;
+import org.rometools.propono.atom.common.rome.AppModuleImpl;
+import org.rometools.propono.atom.server.AtomException;
+import org.rometools.propono.atom.server.AtomNotAuthorizedException;
+import org.rometools.propono.atom.server.AtomNotFoundException;
+import org.rometools.propono.atom.server.AtomRequest;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -338,10 +339,10 @@ public class EntryCollection {
         }
         
         User creator = entry.getCreator();
-        Person author = new Person();
+        SyndPerson author = new Person();
         author.setName(         creator.getUserName());
         author.setEmail(        creator.getEmailAddress());
-        atomEntry.setAuthors(   Collections.singletonList(author));
+        atomEntry.setAuthors(   (List<SyndPerson>)Collections.singletonList(author));
         
         // Add Atom category for Weblogger category, using category scheme
         List categories = new ArrayList();

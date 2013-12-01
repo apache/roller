@@ -16,8 +16,8 @@
 * directory of this distribution.
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
-import com.sun.syndication.propono.atom.common.Categories;
-import com.sun.syndication.propono.atom.server.AtomRequest;
+import org.rometools.propono.atom.common.Categories;
+import org.rometools.propono.atom.server.AtomRequest;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
@@ -32,11 +32,11 @@ import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.WSSEUtilities;
 import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Feed;
-import com.sun.syndication.propono.atom.common.AtomService;
-import com.sun.syndication.propono.atom.server.AtomException;
-import com.sun.syndication.propono.atom.server.AtomHandler;
-import com.sun.syndication.propono.atom.server.AtomMediaResource;
-import com.sun.syndication.propono.atom.server.AtomNotFoundException;
+import org.rometools.propono.atom.common.AtomService;
+import org.rometools.propono.atom.server.AtomException;
+import org.rometools.propono.atom.server.AtomHandler;
+import org.rometools.propono.atom.server.AtomMediaResource;
+import org.rometools.propono.atom.server.AtomNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;

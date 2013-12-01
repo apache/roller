@@ -22,11 +22,11 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.Text;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Text;
+import org.jdom2.input.SAXBuilder;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry.Attributes;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry.Types;
 

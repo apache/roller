@@ -16,7 +16,7 @@
  */
 package org.apache.roller.planet.util.rome;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import com.sun.syndication.feed.rss.Item;
 import com.sun.syndication.io.impl.DateParser;

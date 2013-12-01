@@ -38,11 +38,11 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.Utilities;
 
 import com.sun.syndication.feed.atom.Category;
-import com.sun.syndication.propono.atom.common.AtomService;
-import com.sun.syndication.propono.atom.common.Categories;
-import com.sun.syndication.propono.atom.common.Collection;
-import com.sun.syndication.propono.atom.common.Workspace;
-import com.sun.syndication.propono.atom.server.AtomException;
+import org.rometools.propono.atom.common.AtomService;
+import org.rometools.propono.atom.common.Categories;
+import org.rometools.propono.atom.common.Collection;
+import org.rometools.propono.atom.common.Workspace;
+import org.rometools.propono.atom.server.AtomException;
 
 
 /**
