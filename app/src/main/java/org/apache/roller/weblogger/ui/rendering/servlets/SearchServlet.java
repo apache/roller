@@ -110,10 +110,7 @@ public class SearchServlet extends HttpServlet {
         // Development only. Reload if theme has been modified
         if (themeReload
                 && !weblog.getEditorTheme()
-                        .equals(WeblogTemplate.ACTION_CUSTOM)
-                && (searchRequest.getPathInfo() == null || searchRequest
-                        .getPathInfo() != null
-                        && !searchRequest.getPathInfo().endsWith(".css"))) {
+                        .equals(WeblogTemplate.ACTION_CUSTOM)) {
 
             try {
                 ThemeManager manager = WebloggerFactory.getWeblogger()
