@@ -206,7 +206,8 @@ public class PageServlet extends HttpServlet {
                 && !weblog.getEditorTheme()
                         .equals(WeblogTemplate.ACTION_CUSTOM)
                 && (pageRequest.getPathInfo() == null || pageRequest
-                        .getPathInfo() != null)) {
+                        .getPathInfo() != null
+                        && !pageRequest.getPathInfo().endsWith(".css"))) {
             try {
                 ThemeManager manager = WebloggerFactory.getWeblogger()
                         .getThemeManager();

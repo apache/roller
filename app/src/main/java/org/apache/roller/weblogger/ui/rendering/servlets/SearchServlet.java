@@ -112,7 +112,8 @@ public class SearchServlet extends HttpServlet {
                 && !weblog.getEditorTheme()
                         .equals(WeblogTemplate.ACTION_CUSTOM)
                 && (searchRequest.getPathInfo() == null || searchRequest
-                        .getPathInfo() != null)) {
+                        .getPathInfo() != null
+                        && !searchRequest.getPathInfo().endsWith(".css"))) {
 
             try {
                 ThemeManager manager = WebloggerFactory.getWeblogger()
