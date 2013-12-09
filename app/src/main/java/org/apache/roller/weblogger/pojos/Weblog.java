@@ -716,11 +716,11 @@ public class Weblog implements Serializable {
 
     
     /**
-     * A short description about the weblog.
+     * A description for the weblog (its purpose, authors, etc.)
      *
-     * This field difers from the 'description' attribute in the sense that the
-     * description is meant to hold more of a tagline, while this attribute is
-     * more of a full paragraph (or two) about section.
+     * This field is meant to hold a paragraph or two describing the weblog, in contrast
+     * to the short sentence or two 'description' attribute meant for blog taglines
+     * and HTML header META description tags.
      *
      */
     public String getAbout() {

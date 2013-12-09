@@ -6,6 +6,7 @@
     <title>$model.weblog.name: $model.weblog.description</title>
     #showAutodiscoveryLinks($model.weblog)
     <link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+    #showMetaDescription()
 </head>
 <body>
 

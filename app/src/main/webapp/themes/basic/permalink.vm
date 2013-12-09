@@ -5,6 +5,7 @@
     <title>$model.weblogEntry.title : $model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
     <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
+    #showMetaDescription()
 </head>
 <body>
 
