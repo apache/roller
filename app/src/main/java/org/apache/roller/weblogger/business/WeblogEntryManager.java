@@ -148,10 +148,10 @@ public interface WeblogEntryManager {
      * Get weblog entries with given category or, optionally, any sub-category
      * of that category.
      * @param cat     Category
-     * @param subcats True if sub-categories are to be fetched
+     * @param publishedOnly True to retrieve published articles only
      * @return        List of weblog entries in category
      */
-    List getWeblogEntries(WeblogCategory cat, boolean subcats)
+    List getWeblogEntries(WeblogCategory cat, boolean publishedOnly)
             throws WebloggerException; 
     
     /** 

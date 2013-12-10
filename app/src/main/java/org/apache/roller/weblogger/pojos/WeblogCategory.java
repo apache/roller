@@ -226,13 +226,13 @@ public class WeblogCategory implements Serializable, Comparable {
      * Retrieve all weblog entries in this category and, optionally, include
      * weblog entries all sub-categories.
      *
-     * @param subcats True if entries from sub-categories are to be returned.
+     * @param publishedOnly True if desired to return only published entries
      * @return List of WeblogEntryData objects.
      * @throws WebloggerException
      */
-    public List retrieveWeblogEntries(boolean subcats) throws WebloggerException {
+    public List retrieveWeblogEntries(boolean publishedOnly) throws WebloggerException {
         WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        return wmgr.getWeblogEntries(this, subcats);
+        return wmgr.getWeblogEntries(this, publishedOnly);
     }
     
     
@@ -295,7 +295,7 @@ public class WeblogCategory implements Serializable, Comparable {
     
     /**
      * Determine if category is in use. Returns true if any weblog entries
-     * use this category or any of it's subcategories.
+     * use this category or any of its subcategories.
      */
     public boolean isInUse() {
         try {

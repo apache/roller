@@ -90,7 +90,7 @@ public class CategoryRemove extends UIAction {
         try {
             // Build list of all categories, except for current one, sorted by path.
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
+            List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog(), false);
             for(WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getRemoveId())) {
                     allCategoriesSet.add(cat);

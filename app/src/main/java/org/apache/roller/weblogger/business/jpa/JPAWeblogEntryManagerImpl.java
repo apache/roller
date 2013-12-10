@@ -123,7 +123,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public void removeWeblogCategory(WeblogCategory cat)
     throws WebloggerException {
-        if(cat.retrieveWeblogEntries(true).size() > 0) {
+        if(cat.retrieveWeblogEntries(false).size() > 0) {
             throw new WebloggerException("Cannot remove category with entries");
         }
         
@@ -231,7 +231,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         // get all entries in category and subcats
-        List results = srcCat.retrieveWeblogEntries(true);
+        List results = srcCat.retrieveWeblogEntries(false);
         
         // Loop through entries in src cat, assign them to dest cat
         Iterator iter = results.iterator();
@@ -774,12 +774,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    // TODO: this method should be removed and it's functionality moved to getWeblogEntries()
-    public List getWeblogEntries(WeblogCategory cat, boolean subcats)
+    // TODO: this method should be removed and its functionality moved to getWeblogEntries()
+    public List getWeblogEntries(WeblogCategory cat, boolean publishedOnly)
     throws WebloggerException {
         List results = null;
         
-        if (!subcats) {
+        if (publishedOnly) {
             Query q = strategy.getNamedQuery(
                     "WeblogEntry.getByStatus&Category");
             q.setParameter(1, WeblogEntry.PUBLISHED);
@@ -787,10 +787,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             results = q.getResultList();
         } else {
             Query q = strategy.getNamedQuery(
-                    "WeblogEntry.getByStatus&Category.pathLike&Website");
-            q.setParameter(1, WeblogEntry.PUBLISHED);
-            q.setParameter(2, cat.getPath() + '%');
-            q.setParameter(3, cat.getWebsite());
+                    "WeblogEntry.getByCategory");
+            q.setParameter(1, cat);
             results = q.getResultList();
         }
         

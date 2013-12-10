@@ -230,7 +230,7 @@ public class WeblogEntryTest extends TestCase {
         
         // get all (non-future) PUBLISHED entries in category 
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog.getDefaultCategory(), false);
+        entries = mgr.getWeblogEntries(testWeblog.getDefaultCategory(), true);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         

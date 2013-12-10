@@ -37,7 +37,7 @@
         </span>
         <p><s:text name="categoryDeleteOK.youMustMoveEntries" /><p>
             <s:text name="categoryDeleteOK.moveToWhere" />
-            <s:select name="targetCategoryId" list="allCategories" listKey="id" listValue="path" />
+            <s:select name="targetCategoryId" list="allCategories" listKey="id" listValue="name" />
         </p>
     </s:if>
     <s:else>

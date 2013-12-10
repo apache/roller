@@ -264,10 +264,19 @@ public final class TestUtils {
     }
 
     /**
-     * Convenience method for creating a weblog entry.
+     * Convenience method for creating a published weblog entry.
      */
     public static WeblogEntry setupWeblogEntry(String anchor,
             WeblogCategory cat, Weblog weblog, User user) throws Exception {
+
+        return TestUtils.setupWeblogEntry(anchor, cat, WeblogEntry.PUBLISHED, weblog, user);
+    }
+
+    /**
+     * Convenience method for creating a weblog entry
+     */
+    public static WeblogEntry setupWeblogEntry(String anchor,
+        WeblogCategory cat, String status, Weblog weblog, User user) throws Exception {
 
         WeblogEntry testEntry = new WeblogEntry();
         testEntry.setTitle(anchor);
@@ -278,7 +287,7 @@ public final class TestUtils {
                 .getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date()
                 .getTime()));
-        testEntry.setStatus(WeblogEntry.PUBLISHED);
+        testEntry.setStatus(status);
         testEntry.setWebsite(getManagedWebsite(weblog));
         testEntry.setCreatorUserName(getManagedUser(user).getUserName());
         testEntry.setCategory(cat);

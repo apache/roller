@@ -110,10 +110,10 @@ public final class WeblogCategoryWrapper {
     }
     
     
-    public List retrieveWeblogEntries(boolean subcats)
+    public List retrieveWeblogEntries(boolean publishedOnly)
             throws WebloggerException {
         
-        List initialCollection = this.pojo.retrieveWeblogEntries(subcats);
+        List initialCollection = this.pojo.retrieveWeblogEntries(publishedOnly);
         
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover

@@ -246,8 +246,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         WeblogCategory root = mgr.getRootWeblogCategory(testWeblog);
         WeblogEntry e1 = null;
         WeblogEntry e2 = null; 
-        WeblogEntry e3 = null; 
-        
+        WeblogEntry e3 = null;
+        WeblogEntry e4 = null;
+
         try {
             // add some categories and entries to test with
             WeblogCategory dest = new WeblogCategory(testWeblog, root, "c0", null, null);
@@ -270,8 +271,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             dest = mgr.getWeblogCategory(dest.getId());
 
             e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
-            e2 = TestUtils.setupWeblogEntry("e2", c2, testWeblog, testUser);
-            e3 = TestUtils.setupWeblogEntry("e3", c3, testWeblog, testUser);
+            e2 = TestUtils.setupWeblogEntry("e2", c1, WeblogEntry.DRAFT, testWeblog, testUser);
+            e3 = TestUtils.setupWeblogEntry("e3", c2, testWeblog, testUser);
+            e4 = TestUtils.setupWeblogEntry("e4", c3, testWeblog, testUser);
 
             TestUtils.endSession(true);
 
@@ -284,10 +286,10 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             // verify number of entries in each category
             assertEquals(0, dest.retrieveWeblogEntries(true).size());
             assertEquals(0, dest.retrieveWeblogEntries(false).size());
-            assertEquals(1, c1.retrieveWeblogEntries(false).size());
-            assertEquals(3, c1.retrieveWeblogEntries(true).size());
+            assertEquals(2, c1.retrieveWeblogEntries(false).size());
+            assertEquals(1, c1.retrieveWeblogEntries(true).size());
 
-            // move contents of source category c1 to destination catetory dest
+            // move contents of source category c1 to destination category dest
             mgr.moveWeblogCategory(c1, dest);
             TestUtils.endSession(true);
 
@@ -297,24 +299,21 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             c2 = mgr.getWeblogCategory(c2.getId());
             c3 = mgr.getWeblogCategory(c3.getId());
 
-            assertEquals(3, dest.retrieveWeblogEntries(true).size());
-            assertEquals(0, dest.retrieveWeblogEntries(false).size());
-
             assertEquals(dest, c1.getParent());
             assertEquals(c1,   c2.getParent());
             assertEquals(c2,   c3.getParent());
 
-            assertEquals(1, c1.retrieveWeblogEntries(false).size());
+            assertEquals(2, c1.retrieveWeblogEntries(false).size());
+            assertEquals(1, c1.retrieveWeblogEntries(true).size());
             assertEquals(1, c2.retrieveWeblogEntries(false).size());
             assertEquals(1, c3.retrieveWeblogEntries(false).size());
-
-            List entries = c1.retrieveWeblogEntries(true);
-            assertEquals(3, entries.size());
+            assertEquals(0, dest.retrieveWeblogEntries(false).size());
 
         } finally {
             mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e1));
             mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e2));
             mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e3));
+            mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e4));
         }
         log.info("END");
     }
@@ -328,7 +327,8 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry e1 = null;
         WeblogEntry e2 = null; 
-        WeblogEntry e3 = null; 
+        WeblogEntry e3 = null;
+        WeblogEntry e4 = null;
         try {
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -358,8 +358,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             testUser = TestUtils.getManagedUser(testUser);
             e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
-            e2 = TestUtils.setupWeblogEntry("e2", c2, testWeblog, testUser);
-            e3 = TestUtils.setupWeblogEntry("e3", c3, testWeblog, testUser);
+            e2 = TestUtils.setupWeblogEntry("e2", c1, WeblogEntry.DRAFT, testWeblog, testUser);
+            e3 = TestUtils.setupWeblogEntry("e3", c2, testWeblog, testUser);
+            e4 = TestUtils.setupWeblogEntry("e4", c3, testWeblog, testUser);
 
             TestUtils.endSession(true);
 
@@ -372,8 +373,8 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             // verify number of entries in each category
             assertEquals(0, dest.retrieveWeblogEntries(true).size());
             assertEquals(0, dest.retrieveWeblogEntries(false).size());
-            assertEquals(1, c1.retrieveWeblogEntries(false).size());
-            assertEquals(3, c1.retrieveWeblogEntries(true).size());
+            assertEquals(2, c1.retrieveWeblogEntries(false).size());
+            assertEquals(1, c1.retrieveWeblogEntries(true).size());
 
             // move contents of source category c1 to destination category dest
             mgr.moveWeblogCategoryContents(c1, dest);
@@ -385,16 +386,17 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             c1 = mgr.getWeblogCategory(c1.getId());
 
             // Hierarchy is flattened under dest      
-            assertEquals(3, dest.retrieveWeblogEntries(true).size());
-            assertEquals(3, dest.retrieveWeblogEntries(false).size());
+            assertEquals(2, dest.retrieveWeblogEntries(false).size());
+            assertEquals(1, dest.retrieveWeblogEntries(true).size());
 
             // c1 category should be empty now
             assertEquals(0, c1.retrieveWeblogEntries(false).size());
-            
+
         } finally {
             mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e1));
             mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e2));
             mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e3));
+            mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e4));
         }
         
         log.info("END");
