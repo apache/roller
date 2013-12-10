@@ -31,30 +31,14 @@ function onMove()
 //-->
 </script>
 
-<s:if test="categoryPath.isEmpty">
-    <p class="subtitle">
-        <s:text name="categoriesForm.subtitle" >
-            <s:param value="weblog" />
-        </s:text>
-    </p>  
-    <p class="pagetip">
-        <s:text name="categoriesForm.rootPrompt" />
-    </p>
-</s:if>
-
-<s:else>
-    <p class="subtitle">
-    <s:text name="categoriesForm.path" />: /
-    <s:iterator id="pathItem" value="categoryPath">
-        <s:url id="pathUrl" action="categories">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-            <s:param name="categoryId" value="#pathItem.id" />
-        </s:url>
-        <s:a href="%{pathUrl}"><s:property value="#pathItem.name" /></s:a> / 
-    </s:iterator>
-    <p>
-    <p><s:text name="categoriesForm.categoryPrompt" /></p>
-</s:else>
+<p class="subtitle">
+    <s:text name="categoriesForm.subtitle" >
+        <s:param value="weblog" />
+    </s:text>
+</p>
+<p class="pagetip">
+    <s:text name="categoriesForm.rootPrompt" />
+</p>
 
 
 <%-- Form is a table of categories each with checkbox --%>
@@ -62,28 +46,14 @@ function onMove()
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="categoryId" /> 
-    
-    <s:if test="!allCategories.isEmpty">
-    
-        <%-- Move-selected button --%>
-        <s:submit value="%{getText('categoriesForm.move')}" onclick="onMove();return false;" />
-    
-        <%-- Move-to combo-box --%>
-        <s:select name="targetCategoryId" list="allCategories" listKey="id" listValue="path" />
-    
-        <br /><br />
-    
-    </s:if>
-    
+
     <table class="rollertable">
         
         <tr class="rollertable">
-            <th class="rollertable" width="5%"><input type="checkbox" name="control" onclick="toggleFunctionAll(this.checked);"/></th>
-            <th class="rollertable" width="5%">&nbsp;</th>
-            <th class="rollertable" width="30%"><s:text name="categoriesForm.name" /></th>
+            <th class="rollertable" width="35%"><s:text name="categoriesForm.name" /></th>
             <th class="rollertable" width="45%"><s:text name="categoriesForm.description" /></th>
-            <th class="rollertable" width="5%"><s:text name="categoriesForm.edit" /></th>
-            <th class="rollertable" width="5%"><s:text name="categoriesForm.remove" /></th>
+            <th class="rollertable" width="10%"><s:text name="categoriesForm.edit" /></th>
+            <th class="rollertable" width="10%"><s:text name="categoriesForm.remove" /></th>
         </tr>
         
         <s:if test="AllCategories != null && !AllCategories.isEmpty">
@@ -97,18 +67,8 @@ function onMove()
                 <tr class="rollertable_even">
             </s:else>
             
-                <td class="rollertable center" style="vertical-align:middle">
-                    <input type="checkbox" name="selectedCategories" value="<s:property value="#category.id"/>" />
-                </td>
-                
-                <td class="rollertable" align="center"><img src='<s:url value="/images/folder.png"/>' alt="icon" /></td>
-                
                 <td class="rollertable">
-                    <s:url id="categoryUrl" action="categories">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="categoryId" value="#category.id" />
-                    </s:url>
-                    <s:a href="%{categoryUrl}"><str:truncateNicely lower="15" upper="20" ><s:property value="#category.name" /></str:truncateNicely></s:a>
+                    <str:truncateNicely lower="15" upper="20" ><s:property value="#category.name" /></str:truncateNicely>
                 </td>
                 
                 <td class="rollertable">
