@@ -34,16 +34,16 @@ import java.util.List;
  */
 public class DisplayGroup {
     
-    private List propertyDefs = null;
+    private List<PropertyDef> propertyDefs = null;
     private String name = null;
     private String key = null;
     
     
     public DisplayGroup() {
-        this.propertyDefs = new ArrayList();
+        this.propertyDefs = new ArrayList<PropertyDef>();
     }
     
-    public DisplayGroup(List propdefs) {
+    public DisplayGroup(List<PropertyDef> propdefs) {
         this.propertyDefs = propdefs;
     }
     
@@ -61,11 +61,11 @@ public class DisplayGroup {
         return name+","+key;
     }
     
-    public List getPropertyDefs() {
+    public List<PropertyDef> getPropertyDefs() {
         return propertyDefs;
     }
 
-    public void setPropertyDefs(List propertyDefs) {
+    public void setPropertyDefs(List<PropertyDef> propertyDefs) {
         this.propertyDefs = propertyDefs;
     }
 

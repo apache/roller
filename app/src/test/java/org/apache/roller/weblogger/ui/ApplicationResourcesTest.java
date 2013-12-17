@@ -23,7 +23,6 @@
 package org.apache.roller.weblogger.ui;
 
 import java.io.FileInputStream;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
@@ -54,7 +53,7 @@ public class ApplicationResourcesTest extends TestCase
 	private Properties baseProps = null; 
 
 	/**
-	 * @param arg0
+	 * @param name
 	 */
 	public ApplicationResourcesTest(String name)
 	{
@@ -129,16 +128,13 @@ public class ApplicationResourcesTest extends TestCase
 		verifyResourceBundle("ApplicationResources_vi");
 	}
 
-	public void testSystemProperties()
-	{
-		Properties sysProps = System.getProperties();
-		Set keys = sysProps.keySet();
-		for (Iterator iter = keys.iterator(); iter.hasNext();)
-		{
-			String key = (String) iter.next();
-			System.out.println(key + " = " + sysProps.getProperty(key));
-		}
-	}
+    public void testSystemProperties()
+    {
+        Properties sysProps = System.getProperties();
+        for (Object key : sysProps.keySet()) {
+            System.out.println(key + " = " + sysProps.getProperty((String)key));
+        }
+    }
 
 	/**
 	 * Helper method to do the actual testing.
@@ -166,15 +162,13 @@ public class ApplicationResourcesTest extends TestCase
 
 		// check Chinese
 		System.out.println("Veriyfing " + bundle + "...");
-		for (Iterator iter = keys.iterator(); iter.hasNext();)
-		{
-			String key = (String) iter.next();
-			if (props.getProperty(key) == null)
-			{
-				System.err.println(key + " = " + baseProps.getProperty(key));
-				missingMessage = true;
-			}
-		}
+        for (Object key : baseProps.keySet()) {
+            if (props.getProperty((String) key) == null)
+            {
+                System.err.println(key + " = " + baseProps.getProperty((String) key));
+                missingMessage = true;
+            }
+        }
 
 		assertFalse(missingMessage);
 	}

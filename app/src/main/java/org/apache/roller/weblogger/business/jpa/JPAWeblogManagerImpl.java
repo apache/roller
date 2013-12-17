@@ -121,10 +121,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         Query themeAssocQuery = strategy.getNamedQuery("WeblogThemeAssoc.getThemeAssocsByWeblog");
         themeAssocQuery.setParameter(1,website);
-         List assocResults = themeAssocQuery.getResultList();
-
-        for(Iterator iter = assocResults.iterator(); iter.hasNext();) {
-            WeblogThemeAssoc themeAssoc = (WeblogThemeAssoc) iter.next();
+        List<WeblogThemeAssoc> assocResults = themeAssocQuery.getResultList();
+        for(WeblogThemeAssoc themeAssoc : assocResults) {
             this.strategy.remove(themeAssoc);
         }
         

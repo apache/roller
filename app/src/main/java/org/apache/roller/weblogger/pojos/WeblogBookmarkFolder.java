@@ -40,7 +40,7 @@ import org.apache.roller.util.UUIDGenerator;
  * Folders or Bookmarks. Don't construct one of these yourself, instead use
  * the create method in your BookmarkManager implementation.</p>
  */
-public class WeblogBookmarkFolder implements Serializable, Comparable {
+public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBookmarkFolder> {
     
     public static final long serialVersionUID = -6272468884763861944L;
     
@@ -56,7 +56,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     // associations
     private Weblog website = null;
     private WeblogBookmarkFolder parentFolder = null;
-    private Set childFolders = new TreeSet();
+    private Set<WeblogBookmarkFolder> childFolders = new TreeSet<WeblogBookmarkFolder>();
     private Set bookmarks = new TreeSet();
     
     
@@ -125,8 +125,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object o) {
-        WeblogBookmarkFolder other = (WeblogBookmarkFolder)o;
+    public int compareTo(WeblogBookmarkFolder other) {
         return getName().compareTo(other.getName());
     }
     
@@ -212,11 +211,11 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     /**
      * Get child folders of this folder.
      */
-    public Set getFolders() {
+    public Set<WeblogBookmarkFolder> getFolders() {
         return this.childFolders;
     }
     
-    private void setFolders(Set folders) {
+    private void setFolders(Set<WeblogBookmarkFolder> folders) {
         this.childFolders = folders;
     }
     

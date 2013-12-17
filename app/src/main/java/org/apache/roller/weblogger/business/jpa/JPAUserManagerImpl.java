@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.business.UserManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -77,7 +76,7 @@ public class JPAUserManagerImpl implements UserManager {
         // remove permissions, maintaining both sides of relationship
         List<WeblogPermission> perms = getWeblogPermissions(user);
         for (WeblogPermission perm : perms) {
-            this.strategy.remove(perms);
+            this.strategy.remove(perm);
         }
         this.strategy.remove(user);
 
@@ -194,7 +193,7 @@ public class JPAUserManagerImpl implements UserManager {
         return user;
     }
 
-    public List getUsers(Weblog weblog, Boolean enabled, Date startDate,
+    public List<User> getUsers(Weblog weblog, Boolean enabled, Date startDate,
             Date endDate, int offset, int length)
             throws WebloggerException {
         Query query = null;
@@ -261,12 +260,12 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public List getUsers(int offset, int length) throws WebloggerException {
+    public List<User> getUsers(int offset, int length) throws WebloggerException {
         return getUsers(Boolean.TRUE, null, null, offset, length);
     }
 
     
-    public List getUsers(Boolean enabled, Date startDate, Date endDate,
+    public List<User> getUsers(Boolean enabled, Date startDate, Date endDate,
             int offset, int length)
             throws WebloggerException {
         Query query = null;
@@ -759,13 +758,11 @@ public class JPAUserManagerImpl implements UserManager {
     public List<String> getRoles(User user) throws WebloggerException {
         Query q = strategy.getNamedQuery("UserRole.getByUserName");
         q.setParameter(1, user.getUserName());
-        List roles = q.getResultList();
+        List<UserRole> roles = q.getResultList();
         List<String> roleNames = new ArrayList<String>();
-        for (Iterator it = roles.iterator(); it.hasNext();) {
-            UserRole userRole = (UserRole)it.next();
+        for (UserRole userRole : roles) {
             roleNames.add(userRole.getRole());
         }
-
         return roleNames;
     }
 

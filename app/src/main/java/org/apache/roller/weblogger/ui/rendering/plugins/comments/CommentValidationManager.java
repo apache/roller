@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
@@ -35,7 +34,7 @@ import org.apache.roller.weblogger.util.Utilities;
 public class CommentValidationManager {
     private static Log     log = LogFactory.getLog(CommentValidationManager.class);
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
-    private List           validators = new ArrayList();
+    private List<CommentValidator> validators = new ArrayList<CommentValidator>();
     
     public CommentValidationManager() {
         
@@ -86,8 +85,7 @@ public class CommentValidationManager {
     public int validateComment(WeblogEntryComment comment, RollerMessages messages) {
         int total = 0;
         if (validators.size() > 0) {
-            for (Iterator it = validators.iterator(); it.hasNext();) {
-                CommentValidator val = (CommentValidator) it.next();
+            for (CommentValidator val : validators) {
                 log.debug("Invoking comment validator "+val.getName());
                 total += val.validate(comment, messages);
             }

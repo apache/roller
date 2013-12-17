@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.core;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Iterator;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -234,8 +233,7 @@ public class RollerContext extends ContextLoaderListener
         
         if (!rememberMeEnabled) {
             ProviderManager provider = (ProviderManager) ctx.getBean("_authenticationManager");
-            for (Iterator it = provider.getProviders().iterator(); it.hasNext();) {
-                AuthenticationProvider authProvider = (AuthenticationProvider) it.next();
+            for (AuthenticationProvider authProvider : provider.getProviders()) {
                 if (authProvider instanceof RememberMeAuthenticationProvider) {
                     provider.getProviders().remove(authProvider);
                 }

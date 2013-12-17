@@ -100,7 +100,7 @@ public class TagDataServlet extends HttpServlet {
         } catch (Exception ignored) {}
 
         Weblogger roller = WebloggerFactory.getWeblogger();
-        List tags = null;
+        List<TagStat> tags = null;
         Weblog weblog = null;
         try {
             WeblogManager wmgr = roller.getWeblogManager();
@@ -149,14 +149,13 @@ public class TagDataServlet extends HttpServlet {
             pw.println("   xmlns:atom=\"http://www.w3.org/2005/Atom\""); 
             pw.println("   xmlns:tagdata=\"http://roller.apache.org/ns/tagdata\">");
             int count = 0;
-            for (Iterator it = tags.iterator(); it.hasNext();) {
-                TagStat stat = (TagStat) it.next();
+            for (TagStat stat : tags) {
                 String term = stat.getName();
-                String viewURI = urlstrat.getWeblogCollectionURL(weblog, 
-                        null,  // locale 
+                String viewURI = urlstrat.getWeblogCollectionURL(weblog,
+                        null,  // locale
                         null,  // category
                         null,  // date string
-                        Collections.singletonList(stat.getName()), 
+                        Collections.singletonList(stat.getName()),
                         0,     // page
                         true); // absolute
                 int frequency = stat.getCount();
@@ -180,7 +179,6 @@ public class TagDataServlet extends HttpServlet {
             response.flushBuffer();
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
-            return;
         }
     }
 }

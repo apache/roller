@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.business.referrers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,7 +62,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
     private boolean asyncMode = false;
     private int numWorkers = 1;
     private int sleepTime = 10000;
-    private List workers = null;
+    private List<WorkerThread> workers = null;
     private List referrerQueue = null;
     private int referrerCount = 0;
     private int maxAsyncQueueSize = 0;
@@ -201,10 +200,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
                 mLogger.info("Max Async Referrer queue size: " + maxAsyncQueueSize);
             }
             // kill all of our threads
-            WorkerThread worker = null;
-            Iterator it = this.workers.iterator();
-            while(it.hasNext()) {
-                worker = (WorkerThread) it.next();
+            for (WorkerThread worker : workers) {
                 worker.interrupt();
             }
         }

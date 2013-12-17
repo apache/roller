@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.webservices.adminprotocol;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
@@ -137,17 +136,15 @@ class RollerMemberHandler extends Handler {
     private EntrySet getCollection() throws HandlerException {
         // get all permissions: for all users, for all websites
         try {
-            List users = getRoller().getUserManager().getUsers(null, null, null, 0, -1);
+            List<User> users = getRoller().getUserManager().getUsers(null, null, null, 0, -1);
             List<WeblogPermission> perms = new ArrayList<WeblogPermission>();
-            for (Iterator i = users.iterator(); i.hasNext(); ) {
-                User user = (User)i.next();
+            for (User user : users) {
                 List<WeblogPermission> permissions = getRoller().getUserManager().getWeblogPermissions(user);
                 for (WeblogPermission perm : permissions) {
                     perms.add(perm);
                 }
             }
-            EntrySet es = toMemberEntrySet(perms);
-            return es;
+            return toMemberEntrySet(perms);
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get member collection", re);
         }

@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.ui.struts2.ajax;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -73,11 +72,9 @@ public class UserDataServlet extends HttpServlet {
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             UserManager umgr = roller.getUserManager();
-            List users =
+            List<User> users =
                     umgr.getUsersStartingWith(startsWith, enabledOnly, offset, length);
-            Iterator userIter = users.iterator();
-            while (userIter.hasNext()) {
-                User user = (User)userIter.next();
+            for (User user : users) {
                 response.getWriter().print(user.getUserName());
                 response.getWriter().print(",");
                 response.getWriter().println(user.getEmailAddress());

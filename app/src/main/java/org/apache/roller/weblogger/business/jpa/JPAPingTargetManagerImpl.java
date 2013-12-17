@@ -23,11 +23,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Iterator;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -42,13 +39,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
 @com.google.inject.Singleton
 public class JPAPingTargetManagerImpl implements PingTargetManager {
     
-    /** The logger instance for this class. */
-    private static Log log = LogFactory.getLog(
-        JPAPingTargetManagerImpl.class);
-
     private final JPAPersistenceStrategy strategy;
-    
-    
+
     @com.google.inject.Inject
     protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
@@ -107,7 +99,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         
         // Determine the set of "brother" targets (custom or common) 
         // among which this name should be unique.
-        List brotherTargets = null;
+        List<PingTarget> brotherTargets;
         Weblog website = pingTarget.getWebsite();
         if (website == null) {
             brotherTargets = getCommonPingTargets();
@@ -118,11 +110,9 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         // Within that set of targets, fail if there is a target 
         // with the same name and that target doesn't
         // have the same id.
-        for (Iterator i = brotherTargets.iterator(); i.hasNext();) {
-            PingTarget brother = (PingTarget) i.next();
-            // Fail if it has the same name but not the same id.
-            if (brother.getName().equals(name) && 
-                (id == null || !brother.getId().equals(id))) {
+        for (PingTarget brother : brotherTargets) {
+            if (brother.getName().equals(name) &&
+                    (id == null || !brother.getId().equals(id))) {
                 return false;
             }
         }
@@ -172,14 +162,14 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         }
     }
 
-    public List getCommonPingTargets()
+    public List<PingTarget> getCommonPingTargets()
             throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "PingTarget.getByWebsiteNullOrderByName");
         return q.getResultList();
     }
 
-    public List getCustomPingTargets(Weblog website)
+    public List<PingTarget> getCustomPingTargets(Weblog website)
             throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "PingTarget.getByWebsiteOrderByName");

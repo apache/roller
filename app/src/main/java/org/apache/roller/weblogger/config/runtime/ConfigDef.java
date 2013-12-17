@@ -34,19 +34,18 @@ import java.util.List;
  */
 public class ConfigDef {
     
-    private List displayGroups = null;
+    private List<DisplayGroup> displayGroups = null;
     private String name = null;
     
     
     public ConfigDef() {
-        this.displayGroups = new ArrayList();
+        this.displayGroups = new ArrayList<DisplayGroup>();
     }
 
-    public ConfigDef(List displaygroups) {
+    public ConfigDef(List<DisplayGroup> displaygroups) {
         this.displayGroups = displaygroups;
     }
 
-    
     public boolean addDisplayGroup(DisplayGroup group) {
         return this.displayGroups.add(group);
     }
@@ -60,11 +59,11 @@ public class ConfigDef {
         return name;
     }
     
-    public List getDisplayGroups() {
+    public List<DisplayGroup> getDisplayGroups() {
         return displayGroups;
     }
 
-    public void setDisplayGroups(List displayGroups) {
+    public void setDisplayGroups(List<DisplayGroup> displayGroups) {
         this.displayGroups = displayGroups;
     }
 

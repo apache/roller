@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.business.search.operations;
 
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -116,7 +115,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                 // Add Doc
                 WeblogEntryManager weblogManager = roller
                         .getWeblogEntryManager();
-                List entries = weblogManager.getWeblogEntries(website, // website
+                List<WeblogEntry> entries = weblogManager.getWeblogEntries(website, // website
                         null, null, // startDate
                         null, // endDate
                         null, // catName
@@ -127,8 +126,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
 
                 mLogger.debug("Entries to index: " + entries.size());
 
-                for (Iterator wbItr = entries.iterator(); wbItr.hasNext();) {
-                    WeblogEntry entry = (WeblogEntry) wbItr.next();
+                for (WeblogEntry entry : entries) {
                     writer.addDocument(getDocument(entry));
                     mLogger.debug(MessageFormat.format(
                             "Indexed entry {0}: {1}",

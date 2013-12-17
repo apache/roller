@@ -95,7 +95,7 @@ public interface AutoPingManager {
      * @param website
      * @return a list of auto ping configurations for the given website as <code>AuAutoPingcode> objects.
      */
-    List getAutoPingsByWebsite(Weblog website) throws WebloggerException;
+    List<AutoPing> getAutoPingsByWebsite(Weblog website) throws WebloggerException;
     
     
     /**
@@ -104,7 +104,7 @@ public interface AutoPingManager {
      * @param pingTarget
      * @return a list of auto ping configurations for the given target as <code>AuAutoPingcode> objects.
      */
-    List getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
+    List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
@@ -113,7 +113,7 @@ public interface AutoPingManager {
      * @param changedWeblogEntry the entry that has been created or changed
      * @return a list of the ping configurations that should be applied due to this change
      */
-    List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
+    List<AutoPing> getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
     
     
     /**

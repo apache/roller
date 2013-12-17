@@ -38,8 +38,8 @@ import org.apache.roller.weblogger.pojos.User;
 /**
  * Enable Roller's User Roles to work in CMA setup without a JDBC realm.
  * 
- * If you're using Container Manager Authenticaton (CMA) and you're not using 
- * the a JDBC realm that can add the User Roles defined by Roller, then you can
+ * If you're using Container Manager Authentication (CMA) and you're not using
+ * a JDBC realm that can add the User Roles defined by Roller, then you can
  * use this class to ensure that the request Role methods operate against the
  * User Roles as defined by Roller's User Manager.
  */

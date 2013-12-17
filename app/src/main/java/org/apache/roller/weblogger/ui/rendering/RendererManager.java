@@ -23,7 +23,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Template;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
@@ -39,7 +38,7 @@ public class RendererManager {
 
     private static Log log = LogFactory.getLog(RendererManager.class);
     // a set of all renderer factories we are consulting
-    private static Set rendererFactories = new HashSet();
+    private static Set<RendererFactory> rendererFactories = new HashSet();
 
     static {
         // lookup set of renderer factories we are going to use
@@ -111,10 +110,8 @@ public class RendererManager {
 
         // iterate over our renderer factories and see if one of them
         // wants to handle this content
-        Iterator factories = rendererFactories.iterator();
-        while (factories.hasNext()) {
-            renderer = ((RendererFactory) factories.next()).getRenderer(template, deviceType);
-
+        for (RendererFactory rendererFactory : rendererFactories) {
+            renderer = rendererFactory.getRenderer(template, deviceType);
             if (renderer != null) {
                 return renderer;
             }

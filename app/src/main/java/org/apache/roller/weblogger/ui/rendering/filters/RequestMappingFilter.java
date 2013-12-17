@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.filters;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -48,8 +47,7 @@ public class RequestMappingFilter implements Filter {
     private static Log log = LogFactory.getLog(RequestMappingFilter.class);
     
     // list of RequestMappers that want to inspect the request
-    private final List requestMappers = new ArrayList();
-    
+    private final List<RequestMapper> requestMappers = new ArrayList<RequestMapper>();
     
     public void init(FilterConfig filterConfig) {
         
@@ -118,22 +116,18 @@ public class RequestMappingFilter implements Filter {
         log.debug("entering");
         
         // give each mapper a chance to handle the request
-        RequestMapper mapper = null;
-        Iterator mappersIT = this.requestMappers.iterator();
-        while(mappersIT.hasNext()) {
-            mapper = (RequestMapper) mappersIT.next();
-            
-            log.debug("trying mapper "+mapper.getClass().getName());
-            
+        for (RequestMapper mapper : requestMappers) {
+            log.debug("trying mapper " + mapper.getClass().getName());
+
             boolean wasHandled = mapper.handleRequest(request, response);
             if(wasHandled) {
                 // if mapper has handled the request then we are done
-                log.debug("request handled by "+mapper.getClass().getName());
+                log.debug("request handled by " + mapper.getClass().getName());
                 log.debug("exiting");
                 return;
             }
         }
-        
+
         log.debug("request not mapped");
         
         // nobody handled the request, so let it continue as usual

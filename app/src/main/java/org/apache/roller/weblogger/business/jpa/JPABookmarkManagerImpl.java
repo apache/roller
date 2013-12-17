@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.io.StringReader;
-import java.util.Iterator;
 import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -167,24 +166,21 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         
         log.debug("Updating path tree for folder "+folder.getPath());
         
-        WeblogBookmarkFolder childFolder = null;
-        Iterator childFolders = folder.getFolders().iterator();
-        while(childFolders.hasNext()) {
-            childFolder = (WeblogBookmarkFolder) childFolders.next();
-            
+        //WeblogBookmarkFolder childFolder = null;
+        for (WeblogBookmarkFolder childFolder : folder.getFolders()) {
             log.debug("OLD child folder path was "+childFolder.getPath());
-            
+
             // update path and save
             if("/".equals(folder.getPath())) {
                 childFolder.setPath("/" + childFolder.getName());
             } else {
-                childFolder.setPath(folder.getPath() + "/" + 
-                    childFolder.getName());
+                childFolder.setPath(folder.getPath() + "/" +
+                        childFolder.getName());
             }
             saveFolder(childFolder);
-            
+
             log.debug("NEW child folder path is "+ childFolder.getPath());
-            
+
             // then make recursive call to update this folders children
             updatePathTree(childFolder);
         }
@@ -219,12 +215,9 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
             // Iterate through children of OPML body, importing each
             Element body = doc.getRootElement().getChild("body");
-            Iterator iter = body.getChildren().iterator();
-            while (iter.hasNext()) {
-                Element elem = (Element)iter.next();
-                importOpmlElement( website, elem, newFolder );
+            for (Object elem : body.getChildren()) {
+                importOpmlElement(website, (Element) elem, newFolder );
             }
-
         } catch (Exception ex) {
             throw new WebloggerException(ex);
         }
@@ -296,10 +289,8 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             this.strategy.store(fd);
 
             // Import folder's children
-            Iterator iter = elem.getChildren("outline").iterator();
-            while ( iter.hasNext() ) {
-                Element subelem = (Element)iter.next();
-                importOpmlElement( website, subelem, fd  );
+            for (Object subelem : elem.getChildren("outline")) {
+                importOpmlElement( website, (Element) subelem, fd  );
             }
         }
     }
@@ -331,7 +322,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     /**
-     * @see org.apache.roller.weblogger.model.BookmarkManager#retrieveBookmarks(
+     * @see org.apache.roller.weblogger.business.BookmarkManager#getBookmarks(
      *      org.apache.roller.weblogger.pojos.WeblogBookmarkFolder, boolean)
      */
     public List getBookmarks(WeblogBookmarkFolder folder, boolean subfolders) 
@@ -395,7 +386,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         if (null != parent) {
             return (getFolder(folder.getWebsite(), folder.getPath()) != null);
         }
-        
         return false;
     }
 

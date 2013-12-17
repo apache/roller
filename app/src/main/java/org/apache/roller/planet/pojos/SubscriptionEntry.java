@@ -35,7 +35,7 @@ import org.apache.roller.util.UUIDGenerator;
  * it should be replaced by more complete model that can fully represent all 
  * forms of RSS and Atom.
  */
-public class SubscriptionEntry implements Serializable, Comparable {
+public class SubscriptionEntry implements Serializable, Comparable<SubscriptionEntry> {
     
     // attributes
     private String id = UUIDGenerator.generateUUID();
@@ -59,8 +59,7 @@ public class SubscriptionEntry implements Serializable, Comparable {
     /**
      * Compare planet entries by comparing permalinks.
      */
-    public int compareTo(Object o) {
-        SubscriptionEntry other = (SubscriptionEntry)o;
+    public int compareTo(SubscriptionEntry other) {
         return getPermalink().compareTo(other.getPermalink());
     }
     

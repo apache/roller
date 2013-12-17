@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.User;
@@ -72,11 +73,11 @@ public interface WeblogEntryManager {
      * @param sortBy     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
      * @param sortOrder  Sort order of ASCENDING or DESCENDING (null for DESCENDING)
      * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
+     * @param range
      * @return List of WeblogEntryData objects in reverse chrono order.
      * @throws WebloggerException
      */
-    List getWeblogEntries(
+    List<WeblogEntry> getWeblogEntries(
             Weblog website,
             User    user,
             Date        startDate,
@@ -102,7 +103,7 @@ public interface WeblogEntryManager {
      * @param catName    Category path or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
+     * @param range
      * @return Map of Lists, keyed by Date, and containing WeblogEntryData.
      * @throws WebloggerException
      */
@@ -128,7 +129,7 @@ public interface WeblogEntryManager {
      * @param catName    Category path or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
+     * @param range
      * @return Map of Lists, keyed by Date, and containing date strings.
      * @throws WebloggerException
      */
@@ -151,7 +152,7 @@ public interface WeblogEntryManager {
      * @param publishedOnly True to retrieve published articles only
      * @return        List of weblog entries in category
      */
-    List getWeblogEntries(WeblogCategory cat, boolean publishedOnly)
+    List<WeblogEntry> getWeblogEntries(WeblogCategory cat, boolean subcats)
             throws WebloggerException; 
     
     /** 
@@ -362,7 +363,7 @@ public interface WeblogEntryManager {
      * @return
      * @throws WebloggerException
      */
-    List getPopularTags(Weblog website, Date startDate, int offset, int limit)
+    List<TagStat> getPopularTags(Weblog website, Date startDate, int offset, int limit)
             throws WebloggerException;
     
     /**
@@ -374,7 +375,7 @@ public interface WeblogEntryManager {
      * @return
      * @throws WebloggerException
      */
-    List getTags(Weblog website, String sortBy, String startsWith, int offset, int limit)
+    List<TagStat> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit)
             throws WebloggerException;    
     
     /**

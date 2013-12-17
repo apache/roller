@@ -101,8 +101,8 @@ public class BookmarkTest extends TestCase {
                 "created by testBookmarkCRUD()",
                 "http://www.example.com",
                 "http://www.example.com/rss.xml",
-                new Integer(1),
-                new Integer(12),
+                1,
+                12,
                 "test.jpg");
         bookmark1.setFolder(folder);
         folder.addBookmark(bookmark1);
@@ -114,8 +114,8 @@ public class BookmarkTest extends TestCase {
                 "created by testBookmarkCRUD()",
                 "http://www.example.com",
                 "http://www.example.com/rss.xml",
-                new Integer(1),
-                new Integer(12),
+                1,
+                12,
                 "test.jpf");
         bookmark2.setFolder(folder);
         folder.addBookmark(bookmark2);
@@ -181,17 +181,17 @@ public class BookmarkTest extends TestCase {
         WeblogBookmark b1 = new WeblogBookmark(
                 f1, "b1", "testbookmark",
                 "http://example.com", "http://example.com/rss",
-                new Integer(1), new Integer(1), "image.gif");
+                1, 1, "image.gif");
         bmgr.saveBookmark(b1);
         WeblogBookmark b2 = new WeblogBookmark(
                 f1, "b2", "testbookmark",
                 "http://example.com", "http://example.com/rss",
-                new Integer(1), new Integer(1), "image.gif");
+                1, 1, "image.gif");
         bmgr.saveBookmark(b2);
         WeblogBookmark b3 = new WeblogBookmark(
                 f2, "b3", "testbookmark",
                 "http://example.com", "http://example.com/rss",
-                new Integer(1), new Integer(1), "image.gif");
+                1, 1, "image.gif");
         bmgr.saveBookmark(b3);
         
         TestUtils.endSession(true);
@@ -251,7 +251,7 @@ public class BookmarkTest extends TestCase {
             WeblogBookmark b1 = new WeblogBookmark(
                     f1, "b1", "testbookmark",
                     "http://example.com", "http://example.com/rss",
-                    new Integer(1), new Integer(1), "image.gif");
+                    1, 1, "image.gif");
             f1.addBookmark(b1);
 
             // create folder f2 inside f1
@@ -262,7 +262,7 @@ public class BookmarkTest extends TestCase {
             WeblogBookmark b2 = new WeblogBookmark(
                     f2, "b2", "testbookmark",
                     "http://example.com", "http://example.com/rss",
-                    new Integer(1), new Integer(1), "image.gif");
+                    1, 1, "image.gif");
             f2.addBookmark(b2);
 
             // create folder f3 inside folder f2
@@ -273,7 +273,7 @@ public class BookmarkTest extends TestCase {
             WeblogBookmark b3 = new WeblogBookmark(
                     f3, "b3", "testbookmark",
                     "http://example.com", "http://example.com/rss",
-                    new Integer(1), new Integer(1), "image.gif");
+                    1, 1, "image.gif");
             f3.addBookmark(b3);
 
             TestUtils.endSession(true);

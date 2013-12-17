@@ -275,7 +275,7 @@ public class WeblogEntryTest extends TestCase {
         
         // get pinned entries only
         entries = null;
-        entries = mgr.getWeblogEntriesPinnedToMain(new Integer(5));
+        entries = mgr.getWeblogEntriesPinnedToMain(5);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry1, entries.get(0));
@@ -310,8 +310,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.teardownWeblogEntry(entry3.getId());
         TestUtils.endSession(true);
     }
-    
-    
+
     /**
      * Test that the createAnchor() method actually ensures unique anchors.
      */
@@ -345,7 +344,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.teardownWeblogEntry(entry2.getId());
         TestUtils.endSession(true);
     }
-    
+
     public void testCreateAnEntryWithTagsShortcut() throws Exception {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -450,7 +449,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.teardownWeblogEntry(id);
         TestUtils.endSession(true);
     }    
-    
+
     public void testRemoveTagsViaShortcut() throws Exception {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -578,7 +577,7 @@ public class WeblogEntryTest extends TestCase {
         }
     }
         
-    
+
     public void testRemoveEntryTagCascading() throws Exception {
 
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -614,7 +613,6 @@ public class WeblogEntryTest extends TestCase {
     } 
     
     public void testUpdateTags() throws Exception {
-
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         // setup some test entries to use
@@ -640,9 +638,8 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         entry = mgr.getWeblogEntry(id);
-        HashSet tagNames = new HashSet();
-        for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
-            WeblogEntryTag tagData = (WeblogEntryTag) it.next();
+        HashSet<String> tagNames = new HashSet<String>();
+        for (WeblogEntryTag tagData : entry.getTags()) {
             tagNames.add(tagData.getName());
         }
 
@@ -663,9 +660,8 @@ public class WeblogEntryTest extends TestCase {
      * 
      * @throws Exception
      */
-    public void testUpdateTagTime() throws Exception {
-
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+     public void testUpdateTagTime() throws Exception {
+         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -684,13 +680,12 @@ public class WeblogEntryTest extends TestCase {
 
         Timestamp original = null;
 
-        for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
-            WeblogEntryTag tagData = (WeblogEntryTag) it.next();
+        for (WeblogEntryTag tagData : entry.getTags()) {
             if (tagData.getName().equals("testwillstaytag"))
                 original = tagData.getTime();
         }
 
-        List updateTags = new ArrayList();
+        List<String> updateTags = new ArrayList<String>();
         updateTags.add("testwillstaytag");
         updateTags.add("testnewtag");
         updateTags.add("testnewtag3");
@@ -699,12 +694,12 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         entry = mgr.getWeblogEntry(id);
-        HashSet tagNames = new HashSet();
-        for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
-            WeblogEntryTag tagData = (WeblogEntryTag) it.next();
+        HashSet<String> tagNames = new HashSet<String>();
+        for (WeblogEntryTag tagData : entry.getTags()) {
             tagNames.add(tagData.getName());
-            if (tagData.getName().equals("testwillstaytag"))
+            if (tagData.getName().equals("testwillstaytag")) {
                 assertEquals(original, tagData.getTime());
+            }
         }
 
         assertEquals(3, entry.getTags().size());
@@ -720,18 +715,17 @@ public class WeblogEntryTest extends TestCase {
 
     public void testTagAggregates() throws Exception {
         log.info("BEGIN");
-        
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
         Weblog testWeblog2 = TestUtils.setupWeblog("entryTestWeblog2", testUser);
-        
+
         try {
             // let's make sure we are starting from scratch
 
             // site-wide
-            List tags = mgr.getTags(null, null, null, 0, -1);
+            List<TagStat> tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // first weblog
@@ -749,7 +743,7 @@ public class WeblogEntryTest extends TestCase {
             entry.addTag("two");
             mgr.saveWeblogEntry(entry);
 
-            entry = TestUtils.setupWeblogEntry("entry2", 
+            entry = TestUtils.setupWeblogEntry("entry2",
                     testWeblog.getDefaultCategory(), testWeblog, testUser);
             entry.addTag("one");
             entry.addTag("two");
@@ -762,16 +756,15 @@ public class WeblogEntryTest extends TestCase {
             tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(3, tags.size());
 
-            HashMap expectedWeblogTags = new HashMap();
-            expectedWeblogTags.put("one", new Integer(2));
-            expectedWeblogTags.put("two", new Integer(2));
-            expectedWeblogTags.put("three", new Integer(1));
+            HashMap<String,Integer> expectedWeblogTags = new HashMap<String,Integer>();
+            expectedWeblogTags.put("one", 2);
+            expectedWeblogTags.put("two", 2);
+            expectedWeblogTags.put("three", 1);
 
-            for (Iterator it = tags.iterator(); it.hasNext();) {
-                TagStat stat = (TagStat) it.next();
-                if (!expectedWeblogTags.containsKey(stat.getName()))
+            for (TagStat stat : tags) {
+                if (!expectedWeblogTags.containsKey(stat.getName())) {
                     fail("Unexpected tagName.");
-
+                }
                 Integer expectedCount = (Integer)expectedWeblogTags.get(stat.getName());
                 assertEquals(expectedCount.intValue(), stat.getCount());
             }
@@ -792,14 +785,13 @@ public class WeblogEntryTest extends TestCase {
             tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(4, tags.size());
 
-            HashMap expectedSiteTags = new HashMap();
-            expectedSiteTags.put("one", new Integer(3));
-            expectedSiteTags.put("two", new Integer(2));
-            expectedSiteTags.put("three", new Integer(2));
-            expectedSiteTags.put("four", new Integer(1));
+            HashMap<String, Integer> expectedSiteTags = new HashMap<String, Integer>();
+            expectedSiteTags.put("one", 3);
+            expectedSiteTags.put("two", 2);
+            expectedSiteTags.put("three", 2);
+            expectedSiteTags.put("four", 1);
 
-            for (Iterator it = tags.iterator(); it.hasNext();) {
-                TagStat stat = (TagStat) it.next();
+            for (TagStat stat : tags) {
                 if (!expectedSiteTags.containsKey(stat.getName()))
                     fail("Unexpected tagName.");
 
@@ -811,7 +803,7 @@ public class WeblogEntryTest extends TestCase {
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             entry = mgr.getWeblogEntryByAnchor(testWeblog, "entry2");
-            List updateTags = new ArrayList();
+            List<String> updateTags = new ArrayList<String>();
             updateTags.add("one");
             updateTags.add("three");
             updateTags.add("five");
@@ -824,50 +816,49 @@ public class WeblogEntryTest extends TestCase {
             tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(4, tags.size());
 
-            expectedWeblogTags = new HashMap();
-            expectedWeblogTags.put("one", new Integer(2));
-            expectedWeblogTags.put("two", new Integer(1));
-            expectedWeblogTags.put("three", new Integer(1));
-            expectedWeblogTags.put("five", new Integer(1));
+            expectedWeblogTags = new HashMap<String, Integer>();
+            expectedWeblogTags.put("one", 2);
+            expectedWeblogTags.put("two", 1);
+            expectedWeblogTags.put("three", 1);
+            expectedWeblogTags.put("five", 1);
 
-            for (Iterator it = tags.iterator(); it.hasNext();) {
-                TagStat stat = (TagStat) it.next();
-                if (!expectedWeblogTags.containsKey(stat.getName()))
+            for (TagStat stat : tags) {
+                if (!expectedWeblogTags.containsKey(stat.getName())) {
                     fail("Unexpected tagName.");
-
-                Integer expectedCount = 
+                }
+                Integer expectedCount =
                         (Integer)expectedWeblogTags.get(stat.getName());
-                assertEquals(stat.getName(), 
+                assertEquals(stat.getName(),
                         expectedCount.intValue(), stat.getCount());
             }
 
             tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(5, tags.size());
 
-            expectedSiteTags = new HashMap();
-            expectedSiteTags.put("one", new Integer(3));
-            expectedSiteTags.put("two", new Integer(1));
-            expectedSiteTags.put("three", new Integer(2));
-            expectedSiteTags.put("four", new Integer(1));
-            expectedSiteTags.put("five", new Integer(1));
+            expectedSiteTags = new HashMap<String, Integer>();
+            expectedSiteTags.put("one", 3);
+            expectedSiteTags.put("two", 1);
+            expectedSiteTags.put("three", 2);
+            expectedSiteTags.put("four", 1);
+            expectedSiteTags.put("five", 1);
 
-            for (Iterator it = tags.iterator(); it.hasNext();) {
-                TagStat stat = (TagStat) it.next();
-                if (!expectedSiteTags.containsKey(stat.getName()))
+            for (TagStat stat : tags) {
+                if (!expectedSiteTags.containsKey(stat.getName())) {
                     fail("Unexpected tagName.");
-
+                }
                 Integer expectedCount = (Integer)expectedSiteTags.get(stat.getName());
                 assertEquals(stat.getName(), expectedCount.intValue(), stat.getCount());
             }
-            
+
             TestUtils.teardownWeblog(testWeblog2.getId());
             TestUtils.endSession(true);
-            
+
         } catch (Throwable t) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw); 
             t.printStackTrace(pw);
-            log.info(sw.toString());
+            log.error(sw.toString());
+            System.out.println(sw.toString());
         }
         
         log.info("END");
@@ -885,7 +876,7 @@ public class WeblogEntryTest extends TestCase {
         // let's make sure we are starting from scratch
 
         // site-wide
-        List tags = mgr.getTags(null, null, null, 0, -1);
+        List<TagStat> tags = mgr.getTags(null, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // first weblog
@@ -909,12 +900,11 @@ public class WeblogEntryTest extends TestCase {
         tags = mgr.getTags(testWeblog, null, null, 0, -1);
         assertEquals(2, tags.size());
 
-        HashMap expectedWeblogTags = new HashMap();
-        expectedWeblogTags.put("one", new Integer(1));
-        expectedWeblogTags.put("two", new Integer(1));
+        HashMap<String, Integer> expectedWeblogTags = new HashMap<String, Integer>();
+        expectedWeblogTags.put("one", 1);
+        expectedWeblogTags.put("two", 1);
 
-        for (Iterator it = tags.iterator(); it.hasNext();) {
-            TagStat stat = (TagStat) it.next();
+        for (TagStat stat : tags) {
             if (!expectedWeblogTags.containsKey(stat.getName()))
                 fail("Unexpected tagName.");
 
@@ -935,13 +925,12 @@ public class WeblogEntryTest extends TestCase {
         tags = mgr.getTags(null, null, null, 0, -1);
         assertEquals(3, tags.size());
 
-        HashMap expectedSiteTags = new HashMap();
-        expectedSiteTags.put("one", new Integer(2));
-        expectedSiteTags.put("two", new Integer(1));
-        expectedSiteTags.put("three", new Integer(1));
+        HashMap<String, Integer> expectedSiteTags = new HashMap<String, Integer>();
+        expectedSiteTags.put("one", 2);
+        expectedSiteTags.put("two", 1);
+        expectedSiteTags.put("three", 1);
 
-        for (Iterator it = tags.iterator(); it.hasNext();) {
-            TagStat stat = (TagStat) it.next();
+        for (TagStat stat : tags) {
             if (!expectedSiteTags.containsKey(stat.getName()))
                 fail("Unexpected tagName.");
 
@@ -955,13 +944,13 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.teardownWeblog(testWeblog2.getId());
         TestUtils.endSession(true);
     }
-           
+
   
     
     /**
      * Test that we can add and remove entry attributes for an entry.
      */
-    public void testEntryAttributeCRUD() throws Exception {
+     public void testEntryAttributeCRUD() throws Exception {
         
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -1028,8 +1017,7 @@ public class WeblogEntryTest extends TestCase {
     
     
     public void testWeblogStats() throws Exception {
-        
-        
+
         WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();

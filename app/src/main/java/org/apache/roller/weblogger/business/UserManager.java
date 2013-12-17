@@ -124,7 +124,7 @@ public interface UserManager {
      * @return List A list of UserDatUsers which match the criteria.
      * @throws WebloggerException If there is a problem.
      */
-    List getUsers(
+    List<User> getUsers(
             Boolean enabled,
             Date    startDate,
             Date    endDate,
@@ -141,7 +141,7 @@ public interface UserManager {
      * @param enabled    True for only enalbed, false for disabled, null for all
      * @return List of (up to length) users that match startsWith string
      */
-    List getUsersStartingWith(String startsWith,
+    List<User> getUsersStartingWith(String startsWith,
             Boolean enabled, int offset, int length) throws WebloggerException;
     
     
@@ -156,7 +156,7 @@ public interface UserManager {
     /** 
      * Get collection of users whose names begin with specified letter 
      */
-    List getUsersByLetter(char letter, int offset, int length)
+    List<User> getUsersByLetter(char letter, int offset, int length)
         throws WebloggerException;
     
         
@@ -338,7 +338,7 @@ public interface UserManager {
         
     /**
      * Returns true if user has role specified, should be used only for testing.
-     * @deprecated User checkPermission() instead.
+     * @deprecated Use checkPermission() instead.
      */
     boolean hasRole(String roleName, User user) throws WebloggerException;
     
@@ -346,7 +346,7 @@ public interface UserManager {
     /**
      * Get roles associated with user, should be used only for testing.
      * Get all roles associated with user.
-     * @deprecated User checkPermission() instead.
+     * @deprecated Use checkPermission() instead.
      */
     List<String> getRoles(User user) throws WebloggerException;
 

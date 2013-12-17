@@ -106,7 +106,7 @@ public class FolderFunctionalityTest extends TestCase {
         WeblogBookmarkFolder root = bmgr.getRootFolder(TestUtils.getManagedWebsite(testWeblog));
         
         // walk first level
-        Set folders = root.getFolders();
+        Set<WeblogBookmarkFolder> folders = root.getFolders();
         assertEquals(2, folders.size());
         assertTrue(folders.contains(testFolder));
         
@@ -118,7 +118,7 @@ public class FolderFunctionalityTest extends TestCase {
                 break;
             }
         }
-        
+
         // walk second level
         folders = folder.getFolders();
         assertEquals(1, folders.size());

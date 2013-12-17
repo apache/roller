@@ -195,13 +195,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         log.debug("Updating path tree for category "+cat.getPath());
         
-        WeblogCategory childCat = null;
-        Iterator childCats = cat.getWeblogCategories().iterator();
-        while(childCats.hasNext()) {
-            childCat = (WeblogCategory) childCats.next();
-            
+        for (WeblogCategory childCat : cat.getWeblogCategories()) {
             log.debug("OLD child category path was "+childCat.getPath());
-            
+
             // update path and save
             if("/".equals(cat.getPath())) {
                 childCat.setPath("/" + childCat.getName());
@@ -209,9 +205,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 childCat.setPath(cat.getPath() + "/" + childCat.getName());
             }
             saveWeblogCategory(childCat);
-            
+
             log.debug("NEW child category path is "+ childCat.getPath());
-            
+
             // then make recursive call to update this cats children
             updatePathTree(childCat);
         }
@@ -308,16 +304,14 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             entry.setAnchor(this.createAnchor(entry));
         }
         
-        for(Iterator it = entry.getAddedTags().iterator(); it.hasNext();) {
-            String name = (String) it.next();
-            updateTagCount(name, entry.getWebsite(), 1);
+        for (Object name : entry.getAddedTags()) {
+            updateTagCount((String) name, entry.getWebsite(), 1);
         }
-        
-        for(Iterator it = entry.getRemovedTags().iterator(); it.hasNext();) {
-            String name = (String) it.next();
-            updateTagCount(name, entry.getWebsite(), -1);
+
+        for (Object name : entry.getRemovedTags()) {
+            updateTagCount((String) name, entry.getWebsite(), -1);
         }
-        
+
         // if the entry was published to future, set status as SCHEDULED
         // we only consider an entry future published if it is scheduled
         // more than 1 minute into the future
@@ -525,7 +519,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List getWeblogEntries(
+    public List<WeblogEntry> getWeblogEntries(
             Weblog website,
             User    user,
             Date        startDate,
@@ -711,11 +705,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 //Call back the entity to adjust its internal state
                 entry.onRemoveTag(name);
 
-                //Remove it from database
-                this.strategy.remove(tag);
-                
                 //Remove it from the collection
                 it.remove();
+
+                //Remove it from database
+                this.strategy.remove(tag);
+                this.strategy.flush();
             }
         }
     }
@@ -775,7 +770,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     // TODO: this method should be removed and its functionality moved to getWeblogEntries()
-    public List getWeblogEntries(WeblogCategory cat, boolean publishedOnly)
+    public List<WeblogEntry> getWeblogEntries(WeblogCategory cat, boolean publishedOnly)
     throws WebloggerException {
         List results = null;
         
@@ -854,14 +849,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             return true;
         }
         
-        Iterator cats = cat.getWeblogCategories().iterator();
-        while (cats.hasNext()) {
-            WeblogCategory childCat = (WeblogCategory)cats.next();
+        for (WeblogCategory childCat : cat.getWeblogCategories()) {
             if (childCat.isInUse()) {
                 return true;
             }
         }
-        
+
         if (cat.getWebsite().getBloggerCategory().equals(cat)) {
             return true;
         }
@@ -876,7 +869,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List getComments(
+    public List<WeblogEntryComment> getComments(
             Weblog     website,
             WeblogEntry entry,
             String          searchString,
@@ -973,12 +966,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // but MySQL says "General error, message from server: "You can't
         // specify target table 'roller_comment' for update in FROM clause"
         
-        List comments = getComments(
+        List<WeblogEntryComment> comments = getComments(
                 website, entry, searchString, startDate, endDate,
                 status, true, 0, -1);
         int count = 0;
-        for (Iterator it = comments.iterator(); it.hasNext();) {
-            WeblogEntryComment comment = (WeblogEntryComment) it.next();
+        for (WeblogEntryComment comment : comments) {
             removeComment(comment);
             count++;
         }
@@ -1277,7 +1269,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List getPopularTags(Weblog website, Date startDate, int offset, int limit)
+    public List<TagStat> getPopularTags(Weblog website, Date startDate, int offset, int limit)
     throws WebloggerException {
         Query query = null;
         List queryResults = null;
@@ -1316,7 +1308,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
         
-        List results = new ArrayList(limit);
+        List<TagStat> results = new ArrayList<TagStat>(limit);
         
         for (Iterator iter = queryResults.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
@@ -1334,11 +1326,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         double range = Math.max(.01, max - min) * 1.0001;
         
-        for (Iterator iter = results.iterator(); iter.hasNext(); ) {
-            TagStat t = (TagStat) iter.next();
+        for (TagStat t : results) {
             t.setIntensity((int) (1 + Math.floor(5 * (Math.log(1+t.getCount()) - min) / range)));
         }
-        
+
         // sort results by name, because query had to sort by total
         Collections.sort(results, TAG_STAT_NAME_COMPARATOR);
         
@@ -1348,7 +1339,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List getTags(Weblog website, String sortBy,
+    public List<TagStat> getTags(Weblog website, String sortBy,
             String startsWith, int offset, int limit) throws WebloggerException {
         Query query = null;
         List queryResults = null;
@@ -1390,7 +1381,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         queryResults = query.getResultList();
         
-        List results = new ArrayList();
+        List<TagStat> results = new ArrayList<TagStat>();
         for (Iterator iter = queryResults.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
             TagStat ce = new TagStat();
@@ -1399,7 +1390,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             ce.setCount(((Long) row[1]).intValue());
             results.add(ce);
         }
-        
+
         if (sortByName) {
             Collections.sort(results, TAG_STAT_NAME_COMPARATOR);
         } else {

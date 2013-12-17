@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.business.plugins;
 
 import java.util.ArrayList;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +42,10 @@ public class PluginManagerImpl implements PluginManager {
     private static Log log = LogFactory.getLog(PluginManagerImpl.class);
     
     // Plugin classes keyed by plugin name
-    static Map mPagePlugins = new LinkedHashMap();
+    static Map<String, Class> mPagePlugins = new LinkedHashMap<String, Class>();
     
     // Comment plugins
-    private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList();
+    private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList<WeblogEntryCommentPlugin>();
     
     
     /**
@@ -71,11 +70,9 @@ public class PluginManagerImpl implements PluginManager {
      * Create and init plugins for processing entries in a specified website.
      */
     public Map getWeblogEntryPlugins(Weblog website) {
-        Map ret = new LinkedHashMap();
-        Iterator it = this.mPagePlugins.values().iterator();
-        while (it.hasNext()) {
+        Map<String, WeblogEntryPlugin> ret = new LinkedHashMap<String, WeblogEntryPlugin>();
+        for (Class pluginClass : PluginManagerImpl.mPagePlugins.values()) {
             try {
-                Class pluginClass = (Class)it.next();
                 WeblogEntryPlugin plugin = (WeblogEntryPlugin)pluginClass.newInstance();
                 plugin.init(website);
                 ret.put(plugin.getName(), plugin);
@@ -86,17 +83,15 @@ public class PluginManagerImpl implements PluginManager {
         return ret;
     }
     
-    public String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str) {
+    public String applyWeblogEntryPlugins(Map pagePlugins, WeblogEntry entry, String str) {
 
         String ret = str;
         WeblogEntry copy = new WeblogEntry(entry);
-        List entryPlugins = copy.getPluginsList();
+        List<String> entryPlugins = copy.getPluginsList();
 
-        if (entryPlugins != null && !entryPlugins.isEmpty()) {
-            Iterator iter = entryPlugins.iterator();
-            while (iter.hasNext()) {
-                String key = (String)iter.next();
-                WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin)pagePlugins.get(key);
+        if (entryPlugins != null) {
+            for (String key : entryPlugins) {
+                WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin) pagePlugins.get(key);
                 if (pagePlugin != null) {
                     ret = pagePlugin.render(entry, ret);
                 } else {

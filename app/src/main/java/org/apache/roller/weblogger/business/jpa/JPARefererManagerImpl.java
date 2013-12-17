@@ -112,9 +112,8 @@ public class JPARefererManagerImpl implements RefererManager {
         if (blacklist.length == 0) {
             return;
         }
-        List referers = getBlackListedReferer(blacklist);
-        for (Iterator iterator = referers.iterator(); iterator.hasNext();) {
-            WeblogReferrer referer= (WeblogReferrer) iterator.next();
+        List<WeblogReferrer> referers = getBlackListedReferer(blacklist);
+        for (WeblogReferrer referer : referers) {
             this.strategy.remove(referer);
         }
     }
@@ -136,9 +135,8 @@ public class JPARefererManagerImpl implements RefererManager {
         if (blacklist.length == 0) {
             return;
         }
-        List referers = getBlackListedReferer(website, blacklist);
-        for (Iterator iterator = referers.iterator(); iterator.hasNext();) {
-            WeblogReferrer referer= (WeblogReferrer) iterator.next();
+        List<WeblogReferrer> referers = getBlackListedReferer(website, blacklist);
+        for (WeblogReferrer referer : referers) {
             this.strategy.remove(referer);
         }
     }
@@ -200,7 +198,7 @@ public class JPARefererManagerImpl implements RefererManager {
         q.setParameter(1, Boolean.TRUE);
         q.setParameter(2, Boolean.TRUE);
         q.setParameter(3, start);
-        List queryResults = (List)q.getResultList();
+        List queryResults = q.getResultList();
         for (Iterator it = queryResults.iterator(); it.hasNext(); ) {
             Object[] row = (Object[])it.next();
             long hits = ((Number)row[0]).longValue();
@@ -338,7 +336,7 @@ public class JPARefererManagerImpl implements RefererManager {
     /**
      * Query for collection of referers.
      */
-    protected List getReferersWithSameTitle(Weblog website,
+    protected List<WeblogReferrer> getReferersWithSameTitle(Weblog website,
                                             String requestUrl,
                                             String title,
                                             String excerpt)
@@ -578,16 +576,14 @@ public class JPARefererManagerImpl implements RefererManager {
 
                         // LOOP: find the referer with the highest weight
                         Boolean visible = Boolean.FALSE;
-                        List refs= getReferersWithSameTitle(
+                        List<WeblogReferrer> refs= getReferersWithSameTitle(
                                 mReferer.getWebsite(),
                                 mReferer.getRequestUrl(),
                                 lb.getTitle(),
                                 lb.getExcerpt());
                         WeblogReferrer chosen = null;
                         int maxweight = 0;
-                        for (Iterator rdItr = refs.iterator();rdItr.hasNext();) {
-                            WeblogReferrer referer = (WeblogReferrer) rdItr.next();
-
+                        for (WeblogReferrer referer : refs) {
                             int weight = referer.getRefererUrl().length();
                             if (referer.getRefererUrl().indexOf('#') != -1) {
                                 weight += 100;
@@ -603,14 +599,11 @@ public class JPARefererManagerImpl implements RefererManager {
                                 // replacement must be visible as well.
                                 visible = Boolean.TRUE;
                             }
-
                         }
 
                         // LOOP: to mark all of the lower weight ones
                         // as duplicates
-                        for (Iterator rdItr = refs.iterator();rdItr.hasNext();) {
-                            WeblogReferrer referer = (WeblogReferrer) rdItr.next();
-
+                        for (WeblogReferrer referer : refs) {
                             if (!referer.equals(chosen)) {
                                 referer.setDuplicate(Boolean.TRUE);
                             } else {
@@ -619,8 +612,6 @@ public class JPARefererManagerImpl implements RefererManager {
                             }
                             saveReferer(referer);
                         }
-
-
                     }
                 } else {
                     // It is not a linkback, but store it anyway
@@ -655,14 +646,14 @@ public class JPARefererManagerImpl implements RefererManager {
         query.executeUpdate();
     }
 
-    protected List getBlackListedReferer(String[] blacklist) throws
+    protected List<WeblogReferrer> getBlackListedReferer(String[] blacklist) throws
             WebloggerException {
         StringBuilder queryString = getQueryStringForBlackList(blacklist);
         Query query = strategy.getDynamicQuery(queryString.toString());
-        return (List) query.getResultList();
+        return query.getResultList();
     }
 
-    protected List getBlackListedReferer(Weblog website, String[] blacklist) 
+    protected List<WeblogReferrer> getBlackListedReferer(Weblog website, String[] blacklist)
             throws WebloggerException {
         StringBuilder queryString = getQueryStringForBlackList(blacklist);
         queryString.append(" AND r.website = ?1 ");

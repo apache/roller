@@ -619,9 +619,9 @@ public class WeblogEntry implements Serializable {
             }
         }
 
-        WeblogEntryManager weblogManager = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         for (Iterator it = removeTags.iterator(); it.hasNext();) {
-            weblogManager.removeWeblogEntryTag((String) it.next(), this);
+            weblogEntryManager.removeWeblogEntryTag((String) it.next(), this);
         }
         
         for (Iterator it = newTags.iterator(); it.hasNext();) {
@@ -929,11 +929,11 @@ public class WeblogEntry implements Serializable {
      * Convenience method to transform mPlugins to a List
      * @return
      */
-    public List getPluginsList() {
+    public List<String> getPluginsList() {
         if (getPlugins() != null) {
             return Arrays.asList( StringUtils.split(getPlugins(), ",") );
         }
-        return new ArrayList();
+        return new ArrayList<String>();
     }    
     
     /** Convenience method for checking status */

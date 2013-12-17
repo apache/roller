@@ -366,8 +366,6 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
 
             // need to query for cats again since session was closed
             c1 = mgr.getWeblogCategory(c1.getId());
-            c2 = mgr.getWeblogCategory(c2.getId());
-            c3 = mgr.getWeblogCategory(c3.getId());
             dest = mgr.getWeblogCategory(dest.getId());
 
             // verify number of entries in each category

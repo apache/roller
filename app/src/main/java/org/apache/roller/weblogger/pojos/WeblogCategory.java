@@ -36,7 +36,7 @@ import org.apache.roller.util.UUIDGenerator;
 /**
  * Weblog Category.
  */
-public class WeblogCategory implements Serializable, Comparable {
+public class WeblogCategory implements Serializable, Comparable<WeblogCategory> {
     
     public static final long serialVersionUID = 1435782148712018954L;
     
@@ -52,9 +52,8 @@ public class WeblogCategory implements Serializable, Comparable {
     // associations
     private Weblog website = null;
     private WeblogCategory parentCategory = null;
-    private Set childCategories = new HashSet();
-    
-    
+    private Set<WeblogCategory> childCategories = new HashSet<WeblogCategory>();
+
     public WeblogCategory() {
     }
     
@@ -120,12 +119,10 @@ public class WeblogCategory implements Serializable, Comparable {
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object o) {
-        WeblogCategory other = (WeblogCategory)o;
+    public int compareTo(WeblogCategory other) {
         return getName().compareTo(other.getName());
     }
-    
-    
+
     /**
      * Database surrogate key.
      */
@@ -213,11 +210,11 @@ public class WeblogCategory implements Serializable, Comparable {
     /**
      * Get child categories of this category.
      */
-    public Set getWeblogCategories() {
+    public Set<WeblogCategory> getWeblogCategories() {
         return this.childCategories;
     }
     
-    private void setWeblogCategories(Set cats) {
+    private void setWeblogCategories(Set<WeblogCategory> cats) {
         this.childCategories = cats;
     }
     
@@ -267,7 +264,7 @@ public class WeblogCategory implements Serializable, Comparable {
      */
     public boolean hasCategory(String name) {
         Iterator cats = this.getWeblogCategories().iterator();
-        WeblogCategory cat = null;
+        WeblogCategory cat;
         while(cats.hasNext()) {
             cat = (WeblogCategory) cats.next();
             if(name.equals(cat.getName())) {
@@ -290,6 +287,7 @@ public class WeblogCategory implements Serializable, Comparable {
             // if our path starts with our parents path then we are a descendent
             return getPath().startsWith(ancestor.getPath());
         }
+
     }
     
     

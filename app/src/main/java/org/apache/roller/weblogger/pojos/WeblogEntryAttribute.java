@@ -26,7 +26,7 @@ import org.apache.roller.util.UUIDGenerator;
 /**
  * Weblog entry attribute.
  */
-public class WeblogEntryAttribute implements Comparable {
+public class WeblogEntryAttribute implements Comparable<WeblogEntryAttribute> {
     
     private String id = UUIDGenerator.generateUUID();
     private WeblogEntry entry;
@@ -107,8 +107,7 @@ public class WeblogEntryAttribute implements Comparable {
         .toHashCode();
     }
     
-    public int compareTo(Object o) {
-        WeblogEntryAttribute att = (WeblogEntryAttribute)o;
+    public int compareTo(WeblogEntryAttribute att) {
         return getName().compareTo(att.getName());
     }
     
