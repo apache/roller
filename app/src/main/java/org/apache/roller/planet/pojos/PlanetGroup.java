@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 /**
  * Planet Group.
  */
-public class PlanetGroup implements Serializable, Comparable {
+public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
 
     private transient String[] catArray = null;
     
@@ -62,8 +62,7 @@ public class PlanetGroup implements Serializable, Comparable {
     /**
      * For comparing groups and sorting, ordered by Title.
      */
-    public int compareTo(Object o) {
-        PlanetGroup other = (PlanetGroup) o;
+    public int compareTo(PlanetGroup other) {
         return getTitle().compareTo(other.getTitle());
     }
     

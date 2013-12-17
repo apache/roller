@@ -29,7 +29,7 @@ import org.apache.roller.util.UUIDGenerator;
  * Don't construct one of these yourself, instead use the create method in
  * the your BookmarkManager implementation.</p>
  */
-public class WeblogBookmark implements Serializable, Comparable {
+public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> {
     
     public static final long serialVersionUID = 2315131256728236003L;
     
@@ -207,7 +207,7 @@ public class WeblogBookmark implements Serializable, Comparable {
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object o) {
+    public int compareTo(WeblogBookmark o) {
         return bookmarkComparator.compare(this, o);
     }
     

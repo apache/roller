@@ -25,7 +25,7 @@ import java.util.TreeSet;
 /**
  * A Roller "Planet".
  */
-public class Planet implements Comparable {
+public class Planet implements Comparable<Planet> {
     
     private String id = UUIDGenerator.generateUUID();
     private String handle = null;
@@ -48,8 +48,7 @@ public class Planet implements Comparable {
     /**
      * For comparing planets and sorting, ordered by Title.
      */
-    public int compareTo(Object o) {
-        Planet other = (Planet) o;
+    public int compareTo(Planet other) {
         return getTitle().compareTo(other.getTitle());
     }
     

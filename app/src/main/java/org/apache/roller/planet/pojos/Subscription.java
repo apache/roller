@@ -27,7 +27,7 @@ import org.apache.roller.util.UUIDGenerator;
 /**
  * Planet Subscription.
  */
-public class Subscription implements Serializable, Comparable {
+public class Subscription implements Serializable, Comparable<Subscription> {
     
     // attributes
     private String id = UUIDGenerator.generateUUID();
@@ -51,8 +51,7 @@ public class Subscription implements Serializable, Comparable {
      * This ensures that feeds are sorted by title, but that identical titles 
      * don't make feeds equal.
      */
-    public int compareTo(Object o) {
-        Subscription other = (Subscription) o;
+    public int compareTo(Subscription other) {
         String otherString = other.getTitle() + other.getFeedURL();
         String thisString = getTitle() + getFeedURL();
         return thisString.compareTo(otherString);

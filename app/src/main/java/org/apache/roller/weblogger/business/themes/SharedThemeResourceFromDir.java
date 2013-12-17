@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.pojos.ThemeResource;
  * of this class.
  */
 public class SharedThemeResourceFromDir 
-        implements ThemeResource, Serializable, Comparable {
+        implements ThemeResource, Serializable, Comparable<SharedThemeResourceFromDir> {
     
     // the physical java.io.File backing this resource
     private File resourceFile = null;
@@ -54,8 +54,7 @@ public class SharedThemeResourceFromDir
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object o) {
-        ThemeResource other = (ThemeResource) o;
+    public int compareTo(SharedThemeResourceFromDir other) {
         return getPath().compareTo(other.getPath());
     }
     
