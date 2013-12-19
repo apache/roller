@@ -100,7 +100,9 @@ public class MediaFileBase extends UIAction {
                 for (int index = 0; index < fileIds.length; index++) {
                     log.debug("Deleting media file - " + fileIds[index]);
                     MediaFile mediaFile = manager.getMediaFile(fileIds[index]);
-                    manager.removeMediaFile(getActionWeblog(), mediaFile);
+                    if (mediaFile != null) {
+                        manager.removeMediaFile(getActionWeblog(), mediaFile);
+                    }
                 }
             }
 
@@ -110,8 +112,10 @@ public class MediaFileBase extends UIAction {
                 for (int index = 0; index < dirIds.length; index++) {
                     log.debug("Deleting media file directory - " + dirIds[index]);
                     MediaFileDirectory mediaFileDir = manager.getMediaFileDirectory(dirIds[index]);
-                    mediaFileDir.getParent().removeChildDirectory(mediaFileDir);
-                    manager.removeMediaFileDirectory(mediaFileDir);
+                    if (mediaFileDir != null) {
+                        mediaFileDir.getParent().removeChildDirectory(mediaFileDir);
+                        manager.removeMediaFileDirectory(mediaFileDir);
+                    }
                 }
             }
             WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(this.getActionWeblog());
