@@ -130,41 +130,7 @@ public class Categories extends UIAction {
 	}
 
 	public String move() {
-
-		try {
-			WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-					.getWeblogEntryManager();
-
-			log.debug("Moving categories to category - "
-					+ getTargetCategoryId());
-
-			// Move subCategories to new category.
-			String[] cats = getSelectedCategories();
-			WeblogCategory parent = wmgr
-					.getWeblogCategory(getTargetCategoryId());
-			if (cats != null) {
-				for (int i = 0; i < cats.length; i++) {
-					WeblogCategory cd = wmgr.getWeblogCategory(cats[i]);
-
-					// Don't move category into itself.
-					if (!cd.getId().equals(parent.getId())
-							&& !parent.descendentOf(cd)) {
-						wmgr.moveWeblogCategory(cd, parent);
-					} else {
-						addMessage("categoriesForm.warn.notMoving",
-								cd.getName());
-					}
-				}
-
-				// flush changes
-				WebloggerFactory.getWeblogger().flush();
-			}
-
-		} catch (WebloggerException ex) {
-			log.error("Error moving categories", ex);
-			addError("categoriesForm.error.move");
-		}
-
+        // no-op today as subcategories no longer supported
 		return execute();
 	}
 

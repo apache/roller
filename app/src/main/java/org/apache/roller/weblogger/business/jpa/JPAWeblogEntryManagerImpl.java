@@ -152,43 +152,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         roller.getWeblogManager().saveWeblog(
                 cat.getWebsite());
     }
-    
-    /**
-     * @inheritDoc
-     */
-    public void moveWeblogCategory(WeblogCategory srcCat, WeblogCategory destCat)
-    throws WebloggerException {
-        
-        // TODO: this check should be made before calling this method?
-        if (destCat.descendentOf(srcCat)) {
-            throw new WebloggerException(
-                    "ERROR cannot move parent category into it's own child");
-        }
-        
-        log.debug("Moving category "+srcCat.getPath() +
-                " under "+destCat.getPath());
-        
-        
-        WeblogCategory oldParent = srcCat.getParent();
-        if(oldParent != null) {
-            oldParent.getWeblogCategories().remove(srcCat);
-        }
-        srcCat.setParent(destCat);
-        destCat.getWeblogCategories().add(srcCat);
-        
-        if("/".equals(destCat.getPath())) {
-            srcCat.setPath("/"+srcCat.getName());
-        } else {
-            srcCat.setPath(destCat.getPath() + "/" + srcCat.getName());
-        }
-        saveWeblogCategory(srcCat);
-        
-        // the main work to be done for a category move is to update the
-        // path attribute of the category and all descendent categories
-        updatePathTree(srcCat);
-    }
-    
-    
+
     // updates the paths of all descendents of the given category
     private void updatePathTree(WeblogCategory cat)
     throws WebloggerException {

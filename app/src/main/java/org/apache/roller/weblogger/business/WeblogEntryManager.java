@@ -229,15 +229,6 @@ public interface WeblogEntryManager {
     
     
     /**
-     * Move a category under another category.
-     *
-     * This moves the src category itself and all children and associated entries.
-     */
-    void moveWeblogCategory(WeblogCategory src, WeblogCategory dest)
-            throws WebloggerException;
-    
-    
-    /**
      * Recategorize all entries with one category to another.
      */
     void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat)
