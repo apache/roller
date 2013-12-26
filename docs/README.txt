@@ -4,7 +4,6 @@ test plans.
     roller-install-guide.odt  - How to install Roller 
     roller-user-guide.odt     - How to use Roller 
     roller-template-guide.odt - How to create Roller templates and themes 
-    roller-dev-guide.odt      - Incomplete developer guide 
     examples/                 - example configuration and script files
     testing/                  - Various test scripts
 
