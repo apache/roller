@@ -25,51 +25,31 @@
     <table class="formtable">
         <tr>
             <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-            <s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
-                <td class="field"><s:textfield value="%{bean.userName}" name="bean.userName" size="30" maxlength="30" /></td>
-            </s:if>
-            <s:else>
-                <td class="field"><s:textfield value="" name="bean.userName" size="30" maxlength="30" /></td>
-            </s:else>
+            <td class="field"><s:textfield name="bean.userName" size="30" maxlength="30" /></td>
             <td class="description"><s:text name="userAdmin.tip.userName" /></td>
         </tr>
         
         <tr>
             <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-            <td class="field"><s:password value="" name="bean.password" size="20" maxlength="20" /></td>
+            <td class="field"><s:password name="bean.password" size="20" maxlength="20" /></td>
             <td class="description"><s:text name="userAdmin.tip.password" /></td>
         </tr>
         
         <tr>
             <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
-            <s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
-                <td class="field"><s:textfield value="%{bean.screenName}" name="bean.screenName" size="30" maxlength="30" /></td>
-            </s:if>
-            <s:else>
-                <td class="field"><s:textfield value="" name="bean.screenName" size="30" maxlength="30" /></td>
-            </s:else>
+            <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
             <td class="description"><s:text name="userAdmin.tip.screenName" /></td>
         </tr>
         
         <tr>
             <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
-            <s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
-                <td class="field"><s:textfield value="%{bean.fullName}" name="bean.fullName" size="30" maxlength="30" /></td>
-            </s:if>
-            <s:else>
-                <td class="field"><s:textfield value="" name="bean.fullName" size="30" maxlength="30" /></td>
-            </s:else>
+            <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
             <td class="description"><s:text name="userAdmin.tip.fullName" /></td>
         </tr>
         
         <tr>
             <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
-            <s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
-                <td class="field"><s:textfield value="%{bean.emailAddress}" name="bean.emailAddress" size="30" maxlength="30" /></td>
-            </s:if>
-            <s:else>
-                <td class="field"><s:textfield value="" name="bean.emailAddress" size="30" maxlength="30" /></td>
-            </s:else>
+            <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" /></td>
             <td class="description"><s:text name="userAdmin.tip.email" /></td>
         </tr>
         
