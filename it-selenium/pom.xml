@@ -28,6 +28,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <name>Roller Selenium tests</name>
     <artifactId>roller-selenium-tests</artifactId>
     <packaging>war</packaging>
 

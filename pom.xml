@@ -12,7 +12,7 @@
         <maven>3.0.5</maven>
     </prerequisites>
 
-    <name>Roller project</name>
+    <name>Roller</name>
     <description>
         Roller is an open source blog server built with open source Java
         libraries including Spring, Struts2, Velocity and Commons.
