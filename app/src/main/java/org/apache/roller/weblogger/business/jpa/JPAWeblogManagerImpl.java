@@ -534,6 +534,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
     public List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException {
         List weblogs = new ArrayList();
+        if (user == null) {
+            return weblogs;
+        }
         List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(user);
         for (WeblogPermission perm : perms) {
             Weblog weblog = perm.getWeblog();
