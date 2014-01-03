@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.util.cache;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
@@ -61,10 +60,10 @@ public final class CacheManager {
     private static CacheFactory cacheFactory = null;
     
     // a set of all registered cache handlers
-    private static Set cacheHandlers = new HashSet();
+    private static Set<CacheHandler> cacheHandlers = new HashSet<CacheHandler>();
     
     // a map of all registered caches
-    private static Map caches = new HashMap();
+    private static Map<String, Cache> caches = new HashMap<String, Cache>();
     
     
     static {
@@ -201,9 +200,9 @@ public final class CacheManager {
      * invalidated.
      */
     public static void registerHandler(CacheHandler handler) {
-        
+
         log.debug("Registering handler "+handler);
-        
+
         if(handler != null) {
             cacheHandlers.add(handler);
         }
@@ -213,10 +212,8 @@ public final class CacheManager {
     public static void invalidate(WeblogEntry entry) {
         
         log.debug("invalidating entry = "+entry.getAnchor());
-        
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            ((CacheHandler) handlers.next()).invalidate(entry);
+        for (CacheHandler handler : cacheHandlers) {
+            handler.invalidate(entry);
         }
     }
     
@@ -224,10 +221,8 @@ public final class CacheManager {
     public static void invalidate(Weblog website) {
         
         log.debug("invalidating website = "+website.getHandle());
-        
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            ((CacheHandler) handlers.next()).invalidate(website);
+        for (CacheHandler handler : cacheHandlers) {
+            handler.invalidate(website);
         }
     }
     
@@ -235,10 +230,8 @@ public final class CacheManager {
     public static void invalidate(WeblogBookmark bookmark) {
         
         log.debug("invalidating bookmark = "+bookmark.getId());
-        
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            ((CacheHandler) handlers.next()).invalidate(bookmark);
+        for (CacheHandler handler : cacheHandlers) {
+            handler.invalidate(bookmark);
         }
     }
     
@@ -246,10 +239,8 @@ public final class CacheManager {
     public static void invalidate(WeblogBookmarkFolder folder) {
         
         log.debug("invalidating folder = "+folder.getId());
-        
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            ((CacheHandler) handlers.next()).invalidate(folder);
+        for (CacheHandler handler : cacheHandlers) {
+            handler.invalidate(folder);
         }
     }
     
@@ -257,10 +248,8 @@ public final class CacheManager {
     public static void invalidate(WeblogEntryComment comment) {
         
         log.debug("invalidating comment = "+comment.getId());
-        
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            ((CacheHandler) handlers.next()).invalidate(comment);
+        for (CacheHandler handler : cacheHandlers) {
+            handler.invalidate(comment);
         }
     }
     
@@ -272,10 +261,8 @@ public final class CacheManager {
         // NOTE: Invalidating an entire website for each referer is not
         //       good for our caching.  This may need reevaluation later.
         //lastExpiredCache.put(referer.getWebsite().getHandle(), new Date());
-        
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            ((CacheHandler) handlers.next()).invalidate(referer);
+        for (CacheHandler handler : cacheHandlers) {
+            handler.invalidate(referer);
         }
     }
     
@@ -283,32 +270,25 @@ public final class CacheManager {
     public static void invalidate(User user) {
         
         log.debug("invalidating user = "+user.getUserName());
-        
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            ((CacheHandler) handlers.next()).invalidate(user);
+        for (CacheHandler handler : cacheHandlers) {
+            handler.invalidate(user);
         }
     }
     
     
     public static void invalidate(WeblogCategory category) {
         
-        log.debug("invalidating category = "+category.getId());
-        
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            ((CacheHandler) handlers.next()).invalidate(category);
+        log.debug("invalidating category = " + category.getId());
+        for (CacheHandler handler : cacheHandlers) {
+            handler.invalidate(category);
         }
     }
     
     
     public static void invalidate(WeblogTemplate template) {
-        
-        log.debug("invalidating template = "+template.getId());
-        
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            ((CacheHandler) handlers.next()).invalidate(template);
+        log.debug("invalidating template = " + template.getId());
+        for (CacheHandler handler : cacheHandlers) {
+            handler.invalidate(template);
         }
     }
 
@@ -317,13 +297,7 @@ public final class CacheManager {
      * Flush the entire cache system.
      */
     public static void clear() {
-        
-        // loop through all caches and trigger a clear
-        Cache cache = null;
-        Iterator cachesIT = caches.values().iterator();
-        while(cachesIT.hasNext()) {
-            cache = (Cache) cachesIT.next();
-            
+        for (Cache cache : caches.values()) {
             cache.clear();
         }
     }
@@ -333,8 +307,7 @@ public final class CacheManager {
      * Flush a single cache.
      */
     public static void clear(String cacheId) {
-        
-        Cache cache = (Cache) caches.get(cacheId);
+        Cache cache = caches.get(cacheId);
         if(cache != null) {
             cache.clear();
         }
@@ -350,17 +323,10 @@ public final class CacheManager {
      * something a bit more elaborate, like JMX.
      */
     public static Map getStats() {
-        
         Map allStats = new HashMap();
-        
-        Cache cache = null;
-        Iterator cachesIT = caches.values().iterator();
-        while(cachesIT.hasNext()) {
-            cache = (Cache) cachesIT.next();
-            
+        for (Cache cache : caches.values()) {
             allStats.put(cache.getId(), cache.getStats());
         }
-        
         return allStats;
     }
     

@@ -49,7 +49,7 @@ public class HitCountQueue {
     private int numWorkers = 1;
     private int sleepTime = 180000;
     private WorkerThread worker = null;
-    private List queue = null;
+    private List<String> queue = null;
     
     
     static {
@@ -70,7 +70,7 @@ public class HitCountQueue {
         }
         
         // create the hits queue
-        this.queue = Collections.synchronizedList(new ArrayList());
+        this.queue = Collections.synchronizedList(new ArrayList<String>());
         
         // start up a worker to process the hits at intervals
         HitCountProcessingJob job = new HitCountProcessingJob();
@@ -94,8 +94,8 @@ public class HitCountQueue {
     }
     
     
-    public List getHits() {
-        return new ArrayList(this.queue);
+    public List<String> getHits() {
+        return new ArrayList<String>(this.queue);
     }
     
     
@@ -103,7 +103,7 @@ public class HitCountQueue {
      * Reset the queued hits.
      */
     public synchronized void resetHits() {
-        this.queue = Collections.synchronizedList(new ArrayList());
+        this.queue = Collections.synchronizedList(new ArrayList<String>());
     }
     
     

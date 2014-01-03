@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.core.util.menu;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -105,13 +104,9 @@ public class MenuHelper {
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         
         // iterate over tabs from parsed config
-        ParsedTab configTab = null;
-        Iterator tabsIter = menuConfig.getTabs().iterator();
-        while (tabsIter.hasNext()) {
-            configTab = (ParsedTab) tabsIter.next();
-            
-            log.debug("config tab = "+configTab.getName());
-            
+        for (ParsedTab configTab : menuConfig.getTabs()) {
+            log.debug("config tab = " + configTab.getName());
+
             // does this tab have an enabledProperty?
             boolean includeTab = true;
             if(configTab.getEnabledProperty() != null) {
@@ -119,7 +114,7 @@ public class MenuHelper {
             } else if(configTab.getDisabledProperty() != null) {
                 includeTab = ! getBooleanProperty(configTab.getDisabledProperty());
             }
-            
+
             // user roles check
             if (includeTab && configTab.getGlobalPermissionActions() != null
                     && !configTab.getGlobalPermissionActions().isEmpty()) {
@@ -145,20 +140,17 @@ public class MenuHelper {
 
             if (includeTab) {
                 log.debug("tab allowed - "+configTab.getName());
-                
+
                 // all checks passed, tab should be included
                 MenuTab tab = new MenuTab();
                 tab.setKey(configTab.getName());
-                
+
                 // setup tab items
                 boolean firstItem = true;
-                ParsedTabItem configTabItem = null;
-                Iterator itemsIter = configTab.getTabItems().iterator();
-                while (itemsIter.hasNext()) {
-                    configTabItem = (ParsedTabItem) itemsIter.next();
-                    
+                for (ParsedTabItem configTabItem : configTab.getTabItems()) {
+
                     log.debug("config tab item = "+configTabItem.getName());
-                    
+
                     boolean includeItem = true;
 
                     if (configTabItem.getEnabledProperty() != null) {
@@ -166,7 +158,7 @@ public class MenuHelper {
                     } else if (configTabItem.getDisabledProperty() != null) {
                         includeItem = ! getBooleanProperty(configTabItem.getDisabledProperty());
                     }
-                    
+
                     // user roles check
                     if (includeItem && configTabItem.getGlobalPermissionActions() != null
                             && !configTabItem.getGlobalPermissionActions().isEmpty()) {
@@ -186,34 +178,34 @@ public class MenuHelper {
 
                     if (includeItem) {
                         log.debug("tab item allowed - "+configTabItem.getName());
-                        
+
                         // all checks passed, item should be included
                         MenuTabItem tabItem = new MenuTabItem();
                         tabItem.setKey(configTabItem.getName());
                         tabItem.setAction(configTabItem.getAction());
-                        
+
                         // is this the selected item?
                         if (isSelected(currentAction, configTabItem)) {
                             tabItem.setSelected(true);
                             tab.setSelected(true);
                         }
-                        
+
                         // the url for the tab is the url of the first item of the tab
                         if (firstItem) {
                             tab.setAction(tabItem.getAction());
                             firstItem = false;
                         }
-                        
+
                         // add the item
                         tab.addItem(tabItem);
                     }
                 }
-                
+
                 // add the tab
                 tabMenu.addTab(tab);
             }
         }
-        
+
         return tabMenu;
     }    
     
@@ -231,11 +223,11 @@ public class MenuHelper {
             return true;
         }
         
-        // an item is also considered selected if it's subforwards are the current action
+        // an item is also considered selected if its subforwards are the current action
         String[] subActions = tabItem.getSubActions();
-        if (subActions != null && subActions.length > 0) {
-            for(int i=0; i < subActions.length; i++) {
-                if (currentAction.equals(subActions[i])) {
+        if (subActions != null) {
+            for (String subAction : subActions) {
+                if (currentAction.equals(subAction)) {
                     return true;
                 }
             }
@@ -262,13 +254,11 @@ public class MenuHelper {
         Document doc = builder.build(instream);
         
         Element root = doc.getRootElement();
-        List parsedMenus = root.getChildren("menu");
-        Iterator iter = parsedMenus.iterator();
-        while (iter.hasNext()) {
-            Element e = (Element) iter.next();
+        List<Element> parsedMenus = root.getChildren("menu");
+        for (Element e : parsedMenus) {
             config.addTab(elementToParsedTab(e));
         }
-        
+
         return config;
     }
     
@@ -287,13 +277,11 @@ public class MenuHelper {
         tab.setEnabledProperty(element.getAttributeValue("enabledProperty"));
         tab.setDisabledProperty(element.getAttributeValue("disabledProperty"));
         
-        List menuItems = element.getChildren("menu-item");
-        Iterator iter = menuItems.iterator();
-        while (iter.hasNext()) {
-            Element e = (Element) iter.next();
+        List<Element> menuItems = element.getChildren("menu-item");
+        for (Element e : menuItems) {
             tab.addItem(elementToParsedTabItem(e));
         }
-        
+
         return tab;
     }
     

@@ -450,7 +450,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Get websites of a user
      */
-    public List getWeblogs(
+    public List<Weblog> getWeblogs(
             Boolean enabled, Boolean active,
             Date startDate, Date endDate, int offset, int length) throws WebloggerException {
         
@@ -532,8 +532,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         roller.getWeblogManager().saveWeblog(themeAssoc.getWeblog());
     }
         
-    public List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException {
-        List weblogs = new ArrayList();
+    public List<Weblog> getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException {
+        List<Weblog> weblogs = new ArrayList<Weblog>();
         if (user == null) {
             return weblogs;
         }
@@ -549,8 +549,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return weblogs;
     }
     
-    public List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
-        List users = new ArrayList();
+    public List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
+        List<User> users = new ArrayList<User>();
         List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(weblog);
         for (WeblogPermission perm : perms) {
             User user = perm.getUser();
@@ -668,7 +668,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @see org.apache.roller.weblogger.business.WeblogManager#getPages(Weblog)
      */
-    public List getPages(Weblog website) throws WebloggerException {
+    public List<Weblog> getPages(Weblog website) throws WebloggerException {
         if (website == null) {
             throw new WebloggerException("website is null");
         }
@@ -694,7 +694,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return results;
     }
     
-    public List getWeblogsByLetter(char letter, int offset, int length)
+    public List<Weblog> getWeblogsByLetter(char letter, int offset, int length)
     throws WebloggerException {
         Query query = strategy.getNamedQuery(
                 "Weblog.getByLetterOrderByHandle");
@@ -708,7 +708,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return query.getResultList();
     }
     
-    public List getMostCommentedWeblogs(Date startDate, Date endDate,
+    public List<StatCount> getMostCommentedWeblogs(Date startDate, Date endDate,
             int offset, int length)
             throws WebloggerException {
         
@@ -738,7 +738,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             query.setMaxResults(length);
         }
         List queryResults = query.getResultList();
-        List results = new ArrayList();
+        List<StatCount> results = new ArrayList<StatCount>();
         for (Iterator iter = queryResults.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
             StatCount sc = new StatCount(

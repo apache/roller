@@ -27,8 +27,8 @@ import java.util.List;
  */
 public class RollerMessages
 {
-    private List mErrors = new ArrayList();
-    private List mMessages = new ArrayList();
+    private List<RollerMessage> mErrors = new ArrayList<RollerMessage>();
+    private List<RollerMessage> mMessages = new ArrayList<RollerMessage>();
     
     public RollerMessages() 
     {
@@ -76,17 +76,11 @@ public class RollerMessages
     public String toString() 
     {
         StringBuilder sb = new StringBuilder();
-        Iterator msgs = mMessages.iterator();
-        while (msgs.hasNext())
-        {
-            RollerMessage msg = (RollerMessage) msgs.next();
+        for (RollerMessage msg : mMessages) {
             sb.append(msg.getKey());
             sb.append(" : ");
         }
-        Iterator errs = mErrors.iterator();
-        while (errs.hasNext())
-        {
-            RollerMessage msg = (RollerMessage) errs.next();
+        for (RollerMessage msg : mErrors) {
             sb.append(msg.getKey());
             sb.append(" : ");
         }

@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,8 +95,7 @@ public class PlanetModel implements Model {
     /**
      * Get pager for PlanetEntry objects from 'all' and
      * 'exernal' Planet groups. in reverse chrono order.
-     * @param offset   Offset into results (for paging)
-     * @param len      Max number of results to return
+     * @param length      Max number of results to return
      */
     public Pager getAggregationPager(int sinceDays, int length) {
         
@@ -120,8 +118,7 @@ public class PlanetModel implements Model {
     /**
      * Get pager for WeblogEntry objects from specified
      * Planet groups in reverse chrono order.
-     * @param offset   Offset into results (for paging)
-     * @param len      Max number of results to return
+     * @param length      Max number of results to return
      */
     public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
         
@@ -144,8 +141,7 @@ public class PlanetModel implements Model {
     /**
      * Get pager for WeblogEntry objects from specified
      * Planet feed in reverse chrono order.
-     * @param offset   Offset into results (for paging)
-     * @param len      Max number of results to return
+     * @param length      Max number of results to return
      */
     public Pager getFeedPager(String feedURL, int length) {
         
@@ -168,10 +164,9 @@ public class PlanetModel implements Model {
     /**
      * Get PlanetSubscription objects in descending order by Planet ranking.
      * @param sinceDays Only consider weblogs updated in the last sinceDays
-     * @param offset   Offset into results (for paging)
-     * @param len      Max number of results to return
+     * @param length      Max number of results to return
      */
-    public List getRankedSubscriptions(int sinceDays, int length) {
+    public List<Subscription> getRankedSubscriptions(int sinceDays, int length) {
         return getRankedSubscriptions(null, sinceDays, length);
     }
     
@@ -180,20 +175,18 @@ public class PlanetModel implements Model {
      * Get PlanetSubscription objects in descending order by Planet ranking.
      * @param groupHandle Only consider weblogs updated in the last sinceDays
      * @param sinceDays   Only consider weblogs updated in the last sinceDays
-     * @param offset      Offset into results (for paging)
-     * @param len         Max number of results to return
+     * @param length         Max number of results to return
      */
-    public List getRankedSubscriptions(String groupHandle, int sinceDays, int length) {
-        List list = new ArrayList();
+    public List<Subscription> getRankedSubscriptions(String groupHandle, int sinceDays, int length) {
+        List<Subscription> list = new ArrayList<Subscription>();
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
             Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);
             PlanetGroup planetGroup = planetManager.getGroup(defaultPlanet, groupHandle);
-            List subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
-            for (Iterator it = subs.iterator(); it.hasNext();) {
-                Subscription sub = (Subscription) it.next();
+            List<Subscription> subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
+            for (Subscription sub : subs) {
                 // TODO needs pojo wrapping from planet
-                list.add(sub); 
+                list.add(sub);
             }
         } catch (Exception e) {
             log.error("ERROR: get ranked blogs", e);

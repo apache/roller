@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.runnable;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
@@ -138,7 +137,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             log.debug("looking up scheduled entries older than "+now);
             
             // get all published entries older than current time
-            List scheduledEntries = wMgr.getWeblogEntries(
+            List<WeblogEntry> scheduledEntries = wMgr.getWeblogEntries(
                     
                     null,   // website
                     null,   // user
@@ -154,32 +153,23 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
                     
             log.debug("promoting "+scheduledEntries.size()+" entries to PUBLISHED state");
             
-            WeblogEntry entry = null;
-            Iterator it = scheduledEntries.iterator();
-            while(it.hasNext()) {
-                entry = (WeblogEntry) it.next();
-                
-                // update status to PUBLISHED and save
+            for (WeblogEntry entry : scheduledEntries) {
                 entry.setStatus(WeblogEntry.PUBLISHED);
                 wMgr.saveWeblogEntry(entry);
             }
-            
+
             // commit the changes
             WebloggerFactory.getWeblogger().flush();
             
             // take a second pass to trigger reindexing and cache invalidations
             // this is because we need the updated entries flushed first
-            it = scheduledEntries.iterator();
-            while(it.hasNext()) {
-                entry = (WeblogEntry) it.next();
-                
+            for (WeblogEntry entry : scheduledEntries) {
                 // trigger a cache invalidation
                 CacheManager.invalidate(entry);
-                
                 // trigger search index on entry
                 searchMgr.addEntryReIndexOperation(entry);
             }
-            
+
         } catch (WebloggerException e) {
             log.error("Error getting scheduled entries", e);
         } catch(Exception e) {

@@ -743,15 +743,15 @@ public class WeblogEntry implements Serializable {
     
     //------------------------------------------------------------------------
     
-    public List getComments() {
+    public List<WeblogEntryComment> getComments() {
         return getComments(true, true);
     }
     
     /**
      * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
-    public List getComments(boolean ignoreSpam, boolean approvedOnly) {
-        List list = new ArrayList();
+    public List<WeblogEntryComment> getComments(boolean ignoreSpam, boolean approvedOnly) {
+        List<WeblogEntryComment> list = new ArrayList<WeblogEntryComment>();
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             return wmgr.getComments(

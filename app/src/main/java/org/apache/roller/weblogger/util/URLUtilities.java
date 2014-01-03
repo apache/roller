@@ -38,29 +38,27 @@ public final class URLUtilities {
     /**
      * Compose a map of key=value params into a query string.
      */
-    public static String getQueryString(Map params) {
+    public static String getQueryString(Map<String, String> params) {
         
         if(params == null) {
             return null;
         }
         
         StringBuilder queryString = new StringBuilder();
-        
-        for(Iterator keys = params.keySet().iterator(); keys.hasNext();) {
-            String key = (String) keys.next();
-            String value = (String) params.get(key);
-            
+        for (String key : params.keySet()) {
+            String value = params.get(key);
+
             if (queryString.length() == 0) {
                 queryString.append("?");
             } else {
                 queryString.append("&");
             }
-            
+
             queryString.append(key);
             queryString.append("=");
             queryString.append(value);
         }
-        
+
         return queryString.toString();
     }
     

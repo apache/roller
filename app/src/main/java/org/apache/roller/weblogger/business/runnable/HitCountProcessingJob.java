@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.runnable;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -27,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -53,25 +51,21 @@ public class HitCountProcessingJob implements Job {
      */
     public void execute() {
         
-        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         HitCountQueue hitCounter = HitCountQueue.getInstance();
         
         // first get the current set of hits
-        List currentHits = hitCounter.getHits();
+        List<String> currentHits = hitCounter.getHits();
         
         // now reset the queued hits
         hitCounter.resetHits();
         
         // tally the counts, grouped by weblog handle
-        Map hitsTally = new HashMap();
-        String weblogHandle = null;
-        for(int i=0; i < currentHits.size(); i++) {
-            weblogHandle = (String) currentHits.get(i);
-            
-            Long count = (Long) hitsTally.get(weblogHandle);
+        Map<String, Long> hitsTally = new HashMap<String, Long>();
+        for (String weblogHandle : currentHits) {
+            Long count = hitsTally.get(weblogHandle);
             if(count == null) {
                 count = 1L;
             } else {
@@ -79,25 +73,21 @@ public class HitCountProcessingJob implements Job {
             }
             hitsTally.put(weblogHandle, count);
         }
-        
+
         // iterate over the tallied hits and store them in the db
         try {
             long startTime = System.currentTimeMillis();
             
-            Weblog weblog = null;
-            String key = null;
-            Iterator it = hitsTally.keySet().iterator();
-            while(it.hasNext()) {
-                key = (String) it.next();
-                
+            Weblog weblog;
+            for (String key : hitsTally.keySet()) {
                 try {
                     weblog = wmgr.getWeblogByHandle(key);
-                    emgr.incrementHitCount(weblog, ((Long)hitsTally.get(key)).intValue());
+                    emgr.incrementHitCount(weblog, (hitsTally.get(key)).intValue());
                 } catch (WebloggerException ex) {
                     log.error(ex);
                 }
             }
-            
+
             // flush the results to the db
             WebloggerFactory.getWeblogger().flush();
             

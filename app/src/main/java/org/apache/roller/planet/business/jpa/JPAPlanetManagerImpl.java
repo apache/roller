@@ -53,11 +53,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     
     /** The strategy for this manager. */
     private final JPAPersistenceStrategy strategy;
-    
-    protected Map lastUpdatedByGroup = new HashMap();
-    protected static final String NO_GROUP = "zzz_nogroup_zzz";
-    
-    
+
     @com.google.inject.Inject  
     protected JPAPlanetManagerImpl(JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Planet Manager");
@@ -129,7 +125,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return q.getResultList().size();
     }
     
-    public List getTopSubscriptions(int offset, int length)
+    public List<Subscription> getTopSubscriptions(int offset, int length)
     throws RollerException {
         return getTopSubscriptions(null, offset, length);
     }
@@ -137,9 +133,9 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     /**
      * Get top X subscriptions, restricted by group.
      */
-    public List getTopSubscriptions(
+    public List<Subscription> getTopSubscriptions(
             PlanetGroup group, int offset, int len) throws RollerException {
-        List result = null;
+        List<Subscription> result;
         if (group != null) {
             Query q = strategy.getNamedQuery(
                     "Subscription.getByGroupOrderByInboundBlogsDesc");
@@ -200,11 +196,11 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return (Planet)strategy.load(Planet.class, id);
     }
     
-    public List getWebloggers() throws RollerException {
-        return (List)strategy.getNamedQuery("Planet.getAll").getResultList();
+    public List<Planet> getWebloggers() throws RollerException {
+        return strategy.getNamedQuery("Planet.getAll").getResultList();
     }
     
-    public List getGroupHandles(Planet planet) throws RollerException {
+    public List<String> getGroupHandles(Planet planet) throws RollerException {
         List<String> handles = new ArrayList<String>();
         for (PlanetGroup group : getGroups(planet)) {
             handles.add(group.getHandle());
@@ -242,7 +238,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         sub.getEntries().clear();
     }
     
-    public List getSubscriptions() throws RollerException {
+    public List<Subscription> getSubscriptions() throws RollerException {
         Query q = strategy.getNamedQuery("Subscription.getAllOrderByFeedURL");
         return q.getResultList();
     }
@@ -251,7 +247,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return (SubscriptionEntry) strategy.load(SubscriptionEntry.class, id);
     }
 
-    public List getEntries(Subscription sub, int offset, int len) throws RollerException {            
+    public List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len) throws RollerException {
         if (sub == null) {
             throw new WebloggerException("subscription cannot be null");
         }
@@ -266,17 +262,17 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return q.getResultList();
     }
 
-    public List getEntries(PlanetGroup group, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(PlanetGroup group, int offset, int len) throws RollerException {
         return getEntries(group, null, null, offset, len);
     }
 
-    public List getEntries(PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws RollerException {
 
         if (group == null) {
             throw new WebloggerException("group cannot be null or empty");
         }
         
-        List ret = null;
+        List<SubscriptionEntry> ret = null;
         try {
             long startTime = System.currentTimeMillis();
             

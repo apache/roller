@@ -45,7 +45,7 @@ public interface PlanetManager extends Manager {
     Planet getWebloggerById(String id) throws RollerException;
     
     
-    List getWebloggers() throws RollerException;
+    List<Planet> getWebloggers() throws RollerException;
     
     
     /**
@@ -96,7 +96,7 @@ public interface PlanetManager extends Manager {
     /**
      * Get all subscriptions.
      */
-    List getSubscriptions() throws RollerException;
+    List<Subscription> getSubscriptions() throws RollerException;
     
     
     /**
@@ -108,13 +108,13 @@ public interface PlanetManager extends Manager {
     /**
      * Get top X subscriptions.
      */
-    List getTopSubscriptions(int offset, int len) throws RollerException;
+    List<Subscription> getTopSubscriptions(int offset, int len) throws RollerException;
     
     
     /**
      * Get top X subscriptions, restricted by group.
      */
-    List getTopSubscriptions(PlanetGroup group, int offset, int len)
+    List<Subscription> getTopSubscriptions(PlanetGroup group, int offset, int len)
         throws RollerException;
     
     
@@ -148,23 +148,23 @@ public interface PlanetManager extends Manager {
     /**
      * Get entries in a single feed as list of SubscriptionEntry objects.
      */
-    List getEntries(Subscription sub, int offset, int len)
+    List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len)
         throws RollerException;
     
     
     /**
-     * Get Entries for a Group in reverse chonological order.
+     * Get Entries for a Group in reverse chronological order.
      *
      * @param group Restrict to entries from one group.
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */
-    List getEntries(PlanetGroup group, int offset, int len)
+    List<SubscriptionEntry> getEntries(PlanetGroup group, int offset, int len)
         throws RollerException;
     
     
     /**
-     * Get Entries for a Group in reverse chonological order, optionally 
+     * Get Entries for a Group in reverse chronological order, optionally
      * constrained to a certain timeframe.
      *
      * @param group Restrict to entries from one group.
@@ -173,7 +173,7 @@ public interface PlanetManager extends Manager {
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */
-    List getEntries(PlanetGroup group,
+    List<SubscriptionEntry> getEntries(PlanetGroup group,
                            Date startDate, 
                            Date endDate,
                            int offset, 

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
@@ -388,17 +387,16 @@ public class SiteModel implements Model {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getNewWeblogs(int sinceDays, int length) {
-        List results = new ArrayList();
+    public List<WeblogWrapper> getNewWeblogs(int sinceDays, int length) {
+        List<WeblogWrapper> results = new ArrayList<WeblogWrapper>();
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, -1 * sinceDays);
         Date startDate = cal.getTime();
         try {            
-            List weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogs(
+            List<Weblog> weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogs(
                 Boolean.TRUE, Boolean.TRUE, startDate, null, 0, length);
-            for (Iterator it = weblogs.iterator(); it.hasNext();) {
-                Weblog website = (Weblog) it.next();
+            for (Weblog website : weblogs) {
                 results.add(WeblogWrapper.wrap(website, urlStrategy));
             }
         } catch (Exception e) {
@@ -413,14 +411,13 @@ public class SiteModel implements Model {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getNewUsers(int sinceDays, int length) {
-        List results = new ArrayList();
+    public List<UserWrapper> getNewUsers(int sinceDays, int length) {
+        List<UserWrapper> results = new ArrayList<UserWrapper>();
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
-            List users = umgr.getUsers(Boolean.TRUE, null, null, 0, length);
-            for (Iterator it = users.iterator(); it.hasNext();) {
-                User user = (User) it.next();
+            List<User> users = umgr.getUsers(Boolean.TRUE, null, null, 0, length);
+            for (User user : users) {
                 results.add(UserWrapper.wrap(user));
             }
         } catch (Exception e) {
@@ -433,18 +430,16 @@ public class SiteModel implements Model {
     /**
      * Get list of WebsiteDisplay objects, ordered by number of hits.
      * @param sinceDays Only consider weblogs updated in the last sinceDays
-     * @param len      Max number of results to return
+     * @param length      Max number of results to return
      */
-    public List getHotWeblogs(int sinceDays, int length) {
+    public List<StatCount> getHotWeblogs(int sinceDays, int length) {
         
-        List results = new ArrayList();
+        List<StatCount> results = new ArrayList<StatCount>();
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List hotBlogs = mgr.getHotWeblogs(sinceDays, 0, length);
+            List<WeblogHitCount> hotBlogs = mgr.getHotWeblogs(sinceDays, 0, length);
             
-            Iterator hitCounts = hotBlogs.iterator();
-            while (hitCounts.hasNext()) {
-                WeblogHitCount hitCount = (WeblogHitCount) hitCounts.next();
+            for (WeblogHitCount hitCount : hotBlogs) {
                 StatCount statCount = new StatCount(
                     hitCount.getWeblog().getId(),
                     hitCount.getWeblog().getHandle(),
@@ -467,7 +462,6 @@ public class SiteModel implements Model {
      * Get most collection of most commented websites, as StatCount objects,
      * in descending order by number of comments.
      * @param sinceDays Only consider weblogs updated in the last sinceDays
-     * @param offset   Offset into results (for paging)
      * @param length   Max number of results to return
      */
     public List getMostCommentedWeblogs(int sinceDays , int length) {
@@ -492,7 +486,7 @@ public class SiteModel implements Model {
      * objects, in descending order by number of comments.
      * @param sinceDays Only consider weblogs updated in the last sinceDays
      * @param cats     To limit results to list of category names
-     * @param len      Max number of results to return
+     * @param length      Max number of results to return
      */
     public List getMostCommentedWeblogEntries(
             List cats, int sinceDays, int length) {
@@ -514,17 +508,15 @@ public class SiteModel implements Model {
     
     /**
      * Get pinned entries.
-     * @param sinceDays Only consider weblogs updated in the last sinceDays
      * @param length    Max number of results to return
      */
-    public List getPinnedWeblogEntries(int length) {
-        List results = new ArrayList();
+    public List<WeblogEntryWrapper> getPinnedWeblogEntries(int length) {
+        List<WeblogEntryWrapper> results = new ArrayList<WeblogEntryWrapper>();
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            List weblogs = wmgr.getWeblogEntriesPinnedToMain(length);
-            for (Iterator it = weblogs.iterator(); it.hasNext();) {
-                WeblogEntry entry = (WeblogEntry) it.next();
+            List<WeblogEntry> weblogEntries = wmgr.getWeblogEntriesPinnedToMain(length);
+            for (WeblogEntry entry : weblogEntries) {
                 results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
             }
         } catch (Exception e) {

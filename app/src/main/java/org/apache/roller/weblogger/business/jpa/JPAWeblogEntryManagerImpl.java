@@ -627,7 +627,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List getWeblogEntriesPinnedToMain(Integer max)
+    public List<WeblogEntry> getWeblogEntriesPinnedToMain(Integer max)
     throws WebloggerException {
         Query query = strategy.getNamedQuery(
                 "WeblogEntry.getByPinnedToMain&statusOrderByPubTimeDesc");
@@ -1523,7 +1523,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List getHotWeblogs(int sinceDays, int offset, int length)
+    public List<WeblogHitCount> getHotWeblogs(int sinceDays, int offset, int length)
     throws WebloggerException {
         
         // figure out start date

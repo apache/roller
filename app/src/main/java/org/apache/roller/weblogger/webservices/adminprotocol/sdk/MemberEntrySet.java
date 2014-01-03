@@ -26,7 +26,6 @@ package org.apache.roller.weblogger.webservices.adminprotocol.sdk;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -65,15 +64,14 @@ public class MemberEntrySet extends EntrySet {
         if (!rootName.equals(Tags.MEMBERS)) {
             throw new UnexpectedRootElementException("ERROR: Incorrect root element", Tags.MEMBERS, rootName);
         }
-        List members = root.getChildren(MemberEntry.Tags.MEMBER, NAMESPACE);
+        List<Element> members = root.getChildren(MemberEntry.Tags.MEMBER, NAMESPACE);
         if (members != null) {
-            List entries = new ArrayList();
-            for (Iterator i = members.iterator(); i.hasNext(); ) {
-                Element member = (Element)i.next();
+            List<MemberEntry> entries = new ArrayList<MemberEntry>();
+            for (Element member : members) {
                 MemberEntry entry = new MemberEntry(member, urlPrefix);
                 entries.add(entry);
             }
-            setEntries((Entry[])entries.toArray(new Entry[0]));
+            setEntries(entries.toArray(new Entry[0]));
         }
         setHref(urlPrefix + "/" + Types.MEMBERS);
     }

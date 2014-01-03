@@ -149,7 +149,6 @@ public interface WeblogEntryManager {
      * Get weblog entries with given category or, optionally, any sub-category
      * of that category.
      * @param cat     Category
-     * @param publishedOnly True to retrieve published articles only
      * @return        List of weblog entries in category
      */
     List<WeblogEntry> getWeblogEntries(WeblogCategory cat, boolean subcats)
@@ -194,9 +193,9 @@ public interface WeblogEntryManager {
     /**
      * Get specified number of most recent pinned and published Weblog Entries.
      * @param max Maximum number to return.
-     * @return Collection of WeblogEntryData objects.
+     * @return Collection of WeblogEntry objects.
      */
-    List getWeblogEntriesPinnedToMain(Integer max) throws WebloggerException;
+    List<WeblogEntry> getWeblogEntriesPinnedToMain(Integer max) throws WebloggerException;
 
     /**
      * Remove attribute with given name from given WeblogEntryData
@@ -283,7 +282,7 @@ public interface WeblogEntryManager {
      * @param offset     Offset into results for paging
      * @param length     Max comments to return (or -1 for no limit)
      */
-    List getComments(
+    List<WeblogEntryComment> getComments(
             
             Weblog          website,
             WeblogEntry     entry,
@@ -436,7 +435,7 @@ public interface WeblogEntryManager {
      * @return The list of HitCountData objects ranked by hit count, descending.
      * @throws WebloggerException If there was a problem with the backend.
      */
-    List getHotWeblogs(int sinceDays, int offset, int length)
+    List<WeblogHitCount> getHotWeblogs(int sinceDays, int offset, int length)
         throws WebloggerException;
     
     

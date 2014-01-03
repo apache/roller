@@ -97,19 +97,18 @@ public class MailUtil {
             String content;
             
             // list of enabled website authors and admins
-            ArrayList reviewers = new ArrayList();
-            List websiteUsers = wmgr.getWeblogUsers(entry.getWebsite(), true);
+            List<String> reviewers = new ArrayList<String>();
+            List<User> websiteUsers = wmgr.getWeblogUsers(entry.getWebsite(), true);
             
             // build list of reviewers (website users with author permission)
-            Iterator websiteUserIter = websiteUsers.iterator();
-            while (websiteUserIter.hasNext()) {
-                User websiteUser = (User)websiteUserIter.next();
-                if (entry.getWebsite().hasUserPermission(                        
+            for (User websiteUser : websiteUsers) {
+                if (entry.getWebsite().hasUserPermission(
                         websiteUser, WeblogPermission.POST)
                         && websiteUser.getEmailAddress() != null) {
                     reviewers.add(websiteUser.getEmailAddress());
                 }
             }
+
             to = (String[])reviewers.toArray(new String[reviewers.size()]);
             
             // Figure URL to entry edit page
@@ -287,16 +286,15 @@ public class MailUtil {
         }
         
         // build list of email addresses to send notification to
-        Set subscribers = new TreeSet();
+        Set<String> subscribers = new TreeSet<String>();
         
         // If we are to notify subscribers, then...
         if (notifySubscribers) {
             log.debug("Sending notification email to all subscribers");
 
             // Get all the subscribers to this comment thread
-            List comments = entry.getComments(true, true);
-            for (Iterator it = comments.iterator(); it.hasNext();) {
-                WeblogEntryComment comment = (WeblogEntryComment) it.next();
+            List<WeblogEntryComment> comments = entry.getComments(true, true);
+            for (WeblogEntryComment comment : comments) {
                 if (!StringUtils.isEmpty(comment.getEmail()) && commentObject.getApproved()) {
                     // If user has commented twice, count the most recent notify setting
                     if (comment.getNotify()) {
@@ -410,7 +408,7 @@ public class MailUtil {
         ownermsg.append("Link to comment management page:");
         ownermsg.append((escapeHtml) ? "\n" : "<br />");
         
-        Map<String, String> parameters = new HashMap();
+        Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("bean.entryId", entry.getId());
         String deleteURL = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL(
                 "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);

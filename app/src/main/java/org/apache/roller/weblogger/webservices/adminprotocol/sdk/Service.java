@@ -25,9 +25,7 @@ package org.apache.roller.weblogger.webservices.adminprotocol.sdk;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -77,16 +75,14 @@ public class Service extends EntrySet {
 
     public void populate(Document doc) {
         Element root = doc.getRootElement();
-        List workspaces = new ArrayList();
-        List spaces = root.getChildren("workspace", NAMESPACE);
-        Iterator iter = spaces.iterator();
-        while (iter.hasNext()) {
-            Element e = (Element) iter.next();
+        List<Workspace> workspaces = new ArrayList<Workspace>();
+        List<Element> spaces = root.getChildren("workspace", NAMESPACE);
+        for (Element e : spaces) {
             Workspace ws = new Workspace();
             ws.populate(e);
             workspaces.add(ws);
         }
-        setEntries((Entry[])workspaces.toArray(new Workspace[0]));
+        setEntries(workspaces.toArray(new Workspace[0]));
     }
             
     /** This class describes a service workspace. */    
@@ -130,16 +126,14 @@ public class Service extends EntrySet {
         
         public void populate(Element elem) {
             setTitle(elem.getAttributeValue(Attributes.TITLE)); //, NAMESPACE));
-            List collections = new ArrayList();
-            List spaces = elem.getChildren("collection", NAMESPACE);
-            Iterator iter = spaces.iterator();
-            while (iter.hasNext()) {
-                Element e = (Element) iter.next();
+            List<Collection> collections = new ArrayList<Collection>();
+            List<Element> spaces = elem.getChildren("collection", NAMESPACE);
+            for (Element e : spaces) {
                 Collection col = new Collection();
                 col.populate(e);
                 collections.add(col);
             }
-            Workspace.this.setEntries((Entry[])collections.toArray(new Collection[0]));
+            Workspace.this.setEntries(collections.toArray(new Collection[0]));
         }
 
 
