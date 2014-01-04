@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business.plugins;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -43,7 +44,7 @@ public interface PluginManager {
      *
      * @param website        Website being processed
      */
-    Map getWeblogEntryPlugins(Weblog website);
+    Map<String, WeblogEntryPlugin> getWeblogEntryPlugins(Weblog website);
     
     
     /**

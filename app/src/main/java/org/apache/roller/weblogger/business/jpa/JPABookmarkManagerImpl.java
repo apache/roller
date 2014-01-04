@@ -325,10 +325,10 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
      * @see org.apache.roller.weblogger.business.BookmarkManager#getBookmarks(
      *      org.apache.roller.weblogger.pojos.WeblogBookmarkFolder, boolean)
      */
-    public List getBookmarks(WeblogBookmarkFolder folder, boolean subfolders) 
+    public List<WeblogBookmark> getBookmarks(WeblogBookmarkFolder folder, boolean subfolders)
             throws WebloggerException {
-        Query query = null;
-        List results = null;
+        Query query;
+        List<WeblogBookmark> results = null;
 
         if(!subfolders) {
             // if no subfolders then this is an equals query
@@ -363,7 +363,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         }
     }
 
-    public List getAllFolders(Weblog website)
+    public List<WeblogBookmarkFolder> getAllFolders(Weblog website)
             throws WebloggerException {
         if (website == null) {
             throw new WebloggerException("Website is null");

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -300,8 +299,8 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             WebloggerFactory.getWeblogger().flush();
             
             // notify caches of changes, flush weblogs affected by changes
-            for (Iterator sites = flushList.iterator(); sites.hasNext();) {
-                CacheManager.invalidate((Weblog)sites.next());
+            for (Weblog weblog : flushList) {
+                CacheManager.invalidate(weblog);
             }
             
             addMessage("commentManagement.updateSuccess");

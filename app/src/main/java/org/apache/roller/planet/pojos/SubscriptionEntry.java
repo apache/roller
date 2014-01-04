@@ -191,9 +191,8 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
      * (case-insensitive comparison).
      */
     public boolean inCategory(String category) {
-        Iterator cats = getCategories().iterator();
-        while (cats.hasNext()) {
-            String catName = ((String)cats.next()).toLowerCase();
+        for (Category cat : getCategories()) {
+            String catName = cat.getName().toLowerCase();
             if (catName.contains(category.toLowerCase())) {
                 return true;
             }
@@ -206,14 +205,14 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Returns categories as list of WeblogCategoryData objects.
      */
-    public List getCategories() {
-        List list = new ArrayList();
+    public List<Category> getCategories() {
+        List<Category> list = new ArrayList<Category>();
         if (getCategoriesString() != null) {
             String[] catArray = Utilities.stringToStringArray(getCategoriesString(),",");
-            for (int i=0; i<catArray.length; i++) {
+            for (String catName : catArray) {
                 Category cat = new Category();
-                cat.setName(catArray[i]);
-                cat.setPath(catArray[i]);
+                cat.setName(catName);
+                cat.setPath(catName);
                 list.add(cat);
             }
         }
@@ -232,7 +231,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
         return cat;
     }
 
-    public void setCategoriesString(List categories) {
+    public void setCategoriesString(List<Category> categories) {
         StringBuilder sb = new StringBuilder();
         Iterator cats = categories.iterator();
         while (cats.hasNext()) {

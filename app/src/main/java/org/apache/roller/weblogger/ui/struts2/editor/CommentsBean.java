@@ -22,7 +22,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.util.DateUtil;
@@ -51,15 +50,13 @@ public class CommentsBean {
     private String ids = null;
     
     
-    public void loadCheckboxes(List comments) {
+    public void loadCheckboxes(List<WeblogEntryComment> comments) {
         
-        List<String> allComments = new ArrayList();
-        List<String> approvedList = new ArrayList();
-        List<String> spamList = new ArrayList();
+        List<String> allComments = new ArrayList<String>();
+        List<String> approvedList = new ArrayList<String>();
+        List<String> spamList = new ArrayList<String>();
         
-        Iterator it = comments.iterator();
-        while (it.hasNext()) {
-            WeblogEntryComment comment = (WeblogEntryComment)it.next();
+        for (WeblogEntryComment comment : comments) {
             allComments.add(comment.getId());
             
             if(WeblogEntryComment.APPROVED.equals(comment.getStatus())) {
@@ -70,14 +67,14 @@ public class CommentsBean {
         }
         
         // list of ids we are working on
-        String[] idArray = (String[]) allComments.toArray(new String[allComments.size()]);
+        String[] idArray = allComments.toArray(new String[allComments.size()]);
         setIds(Utilities.stringArrayToString(idArray,","));
         
         // approved ids list
-        setApprovedComments((String[])approvedList.toArray(new String[approvedList.size()]));
+        setApprovedComments(approvedList.toArray(new String[approvedList.size()]));
         
         // spam ids list
-        setSpamComments((String[])spamList.toArray(new String[spamList.size()]));
+        setSpamComments(spamList.toArray(new String[spamList.size()]));
     }
     
     

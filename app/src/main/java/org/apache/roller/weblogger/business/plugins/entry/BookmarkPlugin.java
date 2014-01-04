@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.plugins.entry;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -90,27 +89,23 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
      * @param folders
      * @return
      */
-    private String lookInFolders(String text, Collection folders) {
+    private String lookInFolders(String text, Collection<WeblogBookmarkFolder> folders) {
         
-        Iterator it = folders.iterator();
-        while (it.hasNext()) {
-            WeblogBookmarkFolder folder = (WeblogBookmarkFolder)it.next();
+        for (WeblogBookmarkFolder folder: folders) {
             text = matchBookmarks(text, folder);
-            
+
             if (!folder.getFolders().isEmpty()) {
                 lookInFolders(text, folder.getFolders());
             }
         }
-        
+
         return text;
     }
     
     
-    private String matchBookmarks(String text,WeblogBookmarkFolder folder) {
-        Iterator bookmarks = folder.getBookmarks().iterator();
+    private String matchBookmarks(String text, WeblogBookmarkFolder folder) {
         String workingText = text;
-        while (bookmarks.hasNext()) {
-            WeblogBookmark bookmark = (WeblogBookmark)bookmarks.next();
+        for (WeblogBookmark bookmark : folder.getBookmarks()) {
             String bkDescription = bookmark.getDescription();
             if (bkDescription == null) {
                 bkDescription = "";

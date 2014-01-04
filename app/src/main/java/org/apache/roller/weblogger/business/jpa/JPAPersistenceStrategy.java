@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.io.InputStream;
@@ -183,11 +182,10 @@ public class JPAPersistenceStrategy {
      */
     public void removeAll(Collection pos) throws WebloggerException {
         EntityManager em = getEntityManager(true);
-        for (Iterator iterator = pos.iterator(); iterator.hasNext();) {
-            Object obj = iterator.next();
+        for (Object obj : pos) {
             em.remove(obj);
         }
-    }    
+    }
     
     /**
      * Retrieve object, no transaction needed.

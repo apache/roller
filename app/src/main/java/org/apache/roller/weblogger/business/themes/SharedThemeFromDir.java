@@ -50,20 +50,17 @@ public class SharedThemeFromDir extends SharedTheme {
     private ThemeTemplate stylesheet = null;
 
     // we keep templates in a Map for faster lookups by name
-    // the Map contains ... (template name, ThemeTemplate)
-    private Map templatesByName = new HashMap();
+    private Map<String, ThemeTemplate> templatesByName = new HashMap<String, ThemeTemplate>();
 
     // we keep templates in a Map for faster lookups by link
-    // the Map contains ... (template link, List<tThemeTemplate>)
-    private Map templatesByLink = new HashMap();
+    private Map<String, ThemeTemplate> templatesByLink = new HashMap<String, ThemeTemplate>();
 
     // we keep templates in a Map for faster lookups by action
-    // the Map contains ... (template action, ThemeTemplate)
-    private Map templatesByAction = new HashMap();
+    private Map<String, ThemeTemplate> templatesByAction = new HashMap<String, ThemeTemplate>();
 
     // we keep resources in a Map for faster lookups by path
     // the Map contains ... (resource path, ThemeResource)
-    private Map resources = new HashMap();
+    private Map<String, ThemeResource> resources = new HashMap<String, ThemeResource>();
 
     public SharedThemeFromDir(String themeDirPath)
             throws ThemeInitializationException {
@@ -84,8 +81,8 @@ public class SharedThemeFromDir extends SharedTheme {
     /**
      * Get the collection of all templates associated with this Theme.
      */
-    public List getTemplates() {
-        return new ArrayList(this.templatesByName.values());
+    public List<ThemeTemplate> getTemplates() {
+        return new ArrayList<ThemeTemplate>(this.templatesByName.values());
     }
 
     /**
@@ -100,8 +97,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * cannot be found.
      */
     public ThemeTemplate getDefaultTemplate() {
-        return (ThemeTemplate) this.templatesByAction
-                .get(ThemeTemplate.ACTION_WEBLOG);
+        return this.templatesByAction.get(ThemeTemplate.ACTION_WEBLOG);
     }
 
     /**
@@ -109,7 +105,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * cannot be found.
      */
     public ThemeTemplate getTemplateByName(String name) {
-        return (ThemeTemplate) this.templatesByName.get(name);
+        return this.templatesByName.get(name);
     }
 
     /**
@@ -117,7 +113,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * cannot be found.
      */
     public ThemeTemplate getTemplateByLink(String link) {
-        return (ThemeTemplate) this.templatesByLink.get(link);
+        return this.templatesByLink.get(link);
     }
 
     /**
@@ -125,7 +121,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * cannot be found.
      */
     public ThemeTemplate getTemplateByAction(String action) {
-        return (ThemeTemplate) this.templatesByAction.get(action);
+        return this.templatesByAction.get(action);
     }
 
     /**
@@ -133,10 +129,10 @@ public class SharedThemeFromDir extends SharedTheme {
      * 
      * It is assured that the resources are returned sorted by pathname.
      */
-    public List getResources() {
+    public List<ThemeResource> getResources() {
 
         // make sure resources are sorted.
-        List myResources = new ArrayList(this.resources.values());
+        List myResources = new ArrayList<ThemeResource>(this.resources.values());
         Collections.sort(myResources);
 
         return myResources;
@@ -147,7 +143,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * cannot be found.
      */
     public ThemeResource getResource(String path) {
-        return (ThemeResource) this.resources.get(path);
+        return this.resources.get(path);
     }
 
     public String toString() {
@@ -155,14 +151,12 @@ public class SharedThemeFromDir extends SharedTheme {
         sb.append(name);
         sb.append("\n");
 
-        Iterator it = this.templatesByName.values().iterator();
-        while (it.hasNext()) {
-            sb.append(it.next());
+        for (ThemeTemplate template : templatesByName.values()) {
+            sb.append(template);
             sb.append("\n");
         }
 
         return sb.toString();
-
     }
 
     /**
@@ -172,7 +166,7 @@ public class SharedThemeFromDir extends SharedTheme {
 
         log.debug("Parsing theme descriptor for " + this.themeDir);
 
-        ThemeMetadata themeMetadata = null;
+        ThemeMetadata themeMetadata;
         try {
             // lookup theme descriptor and parse it
             ThemeMetadataParser parser = new ThemeMetadataParser();
@@ -294,11 +288,7 @@ public class SharedThemeFromDir extends SharedTheme {
         }
 
         // go through static resources and add them to the theme
-        String resourcePath = null;
-        Iterator resourcesIter = themeMetadata.getResources().iterator();
-        while (resourcesIter.hasNext()) {
-            resourcePath = (String) resourcesIter.next();
-
+        for (String resourcePath : themeMetadata.getResources()) {
             // construct ThemeResource object from resource
             File resourceFile = new File(this.themeDir + File.separator
                     + resourcePath);
@@ -324,11 +314,8 @@ public class SharedThemeFromDir extends SharedTheme {
         }
 
         // go through templates and read in contents to a ThemeTemplate
-        SharedThemeTemplate theme_template = null;
-        ThemeMetadataTemplate templateMetadata = null;
-        Iterator templatesIter = themeMetadata.getTemplates().iterator();
-        while (templatesIter.hasNext()) {
-            templateMetadata = (ThemeMetadataTemplate) templatesIter.next();
+        SharedThemeTemplate theme_template;
+        for (ThemeMetadataTemplate templateMetadata : themeMetadata.getTemplates()) {
 
             // getting the template codes for available types
             ThemeMetadataTemplateCode standardTemplateCode = templateMetadata
@@ -408,7 +395,7 @@ public class SharedThemeFromDir extends SharedTheme {
             return null;
         }
 
-        char[] chars = null;
+        char[] chars;
         int length;
         try {
             chars = new char[(int) templateFile.length()];

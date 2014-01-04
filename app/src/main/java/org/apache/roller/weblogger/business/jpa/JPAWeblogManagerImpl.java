@@ -37,7 +37,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
-import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.StatCountCountComparator;
@@ -129,10 +128,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove tags
         Query tagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblog");
         tagQuery.setParameter(1, website);
-        List results = tagQuery.getResultList();
+        List<WeblogEntryTag> results = tagQuery.getResultList();
         
-        for(Iterator iter = results.iterator(); iter.hasNext();) {
-            WeblogEntryTag tagData = (WeblogEntryTag) iter.next();
+        for(WeblogEntryTag tagData : results) {
             if (tagData.getWeblogEntry() != null) {
                 tagData.getWeblogEntry().getTags().remove(tagData);
             }
@@ -159,34 +157,30 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         Query q = strategy.getNamedQuery("PingQueueEntry.getByWebsite");
         q.setParameter(1, website);
         List queueEntries = q.getResultList();
-        Iterator it = queueEntries.iterator();
-        while(it.hasNext()) {
-            this.strategy.remove((PingQueueEntry) it.next());
+        for (Object obj : queueEntries) {
+            this.strategy.remove(obj);
         }
         
         // Remove the website's auto ping configurations
-        AutoPingManager autoPingMgr = roller
-        .getAutopingManager();
-        List autopings = autoPingMgr.getAutoPingsByWebsite(website);
-        it = autopings.iterator();
-        while(it.hasNext()) {
-            this.strategy.remove((AutoPing) it.next());
+        AutoPingManager autoPingMgr = roller.getAutopingManager();
+        List<AutoPing> autopings = autoPingMgr.getAutoPingsByWebsite(website);
+        for (AutoPing autoPing : autopings) {
+            this.strategy.remove(autoPing);
         }
         
         // Remove the website's custom ping targets
         PingTargetManager pingTargetMgr = roller.getPingTargetManager();
-        List pingtargets = pingTargetMgr.getCustomPingTargets(website);
-        it = pingtargets.iterator();
-        while(it.hasNext()) {
-            this.strategy.remove((PingTarget) it.next());
+        List<PingTarget> pingTargets = pingTargetMgr.getCustomPingTargets(website);
+        for (PingTarget pingTarget : pingTargets) {
+            this.strategy.remove(pingTarget);
         }
         
         // remove associated referers
         Query refQuery2 = strategy.getNamedQuery("WeblogReferrer.getByWebsite");
         refQuery2.setParameter(1, website);
         List referers = refQuery2.getResultList();
-        for (Iterator iter = referers.iterator(); iter.hasNext();) {
-            WeblogReferrer referer = (WeblogReferrer) iter.next();
+        for (Object obj : referers) {
+            WeblogReferrer referer = (WeblogReferrer) obj;
             this.strategy.remove(referer.getClass(), referer.getId());
         }
         // TODO: can we eliminate this unnecessary flush with OpenJPA 1.0
@@ -196,8 +190,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         Query pageQuery = strategy.getNamedQuery("WeblogTemplate.getByWebsite");
         pageQuery.setParameter(1, website);
         List pages = pageQuery.getResultList();
-        for (Iterator iter = pages.iterator(); iter.hasNext();) {
-            WeblogTemplate page = (WeblogTemplate) iter.next();
+        for (Object obj : pages) {
+            WeblogTemplate page = (WeblogTemplate) obj;
 
             //remove associated templateCode objects
             this.removeTemplateCodeObjs(page);
@@ -226,9 +220,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         Query refQuery = strategy.getNamedQuery("WeblogEntry.getByWebsite");
         refQuery.setParameter(1, website);
         List entries = refQuery.getResultList();
-        for (Iterator iter = entries.iterator(); iter.hasNext();) {
-            WeblogEntry entry = (WeblogEntry) iter.next();
-            emgr.removeWeblogEntry(entry);
+        for (Object object : entries) {
+            emgr.removeWeblogEntry((WeblogEntry) object);
         }
         this.strategy.flush();
         
@@ -239,9 +232,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // remove permissions
-        for (Iterator iterator = umgr.getWeblogPermissions(website).iterator(); iterator.hasNext();) {
-            WeblogPermission perm = (WeblogPermission) iterator.next();
-            umgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS); 
+        for (WeblogPermission perm : umgr.getWeblogPermissions(website)) {
+            umgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS);
         }
         
         // flush the changes before returning. This is required as there is a
@@ -249,9 +241,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.flush();        
     }
     
-    protected void updateTagAggregates(List tags) throws WebloggerException {
-        for(Iterator iter = tags.iterator(); iter.hasNext();) {
-            TagStat stat = (TagStat) iter.next();            
+    protected void updateTagAggregates(List<TagStat> tags) throws WebloggerException {
+        for(TagStat stat : tags) {
             Query query = strategy.getNamedUpdate(
                 "WeblogEntryTagAggregate.getByName&WebsiteNullOrderByLastUsedDesc");
             query.setParameter(1, stat.getName());
@@ -374,11 +365,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         PingTargetManager pingTargetMgr = roller.getPingTargetManager();
         AutoPingManager autoPingMgr = roller.getAutopingManager();
         
-        Iterator pingTargets = pingTargetMgr.getCommonPingTargets().iterator();
-        PingTarget pingTarget = null;
-        while(pingTargets.hasNext()) {
-            pingTarget = (PingTarget) pingTargets.next();
-            
+        for (PingTarget pingTarget : pingTargetMgr.getCommonPingTargets()) {
             if(pingTarget.isAutoEnabled()) {
                 AutoPing autoPing = new AutoPing(
                         null, pingTarget, newWeblog);
@@ -668,7 +655,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @see org.apache.roller.weblogger.business.WeblogManager#getPages(Weblog)
      */
-    public List<Weblog> getPages(Weblog website) throws WebloggerException {
+    public List<WeblogTemplate> getPages(Weblog website) throws WebloggerException {
         if (website == null) {
             throw new WebloggerException("website is null");
         }
@@ -775,11 +762,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         codeQuery.setParameter(1, page.getId());
         List codeList = codeQuery.getResultList();
 
-        for (Iterator itr = codeList.iterator(); itr.hasNext(); ) {
-            WeblogThemeTemplateCode templateCode = (WeblogThemeTemplateCode) itr.next();
-            this.strategy.remove(templateCode);
+        for (Object obj : codeList) {
+            this.strategy.remove(obj);
         }
-
     }
 
 }

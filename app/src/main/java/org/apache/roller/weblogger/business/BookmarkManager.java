@@ -84,7 +84,7 @@ public interface BookmarkManager {
      * @return List The list of FolderData objects from the weblog.
      * @throws WebloggerException If there is a problem.
      */
-    List getAllFolders(Weblog weblog) throws WebloggerException;
+    List<WeblogBookmarkFolder> getAllFolders(Weblog weblog) throws WebloggerException;
     
     
     /** 
@@ -146,7 +146,7 @@ public interface BookmarkManager {
      * @return List The list of bookmarks found.
      * @throws WebloggerException If there is a problem.
      */
-    List getBookmarks(WeblogBookmarkFolder folder, boolean recurse)
+    List<WeblogBookmark> getBookmarks(WeblogBookmarkFolder folder, boolean recurse)
             throws WebloggerException;
     
     

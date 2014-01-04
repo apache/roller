@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,7 +80,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	// directory where themes are kept
 	private String themeDir = null;
 	// the Map contains ... (theme id, Theme)
-	private Map themes = null;
+	private Map<String, Theme> themes = null;
 
 	// list of available types for templates
 	private static ArrayList<String> typeList = new ArrayList<String>();
@@ -182,9 +181,9 @@ public class ThemeManagerImpl implements ThemeManager {
 	 * 
 	 *      TODO: reimplement enabled vs. disabled logic once we support it
 	 */
-	public List getEnabledThemesList() {
+	public List<Theme> getEnabledThemesList() {
 
-		List allThemes = new ArrayList(this.themes.values());
+		List allThemes = new ArrayList<Theme>(this.themes.values());
 
 		// sort 'em ... default ordering for themes is by name
 		Collections.sort(allThemes);
@@ -211,14 +210,10 @@ public class ThemeManagerImpl implements ThemeManager {
                     + " does not have a root MediaFile directory");
         }
 
-		Set importedActionTemplates = new HashSet();
-		ThemeTemplate themeTemplate = null;
+		Set<String> importedActionTemplates = new HashSet<String>();
 		ThemeTemplate stylesheetTemplate = theme.getStylesheet();
-		Iterator iter = theme.getTemplates().iterator();
-		while (iter.hasNext()) {
-			themeTemplate = (ThemeTemplate) iter.next();
-
-			WeblogTemplate template = null;
+		for (ThemeTemplate themeTemplate : theme.getTemplates()) {
+			WeblogTemplate template;
 
 			// if template is an action, lookup by action
 			if (themeTemplate.getAction() != null
@@ -270,8 +265,7 @@ public class ThemeManagerImpl implements ThemeManager {
 			for (String type : ThemeManagerImpl.getTypesList()) {
 
 				// See if we already have some code for this template already (eg previous theme)
-				WeblogThemeTemplateCode weblogTemplateCode = (WeblogThemeTemplateCode) template
-						.getTemplateCode(type);
+				WeblogThemeTemplateCode weblogTemplateCode = template.getTemplateCode(type);
 
 				// Get the template for the new theme
 				TemplateCode templateCode = themeTemplate.getTemplateCode(type);
@@ -320,11 +314,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		wmgr.saveWeblog(website);
 
 		// now lets import all the theme resources
-		List resources = theme.getResources();
-		Iterator iterat = resources.iterator();
-		ThemeResource resource = null;
-		while (iterat.hasNext()) {
-			resource = (ThemeResource) iterat.next();
+        for (ThemeResource resource : theme.getResources()) {
 
 			log.debug("Importing resource " + resource.getPath());
 
@@ -344,9 +334,9 @@ public class ThemeManagerImpl implements ThemeManager {
 			} else {
 				String resourcePath = resource.getPath();
 
-				MediaFileDirectory mdir = null;
-				String justName = null;
-				String justPath = null;
+				MediaFileDirectory mdir;
+				String justName;
+				String justPath;
 
 				if (resourcePath.indexOf('/') == -1) {
 					mdir = fileMgr.getMediaFileRootDirectory(website);
@@ -410,9 +400,9 @@ public class ThemeManagerImpl implements ThemeManager {
 	 * This is a convenience method which loads all the theme data from themes
 	 * stored on the filesystem in the roller webapp /themes/ directory.
 	 */
-	private Map loadAllThemesFromDisk() {
+	private Map<String, Theme> loadAllThemesFromDisk() {
 
-		Map themeMap = new HashMap();
+		Map<String, Theme> themeMap = new HashMap<String, Theme>();
 
 		// first, get a list of the themes available
 		File themesdir = new File(this.themeDir);
@@ -458,19 +448,15 @@ public class ThemeManagerImpl implements ThemeManager {
 			Theme theme = new SharedThemeFromDir(this.themeDir + File.separator
 					+ reloadTheme);
 
-			if (theme != null) {
+            Theme loadedTheme = themes.get(theme.getId());
 
-				Theme loadedTheme = (Theme) themes.get(theme.getId());
-
-				if (loadedTheme != null
-						&& theme.getLastModified().after(
-								loadedTheme.getLastModified())) {
-					themes.remove(theme.getId());
-					themes.put(theme.getId(), theme);
-					reloaded = true;
-				}
-
-			}
+            if (loadedTheme != null
+                    && theme.getLastModified().after(
+                            loadedTheme.getLastModified())) {
+                themes.remove(theme.getId());
+                themes.put(theme.getId(), theme);
+                reloaded = true;
+            }
 
 		} catch (Exception unexpected) {
 			// shouldn't happen, so let's learn why it did
@@ -482,8 +468,8 @@ public class ThemeManagerImpl implements ThemeManager {
 	}
 
 	private void addAvailableTypes() {
-		this.getTypesList().add("standard");
-		this.getTypesList().add("mobile");
+        ThemeManagerImpl.getTypesList().add("standard");
+        ThemeManagerImpl.getTypesList().add("mobile");
 	}
 
 	public static ArrayList<String> getTypesList() {

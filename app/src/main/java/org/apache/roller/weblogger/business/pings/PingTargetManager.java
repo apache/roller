@@ -44,7 +44,6 @@ public interface PingTargetManager {
     /**
      * Remove a ping target.
      *
-     * @param id id of the ping target to be removed
      * @throws WebloggerException
      */
     void removePingTarget(PingTarget pingTarget) throws WebloggerException;
@@ -69,20 +68,20 @@ public interface PingTargetManager {
     /**
      * Get a list of the common (shared) ping targets.
      * 
-     * @return the list of common ping targets as a <code>List</code> of {@link PPingTarget objects
+     * @return the list of common ping targets as a <code>List</code> of {@link PingTarget objects
      * @throws WebloggerException
      */
-    List getCommonPingTargets() throws WebloggerException;
+    List<PingTarget> getCommonPingTargets() throws WebloggerException;
     
     
     /**
      * Get a list of the custom ping targets for the given website.
      * 
      * @param website the website whose custom targets should be returned.
-     * @return the list of custom ping targets for the given website as a <code>List</code> of {@link PiPingTarget         objects
+     * @return the list of custom ping targets for the given website as a <code>List</code> of {@link PingTarget objects
      * @throws WebloggerException
      */
-    List getCustomPingTargets(Weblog website) throws WebloggerException;
+    List<PingTarget> getCustomPingTargets(Weblog website) throws WebloggerException;
     
     
     /**

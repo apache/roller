@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -221,8 +220,7 @@ public class MediaFile implements Serializable {
             return;
         }
 
-        for (Iterator it = getTags().iterator(); it.hasNext();) {
-            MediaFileTag tag = (MediaFileTag) it.next();
+        for (MediaFileTag tag : getTags()) {
             if (tag.getName().equals(name)) {
                 return;
             }
@@ -255,20 +253,18 @@ public class MediaFile implements Serializable {
             return;
         }
 
-        HashSet newTags = new HashSet(updatedTags.size());
+        HashSet<String> newTags = new HashSet<String>(updatedTags.size());
         Locale localeObject = getWeblog() != null ? getWeblog()
                 .getLocaleInstance() : Locale.getDefault();
 
-        for (Iterator<String> it = updatedTags.iterator(); it.hasNext();) {
-            String inName = it.next();
+        for (String inName : updatedTags) {
             newTags.add(Utilities.normalizeTag(inName, localeObject));
         }
 
-        HashSet removeTags = new HashSet();
+        HashSet<String> removeTags = new HashSet<String>();
 
         // remove old ones no longer passed.
-        for (Iterator it = getTags().iterator(); it.hasNext();) {
-            MediaFileTag tag = (MediaFileTag) it.next();
+        for (MediaFileTag tag : getTags()) {
             if (!newTags.contains(tag.getName())) {
                 removeTags.add(tag.getName());
             } else {
@@ -278,19 +274,20 @@ public class MediaFile implements Serializable {
 
         MediaFileManager mediaManager = WebloggerFactory.getWeblogger()
                 .getMediaFileManager();
-        for (Iterator it = removeTags.iterator(); it.hasNext();) {
-            mediaManager.removeMediaFileTag((String) it.next(), this);
+
+        for (String tag : removeTags) {
+            mediaManager.removeMediaFileTag(tag, this);
         }
 
-        for (Iterator it = newTags.iterator(); it.hasNext();) {
-            addTag((String) it.next());
+        for (String tag : newTags) {
+            addTag(tag);
         }
     }
 
     public String getTagsAsString() {
         StringBuilder sb = new StringBuilder();
-        for (Iterator it = getTags().iterator(); it.hasNext();) {
-            sb.append(((MediaFileTag) it.next()).getName()).append(" ");
+        for (MediaFileTag tag : getTags()) {
+            sb.append(tag.getName()).append(" ");
         }
         if (sb.length() > 0) {
             sb.deleteCharAt(sb.length() - 1);

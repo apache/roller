@@ -227,7 +227,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
      * @return List of WeblogEntryData objects.
      * @throws WebloggerException
      */
-    public List retrieveWeblogEntries(boolean publishedOnly) throws WebloggerException {
+    public List<WeblogEntry> retrieveWeblogEntries(boolean publishedOnly) throws WebloggerException {
         WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         return wmgr.getWeblogEntries(this, publishedOnly);
     }

@@ -40,7 +40,7 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable<Sha
     protected Date lastModified = null;
     protected boolean enabled = false;
     
-    public abstract List getResources();
+    public abstract List<ThemeResource> getResources();
     
     public abstract ThemeResource getPreviewImage();
     

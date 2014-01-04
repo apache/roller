@@ -26,13 +26,11 @@ package org.apache.roller.weblogger.webservices.adminprotocol.sdk;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types;
 
 /**
  * This class describes a set of user entries. 
@@ -67,15 +65,14 @@ public class UserEntrySet extends EntrySet {
         if (!rootName.equals(Tags.USERS)) {
             throw new UnexpectedRootElementException("ERROR: Unexpected root element", Tags.USERS, rootName);
         }
-        List users = root.getChildren(UserEntry.Tags.USER, NAMESPACE);
+        List<Element> users = root.getChildren(UserEntry.Tags.USER, NAMESPACE);
         if (users != null) {
-            List entries = new ArrayList();
-            for (Iterator i = users.iterator(); i.hasNext(); ) {
-                Element user = (Element)i.next();
+            List<UserEntry> entries = new ArrayList<UserEntry>();
+            for (Element user : users) {
                 UserEntry entry = new UserEntry(user, urlPrefix);
                 entries.add(entry);
             }
-            setEntries((Entry[])entries.toArray(new Entry[0]));
+            setEntries(entries.toArray(new Entry[0]));
         }
         setHref(urlPrefix + "/" + Types.USERS);
     }    

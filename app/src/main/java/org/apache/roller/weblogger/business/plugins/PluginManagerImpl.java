@@ -69,7 +69,7 @@ public class PluginManagerImpl implements PluginManager {
     /**
      * Create and init plugins for processing entries in a specified website.
      */
-    public Map getWeblogEntryPlugins(Weblog website) {
+    public Map<String, WeblogEntryPlugin> getWeblogEntryPlugins(Weblog website) {
         Map<String, WeblogEntryPlugin> ret = new LinkedHashMap<String, WeblogEntryPlugin>();
         for (Class pluginClass : PluginManagerImpl.mPagePlugins.values()) {
             try {

@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -57,7 +56,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     private Weblog website = null;
     private WeblogBookmarkFolder parentFolder = null;
     private Set<WeblogBookmarkFolder> childFolders = new TreeSet<WeblogBookmarkFolder>();
-    private Set bookmarks = new TreeSet();
+    private Set<WeblogBookmark> bookmarks = new TreeSet<WeblogBookmark>();
     
     
     public WeblogBookmarkFolder() {
@@ -223,12 +222,12 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     /**
      * Get bookmarks contained in this folder.
      */
-    public Set getBookmarks() {
+    public Set<WeblogBookmark> getBookmarks() {
         return this.bookmarks;
     }
     
     // this is private to force the use of add/remove bookmark methods.
-    private void setBookmarks(Set bookmarks) {
+    private void setBookmarks(Set<WeblogBookmark> bookmarks) {
         this.bookmarks = bookmarks;
     }
     
@@ -281,10 +280,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
      * @return boolean true if child folder exists, false otherwise.
      */
     public boolean hasFolder(String name) {
-        Iterator folders = this.getFolders().iterator();
-        WeblogBookmarkFolder folder = null;
-        while(folders.hasNext()) {
-            folder = (WeblogBookmarkFolder) folders.next();
+        for (WeblogBookmarkFolder folder : this.getFolders()) {
             if(name.equals(folder.getName())) {
                 return true;
             }
@@ -334,11 +330,8 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         
         log.debug("Updating path tree for folder "+folder.getPath());
         
-        WeblogBookmarkFolder childFolder = null;
-        Iterator childFolders = folder.getFolders().iterator();
-        while(childFolders.hasNext()) {
-            childFolder = (WeblogBookmarkFolder) childFolders.next();
-            
+        for (WeblogBookmarkFolder childFolder : folder.getFolders()) {
+
             log.debug("OLD child folder path was "+childFolder.getPath());
             
             // update path and save

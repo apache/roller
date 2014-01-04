@@ -42,7 +42,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
-import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.TagStatComparator;
@@ -191,13 +190,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         // get all entries in category and subcats
-        List results = srcCat.retrieveWeblogEntries(false);
+        List<WeblogEntry> results = srcCat.retrieveWeblogEntries(false);
         
         // Loop through entries in src cat, assign them to dest cat
-        Iterator iter = results.iterator();
         Weblog website = destCat.getWebsite();
-        while (iter.hasNext()) {
-            WeblogEntry entry = (WeblogEntry) iter.next();
+        for (WeblogEntry entry : results) {
             entry.setCategory(destCat);
             entry.setWebsite(website);
             this.strategy.store(entry);
@@ -309,13 +306,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         Query q = strategy.getNamedQuery("WeblogReferrer.getByWeblogEntry");
         q.setParameter(1, entry);
         List referers = q.getResultList();
-        for (Iterator iter = referers.iterator(); iter.hasNext();) {
-            WeblogReferrer referer = (WeblogReferrer) iter.next();
-            this.strategy.remove(referer);
+        for (Object obj : referers) {
+            this.strategy.remove(obj);
         }
         
         // remove comments
-        List comments = getComments(
+        List<WeblogEntryComment> comments = getComments(
                 null,  // website
                 entry,
                 null,  // search String
@@ -325,14 +321,14 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 true,  // reverse chrono order (not that it matters)
                 0,     // offset
                 -1);   // no limit
-        Iterator commentsIT = comments.iterator();
-        while (commentsIT.hasNext()) {
-            this.strategy.remove((WeblogEntryComment) commentsIT.next());
+
+        for (WeblogEntryComment comment : comments) {
+            this.strategy.remove(comment);
         }
         
         // remove tags aggregates
         if (entry.getTags() != null) {
-            for(Iterator it = entry.getTags().iterator(); it.hasNext(); ) {
+            for (Iterator it = entry.getTags().iterator(); it.hasNext(); ) {
                 WeblogEntryTag tag = (WeblogEntryTag) it.next();
                 updateTagCount(tag.getName(), entry.getWebsite(), -1);
                 it.remove();
@@ -1072,7 +1068,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         TreeMap map = new TreeMap(REVERSE_COMPARATOR);
         
-        List entries = getWeblogEntries( 
+        List<WeblogEntry> entries = getWeblogEntries(
                 website,
                 null, // user
                 startDate,
@@ -1093,8 +1089,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         SimpleDateFormat formatter = DateUtil.get8charDateFormat();
-        for (Iterator wbItr = entries.iterator(); wbItr.hasNext();) {
-            WeblogEntry entry = (WeblogEntry) wbItr.next();
+        for (WeblogEntry entry : entries) {
             Date sDate = DateUtil.getNoonOfDay(entry.getPubTime(), cal);
             if (stringsOnly) {
                 if (map.get(sDate) == null) {

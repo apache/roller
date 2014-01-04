@@ -34,7 +34,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -55,10 +54,10 @@ public class Pings extends UIAction {
     private PingTarget pingTarget = null;
     
     // commong ping targets list
-    private List commonPingTargets = Collections.EMPTY_LIST;
+    private List<PingTarget> commonPingTargets = Collections.EMPTY_LIST;
     
     // custom ping targets list for weblog
-    private List customPingTargets = Collections.EMPTY_LIST;
+    private List<PingTarget> customPingTargets = Collections.EMPTY_LIST;
     
     // track the enabled/disabled status for pings
     private Map pingStatus = Collections.EMPTY_MAP;
@@ -220,33 +219,30 @@ public class Pings extends UIAction {
         AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
         
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
-        Map isEnabled = new HashMap();
+        Map<String, Boolean> isEnabled = new HashMap<String, Boolean>();
         
-        List autopings = Collections.EMPTY_LIST;
+        List<AutoPing> autoPings = Collections.EMPTY_LIST;
         try {
-            autopings = autoPingMgr.getAutoPingsByWebsite(getActionWeblog());
+            autoPings = autoPingMgr.getAutoPingsByWebsite(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error("Error looking up auto pings for weblog - "+getActionWeblog().getHandle(), ex);
         }
         
         // Add the enabled auto ping configs with TRUE
-        for (Iterator i = autopings.iterator(); i.hasNext();) {
-            AutoPing autoPing = (AutoPing) i.next();
+        for (AutoPing autoPing : autoPings) {
             isEnabled.put(autoPing.getPingTarget().getId(), Boolean.TRUE);
         }
         
         // Somewhat awkward, but the two loops save building a separate combined list.
         // Add disabled common ones with FALSE
-        for (Iterator i = getCommonPingTargets().iterator(); i.hasNext();) {
-            PingTarget inPingTarget = (PingTarget) i.next();
+        for (PingTarget inPingTarget : getCommonPingTargets()) {
             if (isEnabled.get(inPingTarget.getId()) == null) {
                 isEnabled.put(inPingTarget.getId(), Boolean.FALSE);
             }
         }
         
         // Add disabled custom ones with FALSE
-        for (Iterator i = getCustomPingTargets().iterator(); i.hasNext();) {
-            PingTarget inPingTarget = (PingTarget) i.next();
+        for (PingTarget inPingTarget : getCustomPingTargets()) {
             if (isEnabled.get(inPingTarget.getId()) == null) {
                 isEnabled.put(inPingTarget.getId(), Boolean.FALSE);
             }
@@ -274,19 +270,19 @@ public class Pings extends UIAction {
         this.pingTarget = pingTarget;
     }
 
-    public List getCommonPingTargets() {
+    public List<PingTarget> getCommonPingTargets() {
         return commonPingTargets;
     }
 
-    public void setCommonPingTargets(List commonPingTargets) {
+    public void setCommonPingTargets(List<PingTarget> commonPingTargets) {
         this.commonPingTargets = commonPingTargets;
     }
 
-    public List getCustomPingTargets() {
+    public List<PingTarget> getCustomPingTargets() {
         return customPingTargets;
     }
 
-    public void setCustomPingTargets(List customPingTargets) {
+    public void setCustomPingTargets(List<PingTarget> customPingTargets) {
         this.customPingTargets = customPingTargets;
     }
 

@@ -26,13 +26,11 @@ package org.apache.roller.weblogger.webservices.adminprotocol.sdk;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet.Types;
 
 /**
  * This class describes a set of weblog entries. 
@@ -64,15 +62,14 @@ public class WeblogEntrySet extends EntrySet {
         if (!rootName.equals(Tags.WEBLOGS)) {
             throw new UnexpectedRootElementException("ERROR: Unexpected root element", Tags.WEBLOGS, rootName);
         }
-        List weblogs = root.getChildren(WeblogEntry.Tags.WEBLOG, Service.NAMESPACE);
+        List<Element> weblogs = root.getChildren(WeblogEntry.Tags.WEBLOG, Service.NAMESPACE);
         if (weblogs != null) {
-            List entries = new ArrayList();
-            for (Iterator i = weblogs.iterator(); i.hasNext(); ) {
-                Element weblog = (Element)i.next();
+            List<WeblogEntry> entries = new ArrayList<WeblogEntry>();
+            for (Element weblog : weblogs) {
                 WeblogEntry entry = new WeblogEntry(weblog, urlPrefix);
                 entries.add(entry);
             }
-            setEntries((Entry[])entries.toArray(new Entry[0]));
+            setEntries(entries.toArray(new Entry[0]));
         }
         setHref(urlPrefix + "/" + Types.WEBLOGS);
     }    

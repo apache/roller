@@ -112,7 +112,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     
     public Iterator getAllSubscriptions() {
         try {
-            return ((List)strategy.getNamedQuery(
+            return (strategy.getNamedQuery(
                     "Subscription.getAll").getResultList()).iterator();
         } catch (Exception e) {
             throw new RuntimeException(

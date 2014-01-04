@@ -18,7 +18,6 @@ package org.apache.roller.weblogger.planet.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -173,20 +172,15 @@ public class PlanetGroups extends PlanetUIAction {
     
     
     public List<PlanetGroup> getGroups() {
+        List<PlanetGroup> displayGroups = new ArrayList<PlanetGroup>();
         
-        List<PlanetGroup> displayGroups = new ArrayList();
-        
-        Iterator allgroups = getPlanet().getGroups().iterator();
-        while (allgroups.hasNext()) {
-            PlanetGroup agroup = (PlanetGroup) allgroups.next();
-            
+        for (PlanetGroup group : getPlanet().getGroups()) {
             // The "all" group is considered a special group and cannot be
             // managed independently
-            if (!agroup.getHandle().equals("all")) {
-                displayGroups.add(agroup);
+            if (!group.getHandle().equals("all")) {
+                displayGroups.add(group);
             }
         }
-        
         return displayGroups;
     }
     

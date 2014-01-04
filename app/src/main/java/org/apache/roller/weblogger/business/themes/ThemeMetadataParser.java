@@ -201,7 +201,7 @@ public class ThemeMetadataParser {
         template.setLink(element.getChildText("link"));
 
         // parsing templatecode segment
-         List templateCodeList = element.getChildren("templateCode");
+        List templateCodeList = element.getChildren("templateCode");
         Iterator templCodeitr = templateCodeList.iterator();
 
 		boolean roller50format = false;

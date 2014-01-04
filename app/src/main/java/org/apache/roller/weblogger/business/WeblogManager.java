@@ -114,7 +114,7 @@ public interface WeblogManager {
     
     /**
      * Get users of a weblog.
-     * @param user        Get all users for this weblog
+     * @param weblog Weblog to retrieve users for
      * @param enabledOnly Include only enabled users?
      * @return List of WebsiteData objects.
      */
@@ -126,7 +126,7 @@ public interface WeblogManager {
      * @param startDate Restrict to those created after (or null for all)
      * @param endDate Restrict to those created before (or null for all)
      * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
+     * @param length       Maximum number of results to return (for paging)
      * @return List of StatCount objects.
      */
     List<StatCount> getMostCommentedWeblogs(
@@ -201,7 +201,7 @@ public interface WeblogManager {
     /**
      * Get website's pages
      */
-    List getPages(Weblog w) throws WebloggerException;
+    List<WeblogTemplate> getPages(Weblog w) throws WebloggerException;
    
     
     /**
