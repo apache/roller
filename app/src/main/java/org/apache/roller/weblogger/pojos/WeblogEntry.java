@@ -29,7 +29,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -101,11 +100,11 @@ public class WeblogEntry implements Serializable {
     private WeblogCategory category = null;
     
     // Collection of name/value entry attributes
-    private Set attSet = new TreeSet();
+    private Set<WeblogEntryAttribute> attSet = new TreeSet<WeblogEntryAttribute>();
     
-    private Set tagSet = new HashSet(); 
-    private Set removedTags = new HashSet();
-    private Set addedTags = new HashSet();
+    private Set<WeblogEntryTag> tagSet = new HashSet<WeblogEntryTag>();
+    private Set<String> removedTags = new HashSet<String>();
+    private Set<String> addedTags = new HashSet<String>();
     
     //----------------------------------------------------------- Construction
     
@@ -227,10 +226,10 @@ public class WeblogEntry implements Serializable {
        
     /**
      * Return collection of WeblogCategory objects of this entry.
-     * Added for symetry with PlanetEntryData object.
+     * Added for symmetry with PlanetEntryData object.
      */
-    public List getCategories() {
-        List cats = new ArrayList();
+    public List<WeblogCategory> getCategories() {
+        List<WeblogCategory> cats = new ArrayList<WeblogCategory>();
         cats.add(getCategory());
         return cats;
     }
@@ -355,7 +354,7 @@ public class WeblogEntry implements Serializable {
     /**
      * Map attributes as set because XDoclet 1.2b4 map support is broken.
      */
-    public Set getEntryAttributes() {
+    public Set<WeblogEntryAttribute> getEntryAttributes() {
         return attSet;
     }
 
@@ -368,8 +367,7 @@ public class WeblogEntry implements Serializable {
      */
     public String findEntryAttribute(String name) {
         if (getEntryAttributes() != null) {
-            for (Iterator it = getEntryAttributes().iterator(); it.hasNext(); ) {
-                WeblogEntryAttribute att = (WeblogEntryAttribute) it.next();
+            for (WeblogEntryAttribute att : getEntryAttributes()) {
                 if (name.equals(att.getName())) {
                     return att.getValue();
                 }
@@ -380,8 +378,7 @@ public class WeblogEntry implements Serializable {
         
     public void putEntryAttribute(String name, String value) throws Exception {
         WeblogEntryAttribute att = null;
-        for (Iterator it = getEntryAttributes().iterator(); it.hasNext(); ) {
-            WeblogEntryAttribute o = (WeblogEntryAttribute) it.next();
+        for (WeblogEntryAttribute o : getEntryAttributes()) {
             if (name.equals(o.getName())) {
                 att = o; 
                 break;
@@ -563,8 +560,7 @@ public class WeblogEntry implements Serializable {
             return;
         }
         
-        for (Iterator it = getTags().iterator(); it.hasNext();) {
-            WeblogEntryTag tag = (WeblogEntryTag) it.next();
+        for (WeblogEntryTag tag : getTags()) {
             if (tag.getName().equals(name)) {
                 return;
             }
@@ -599,19 +595,17 @@ public class WeblogEntry implements Serializable {
             return;
         }
         
-        HashSet newTags = new HashSet(updatedTags.size());
+        Set<String> newTags = new HashSet<String>(updatedTags.size());
         Locale localeObject = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
         
-        for(Iterator<String> it = updatedTags.iterator(); it.hasNext();) {
-            String name = it.next();
+        for (String name : updatedTags) {
             newTags.add(Utilities.normalizeTag(name, localeObject));
         }
         
-        HashSet removeTags = new HashSet();
+        Set<String> removeTags = new HashSet<String>();
 
         // remove old ones no longer passed.
-        for (Iterator it = getTags().iterator(); it.hasNext();) {
-            WeblogEntryTag tag = (WeblogEntryTag) it.next();
+        for (WeblogEntryTag tag : getTags()) {
             if (!newTags.contains(tag.getName())) {
                 removeTags.add(tag.getName());
             } else {
@@ -620,12 +614,12 @@ public class WeblogEntry implements Serializable {
         }
 
         WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        for (Iterator it = removeTags.iterator(); it.hasNext();) {
-            weblogEntryManager.removeWeblogEntryTag((String) it.next(), this);
+        for (String removeTag : removeTags) {
+            weblogEntryManager.removeWeblogEntryTag(removeTag, this);
         }
         
-        for (Iterator it = newTags.iterator(); it.hasNext();) {
-            addTag((String) it.next());
+        for (String newTag : newTags) {
+            addTag(newTag);
         }
     }
    
@@ -634,8 +628,8 @@ public class WeblogEntry implements Serializable {
         // Sort by name
         Set<WeblogEntryTag> tmp = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
         tmp.addAll(getTags());
-        for (Iterator it = tmp.iterator(); it.hasNext();) {
-            sb.append(((WeblogEntryTag) it.next()).getName()).append(" ");
+        for (WeblogEntryTag entryTag : tmp) {
+            sb.append(entryTag.getName()).append(" ");
         }
         if (sb.length() > 0) {
             sb.deleteCharAt(sb.length() - 1);
@@ -1028,7 +1022,7 @@ public class WeblogEntry implements Serializable {
     private String render(String str) {
         String ret = str;
         mLogger.debug("Applying page plugins to string");
-        Map inPlugins = getWebsite().getInitializedPlugins();
+        Map<String, WeblogEntryPlugin> inPlugins = getWebsite().getInitializedPlugins();
         if (str != null && inPlugins != null) {
             List entryPlugins = getPluginsList();
             
@@ -1038,11 +1032,9 @@ public class WeblogEntry implements Serializable {
                 // now loop over mPagePlugins, matching
                 // against Entry plugins (by name):
                 // where a match is found render Plugin.
-                Iterator iter = inPlugins.keySet().iterator();
-                while (iter.hasNext()) {
-                    String key = (String)iter.next();
+                for (String key : inPlugins.keySet()) {
                     if (entryPlugins.contains(key)) {
-                        WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin) inPlugins.get(key);
+                        WeblogEntryPlugin pagePlugin = inPlugins.get(key);
                         try {
                             ret = pagePlugin.render(this, ret);
                         } catch (Exception e) {
@@ -1084,7 +1076,7 @@ public class WeblogEntry implements Serializable {
                 displayContent = this.getTransformedSummary();
                 if(StringUtils.isNotEmpty(this.getText())) {
                     // add read more
-                    List args = new ArrayList();
+                    List<String> args = new ArrayList<String>();
                     args.add(readMoreLink);
                     
                     // TODO: we need a more appropriate way to get the view locale here

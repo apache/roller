@@ -445,7 +445,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List getWeblogCategories(Weblog website, boolean includeRoot)
+    public List<WeblogCategory> getWeblogCategories(Weblog website, boolean includeRoot)
     throws WebloggerException {
         if (website == null) {
             throw new WebloggerException("website is null");
@@ -464,7 +464,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List getWeblogCategories(Weblog website)
+    public List<WeblogCategory> getWeblogCategories(Weblog website)
     throws WebloggerException {
         if (website == null) {
             throw new WebloggerException("website is null");
@@ -1004,7 +1004,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public Map getWeblogEntryObjectMap(
+    public Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(
             Weblog website,
             Date    startDate,
             Date    endDate,
@@ -1030,7 +1030,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public Map getWeblogEntryStringMap(
+    public Map<Date, String> getWeblogEntryStringMap(
             Weblog website,
             Date    startDate,
             Date    endDate,

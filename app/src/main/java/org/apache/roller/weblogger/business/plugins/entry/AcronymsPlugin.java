@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business.plugins.entry;
 
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,8 +94,8 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         Pattern[] acronymPatterns = new Pattern[acronyms.size()];
         String[] acronymTags = new String[acronyms.size()];
         int count = 0;
-        for (Iterator iter = acronyms.keySet().iterator(); iter.hasNext();) {
-            String acronym = (String) iter.next();
+        for (Object acrObj : acronyms.keySet()) {
+            String acronym = (String) acrObj;
             acronymPatterns[count] = Pattern.compile("\\b" + acronym + "\\b");
             LOG.debug("match '" + acronym + "'");
             acronymTags[count] =
@@ -109,7 +108,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         }
         
         // if there are none, no work to do
-        if (acronymPatterns == null || acronymPatterns.length == 0) {
+        if (acronymPatterns.length == 0) {
             return text;
         }
         

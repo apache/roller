@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -48,7 +47,7 @@ public class WeblogsPager extends AbstractPager {
     private int length = 0;
     
     // collection for the pager
-    private List weblogs;
+    private List<WeblogWrapper> weblogs;
     
     // are there more items?
     private boolean more = false;
@@ -99,7 +98,7 @@ public class WeblogsPager extends AbstractPager {
         if(letter != null) {
             int page = getPage() + 1;
             if(hasMoreItems()) {
-                Map params = new HashMap();
+                Map<String, String> params = new HashMap<String, String>();
                 params.put("page", ""+page);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
@@ -116,7 +115,7 @@ public class WeblogsPager extends AbstractPager {
         if(letter != null) {
             int page = getPage() - 1;
             if (page >= 0) {
-                Map params = new HashMap();
+                Map<String, String> params = new HashMap<String, String>();
                 params.put("page", ""+page);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
@@ -128,13 +127,13 @@ public class WeblogsPager extends AbstractPager {
     }
     
     
-    public List getItems() {
+    public List<WeblogWrapper> getItems() {
         
         if (weblogs == null) {
             // calculate offset
             int offset = getPage() * length;
             
-            List results = new ArrayList();
+            List<WeblogWrapper> results = new ArrayList<WeblogWrapper>();
             Date startDate = null;
             if (sinceDays != -1) {
                 Calendar cal = Calendar.getInstance();
@@ -145,7 +144,7 @@ public class WeblogsPager extends AbstractPager {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogManager wmgr = roller.getWeblogManager();
-                List rawWeblogs = null;
+                List<Weblog> rawWeblogs;
                 if (letter == null) {
                     rawWeblogs = wmgr.getWeblogs(Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
                 } else {
@@ -154,10 +153,9 @@ public class WeblogsPager extends AbstractPager {
                 
                 // wrap the results
                 int count = 0;
-                for (Iterator it = rawWeblogs.iterator(); it.hasNext();) {
-                    Weblog website = (Weblog) it.next();
+                for (Weblog website : rawWeblogs) {
                     if (count++ < length) {
-                        results.add(WeblogWrapper.wrap(website, urlStrategy));                    
+                        results.add(WeblogWrapper.wrap(website, urlStrategy));
                     } else {
                         more = true;
                     }

@@ -179,7 +179,7 @@ public class WeblogCalendarModel implements CalendarModel {
                     0, -1);
         } catch (WebloggerException e) {
             log.error(e);
-            monthMap = new HashMap();
+            monthMap = new HashMap<Date, String>();
         }
     }
     
@@ -195,7 +195,7 @@ public class WeblogCalendarModel implements CalendarModel {
     }
     
     public String getParameterValue(Date day) {
-        return (String)monthMap.get( day );
+        return (String) monthMap.get(day);
     }
 
     // convenience method returns 8 char day stamp YYYYMMDD
@@ -272,7 +272,7 @@ public class WeblogCalendarModel implements CalendarModel {
     public String computeUrl(Date day, boolean monthURL, boolean alwaysURL) {
         String url = null;
         // get the 8 char YYYYMMDD datestring for day
-        String dateString = (String)monthMap.get(day);
+        String dateString = (String) monthMap.get(day);
         if (dateString == null && !alwaysURL) {
             return null;
         }

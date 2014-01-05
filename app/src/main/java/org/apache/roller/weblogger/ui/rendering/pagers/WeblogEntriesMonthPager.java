@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -51,7 +50,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     private Date prevMonth;
     
     // collection for the pager
-    private Map entries = null;
+    private Map<Date, List<WeblogEntryWrapper>> entries = null;
     
     // are there more pages?
     private boolean more = false;
@@ -97,7 +96,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     }
     
     
-    public Map getEntries() {
+    public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         Date date = parseDate(dateString);
         Calendar cal = Calendar.getInstance(weblog.getTimeZoneInstance());
         cal.setTime(date);
@@ -107,10 +106,10 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         Date endDate = DateUtil.getEndOfMonth(date, cal);
         
         if (entries == null) {
-            entries = new TreeMap(new ReverseComparator());
+            entries = new TreeMap<Date, List<WeblogEntryWrapper>>(new ReverseComparator());
             try {
-                Map mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(
-                        
+                Map<Date, List<WeblogEntry>> mmap = WebloggerFactory.getWeblogger()
+                        .getWeblogEntryManager().getWeblogEntryObjectMap(
                         weblog,
                         startDate,
                         endDate,
@@ -122,17 +121,13 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
                               
                 // need to wrap pojos
                 int count = 0;
-                java.util.Date key = null;
-                Iterator days = mmap.keySet().iterator();
-                while(days.hasNext()) {
-                    key = (java.util.Date)days.next();
-
+                for (Date key : mmap.keySet()) {
                     // now we need to go through each entry in a day and wrap
-                    List wrapped = new ArrayList();
-                    List unwrapped= (List) mmap.get(key);
+                    List<WeblogEntryWrapper> wrapped = new ArrayList<WeblogEntryWrapper>();
+                    List<WeblogEntry> unwrapped = mmap.get(key);
                     for(int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
-                            wrapped.add(i,WeblogEntryWrapper.wrap((WeblogEntry)unwrapped.get(i), urlStrategy));
+                            wrapped.add(i,WeblogEntryWrapper.wrap(unwrapped.get(i), urlStrategy));
                         } else {
                             more = true;
                         }

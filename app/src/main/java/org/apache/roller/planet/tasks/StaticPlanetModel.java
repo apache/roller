@@ -18,7 +18,6 @@
 package org.apache.roller.planet.tasks;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,12 +82,6 @@ public class StaticPlanetModel {
             PlanetGroup group, int maxEntries) throws RollerException {
         return planetManager.getEntries(group, 0, maxEntries);
     }
-    
-    
-    public Iterator getAllSubscriptions() throws RollerException {
-        return planetManager.getSubscriptions().iterator();
-    }
-    
     
     public int getSubscriptionCount() throws RollerException {
         return planetManager.getSubscriptionCount();

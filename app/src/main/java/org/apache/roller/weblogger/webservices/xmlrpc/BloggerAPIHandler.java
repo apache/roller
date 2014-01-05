@@ -19,10 +19,8 @@
 package org.apache.roller.weblogger.webservices.xmlrpc;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -121,7 +119,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @param blogid Unique identifier of the blog the post will be added to
      * @param userid Login for a Blogger user who has permission to post to the blog
      * @param password Password for said username
-     * @param template The text for the new template (usually mostly HTML).
+     * @param templateData The text for the new template (usually mostly HTML).
      * @param templateType Determines which of the blog's templates is to be set.
      * @return 
      * @throws XmlRpcException
@@ -279,11 +277,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 User user = umgr.getUserByUserName(userid);
                 
                 // get list of user's enabled websites
-                List websites = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
-                Iterator iter = websites.iterator();
-                while (iter.hasNext()) {
-                    Weblog website = (Weblog)iter.next();
-                    
+                List<Weblog> websites = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
+                for (Weblog website : websites) {
                     // only include weblog's that have client API support enabled
                     if (Boolean.TRUE.equals(website.getEnableBloggerApi())) {
                         Hashtable blog = new Hashtable(3);
@@ -467,20 +462,16 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
-                Map entries = weblogMgr.getWeblogEntryObjectMap(
+                Map<Date, List<WeblogEntry>> entries = weblogMgr.getWeblogEntryObjectMap(
                         website,                // website
                         null,                   // startDate
                         new Date(),             // endDate
                         null,                   // catName
                         null,                   // tags
                         null, null, 0, -1);
-                
-                Iterator iter = entries.values().iterator();
-                while (iter.hasNext()) {
-                    ArrayList list = (ArrayList) iter.next();
-                    Iterator i = list.iterator();
-                    while (i.hasNext()) {
-                        WeblogEntry entry = (WeblogEntry) i.next();
+
+                for (List<WeblogEntry> weList : entries.values()) {
+                    for (WeblogEntry entry : weList) {
                         Hashtable result = new Hashtable();
                         if (entry.getPubTime() != null) {
                             result.put("dateCreated", entry.getPubTime());

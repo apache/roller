@@ -22,14 +22,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -53,7 +50,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     private List queryTags = null;
     
     // entries for the pager
-    private List entries;
+    private List<WeblogEntryWrapper> entries;
     
     // are there more entries?
     private boolean more = false;
@@ -90,13 +87,13 @@ public class WeblogEntriesListPager extends AbstractPager {
     }
     
     
-    public List getItems() {
+    public List<WeblogEntryWrapper> getItems() {
         
         if (entries == null) {
             // calculate offset
             int offset = getPage() * length;
-            
-            List results = new ArrayList();
+
+            List<WeblogEntryWrapper> results = new ArrayList<WeblogEntryWrapper>();
             
             Date startDate = null;
             if(sinceDays > 0) {
@@ -107,9 +104,8 @@ public class WeblogEntriesListPager extends AbstractPager {
             }
             
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                List rawEntries = wmgr.getWeblogEntries(
+                List<WeblogEntry> rawEntries = WebloggerFactory.getWeblogger()
+                        .getWeblogEntryManager().getWeblogEntries(
                         queryWeblog,
                         queryUser,
                         startDate,
@@ -125,8 +121,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                                 
                 // wrap the results
                 int count = 0;
-                for (Iterator it = rawEntries.iterator(); it.hasNext();) {
-                    WeblogEntry entry = (WeblogEntry) it.next();
+                for (WeblogEntry entry : rawEntries) {
                     if (count++ < length) {
                         results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
                     }
@@ -154,9 +149,9 @@ public class WeblogEntriesListPager extends AbstractPager {
     public Date getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
-            List<WeblogEntryWrapper> items = (List<WeblogEntryWrapper>)getItems();
+            List<WeblogEntryWrapper> items = getItems();
             if (getItems() != null && getItems().size() > 0) {
-                Timestamp newest = ((WeblogEntryWrapper)getItems().get(0)).getUpdateTime();
+                Timestamp newest = (getItems().get(0)).getUpdateTime();
                 for (WeblogEntryWrapper e : items) {
                     if (e.getUpdateTime().after(newest)) {
                         newest = e.getPubTime();

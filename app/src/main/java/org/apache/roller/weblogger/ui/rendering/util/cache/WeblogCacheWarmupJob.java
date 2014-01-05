@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -91,7 +90,7 @@ public class WeblogCacheWarmupJob implements Job {
     }
     
     
-    private void warmupFeedCache(List weblogs, String type, String format) {
+    private void warmupFeedCache(List<String> weblogs, String type, String format) {
         
         if(weblogs == null) {
             return;
@@ -99,13 +98,9 @@ public class WeblogCacheWarmupJob implements Job {
         
         // we are working on the feed cache
         WeblogFeedCache feedCache = WeblogFeedCache.getInstance();
-        
         long start = System.currentTimeMillis();
         
-        Iterator allWeblogs = weblogs.iterator();
-        String weblogHandle = null;
-        while(allWeblogs.hasNext()) {
-            weblogHandle = (String) allWeblogs.next();
+        for (String weblogHandle : weblogs) {
             log.debug("doing weblog "+weblogHandle);
             
             try {
@@ -117,7 +112,7 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 
                 // populate the rendering model
-                HashMap model = new HashMap();
+                Map model = new HashMap();
                 Map initData = new HashMap();
                 initData.put("request", null);
                 initData.put("feedRequest", feedRequest);

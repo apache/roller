@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -46,7 +45,7 @@ public class UsersPager extends AbstractPager {
     private int length = 0;
     
     // collection for the pager
-    private List users;
+    private List<UserWrapper> users;
     
     // are there more items?
     private boolean more = false;
@@ -126,17 +125,17 @@ public class UsersPager extends AbstractPager {
     }
     
     
-    public List getItems() {
+    public List<UserWrapper> getItems() {
         
         if (users == null) {
             // calculate offset
             int offset = getPage() * length;
             
-            List results = new ArrayList();
+            List<UserWrapper> results = new ArrayList<UserWrapper>();
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 UserManager umgr = roller.getUserManager();
-                List rawUsers = null;
+                List<User> rawUsers;
                 if (letter == null) {
                     rawUsers = umgr.getUsers(Boolean.TRUE, null, null, offset, length + 1);
                 } else {
@@ -145,8 +144,7 @@ public class UsersPager extends AbstractPager {
                 
                 // wrap the results
                 int count = 0;
-                for (Iterator it = rawUsers.iterator(); it.hasNext();) {
-                    User user = (User) it.next();
+                for (User user : rawUsers) {
                     if (count++ < length) {
                         results.add(UserWrapper.wrap(user));
                     } else {

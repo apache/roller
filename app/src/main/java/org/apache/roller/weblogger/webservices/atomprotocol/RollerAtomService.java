@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public class RollerAtomService extends AtomService {
      */
     public RollerAtomService(User user, String atomURL) throws WebloggerException, AtomException {
         Weblogger roller = WebloggerFactory.getWeblogger();
-        List perms = null;
+        List<WeblogPermission> perms;
         
         if (!WebloggerRuntimeConfig.getBooleanProperty("webservices.enableAtomPub")) {
         	throw new AtomException("AtomPub not enabled for this Roller installation");
@@ -73,10 +72,9 @@ public class RollerAtomService extends AtomService {
             throw new AtomException("Getting site's accept range", re);
         }
         if (perms != null) {
-            for (Iterator iter = perms.iterator(); iter.hasNext();) {
-                WeblogPermission perm = (WeblogPermission) iter.next();
+            for (WeblogPermission perm : perms) {
                 Weblog weblog = perm.getWeblog();
-                Workspace workspace = null;
+                Workspace workspace;
                 try {
 
                     // Create workspace to represent weblog
@@ -93,9 +91,8 @@ public class RollerAtomService extends AtomService {
                     Categories cats = new Categories();
                     cats.setFixed(true);
                     cats.setScheme(getWeblogCategoryScheme(weblog));
-                    List rollerCats = roller.getWeblogEntryManager().getWeblogCategories(weblog, false);
-                    for (Iterator it = rollerCats.iterator(); it.hasNext();) {
-                        WeblogCategory rollerCat = (WeblogCategory) it.next();
+                    List<WeblogCategory> rollerCats = roller.getWeblogEntryManager().getWeblogCategories(weblog, false);
+                    for (WeblogCategory rollerCat : rollerCats) {
                         Category cat = new Category();
                         cat.setTerm(rollerCat.getPath().substring(1));
                         cat.setLabel(rollerCat.getName());

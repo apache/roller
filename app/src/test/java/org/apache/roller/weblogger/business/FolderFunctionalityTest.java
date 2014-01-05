@@ -125,7 +125,7 @@ public class FolderFunctionalityTest extends TestCase {
         assertTrue(folders.contains(f2));
         
         // find cat2
-        folder = (WeblogBookmarkFolder) folders.iterator().next();
+        folder = folders.iterator().next();
         
         // walk third level
         folders = folder.getFolders();
@@ -133,7 +133,7 @@ public class FolderFunctionalityTest extends TestCase {
         assertTrue(folders.contains(f3));
         
         // find cat3
-        folder = (WeblogBookmarkFolder) folders.iterator().next();
+        folder = folders.iterator().next();
         
         // make sure this is the end of the tree
         folders = folder.getFolders();

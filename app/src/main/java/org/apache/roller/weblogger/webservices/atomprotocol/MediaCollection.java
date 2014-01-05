@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -157,8 +156,8 @@ public class MediaCollection {
                                       
                     MediaFile stored = fileMgr.getMediaFile(mf.getId());
                     Entry mediaEntry = createAtomResourceEntry(website, stored);
-                    for (Iterator it = mediaEntry.getOtherLinks().iterator(); it.hasNext();) {
-                        Link link = (Link)it.next();
+                    for (Object objLink : mediaEntry.getOtherLinks()) {
+                        Link link = (Link) objLink;
                         if ("edit".equals(link.getRel())) {
                             log.debug("Exiting");
                             return mediaEntry;

@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +55,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     private Map params = Collections.EMPTY_MAP;
     
     // map of config properties
-    private Map properties = Collections.EMPTY_MAP;
+    private Map<String, RuntimeConfigProperty> properties = Collections.EMPTY_MAP;
     
     // the runtime config def used to populate the display
     private ConfigDef globalConfigDef = null;
@@ -155,13 +154,10 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         }
         
         // only set values for properties that are already defined
-        String propName = null;
-        RuntimeConfigProperty updProp = null;
-        String incomingProp = null;
-        Iterator propsIT = getProperties().keySet().iterator();
-        while (propsIT.hasNext()) {
-            propName = (String) propsIT.next();
-            updProp = (RuntimeConfigProperty) getProperties().get(propName);
+        RuntimeConfigProperty updProp;
+        String incomingProp;
+        for (String propName : getProperties().keySet()) {
+            updProp = getProperties().get(propName);
             incomingProp = this.getParameter(updProp.getName());
             
             log.debug("Checking property ["+propName+"]");
@@ -196,8 +192,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         if(getCommentPlugins().length > 0) {
             enabledPlugins = StringUtils.join(getCommentPlugins(), ",");
         }
-        RuntimeConfigProperty prop = 
-                    (RuntimeConfigProperty) getProperties().get("users.comments.plugins");
+        RuntimeConfigProperty prop = getProperties().get("users.comments.plugins");
         prop.setValue(enabledPlugins);
             
         try {
@@ -242,11 +237,11 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     }
     
     
-    public Map getProperties() {
+    public Map<String, RuntimeConfigProperty> getProperties() {
         return properties;
     }
 
-    public void setProperties(Map properties) {
+    public void setProperties(Map<String, RuntimeConfigProperty> properties) {
         this.properties = properties;
     }
 

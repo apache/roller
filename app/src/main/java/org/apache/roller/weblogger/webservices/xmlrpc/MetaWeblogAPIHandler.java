@@ -22,7 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -85,9 +84,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         try {
             Hashtable result = new Hashtable();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-            List cats = weblogMgr.getWeblogCategories(website, false);
-            for (Iterator wbcItr = cats.iterator(); wbcItr.hasNext();) {
-                WeblogCategory category = (WeblogCategory) wbcItr.next();
+            List<WeblogCategory> cats = weblogMgr.getWeblogCategories(website, false);
+            for (WeblogCategory category : cats) {
                 result.put(category.getPath(),
                         createCategoryStruct(category, userid));
             }
@@ -437,7 +435,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
-                List entries = weblogMgr.getWeblogEntries(
+                List<WeblogEntry> entries = weblogMgr.getWeblogEntries(
                         website,           // website
                         null,
                         null,              // startDate
@@ -451,9 +449,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                         null,
                         0, numposts);
                 
-                Iterator iter = entries.iterator();
-                while (iter.hasNext()) {
-                    WeblogEntry entry = (WeblogEntry)iter.next();
+                for (WeblogEntry entry : entries) {
                     results.addElement(createPostStruct(entry, userid));
                 }
             }

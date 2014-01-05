@@ -101,15 +101,14 @@ public class Register extends UIAction implements ServletRequestAware {
         
         /* TODO: when Spring Security 2.1 is release comment out this stuff, 
          * which pre-populates the user bean with info from OpenID provider.
-         * 
+         *
         Collection attrsCollect = (Collection)WebloggerFactory.getWeblogger()
                 .getUserManager().userAttributes.get(UserAttribute.Attributes.openidUrl.toString());
         
         if (attrsCollect != null) {
             ArrayList attrs = new ArrayList(attrsCollect);
-            for (Iterator it = attrs.iterator(); it.hasNext();) {                
-                OpenIDUserAttribute attr = (OpenIDUserAttribute) it.next();    
-                if (attr.getName().equals(OpenIDUserAttribute.Attributes.country.toString())) {                                        
+            for (OpenIDUserAttribute attr : attrs) {
+                if (attr.getName().equals(OpenIDUserAttribute.Attributes.country.toString())) {
                     getBean().setLocale(UIUtils.getLocale(attr.getValue()));
                 }                
                if (attr.getName().equals(OpenIDUserAttribute.Attributes.email.toString())) {

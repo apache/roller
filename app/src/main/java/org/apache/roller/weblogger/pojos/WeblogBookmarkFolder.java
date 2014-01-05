@@ -267,7 +267,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     /**
      * @param subfolders
      */
-    public List retrieveBookmarks(boolean subfolders) throws WebloggerException {
+    public List<WeblogBookmark> retrieveBookmarks(boolean subfolders) throws WebloggerException {
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         return bmgr.getBookmarks(this, subfolders);
     }

@@ -104,10 +104,10 @@ public interface WeblogEntryManager {
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param offset     Offset into results for paging
      * @param range
-     * @return Map of Lists, keyed by Date, and containing WeblogEntryData.
+     * @return Map of Lists, keyed by Date, and containing WeblogEntry objects.
      * @throws WebloggerException
      */
-    Map getWeblogEntryObjectMap(
+    Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(
             Weblog website,
             Date        startDate,
             Date        endDate,
@@ -121,8 +121,8 @@ public interface WeblogEntryManager {
         
     /**
      * Get Weblog Entry date strings grouped by day. This method returns a Map
-     * that contains Lists, each List contains YYYYMMDD date strings objects,
-     * and the Lists are keyed by Date objects.
+     * that contains YYYYMMDD date strings object, keyed by Date objects
+     *
      * @param website    Weblog or null to get for all weblogs.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
@@ -130,10 +130,10 @@ public interface WeblogEntryManager {
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param offset     Offset into results for paging
      * @param range
-     * @return Map of Lists, keyed by Date, and containing date strings.
+     * @return Map of date strings keyed by Date
      * @throws WebloggerException
      */
-    Map getWeblogEntryStringMap(
+    Map<Date, String> getWeblogEntryStringMap(
             Weblog website,
             Date        startDate,
             Date        endDate,
@@ -252,7 +252,7 @@ public interface WeblogEntryManager {
     /** 
      * Get WebLogCategory objects for a website. 
      */
-    List getWeblogCategories(Weblog website, boolean includeRoot)
+    List<WeblogCategory> getWeblogCategories(Weblog website, boolean includeRoot)
             throws WebloggerException;
     
                

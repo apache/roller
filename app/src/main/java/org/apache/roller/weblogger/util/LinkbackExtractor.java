@@ -25,7 +25,6 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.text.MutableAttributeSet;
@@ -167,7 +166,6 @@ public class LinkbackExtractor
         SyndFeedInput feedInput = new SyndFeedInput();       
         SyndFeed feed = feedInput.build(
             new InputStreamReader(new URL(rssLink).openStream()));
-        Iterator itemIter = feed.getEntries().iterator();
         String feedTitle = feed.getTitle();
 
         int count = 0;
@@ -177,10 +175,10 @@ public class LinkbackExtractor
             mLogger.debug("Feed parsed, title: " + feedTitle);
         }
 
-        while (itemIter.hasNext())
+        for (Object objItem : feed.getEntries())
         {
             count++;
-            SyndEntry item = (SyndEntry) itemIter.next();
+            SyndEntry item = (SyndEntry) objItem;
             if (item.getDescription().getValue().contains(requestURL))
             {
                 mFound = true;

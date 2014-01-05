@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -263,10 +262,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
      * @return boolean true if child category exists, false otherwise.
      */
     public boolean hasCategory(String name) {
-        Iterator cats = this.getWeblogCategories().iterator();
-        WeblogCategory cat;
-        while(cats.hasNext()) {
-            cat = (WeblogCategory) cats.next();
+        for (WeblogCategory cat : getWeblogCategories()) {
             if(name.equals(cat.getName())) {
                 return true;
             }
@@ -330,11 +326,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         
         log.debug("Updating path tree for category "+cat.getPath());
         
-        WeblogCategory childCat = null;
-        Iterator childCats = cat.getWeblogCategories().iterator();
-        while(childCats.hasNext()) {
-            childCat = (WeblogCategory) childCats.next();
-            
+        for (WeblogCategory childCat : cat.getWeblogCategories()) {
             log.debug("OLD child category path was "+childCat.getPath());
             
             // update path and save

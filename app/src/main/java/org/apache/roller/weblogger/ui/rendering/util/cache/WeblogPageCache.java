@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -242,28 +241,23 @@ public final class WeblogPageCache {
         return key.toString();
     }
     
-    
-    private String paramsToString(Map map) {
-        
-        if (map == null) {
+    private String paramsToString(Map<String, String[]> map) {
+
+        if(map == null) {
             return null;
         }
-        
+
         StringBuilder string = new StringBuilder();
-        
-        String key = null;
-        String[] value = null;
-        Iterator keys = map.keySet().iterator();
-        while (keys.hasNext()) {
-            key = (String) keys.next();
-            value = (String[]) map.get(key);
-            
+
+        String[] value;
+        for (String key : map.keySet()) {
+            value = map.get(key);
+
             if(value != null) {
                 string.append(",").append(key).append("=").append(value[0]);
             }
         }
-        
+
         return Utilities.toBase64(string.toString().substring(1).getBytes());
     }
-    
 }

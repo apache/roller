@@ -171,7 +171,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * @param length Maximum number of results to return (for paging)
      * @return List of StatCount objects.
      */
-    public List getHotWeblogs(int sinceDays, int offset, int length)
+    public List<StatCount> getHotWeblogs(int sinceDays, int offset, int length)
             throws WebloggerException {
 
         if (log.isDebugEnabled()) {
@@ -256,7 +256,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * @param weblog
      * @return List of type WeblogReferrer
      */
-    public List getReferers(Weblog weblog) throws WebloggerException {
+    public List<WeblogReferrer> getReferers(Weblog weblog) throws WebloggerException {
         Query q = strategy.getNamedQuery(
             "WeblogReferrer.getByWebsiteOrderByTotalHitsDesc");
         q.setParameter(1, weblog);
@@ -268,7 +268,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * @param website Web site.
      * @return List of type WeblogReferrer
      */
-    public List getTodaysReferers(Weblog website) throws WebloggerException {
+    public List<WeblogReferrer> getTodaysReferers(Weblog website) throws WebloggerException {
         Query q = strategy.getNamedQuery(
             "WeblogReferrer.getByWebsite&DayHitsGreaterZeroOrderByDayHitsDesc");
         q.setParameter(1, website);
@@ -282,7 +282,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * @return List of type WeblogReferrer.
      * @throws org.apache.roller.weblogger.WebloggerException
      */
-    public List getReferersToDate(Weblog website, String date)
+    public List<WeblogReferrer> getReferersToDate(Weblog website, String date)
             throws WebloggerException {
 
         if (website==null) {
@@ -307,7 +307,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * @return List of WeblogReferrer objects.
      * @throws org.apache.roller.weblogger.WebloggerException
      */
-    public List getReferersToEntry(String entryid) throws WebloggerException {
+    public List<WeblogReferrer> getReferersToEntry(String entryid) throws WebloggerException {
         if (null == entryid) {
             throw new WebloggerException("entryid is null");
         }

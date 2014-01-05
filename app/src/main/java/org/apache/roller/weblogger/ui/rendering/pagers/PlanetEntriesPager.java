@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,7 +47,7 @@ public class PlanetEntriesPager extends AbstractPager {
     private int length = 0;
     
     // the collection for the pager
-    private List entries = null;
+    private List<SubscriptionEntry> entries = null;
     
     // are there more items?
     private boolean more = false;
@@ -77,7 +76,7 @@ public class PlanetEntriesPager extends AbstractPager {
     }
     
     
-    public List getItems() {
+    public List<SubscriptionEntry> getItems() {
         
         if (entries == null) {
             // calculate offset
@@ -91,12 +90,12 @@ public class PlanetEntriesPager extends AbstractPager {
                 startDate = cal.getTime();
             }
             
-            List results = new ArrayList();
+            List<SubscriptionEntry> results = new ArrayList<SubscriptionEntry>();
             try {
                 PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
                 Planet planet = planetManager.getWeblogger("default");
                 
-                List entries = null;
+                List<SubscriptionEntry> entries;
                 if (feedURL != null) {
                     Subscription sub = planetManager.getSubscription(feedURL);
                     entries = planetManager.getEntries(sub, offset, length+1);
@@ -110,8 +109,7 @@ public class PlanetEntriesPager extends AbstractPager {
                 
                 // wrap 'em
                 int count = 0;
-                for (Iterator it = entries.iterator(); it.hasNext();) {
-                    SubscriptionEntry entry = (SubscriptionEntry) it.next();
+                for (SubscriptionEntry entry : entries) {
                     // TODO needs pojo wrapping from planet
                     if (count++ < length) { 
                         results.add(entry);

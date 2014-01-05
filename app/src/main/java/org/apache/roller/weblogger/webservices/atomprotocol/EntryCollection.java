@@ -34,7 +34,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -113,8 +112,8 @@ public class EntryCollection {
 
             rollerEntry = mgr.getWeblogEntry(rollerEntry.getId());
             Entry newEntry = createAtomEntry(rollerEntry);
-            for (Iterator it = newEntry.getOtherLinks().iterator(); it.hasNext();) {
-                Link link = (Link)it.next();
+            for (Object objLink : newEntry.getOtherLinks()) {
+                Link link = (Link) objLink;
                 if ("edit".equals(link.getRel())) {
                     log.debug("Exiting");
                     return createAtomEntry(rollerEntry);
@@ -171,7 +170,7 @@ public class EntryCollection {
             if (!RollerAtomHandler.canView(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website: " + handle);
             }
-            List entries = roller.getWeblogEntryManager().getWeblogEntries( 
+            List<WeblogEntry> entries = roller.getWeblogEntryManager().getWeblogEntries(
                     website,           // website
                     null,              // user
                     null,              // startDate
@@ -196,13 +195,15 @@ public class EntryCollection {
             link.setType("text/html");
             feed.setAlternateLinks(Collections.singletonList(link));
 
-            List atomEntries = new ArrayList();
+            List<Entry> atomEntries = new ArrayList<Entry>();
             int count = 0;
-            for (Iterator iter = entries.iterator(); iter.hasNext() && count < MAX_ENTRIES; count++) {
-                WeblogEntry rollerEntry = (WeblogEntry)iter.next();
+            for (WeblogEntry rollerEntry : entries) {
+                if (count++ >= MAX_ENTRIES) {
+                    break;
+                }
                 Entry entry = createAtomEntry(rollerEntry);
                 atomEntries.add(entry);
-                if (count == 0) {
+                if (count == 1) {
                     // first entry is most recent
                     feed.setUpdated(entry.getUpdated());
                 }
@@ -344,7 +345,7 @@ public class EntryCollection {
         atomEntry.setAuthors(   Collections.singletonList(author));
         
         // Add Atom category for Weblogger category, using category scheme
-        List categories = new ArrayList();
+        List<Category> categories = new ArrayList<Category>();
         Category atomCat = new Category();
         atomCat.setScheme(RollerAtomService.getWeblogCategoryScheme(entry.getWebsite()));
         atomCat.setTerm(entry.getCategory().getPath().substring(1));
@@ -353,8 +354,7 @@ public class EntryCollection {
         // Add Atom categories for each Weblogger tag with null scheme
         Set<WeblogEntryTag> tmp = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
         tmp.addAll(entry.getTags());
-        for (Iterator tagit = tmp.iterator(); tagit.hasNext();) {
-            WeblogEntryTag tag = (WeblogEntryTag) tagit.next();
+        for (WeblogEntryTag tag : tmp) {
             Category newcat = new Category();
             newcat.setTerm(tag.getName());
             categories.add(newcat);

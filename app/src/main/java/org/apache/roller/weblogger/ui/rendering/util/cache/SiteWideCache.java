@@ -23,7 +23,6 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -421,7 +420,7 @@ public class SiteWideCache implements CacheHandler {
     }
     
     
-    private String paramsToString(Map map) {
+    private String paramsToString(Map<String, String[]> map) {
         
         if(map == null) {
             return null;
@@ -429,12 +428,9 @@ public class SiteWideCache implements CacheHandler {
         
         StringBuilder string = new StringBuilder();
         
-        String key = null;
-        String[] value = null;
-        Iterator keys = map.keySet().iterator();
-        while(keys.hasNext()) {
-            key = (String) keys.next();
-            value = (String[]) map.get(key);
+        String[] value;
+        for (String key : map.keySet()) {
+            value = map.get(key);
             
             if(value != null) {
                 string.append(",").append(key).append("=").append(value[0]);
