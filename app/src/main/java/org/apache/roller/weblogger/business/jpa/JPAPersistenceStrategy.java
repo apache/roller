@@ -112,7 +112,19 @@ public class JPAPersistenceStrategy {
             }
         }
     }
-                        
+    /**
+     * Refresh changes to the current object.
+     * 
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
+     */
+    public void refresh(Object clazz) throws WebloggerException {
+        try {
+            EntityManager em = getEntityManager(true);
+            em.refresh(clazz);
+        } catch (PersistenceException pe) {
+            throw new WebloggerException(pe);
+        }
+    }
     /**
      * Flush changes to the datastore, commit transaction, release em.
      * @throws org.apache.roller.weblogger.WebloggerException on any error

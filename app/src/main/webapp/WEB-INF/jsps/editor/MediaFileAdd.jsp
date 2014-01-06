@@ -70,6 +70,7 @@
 <s:form id="entry" action="mediaFileAdd!save" method="POST" enctype="multipart/form-data">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
+    <s:hidden name="directoryPath" />
 
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
@@ -178,6 +179,7 @@
     <br />
     <div class="control">
        <input type="submit" value='<s:text name="mediaFileAdd.upload" />' name="upload" />
+       <s:submit value="%{getText('application.cancel')}" action="mediaFileView" />
     </div>
 
 </s:form>

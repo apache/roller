@@ -108,9 +108,19 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             MediaFileDirectory targetDir) throws WebloggerException {
 
         for (MediaFileDirectory mediaFileDir : mediaFileDirs) {
+            // Refresh associated parent for changes
+            strategy.refresh(mediaFileDir.getParent());
             mediaFileDir.setParent(targetDir);
             this.strategy.store(mediaFileDir);
         }
+        
+        // Refresh associated parent for changes
+        roller.flush();
+        strategy.refresh(targetDir);
+        if (targetDir.getParent() != null) {
+            strategy.refresh(targetDir.getParent());
+        }
+        
         // update weblog last modified date. date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(targetDir.getWeblog());
     }
@@ -135,6 +145,15 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
         // update weblog last modified date. date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(targetDirectory.getWeblog());
+        
+        // Refresh associated parent for changes
+        roller.flush();
+        if (moved.size() > 0) {
+            strategy.refresh(moved.get(0).getDirectory());
+        }
+        
+        // Refresh associated parent for changes
+        strategy.refresh(targetDirectory);
     }
 
     /**
@@ -284,6 +303,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             return;
         }
         strategy.store(mediaFile);
+        
+        // Refresh associated parent for changes
+        strategy.refresh(mediaFile.getDirectory());
 
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
@@ -328,6 +350,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
             cmgr.saveFileContent(mediaFile.getWeblog(), mediaFile.getId()
                     + "_sm", new ByteArrayInputStream(baos.toByteArray()));
+            
+            // Refresh associated parent for changes
+            strategy.refresh(mediaFile.getDirectory());
 
         } catch (Exception e) {
             log.debug("ERROR creating thumbnail", e);
@@ -341,6 +366,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             throws WebloggerException {
         mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
         strategy.store(mediaFile);
+        
+        // Refresh associated parent for changes
+        strategy.refresh(mediaFile.getDirectory());
+        
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
     }
@@ -364,6 +393,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             throw new FileIOException(msgs.toString());
         }
         cmgr.saveFileContent(weblog, mediaFile.getId(), is);
+        
+        // Refresh associated parent for changes
+        strategy.refresh(mediaFile.getDirectory());
 
         if (mediaFile.isImageFile()) {
             updateThumbnail(mediaFile);
@@ -526,6 +558,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 .getFileContentManager();
 
         this.strategy.remove(mediaFile);
+        
+        // Refresh associated parent for changes
+        strategy.refresh(mediaFile.getDirectory());
+        
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
 
@@ -902,8 +938,15 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         Set<MediaFileDirectory> dirs = dir.getChildDirectories();
         for (MediaFileDirectory md : dirs) {
             removeMediaFileDirectory(md);
+            // Refresh associated object
+            strategy.refresh(md);
         }
         this.strategy.remove(dir);
+        
+        // Refresh associated parent
+        roller.flush();
+        strategy.refresh(dir.getParent());
+     
     }
 
     public void removeMediaFileTag(String name, MediaFile entry)
@@ -916,10 +959,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 // Call back the entity to adjust its internal state
                 entry.onRemoveTag(name);
 
-                // Remove it from database
+                // Refresh it from database
                 this.strategy.remove(tag);
 
-                // Remove it from the collection
+                // Refresh it from the collection
                 it.remove();
             }
         }

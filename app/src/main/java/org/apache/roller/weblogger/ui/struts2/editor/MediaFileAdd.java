@@ -93,6 +93,13 @@ public class MediaFileAdd extends MediaFileBase {
 
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
+        } finally{
+            //flush
+            try {
+                WebloggerFactory.getWeblogger().flush();
+            } catch (WebloggerException e) {
+                //ignored
+            }
         }
     }
 

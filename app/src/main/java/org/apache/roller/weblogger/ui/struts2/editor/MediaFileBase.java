@@ -59,6 +59,7 @@ public class MediaFileBase extends UIAction {
             manager.removeMediaFile(getActionWeblog(), mediaFile);
             // flush changes
             WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.getWeblogger().release();
             addMessage("mediaFile.delete.success");
         } catch (WebloggerException e) {
             log.error("Error deleting media file", e);
@@ -122,6 +123,7 @@ public class MediaFileBase extends UIAction {
             
             // flush changes
             WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.getWeblogger().release();
             addMessage("mediaFile.delete.success");
 
         } catch (WebloggerException e) {
@@ -163,6 +165,7 @@ public class MediaFileBase extends UIAction {
 
             // flush changes
             WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.getWeblogger().release();
             addMessage("mediaFile.move.success");
 
         } catch (WebloggerException e) {
