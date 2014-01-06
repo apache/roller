@@ -33,14 +33,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-import javax.imageio.ImageIO;
 
+import javax.imageio.ImageIO;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,6 +60,7 @@ import org.apache.roller.weblogger.pojos.MediaFileTag;
 import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -111,16 +112,22 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             // Refresh associated parent for changes
             strategy.refresh(mediaFileDir.getParent());
             mediaFileDir.setParent(targetDir);
+            if ("/".equals(targetDir.getPath())) {
+                mediaFileDir.setPath("/" + mediaFileDir.getName());
+            } else {
+                mediaFileDir.setPath(targetDir.getPath() + "/"
+                        + mediaFileDir.getName());
+            }
             this.strategy.store(mediaFileDir);
         }
-        
+
         // Refresh associated parent for changes
         roller.flush();
         strategy.refresh(targetDir);
         if (targetDir.getParent() != null) {
             strategy.refresh(targetDir.getParent());
         }
-        
+
         // update weblog last modified date. date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(targetDir.getWeblog());
     }

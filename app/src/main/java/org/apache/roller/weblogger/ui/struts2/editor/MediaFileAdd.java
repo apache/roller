@@ -38,7 +38,6 @@ import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
-
 /**
  * Adds a new media file.
  */
@@ -62,8 +61,7 @@ public class MediaFileAdd extends MediaFileBase {
 
     private List<MediaFile> newFiles = new ArrayList<MediaFile>();
 
-    private String directoryPath =  null;
-    
+    private String directoryPath = null;
 
     public MediaFileAdd() {
         this.actionName = "mediaFileAdd";
@@ -78,27 +76,34 @@ public class MediaFileAdd extends MediaFileBase {
         log.debug("Into myprepare");
         refreshAllDirectories();
         try {
-            MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+            MediaFileManager mgr = WebloggerFactory.getWeblogger()
+                    .getMediaFileManager();
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
 
             } else if (StringUtils.isNotEmpty(directoryPath)) {
-                setDirectory(mgr.getMediaFileDirectoryByPath(getActionWeblog(), directoryPath));
+                setDirectory(mgr.getMediaFileDirectoryByPath(getActionWeblog(),
+                        directoryPath));
 
             } else {
-                setDirectory(mgr.createRootMediaFileDirectory(getActionWeblog()));
+                MediaFileDirectory root = mgr
+                        .getMediaFileRootDirectory(getActionWeblog());
+                if (root == null) {
+                    root = mgr.createRootMediaFileDirectory(getActionWeblog());
+                }
+                setDirectory(root);
             }
             directoryPath = getDirectory().getPath();
             bean.setDirectoryId(getDirectory().getId());
 
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
-        } finally{
-            //flush
+        } finally {
+            // flush
             try {
                 WebloggerFactory.getWeblogger().flush();
             } catch (WebloggerException e) {
-                //ignored
+                // ignored
             }
         }
     }
@@ -123,8 +128,9 @@ public class MediaFileAdd extends MediaFileBase {
         myValidate();
 
         if (!hasActionErrors()) {
-            
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+
+            MediaFileManager manager = WebloggerFactory.getWeblogger()
+                    .getMediaFileManager();
 
             RollerMessages errors = new RollerMessages();
             List<MediaFile> uploaded = new ArrayList();
@@ -152,36 +158,43 @@ public class MediaFileAdd extends MediaFileBase {
                         }
 
                         // make sure fileName is valid
-                        if (fileName.indexOf('/') != -1 ||
-                                fileName.indexOf('\\') != -1 ||
-                                fileName.contains("..")) {
+                        if (fileName.indexOf('/') != -1
+                                || fileName.indexOf('\\') != -1
+                                || fileName.contains("..")) {
                             addError("uploadFiles.error.badPath", fileName);
                             continue;
                         }
 
-                        mediaFile.setName(       fileName);
-                        mediaFile.setDirectory(  getDirectory());
-                        mediaFile.setWeblog(     getActionWeblog());
-                        mediaFile.setLength(     this.uploadedFiles[i].length());
-                        mediaFile.setInputStream(new FileInputStream(this.uploadedFiles[i]));
-                        mediaFile.setContentType(this.uploadedFilesContentType[i]);
+                        mediaFile.setName(fileName);
+                        mediaFile.setDirectory(getDirectory());
+                        mediaFile.setWeblog(getActionWeblog());
+                        mediaFile.setLength(this.uploadedFiles[i].length());
+                        mediaFile.setInputStream(new FileInputStream(
+                                this.uploadedFiles[i]));
+                        mediaFile
+                                .setContentType(this.uploadedFilesContentType[i]);
 
                         // insome cases Struts2 is not able to guess the content
                         // type correctly and assigns the default, which is
                         // octet-stream. So in cases where we see octet-stream
                         // we double check and see if we can guess the content
                         // type via the Java MIME type facilities.
-                        mediaFile.setContentType(this.uploadedFilesContentType[i]);
+                        mediaFile
+                                .setContentType(this.uploadedFilesContentType[i]);
                         if (mediaFile.getContentType() == null
-                                || mediaFile.getContentType().endsWith("/octet-stream")) {
-                            
-                            String ctype = Utilities.getContentTypeFromFileName(mediaFile.getName());
+                                || mediaFile.getContentType().endsWith(
+                                        "/octet-stream")) {
+
+                            String ctype = Utilities
+                                    .getContentTypeFromFileName(mediaFile
+                                            .getName());
                             if (null != ctype) {
                                 mediaFile.setContentType(ctype);
                             }
                         }
 
-                        manager.createMediaFile(getActionWeblog(), mediaFile, errors);
+                        manager.createMediaFile(getActionWeblog(), mediaFile,
+                                errors);
                         WebloggerFactory.getWeblogger().flush();
 
                         if (mediaFile.isImageFile()) {
@@ -207,7 +220,8 @@ public class MediaFileAdd extends MediaFileBase {
                 if (uploaded.size() > 0 && !this.errorsExist()) {
                     addMessage("uploadFiles.uploadedFiles");
                     for (MediaFile upload : uploaded) {
-                        addMessage("uploadFiles.uploadedFile", upload.getPermalink());
+                        addMessage("uploadFiles.uploadedFile",
+                                upload.getPermalink());
                     }
 
                 } else {
@@ -284,7 +298,8 @@ public class MediaFileAdd extends MediaFileBase {
     }
 
     /**
-     * @param newImages the newImages to set
+     * @param newImages
+     *            the newImages to set
      */
     public void setNewImages(List<MediaFile> newImages) {
         this.newImages = newImages;
@@ -298,7 +313,8 @@ public class MediaFileAdd extends MediaFileBase {
     }
 
     /**
-     * @param newFiles the newFiles to set
+     * @param newFiles
+     *            the newFiles to set
      */
     public void setNewFiles(List<MediaFile> newFiles) {
         this.newFiles = newFiles;
@@ -312,7 +328,8 @@ public class MediaFileAdd extends MediaFileBase {
     }
 
     /**
-     * @param directoryPath the directoryPath to set
+     * @param directoryPath
+     *            the directoryPath to set
      */
     public void setDirectoryPath(String directoryPath) {
         this.directoryPath = directoryPath;

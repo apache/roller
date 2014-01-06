@@ -530,14 +530,11 @@ public class MediaFile implements Serializable {
             return false;
         }
         MediaFile o = (MediaFile) other;
-        return new EqualsBuilder().append(getName(), o.getName())
-                .append(getDirectory(), o.getDirectory())
-                .append(getWeblog(), o.getWeblog()).isEquals();
+        return new EqualsBuilder().append(getId(), o.getId()).isEquals();
     }
 
     public int hashCode() {
-        return new HashCodeBuilder().append(getName()).append(getDirectory())
-                .append(getWeblog()).toHashCode();
+        return new HashCodeBuilder().append(getId()).toHashCode();
     }
 
 }
