@@ -14,7 +14,13 @@
 -- copyright in this work, please see the NOTICE file in the top level
 -- directory of this distribution.
 
+-- Running local tests in eclipse.
+
 -- Script is used to clear old data prior to running local tests
+
+-- Copy this file to app/src/test/resources/dbscripts/junit-cleartables-mysql.sql
+
+-- Any changes here should also be in docs/testing/junit-cleartables-mysql.sql.
 
 delete mt from website w, roller_mediafile mf, roller_mediafiletag mt where w.id = mf.weblogid and mt.mediafile_id = mf.id and w.creator like 'junit_%';
 delete mf from website w, roller_mediafile mf where w.id = mf.weblogid and w.creator like 'junit_%';
