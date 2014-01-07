@@ -118,11 +118,14 @@ public class JPAPersistenceStrategy {
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     public void refresh(Object clazz) throws WebloggerException {
+        if (clazz == null) {
+            return;
+        }
         try {
             EntityManager em = getEntityManager(true);
             em.refresh(clazz);
-        } catch (PersistenceException pe) {
-            throw new WebloggerException(pe);
+        } catch (Exception e) {
+            // ignored;
         }
     }
     /**

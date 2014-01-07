@@ -149,4 +149,23 @@ public class SQLScriptRunner {
         messages.add(msg);
     }
     
+    
+    /**
+     * Gets the commands.
+     * 
+     * @return the commands
+     */
+    public List<String> getCommands() {
+        return commands;
+    }
+
+    /**
+     * Sets the commands.
+     * 
+     * @param commands
+     *            the new commands
+     */
+    public void setCommands(List<String> commands) {
+        this.commands = commands;
+    }
 }

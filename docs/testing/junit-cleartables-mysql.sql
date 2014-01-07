@@ -33,4 +33,6 @@ delete from rolleruser WHERE username like 'junit_%';
 delete from roller_userattribute WHERE username like 'junit_%';
 delete from roller_oauthconsumer WHERE username like 'junit_%';
 delete from roller_oauthaccessor WHERE username like 'junit_%';
-
+delete from roller_tasklock WHERE name = 'TestTask';
+delete from roller_mediafile WHERE name like 'test%';
+delete from roller_mediafiledir;

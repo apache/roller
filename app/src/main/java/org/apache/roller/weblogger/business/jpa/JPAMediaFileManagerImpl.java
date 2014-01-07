@@ -60,7 +60,6 @@ import org.apache.roller.weblogger.pojos.MediaFileTag;
 import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -152,13 +151,13 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
         // update weblog last modified date. date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(targetDirectory.getWeblog());
-        
+
         // Refresh associated parent for changes
         roller.flush();
         if (moved.size() > 0) {
             strategy.refresh(moved.get(0).getDirectory());
         }
-        
+
         // Refresh associated parent for changes
         strategy.refresh(targetDirectory);
     }
@@ -192,6 +191,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         MediaFileDirectory newDirectory = parentDirectory
                 .createNewDirectory(newDirName);
+        
+        // Refresh associated parent for changes
+        strategy.refresh(parentDirectory);
 
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(newDirectory.getWeblog());
@@ -205,6 +207,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public void createMediaFileDirectory(MediaFileDirectory directory)
             throws WebloggerException {
         this.strategy.store(directory);
+        
+        // Refresh associated parent for changes
+        strategy.refresh(directory.getParent());
 
         // update weblog last modified date. date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(directory.getWeblog());
@@ -310,7 +315,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             return;
         }
         strategy.store(mediaFile);
-        
+
         // Refresh associated parent for changes
         strategy.refresh(mediaFile.getDirectory());
 
@@ -357,7 +362,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
             cmgr.saveFileContent(mediaFile.getWeblog(), mediaFile.getId()
                     + "_sm", new ByteArrayInputStream(baos.toByteArray()));
-            
+
             // Refresh associated parent for changes
             strategy.refresh(mediaFile.getDirectory());
 
@@ -373,10 +378,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             throws WebloggerException {
         mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
         strategy.store(mediaFile);
-        
+
         // Refresh associated parent for changes
         strategy.refresh(mediaFile.getDirectory());
-        
+
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
     }
@@ -400,7 +405,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             throw new FileIOException(msgs.toString());
         }
         cmgr.saveFileContent(weblog, mediaFile.getId(), is);
-        
+
         // Refresh associated parent for changes
         strategy.refresh(mediaFile.getDirectory());
 
@@ -565,10 +570,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 .getFileContentManager();
 
         this.strategy.remove(mediaFile);
-        
+
         // Refresh associated parent for changes
         strategy.refresh(mediaFile.getDirectory());
-        
+
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
 
@@ -942,18 +947,31 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             }
             this.strategy.remove(mf);
         }
+
         Set<MediaFileDirectory> dirs = dir.getChildDirectories();
+        // Recursive fix ConcurrentModificationException
+        List<MediaFileDirectory> concurrentFix = new ArrayList<MediaFileDirectory>();
         for (MediaFileDirectory md : dirs) {
-            removeMediaFileDirectory(md);
-            // Refresh associated object
-            strategy.refresh(md);
+            concurrentFix.add(md);
         }
+
+        for (Iterator<MediaFileDirectory> i = concurrentFix.iterator(); i
+                .hasNext();) {
+            MediaFileDirectory md = i.next();
+            removeMediaFileDirectory(md);
+            // strategy.refresh(md);
+        }
+
+        // for (MediaFileDirectory md : dirs) {
+        // removeMediaFileDirectory(md);
+        // }
+
         this.strategy.remove(dir);
-        
+
         // Refresh associated parent
         roller.flush();
         strategy.refresh(dir.getParent());
-     
+
     }
 
     public void removeMediaFileTag(String name, MediaFile entry)
