@@ -943,6 +943,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         for (MediaFile mf : files) {
             try {
                 cmgr.deleteFile(dir.getWeblog(), mf.getId());
+                // Now thumbnail
+                cmgr.deleteFile(dir.getWeblog(), mf.getId() + "_sm");
             } catch (Exception e) {
                 log.debug("File to be deleted already unavailable in the file store");
             }
@@ -955,15 +957,13 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         for (MediaFileDirectory md : dirs) {
             concurrentFix.add(md);
         }
-
         for (Iterator<MediaFileDirectory> i = concurrentFix.iterator(); i
                 .hasNext();) {
             MediaFileDirectory md = i.next();
             removeMediaFileDirectory(md);
-            // strategy.refresh(md);
         }
-
         // for (MediaFileDirectory md : dirs) {
+        // see Recursive fix above
         // removeMediaFileDirectory(md);
         // }
 
