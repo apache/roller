@@ -191,12 +191,13 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         MediaFileDirectory newDirectory = parentDirectory
                 .createNewDirectory(newDirName);
-        
-        // Refresh associated parent for changes
-        strategy.refresh(parentDirectory);
 
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(newDirectory.getWeblog());
+
+        // Refresh associated parent for changes
+        roller.flush();
+        strategy.refresh(parentDirectory);
 
         return newDirectory;
     }
@@ -207,12 +208,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public void createMediaFileDirectory(MediaFileDirectory directory)
             throws WebloggerException {
         this.strategy.store(directory);
-        
-        // Refresh associated parent for changes
-        strategy.refresh(directory.getParent());
 
         // update weblog last modified date. date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(directory.getWeblog());
+
+        // Refresh associated parent for changes
+        strategy.refresh(directory.getParent());
     }
 
     /**

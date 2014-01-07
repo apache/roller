@@ -70,7 +70,7 @@ public class MediaFileTest extends TestCase {
      * Test creation of directory by path
      */
     @Test
-    public void ZtestCreateMediaFileDirectoryByPath() throws Exception {
+    public void testCreateMediaFileDirectoryByPath() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
 
@@ -181,7 +181,7 @@ public class MediaFileTest extends TestCase {
      * Test directory creation
      */
     @Test
-    public void ZtestCreateMediaFileDirectory() throws Exception {
+    public void testCreateMediaFileDirectory() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
 
@@ -235,7 +235,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test getting list of all directories for a given user.
      */
-    public void ZtestGetMediaFileDirectories() throws Exception {
+    public void testGetMediaFileDirectories() throws Exception {
 
         User testUser = null;
         Weblog testWeblog = null;
@@ -315,7 +315,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test deletion of media file
      */
-    public void ZtestDeleteMediaFile() throws Exception {
+    public void testDeleteMediaFile() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
         testUser = TestUtils.setupUser("mediaFileTestUser4");
@@ -389,7 +389,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test creation of media file.
      */
-    public void ZtestCreateMediaFile() throws Exception {
+    public void testCreateMediaFile() throws Exception {
 
         User testUser = null;
         Weblog testWeblog = null;
@@ -448,7 +448,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test searching media file.
      */
-    public void ZtestSearchMediaFile() throws Exception {
+    public void testSearchMediaFile() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
         testUser = TestUtils.setupUser("mediaFileTestUser7");
@@ -672,7 +672,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test searching media file with paging logic.
      */
-    public void ZtestSearchMediaFilePaging() throws Exception {
+    public void testSearchMediaFilePaging() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
         testUser = TestUtils.setupUser("mediaFileTestUser9");
@@ -767,7 +767,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test searching media file with paging logic.
      */
-    public void ZtestSearchMediaFileOrderBy() throws Exception {
+    public void testSearchMediaFileOrderBy() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
         testUser = TestUtils.setupUser("mediaFileTestUser10");
@@ -860,7 +860,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test media file update
      */
-    public void ZtestUpdateMediaFile() throws Exception {
+    public void testUpdateMediaFile() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
         testUser = TestUtils.setupUser("mediaFileTestUser5");
@@ -931,7 +931,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test media file and directory gets
      */
-    public void ZtestGetDirectoryContents() throws Exception {
+    public void testGetDirectoryContents() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
         testUser = TestUtils.setupUser("mediaFileTestUser6");
@@ -1025,7 +1025,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test moving files across directories.
      */
-    public void ZtestMoveDirectoryContents() throws Exception {
+    public void testMoveDirectoryContents() throws Exception {
 
         User testUser = null;
         Weblog testWeblog = null;
