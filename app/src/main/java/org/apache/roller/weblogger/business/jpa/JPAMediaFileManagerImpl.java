@@ -318,6 +318,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         strategy.store(mediaFile);
 
         // Refresh associated parent for changes
+        roller.flush();
         strategy.refresh(mediaFile.getDirectory());
 
         // update weblog last modified date. date updated by saveWeblog()
@@ -876,6 +877,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                             : newDir.getPath()) + "/" + files[i].getName();
                     log.debug("    Upgrade file with original path: "
                             + originalPath);
+
                     MediaFile mf = new MediaFile();
                     try {
                         mf.setName(files[i].getName());
@@ -895,10 +897,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                         mf.setInputStream(new FileInputStream(files[i]));
                         mf.setContentType(Utilities
                                 .getContentTypeFromFileName(files[i].getName()));
-                        newDir.getMediaFiles().add(mf);
 
+                        // Create
                         this.roller.getMediaFileManager().createMediaFile(
                                 weblog, mf, messages);
+                        newDir.getMediaFiles().add(mf);
+
                         log.info(messages.toString());
 
                         fileCount++;
