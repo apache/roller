@@ -115,7 +115,7 @@
                             <database>rollerdb</database>
                             <username>APP</username>
                             <password>APP</password>
-                            <port>3223</port>
+                            <port>4224</port>
                             <sources>
                                 <script>
                                     <sourceFile>target/roller-selenium-tests-5.1.0-SNAPSHOT/WEB-INF/classes/dbscripts/derby/createdb.sql</sourceFile>
