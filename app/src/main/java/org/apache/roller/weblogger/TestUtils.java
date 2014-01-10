@@ -130,14 +130,15 @@ public final class TestUtils {
      */
     private static void clearTestData() throws Exception {
 
+        String scriptFile = "junit-cleartables-mysql.sql";
+
         ClasspathDatabaseScriptProvider scriptProvider = new ClasspathDatabaseScriptProvider();
-        InputStream script = scriptProvider
-                .getDatabaseScript("junit-cleartables-mysql.sql");
+        InputStream script = scriptProvider.getDatabaseScript(scriptFile);
 
         if (script == null) {
 
-            System.out
-                    .println("File /dbscripts/junit-cleartables-mysql.sql not found on class path.");
+            System.out.println("File /dbscripts/" + scriptFile
+                    + " not found on class path.");
             return;
 
         }
@@ -151,6 +152,9 @@ public final class TestUtils {
             SQLScriptRunner runner = new SQLScriptRunner(script);
 
             if (runner != null) {
+
+                System.out.println("Clearing files using script file : "
+                        + scriptProvider.getScriptURL(scriptFile));
 
                 // Loop script and remove invalid lines
                 List<String> updatedCommands = new ArrayList<String>();
