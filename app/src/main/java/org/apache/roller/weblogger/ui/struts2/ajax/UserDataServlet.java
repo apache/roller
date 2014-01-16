@@ -46,6 +46,11 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  * username1, emailaddress1 <br/>
  * username2, emailaddress2 <br/>
  * usernameN, emailaddressN <br/>
+ * 
+ * web.xml
+ * <url-pattern>/roller-ui/admin/userdata/*</url-pattern>
+ * security.xml
+ * <intercept-url pattern="/roller-ui/admin/**" access="admin"/>
  */
 public class UserDataServlet extends HttpServlet {
 
@@ -55,6 +60,7 @@ public class UserDataServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // This user check can be removed as we protected by spring (see above).
         WeblogRequest weblogRequest = null;
         try {
             weblogRequest = new WeblogRequest(request);
