@@ -954,7 +954,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             }
             this.strategy.remove(mf);
         }
-
+        
+        // Children
+        roller.flush();
+        
         Set<MediaFileDirectory> dirs = dir.getChildDirectories();
         // Recursive fix ConcurrentModificationException
         List<MediaFileDirectory> concurrentFix = new ArrayList<MediaFileDirectory>();
