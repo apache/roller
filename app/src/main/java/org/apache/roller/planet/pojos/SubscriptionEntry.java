@@ -231,12 +231,12 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
         return cat;
     }
 
-    public void setCategoriesString(List<Category> categories) {
+    public void setCategoriesString(List<String> categoryNames) {
         StringBuilder sb = new StringBuilder();
-        Iterator cats = categories.iterator();
+        Iterator cats = categoryNames.iterator();
         while (cats.hasNext()) {
-            String cat = (String)cats.next();
-            sb.append(cat);
+            String catName = (String) cats.next();
+            sb.append(catName);
             if (cats.hasNext()) {
                 sb.append(",");
             }

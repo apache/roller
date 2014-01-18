@@ -24,7 +24,7 @@
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
         <lucene.version>4.6.0</lucene.version>
         <spring.version>3.2.4.RELEASE</spring.version>
-        <spring.security.version>3.1.4.RELEASE</spring.security.version>
+        <spring.security.version>3.2.0.RELEASE</spring.security.version>
     </properties>
 
     <dependencies>
@@ -275,13 +275,13 @@
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-spring-plugin</artifactId>
-            <version>2.3.15.3</version>
+            <version>2.3.16</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-tiles-plugin</artifactId>
-            <version>2.3.15.3</version>
+            <version>2.3.16</version>
         </dependency>
 
         <dependency>
@@ -338,12 +338,12 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.8.3</version>
+            <version>1.9.1</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.8</version>
+            <version>1.9</version>
         </dependency>
 
         <!-- test deps -->
@@ -358,7 +358,7 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.9.2</version>
+            <version>1.9.3</version>
             <scope>test</scope>
         </dependency>
 
