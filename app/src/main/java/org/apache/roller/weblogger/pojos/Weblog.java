@@ -547,12 +547,6 @@ public class Weblog implements Serializable {
         return count;
     }
     
-    /** No-op needed to please XDoclet generated code */
-    private int userCount = 0;
-    public void setUserCount(int userCount) {
-        // no-op
-    }
-
     public int getAdminUserCount() {
         int count = 0;
         try {
@@ -570,12 +564,6 @@ public class Weblog implements Serializable {
         return count;
     }
     
-    /** No-op needed to please XDoclet generated code */
-    private int adminUserCount = 0;
-    public void setAdminUserCount(int adminUserCount) {
-        // no-op
-    }
-
     public int getEntryDisplayCount() {
         return entryDisplayCount;
     }
@@ -954,9 +942,6 @@ public class Weblog implements Serializable {
         return Collections.EMPTY_LIST;
     }
     
-    /** No-op method to please XDoclet */
-    public void setTodaysReferrers(List ignored) {}
-    
     /**
      * Get number of hits counted today.
      */
@@ -973,11 +958,7 @@ public class Weblog implements Serializable {
         }
         return 0;
     }
-    
-    /** No-op method to please XDoclet */
-    public void setTodaysHits(int ignored) {}
 
-        
     /**
      * Get a list of TagStats objects for the most popular tags
      *
@@ -1016,9 +997,6 @@ public class Weblog implements Serializable {
         return count;
     }
     
-    /** No-op method to please XDoclet */
-    public void setCommentCount(int ignored) {}
-    
     public long getEntryCount() {
         long count = 0;
         try {
@@ -1030,9 +1008,6 @@ public class Weblog implements Serializable {
         }
         return count;
     }
-
-    /** No-op method to please XDoclet */
-    public void setEntryCount(int ignored) {}
 
     /**
      * @return  mobileTheme

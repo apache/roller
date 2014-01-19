@@ -147,11 +147,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     
     /**
      * The short name for this folder.
-     *
-     * @struts.validator type="required" msgkey="errors.required"
-     * @struts.validator type="mask" msgkey="errors.noslashes"
-     * @struts.validator-var name="mask" value="${noslashes}"
-     * @struts.validator-args arg0resource="folderForm.name"
      */
     public String getName() {
         return this.name;

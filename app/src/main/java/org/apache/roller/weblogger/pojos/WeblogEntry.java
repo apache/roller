@@ -57,8 +57,6 @@ import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Represents a Weblog Entry.
- *
- * @struts.form include-all="true"
  */
 public class WeblogEntry implements Serializable {
     private static Log mLogger =
@@ -234,11 +232,6 @@ public class WeblogEntry implements Serializable {
         return cats;
     }
     
-    /** No-op method to please XDoclet */
-    public void setCategories(List cats) {
-        // no-op
-    }
-    
     public Weblog getWebsite() {
         return this.website;
     }
@@ -351,9 +344,7 @@ public class WeblogEntry implements Serializable {
     }
     
     //-------------------------------------------------------------------------
-    /**
-     * Map attributes as set because XDoclet 1.2b4 map support is broken.
-     */
+
     public Set<WeblogEntryAttribute> getEntryAttributes() {
         return attSet;
     }
@@ -362,9 +353,6 @@ public class WeblogEntry implements Serializable {
         this.attSet = atts;
     }
     
-    /**
-     * Would be named getEntryAttribute, but that would set off XDoclet
-     */
     public String findEntryAttribute(String name) {
         if (getEntryAttributes() != null) {
             for (WeblogEntryAttribute att : getEntryAttributes()) {
@@ -767,11 +755,6 @@ public class WeblogEntry implements Serializable {
         return comments.size();
     }
     
-    /** No-op to please XDoclet */
-    public void setCommentCount(int ignored) {
-        // no-op
-    }
-    
     public List getReferers() {
         List referers = null;
         try {
@@ -812,13 +795,6 @@ public class WeblogEntry implements Serializable {
     public String getCommentsLink() {
         return getPermaLink() + "#comments";
     }
-    
-    /** 
-     * to please XDoclet 
-     * @deprecated Use commentLink() instead
-     */
-    public void setCommentsLink(String ignored) {}
-    
     
     /**
      * Return the Title of this post, or the first 255 characters of the
@@ -934,52 +910,31 @@ public class WeblogEntry implements Serializable {
     public boolean isDraft() {
         return getStatus().equals(DRAFT);
     }
-    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
-    public void setDraft(boolean value) {
-    }
-    
+
     /** Convenience method for checking status */
     public boolean isPending() {
         return getStatus().equals(PENDING);
     }
-    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
-    public void setPending(boolean value) {
-    }
-    
+
     /** Convenience method for checking status */
     public boolean isPublished() {
         return getStatus().equals(PUBLISHED);
     }
-    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
-    public void setPublished(boolean value) {
-    }
-  
+
     /**
      * Get entry text, transformed by plugins enabled for entry.
      */
     public String getTransformedText() {
         return render(getText());
     }
-    /**
-     * No-op to please XDoclet.
-     */
-    public void setTransformedText(String t) {
-        // no-op
-    }
-    
+
     /**
      * Get entry summary, transformed by plugins enabled for entry.
      */
     public String getTransformedSummary() {
         return render(getSummary());
     }
-    /**
-     * No-op to please XDoclet.
-     */
-    public void setTransformedSummary(String t) {
-        // no-op
-    }    
-    
+
     /**
      * Determine if the specified user has permissions to edit this entry.
      */
@@ -1100,6 +1055,4 @@ public class WeblogEntry implements Serializable {
         return displayContent(null);
     }
 
-    /** No-op method to please XDoclet */
-    public void setDisplayContent(String ignored) {}
 }

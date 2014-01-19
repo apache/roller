@@ -30,8 +30,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
  * Permission for one specific weblog
- * @struts.form include-all="true"
- *
  * @author Dave Johnson
  */
 public class WeblogPermission extends ObjectPermission implements Serializable {

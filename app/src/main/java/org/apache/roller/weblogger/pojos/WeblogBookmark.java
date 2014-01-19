@@ -81,9 +81,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     /**
      * Name of bookmark.
-     *
-     * @struts.validator type="required" msgkey="errors.required"
-     * @struts.validator-args arg0resource="bookmarkForm.name"
      */
     public String getName() {
         return this.name;
@@ -117,10 +114,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     /**
      * Weight indicates prominence of link
-     *
-     * @struts.validator type="required" msgkey="errors.required"
-     * @struts.validator type="integer" msgkey="errors.integer"
-     * @struts.validator-args arg0resource="bookmarkForm.weight"
      */
     public java.lang.Integer getWeight() {
         return this.weight;
@@ -132,10 +125,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     /**
      * Priority determines order of display
-     *
-     * @struts.validator type="required" msgkey="errors.required"
-     * @struts.validator type="integer" msgkey="errors.integer"
-     * @struts.validator-args arg0resource="bookmarkForm.priority"
      */
     public java.lang.Integer getPriority() {
         return this.priority;
