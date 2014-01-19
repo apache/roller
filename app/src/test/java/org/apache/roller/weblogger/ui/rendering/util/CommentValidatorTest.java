@@ -107,7 +107,7 @@ public class CommentValidatorTest extends TestCase {
         comment.setContent("nice friendly stuff"); 
         assertEquals(100, mgr.validateComment(comment, msgs));
 
-        comment.setContent("blah blah 01-suonerie.com blah"); 
+        comment.setContent("blah blah www.myblacklistedsite.com blah");
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
     
