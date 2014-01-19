@@ -481,4 +481,34 @@
         <mapped-name>Session</mapped-name>
     </resource-ref>
 
+    <!--
+         Uncomment below to use SSL on sensitive pages.  Alternatively,
+         can lock up the entire site with this single element:
+         <url-pattern>/*</url-pattern>, if you do site-wide however must add
+         weblog.absoluteurl.{handle} property for each blog in
+         roller-custom.properties, e.g.,
+         weblog.absoluteurl.myblog=https://localhost:8443/roller
+         Servlet container-specific SSL configuration must also be done, see
+         the documentation for your servlet container for more details.
+    -->
+    <!--security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPS resources</web-resource-name>
+            <url-pattern>/roller-ui/login.rol</url-pattern>
+            <url-pattern>/roller-ui/register.rol</url-pattern>
+            <url-pattern>/roller-ui/register!save.rol</url-pattern>
+            <url-pattern>/roller-ui/profile.rol</url-pattern>
+            <url-pattern>/roller-ui/profile!save.rol</url-pattern>
+            <url-pattern>/roller-ui/admin/*</url-pattern>
+            <url-pattern>/roller-ui/login-redirect.jsp</url-pattern>
+            <url-pattern>/roller-ui/login-redirect.rol</url-pattern>
+            <url-pattern>/roller-ui/authoring/userdata</url-pattern>
+            <url-pattern>/roller-ui/authoring/membersInvite.rol</url-pattern>
+            <url-pattern>/roller-ui/authoring/membersInvite!save.rol</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint-->
+
 </web-app>
