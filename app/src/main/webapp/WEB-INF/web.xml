@@ -484,12 +484,13 @@
     <!--
          Uncomment below to use SSL on sensitive pages.  Alternatively,
          can lock up the entire site with this single element:
-         <url-pattern>/*</url-pattern>, if you do site-wide however must add
-         weblog.absoluteurl.{handle} property for each blog in
+         <url-pattern>/*</url-pattern>, if you do site-wide however must
+         set Absolute URL to Site field (Server Admin | Configuration | Settings)
+         or add weblog.absoluteurl.{handle} property for each blog in
          roller-custom.properties, e.g.,
          weblog.absoluteurl.myblog=https://localhost:8443/roller
-         Servlet container-specific SSL configuration must also be done, see
-         the documentation for your servlet container for more details.
+         Servlet container-specific SSL configuration must also be done,
+         see your servlet container's documentation for details.
     -->
     <!--security-constraint>
         <web-resource-collection>
