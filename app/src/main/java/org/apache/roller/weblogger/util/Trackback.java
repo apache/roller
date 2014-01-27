@@ -30,8 +30,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -175,7 +175,7 @@ public class Trackback {
         
         SAXBuilder builder = new SAXBuilder();
         Document doc = builder.build(
-                new StringReader(StringEscapeUtils.unescapeHtml(response)));
+                new StringReader(StringEscapeUtils.unescapeHtml4(response)));
         Element root = doc.getRootElement();
         
         if ("response".equals(root.getName())) {

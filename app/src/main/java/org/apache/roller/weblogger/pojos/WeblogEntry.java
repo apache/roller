@@ -36,10 +36,10 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
@@ -820,7 +820,7 @@ public class WeblogEntry implements Serializable {
      * Return RSS 09x style description (escaped HTML version of entry text)
      */
     public String getRss09xDescription(int maxLength) {
-        String ret = StringEscapeUtils.escapeHtml(getText());
+        String ret = StringEscapeUtils.escapeHtml3(getText());
         if (maxLength != -1 && ret.length() > maxLength) {
             ret = ret.substring(0,maxLength-3)+"...";
         }

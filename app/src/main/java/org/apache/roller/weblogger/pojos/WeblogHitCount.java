@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 

@@ -34,7 +34,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

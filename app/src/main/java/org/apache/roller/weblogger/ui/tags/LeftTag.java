@@ -16,8 +16,8 @@
 package org.apache.roller.weblogger.ui.tags;
 
 import javax.servlet.jsp.JspException;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * Gets the leftmost 'n' characters from a string.
@@ -60,7 +60,7 @@ public class LeftTag extends StringTagSupport {
 
 
     public String changeString(String text) throws JspException {
-        return StringUtils.left(text, NumberUtils.stringToInt(count));
+        return StringUtils.left(text, NumberUtils.toInt(count));
     }
 
     public void initAttributes() {

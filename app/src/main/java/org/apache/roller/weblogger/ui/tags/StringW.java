@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.tags;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A set of String library static methods. While extending String or 

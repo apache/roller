@@ -19,9 +19,9 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 
@@ -232,7 +232,7 @@ public class WeblogReferrer implements Serializable {
     public String getDisplayUrl(int maxWidth, boolean includeHits) {
         StringBuilder sb = new StringBuilder();
         
-        String url = StringEscapeUtils.escapeHtml(getUrl());
+        String url = StringEscapeUtils.escapeHtml4(getUrl());
         String displayUrl = url.trim();
         String restOfUrl = null;
         

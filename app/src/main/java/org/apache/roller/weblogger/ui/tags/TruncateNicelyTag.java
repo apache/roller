@@ -16,7 +16,7 @@
 package org.apache.roller.weblogger.ui.tags;
 
 import javax.servlet.jsp.JspException;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * A more intelligent substring.  It attempts to cut off a string after
@@ -94,8 +94,8 @@ public class TruncateNicelyTag extends StringTagSupport {
 
     public String changeString(String text) throws JspException {
 					
-		int l = NumberUtils.stringToInt(lower);
-		int u = NumberUtils.stringToInt(upper);
+		int l = NumberUtils.toInt(lower);
+		int u = NumberUtils.toInt(upper);
 	
 		return StringW.truncateNicely(text, l, u, this.appendToEnd);
     }

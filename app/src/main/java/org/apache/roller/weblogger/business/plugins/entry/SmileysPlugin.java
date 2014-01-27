@@ -22,7 +22,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -66,7 +66,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     
     
     public String getDescription() {
-        return StringEscapeUtils.escapeJavaScript(description);
+        return StringEscapeUtils.escapeEcmaScript(description);
     }
     
     

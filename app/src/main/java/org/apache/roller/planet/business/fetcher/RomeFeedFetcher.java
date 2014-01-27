@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
@@ -210,7 +210,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         if (romeEntry.getContents().size() > 0) {
             SyndContent content= (SyndContent)romeEntry.getContents().get(0);
             if (content != null && content.getType().equals("text/plain")) {
-                newEntry.setText(StringEscapeUtils.unescapeHtml(content.getValue()));
+                newEntry.setText(StringEscapeUtils.unescapeHtml4(content.getValue()));
             } else if (content != null) {
                 newEntry.setText(content.getValue());
             }

@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.jdom.Document;
 import org.jdom.Element;

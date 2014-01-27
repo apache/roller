@@ -16,7 +16,7 @@
 package org.apache.roller.weblogger.ui.tags;
 
 import javax.servlet.jsp.JspException;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * Word-wrap a String. This involves formatting a long 
@@ -132,7 +132,7 @@ public class WordWrapTag extends StringTagSupport {
     }
 
     public String changeString(String text) throws JspException {
-        return StringW.wordWrap(text, NumberUtils.stringToInt(width), delimiter, split, delimiterInside );
+        return StringW.wordWrap(text, NumberUtils.toInt(width), delimiter, split, delimiterInside );
     }
 
     public void initAttributes() {

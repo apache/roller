@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.ResourceBundle;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;

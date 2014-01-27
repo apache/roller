@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -58,7 +58,7 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     
     
     public String getDescription() {
-        return StringEscapeUtils.escapeJavaScript(description);
+        return StringEscapeUtils.escapeEcmaScript(description);
     }
     
     
