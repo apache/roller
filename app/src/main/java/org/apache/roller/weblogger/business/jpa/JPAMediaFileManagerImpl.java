@@ -31,6 +31,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -365,6 +367,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             cmgr.saveFileContent(mediaFile.getWeblog(), mediaFile.getId()
                     + "_sm", new ByteArrayInputStream(baos.toByteArray()));
 
+            roller.flush();
             // Refresh associated parent for changes
             strategy.refresh(mediaFile.getDirectory());
 
@@ -381,6 +384,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
         strategy.store(mediaFile);
 
+        roller.flush();
         // Refresh associated parent for changes
         strategy.refresh(mediaFile.getDirectory());
 
@@ -396,6 +400,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
         strategy.store(mediaFile);
 
+        roller.flush();
+        // Refresh associated parent for changes
+        strategy.refresh(mediaFile.getDirectory());
+
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
 
@@ -407,9 +415,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             throw new FileIOException(msgs.toString());
         }
         cmgr.saveFileContent(weblog, mediaFile.getId(), is);
-
-        // Refresh associated parent for changes
-        strategy.refresh(mediaFile.getDirectory());
 
         if (mediaFile.isImageFile()) {
             updateThumbnail(mediaFile);
@@ -954,25 +959,18 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             }
             this.strategy.remove(mf);
         }
-        
+
         // Children
         roller.flush();
-        
-        Set<MediaFileDirectory> dirs = dir.getChildDirectories();
+
+        // Set<MediaFileDirectory> dirs = dir.getChildDirectories();
         // Recursive fix ConcurrentModificationException
-        List<MediaFileDirectory> concurrentFix = new ArrayList<MediaFileDirectory>();
+        Set<MediaFileDirectory> dirs = Collections
+                .synchronizedSet(new HashSet<MediaFileDirectory>(dir
+                        .getChildDirectories()));
         for (MediaFileDirectory md : dirs) {
-            concurrentFix.add(md);
-        }
-        for (Iterator<MediaFileDirectory> i = concurrentFix.iterator(); i
-                .hasNext();) {
-            MediaFileDirectory md = i.next();
             removeMediaFileDirectory(md);
         }
-        // for (MediaFileDirectory md : dirs) {
-        // see Recursive fix above
-        // removeMediaFileDirectory(md);
-        // }
 
         this.strategy.remove(dir);
 
