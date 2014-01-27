@@ -384,40 +384,6 @@ create index ref_datestr_idx on referer( datestr );
 create index ref_refpermlnk_idx on referer( refpermalink$!db.INDEXSIZE );
 create index ref_duplicate_idx on referer( duplicate );
 
--- Configuration options for Roller, should only ever be one row
--- Deprecated in 1.2: configuration now stored in roller_properties table
-create table rollerconfig (
-    id              varchar(48) not null primary key,
-    sitedescription varchar(255),
-    sitename        varchar(255),
-    emailaddress    varchar(255),
-    absoluteurl     varchar(255),
-    adminusers      varchar(255),
-    encryptpasswords $db.BOOLEAN_SQL_TYPE_TRUE not null,
-    algorithm       varchar(10),
-    newuserallowed  $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    editorpages     varchar(255),
-    userthemes      varchar(255) not null,
-    indexdir        varchar(255),
-    memdebug        $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    autoformatcomments $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    escapecommenthtml $db.BOOLEAN_SQL_TYPE_TRUE not null,
-    emailcomments   $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    enableaggregator $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    enablelinkback  $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    rsscachetime    integer default 3000 not null,
-    rssusecache     $db.BOOLEAN_SQL_TYPE_TRUE not null,
-    uploadallow     varchar(255),
-    uploadforbid    varchar(255),
-    uploadenabled   $db.BOOLEAN_SQL_TYPE_TRUE not null,
-    uploaddir       varchar(255) not null,
-    uploadpath      varchar(255) not null,
-    uploadmaxdirmb  decimal(5,2) default 4.0 not null,
-    uploadmaxfilemb decimal(5,2) default 1.5 not null,
-    dbversion       varchar(10),
-    refspamwords    $db.TEXT_SQL_TYPE
-);
-
 create table roller_properties (
     name     varchar(255) not null primary key,
     value    $db.TEXT_SQL_TYPE

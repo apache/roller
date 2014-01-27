@@ -172,8 +172,6 @@ public class PasswordUtility
         	.prepareStatement("select username,passphrase from rolleruser");
         PreparedStatement userUpdate = con
         	.prepareStatement("update rolleruser set passphrase=? where username=?");
-        PreparedStatement configUpdate = con
-			.prepareStatement("update rollerconfig set encryptpasswords=?");
 
         Properties props = new Properties();
         ResultSet users = userQuery.executeQuery();
@@ -194,9 +192,6 @@ public class PasswordUtility
             userUpdate.executeUpdate();
             System.out.println("Encrypted password for user: " + username);
         }
-        
-        configUpdate.setBoolean(1, true);
-        configUpdate.executeUpdate();
     }
 
     /** 
@@ -207,8 +202,6 @@ public class PasswordUtility
     {
         PreparedStatement userUpdate = con
 			.prepareStatement("update rolleruser set passphrase=? where username=?");
-        PreparedStatement configUpdate = con
-			.prepareStatement("update rollerconfig set encryptpasswords=?");
 
         Properties props = new Properties();
         props.load(new FileInputStream(fileName));
@@ -222,9 +215,6 @@ public class PasswordUtility
             userUpdate.setString(2, username);
             userUpdate.executeUpdate();
         }
-        
-        configUpdate.setBoolean(1, false);
-        configUpdate.executeUpdate();
     }
 
     /** 
@@ -234,18 +224,11 @@ public class PasswordUtility
                     Connection con, String username, String password, String algorithm) 
     	    throws Exception
     {
-		PreparedStatement encryptionQuery = 
-            con.prepareStatement("select encryptpasswords from rollerconfig");
-		PreparedStatement userUpdate = 
+		PreparedStatement userUpdate =
             con.prepareStatement("update rolleruser set passphrase=? where username=?");
 		
-		ResultSet rs = encryptionQuery.executeQuery();
-		rs.next();
-		boolean encryption = rs.getBoolean(1);
-		
-		String newpassword = 
-		    encryption ? Utilities.encodePassword(password, algorithm) : password;
-		userUpdate.setString(1, newpassword);
+		String newPassword = Utilities.encodePassword(password, algorithm);
+		userUpdate.setString(1, newPassword);
 		userUpdate.setString(2, username);
 		userUpdate.executeUpdate();
     }   

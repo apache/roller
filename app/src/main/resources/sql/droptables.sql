@@ -25,7 +25,6 @@ drop table rag_properties;
 -- non-associated tables
 drop table newsfeed;
 drop table usercookie;
-drop table rollerconfig;
 drop table roller_properties;
 drop table roller_audit_log;
 drop table roller_tasklock;
