@@ -452,9 +452,8 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
-    <definition name=".MemberResign" extends=".tiles-tabbedpage" >
+    <definition name=".MemberResign" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MemberResign.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
     <definition name=".Pings" extends=".tiles-tabbedpage" >
