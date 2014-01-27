@@ -47,10 +47,9 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  * username2, emailaddress2 <br/>
  * usernameN, emailaddressN <br/>
  * 
- * web.xml
- * <url-pattern>/roller-ui/admin/userdata/*</url-pattern>
- * security.xml
- * <intercept-url pattern="/roller-ui/admin/**" access="admin"/>
+ * web.xml: <url-pattern>/roller-ui/authoring/userdata/*</url-pattern>
+ * security.xml: <intercept-url pattern="/roller-ui/authoring/**"
+ * access="admin,editor"/>
  */
 public class UserDataServlet extends HttpServlet {
 
@@ -60,6 +59,8 @@ public class UserDataServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        boolean admin = false;
+
         // This user check can be removed as we protected by spring (see above).
         WeblogRequest weblogRequest = null;
         try {
@@ -67,10 +68,13 @@ public class UserDataServlet extends HttpServlet {
 
             // Make sure we have the correct authority
             User user = weblogRequest.getUser();
-            if (user == null || !user.hasGlobalPermission("admin")) {
-                // user not found or not admin
+            if (user == null) {
+                // user not found
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
+            } else if (user.hasGlobalPermission("admin")) {
+                // admin
+                admin = true;
             }
 
         } catch (Exception e) {
@@ -105,8 +109,13 @@ public class UserDataServlet extends HttpServlet {
                     enabledOnly, offset, length);
             for (User user : users) {
                 response.getWriter().print(user.getUserName());
-                response.getWriter().print(",");
-                response.getWriter().println(user.getEmailAddress());
+                if (admin) {
+                    response.getWriter().print(",");
+                    response.getWriter().println(user.getEmailAddress());
+                } else{
+                    response.getWriter().print(",");
+                    response.getWriter().println(user.getScreenName());
+                }
             }
             response.flushBuffer();
         } catch (WebloggerException e) {

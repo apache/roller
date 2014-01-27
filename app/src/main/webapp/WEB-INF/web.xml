@@ -411,7 +411,7 @@
 
     <servlet-mapping>
         <servlet-name>UserDataServlet</servlet-name>
-        <url-pattern>/roller-ui/admin/userdata/*</url-pattern>
+        <url-pattern>/roller-ui/authoring/userdata/*</url-pattern>
     </servlet-mapping>
 
 
