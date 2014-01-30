@@ -8,7 +8,6 @@ Each menu or menu item is governed by four attributes:
        - admin:    superuser, administers server, etc.
        - login:    allowed to login and save profile
        - weblog:   is allowed to create and user weblogs
-       - comment:  allowed to comment on weblogs
        Use "any" to indicate that role is not required to view item
        
     2) weblogPerms: these are the weblog specific permissions required to view item
@@ -20,113 +19,112 @@ Each menu or menu item is governed by four attributes:
     3) enable property: if true, show this menu
 
     4) disable property: if true, don't show this menu
+    
+    Note : Adding unnecessary authority checks will slow menu rendering
+    
 -->
 <menu-bar>
     
+    <!--  if we already have checked globalPerms="login" we should -->
+    <!--  not need to recheck on each tab item as they are the same -->
     <menu name="tabbedmenu.weblog" weblogPerms="edit_draft" globalPerms="login" >
         
+        <!-- globalPerms="login" -->
         <menu-item action="entryAdd" 
                    name="tabbedmenu.weblog.newEntry" 
-                   globalPerms="login"
                    weblogPerms="edit_draft" 
                    subactions="entryEdit,entryRemove" />
         
+        <!-- globalPerms="login" -->
         <menu-item action="entries" 
                    name="tabbedmenu.weblog.archives" 
-                   globalPerms="login"
                    weblogPerms="post" />
         
+        <!-- globalPerms="login" -->
         <menu-item action="comments" 
                    name="tabbedmenu.admin.commentManagement" 
-                   globalPerms="login"
                    weblogPerms="post" />
         
+        <!-- globalPerms="login" -->
         <menu-item action="categories"   
                    name="tabbedmenu.weblog.categories" 
-                   globalPerms="login"
                    weblogPerms="post"
                    subactions="categoryAdd,categoryEdit,categoryRemove" />
         
+        <!-- globalPerms="login" -->
         <menu-item action="bookmarks"    
                    name="tabbedmenu.bookmarks.allFolders" 
-                   globalPerms="login"
                    weblogPerms="admin"
                    subactions="bookmarkAdd,bookmarkEdit,folderAdd,folderEdit,bookmarksImport" />
 
+        <!-- globalPerms="login" -->
         <menu-item action="mediaFileView"
                    name="tabbedmenu.weblog.mediaFiles"
-                   globalPerms="login"
                    weblogPerms="post"
                    subactions="mediaFileAdd,mediaFileHierarchicalView,mediaFileSearch" />
 
+        <!-- globalPerms="login" -->
         <menu-item action="weblogExport"
                    enabledProperty="weblog.export.enabled"
                    name="tabbedmenu.weblog.export"
-                   globalPerms="login"
                    weblogPerms="admin"
                    subactions="exportEntries,exportResources"/>
 
+        <!-- globalPerms="login" -->
          <menu-item action="referrers"
-                   name="tabbedmenu.weblog.referers" 
-                   globalPerms="login"
+                   name="tabbedmenu.weblog.referers"
                    weblogPerms="admin"
                    enabledProperty="referrers.processing.enabled" />
     </menu>
     
-    
+    <!--  if we already have checked weblogPerms="admin" globalPerms="login" we should -->
+    <!--  not need to recheck on each tab item as they are the same -->
     <menu name="tabbedmenu.design" weblogPerms="admin" globalPerms="login" enabledProperty="themes.customtheme.allowed">
         
-        <menu-item action="themeEdit"         
-                   name="tabbedmenu.website.themes" 
-                   globalPerms="login"
-                   weblogPerms="admin" />
+        <!-- globalPerms="login" weblogPerms="admin" -->
+        <menu-item action="themeEdit"
+                   name="tabbedmenu.website.themes" />
         
-        <menu-item action="stylesheetEdit"         
-                   name="tabbedmenu.design.stylesheet" 
-                   globalPerms="login"
-                   weblogPerms="admin" />
-                   
-        <menu-item action="templates"         
+        <!-- globalPerms="login" weblogPerms="admin" -->
+        <menu-item action="stylesheetEdit"
+                   name="tabbedmenu.design.stylesheet" />
+        
+        <!-- globalPerms="login" weblogPerms="admin" -->
+        <menu-item action="templates"
                    name="tabbedmenu.website.pages" 
-                   globalPerms="login"
-                   weblogPerms="admin" 
                    subactions="templateAdd,templateEdit,templateRemove,templatesRemove" />
-                   
     </menu>
     
     
-    <menu name="tabbedmenu.website" weblogPerms="admin">
+    <!--  if we already have checked weblogPerms="admin" globalPerms="login" we should -->
+    <!--  not need to recheck on each tab item as they are the same -->
+    <menu name="tabbedmenu.website" weblogPerms="admin" globalPerms="login">
         
-        <menu-item action="weblogConfig"       
+        <!-- globalPerms="login" weblogPerms="admin" -->
+        <menu-item action="weblogConfig"
                    name="tabbedmenu.website.settings" 
-                   globalPerms="login"
-                   weblogPerms="admin" 
                    subactions="weblogRemove" />
         
+        <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="members" 
                    name="tabbedmenu.website.members" 
-                   globalPerms="login"
-                   weblogPerms="admin"
                    subactions="invite" 
                    enabledProperty="groupblogging.enabled"/>
         
-        <menu-item action="pings"         
+        <!-- globalPerms="login" weblogPerms="admin" -->
+        <menu-item action="pings"
                    name="tabbedmenu.weblog.pingSetup" 
-                   globalPerms="login"
-                   weblogPerms="admin" 
                    disabledProperty="pings.disablePingUsage" />
         
+        <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="customPingTargets" 
                    name="tabbedmenu.weblog.customPingTargets" 
-                   globalPerms="login"
-                   weblogPerms="admin" 
                    subactions="customPingTargetAdd,customPingTargetEdit"
-                   disabledProperty="pings.disallowCustomTargets" />        
+                   disabledProperty="pings.disallowCustomTargets" />
         
-        <menu-item action="maintenance"      
-                   name="tabbedmenu.website.maintenance" 
-                   globalPerms="login"
-                   weblogPerms="admin" />
+        <!-- globalPerms="login" weblogPerms="admin" -->
+        <menu-item action="maintenance"
+                   name="tabbedmenu.website.maintenance" />
     </menu>
     
 </menu-bar>
