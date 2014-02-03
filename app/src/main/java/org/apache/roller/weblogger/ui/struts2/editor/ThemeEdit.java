@@ -148,8 +148,10 @@ public class ThemeEdit extends UIAction {
                         themeMgr.importTheme(getActionWeblog(), t);
                     } else {
                         // Reset our custom from base
-                        weblog.setCustomStylesheetPath(t.getStylesheet()
-                                .getLink());
+                        if (t.getStylesheet() != null) {
+                            weblog.setCustomStylesheetPath(t.getStylesheet()
+                                    .getLink());
+                        }
                     }
                 } catch (Exception re) {
                     log.error("Error customizing theme for weblog - "
