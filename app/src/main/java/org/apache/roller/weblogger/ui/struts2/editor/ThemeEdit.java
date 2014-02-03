@@ -138,18 +138,24 @@ public class ThemeEdit extends UIAction {
 
                 // do theme import if necessary
                 SharedTheme t = null;
-                if (isImportTheme() && !StringUtils.isEmpty(getImportThemeId())) {
-                    try {
-                        ThemeManager themeMgr = WebloggerFactory.getWeblogger()
-                                .getThemeManager();
-                        t = themeMgr.getTheme(getImportThemeId());
+
+                try {
+                    ThemeManager themeMgr = WebloggerFactory.getWeblogger()
+                            .getThemeManager();
+                    t = themeMgr.getTheme(getImportThemeId());
+                    if (isImportTheme()
+                            && !StringUtils.isEmpty(getImportThemeId())) {
                         themeMgr.importTheme(getActionWeblog(), t);
-                    } catch (Exception re) {
-                        log.error("Error customizing theme for weblog - "
-                                + getActionWeblog().getHandle(), re);
-                        // TODO: i18n
-                        addError("Error importing theme");
+                    } else {
+                        // Reset our custom from base
+                        weblog.setCustomStylesheetPath(t.getStylesheet()
+                                .getLink());
                     }
+                } catch (Exception re) {
+                    log.error("Error customizing theme for weblog - "
+                            + getActionWeblog().getHandle(), re);
+                    // TODO: i18n
+                    addError("Error importing theme");
                 }
 
                 if (!hasActionErrors()) {
@@ -226,7 +232,8 @@ public class ThemeEdit extends UIAction {
                             .getWeblogManager();
 
                     // Remove old style sheet
-                    if (!originalTheme.equals(getThemeId())
+                    if (!WeblogTheme.CUSTOM.equals(originalTheme)
+                            && !originalTheme.equals(getThemeId())
                             && getActionWeblog().getTheme().getStylesheet() != null) {
 
                         WeblogTemplate stylesheet = mgr.getPageByLink(

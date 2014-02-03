@@ -39,92 +39,92 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  */
 public class TemplatesRemove extends UIAction {
 
-	private static final long serialVersionUID = 895186156151331087L;
-	private static Log log = LogFactory.getLog(TemplatesRemove.class);
+    private static final long serialVersionUID = 895186156151331087L;
+    private static Log log = LogFactory.getLog(TemplatesRemove.class);
 
-	// Templates to remove
-	private String[] idSelections = null;
+    // Templates to remove
+    private String[] idSelections = null;
 
-	// Limit updates to just this set of comma-separated IDs
-	private String ids = null;
+    // Limit updates to just this set of comma-separated IDs
+    private String ids = null;
 
-	// list of templates to display
-	private List<WeblogTemplate> templates = Collections.emptyList();;
+    // list of templates to display
+    private List<WeblogTemplate> templates = Collections.emptyList();;
 
-	public TemplatesRemove() {
-		this.actionName = "templatesRemove";
-		this.desiredMenu = "editor";
-		this.pageTitle = "editPages.title.removeOK";
-	}
+    public TemplatesRemove() {
+        this.actionName = "templatesRemove";
+        this.desiredMenu = "editor";
+        this.pageTitle = "editPages.title.removeOK";
+    }
 
-	@Override
-	public List<String> requiredWeblogPermissionActions() {
-		return Collections.singletonList(WeblogPermission.ADMIN);
-	}
+    @Override
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
+    }
 
-	public void myPrepare() {
+    public void myPrepare() {
 
         if (getIdSelections() != null) {
 
-			// query for templates list
-			try {
+            // query for templates list
+            try {
 
-				WeblogManager mgr = WebloggerFactory.getWeblogger()
-						.getWeblogManager();
+                WeblogManager mgr = WebloggerFactory.getWeblogger()
+                        .getWeblogManager();
 
-				List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
-				WeblogTemplate template = null;
+                List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
+                WeblogTemplate template = null;
 
-				String[] idsToDelete = getIdSelections();
-				if (idsToDelete != null && idsToDelete.length > 0) {
+                String[] idsToDelete = getIdSelections();
+                if (idsToDelete != null && idsToDelete.length > 0) {
 
-					for (int i = 0; i < idsToDelete.length; i++) {
-						if (!idsToDelete[i].equals("")) {
-							template = mgr.getPage(idsToDelete[i]);
-							if (template != null) {
-								pages.add(template);
-							}
-						}
-					}
+                    for (int i = 0; i < idsToDelete.length; i++) {
+                        if (!idsToDelete[i].equals("")) {
+                            template = mgr.getPage(idsToDelete[i]);
+                            if (template != null) {
+                                pages.add(template);
+                            }
+                        }
+                    }
 
-				}
+                }
 
-				// Set page data
-				setTemplates(pages);
-				setIds(Utilities.stringArrayToString(idsToDelete, ","));
+                // Set page data
+                setTemplates(pages);
+                setIds(Utilities.stringArrayToString(idsToDelete, ","));
 
-				// Flush for operation
-				WebloggerFactory.getWeblogger().flush();
+                // Flush for operation
+                WebloggerFactory.getWeblogger().flush();
 
-			} catch (Exception ex) {
-				log.error("Error getting templates for weblog - "
-						+ getActionWeblog().getHandle(), ex);
-				addError("error.unexpected");
-			}
+            } catch (Exception ex) {
+                log.error("Error getting templates for weblog - "
+                        + getActionWeblog().getHandle(), ex);
+                addError("error.unexpected");
+            }
 
-		}
-	}
+        }
+    }
 
-	/**
-	 * Display the remove template confirmation.
-	 */
-	public String execute() {
+    /**
+     * Display the remove template confirmation.
+     */
+    public String execute() {
 
-		if (getIds() != null && getTemplates() != null
-				&& getTemplates().size() > 0) {
-			return "confirm";
-		} else {
-			return SUCCESS;
-		}
+        if (getIds() != null && getTemplates() != null
+                && getTemplates().size() > 0) {
+            return "confirm";
+        } else {
+            return SUCCESS;
+        }
 
-	}
+    }
 
-	/**
-	 * Remove Selected templates
-	 */
-	public String remove() {
+    /**
+     * Remove Selected templates
+     */
+    public String remove() {
 
-		if (getIds() != null) {
+        if (getIds() != null) {
             try {
 
                 String[] idsToDelete = Utilities.stringToStringArray(getIds(),
@@ -143,8 +143,8 @@ public class TemplatesRemove extends UIAction {
                             template = mgr.getPage(idsToDelete[i]);
                             if (!template.isRequired()
                                     || !WeblogTemplate.ACTION_CUSTOM
-                                    .equals(getActionWeblog()
-                                            .getEditorTheme())) {
+                                            .equals(getActionWeblog()
+                                                    .getEditorTheme())) {
 
                                 // if weblog template remove custom style sheet
                                 // also
@@ -157,12 +157,12 @@ public class TemplatesRemove extends UIAction {
                                     // Delete style sheet if the same name
                                     if (stylesheet != null
                                             && getActionWeblog().getTheme()
-                                            .getStylesheet() != null
+                                                    .getStylesheet() != null
                                             && stylesheet.getLink().equals(
-                                            getActionWeblog()
-                                                    .getTheme()
-                                                    .getStylesheet()
-                                                    .getLink())) {
+                                                    getActionWeblog()
+                                                            .getTheme()
+                                                            .getStylesheet()
+                                                            .getLink())) {
                                         // Same so OK to delete
                                         WeblogTemplate css = mgr.getPageByLink(
                                                 getActionWeblog(),
@@ -206,63 +206,63 @@ public class TemplatesRemove extends UIAction {
             }
         }
 
-		return "confirm";
-	}
+        return "confirm";
+    }
 
-	/**
-	 * Cancel.
-	 * 
-	 * @return the string
-	 */
-	public String cancel() {
-		return "cancel";
-	}
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return "cancel";
+    }
 
-	/**
-	 * Gets the templates.
-	 * 
-	 * @return the templates
-	 */
-	public List<WeblogTemplate> getTemplates() {
-		return templates;
-	}
+    /**
+     * Gets the templates.
+     * 
+     * @return the templates
+     */
+    public List<WeblogTemplate> getTemplates() {
+        return templates;
+    }
 
-	/**
-	 * Sets the templates.
-	 * 
-	 * @param templates
-	 *            the new templates
-	 */
-	public void setTemplates(List<WeblogTemplate> templates) {
-		this.templates = templates;
-	}
+    /**
+     * Sets the templates.
+     * 
+     * @param templates
+     *            the new templates
+     */
+    public void setTemplates(List<WeblogTemplate> templates) {
+        this.templates = templates;
+    }
 
-	/**
-	 * Select check boxes for deleting records
-	 */
-	public String[] getIdSelections() {
-		return idSelections.clone();
-	}
+    /**
+     * Select check boxes for deleting records
+     */
+    public String[] getIdSelections() {
+        return idSelections;
+    }
 
-	/**
-	 * Select check boxes for deleting records
-	 */
-	public void setIdSelections(String[] idSelections) {
-		this.idSelections = idSelections.clone();
-	}
+    /**
+     * Select check boxes for deleting records
+     */
+    public void setIdSelections(String[] idSelections) {
+        this.idSelections = idSelections;
+    }
 
-	/**
-	 * Comma separated list if ids to remove
-	 */
-	public String getIds() {
-		return ids;
-	}
+    /**
+     * Comma separated list if ids to remove
+     */
+    public String getIds() {
+        return ids;
+    }
 
-	/**
-	 * Comma separated list if ids to remove
-	 */
-	public void setIds(String ids) {
-		this.ids = ids;
-	}
+    /**
+     * Comma separated list if ids to remove
+     */
+    public void setIds(String ids) {
+        this.ids = ids;
+    }
 
 }
