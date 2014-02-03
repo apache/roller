@@ -44,166 +44,169 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  */
 public class StylesheetEdit extends UIAction {
 
-	private static final long serialVersionUID = 4657591015852311907L;
+    private static final long serialVersionUID = 4657591015852311907L;
 
-	private static Log log = LogFactory.getLog(StylesheetEdit.class);
+    private static Log log = LogFactory.getLog(StylesheetEdit.class);
     private static final String MOBILE_THEME_TYPE = "mobile";
     private static final String STANDARD_THEME_TYPE = "standard";
 
-	// the template we are working on
-	private WeblogTemplate template = null;
+    // the template we are working on
+    private WeblogTemplate template = null;
 
-	// the contents of the stylesheet override
-	private String contentsStandard = null;
-	private String contentsMobile = null;
+    // the contents of the stylesheet override
+    private String contentsStandard = null;
+    private String contentsMobile = null;
 
-	// Do we have a custom stylesheet already for a custom theme
-	private boolean customStylesheet = false;
+    // Do we have a custom stylesheet already for a custom theme
+    private boolean customStylesheet = false;
 
-	public StylesheetEdit() {
-		this.actionName = "stylesheetEdit";
-		this.desiredMenu = "editor";
-		this.pageTitle = "stylesheetEdit.title";
-	}
+    public StylesheetEdit() {
+        this.actionName = "stylesheetEdit";
+        this.desiredMenu = "editor";
+        this.pageTitle = "stylesheetEdit.title";
+    }
 
-	@Override
-	public List<String> requiredWeblogPermissionActions() {
-		return Collections.singletonList(WeblogPermission.ADMIN);
-	}
+    @Override
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
+    }
 
-	@Override
-	public void myPrepare() {
+    @Override
+    public void myPrepare() {
 
-		ThemeTemplate stylesheet = null;
-		try {
-			stylesheet = getActionWeblog().getTheme().getStylesheet();
-		} catch (WebloggerException ex) {
-			log.error("Error looking up stylesheet on weblog - "
-					+ getActionWeblog().getHandle(), ex);
-		}
+        ThemeTemplate stylesheet = null;
+        try {
+            stylesheet = getActionWeblog().getTheme().getStylesheet();
+        } catch (WebloggerException ex) {
+            log.error("Error looking up stylesheet on weblog - "
+                    + getActionWeblog().getHandle(), ex);
+        }
 
-		if (stylesheet != null) {
-			log.debug("custom stylesheet path is - " + stylesheet.getLink());
-			try {
-				setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
-						.getPageByLink(getActionWeblog(), stylesheet.getLink()));
+        if (stylesheet != null) {
+            log.debug("custom stylesheet path is - " + stylesheet.getLink());
+            try {
+                setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getPageByLink(getActionWeblog(), stylesheet.getLink()));
 
-				if (getTemplate() == null) {
-					log.debug("custom stylesheet not found, creating it");
+                if (getTemplate() == null) {
+                    log.debug("custom stylesheet not found, creating it");
 
-					// template doesn't exist yet, so create it
-					WeblogTemplate stylesheetTmpl = new WeblogTemplate();
-					stylesheetTmpl.setWebsite(getActionWeblog());
-					stylesheetTmpl.setAction(ThemeTemplate.ACTION_CUSTOM);
-					stylesheetTmpl.setName(stylesheet.getName());
-					stylesheetTmpl.setDescription(stylesheet.getDescription());
-					stylesheetTmpl.setLink(stylesheet.getLink());
-					stylesheetTmpl.setContents(stylesheet.getContents());
-					stylesheetTmpl.setHidden(false);
-					stylesheetTmpl.setNavbar(false);
-					stylesheetTmpl.setLastModified(new Date());
-					stylesheetTmpl.setTemplateLanguage(stylesheet
-							.getTemplateLanguage());
+                    // template doesn't exist yet, so create it
+                    WeblogTemplate stylesheetTmpl = new WeblogTemplate();
+                    stylesheetTmpl.setWebsite(getActionWeblog());
+                    stylesheetTmpl.setAction(ThemeTemplate.ACTION_CUSTOM);
+                    stylesheetTmpl.setName(stylesheet.getName());
+                    stylesheetTmpl.setDescription(stylesheet.getDescription());
+                    stylesheetTmpl.setLink(stylesheet.getLink());
+                    stylesheetTmpl.setContents(stylesheet.getContents());
+                    stylesheetTmpl.setHidden(false);
+                    stylesheetTmpl.setNavbar(false);
+                    stylesheetTmpl.setLastModified(new Date());
+                    stylesheetTmpl.setTemplateLanguage(stylesheet
+                            .getTemplateLanguage());
 
-					// create template codes for available template code Types
-					WeblogThemeTemplateCode standardTemplateCode = new WeblogThemeTemplateCode(
-							stylesheetTmpl.getId(), STANDARD_THEME_TYPE);
-					standardTemplateCode.setTemplate(stylesheetTmpl
-							.getContents());
-					standardTemplateCode.setTemplateLanguage(stylesheetTmpl
-							.getTemplateLanguage());
+                    // create template codes for available template code Types
+                    WeblogThemeTemplateCode standardTemplateCode = new WeblogThemeTemplateCode(
+                            stylesheetTmpl.getId(), STANDARD_THEME_TYPE);
+                    standardTemplateCode.setTemplate(stylesheetTmpl
+                            .getContents());
+                    standardTemplateCode.setTemplateLanguage(stylesheetTmpl
+                            .getTemplateLanguage());
 
-					WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(
-							stylesheetTmpl.getId(), MOBILE_THEME_TYPE);
-					mobileTemplateCode
-							.setTemplate(stylesheetTmpl.getContents());
-					mobileTemplateCode.setTemplateLanguage(stylesheetTmpl
-							.getTemplateLanguage());
+                    WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(
+                            stylesheetTmpl.getId(), MOBILE_THEME_TYPE);
+                    mobileTemplateCode
+                            .setTemplate(stylesheetTmpl.getContents());
+                    mobileTemplateCode.setTemplateLanguage(stylesheetTmpl
+                            .getTemplateLanguage());
 
-					WebloggerFactory.getWeblogger().getWeblogManager()
-							.saveTemplateCode(standardTemplateCode);
-					WebloggerFactory.getWeblogger().getWeblogManager()
-							.saveTemplateCode(mobileTemplateCode);
+                    WebloggerFactory.getWeblogger().getWeblogManager()
+                            .saveTemplateCode(standardTemplateCode);
+                    WebloggerFactory.getWeblogger().getWeblogManager()
+                            .saveTemplateCode(mobileTemplateCode);
 
-					WebloggerFactory.getWeblogger().getWeblogManager()
-							.savePage(stylesheetTmpl);
-					WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.getWeblogger().getWeblogManager()
+                            .savePage(stylesheetTmpl);
+                    WebloggerFactory.getWeblogger().flush();
 
-					setTemplate(stylesheetTmpl);
-				}
+                    setTemplate(stylesheetTmpl);
 
-				// See if we have a custom style sheet from a custom theme.
-				if (!WeblogTheme.CUSTOM.equals(getActionWeblog()
-						.getEditorTheme())
-						&& getActionWeblog().getTheme().getStylesheet() != null) {
+                    // success message
+                    addMessage("stylesheetEdit.create.success");
+                }
 
-					ThemeTemplate override = WebloggerFactory
-							.getWeblogger()
-							.getWeblogManager()
-							.getPageByLink(
-									getActionWeblog(),
-									getActionWeblog().getTheme()
-											.getStylesheet().getLink());
+                // See if we have a custom style sheet from a custom theme.
+                if (!WeblogTheme.CUSTOM.equals(getActionWeblog()
+                        .getEditorTheme())
+                        && getActionWeblog().getTheme().getStylesheet() != null) {
 
-					if (override != null) {
-						customStylesheet = true;
-					}
-				}
+                    ThemeTemplate override = WebloggerFactory
+                            .getWeblogger()
+                            .getWeblogManager()
+                            .getPageByLink(
+                                    getActionWeblog(),
+                                    getActionWeblog().getTheme()
+                                            .getStylesheet().getLink());
 
-			} catch (WebloggerException ex) {
-				log.error(
-						"Error finding/adding stylesheet tempalate from weblog - "
-								+ getActionWeblog().getHandle(), ex);
-			}
-		}
-	}
+                    if (override != null) {
+                        customStylesheet = true;
+                    }
+                }
 
-	/**
-	 * Show stylesheet edit page.
-	 */
-	public String execute() {
+            } catch (WebloggerException ex) {
+                log.error(
+                        "Error finding/adding stylesheet tempalate from weblog - "
+                                + getActionWeblog().getHandle(), ex);
+            }
+        }
+    }
 
-		if (getTemplate() == null) {
-			return ERROR;
-		}
+    /**
+     * Show stylesheet edit page.
+     */
+    public String execute() {
 
-		try {
+        if (getTemplate() == null) {
+            return ERROR;
+        }
 
-			if (getTemplate().getTemplateCode(STANDARD_THEME_TYPE) != null) {
-				setContentsStandard(getTemplate().getTemplateCode(STANDARD_THEME_TYPE)
-						.getTemplate());
-			} else {
-				setContentsStandard(getTemplate().getContents());
-			}
-			if (getTemplate().getTemplateCode(MOBILE_THEME_TYPE) != null) {
-				setContentsMobile(getTemplate().getTemplateCode(MOBILE_THEME_TYPE)
-						.getTemplate());
-			}
+        try {
 
-			if (log.isDebugEnabled()) {
+            if (getTemplate().getTemplateCode(STANDARD_THEME_TYPE) != null) {
+                setContentsStandard(getTemplate().getTemplateCode(
+                        STANDARD_THEME_TYPE).getTemplate());
+            } else {
+                setContentsStandard(getTemplate().getContents());
+            }
+            if (getTemplate().getTemplateCode(MOBILE_THEME_TYPE) != null) {
+                setContentsMobile(getTemplate().getTemplateCode(
+                        MOBILE_THEME_TYPE).getTemplate());
+            }
+
+            if (log.isDebugEnabled()) {
                 log.debug("Standard: " + getContentsStandard() + " Mobile: "
                         + getContentsMobile());
             }
 
-		} catch (WebloggerException e) {
-			log.error("Error loading Weblog template codes for stylesheet", e);
-		}
+        } catch (WebloggerException e) {
+            log.error("Error loading Weblog template codes for stylesheet", e);
+        }
 
-		return INPUT;
-	}
+        return INPUT;
+    }
 
-	/**
-	 * Save an existing stylesheet.
-	 */
-	public String save() {
+    /**
+     * Save an existing stylesheet.
+     */
+    public String save() {
 
-		if (getTemplate() == null) {
-			// TODO: i18n
-			addError("Unable to locate stylesheet template");
-			return ERROR;
-		}
+        if (getTemplate() == null) {
+            // TODO: i18n
+            addError("Unable to locate stylesheet template");
+            return ERROR;
+        }
 
-		if (!hasActionErrors()) {
+        if (!hasActionErrors()) {
             try {
 
                 WeblogTemplate stylesheet = getTemplate();
@@ -262,28 +265,28 @@ public class StylesheetEdit extends UIAction {
             }
         }
 
-		return INPUT;
-	}
+        return INPUT;
+    }
 
-	/**
-	 * Revert the stylesheet to its original state.
-	 */
-	public String revert() {
+    /**
+     * Revert the stylesheet to its original state.
+     */
+    public String revert() {
 
-		if (getTemplate() == null) {
-			// TODO: i18n
-			addError("Unable to locate stylesheet template");
-			return ERROR;
-		}
+        if (getTemplate() == null) {
+            // TODO: i18n
+            addError("Unable to locate stylesheet template");
+            return ERROR;
+        }
 
-		// make sure we are still using a shared theme so that reverting is
-		// possible
-		if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-			// TODO: i18n
-			addError("stylesheetEdit.error.customTheme");
-		}
+        // make sure we are still using a shared theme so that reverting is
+        // possible
+        if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
+            // TODO: i18n
+            addError("stylesheetEdit.error.customTheme");
+        }
 
-		if (!hasActionErrors()) {
+        if (!hasActionErrors()) {
             try {
 
                 WeblogTemplate stylesheet = getTemplate();
@@ -338,28 +341,28 @@ public class StylesheetEdit extends UIAction {
             }
         }
 
-		return execute();
-	}
+        return execute();
+    }
 
-	/**
-	 * set theme to default stylesheet, ie delete it.
-	 */
-	public String delete() {
+    /**
+     * set theme to default stylesheet, ie delete it.
+     */
+    public String delete() {
 
-		if (getTemplate() == null) {
-			log.error("Unable to locate stylesheet template");
-			addError("error.recordnotfound");
-			return ERROR;
-		}
+        if (getTemplate() == null) {
+            log.error("Unable to locate stylesheet template");
+            addError("error.recordnotfound");
+            return ERROR;
+        }
 
-		// make sure we are still using a shared theme so that deleting is
-		// possible
-		if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-			log.error("Unable to delete stylesheet");
-			addError("stylesheetEdit.error.customTheme");
-		}
+        // make sure we are still using a shared theme so that deleting is
+        // possible
+        if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
+            log.error("Unable to delete stylesheet");
+            addError("stylesheetEdit.error.customTheme");
+        }
 
-		if (!hasActionErrors()) {
+        if (!hasActionErrors()) {
             try {
 
                 WeblogTemplate stylesheet = getTemplate();
@@ -397,92 +400,92 @@ public class StylesheetEdit extends UIAction {
             }
         }
 
-		return "delete";
+        return "delete";
 
-	}
+    }
 
-	/**
-	 * Checks if is custom theme.
-	 * 
-	 * @return true, if is custom theme
-	 */
-	public boolean isCustomTheme() {
-		return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
-	}
+    /**
+     * Checks if is custom theme.
+     * 
+     * @return true, if is custom theme
+     */
+    public boolean isCustomTheme() {
+        return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
+    }
 
-	/**
-	 * Gets the template.
-	 * 
-	 * @return the template
-	 */
-	public WeblogTemplate getTemplate() {
-		return template;
-	}
+    /**
+     * Gets the template.
+     * 
+     * @return the template
+     */
+    public WeblogTemplate getTemplate() {
+        return template;
+    }
 
-	/**
-	 * Sets the template.
-	 * 
-	 * @param template
-	 *            the new template
-	 */
-	public void setTemplate(WeblogTemplate template) {
-		this.template = template;
-	}
+    /**
+     * Sets the template.
+     * 
+     * @param template
+     *            the new template
+     */
+    public void setTemplate(WeblogTemplate template) {
+        this.template = template;
+    }
 
-	/**
-	 * Gets the contents standard.
-	 * 
-	 * @return the contents standard
-	 */
-	public String getContentsStandard() {
-		return this.contentsStandard;
-	}
+    /**
+     * Gets the contents standard.
+     * 
+     * @return the contents standard
+     */
+    public String getContentsStandard() {
+        return this.contentsStandard;
+    }
 
-	/**
-	 * Sets the contents standard.
-	 * 
-	 * @param contents
-	 *            the new contents standard
-	 */
-	public void setContentsStandard(String contents) {
-		this.contentsStandard = contents;
-	}
+    /**
+     * Sets the contents standard.
+     * 
+     * @param contents
+     *            the new contents standard
+     */
+    public void setContentsStandard(String contents) {
+        this.contentsStandard = contents;
+    }
 
-	/**
-	 * Gets the contents mobile.
-	 * 
-	 * @return the contents mobile
-	 */
-	public String getContentsMobile() {
-		return this.contentsMobile;
-	}
+    /**
+     * Gets the contents mobile.
+     * 
+     * @return the contents mobile
+     */
+    public String getContentsMobile() {
+        return this.contentsMobile;
+    }
 
-	/**
-	 * Sets the contents mobile.
-	 * 
-	 * @param contents
-	 *            the new contents mobile
-	 */
-	public void setContentsMobile(String contents) {
-		this.contentsMobile = contents;
-	}
+    /**
+     * Sets the contents mobile.
+     * 
+     * @param contents
+     *            the new contents mobile
+     */
+    public void setContentsMobile(String contents) {
+        this.contentsMobile = contents;
+    }
 
-	/**
-	 * Checks if is custom stylesheet.
-	 * 
-	 * @return true, if checks if is custom stylesheet
-	 */
-	public boolean isCustomStylesheet() {
-		return customStylesheet;
-	}
+    /**
+     * Checks if is custom stylesheet.
+     * 
+     * @return true, if checks if is custom stylesheet
+     */
+    public boolean isCustomStylesheet() {
+        return customStylesheet;
+    }
 
-	/**
-	 * Sets the custom stylesheet.
-	 * 
-	 * @param customStylesheet
-	 *            the custom stylesheet
-	 */
-	public void setCustomStylesheet(boolean customStylesheet) {
-		this.customStylesheet = customStylesheet;
-	}
+    /**
+     * Sets the custom stylesheet.
+     * 
+     * @param customStylesheet
+     *            the custom stylesheet
+     */
+    public void setCustomStylesheet(boolean customStylesheet) {
+        this.customStylesheet = customStylesheet;
+    }
 }
