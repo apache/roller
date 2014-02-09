@@ -152,30 +152,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 cat.getWebsite());
     }
 
-    // updates the paths of all descendents of the given category
-    private void updatePathTree(WeblogCategory cat)
-    throws WebloggerException {
-        
-        log.debug("Updating path tree for category "+cat.getPath());
-        
-        for (WeblogCategory childCat : cat.getWeblogCategories()) {
-            log.debug("OLD child category path was "+childCat.getPath());
-
-            // update path and save
-            if("/".equals(cat.getPath())) {
-                childCat.setPath("/" + childCat.getName());
-            } else {
-                childCat.setPath(cat.getPath() + "/" + childCat.getName());
-            }
-            saveWeblogCategory(childCat);
-
-            log.debug("NEW child category path is "+ childCat.getPath());
-
-            // then make recursive call to update this cats children
-            updatePathTree(childCat);
-        }
-    }
-    
     /**
      * @inheritDoc
      */
@@ -394,7 +370,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             }
         }
         
-        if (catName != null && !catName.trim().equals("/")) {
+        if (catName != null) {
             category = getWeblogCategoryByPath(current.getWebsite(), catName);
             if (category != null) {
                 params.add(size++, category);
@@ -788,8 +764,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // ensure that no sibling categories share the same name
         WeblogCategory parent = cat.getParent();
         if (null != parent) {
-            return (getWeblogCategoryByPath(
-                    cat.getWebsite(), cat.getPath()) != null);
+            return (getWeblogCategoryByName(
+                    cat.getWebsite(), cat.getName()) != null);
         }
         
         return false;
@@ -952,32 +928,30 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public WeblogCategory getWeblogCategoryByPath(Weblog website,
-            String categoryPath) throws WebloggerException {
-        return getWeblogCategoryByPath(website, null, categoryPath);
+    public WeblogCategory getWeblogCategoryByName(Weblog website,
+            String categoryName) throws WebloggerException {
+        return getWeblogCategoryByName(website, null, categoryName);
     }
-    
+
+    public WeblogCategory getWeblogCategoryByPath(Weblog website,
+                                                  String categoryPath) throws WebloggerException {
+        return getWeblogCategoryByName(website, null, categoryPath.substring(1));
+    }
+
     /**
      * @inheritDoc
      */
     // TODO: ditch this method in favor of getWeblogCategoryByPath(weblog, path)
-    public WeblogCategory getWeblogCategoryByPath(Weblog website,
-            WeblogCategory category, String path) throws WebloggerException {
+    public WeblogCategory getWeblogCategoryByName(Weblog website,
+            WeblogCategory category, String name) throws WebloggerException {
         
-        if (path == null || path.trim().equals("/")) {
+        if (name == null) {
             return getRootWeblogCategory(website);
         } else {
-            String catPath = path;
-            
-            // all cat paths must begin with a '/'
-            if(!catPath.startsWith("/")) {
-                catPath = "/"+catPath;
-            }
-            
             // now just do simple lookup by path
             Query q = strategy.getNamedQuery(
-                    "WeblogCategory.getByPath&Website");
-            q.setParameter(1, catPath);
+                    "WeblogCategory.getByName&Website");
+            q.setParameter(1, name);
             q.setParameter(2, website);
             try {
                 return (WeblogCategory)q.getSingleResult();

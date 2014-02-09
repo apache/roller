@@ -550,6 +550,9 @@
                             <value>${basedir}/target</value>
                         </property>
                     </systemProperties>
+                    <!--excludes>
+                        <exclude>**/??.java</exclude>
+                    </excludes-->
                 </configuration>
             </plugin>
 

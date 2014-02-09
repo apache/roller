@@ -91,10 +91,12 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         WeblogCategory testCat = new WeblogCategory(testWeblog, null, "root", "root", null);
         assertTrue(root.equals(testCat));
-        
-        testCat = new WeblogCategory(testWeblog, root, "root", "root", null);
+        mgr.removeWeblogCategory(testCat);
+
+        testCat = new WeblogCategory(testWeblog, root, "other name", "root", null);
         assertFalse(root.equals(testCat));
-        
+        mgr.removeWeblogCategory(testCat);
+
         log.info("END");
     }
     
@@ -175,13 +177,10 @@ public class WeblogCategoryCRUDTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogCategory root = mgr.getRootWeblogCategory(testWeblog);
         
-        // add a small category tree /subcat/subcat2
+        // add a category child item /subcat
         WeblogCategory subcat = new WeblogCategory(testWeblog, root, "subcatTest1", null, null);
         root.addCategory(subcat);
         mgr.saveWeblogCategory(subcat);
-        WeblogCategory subcat2 = new WeblogCategory(testWeblog, subcat, "subcatTest2", null, null);
-        subcat.addCategory(subcat2);
-        mgr.saveWeblogCategory(subcat2);
         TestUtils.endSession(true);
         
         // check that subcat tree can be navigated
@@ -190,10 +189,8 @@ public class WeblogCategoryCRUDTest extends TestCase {
         assertEquals(1, root.getWeblogCategories().size());
         subcat = (WeblogCategory) root.getWeblogCategories().iterator().next();
         assertEquals("subcatTest1", subcat.getName());
-        assertEquals(1, subcat.getWeblogCategories().size());
-        subcat2 = (WeblogCategory) subcat.getWeblogCategories().iterator().next();
-        assertEquals("subcatTest2", subcat2.getName());
-        
+        assertEquals(0, subcat.getWeblogCategories().size());
+
         // now delete category and subcats should be deleted by cascade
         mgr.removeWeblogCategory(subcat);
         TestUtils.endSession(true);
@@ -202,7 +199,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = mgr.getRootWeblogCategory(testWeblog);
         assertEquals(0, root.getWeblogCategories().size());
-        assertNull(mgr.getWeblogCategoryByPath(TestUtils.getManagedWebsite(testWeblog), "/subcatTest1/subcatTest2"));
+        assertNull(mgr.getWeblogCategoryByPath(TestUtils.getManagedWebsite(testWeblog), "/subcatTest1"));
         
         log.info("END");
     }

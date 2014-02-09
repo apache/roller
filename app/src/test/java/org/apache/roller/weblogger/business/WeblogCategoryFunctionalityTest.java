@@ -180,28 +180,28 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     /**
      * Lookup category by path.
      */
-    public void testLookupCategoryByPath() throws Exception {
+    public void testLookupCategoryByName() throws Exception {
         
         log.info("BEGIN");
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogCategory cat = mgr.getWeblogCategoryByPath(testWeblog, "/catTest-cat1");
+        WeblogCategory cat = mgr.getWeblogCategoryByName(testWeblog, "catTest-cat1");
         assertNotNull(cat);
         assertEquals(cat, cat1);
         
-        cat = mgr.getWeblogCategoryByPath(testWeblog, "/catTest-cat1/catTest-cat2/catTest-cat3");
+        cat = mgr.getWeblogCategoryByName(testWeblog, "catTest-cat3");
         assertNotNull(cat);
         assertEquals(cat, cat3);
         
         // test lazy lookup, specifying just a name without slashes
-        cat = mgr.getWeblogCategoryByPath(testWeblog, "catTest-cat1");
+        cat = mgr.getWeblogCategoryByName(testWeblog, "catTest-cat1");
         assertNotNull(cat);
         assertEquals(cat, cat1);
         
         // if no path is specified we should get the root category
-        cat = mgr.getWeblogCategoryByPath(testWeblog, null);
+        cat = mgr.getWeblogCategoryByName(testWeblog, null);
         assertNotNull(cat);
         assertEquals(cat.getPath(), "/");
         

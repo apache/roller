@@ -241,15 +241,24 @@ public interface WeblogEntryManager {
     
     
     /**
-     * Get category specified by website and categoryPath.
+     * Get category specified by website and name.
      * @param website      Website of WeblogCategory.
-     * @param categoryPath Path of WeblogCategory, relative to category root.
+     * @param categoryName Name of WeblogCategory
+     */
+    WeblogCategory getWeblogCategoryByName(Weblog website,
+            String categoryName) throws WebloggerException;
+
+
+    /**
+     * Get category specified by website and name. Will be removed soon, as all categories
+     * are now top-level.
+     * @param website      Website of WeblogCategory.
+     * @param categoryName Path of WeblogCategory
      */
     WeblogCategory getWeblogCategoryByPath(Weblog website,
-            String categoryPath) throws WebloggerException;
-    
-    
-    /** 
+                                           String categoryPath) throws WebloggerException;
+
+    /**
      * Get WebLogCategory objects for a website. 
      */
     List<WeblogCategory> getWeblogCategories(Weblog website, boolean includeRoot)

@@ -46,8 +46,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     private String name = null;
     private String description = null;
     private String image = null;
-    private String path = null;
-    
+
     // associations
     private Weblog website = null;
     private WeblogCategory parentCategory = null;
@@ -69,15 +68,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         
         this.website = website;
         this.parentCategory = parent;
-
-        // calculate path
-        if(parent == null) {
-            this.path = "/";
-        } else if("/".equals(parent.getPath())) {
-            this.path = "/"+name;
-        } else {
-            this.path = parent.getPath() + "/" + name;
-        }
     }
     
     
@@ -87,7 +77,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
-        buf.append(", ").append(getPath());
+        buf.append(", ").append(getName());
         buf.append("}");
         return buf.toString();
     }
@@ -101,8 +91,8 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         if (other instanceof WeblogCategory) {
             WeblogCategory o = (WeblogCategory)other;
             return new EqualsBuilder()
-                .append(getPath(), o.getPath()) 
-                //.append(getWebsite(), o.getWebsite()) 
+                .append(getName(), o.getName())
+                .append(getWebsite(), o.getWebsite())
                 .isEquals();
         }        
         return false;
@@ -110,8 +100,8 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         
     public int hashCode() {
         return new HashCodeBuilder()
-            .append(getPath())
-            //.append(getWebsite())
+            .append(getName())
+            .append(getWebsite())
             .toHashCode();
     }
     
@@ -171,17 +161,13 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     
     
     /**
-     * The full path to this category in the hierarchy.
+     * The full path to this category in the hierarchy.  Will be removed soon,
+     * as all categories are now top-level, use getName() going forward.
      */
     public String getPath() {
-        return this.path;
+        return this.parentCategory != null ? ("/" + name) : "/";
     }
-    
-    public void setPath(String path) {
-        this.path = path;
-    }
-    
-    
+
     /**
      * Get the weblog which owns this category.
      */
@@ -204,7 +190,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     public void setParent(WeblogCategory parent) {
         this.parentCategory = parent;
     }
-    
+
     
     /**
      * Get child categories of this category.
@@ -276,16 +262,13 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
      */
     public boolean descendentOf(WeblogCategory ancestor) {
         
-        // if this is a root node then we can't be a descendent
-        if(getParent() == null) {
-            return false;
+        if (parentCategory == ancestor) {
+            return true;
         } else {
-            // if our path starts with our parents path then we are a descendent
-            return getPath().startsWith(ancestor.getPath());
+            return false;
         }
-
     }
-    
+
     
     /**
      * Determine if category is in use. Returns true if any weblog entries
@@ -300,48 +283,15 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     }
     
     
+
     // convenience method for updating the category name, which triggers a path tree rebuild
     public void updateName(String newName) throws WebloggerException {
         
         // update name
         setName(newName);
-        
-        // calculate path
-        if(getParent() == null) {
-            setPath("/");
-        } else if("/".equals(getParent().getPath())) {
-            setPath("/"+getName());
-        } else {
-            setPath(getParent().getPath() + "/" + getName());
-        }
-        
+
         // update path tree for all children
-        updatePathTree(this);
+        WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogCategory(this);
     }
-    
-    
-    // updates the paths of all descendents of the given category
-    public static void updatePathTree(WeblogCategory cat) 
-            throws WebloggerException {
-        
-        log.debug("Updating path tree for category "+cat.getPath());
-        
-        for (WeblogCategory childCat : cat.getWeblogCategories()) {
-            log.debug("OLD child category path was "+childCat.getPath());
-            
-            // update path and save
-            if("/".equals(cat.getPath())) {
-                childCat.setPath("/" + childCat.getName());
-            } else {
-                childCat.setPath(cat.getPath() + "/" + childCat.getName());
-            }
-            WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogCategory(childCat);
-            
-            log.debug("NEW child category path is "+ childCat.getPath());
-            
-            // then make recursive call to update this cats children
-            updatePathTree(childCat);
-        }
-    }
-    
+
 }

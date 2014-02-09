@@ -168,7 +168,6 @@ public class Entries extends UIAction {
         
         WeblogCategory tmpCat = new WeblogCategory();
         tmpCat.setName("Any");
-        tmpCat.setPath("");
         cats.add(tmpCat);
         
         List<WeblogCategory> weblogCats = Collections.EMPTY_LIST;

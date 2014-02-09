@@ -219,9 +219,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove entries
         Query refQuery = strategy.getNamedQuery("WeblogEntry.getByWebsite");
         refQuery.setParameter(1, website);
-        List entries = refQuery.getResultList();
-        for (Object object : entries) {
-            emgr.removeWeblogEntry((WeblogEntry) object);
+        List<WeblogEntry> entries = refQuery.getResultList();
+        for (WeblogEntry entry : entries) {
+            emgr.removeWeblogEntry(entry);
         }
         this.strategy.flush();
         
@@ -230,7 +230,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (null != rootCat) {
             this.strategy.remove(rootCat);
         }
-        
+
+        // delete all weblog categories
+        Query removeCategories= strategy.getNamedUpdate(
+                "WeblogCategory.removeByWebsite");
+        removeCategories.setParameter(1, website);
+        removeCategories.executeUpdate();
+
         // remove permissions
         for (WeblogPermission perm : umgr.getWeblogPermissions(website)) {
             umgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS);
