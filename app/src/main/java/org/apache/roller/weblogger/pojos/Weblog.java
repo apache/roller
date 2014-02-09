@@ -757,6 +757,7 @@ public class Weblog implements Serializable {
     }
     
     
+    @Deprecated
     public Set<WeblogCategory> getWeblogCategories(String categoryPath) {
         Set<WeblogCategory> ret = new HashSet<WeblogCategory>();
         try {
@@ -764,7 +765,7 @@ public class Weblog implements Serializable {
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();            
             WeblogCategory category = null;
             if (categoryPath != null && !categoryPath.equals("nil")) {
-                category = wmgr.getWeblogCategoryByPath(this, categoryPath);
+                category = wmgr.getWeblogCategoryByName(this, categoryPath.substring(1));
             } else {
                 category = this.getDefaultCategory();
             }
@@ -781,7 +782,7 @@ public class Weblog implements Serializable {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             if (categoryPath != null && !categoryPath.equals("nil")) {
-                category = wmgr.getWeblogCategoryByPath(this, categoryPath);
+                category = wmgr.getWeblogCategoryByName(this, categoryPath.substring(1));
             } else {
                 category = this.getDefaultCategory();
             }

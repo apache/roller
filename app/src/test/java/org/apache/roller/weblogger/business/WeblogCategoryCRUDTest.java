@@ -199,7 +199,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = mgr.getRootWeblogCategory(testWeblog);
         assertEquals(0, root.getWeblogCategories().size());
-        assertNull(mgr.getWeblogCategoryByPath(TestUtils.getManagedWebsite(testWeblog), "/subcatTest1"));
+        assertNull(mgr.getWeblogCategoryByName(TestUtils.getManagedWebsite(testWeblog), "subcatTest1"));
         
         log.info("END");
     }

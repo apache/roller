@@ -213,7 +213,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                weblogCategory = wmgr.getWeblogCategoryByPath(getWeblog(), weblogCategoryName);
+                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(), weblogCategoryName.substring(1));
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);
             }

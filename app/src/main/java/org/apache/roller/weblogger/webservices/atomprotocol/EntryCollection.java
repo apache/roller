@@ -434,8 +434,8 @@ public class EntryCollection {
                     String catString = cat.getTerm();
                     if (catString != null) {
                         WeblogCategory rollerCat =
-                                roller.getWeblogEntryManager().getWeblogCategoryByPath(
-                                rollerEntry.getWebsite(), catString);
+                                roller.getWeblogEntryManager().getWeblogCategoryByName(
+                                rollerEntry.getWebsite(), catString.substring(1));
                         if (rollerCat != null) {
                             // Found a valid category, so break out
                             rollerEntry.setCategory(rollerCat);

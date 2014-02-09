@@ -174,7 +174,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             if ( cat != null ) {
                 // Use first category specified by request
                 WeblogCategory cd =
-                        weblogMgr.getWeblogCategoryByPath(entry.getWebsite(), cat);
+                        weblogMgr.getWeblogCategoryByName(entry.getWebsite(), cat);
                 entry.setCategory(cd);
             }
             
@@ -284,7 +284,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                     mLogger.debug("cat to string - "+cats[0].toString());
                     for (int i=0; i<cats.length; i++) {
                         Object cat = cats[i];
-                        rollerCat = weblogMgr.getWeblogCategoryByPath(website, (String)cat);
+                        rollerCat = weblogMgr.getWeblogCategoryByName(website, (String)cat);
                         if (rollerCat != null) {
                             entry.setCategory(rollerCat);
                             break;

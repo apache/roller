@@ -335,7 +335,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
     }
     
-    public List getNextPrevEntries(WeblogEntry current, String catName,
+    public List getNextPrevEntries(WeblogEntry current, String catPath,
             String locale, int maxEntries, boolean next)
             throws WebloggerException {
 
@@ -344,8 +344,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 			return Collections.emptyList();
 		}
 
-        Query query = null;
-        WeblogCategory category = null;
+        Query query;
+        WeblogCategory category;
         
         List params = new ArrayList();
         int size = 0;
@@ -370,13 +370,13 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             }
         }
         
-        if (catName != null) {
-            category = getWeblogCategoryByPath(current.getWebsite(), catName);
+        if (catPath != null) {
+            category = getWeblogCategoryByName(current.getWebsite(), catPath.substring(1));
             if (category != null) {
                 params.add(size++, category);
                 whereClause.append(" AND e.category = ?" + size);
             } else {
-                throw new WebloggerException("Cannot find category: " + catName);
+                throw new WebloggerException("Cannot find category: " + catPath);
             } 
         }
         
@@ -460,7 +460,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             User    user,
             Date        startDate,
             Date        endDate,
-            String      catName,
+            String      catPath,
             List        tags,
             String      status,
             String      text,
@@ -471,16 +471,13 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             int         length) throws WebloggerException {
         
         WeblogCategory cat = null;
-        if (StringUtils.isNotEmpty(catName) && website != null) {
-            cat = getWeblogCategoryByPath(website, catName);
+        if (StringUtils.isNotEmpty(catPath) && website != null) {
+            cat = getWeblogCategoryByName(website, catPath.substring(1));
             if (cat == null) {
-                catName = null;
+                catPath = null;
             }
         }
-        if (catName != null && catName.trim().equals("/")) {
-            catName = null;
-        }
-        
+
         List params = new ArrayList();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
@@ -933,22 +930,17 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         return getWeblogCategoryByName(website, null, categoryName);
     }
 
-    public WeblogCategory getWeblogCategoryByPath(Weblog website,
-                                                  String categoryPath) throws WebloggerException {
-        return getWeblogCategoryByName(website, null, categoryPath.substring(1));
-    }
-
     /**
      * @inheritDoc
      */
-    // TODO: ditch this method in favor of getWeblogCategoryByPath(weblog, path)
+    // TODO: ditch this method in favor of getWeblogCategoryByName(weblog, name)
     public WeblogCategory getWeblogCategoryByName(Weblog website,
             WeblogCategory category, String name) throws WebloggerException {
         
         if (name == null) {
             return getRootWeblogCategory(website);
         } else {
-            // now just do simple lookup by path
+            // now just do simple lookup by name
             Query q = strategy.getNamedQuery(
                     "WeblogCategory.getByName&Website");
             q.setParameter(1, name);
