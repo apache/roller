@@ -199,12 +199,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         cat = mgr.getWeblogCategoryByName(testWeblog, "catTest-cat1");
         assertNotNull(cat);
         assertEquals(cat, cat1);
-        
-        // if no path is specified we should get the root category
-        cat = mgr.getWeblogCategoryByName(testWeblog, null);
-        assertNotNull(cat);
-        assertEquals(cat.getPath(), "/");
-        
+
         log.info("END");
     }
     

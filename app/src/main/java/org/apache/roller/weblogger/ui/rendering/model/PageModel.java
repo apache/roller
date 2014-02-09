@@ -175,7 +175,7 @@ public class PageModel implements Model {
     
     
     /**
-     * Get weblog category specified by request, or null if the category path
+     * Get weblog category specified by request, or null if the category name
      * found in the request does not exist in the current weblog.
      */
     public WeblogCategoryWrapper getWeblogCategory() {

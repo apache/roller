@@ -159,15 +159,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         this.image = image;
     }
     
-    
-    /**
-     * The full path to this category in the hierarchy.  Will be removed soon,
-     * as all categories are now top-level, use getName() going forward.
-     */
-    public String getPath() {
-        return this.parentCategory != null ? ("/" + name) : "/";
-    }
-
     /**
      * Get the weblog which owns this category.
      */

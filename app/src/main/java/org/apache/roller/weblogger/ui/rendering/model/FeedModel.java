@@ -113,7 +113,7 @@ public class FeedModel implements Model {
     /**
      * Get category path or name specified by request.
      */
-    public String getCategoryPath() {
+    public String getCategoryName() {
         return feedRequest.getWeblogCategoryName();
     }
     

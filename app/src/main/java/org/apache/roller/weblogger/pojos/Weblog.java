@@ -776,7 +776,7 @@ public class Weblog implements Serializable {
     
     /**
      * Get up to 100 most recent published entries in weblog.
-     * @param cat Category path or null for no category restriction
+     * @param cat Category name or null for no category restriction
      * @param length Max entries to return (1-100)
      * @return List of weblog entry objects.
      */

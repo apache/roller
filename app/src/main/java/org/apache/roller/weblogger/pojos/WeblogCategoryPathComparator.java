@@ -22,14 +22,13 @@ import java.util.Comparator;
 
 
 /**
- * Compare weblog categories by path.
+ * Compare weblog categories by name.
  */
 public class WeblogCategoryPathComparator implements Comparator {
     
     public int compare(Object o1, Object o2) {
         WeblogCategory f1 = (WeblogCategory)o1;
         WeblogCategory f2 = (WeblogCategory)o2;
-        return f1.getPath().compareTo(f2.getPath());
+        return f1.getName().compareTo(f2.getName());
     }
-    
 }

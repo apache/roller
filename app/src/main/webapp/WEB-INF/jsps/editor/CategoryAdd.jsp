@@ -22,7 +22,7 @@
 </p>
 
 <p>
-    <b><s:text name="categoriesForm.path" /></b>:<s:property value="category.path" />
+    <b><s:text name="categoriesForm.name" /></b>:<s:property value="category.name" />
 </p>
 
 <s:form action="categoryAdd!save">

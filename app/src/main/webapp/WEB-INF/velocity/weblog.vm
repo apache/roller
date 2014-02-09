@@ -93,12 +93,12 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
       <link rel="alternate" type="application/atom+xml" title="Entries tagged $model.tags.toString() (Atom)"  href="$url.feed.entries.atomByTags($model.tags, false)" />
       <link rel="alternate" type="application/rss+xml"  title="Entries tagged $model.tags.toString() (RSS)"   href="$url.feed.entries.rssByTags($model.tags, false)" />
     #elseif ($model.weblogCategory)
-      <link rel="alternate" type="application/atom+xml" title="Entries for category $model.weblogCategory.name (Atom)"  href="$url.feed.entries.atom($model.weblogCategory.path, false)" />
-      <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.weblogCategory.name (RSS)"   href="$url.feed.entries.rss($model.weblogCategory.path, false)" />
+      <link rel="alternate" type="application/atom+xml" title="Entries for category $model.weblogCategory.name (Atom)"  href="$url.feed.entries.atom($model.weblogCategory.name, false)" />
+      <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.weblogCategory.name (RSS)"   href="$url.feed.entries.rss($model.weblogCategory.name, false)" />
     #end
 
     #else
-    <link rel="alternate" type="application/rss+xml"  title="Search results for '$utils.escapeHTML($model.term)'"  href="$utils.escapeHTML($url.feed.entries.search($model.term,$model.weblogCategory.path))" />
+    <link rel="alternate" type="application/rss+xml"  title="Search results for '$utils.escapeHTML($model.term)'"  href="$utils.escapeHTML($url.feed.entries.search($model.term,$model.weblogCategory.name))" />
     #end
     #if ($site)
         <link rel="search"
@@ -560,16 +560,16 @@ Show weblog's categories in specified parent category.
     #if(!$expanding && !$subcats)
         <ul class="rCategory">
         #if ($model.weblogCategory || $model.permalink)
-            <li><a href="$url.category($categoryObject.path)">$text.get("macro.weblog.allcategories")</a></li>
+            <li><a href="$url.category($categoryObject.name)">$text.get("macro.weblog.allcategories")</a></li>
         #else
-            <li class="selected"><a href="$url.category($categoryObject.path)">$text.get("macro.weblog.allcategories")</a></li>
+            <li class="selected"><a href="$url.category($categoryObject.name)">$text.get("macro.weblog.allcategories")</a></li>
         #end
         #set($cats = $categoryObject.getWeblogCategories())
         #foreach($cat in $cats)
-            #if ($model.weblogCategory && $model.weblogCategory.path == $cat.path || ($model.permalink && $model.weblogEntry.category.path == $cat.path))
-                <li class="selected"><a href="$url.category($cat.path)">$cat.name</a></li>
+            #if ($model.weblogCategory && $model.weblogCategory.name == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
+                <li class="selected"><a href="$url.category($cat.name)">$cat.name</a></li>
             #else
-                <li><a href="$url.category($cat.path)">$cat.name</a></li>
+                <li><a href="$url.category($cat.name)">$cat.name</a></li>
             #end
         #end
         </ul>
@@ -588,18 +588,18 @@ Show weblog's categories in specified parent category.
           <h2>Categories</h2>
           <ul data-role="listview">
             #if ($model.weblogCategory || $model.permalink)
-              <li><a href="$url.category($categoryObject.path)" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
+              <li><a href="$url.category($categoryObject.name)" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
             #else
-              <li class="ui-btn-active"><a href="$url.category($categoryObject.path)" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
+              <li class="ui-btn-active"><a href="$url.category($categoryObject.name)" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
             #end
             #set($active = $text.get("macro.weblog.allcategories"))
             #set($cats = $categoryObject.getWeblogCategories())
             #foreach($cat in $cats)
-              #if ($model.weblogCategory && $model.weblogCategory.path == $cat.path || ($model.permalink && $model.weblogEntry.category.path == $cat.path))
-                <li class="ui-btn-active"><a href="$url.category($cat.path)" data-transition="fade">$cat.name</a></li>
+              #if ($model.weblogCategory && $model.weblogCategory.name == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
+                <li class="ui-btn-active"><a href="$url.category($cat.name)" data-transition="fade">$cat.name</a></li>
                 #set($active = $cat.name)
               #else
-                <li><a href="$url.category($cat.path)" data-transition="fade">$cat.name</a></li>
+                <li><a href="$url.category($cat.name)" data-transition="fade">$cat.name</a></li>
               #end
             #end
           </ul>
@@ -618,16 +618,16 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
             #set($divId = "div_$categoryObject.name")
             <div class="rCategory">
             <li><a href="javascript:toggleFolder('$divId')">
-                <span id="i$divId">+</span></a><a href="$url.category($categoryObject.path)">$categoryObject.name</a></li>
+                <span id="i$divId">+</span></a><a href="$url.category($categoryObject.name)">$categoryObject.name</a></li>
             <ul id="$divId" class="rCategory" style="display:none">
         #elseif ($subcats && $categoryObject.weblogCategories.size() > 0)
-            <li><a href="$url.category($categoryObject.path)">$categoryObject.name</a></li>
+            <li><a href="$url.category($categoryObject.name)">$categoryObject.name</a></li>
             <ul class="rCategory">
         #else
-            #if ($model.weblogCategory && $model.weblogCategory.path == $categoryObject.path)
+            #if ($model.weblogCategory && $model.weblogCategory.name == $categoryObject.name)
                 <li class="selected">$categoryObject.name</li>
             #else
-                <li><a href="$url.category($categoryObject.path)">$categoryObject.name</a></li>
+                <li><a href="$url.category($categoryObject.name)">$categoryObject.name</a></li>
             #end
         #end
     #end

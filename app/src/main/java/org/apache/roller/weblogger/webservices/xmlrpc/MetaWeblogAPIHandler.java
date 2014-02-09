@@ -503,11 +503,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         URLStrategy strategy = roller.getUrlStrategy();
         
         String catUrl = strategy.getWeblogCollectionURL(category.getWebsite(),
-        		null, category.getPath(), null, null, 0, true);
+        		null, category.getName(), null, null, 0, true);
         struct.put("htmlUrl", catUrl);
         
         String rssUrl = strategy.getWeblogFeedURL(category.getWebsite(),
-               null, "entries", "rss", category.getPath(), null, null, false, true);
+               null, "entries", "rss", category.getName(), null, null, false, true);
         struct.put("rssUrl",rssUrl);
         
         return struct;

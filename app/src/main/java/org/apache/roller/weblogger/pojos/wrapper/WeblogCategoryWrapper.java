@@ -75,13 +75,7 @@ public final class WeblogCategoryWrapper {
     public String getImage() {
         return this.pojo.getImage();
     }
-    
-    
-    public String getPath() {
-        return this.pojo.getPath();
-    }
-    
-    
+
     public WeblogWrapper getWebsite() {
         return WeblogWrapper.wrap(this.pojo.getWebsite(), urlStrategy);
     }

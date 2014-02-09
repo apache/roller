@@ -67,7 +67,7 @@ public interface WeblogEntryManager {
      * @param user       User or null to get for all users.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
-     * @param catPath    Category path or null for all categories.
+     * @param catName    Category name or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param text       Text appearing in the text or summary, or null for all
      * @param sortBy     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
@@ -82,7 +82,7 @@ public interface WeblogEntryManager {
             User    user,
             Date        startDate,
             Date        endDate,
-            String      catPath,
+            String      catName,
             List        tags,
             String      status,
             String      text,
@@ -100,7 +100,7 @@ public interface WeblogEntryManager {
      * @param website    Weblog or null to get for all weblogs.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
-     * @param catPath    Category path or null for all categories.
+     * @param catName    Category name or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param offset     Offset into results for paging
      * @param range
@@ -111,7 +111,7 @@ public interface WeblogEntryManager {
             Weblog website,
             Date        startDate,
             Date        endDate,
-            String      catPath,
+            String      catName,
             List        tags,            
             String      status,
             String      locale,
@@ -126,7 +126,7 @@ public interface WeblogEntryManager {
      * @param website    Weblog or null to get for all weblogs.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
-     * @param catPath    Category path or null for all categories.
+     * @param catName    Category name or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param offset     Offset into results for paging
      * @param range
@@ -137,7 +137,7 @@ public interface WeblogEntryManager {
             Weblog website,
             Date        startDate,
             Date        endDate,
-            String      catPath,
+            String      catName,
             List        tags,            
             String      status,
             String      locale,

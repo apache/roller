@@ -197,13 +197,13 @@ public class URLModel implements Model {
     }
     
     
-    public String category(String catPath) {
-        return urlStrategy.getWeblogCollectionURL(weblog, locale, catPath, null, null, -1, true);
+    public String category(String catName) {
+        return urlStrategy.getWeblogCollectionURL(weblog, locale, catName, null, null, -1, true);
     }
     
     
-    public String category(String catPath, int pageNum) {
-        return urlStrategy.getWeblogCollectionURL(weblog, locale, catPath, null, null, pageNum, true);
+    public String category(String catName, int pageNum) {
+        return urlStrategy.getWeblogCollectionURL(weblog, locale, catName, null, null, pageNum, true);
     }
     
     

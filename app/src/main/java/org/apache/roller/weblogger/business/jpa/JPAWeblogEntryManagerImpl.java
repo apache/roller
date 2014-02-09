@@ -335,7 +335,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
     }
     
-    public List getNextPrevEntries(WeblogEntry current, String catPath,
+    public List getNextPrevEntries(WeblogEntry current, String catName,
             String locale, int maxEntries, boolean next)
             throws WebloggerException {
 
@@ -370,13 +370,13 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             }
         }
         
-        if (catPath != null) {
-            category = getWeblogCategoryByName(current.getWebsite(), catPath);
+        if (catName != null) {
+            category = getWeblogCategoryByName(current.getWebsite(), catName);
             if (category != null) {
                 params.add(size++, category);
                 whereClause.append(" AND e.category = ?" + size);
             } else {
-                throw new WebloggerException("Cannot find category: " + catPath);
+                throw new WebloggerException("Cannot find category: " + catName);
             } 
         }
         
@@ -460,7 +460,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             User    user,
             Date        startDate,
             Date        endDate,
-            String      catPath,
+            String      catName,
             List        tags,
             String      status,
             String      text,
@@ -471,10 +471,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             int         length) throws WebloggerException {
         
         WeblogCategory cat = null;
-        if (StringUtils.isNotEmpty(catPath) && website != null) {
-            cat = getWeblogCategoryByName(website, catPath);
+        if (StringUtils.isNotEmpty(catName) && website != null) {
+            cat = getWeblogCategoryByName(website, catName);
             if (cat == null) {
-                catPath = null;
+                catName = null;
             }
         }
 

@@ -156,7 +156,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
                 entry.setPubTime(rollerEntry.getPubTime());
                 entry.setText(content);
                 entry.setPermalink(rollerEntry.getPermalink());
-                entry.setCategoriesString(rollerEntry.getCategory().getPath());
+                entry.setCategoriesString(rollerEntry.getCategory().getName());
                 
                 newSub.addEntry(entry);
             }
