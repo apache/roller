@@ -348,7 +348,7 @@ public class EntryCollection {
         List<Category> categories = new ArrayList<Category>();
         Category atomCat = new Category();
         atomCat.setScheme(RollerAtomService.getWeblogCategoryScheme(entry.getWebsite()));
-        atomCat.setTerm(entry.getCategory().getPath().substring(1));
+        atomCat.setTerm(entry.getCategory().getName());
         categories.add(atomCat);
         
         // Add Atom categories for each Weblogger tag with null scheme
@@ -435,7 +435,7 @@ public class EntryCollection {
                     if (catString != null) {
                         WeblogCategory rollerCat =
                                 roller.getWeblogEntryManager().getWeblogCategoryByName(
-                                rollerEntry.getWebsite(), catString.substring(1));
+                                rollerEntry.getWebsite(), catString);
                         if (rollerCat != null) {
                             // Found a valid category, so break out
                             rollerEntry.setCategory(rollerCat);

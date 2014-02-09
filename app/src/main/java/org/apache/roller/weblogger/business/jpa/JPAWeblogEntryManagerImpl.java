@@ -371,7 +371,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         if (catPath != null) {
-            category = getWeblogCategoryByName(current.getWebsite(), catPath.substring(1));
+            category = getWeblogCategoryByName(current.getWebsite(), catPath);
             if (category != null) {
                 params.add(size++, category);
                 whereClause.append(" AND e.category = ?" + size);
@@ -472,7 +472,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         WeblogCategory cat = null;
         if (StringUtils.isNotEmpty(catPath) && website != null) {
-            cat = getWeblogCategoryByName(website, catPath.substring(1));
+            cat = getWeblogCategoryByName(website, catPath);
             if (cat == null) {
                 catPath = null;
             }

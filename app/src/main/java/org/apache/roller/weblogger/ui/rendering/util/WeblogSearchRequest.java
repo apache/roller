@@ -97,13 +97,8 @@ public class WeblogSearchRequest extends WeblogRequest {
         
         if(request.getParameter("cat") != null &&
                 request.getParameter("cat").trim().length() > 0) {
-            this.weblogCategoryName = 
+            this.weblogCategoryName =
                     URLUtilities.decode(request.getParameter("cat"));
-            
-            // all categories must start with a /
-            if(!this.weblogCategoryName.startsWith("/")) {
-                this.weblogCategoryName = "/"+this.weblogCategoryName;
-            }
         }
     }
 
@@ -136,7 +131,7 @@ public class WeblogSearchRequest extends WeblogRequest {
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(), weblogCategoryName.substring(1));
+                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(), weblogCategoryName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog category " + weblogCategoryName, ex);
             }

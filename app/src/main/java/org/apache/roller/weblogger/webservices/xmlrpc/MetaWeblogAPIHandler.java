@@ -86,7 +86,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             List<WeblogCategory> cats = weblogMgr.getWeblogCategories(website, false);
             for (WeblogCategory category : cats) {
-                result.put(category.getPath(),
+                result.put(category.getName(),
                         createCategoryStruct(category, userid));
             }
             return result;
@@ -486,7 +486,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         struct.put("author", entry.getCreator().getEmailAddress());
         
         Vector catArray = new Vector();
-        catArray.addElement(entry.getCategory().getPath());
+        catArray.addElement(entry.getCategory().getName());
         struct.put("categories", catArray);
         
         return struct;
@@ -496,8 +496,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     private Hashtable createCategoryStruct(WeblogCategory category, String userid) {
         
         Hashtable struct = new Hashtable();
-        struct.put("title", category.getPath());
-        struct.put("description", category.getPath());
+        struct.put("title", category.getName());
+        struct.put("description", category.getName());
         
         Weblogger roller = WebloggerFactory.getWeblogger();
         URLStrategy strategy = roller.getUrlStrategy();

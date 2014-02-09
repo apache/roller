@@ -755,43 +755,24 @@ public class Weblog implements Serializable {
         WeblogCategory category = this.getDefaultCategory();
         return category.getWeblogCategories();
     }
-    
-    
-    @Deprecated
-    public Set<WeblogCategory> getWeblogCategories(String categoryPath) {
-        Set<WeblogCategory> ret = new HashSet<WeblogCategory>();
-        try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();            
-            WeblogCategory category = null;
-            if (categoryPath != null && !categoryPath.equals("nil")) {
-                category = wmgr.getWeblogCategoryByName(this, categoryPath.substring(1));
-            } else {
-                category = this.getDefaultCategory();
-            }
-            ret = category.getWeblogCategories();
-        } catch (WebloggerException e) {
-            log.error("ERROR: fetching categories for path: " + categoryPath, e);
-        }
-        return ret;
-    }
 
-    public WeblogCategory getWeblogCategory(String categoryPath) {
+
+    public WeblogCategory getWeblogCategory(String categoryName) {
         WeblogCategory category = null;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            if (categoryPath != null && !categoryPath.equals("nil")) {
-                category = wmgr.getWeblogCategoryByName(this, categoryPath.substring(1));
+            if (categoryName != null && !categoryName.equals("nil")) {
+                category = wmgr.getWeblogCategoryByName(this, categoryName);
             } else {
                 category = this.getDefaultCategory();
             }
         } catch (WebloggerException e) {
-            log.error("ERROR: fetching category at path: " + categoryPath, e);
+            log.error("ERROR: fetching category: " + categoryName, e);
         }
         return category;
     }
-    
+
     
     /**
      * Get up to 100 most recent published entries in weblog.

@@ -307,8 +307,8 @@ public final class WeblogWrapper {
     public WeblogEntryWrapper getWeblogEntry(String anchor) {
         return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry(anchor), urlStrategy);
     }
-    
-    
+
+
     public List<WeblogCategoryWrapper> getWeblogCategories() {
         Set<WeblogCategory> unwrapped = this.pojo.getWeblogCategories();
         List<WeblogCategoryWrapper> wrapped = new ArrayList<WeblogCategoryWrapper>(unwrapped.size());
@@ -320,25 +320,11 @@ public final class WeblogWrapper {
         }
         return wrapped;
     }
-    
-    
-    public List<WeblogCategoryWrapper> getWeblogCategories(String categoryPath) {
-        Set<WeblogCategory> unwrapped = this.pojo.getWeblogCategories(categoryPath);
-        List<WeblogCategoryWrapper> wrapped = new ArrayList<WeblogCategoryWrapper>(unwrapped.size());
 
-        int i = 0;
-        for (WeblogCategory category : unwrapped) {
-            wrapped.add(i,WeblogCategoryWrapper.wrap(category, urlStrategy));
-            i++;
-        }
-        return wrapped;
+    public WeblogCategoryWrapper getWeblogCategory(String categoryName) {
+        return WeblogCategoryWrapper.wrap(this.pojo.getWeblogCategory(categoryName), urlStrategy);
     }
-    
-    
-    public WeblogCategoryWrapper getWeblogCategory(String categoryPath) {
-        return WeblogCategoryWrapper.wrap(this.pojo.getWeblogCategory(categoryPath), urlStrategy);
-    }
-    
+
     
     public List<WeblogEntryWrapper> getRecentWeblogEntries(String cat,int length) {
         List<WeblogEntry> unwrapped = this.pojo.getRecentWeblogEntries(cat, length);
