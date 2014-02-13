@@ -59,7 +59,7 @@ function onMove()
         <s:if test="AllCategories != null && !AllCategories.isEmpty">
         
         <%-- Categories --%>
-        <s:iterator id="category" value="category.weblogCategories" status="rowstatus">
+        <s:iterator id="category" value="AllCategories" status="rowstatus">
             <s:if test="#rowstatus.odd == true">
                 <tr class="rollertable_odd">
             </s:if>
@@ -84,7 +84,7 @@ function onMove()
                 </td>
                 
                 <td class="rollertable" align="center">
-                    <s:if test="!categoryPath.isEmpty || category.weblogCategories.size() > 1">
+                    <s:if test="AllCategories.size() > 1">
                         <s:url id="removeUrl" action="categoryRemove">
                             <s:param name="weblog" value="%{actionWeblog.handle}" />
                             <s:param name="removeId" value="#category.id" />

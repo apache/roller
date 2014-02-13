@@ -79,7 +79,7 @@ public class WeblogConfig extends UIAction {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             // set categories list
-            setWeblogCategories(wmgr.getWeblogCategories(getActionWeblog(), false));
+            setWeblogCategories(wmgr.getWeblogCategories(getActionWeblog()));
             
             // set the Editor Page list
             UIPluginManager pmgr = RollerContext.getUIPluginManager();

@@ -19,16 +19,8 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
+import java.util.*;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
@@ -97,10 +89,29 @@ public class Weblog implements Serializable {
 
     // Associated objects
     private WeblogCategory bloggerCategory = null;
-    private WeblogCategory defaultCategory = null;
-    
+
     private Map<String, WeblogEntryPlugin> initializedPlugins = null;
-    
+
+    private List<WeblogCategory> weblogCategories = new ArrayList<WeblogCategory>();
+
+
+    public List<WeblogCategory> getWeblogCategories() {
+        return weblogCategories;
+    }
+
+    public void setWeblogCategories(List<WeblogCategory> cats) {
+        this.weblogCategories = cats;
+    }
+
+    public boolean hasCategory(String name) {
+        for (WeblogCategory cat : getWeblogCategories()) {
+            if(name.equals(cat.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Weblog() {    
     }
     
@@ -159,14 +170,6 @@ public class Weblog implements Serializable {
             .append(getHandle())
             .toHashCode();
     } 
-    
-    /*public List getPermissions() {
-        return permissions;
-    }
-    public void setPermissions(List perms) {
-        permissions = perms;
-    }*/
-    
     
     /**
      * Get the Theme object in use by this weblog, or null if no theme selected.
@@ -299,6 +302,9 @@ public class Weblog implements Serializable {
     }
     
     public WeblogCategory getBloggerCategory() {
+        if (bloggerCategory == null) {
+            bloggerCategory = getDefaultCategory();
+        }
         return bloggerCategory;
     }
     
@@ -306,19 +312,13 @@ public class Weblog implements Serializable {
         this.bloggerCategory = bloggerCategory;
     }
     
-    /**
-     * By default,the default category for a weblog is the root and all macros
-     * work with the top level categories that are immediately under the root.
-     * Setting a different default category allows you to partition your weblog.
-     */
     public WeblogCategory getDefaultCategory() {
-        return defaultCategory;
+        if (weblogCategories.size() == 0) {
+            return null;
+        }
+        return weblogCategories.iterator().next();
     }
-    
-    public void setDefaultCategory(WeblogCategory defaultCategory) {
-        this.defaultCategory = defaultCategory;
-    }
-    
+
     public String getEditorPage() {
         return this.editorPage;
     }
@@ -465,7 +465,6 @@ public class Weblog implements Serializable {
         this.setWeblogDayPageId(other.getWeblogDayPageId());
         this.setEnableBloggerApi(other.getEnableBloggerApi());
         this.setBloggerCategory(other.getBloggerCategory());
-        this.setDefaultCategory(other.getDefaultCategory());
         this.setEditorPage(other.getEditorPage());
         this.setBlacklist(other.getBlacklist());
         this.setAllowComments(other.getAllowComments());
@@ -481,6 +480,7 @@ public class Weblog implements Serializable {
         this.setEntryDisplayCount(other.getEntryDisplayCount());
         this.setActive(other.getActive());
         this.setLastModified(other.getLastModified());
+        this.setWeblogCategories(other.getWeblogCategories());
     }
     
     
@@ -747,15 +747,6 @@ public class Weblog implements Serializable {
         }
         return entry;
     }
-    
-    /**
-     * Returns categories under the default category of the weblog.
-     */
-    public Set<WeblogCategory> getWeblogCategories() {
-        WeblogCategory category = this.getDefaultCategory();
-        return category.getWeblogCategories();
-    }
-
 
     public WeblogCategory getWeblogCategory(String categoryName) {
         WeblogCategory category = null;
@@ -765,7 +756,7 @@ public class Weblog implements Serializable {
             if (categoryName != null && !categoryName.equals("nil")) {
                 category = wmgr.getWeblogCategoryByName(this, categoryName);
             } else {
-                category = this.getDefaultCategory();
+                category = getWeblogCategories().iterator().next();
             }
         } catch (WebloggerException e) {
             log.error("ERROR: fetching category: " + categoryName, e);
@@ -1009,4 +1000,24 @@ public class Weblog implements Serializable {
         }
         return theme;
     }
+
+    /**
+     * Add a category as a child of this category.
+     */
+    public void addCategory(WeblogCategory category) {
+
+        // make sure category is not null
+        if(category == null || category.getName() == null) {
+            throw new IllegalArgumentException("Category cannot be null and must have a valid name");
+        }
+
+        // make sure we don't already have a category with that name
+        if(hasCategory(category.getName())) {
+            throw new IllegalArgumentException("Duplicate category name '"+category.getName()+"'");
+        }
+
+        // add it to our list of child categories
+        getWeblogCategories().add(category);
+    }
+
 }

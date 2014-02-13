@@ -26,6 +26,7 @@ package org.apache.roller.weblogger;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.roller.planet.business.PlanetManager;
@@ -308,17 +309,12 @@ public final class TestUtils {
      * Convenience method for creating a weblog category.
      */
     public static WeblogCategory setupWeblogCategory(Weblog weblog,
-            String name, WeblogCategory parent) throws Exception {
+            String name) throws Exception {
 
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
                 .getWeblogEntryManager();
-        WeblogCategory root = mgr.getRootWeblogCategory(weblog);
 
-        WeblogCategory catParent = root;
-        if (parent != null) {
-            catParent = parent;
-        }
-        WeblogCategory testCat = new WeblogCategory(weblog, catParent, name,
+        WeblogCategory testCat = new WeblogCategory(weblog, name,
                 null, null);
         mgr.saveWeblogCategory(testCat);
 
@@ -359,6 +355,15 @@ public final class TestUtils {
             WeblogCategory cat, Weblog weblog, User user) throws Exception {
 
         return TestUtils.setupWeblogEntry(anchor, cat, WeblogEntry.PUBLISHED,
+                weblog, user);
+    }
+
+    /**
+     * Convenience method for creating a published weblog entry with the blog's default category
+     */
+    public static WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) throws Exception {
+
+        return TestUtils.setupWeblogEntry(anchor, weblog.getDefaultCategory(), WeblogEntry.PUBLISHED,
                 weblog, user);
     }
 

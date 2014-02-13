@@ -306,7 +306,7 @@ public class EntryBean {
             
             if(cat == null) {
                 throw new WebloggerException("Category could not be found - "+getCategoryId());
-            } else if(!entry.getWebsite().equals(cat.getWebsite())) {
+            } else if(!entry.getWebsite().equals(cat.getWeblog())) {
                 throw new WebloggerException("Illegal category, not owned by action weblog");
             } else {
                 entry.setCategory(cat);

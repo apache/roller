@@ -48,21 +48,18 @@ public class CategoryAdd extends UIAction {
     
     // bean for managing form data
     private CategoryBean bean = new CategoryBean();
-    
-    
+
     public CategoryAdd() {
         this.actionName = "categoryAdd";
         this.desiredMenu = "editor";
         this.pageTitle = "categoryForm.add.title";
     }
-    
-    
+
     // author perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
     public void myPrepare() {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -73,20 +70,12 @@ public class CategoryAdd extends UIAction {
             log.error("Error looking up category", ex);
         }
     }
-    
-    
+
     /**
      * Show category form.
      */
     @SkipValidation
     public String execute() {
-        
-        if(getCategory() == null) {
-            // TODO: i18n
-            addError("Cannot add category to null parent category");
-            return ERROR;
-        }
-        
         return INPUT;
     }
 
@@ -95,13 +84,6 @@ public class CategoryAdd extends UIAction {
      * Save new category.
      */
     public String save() {
-        
-        if(getCategory() == null) {
-            // TODO: i18n
-            addError("Cannot add category to null parent category");
-            return ERROR;
-        }
-        
         // validation
         myValidate();
         
@@ -110,13 +92,9 @@ public class CategoryAdd extends UIAction {
 
                 WeblogCategory newCategory = new WeblogCategory(
                         getActionWeblog(),
-                        getCategory(),
                         getBean().getName(),
                         getBean().getDescription(),
                         getBean().getImage());
-
-                // add new folder to parent
-                getCategory().addCategory(newCategory);
 
                 // save changes
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -141,19 +119,15 @@ public class CategoryAdd extends UIAction {
         return INPUT;
     }
 
-    
-    // TODO: validation
     public void myValidate() {
-        
-        // name is required, has max length, no html
-        
+        // TODO: Check max length & no html
+
         // make sure new name is not a duplicate of an existing folder
-        if(getCategory().hasCategory(getBean().getName())) {
+        if(getActionWeblog().hasCategory(getBean().getName())) {
             addError("categoryForm.error.duplicateName", getBean().getName());
         }
     }
 
-    
     public String getCategoryId() {
         return categoryId;
     }

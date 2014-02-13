@@ -310,7 +310,7 @@ public final class WeblogWrapper {
 
 
     public List<WeblogCategoryWrapper> getWeblogCategories() {
-        Set<WeblogCategory> unwrapped = this.pojo.getWeblogCategories();
+        List<WeblogCategory> unwrapped = this.pojo.getWeblogCategories();
         List<WeblogCategoryWrapper> wrapped = new ArrayList<WeblogCategoryWrapper>(unwrapped.size());
 
         int i = 0;

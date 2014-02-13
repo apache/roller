@@ -48,16 +48,13 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     private String image = null;
 
     // associations
-    private Weblog website = null;
-    private WeblogCategory parentCategory = null;
-    private Set<WeblogCategory> childCategories = new HashSet<WeblogCategory>();
+    private Weblog weblog = null;
 
     public WeblogCategory() {
     }
     
     public WeblogCategory(
-            Weblog website,
-            WeblogCategory parent,
+            Weblog weblog,
             String name,
             String description,
             String image) {
@@ -66,8 +63,8 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         this.description = description;
         this.image = image;
         
-        this.website = website;
-        this.parentCategory = parent;
+        this.weblog = weblog;
+        weblog.getWeblogCategories().add(this);
     }
     
     
@@ -82,6 +79,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         return buf.toString();
     }
     
+    @Override
     public boolean equals(Object other) {
         
         if (other == null) {
@@ -89,19 +87,20 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         }
         
         if (other instanceof WeblogCategory) {
-            WeblogCategory o = (WeblogCategory)other;
+            WeblogCategory o = (WeblogCategory) other;
             return new EqualsBuilder()
                 .append(getName(), o.getName())
-                .append(getWebsite(), o.getWebsite())
+                .append(getWeblog(), o.getWeblog())
                 .isEquals();
         }        
         return false;
     }
-        
+
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
             .append(getName())
-            .append(getWebsite())
+            .append(getWeblog())
             .toHashCode();
     }
     
@@ -162,39 +161,14 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     /**
      * Get the weblog which owns this category.
      */
-    public Weblog getWebsite() {
-        return website;
+    public Weblog getWeblog() {
+        return weblog;
     }
     
-    public void setWebsite(Weblog website) {
-        this.website = website;
-    }
-    
-    
-    /**
-     * Get parent category, or null if category is root of hierarchy.
-     */
-    public WeblogCategory getParent() {
-        return this.parentCategory;
-    }
-    
-    public void setParent(WeblogCategory parent) {
-        this.parentCategory = parent;
+    public void setWeblog(Weblog weblog) {
+        this.weblog = weblog;
     }
 
-    
-    /**
-     * Get child categories of this category.
-     */
-    public Set<WeblogCategory> getWeblogCategories() {
-        return this.childCategories;
-    }
-    
-    private void setWeblogCategories(Set<WeblogCategory> cats) {
-        this.childCategories = cats;
-    }
-    
-    
     /**
      * Retrieve all weblog entries in this category and, optionally, include
      * weblog entries all sub-categories.
@@ -208,59 +182,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         return wmgr.getWeblogEntries(this, publishedOnly);
     }
     
-    
-    /**
-     * Add a category as a child of this category.
-     */
-    public void addCategory(WeblogCategory category) {
-        
-        // make sure category is not null
-        if(category == null || category.getName() == null) {
-            throw new IllegalArgumentException("Category cannot be null and must have a valid name");
-        }
-        
-        // make sure we don't already have a category with that name
-        if(this.hasCategory(category.getName())) {
-            throw new IllegalArgumentException("Duplicate category name '"+category.getName()+"'");
-        }
-        
-        // set ourselves as the parent of the category
-        category.setParent(this);
-        
-        // add it to our list of child categories
-        getWeblogCategories().add(category);
-    }
-    
-    
-    /**
-     * Does this category have a child category with the specified name?
-     *
-     * @param name The name of the category to check for.
-     * @return boolean true if child category exists, false otherwise.
-     */
-    public boolean hasCategory(String name) {
-        for (WeblogCategory cat : getWeblogCategories()) {
-            if(name.equals(cat.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    
-    /**
-     * Is this category a descendent of the other category?
-     */
-    public boolean descendentOf(WeblogCategory ancestor) {
-        
-        if (parentCategory == ancestor) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    
     /**
      * Determine if category is in use. Returns true if any weblog entries
      * use this category or any of its subcategories.
@@ -272,8 +193,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
             throw new RuntimeException(e);
         }
     }
-    
-    
 
     // convenience method for updating the category name, which triggers a path tree rebuild
     public void updateName(String newName) throws WebloggerException {
@@ -281,7 +200,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         // update name
         setName(newName);
 
-        // update path tree for all children
         WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogCategory(this);
     }
 

@@ -18,17 +18,8 @@
 
 package org.apache.roller.weblogger.business.jpa;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.TreeMap;
 import java.sql.Timestamp;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -104,16 +95,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             if (isDuplicateWeblogCategoryName(cat)) {
                 throw new WebloggerException("Duplicate category name, cannot save category");
             }
-            // Newly added object. If it has a parent,
-            // maintain relationship from both sides
-            WeblogCategory parent = cat.getParent();
-            if(parent != null) {
-                parent.getWeblogCategories().add(cat);
-            }
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(cat.getWebsite());        
+        roller.getWeblogManager().saveWeblog(cat.getWeblog());
         this.strategy.store(cat);
     }
     
@@ -125,31 +110,20 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         if(cat.retrieveWeblogEntries(false).size() > 0) {
             throw new WebloggerException("Cannot remove category with entries");
         }
-        
+
+        Weblog testWeblog = cat.getWeblog();
+        cat.getWeblog().getWeblogCategories().remove(cat);
+
         // remove cat
         this.strategy.remove(cat);
-        //relationship management for the other side
-        WeblogCategory parent = cat.getParent();
-        if(parent != null) {
-            parent.getWeblogCategories().remove(cat);
+
+        if(cat.equals(cat.getWeblog().getBloggerCategory())) {
+            cat.getWeblog().setBloggerCategory(cat.getWeblog().getDefaultCategory());
+            this.strategy.store(cat.getWeblog());
         }
-        
-        // update website default cats if needed
-        if(cat.getWebsite().getBloggerCategory().equals(cat)) {
-            WeblogCategory rootCat = this.getRootWeblogCategory(cat.getWebsite());
-            cat.getWebsite().setBloggerCategory(rootCat);
-            this.strategy.store(cat.getWebsite());
-        }
-        
-        if(cat.getWebsite().getDefaultCategory().equals(cat)) {
-            WeblogCategory rootCat = this.getRootWeblogCategory(cat.getWebsite());
-            cat.getWebsite().setDefaultCategory(rootCat);
-            this.strategy.store(cat.getWebsite());
-        }
-        
+
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(
-                cat.getWebsite());
+        roller.getWeblogManager().saveWeblog(cat.getWeblog());
     }
 
     /**
@@ -159,38 +133,22 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             WeblogCategory destCat)
             throws WebloggerException {
         
-        // TODO: this check should be made before calling this method?
-        if (destCat.descendentOf(srcCat)) {
-            throw new WebloggerException(
-                    "ERROR cannot move parent category into it's own child");
-        }
-        
         // get all entries in category and subcats
         List<WeblogEntry> results = srcCat.retrieveWeblogEntries(false);
         
         // Loop through entries in src cat, assign them to dest cat
-        Weblog website = destCat.getWebsite();
+        Weblog website = destCat.getWeblog();
         for (WeblogEntry entry : results) {
             entry.setCategory(destCat);
             entry.setWebsite(website);
             this.strategy.store(entry);
         }
         
-        // Make sure website's default and bloggerapi categories
-        // are valid after the move
-        
-        if (srcCat.getWebsite().getDefaultCategory().getId()
-        .equals(srcCat.getId())
-        || srcCat.getWebsite().getDefaultCategory().descendentOf(srcCat)) {
-            srcCat.getWebsite().setDefaultCategory(destCat);
-            this.strategy.store(srcCat.getWebsite());
-        }
-        
-        if (srcCat.getWebsite().getBloggerCategory().getId()
-        .equals(srcCat.getId())
-        || srcCat.getWebsite().getBloggerCategory().descendentOf(srcCat)) {
-            srcCat.getWebsite().setBloggerCategory(destCat);
-            this.strategy.store(srcCat.getWebsite());
+        // Update Blogger API category if applicable
+        WeblogCategory bloggerCategory = srcCat.getWeblog().getBloggerCategory();
+        if (bloggerCategory != null && bloggerCategory.getId().equals(srcCat.getId())) {
+            srcCat.getWeblog().setBloggerCategory(destCat);
+            this.strategy.store(srcCat.getWeblog());
         }
     }
     
@@ -221,13 +179,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public void saveWeblogEntry(WeblogEntry entry) throws WebloggerException {
 
         if (entry.getCategory() == null) {
-
             // Entry is invalid without category, so use weblog client cat
             WeblogCategory cat = entry.getWebsite().getBloggerCategory();
             if (cat == null) {
-                // Sill no category, so use first one found
-                cat = (WeblogCategory)
-                    entry.getWebsite().getWeblogCategories().iterator().next();
+                // Still no category, so use first one found
+                cat = entry.getWebsite().getWeblogCategories().iterator().next();
             }
             entry.setCategory(cat);
         }
@@ -402,44 +358,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public WeblogCategory getRootWeblogCategory(Weblog website)
-    throws WebloggerException {
-        if (website == null) {
-            throw new WebloggerException("website is null");
-        }
-        
-        Query q = strategy.getNamedQuery(
-                "WeblogCategory.getByWebsite&ParentNull");
-        q.setParameter(1, website);
-        try {
-            return (WeblogCategory)q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public List<WeblogCategory> getWeblogCategories(Weblog website, boolean includeRoot)
-    throws WebloggerException {
-        if (website == null) {
-            throw new WebloggerException("website is null");
-        }
-        
-        if (includeRoot) {
-            return getWeblogCategories(website);
-        }
-        
-        Query q = strategy.getNamedQuery(
-                "WeblogCategory.getByWebsite&ParentNotNull");
-        q.setParameter(1, website);
-        return q.getResultList();
-    }
-    
-    /**
-     * @inheritDoc
-     */
+    @Override
     public List<WeblogCategory> getWeblogCategories(Weblog website)
     throws WebloggerException {
         if (website == null) {
@@ -447,7 +366,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         Query q = strategy.getNamedQuery(
-                "WeblogCategory.getByWebsite");
+                "WeblogCategory.getByWeblog");
         q.setParameter(1, website);
         return q.getResultList();
     }
@@ -757,15 +676,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public boolean isDuplicateWeblogCategoryName(WeblogCategory cat)
     throws WebloggerException {
-        
-        // ensure that no sibling categories share the same name
-        WeblogCategory parent = cat.getParent();
-        if (null != parent) {
-            return (getWeblogCategoryByName(
-                    cat.getWebsite(), cat.getName()) != null);
-        }
-        
-        return false;
+        return (getWeblogCategoryByName(
+                cat.getWeblog(), cat.getName()) != null);
     }
     
     /**
@@ -782,17 +694,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             return true;
         }
         
-        for (WeblogCategory childCat : cat.getWeblogCategories()) {
-            if (childCat.isInUse()) {
-                return true;
-            }
-        }
-
-        if (cat.getWebsite().getBloggerCategory().equals(cat)) {
-            return true;
-        }
-        
-        if (cat.getWebsite().getDefaultCategory().equals(cat)) {
+        if (cat.getWeblog().getBloggerCategory().equals(cat)) {
             return true;
         }
         
@@ -925,34 +827,19 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public WeblogCategory getWeblogCategoryByName(Weblog website,
+    public WeblogCategory getWeblogCategoryByName(Weblog weblog,
             String categoryName) throws WebloggerException {
-        return getWeblogCategoryByName(website, null, categoryName);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    // TODO: ditch this method in favor of getWeblogCategoryByName(weblog, name)
-    public WeblogCategory getWeblogCategoryByName(Weblog website,
-            WeblogCategory category, String name) throws WebloggerException {
-        
-        if (name == null) {
-            return getRootWeblogCategory(website);
-        } else {
-            // now just do simple lookup by name
-            Query q = strategy.getNamedQuery(
-                    "WeblogCategory.getByName&Website");
-            q.setParameter(1, name);
-            q.setParameter(2, website);
-            try {
-                return (WeblogCategory)q.getSingleResult();
-            } catch (NoResultException e) {
-                return null;
-            }
+        Query q = strategy.getNamedQuery(
+                "WeblogCategory.getByWeblog&Name");
+        q.setParameter(1, weblog);
+        q.setParameter(2, categoryName);
+        try {
+            return (WeblogCategory)q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         }
     }
-    
+
     /**
      * @inheritDoc
      */

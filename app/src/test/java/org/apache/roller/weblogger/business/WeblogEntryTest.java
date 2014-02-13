@@ -118,8 +118,8 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWebsite(testWeblog);
         testEntry.setCreatorUserName(testUser.getUserName());
-        
-        WeblogCategory cat = mgr.getWeblogCategory(testWeblog.getDefaultCategory().getId());
+
+        WeblogCategory cat = testWeblog.getDefaultCategory();
         testEntry.setCategory(cat);
         
         // create a weblog entry
@@ -163,7 +163,7 @@ public class WeblogEntryTest extends TestCase {
         WeblogEntry entry = null;
         List entries = null;
         Map entryMap = null;
-        
+
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
@@ -322,7 +322,7 @@ public class WeblogEntryTest extends TestCase {
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
         TestUtils.endSession(true);
         
         // make sure createAnchor gives us a new anchor value
@@ -334,7 +334,7 @@ public class WeblogEntryTest extends TestCase {
         // make sure we can create a new entry with specified anchor
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogEntry entry2 = TestUtils.setupWeblogEntry(anchor, testWeblog.getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry2 = TestUtils.setupWeblogEntry(anchor, testWeblog, testUser);
         TestUtils.endSession(true);
         assertNotNull(entry2);
         
@@ -401,8 +401,7 @@ public class WeblogEntryTest extends TestCase {
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog
-                .getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
         entry.addTag("testTag");
         entry.addTag("whateverTag");
         String id = entry.getId();
@@ -429,8 +428,7 @@ public class WeblogEntryTest extends TestCase {
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog
-                .getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
         entry.addTag("testTag");
         String id = entry.getId();
         mgr.saveWeblogEntry(entry);
@@ -456,8 +454,7 @@ public class WeblogEntryTest extends TestCase {
             // setup some test entries to use
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             testUser = TestUtils.getManagedUser(testUser);
-            WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog
-                    .getDefaultCategory(), testWeblog, testUser);
+            WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
             entry.addTag("testTag");
             entry.addTag("testTag2");
             String id = entry.getId();
@@ -500,15 +497,13 @@ public class WeblogEntryTest extends TestCase {
         String wid = weblog.getId();
         
         // setup some test entries to use
-        WeblogEntry entry = TestUtils.setupWeblogEntry("tagsExistEntry1", 
-                testWeblog.getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry = TestUtils.setupWeblogEntry("tagsExistEntry1", testWeblog, testUser);
         String id1 = entry.getId();
         entry.addTag("blahTag");
         entry.addTag("fooTag");
         mgr.saveWeblogEntry(entry);
 
-        WeblogEntry entry2 = TestUtils.setupWeblogEntry("tagsExistEntry2", 
-                weblog.getDefaultCategory(), weblog, testUser);
+        WeblogEntry entry2 = TestUtils.setupWeblogEntry("tagsExistEntry2", weblog, testUser);
         String id2 = entry2.getId();
         entry2.addTag("aaaTag");
         entry2.addTag("bbbTag");
@@ -549,8 +544,7 @@ public class WeblogEntryTest extends TestCase {
             // setup some test entries to use
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             testUser = TestUtils.getManagedUser(testUser);
-            WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", 
-                    testWeblog.getDefaultCategory(), testWeblog, testUser);
+            WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
             String id = entry.getId();
             entry.addTag("testTag");
             mgr.saveWeblogEntry(entry);
@@ -584,8 +578,7 @@ public class WeblogEntryTest extends TestCase {
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog
-                .getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
         entry.addTag("testTag");
         String id = entry.getId();
         mgr.saveWeblogEntry(entry);
@@ -617,8 +610,7 @@ public class WeblogEntryTest extends TestCase {
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog
-                .getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
         entry.addTag("testWillStayTag");
         entry.addTag("testTagWillBeRemoved");
         String id = entry.getId();
@@ -665,8 +657,7 @@ public class WeblogEntryTest extends TestCase {
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog
-                .getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
         String id = entry.getId();
 
         entry.addTag("testWillStayTag");
@@ -736,14 +727,12 @@ public class WeblogEntryTest extends TestCase {
             assertEquals(0, tags.size());
 
             // setup some test entries to use
-            WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", 
-                    testWeblog.getDefaultCategory(), testWeblog, testUser);
+            WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
             entry.addTag("one");
             entry.addTag("two");
             mgr.saveWeblogEntry(entry);
 
-            entry = TestUtils.setupWeblogEntry("entry2",
-                    testWeblog.getDefaultCategory(), testWeblog, testUser);
+            entry = TestUtils.setupWeblogEntry("entry2", testWeblog, testUser);
             entry.addTag("one");
             entry.addTag("two");
             entry.addTag("three");
@@ -771,8 +760,7 @@ public class WeblogEntryTest extends TestCase {
             // now add another entry in another blog
             testWeblog2 = TestUtils.getManagedWebsite(testWeblog2);
             testUser = TestUtils.getManagedUser(testUser);
-            entry = TestUtils.setupWeblogEntry("entry3", 
-                    testWeblog2.getDefaultCategory(), testWeblog2, testUser);
+            entry = TestUtils.setupWeblogEntry("entry3", testWeblog2, testUser);
             entry.addTag("one");
             entry.addTag("three");
             entry.addTag("four");
@@ -887,8 +875,7 @@ public class WeblogEntryTest extends TestCase {
         assertEquals(0, tags.size());
 
         // setup some test entries to use
-        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog
-                .getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
         entry.addTag("one");
         entry.addTag("two");
         entry.addTag("ONE");
@@ -912,8 +899,7 @@ public class WeblogEntryTest extends TestCase {
         }
 
         // now add another entry in another blog
-        entry = TestUtils.setupWeblogEntry("entry3", testWeblog2
-                .getDefaultCategory(), testWeblog2, testUser);
+        entry = TestUtils.setupWeblogEntry("entry3", testWeblog2, testUser);
         entry.addTag("ONE");
         entry.addTag("three");
         mgr.saveWeblogEntry(entry);
@@ -965,7 +951,7 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setWebsite(testWeblog);
         testEntry.setCreatorUserName(testUser.getUserName());
 
-        WeblogCategory cat = emgr.getWeblogCategory(testWeblog.getDefaultCategory().getId());
+        WeblogCategory cat = testWeblog.getDefaultCategory();
         testEntry.setCategory(cat);
         
         // create a weblog entry
@@ -1031,17 +1017,12 @@ public class WeblogEntryTest extends TestCase {
         blog3.setEnabled(Boolean. FALSE);
         wmgr.saveWeblog(blog3);
 
-        WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", 
-                testWeblog.getDefaultCategory(), blog1, user1);
-        WeblogEntry entry2 = TestUtils.setupWeblogEntry("entry2", 
-                testWeblog.getDefaultCategory(), blog1, user1);
+        WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", blog1, user1);
+        WeblogEntry entry2 = TestUtils.setupWeblogEntry("entry2", blog1, user1);
         
-        WeblogEntry entry3 = TestUtils.setupWeblogEntry("entry3", 
-                testWeblog.getDefaultCategory(), blog2, user1);
-        WeblogEntry entry4 = TestUtils.setupWeblogEntry("entry4", 
-                testWeblog.getDefaultCategory(), blog2, user1);
-        WeblogEntry entry5 = TestUtils.setupWeblogEntry("entry5", 
-                testWeblog.getDefaultCategory(), blog2, user1);
+        WeblogEntry entry3 = TestUtils.setupWeblogEntry("entry3", blog2, user1);
+        WeblogEntry entry4 = TestUtils.setupWeblogEntry("entry4", blog2, user1);
+        WeblogEntry entry5 = TestUtils.setupWeblogEntry("entry5", blog2, user1);
                
         WeblogEntryComment comment1 = TestUtils.setupComment("comment1", entry1);
         WeblogEntryComment comment2 = TestUtils.setupComment("comment2", entry1);

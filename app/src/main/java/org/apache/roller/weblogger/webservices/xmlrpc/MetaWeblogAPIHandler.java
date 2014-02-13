@@ -84,7 +84,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         try {
             Hashtable result = new Hashtable();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-            List<WeblogCategory> cats = weblogMgr.getWeblogCategories(website, false);
+            List<WeblogCategory> cats = weblogMgr.getWeblogCategories(website);
             for (WeblogCategory category : cats) {
                 result.put(category.getName(),
                         createCategoryStruct(category, userid));
@@ -502,11 +502,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Weblogger roller = WebloggerFactory.getWeblogger();
         URLStrategy strategy = roller.getUrlStrategy();
         
-        String catUrl = strategy.getWeblogCollectionURL(category.getWebsite(),
+        String catUrl = strategy.getWeblogCollectionURL(category.getWeblog(),
         		null, category.getName(), null, null, 0, true);
         struct.put("htmlUrl", catUrl);
         
-        String rssUrl = strategy.getWeblogFeedURL(category.getWebsite(),
+        String rssUrl = strategy.getWeblogFeedURL(category.getWeblog(),
                null, "entries", "rss", category.getName(), null, null, false, true);
         struct.put("rssUrl",rssUrl);
         

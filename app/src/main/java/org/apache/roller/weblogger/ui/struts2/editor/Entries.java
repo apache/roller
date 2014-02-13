@@ -173,7 +173,7 @@ public class Entries extends UIAction {
         List<WeblogCategory> weblogCats = Collections.EMPTY_LIST;
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            weblogCats = wmgr.getWeblogCategories(getActionWeblog(), false);
+            weblogCats = wmgr.getWeblogCategories(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - "+getWeblog(), ex);
         }

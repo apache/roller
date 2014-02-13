@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
@@ -41,12 +40,6 @@ public class Categories extends UIAction {
 
 	private static Log log = LogFactory.getLog(Categories.class);
 
-	// the id of the category we are viewing
-	private String categoryId = null;
-
-	// the category we are viewing
-	private WeblogCategory category = null;
-
 	// list of category ids to move
 	private String[] selectedCategories = null;
 
@@ -54,10 +47,7 @@ public class Categories extends UIAction {
 	private String targetCategoryId = null;
 
 	// all categories from the action weblog
-	private Set allCategories = Collections.EMPTY_SET;
-
-	// path of categories representing selected categories hierarchy
-	private List categoryPath = Collections.EMPTY_LIST;
+	private Set<WeblogCategory> allCategories = Collections.EMPTY_SET;
 
 	public Categories() {
 		this.actionName = "categories";
@@ -70,51 +60,18 @@ public class Categories extends UIAction {
 		return Collections.singletonList(WeblogPermission.POST);
 	}
 
-	public void myPrepare() {
-		try {
-			WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-					.getWeblogEntryManager();
-			if (!StringUtils.isEmpty(getCategoryId())
-					&& !"/".equals(getCategoryId())) {
-				setCategory(wmgr.getWeblogCategory(getCategoryId()));
-			} else {
-				setCategory(wmgr.getRootWeblogCategory(getActionWeblog()));
-			}
-		} catch (WebloggerException ex) {
-			log.error("Error looking up category", ex);
-		}
-	}
-
 	public String execute() {
 
 		// build list of categories for display
-		TreeSet allCategories = new TreeSet(new WeblogCategoryPathComparator());
+		TreeSet<WeblogCategory> allCategories = new TreeSet<WeblogCategory>(new WeblogCategoryPathComparator());
 
 		try {
 			// Build list of all categories, except for current one, sorted by
 			// path.
-			WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-					.getWeblogEntryManager();
-			List<WeblogCategory> cats = wmgr.getWeblogCategories(
-					getActionWeblog(), true);
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+			List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog());
 			for (WeblogCategory cat : cats) {
-				if (getCategoryId() == null && cat.getParent() == null) {
-					// Root folder so do not show the root /
-				} else if (!cat.getId().equals(getCategoryId())) {
-					allCategories.add(cat);
-				}
-			}
-
-			// build category path
-			WeblogCategory parent = getCategory().getParent();
-			if (parent != null) {
-				List categoryPath = new LinkedList();
-				categoryPath.add(0, getCategory());
-				while (parent != null) {
-					categoryPath.add(0, parent);
-					parent = parent.getParent();
-				}
-				setCategoryPath(categoryPath);
+			    allCategories.add(cat);
 			}
 		} catch (WebloggerException ex) {
 			log.error("Error building categories list", ex);
@@ -132,22 +89,6 @@ public class Categories extends UIAction {
 	public String move() {
         // no-op today as subcategories no longer supported
 		return execute();
-	}
-
-	public String getCategoryId() {
-		return categoryId;
-	}
-
-	public void setCategoryId(String categoryId) {
-		this.categoryId = categoryId;
-	}
-
-	public WeblogCategory getCategory() {
-		return category;
-	}
-
-	public void setCategory(WeblogCategory category) {
-		this.category = category;
 	}
 
 	public String[] getSelectedCategories() {
@@ -173,13 +114,4 @@ public class Categories extends UIAction {
 	public void setAllCategories(Set allCategories) {
 		this.allCategories = allCategories;
 	}
-
-	public List getCategoryPath() {
-		return categoryPath;
-	}
-
-	public void setCategoryPath(List categoryPath) {
-		this.categoryPath = categoryPath;
-	}
-
 }

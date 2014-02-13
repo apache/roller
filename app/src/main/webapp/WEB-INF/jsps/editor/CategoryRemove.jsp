@@ -28,8 +28,8 @@
     <s:hidden name="removeId" />
     
     <%-- if we cancel then we need this attribute --%>
-    <s:hidden name="categoryId" value="%{category.parent.id}" />
-    
+    <s:hidden name="categoryId" value="%{category.website.defaultCategory.id}" />
+
     <s:if test="category.inUse" >
         <br />
         <span class="warning">

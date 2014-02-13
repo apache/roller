@@ -234,13 +234,6 @@ public interface WeblogEntryManager {
             throws WebloggerException;
     
     /**
-     * Get top level categories for a website.
-     * @param website Website.
-     */
-    WeblogCategory getRootWeblogCategory(Weblog website) throws WebloggerException;
-    
-    
-    /**
      * Get category specified by website and name.
      * @param website      Website of WeblogCategory.
      * @param categoryName Name of WeblogCategory
@@ -251,7 +244,7 @@ public interface WeblogEntryManager {
     /**
      * Get WebLogCategory objects for a website. 
      */
-    List<WeblogCategory> getWeblogCategories(Weblog website, boolean includeRoot)
+    List<WeblogCategory> getWeblogCategories(Weblog website)
             throws WebloggerException;
 
     /**

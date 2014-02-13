@@ -404,8 +404,8 @@ public class SiteWideCache implements CacheHandler {
      * A category has changed.
      */
     public void invalidate(WeblogCategory category) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(category.getWebsite().getHandle())) {
-            invalidate(category.getWebsite());
+        if(WebloggerRuntimeConfig.isSiteWideWeblog(category.getWeblog().getHandle())) {
+            invalidate(category.getWeblog());
         }
     }
     

@@ -225,15 +225,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         this.strategy.flush();
         
-        // remove categories
-        WeblogCategory rootCat = emgr.getRootWeblogCategory(website);
-        if (null != rootCat) {
-            this.strategy.remove(rootCat);
-        }
-
         // delete all weblog categories
         Query removeCategories= strategy.getNamedUpdate(
-                "WeblogCategory.removeByWebsite");
+                "WeblogCategory.removeByWeblog");
         removeCategories.setParameter(1, website);
         removeCategories.executeUpdate();
 
@@ -284,7 +278,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     public void addWeblog(Weblog newWeblog) throws WebloggerException {
-        
+
         this.strategy.store(newWeblog);
         this.strategy.flush();
         this.addWeblogContents(newWeblog);
@@ -299,42 +293,32 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         roller.getUserManager().grantWeblogPermission(
                 newWeblog, newWeblog.getCreator(), actions);
         
-        // add default category
-        WeblogCategory rootCat = new WeblogCategory(
-                newWeblog, // newWeblog
-                null,      // parent
-                "root",    // name
-                "root",    // description
-                null );    // image
-        this.strategy.store(rootCat);
-        
         String cats = WebloggerConfig.getProperty("newuser.categories");
-        WeblogCategory firstCat = rootCat;
-        if (cats != null && cats.trim().length() > 0) {
-            String[] splitcats = cats.split(",");
-            for (int i=0; i<splitcats.length; i++) {
-                WeblogCategory c = new WeblogCategory(
-                        newWeblog,       // newWeblog
-                        rootCat,         // parent
-                        splitcats[i],    // name
-                        splitcats[i],    // description
-                        null );          // image
-                if (i == 0) {
-                    firstCat = c;
-                }
-                rootCat.getWeblogCategories().add(c);
-                this.strategy.store(c);
+        WeblogCategory firstCat = null;
+        String[] splitcats = cats.split(",");
+        for (int i=0; i<splitcats.length; i++) {
+            if (splitcats[i].trim().length() == 0) {
+                continue;
             }
+            WeblogCategory c = new WeblogCategory(
+                    newWeblog,       // newWeblog
+                    splitcats[i],    // name
+                    null,            // description
+                    null );          // image
+            if (firstCat == null) {
+                firstCat = c;
+            }
+            // TODO: Have weblog add category instead of latter in its constructor?
+            this.strategy.store(c);
         }
-        
+
         // Use first category as default for Blogger API
-        newWeblog.setBloggerCategory(firstCat);
-        
-        // But default category for weblog itself should be  root
-        newWeblog.setDefaultCategory(rootCat);
-        
+        if (firstCat != null) {
+            newWeblog.setBloggerCategory(firstCat);
+        }
+
         this.strategy.store(newWeblog);
-        
+
         // add default bookmarks
         WeblogBookmarkFolder root = new WeblogBookmarkFolder(
                 null, "root", "root", newWeblog);
@@ -363,10 +347,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
 
         roller.getMediaFileManager().createRootMediaFileDirectory(newWeblog);
-        
+
         // flush so that all data up to this point can be available in db
         this.strategy.flush();
-        
+
         // add any auto enabled ping targets
         PingTargetManager pingTargetMgr = roller.getPingTargetManager();
         AutoPingManager autoPingMgr = roller.getAutopingManager();

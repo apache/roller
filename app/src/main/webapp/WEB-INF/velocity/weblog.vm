@@ -560,11 +560,11 @@ Show weblog's categories in specified parent category.
     #if(!$expanding && !$subcats)
         <ul class="rCategory">
         #if ($model.weblogCategory || $model.permalink)
-            <li><a href="$url.category($categoryObject.name)">$text.get("macro.weblog.allcategories")</a></li>
+            <li><a href="$url.home">$text.get("macro.weblog.allcategories")</a></li>
         #else
-            <li class="selected"><a href="$url.category($categoryObject.name)">$text.get("macro.weblog.allcategories")</a></li>
+            <li class="selected"><a href="$url.home">$text.get("macro.weblog.allcategories")</a></li>
         #end
-        #set($cats = $categoryObject.getWeblogCategories())
+        #set($cats = $categoryObject.website.getWeblogCategories())
         #foreach($cat in $cats)
             #if ($model.weblogCategory && $model.weblogCategory.name == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
                 <li class="selected"><a href="$url.category($cat.name)">$cat.name</a></li>
@@ -588,12 +588,12 @@ Show weblog's categories in specified parent category.
           <h2>Categories</h2>
           <ul data-role="listview">
             #if ($model.weblogCategory || $model.permalink)
-              <li><a href="$url.category($categoryObject.name)" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
+              <li><a href="$url.home" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
             #else
-              <li class="ui-btn-active"><a href="$url.category($categoryObject.name)" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
+              <li class="ui-btn-active"><a href="$url.home" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
             #end
             #set($active = $text.get("macro.weblog.allcategories"))
-            #set($cats = $categoryObject.getWeblogCategories())
+            #set($cats = $categoryObject.website.getWeblogCategories())
             #foreach($cat in $cats)
               #if ($model.weblogCategory && $model.weblogCategory.name == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
                 <li class="ui-btn-active"><a href="$url.category($cat.name)" data-transition="fade">$cat.name</a></li>

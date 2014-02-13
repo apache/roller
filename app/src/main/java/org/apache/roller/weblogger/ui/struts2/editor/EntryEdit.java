@@ -318,7 +318,7 @@ public final class EntryEdit extends EntryBase {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                     .getWeblogEntryManager();
-            return wmgr.getWeblogCategories(getActionWeblog(), false);
+            return wmgr.getWeblogCategories(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error(
                     "Error getting category list for weblog - " + getWeblog(),

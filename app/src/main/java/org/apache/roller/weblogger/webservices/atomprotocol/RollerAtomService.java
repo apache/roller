@@ -91,7 +91,7 @@ public class RollerAtomService extends AtomService {
                     Categories cats = new Categories();
                     cats.setFixed(true);
                     cats.setScheme(getWeblogCategoryScheme(weblog));
-                    List<WeblogCategory> rollerCats = roller.getWeblogEntryManager().getWeblogCategories(weblog, false);
+                    List<WeblogCategory> rollerCats = roller.getWeblogEntryManager().getWeblogCategories(weblog);
                     for (WeblogCategory rollerCat : rollerCats) {
                         Category cat = new Category();
                         cat.setTerm(rollerCat.getName());

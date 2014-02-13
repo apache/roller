@@ -139,8 +139,7 @@ public class CategoryEdit extends UIAction {
         
         // make sure new name is not a duplicate of an existing category
         if(!getCategory().getName().equals(getBean().getName())) {
-            WeblogCategory parent = getCategory().getParent();
-            if(parent != null && parent.hasCategory(getBean().getName())) {
+            if(getCategory().getWeblog().hasCategory(getBean().getName())) {
                 addError("categoryForm.error.duplicateName", getBean().getName());
             }
         }

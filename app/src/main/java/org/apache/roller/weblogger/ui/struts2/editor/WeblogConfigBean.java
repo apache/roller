@@ -54,7 +54,6 @@ public class WeblogConfigBean {
     private String about = null;
     
     private String bloggerCategoryId = null;
-    private String defaultCategoryId = null;
     private String[] defaultPluginsArray = null;
     private boolean applyCommentDefaults = false;
     
@@ -246,15 +245,7 @@ public class WeblogConfigBean {
     public void setBloggerCategoryId(String bloggerCategoryId) {
         this.bloggerCategoryId = bloggerCategoryId;
     }
-    
-    public String getDefaultCategoryId() {
-        return defaultCategoryId;
-    }
-    
-    public void setDefaultCategoryId(String defeaultCategoryId) {
-        this.defaultCategoryId = defeaultCategoryId;
-    }
-    
+
     public String[] getDefaultPluginsArray() {
         return defaultPluginsArray;
     }
@@ -307,10 +298,6 @@ public class WeblogConfigBean {
         this.pageModels = dataHolder.getPageModels();
         setIcon(dataHolder.getIconPath());
         setAbout(dataHolder.getAbout());
-        
-        if (dataHolder.getDefaultCategory() != null) {
-            defaultCategoryId = dataHolder.getDefaultCategory().getId();
-        }
         if (dataHolder.getBloggerCategory() != null) {
             bloggerCategoryId = dataHolder.getBloggerCategory().getId();
         }
