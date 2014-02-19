@@ -57,16 +57,21 @@ public class UserDataServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        boolean admin = false;
+
         WeblogRequest weblogRequest = null;
         try {
             weblogRequest = new WeblogRequest(request);
 
             // Make sure we have the correct authority
             User user = weblogRequest.getUser();
-            if (user == null || !user.hasGlobalPermission("admin")) {
-                // user not found or not admin
+            if (user == null) {
+                // user not found
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
+            } else if (user.hasGlobalPermission("admin")) {
+                // admin
+                admin = true;
             }
 
         } catch (Exception e) {
@@ -96,7 +101,11 @@ public class UserDataServlet extends HttpServlet {
                 User user = (User)userIter.next();
                 response.getWriter().print(user.getUserName());
                 response.getWriter().print(",");
-                response.getWriter().println(user.getEmailAddress());
+                if (admin) {
+                    response.getWriter().println(user.getEmailAddress());
+                } else {
+                    response.getWriter().println(user.getScreenName());
+                }
             }
             response.flushBuffer();
         } catch (WebloggerException e) {
