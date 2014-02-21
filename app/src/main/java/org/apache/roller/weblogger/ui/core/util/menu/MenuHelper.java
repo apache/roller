@@ -89,7 +89,7 @@ public class MenuHelper {
      * @param menuId
      *            the menu id
      * @param currentAction
-     *            the current action
+     *            the current action. Null to ignore.
      * @param user
      *            the user
      * @param weblog
@@ -212,7 +212,7 @@ public class MenuHelper {
 
                     boolean includeItem = true;
 
-                    if (!item.contains(currentAction)) {
+                    if (currentAction != null && !item.contains(currentAction)) {
                         // includeItem = false;
                         // Set first action on menu
                         // if (firstItem) {
@@ -267,7 +267,7 @@ public class MenuHelper {
 
                         // is this the selected item? Only one can be selected
                         // so skip the rest
-                        if (selectable
+                        if (currentAction != null && selectable
                                 && isSelected(currentAction, configTabItem)) {
                             tabItem.setSelected(true);
                             tab.setSelected(true);
