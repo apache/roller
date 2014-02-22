@@ -192,13 +192,11 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         }
     }
 
-    // convenience method for updating the category name, which triggers a path tree rebuild
+    /**
+     * Convenience method for updating the category name
+     */
     public void updateName(String newName) throws WebloggerException {
-        
-        // update name
         setName(newName);
-
         WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogCategory(this);
     }
-
 }
