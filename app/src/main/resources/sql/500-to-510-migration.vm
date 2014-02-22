@@ -23,3 +23,11 @@ create table rol_templatecode (
 
 #addColumnNull("webpage" "type"  "varchar(16)")
 #addColumnNull("weblogentry" "search_description"  "varchar(255)")
+
+-- Removal of subcategories means no more path and parentid columns
+delete from weblogcategory where name = 'root' and parentid is null;
+#dropColumn("weblogcategory" 'parentid')
+#dropColumn("weblogcategory" 'path')
+
+-- Allow users to order their weblog categories (zero-based)
+#addColumnNotNull("weblogcategory" "position" "integer" "0")

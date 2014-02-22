@@ -258,7 +258,7 @@ public class DatabaseInstaller {
     }
 
     /**
-     * Upgrade database for Roller 4.0.0
+     * Upgrade database to Roller 4.0.0
      */
     private void upgradeTo400(Connection con, boolean runScripts) throws StartupException {
         
@@ -701,7 +701,7 @@ public class DatabaseInstaller {
     
     
     /**
-     * Upgrade database for Roller 4.1.0
+     * Upgrade database to Roller 5.0
      */
     private void upgradeTo500(Connection con, boolean runScripts) throws StartupException {
         
@@ -727,6 +727,9 @@ public class DatabaseInstaller {
         }        
     }
 
+    /**
+     * Upgrade database to Roller 5.1
+     */
 	private void upgradeTo510(Connection con, boolean runScripts) throws StartupException {
         
         // first we need to run upgrade scripts 

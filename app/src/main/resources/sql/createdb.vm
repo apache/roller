@@ -195,27 +195,14 @@ create table bookmark (
 create index bm_folderid_idx on bookmark( folderid );
 
 create table weblogcategory (
-    id               varchar(48)  not null primary key,
+    id               varchar(48) not null primary key,
     name             varchar(255) not null,
     description      varchar(255),
     websiteid        varchar(48) not null,
     image            varchar(255),
-    parentid         varchar(48),
-    path             varchar(255)
+    position         integer default 0 not null
 );
 create index wc_websiteid_idx on weblogcategory( websiteid );
-create index ws_parentid_idx on weblogcategory( parentid );
-create index ws_path_idx on weblogcategory( path );
-
-create table weblogcategoryassoc (
-    id               varchar(48) not null primary key,
-    categoryid       varchar(48) not null,
-    ancestorid       varchar(40),
-    relation         varchar(20) not null
-);
-create index wca_categoryid_idx on weblogcategoryassoc( categoryid );
-create index wca_ancestorid_idx on weblogcategoryassoc( ancestorid );
-create index wca_relation_idx on weblogcategoryassoc( relation );
 
 create table weblogentry (
     id              varchar(48)  not null primary key,
