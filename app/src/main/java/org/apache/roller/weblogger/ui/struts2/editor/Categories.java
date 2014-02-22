@@ -87,7 +87,7 @@ public class Categories extends UIAction {
 	}
 
 	public String move() {
-        // no-op today as subcategories no longer supported
+        // TODO: Handle reordering of categories
 		return execute();
 	}
 

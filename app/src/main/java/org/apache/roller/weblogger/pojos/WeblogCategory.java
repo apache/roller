@@ -170,8 +170,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     }
 
     /**
-     * Retrieve all weblog entries in this category and, optionally, include
-     * weblog entries all sub-categories.
+     * Retrieve all weblog entries in this category.
      *
      * @param publishedOnly True if desired to return only published entries
      * @return List of WeblogEntryData objects.
@@ -183,8 +182,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     }
     
     /**
-     * Determine if category is in use. Returns true if any weblog entries
-     * use this category or any of its subcategories.
+     * Returns true if category is in use.
      */
     public boolean isInUse() {
         try {

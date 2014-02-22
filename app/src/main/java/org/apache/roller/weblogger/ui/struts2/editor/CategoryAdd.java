@@ -34,17 +34,11 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
- * Add a new subCategory to an existing Category.
+ * Add a new WeblogCategory to the weblog
  */
 public class CategoryAdd extends UIAction {
     
     private static Log log = LogFactory.getLog(CategoryAdd.class);
-    
-    // the id of the Category we are adding the new subCategory into
-    private String categoryId = null;
-    
-    // the category we are adding the new subcategory into
-    private WeblogCategory category = null;
     
     // bean for managing form data
     private CategoryBean bean = new CategoryBean();
@@ -58,17 +52,6 @@ public class CategoryAdd extends UIAction {
     // author perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
-    }
-
-    public void myPrepare() {
-        try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            if(!StringUtils.isEmpty(getCategoryId())) {
-                setCategory(wmgr.getWeblogCategory(getCategoryId()));
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up category", ex);
-        }
     }
 
     /**
@@ -126,22 +109,6 @@ public class CategoryAdd extends UIAction {
         if(getActionWeblog().hasCategory(getBean().getName())) {
             addError("categoryForm.error.duplicateName", getBean().getName());
         }
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public WeblogCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(WeblogCategory category) {
-        this.category = category;
     }
 
     public CategoryBean getBean() {
