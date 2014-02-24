@@ -308,7 +308,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             if (firstCat == null) {
                 firstCat = c;
             }
-            // TODO: Have weblog add category instead of latter in its constructor?
             this.strategy.store(c);
         }
 

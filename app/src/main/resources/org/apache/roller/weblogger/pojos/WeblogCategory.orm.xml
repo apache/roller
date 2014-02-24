@@ -8,7 +8,7 @@
             class="org.apache.roller.weblogger.pojos.WeblogCategory" access="PROPERTY">
         <table name="weblogcategory"/>
         <named-query name="WeblogCategory.getByWeblog">
-                <query>SELECT w FROM WeblogCategory w WHERE w.weblog = ?1</query>
+            <query>SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 order by w.position</query>
         </named-query>
         <named-query name="WeblogCategory.getByWeblog&amp;Name">
             <query>SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 AND w.name = ?2</query>
@@ -28,6 +28,9 @@
             </basic>
             <basic name="image">
                 <column name="image" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="position">
+                <column name="position" insertable="true" updatable="true" unique="false"/>
             </basic>
             <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>

@@ -46,6 +46,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     private String name = null;
     private String description = null;
     private String image = null;
+    private int position;
 
     // associations
     private Weblog weblog = null;
@@ -65,6 +66,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         
         this.weblog = weblog;
         weblog.getWeblogCategories().add(this);
+        this.position = weblog.getWeblogCategories().size();
     }
     
     
@@ -145,8 +147,20 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
+
+    /**
+     * A 1-based position indicator for desired display order of that category.
+     * Value of 0 indicates no ordering yet assigned.
+     * New categories are always placed at the end of the list.
+     */
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
     /**
      * An image icon to represent this category.
      */
