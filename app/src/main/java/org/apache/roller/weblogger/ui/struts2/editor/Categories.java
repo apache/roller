@@ -40,14 +40,8 @@ public class Categories extends UIAction {
 
 	private static Log log = LogFactory.getLog(Categories.class);
 
-	// list of category ids to move
-	private String[] selectedCategories = null;
-
-	// category id of the category to move to
-	private String targetCategoryId = null;
-
 	// all categories from the action weblog
-	private Set<WeblogCategory> allCategories = Collections.EMPTY_SET;
+	private List<WeblogCategory> allCategories;
 
 	public Categories() {
 		this.actionName = "categories";
@@ -61,57 +55,26 @@ public class Categories extends UIAction {
 	}
 
 	public String execute() {
-
-		// build list of categories for display
-		TreeSet<WeblogCategory> allCategories = new TreeSet<WeblogCategory>(new WeblogCategoryPathComparator());
-
 		try {
-			// Build list of all categories, except for current one, sorted by
-			// path.
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-			List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog());
-			for (WeblogCategory cat : cats) {
-			    allCategories.add(cat);
-			}
+			allCategories = wmgr.getWeblogCategories(getActionWeblog());
 		} catch (WebloggerException ex) {
 			log.error("Error building categories list", ex);
-			// TODO: i18n
 			addError("Error building categories list");
-		}
-
-		if (allCategories.size() > 0) {
-			setAllCategories(allCategories);
 		}
 
 		return LIST;
 	}
 
 	public String move() {
-        // TODO: Handle reordering of categories
 		return execute();
 	}
 
-	public String[] getSelectedCategories() {
-		return selectedCategories;
-	}
-
-	public void setSelectedCategories(String[] selectedCategories) {
-		this.selectedCategories = selectedCategories;
-	}
-
-	public String getTargetCategoryId() {
-		return targetCategoryId;
-	}
-
-	public void setTargetCategoryId(String targetCategoryId) {
-		this.targetCategoryId = targetCategoryId;
-	}
-
-	public Set getAllCategories() {
+	public List<WeblogCategory> getAllCategories() {
 		return allCategories;
 	}
 
-	public void setAllCategories(Set allCategories) {
+	public void setAllCategories(List<WeblogCategory> allCategories) {
 		this.allCategories = allCategories;
 	}
 }

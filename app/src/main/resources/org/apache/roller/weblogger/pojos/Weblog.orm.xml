@@ -164,8 +164,9 @@
 				<join-column name="bloggercatid" insertable="true" updatable="true"/>
 			</many-to-one>
             <one-to-many name="weblogCategories" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory" mapped-by="weblog" fetch="EAGER">
+                <order-by>position</order-by>
                 <cascade>
-                    <cascade-remove/>
+                    <cascade-remove/>                                                                                                  1
                 </cascade>
             </one-to-many>
 			<transient name="theme"/>

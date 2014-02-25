@@ -66,7 +66,12 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         
         this.weblog = weblog;
         weblog.getWeblogCategories().add(this);
-        this.position = weblog.getWeblogCategories().size();
+        int size = weblog.getWeblogCategories().size();
+        if (size == 1) {
+            this.position = 0;
+        } else {
+            this.position = weblog.getWeblogCategories().get(size - 2).getPosition() + 1;
+        }
     }
     
     
@@ -149,9 +154,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     }
 
     /**
-     * A 1-based position indicator for desired display order of that category.
-     * Value of 0 indicates no ordering yet assigned.
-     * New categories are always placed at the end of the list.
+     * A 0-based position indicator for desired display order of that category.
      */
     public int getPosition() {
         return position;
