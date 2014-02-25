@@ -18,10 +18,9 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +28,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogCategoryPathComparator;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -50,9 +48,9 @@ public class CategoryRemove extends UIAction {
     
     // category id of the category to move to
     private String targetCategoryId = null;
-    
+
     // all categories from the action weblog
-    private Set allCategories = Collections.EMPTY_SET;
+    private List<WeblogCategory> allCategories = new ArrayList<WeblogCategory>();
     
     
     public CategoryRemove() {
@@ -83,33 +81,22 @@ public class CategoryRemove extends UIAction {
      * Display the remove template confirmation.
      */
     public String execute() {
-        
-        // build list of categories for display
-        TreeSet allCategoriesSet = new TreeSet(new WeblogCategoryPathComparator());
-        
         try {
-            // Build list of all categories, except for current one, sorted by path.
+            // Build list of categories that the removed category's blog entries (if any) can be moved to
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog());
             for(WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getRemoveId())) {
-                    allCategoriesSet.add(cat);
+                    allCategories.add(cat);
                 }
             }
         } catch (WebloggerException ex) {
             log.error("Error building categories list", ex);
-            // TODO: i18n
             addError("Error building categories list");
         }
-        
-        if (allCategoriesSet.size() > 0) {
-            setAllCategories(allCategoriesSet);
-        }
-        
         return INPUT;
     }
-    
-    
+
     /**
      * Remove a new template.
      */
@@ -172,11 +159,11 @@ public class CategoryRemove extends UIAction {
         this.targetCategoryId = targetCategoryId;
     }
 
-    public Set getAllCategories() {
+    public List<WeblogCategory> getAllCategories() {
         return allCategories;
     }
 
-    public void setAllCategories(Set allCategories) {
+    public void setAllCategories(List<WeblogCategory> allCategories) {
         this.allCategories = allCategories;
     }
     

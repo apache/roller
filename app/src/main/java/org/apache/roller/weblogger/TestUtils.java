@@ -26,7 +26,6 @@ package org.apache.roller.weblogger;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.roller.planet.business.PlanetManager;

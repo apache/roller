@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.pojos.wrapper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogCategory;

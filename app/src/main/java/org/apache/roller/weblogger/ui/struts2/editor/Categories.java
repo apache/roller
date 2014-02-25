@@ -20,16 +20,12 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogCategoryPathComparator;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
