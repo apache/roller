@@ -171,16 +171,6 @@ create index fo_websiteid_idx on folder( websiteid );
 create index fo_parentid_idx on folder( parentid );
 create index fo_path_idx on folder( path );
 
-create table folderassoc (
-    id               varchar(48) not null primary key,
-    folderid         varchar(48) not null,
-    ancestorid       varchar(40),
-    relation         varchar(20) not null
-);
-create index fa_folderid_idx on folderassoc( folderid );
-create index fa_ancestorid_idx on folderassoc( ancestorid );
-create index fa_relation_idx on folderassoc( relation );
-
 create table bookmark (
     id               varchar(48) not null primary key,
     folderid         varchar(48) not null,
