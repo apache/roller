@@ -277,15 +277,9 @@
     </servlet>
 
     <servlet>
-        <servlet-name>AdminServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.webservices.adminprotocol.AdminServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>TagDataServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.webservices.tagdata.TagDataServlet</servlet-class>
     </servlet>
-
 
     <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
@@ -298,7 +292,6 @@
             <param-value>true</param-value>
         </init-param>
     </servlet>
-
 
     <!-- BEGIN OAUTH -->
 
@@ -424,11 +417,6 @@
     <servlet-mapping>
         <servlet-name>AtomServlet</servlet-name>
         <url-pattern>/roller-services/app/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AdminServlet</servlet-name>
-        <url-pattern>/roller-services/rap/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
