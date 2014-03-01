@@ -117,12 +117,6 @@ Each menu or menu item is governed by four attributes:
                    disabledProperty="pings.disablePingUsage" />
         
         <!-- globalPerms="login" weblogPerms="admin" -->
-        <menu-item action="customPingTargets" 
-                   name="tabbedmenu.weblog.customPingTargets" 
-                   subactions="customPingTargetAdd,customPingTargetEdit"
-                   disabledProperty="pings.disallowCustomTargets" />
-        
-        <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="maintenance"
                    name="tabbedmenu.website.maintenance" />
     </menu>

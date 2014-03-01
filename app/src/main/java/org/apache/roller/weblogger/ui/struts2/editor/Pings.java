@@ -56,9 +56,6 @@ public class Pings extends UIAction {
     // commong ping targets list
     private List<PingTarget> commonPingTargets = Collections.EMPTY_LIST;
     
-    // custom ping targets list for weblog
-    private List<PingTarget> customPingTargets = Collections.EMPTY_LIST;
-    
     // track the enabled/disabled status for pings
     private Map pingStatus = Collections.EMPTY_MAP;
     
@@ -92,12 +89,6 @@ public class Pings extends UIAction {
         try {
             // load common ping targets list
             setCommonPingTargets(pingTargetMgr.getCommonPingTargets());
-            
-            // load custom ping targets list for weblog, if applicable
-            if(!PingConfig.getDisallowCustomTargets()) {
-                setCustomPingTargets(pingTargetMgr.getCustomPingTargets(getActionWeblog()));
-            }
-            
         } catch (WebloggerException ex) {
             log.error("Error loading ping target lists for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
@@ -233,21 +224,13 @@ public class Pings extends UIAction {
             isEnabled.put(autoPing.getPingTarget().getId(), Boolean.TRUE);
         }
         
-        // Somewhat awkward, but the two loops save building a separate combined list.
-        // Add disabled common ones with FALSE
+        // Add disabled ping targets ones with FALSE
         for (PingTarget inPingTarget : getCommonPingTargets()) {
             if (isEnabled.get(inPingTarget.getId()) == null) {
                 isEnabled.put(inPingTarget.getId(), Boolean.FALSE);
             }
         }
-        
-        // Add disabled custom ones with FALSE
-        for (PingTarget inPingTarget : getCustomPingTargets()) {
-            if (isEnabled.get(inPingTarget.getId()) == null) {
-                isEnabled.put(inPingTarget.getId(), Boolean.FALSE);
-            }
-        }
-        
+
         if (isEnabled.size() > 0) {
             setPingStatus(isEnabled);
         }
@@ -276,14 +259,6 @@ public class Pings extends UIAction {
 
     public void setCommonPingTargets(List<PingTarget> commonPingTargets) {
         this.commonPingTargets = commonPingTargets;
-    }
-
-    public List<PingTarget> getCustomPingTargets() {
-        return customPingTargets;
-    }
-
-    public void setCustomPingTargets(List<PingTarget> customPingTargets) {
-        this.customPingTargets = customPingTargets;
     }
 
     public Map getPingStatus() {

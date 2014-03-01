@@ -71,13 +71,6 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         q.executeUpdate();
     }
 
-    public void removeAllCustomPingTargets()
-            throws WebloggerException {
-        Query q = strategy.getNamedUpdate(
-            "PingTarget.removeByWebsiteNotNull");
-        q.executeUpdate();
-    }
-
     public void savePingTarget(PingTarget pingTarget)
             throws WebloggerException {
         strategy.store(pingTarget);
@@ -97,16 +90,11 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         
         String id = pingTarget.getId();
         
-        // Determine the set of "brother" targets (custom or common) 
+        // Determine the set of "brother" targets
         // among which this name should be unique.
         List<PingTarget> brotherTargets;
-        Weblog website = pingTarget.getWebsite();
-        if (website == null) {
-            brotherTargets = getCommonPingTargets();
-        } else {
-            brotherTargets = getCustomPingTargets(website);
-        }
-        
+        brotherTargets = getCommonPingTargets();
+
         // Within that set of targets, fail if there is a target 
         // with the same name and that target doesn't
         // have the same id.
@@ -165,15 +153,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     public List<PingTarget> getCommonPingTargets()
             throws WebloggerException {
         Query q = strategy.getNamedQuery(
-                "PingTarget.getByWebsiteNullOrderByName");
-        return q.getResultList();
-    }
-
-    public List<PingTarget> getCustomPingTargets(Weblog website)
-            throws WebloggerException {
-        Query q = strategy.getNamedQuery(
-                "PingTarget.getByWebsiteOrderByName");
-        q.setParameter(1, website);
+                "PingTarget.getPingTargetsOrderByName");
         return q.getResultList();
     }
 

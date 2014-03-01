@@ -60,13 +60,6 @@ public class PingConfig {
     private static final String PINGS_LOG_ONLY_PROP = "pings.logOnly";
     private static final boolean PINGS_LOG_ONLY_DEFAULT = false;
 
-    // PingConfig property for controlling whether or not to allow custom ping targets
-    // ("Weblog:Custom Ping Targets" page and actions).  If absent, this defaults to false.
-    // with the enabledProperty behavior in editor-menu.xml.
-    // NOTE: If this property name is changed, editor-menu.xml must also be adjusted.
-    private static final String PINGS_DISALLOW_CUSTOM_TARGETS_PROP = "pings.disallowCustomTargets";
-    private static final boolean PINGS_DISALLOW_CUSTOM_TARGETS_DEFAULT = false;
-
     // PingConfig property for controlling whether or not to allow usage of pings
     // ("Weblog:Pings" page and actions).  If absent, this defaults to false
     // NOTE: If this property name is changed, editor-menu.xml must also be adjusted.
@@ -142,16 +135,6 @@ public class PingConfig {
     }
 
     /**
-     * Determine whether the configuration disallows custom ping targets.  If this is true, users are not allowed to
-     * create or edit custom ping targets, and any auto ping configs that use them are ignored.
-     *
-     * @return the configured (or default) value of the "disallow custom targets" setting.
-     */
-    public static boolean getDisallowCustomTargets() {
-        return getBooleanProperty(PINGS_DISALLOW_CUSTOM_TARGETS_PROP, PINGS_DISALLOW_CUSTOM_TARGETS_DEFAULT);
-    }
-
-    /**
      * Determine whether the configuration disables ping usage (configuration of auto pings and sending of manual
      * pings).  If this is true, all auto ping configus are removed at startup, the Weblog:Pings UI and the associated
      * actions are disabled.
@@ -213,7 +196,7 @@ public class PingConfig {
                 String name = m.group(1).trim();
                 String url = m.group(2).trim();
                 LOGGER.info("Creating common ping target '" + name + "' from configuration properties.");
-                PingTarget pingTarget = new PingTarget(null, name, url, null, false);
+                PingTarget pingTarget = new PingTarget(null, name, url, false);
                 pingTargetMgr.savePingTarget(pingTarget);
             } else {
                 LOGGER.error("Unable to parse configured initial ping target '" + thisTarget + "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);

@@ -26,9 +26,7 @@ import org.apache.roller.util.UUIDGenerator;
 
 
 /**
- * Ping target.   Each instance represents a possible target of a weblog update ping that we send.  Ping targets are
- * either common (defined centrally by an administrator and used by any website), or custom (defined by the user of a
- * specific website) for update pings issued for that website.
+ * Ping target.   Each instance represents a possible target of a weblog update ping that we send.
  * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
@@ -43,7 +41,6 @@ public class PingTarget implements Serializable {
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String pingUrl = null;
-    private Weblog website = null;
     private int conditionCode = -1;
     private Timestamp lastSuccess = null;
     private boolean autoEnabled = false;
@@ -62,13 +59,12 @@ public class PingTarget implements Serializable {
      * @param id      the id (primary key) of this target
      * @param name    the descriptive name of this target
      * @param pingUrl the URL to which to send the ping
-     * @param website the website (on this server) for which this is a custom ping target (may be null)
+     * @param autoEnable if true, pings sent to target by default
      */
-    public PingTarget(String id, String name, String pingUrl, Weblog website, boolean autoEnable) {
+    public PingTarget(String id, String name, String pingUrl, boolean autoEnable) {
         //this.id = id;
         this.name = name;
         this.pingUrl = pingUrl;
-        this.website = website;
         this.conditionCode = CONDITION_OK;
         this.lastSuccess = null;
         this.autoEnabled = autoEnable;
@@ -135,30 +131,6 @@ public class PingTarget implements Serializable {
         this.pingUrl = pingUrl;
     }
 
-
-    /**
-     * Get the website (on this server) for which this ping target is a custom target.  This may be null, indicating
-     * that it is a common ping target, not a custom one.
-     *
-     * @return the website for which this ping target is a custom target, or null if this ping target is not a custom
-     *         target.
-     */
-    public Weblog getWebsite() {
-        return website;
-    }
-
-
-    /**
-     * Set the website (on this server) for which this ping target is a custom target.
-     *
-     * @param website the website for which this ping target is a custom target, or null if this ping target is not a
-     *                custom target
-     */
-    public void setWebsite(Weblog website) {
-        this.website = website;
-    }
-
-
     /**
      * Get the condition code value.  This code, in combination with the last success timestamp, provides a status
      * indicator on the ping target based on its  usage by the ping queue processor. It can be used to implement a
@@ -170,7 +142,6 @@ public class PingTarget implements Serializable {
     public int getConditionCode() {
         return conditionCode;
     }
-
 
     /**
      * Set the condition code value.

@@ -168,13 +168,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             this.strategy.remove(autoPing);
         }
         
-        // Remove the website's custom ping targets
-        PingTargetManager pingTargetMgr = roller.getPingTargetManager();
-        List<PingTarget> pingTargets = pingTargetMgr.getCustomPingTargets(website);
-        for (PingTarget pingTarget : pingTargets) {
-            this.strategy.remove(pingTarget);
-        }
-        
         // remove associated referers
         Query refQuery2 = strategy.getNamedQuery("WeblogReferrer.getByWebsite");
         refQuery2.setParameter(1, website);

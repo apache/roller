@@ -50,12 +50,6 @@ public interface PingTargetManager {
     
     
     /**
-     * Remove all custom targets (regardless of website).
-     */
-    void removeAllCustomPingTargets() throws WebloggerException;
-    
-    
-    /**
      * Retrieve a specific ping target by id.
      *
      * @param id id of the ping target to be retrieved.
@@ -72,18 +66,7 @@ public interface PingTargetManager {
      * @throws WebloggerException
      */
     List<PingTarget> getCommonPingTargets() throws WebloggerException;
-    
-    
-    /**
-     * Get a list of the custom ping targets for the given website.
-     * 
-     * @param website the website whose custom targets should be returned.
-     * @return the list of custom ping targets for the given website as a <code>List</code> of {@link PingTarget objects
-     * @throws WebloggerException
-     */
-    List<PingTarget> getCustomPingTargets(Weblog website) throws WebloggerException;
-    
-    
+
     /**
      * Check if the ping target has a name that is unique in the appropriate set.  If the ping target has no website id
      * (is common), then this checks if the name is unique amongst common targets, and if custom then unique amongst

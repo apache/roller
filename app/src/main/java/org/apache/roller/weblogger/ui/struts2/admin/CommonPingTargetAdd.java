@@ -63,7 +63,6 @@ public class CommonPingTargetAdd extends PingTargetAddBase {
                 null, 
                 getBean().getName(), 
                 getBean().getPingUrl(), 
-                null, 
                 false);
     }
     

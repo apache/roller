@@ -612,7 +612,7 @@ public class Weblog implements Serializable {
      * This includes a change to weblog settings, entries, themes, templates, 
      * comments, categories, bookmarks, folders, etc.
      *
-     * Pings and Referrers are explicitly not included because pings to not
+     * Pings and Referrers are explicitly not included because pings do not
      * affect visible changes to a weblog, and referrers change so often that
      * it would diminish the usefulness of the attribute.
      *

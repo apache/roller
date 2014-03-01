@@ -31,7 +31,6 @@ drop table roller_tasklock;
 
 -- supplemental services tables
 drop table pingqueueentry;
-drop table pingcategory;
 drop table autoping;
 drop table pingtarget;
 drop table referer;

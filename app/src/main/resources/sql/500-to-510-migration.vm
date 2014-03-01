@@ -31,3 +31,8 @@ delete from weblogcategory where name = 'root' and parentid is null;
 
 -- Allow users to order their weblog categories (zero-based)
 #addColumnNotNull("weblogcategory" "position" "integer" "0")
+
+-- Removal of custom ping targets
+delete from pingtarget where websiteid is not null;
+#dropIndex("pt_websiteid_fk" "pingtarget")
+#dropColumn("pingtarget", "websiteid")

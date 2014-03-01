@@ -7,17 +7,8 @@
     <entity metadata-complete="true" name="PingTarget"
             class="org.apache.roller.weblogger.pojos.PingTarget" access="PROPERTY">
         <table name="pingtarget"/>
-        <named-query name="PingTarget.getByWebsiteNullOrderByName">
-            <query>SELECT p FROM PingTarget p WHERE p.website IS NULL ORDER BY p.name</query>
-        </named-query>
-        <named-query name="PingTarget.getByWebsiteOrderByName">
-            <query>SELECT p FROM PingTarget p WHERE p.website = ?1 ORDER BY p.name</query>
-        </named-query>
-        <named-query name="PingTarget.removeByPingTarget">
-            <query>DELETE FROM PingTarget p WHERE p.website IS NOT NULL</query>
-        </named-query>
-        <named-query name="PingTarget.removeByWebsiteNotNull">
-            <query>DELETE FROM PingTarget p WHERE p.website IS NOT NULL</query>
+        <named-query name="PingTarget.getPingTargetsOrderByName">
+            <query>SELECT p FROM PingTarget p ORDER BY p.name</query>
         </named-query>
         <attributes>
             <id name="id">
@@ -38,9 +29,6 @@
             <basic name="autoEnabled">
                 <column name="autoenabled" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
-                <join-column name="websiteid" insertable="true" updatable="true" nullable="true"/>
-            </many-to-one>
         </attributes>
     </entity>
 </entity-mappings>
