@@ -40,12 +40,6 @@ public class FolderAdd extends UIAction {
     
     private static Log log = LogFactory.getLog(FolderAdd.class);
     
-    // the id of the folder we are adding the new subfolder into
-    private String folderId = null;
-    
-    // the folder we are adding the new subfolder into
-    private WeblogBookmarkFolder folder = null;
-    
     // bean for managing form data
     private FolderBean bean = new FolderBean();
     
@@ -62,52 +56,26 @@ public class FolderAdd extends UIAction {
     }
     
     
-    public void myPrepare() {
-        try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            if(!StringUtils.isEmpty(getFolderId())) {
-                setFolder(bmgr.getFolder(getFolderId()));
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up folder - "+getFolderId(), ex);
-        }
-    }
-    
-    
     @SkipValidation
     public String execute() {
-        
-        if(getFolder() == null) {
-            // TODO: i18n
-            addError("Cannot add folder to null parent folder");
-            return ERROR;
-        }
-        
         return INPUT;
     }
 
     
     public String save() {
-        
-        if(getFolder() == null) {
-            // TODO: i18n
-            addError("Cannot add folder to null parent folder");
-            return ERROR;
-        }
-        
         // validation
         myValidate();
         
         if(!hasActionErrors())  {
             try {
                 WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder(
-                        getFolder(),
+                        getActionWeblog().getBookmarkFolder(null),
                         getBean().getName(),
                         getBean().getDescription(),
                         getActionWeblog());
 
-                // add new folder to parent
-                getFolder().addFolder(newFolder);
+                // add new folder to weblog
+                getActionWeblog().getBookmarkFolder(null).addFolder(newFolder);
 
                 // save changes
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
@@ -143,28 +111,12 @@ public class FolderAdd extends UIAction {
         // name is required, has max length, no html
         
         // make sure new name is not a duplicate of an existing folder
-        if(getFolder().hasFolder(getBean().getName())) {
+        if(getActionWeblog().getBookmarkFolder(null).hasFolder(getBean().getName())) {
             addError("folderForm.error.duplicateName", getBean().getName());
         }
     }
     
     
-    public String getFolderId() {
-        return folderId;
-    }
-
-    public void setFolderId(String folderId) {
-        this.folderId = folderId;
-    }
-
-    public WeblogBookmarkFolder getFolder() {
-        return folder;
-    }
-
-    public void setFolder(WeblogBookmarkFolder folder) {
-        this.folder = folder;
-    }
-
     public FolderBean getBean() {
         return bean;
     }

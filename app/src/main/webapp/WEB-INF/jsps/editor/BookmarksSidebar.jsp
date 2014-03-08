@@ -41,7 +41,6 @@
                     <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
                     <s:url id="addFolder" action="folderAdd">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="folderId" value="%{folder.id}" />
                     </s:url>
                     <s:a href="%{addFolder}"><s:text name="bookmarksForm.addFolder" /></s:a>
                 </p>
