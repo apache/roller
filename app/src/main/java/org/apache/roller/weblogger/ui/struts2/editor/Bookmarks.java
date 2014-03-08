@@ -59,6 +59,9 @@ public class Bookmarks extends UIAction {
 	// the target folder to move items to
 	private String targetFolderId = null;
 
+    // a new folder the user wishes to view
+    private String viewFolderId = null;
+
 	// all folders from the action weblog
 	private Set allFolders = Collections.EMPTY_SET;
 
@@ -202,6 +205,21 @@ public class Bookmarks extends UIAction {
 		return execute();
 	}
 
+    /**
+     * View the contents of another bookmark folder.
+     */
+    public String view() {
+        try {
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+            if (!StringUtils.isEmpty(viewFolderId)) {
+                setFolder(bmgr.getFolder(viewFolderId));
+            }
+        } catch (WebloggerException ex) {
+            log.error("Error looking up folder", ex);
+        }
+        return execute();
+    }
+
 	/**
 	 * Move folders and bookmarks to a new folder.
 	 */
@@ -322,4 +340,11 @@ public class Bookmarks extends UIAction {
 		this.folderPath = folderPath;
 	}
 
+    public String getViewFolderId() {
+        return viewFolderId;
+    }
+
+    public void setViewFolderId(String viewFolderId) {
+        this.viewFolderId = viewFolderId;
+    }
 }

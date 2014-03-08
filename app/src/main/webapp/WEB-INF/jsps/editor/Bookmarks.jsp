@@ -71,16 +71,16 @@ function onMove()
     <s:hidden name="weblog" />
     <s:hidden name="folderId" /> 
     
-    <s:if test="!allFolders.isEmpty && ( folder.folders.size > 0 || folder.bookmarks.size > 0)">
-        
-        <%-- Move-selected button --%>
-        <s:submit type="button" action="bookmarks!move" key="bookmarksForm.move" onclick="onMove();return false;" />
-        
-        <%-- Move-to combo-box --%>
-        <s:select name="targetFolderId" list="allFolders" listKey="id" listValue="path" />
-        
+    <s:if test="!allFolders.isEmpty">
+
+        <%-- View button --%>
+        <s:submit type="button" action="bookmarks!view" key="bookmarksForm.viewFolder" />
+
+        <%-- Folder to View combo-box --%>
+        <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="path" />
+
         <br /><br />
-        
+
     </s:if>
     <table class="rollertable">
     
@@ -120,7 +120,7 @@ function onMove()
                 </td>
                 
                 <td class="rollertable">
-                    <str:truncateNicely lower="30" upper="35" ><s:property value="#folder.description" /></str:truncateNicely>
+                    <str:truncateNicely lower="30" upper="35" > </str:truncateNicely>
                 </td>
                 
                 <td class="rollertable"></td>
@@ -158,7 +158,7 @@ function onMove()
                 </td>
                 
                 <td class="rollertable">
-                    <str:truncateNicely lower="30" upper="35" ><s:property value="#bookmark.description" /></str:truncateNicely>
+                    <str:truncateNicely lower="30" upper="35" ><s:property value="#bookmark.url" /></str:truncateNicely>
                 </td>
                 
                 <td class="rollertable">
@@ -194,11 +194,19 @@ function onMove()
         </s:else>
     </table>
     
-    <s:if test="folder.folders.size > 0 || folder.bookmarks.size > 0">
-        <div class="control">
-            <%-- Delete-selected button --%>
-            <input type="button" value="<s:text name="bookmarksForm.delete"/>" onclick="onDelete()" /> 
-        </div>
-    </s:if>
+    <div class="control">
+        <s:if test="folder.folders.size > 0 || folder.bookmarks.size > 0">
+                <%-- Delete-selected button --%>
+                <input type="button" value="<s:text name="bookmarksForm.delete"/>" onclick="onDelete()" />
+        </s:if>
+
+        <s:if test="!allFolders.isEmpty && ( folder.folders.size > 0 || folder.bookmarks.size > 0)">
+            <%-- Move-selected button --%>
+            <s:submit type="button" action="bookmarks!move" key="bookmarksForm.move" onclick="onMove();return false;" />
+
+            <%-- Move-to combo-box --%>
+            <s:select name="targetFolderId" list="allFolders" listKey="id" listValue="path" />
+        </s:if>
+    </div>
 
 </s:form>
