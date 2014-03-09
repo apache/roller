@@ -34,7 +34,7 @@ These are the documented macros in order defined in this file:
     #showWeblogEntryCommentForm($entry)
 
     #showWeblogEntryLinksList($entries)
-    #showBookmarkLinksList($folderObj $expanding $subfolders)
+    #showBookmarkLinksList($folderObj)
     #showWeblogCategoryLinksList()
     #showMobileCategoryLinksList()
     #showReferrersList($weblog)
@@ -484,30 +484,11 @@ Show entries as a HTML ul list.
 #** 
 Show bookmarks as a HTML ul list.
 *#
-#macro(showBookmarkLinksList $folderObject $subfolders $expanding )
+#macro(showBookmarkLinksList $folderObject)
 <ul class="rFolder">
-#_showBookmarkLinksList($folderObject $subfolders $expanding)
-</ul>
-#end
-
-
-#** 
-Recursively display a bookmark folder and children as HTML ul list (undocumented).
-*#
-#macro(_showBookmarkLinksList $folderObject $subfolders $expanding )
-    #if ($expanding) #_showCommonJavascript() #end
     #set($bookmarks = $folderObject.getBookmarks())
     #set($folders = $folderObject.getFolders())
     #set($divId = $utils.replace($folderObject.name, " ", "_" ))
-    #if ($folderObject.name != "root" && $expanding && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
-        <div class="rFolder">
-        <li class="rFolderItem"><a href="javascript:toggleFolder('$divId')">
-            <span id="i$divId">+</span></a>$folderObject.Name</li>
-        <ul id="$divId" class="rFolder" style="display:none">
-    #elseif ($folderObject.name != "root" && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
-        <li class="rFolderItem">$folderObject.Name</li>
-        <ul class="rFolder">
-    #end
     #foreach($bookmark in $bookmarks)
         <li class="rFolderItem">
         #if($utils.isNotEmpty($bookmark.Image))
@@ -526,29 +507,12 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
                src="$url.absoluteSite/images/smrssbadge.gif"
                alt="$text.get("macro.bookmark.urlFeed")"/></a>
             #end
-            <a href="$bookmark.url"
-               title="$bookmark.description"
-               class="rBookmark$bookmark.weight">$bookmark.name</a>
+            <a href="$bookmark.url" title="$bookmark.description"
+            class="rBookmark$bookmark.weight">$bookmark.name</a>
         #end
         </li>
     #end
-    ## show sub-folders
-    #if ($subfolders)
-        #foreach($sFolder in $folders)
-            #_showBookmarkLinksList($sFolder $subfolders $expanding )
-        #end
-    #end
-    #if ($folderObject.name != "root" && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
-        </ul>
-    #end
-    #if ($folderObject.name != "root" && $expanding && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
-        </div>
-        <script type="text/javascript">
-        <!-- 
-        folderPreference("$divId");
-        // -->
-        </script>
-    #end
+</ul>
 #end
 
 

@@ -50,8 +50,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String description = null;
-    private String path = null;
-    
+
     // associations
     private Weblog website = null;
     private WeblogBookmarkFolder parentFolder = null;
@@ -73,15 +72,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         
         this.website = website;
         this.parentFolder = parent;
-        
-        // calculate path
-        if(parent == null) {
-            this.path = "/";
-        } else if("/".equals(parent.getPath())) {
-            this.path = "/"+name;
-        } else {
-            this.path = parent.getPath() + "/" + name;
-        }
     }
     
         
@@ -91,7 +81,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         StringBuilder buf = new StringBuilder();
         buf.append("{");
         buf.append(getId());
-        buf.append(", ").append(getPath());
+        buf.append(", ").append(getName());
         buf.append("}");
         return buf.toString();
     }
@@ -105,8 +95,8 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         if (other instanceof WeblogBookmarkFolder) {
             WeblogBookmarkFolder o = (WeblogBookmarkFolder) other;
             return new EqualsBuilder()
-                .append(getPath(), o.getPath()) 
-                //.append(getWebsite(), o.getWebsite()) 
+                .append(getName(), o.getName())
+                .append(getWebsite(), o.getWebsite())
                 .isEquals();
         }
         
@@ -116,8 +106,8 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     
     public int hashCode() {
         return new HashCodeBuilder()
-            .append(getPath())
-            //.append(getWebsite())
+            .append(getName())
+            .append(getWebsite())
             .toHashCode();
     }
     
@@ -166,17 +156,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    /**
-     * The full path to this folder in the hierarchy.
-     */
-    public String getPath() {
-        return this.path;
-    }
-    
-    public void setPath(String path) {
-        this.path = path;
     }
 
     /**
@@ -260,11 +239,10 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     
     
     /**
-     * @param subfolders
      */
-    public List<WeblogBookmark> retrieveBookmarks(boolean subfolders) throws WebloggerException {
+    public List<WeblogBookmark> retrieveBookmarks() throws WebloggerException {
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-        return bmgr.getBookmarks(this, subfolders);
+        return bmgr.getBookmarks(this);
     }
     
     
@@ -284,64 +262,10 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     }
     
     
-    /**
-     * Is this folder a descendent of the other folder?
-     */
-    public boolean descendentOf(WeblogBookmarkFolder ancestor) {
-        
-        // if this is a root node then we can't be a descendent
-        if(getParent() == null) {
-            return false;
-        } else {
-            // if our path starts with our parents path then we are a descendent
-            return getPath().startsWith(ancestor.getPath());
-        }
-    }
-    
-    
     // convenience method for updating the folder name, which triggers a path tree rebuild
     public void updateName(String newName) throws WebloggerException {
-        
-        // update name
         setName(newName);
-        
-        // calculate path
-        if(getParent() == null) {
-            setPath("/");
-        } else if("/".equals(getParent().getPath())) {
-            setPath("/"+getName());
-        } else {
-            setPath(getParent().getPath() + "/" + getName());
-        }
-        
-        // update path tree for all children
-        updatePathTree(this);
-    }
-    
-    
-    // update the path tree for a given folder
-    public static void updatePathTree(WeblogBookmarkFolder folder) 
-            throws WebloggerException {
-        
-        log.debug("Updating path tree for folder "+folder.getPath());
-        
-        for (WeblogBookmarkFolder childFolder : folder.getFolders()) {
-
-            log.debug("OLD child folder path was "+childFolder.getPath());
-            
-            // update path and save
-            if("/".equals(folder.getPath())) {
-                childFolder.setPath("/" + childFolder.getName());
-            } else {
-                childFolder.setPath(folder.getPath() + "/" + childFolder.getName());
-            }
-            WebloggerFactory.getWeblogger().getBookmarkManager().saveFolder(childFolder);
-            
-            log.debug("NEW child folder path is "+ childFolder.getPath());
-            
-            // then make recursive call to update this folders children
-            updatePathTree(childFolder);
-        }
+        WebloggerFactory.getWeblogger().getBookmarkManager().saveFolder(this);
     }
     
 }

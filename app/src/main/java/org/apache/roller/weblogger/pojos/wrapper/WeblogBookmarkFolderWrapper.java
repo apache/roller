@@ -66,10 +66,6 @@ public final class WeblogBookmarkFolderWrapper {
     }
     
     
-    public String getPath() {
-        return this.pojo.getPath();
-    }
-    
     public WeblogBookmarkFolderWrapper getParent() {
         return WeblogBookmarkFolderWrapper.wrap(this.pojo.getParent());
     }
@@ -108,10 +104,10 @@ public final class WeblogBookmarkFolderWrapper {
     }    
         
     
-    public List<WeblogBookmarkWrapper> retrieveBookmarks(boolean subfolders)
+    public List<WeblogBookmarkWrapper> retrieveBookmarks()
             throws WebloggerException {
         
-        List<WeblogBookmark> initialCollection = this.pojo.retrieveBookmarks(subfolders);
+        List<WeblogBookmark> initialCollection = this.pojo.retrieveBookmarks();
         
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
@@ -124,11 +120,6 @@ public final class WeblogBookmarkFolderWrapper {
         }
 
         return wrappedCollection;
-    }
-    
-    // TODO: this method won't actually work and we probably don't need it here anyways?
-    public boolean descendentOf(WeblogBookmarkFolder ancestor) {
-        return this.pojo.descendentOf(ancestor);
     }
     
 }

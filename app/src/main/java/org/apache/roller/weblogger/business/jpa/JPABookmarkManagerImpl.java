@@ -128,65 +128,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         Weblog weblog = roller.getWeblogManager().getWeblog(websiteid);
         roller.getWeblogManager().saveWeblog(weblog);
     }
-    
-    public void moveFolder(WeblogBookmarkFolder srcFolder, WeblogBookmarkFolder destFolder)
-            throws WebloggerException {
-        
-        // TODO: this check should be made before calling this method?
-        if (destFolder.descendentOf(srcFolder)) {
-            throw new WebloggerException(
-                    "ERROR cannot move parent folder into it's own child");
-        }
-        
-        log.debug("Moving folder " + srcFolder.getPath() + " under " +
-            destFolder.getPath());
-        
-        // Manage relationships
-        WeblogBookmarkFolder oldParent = srcFolder.getParent();
-        if(oldParent != null) {
-            oldParent.getFolders().add(srcFolder);
-        }
-        srcFolder.setParent(destFolder);
-        destFolder.getFolders().add(srcFolder);
-        
-        if("/".equals(destFolder.getPath())) {
-            srcFolder.setPath("/"+srcFolder.getName());
-        } else {
-            srcFolder.setPath(destFolder.getPath() + "/" + srcFolder.getName());
-        }
-        saveFolder(srcFolder);
-        
-        // the main work to be done for a category move is to update the 
-        // path attribute of the category and all descendent categories
-        updatePathTree(srcFolder);
-    }    
 
-    // updates the paths of all descendents of the given folder
-    private void updatePathTree(WeblogBookmarkFolder folder) throws WebloggerException {
-        
-        log.debug("Updating path tree for folder "+folder.getPath());
-        
-        //WeblogBookmarkFolder childFolder = null;
-        for (WeblogBookmarkFolder childFolder : folder.getFolders()) {
-            log.debug("OLD child folder path was "+childFolder.getPath());
-
-            // update path and save
-            if("/".equals(folder.getPath())) {
-                childFolder.setPath("/" + childFolder.getName());
-            } else {
-                childFolder.setPath(folder.getPath() + "/" +
-                        childFolder.getName());
-            }
-            saveFolder(childFolder);
-
-            log.debug("NEW child folder path is "+ childFolder.getPath());
-
-            // then make recursive call to update this folders children
-            updatePathTree(childFolder);
-        }
-    }
-
-    
     /**
      * Retrieve folder and lazy-load it's sub-folders and bookmarks.
      */
@@ -296,23 +238,17 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
 
-    public WeblogBookmarkFolder getFolder(Weblog website, String path)
+    public WeblogBookmarkFolder getFolder(Weblog website, String name)
             throws WebloggerException {
 
-        if (path == null || path.trim().equals("/")) {
+        if (name == null) {
             return getRootFolder(website);
         } else {
-            String folderPath = path;
 
-            // all folder paths must begin with a '/'
-            if(!folderPath.startsWith("/")) {
-                folderPath = "/"+folderPath;
-            }
-
-            // now just do simple lookup by path
-            Query query = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Path");
+            // now just do simple lookup by name
+            Query query = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name");
             query.setParameter(1, website);
-            query.setParameter(2, folderPath);
+            query.setParameter(2, name);
             try {
                 return (WeblogBookmarkFolder)query.getSingleResult();
             } catch (NoResultException e) {
@@ -323,28 +259,17 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
     /**
      * @see org.apache.roller.weblogger.business.BookmarkManager#getBookmarks(
-     *      org.apache.roller.weblogger.pojos.WeblogBookmarkFolder, boolean)
+     *      org.apache.roller.weblogger.pojos.WeblogBookmarkFolder)
      */
-    public List<WeblogBookmark> getBookmarks(WeblogBookmarkFolder folder, boolean subfolders)
+    public List<WeblogBookmark> getBookmarks(WeblogBookmarkFolder folder)
             throws WebloggerException {
         Query query;
-        List<WeblogBookmark> results = null;
+        List<WeblogBookmark> results;
 
-        if(!subfolders) {
-            // if no subfolders then this is an equals query
-            query = strategy.getNamedQuery("BoomarkData.getByFolder");
-            query.setParameter(1, folder);
-            results = query.getResultList();
-        } else {
-            // if we are doing subfolders then do a case sensitive
-            // query using folder path
-            query = strategy.getNamedQuery( 
-                "BoomarkData.getByFolder.pathLike&Folder.website");
-            query.setParameter(1, folder.getPath() + '%');
-            query.setParameter(2, folder.getWebsite());
-            results = query.getResultList();
-        }
-            
+        query = strategy.getNamedQuery("BookmarkData.getByFolder");
+        query.setParameter(1, folder);
+        results = query.getResultList();
+
         return results;
     }
 
@@ -384,7 +309,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         // ensure that no sibling categories share the same name
         WeblogBookmarkFolder parent = folder.getParent();
         if (null != parent) {
-            return (getFolder(folder.getWebsite(), folder.getPath()) != null);
+            return (getFolder(folder.getWebsite(), folder.getName()) != null);
         }
         return false;
     }

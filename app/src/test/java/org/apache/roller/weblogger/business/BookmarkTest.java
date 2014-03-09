@@ -203,18 +203,13 @@ public class BookmarkTest extends TestCase {
         
         // test lookup of all bookmarks in single folder
         WeblogBookmarkFolder testFolder = bmgr.getFolder(f1.getId());
-        List allBookmarks = bmgr.getBookmarks(testFolder, false);
+        List allBookmarks = bmgr.getBookmarks(testFolder);
         assertNotNull(allBookmarks);
         assertEquals(2, allBookmarks.size());
         
         // getBookmarks(folder, false) should also match folder.getBookmarks()
         assertEquals(allBookmarks.size(), testFolder.getBookmarks().size());
         
-        // test lookup of all bookmarks in folder branch (including subfolders)
-        testFolder = bmgr.getFolder(f1.getId());
-        allBookmarks = bmgr.getBookmarks(testFolder, true);
-        assertNotNull(allBookmarks);
-        assertEquals(3, allBookmarks.size());
     }
     
     
@@ -287,33 +282,11 @@ public class BookmarkTest extends TestCase {
             assertEquals(1, f1.getBookmarks().size());
             assertEquals(1, f2.getBookmarks().size());
             assertEquals(1, f3.getBookmarks().size());
-            assertEquals(0, dest.retrieveBookmarks(true).size());
-            assertEquals(3, f1.retrieveBookmarks(true).size());
-
-            // test that parent cannot be moved into child
-            boolean safe = false;
-            try {
-                // Move folder into one of it's children
-                bmgr.moveFolder(f1, f3);
-                TestUtils.endSession(true);
-            } catch (WebloggerException e) {
-                safe = true;
-            }
-            assertTrue(safe);
-
-            // move f1 to dest
-            f1   = bmgr.getFolder( f1.getId());   //Get managed copy
-            dest = bmgr.getFolder( dest.getId()); //Get managed copy
-            bmgr.moveFolder(f1, dest);
-            TestUtils.endSession(true);
-
-            // after move, verify number of entries in eacch folder
-            dest = bmgr.getFolder(dest.getId());
-            f1 = bmgr.getFolder(f1.getId());
-            assertEquals(3, dest.retrieveBookmarks(true).size());
+            assertEquals(0, dest.retrieveBookmarks().size());
+            assertEquals(3, f1.retrieveBookmarks().size());
 
             // check that paths and child folders are correct
-            assertEquals("/dest/f1", f1.getPath());
+            assertEquals("f1", f1.getName());
             assertEquals(1, dest.getFolders().size());
         
             bmgr.removeFolder(f1);
@@ -339,7 +312,7 @@ public class BookmarkTest extends TestCase {
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         fd = getRoller().getBookmarkManager().getFolder(testWeblog, "ZZZ_imports_ZZZ");
-        assertTrue(fd.retrieveBookmarks(true).size() > 0 );
+        assertTrue(fd.retrieveBookmarks().size() > 0 );
         getRoller().getBookmarkManager().removeFolder(fd);
         TestUtils.endSession(true);
     }

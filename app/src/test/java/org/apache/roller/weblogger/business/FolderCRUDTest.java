@@ -92,9 +92,6 @@ public class FolderCRUDTest extends TestCase {
         WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(null, "root", "root", TestUtils.getManagedWebsite(testWeblog));
         assertTrue(root.equals(testFolder));
         
-        testFolder = new WeblogBookmarkFolder(root, "root", "root", TestUtils.getManagedWebsite(testWeblog));
-        assertFalse(root.equals(testFolder));
-        
         log.info("END");
     }
     

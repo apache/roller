@@ -22,7 +22,7 @@
     <h2>Links</h2>
     <div class="sidebar">
     #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
-    #showBookmarkLinksList($rootFolder false false) 
+    #showBookmarkLinksList($rootFolder)
     </div>
 
     <h2>Navigation</h2>

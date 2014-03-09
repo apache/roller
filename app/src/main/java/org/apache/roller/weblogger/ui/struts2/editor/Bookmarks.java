@@ -50,10 +50,10 @@ public class Bookmarks extends UIAction {
 	// the folder being viewed
 	private WeblogBookmarkFolder folder = null;
 
-	// the list of folders to move/delete
+	// the list of folders to delete
 	private String[] selectedFolders = null;
 
-	// the list of bookmarks to move/delete
+	// the list of bookmarks to move or delete
 	private String[] selectedBookmarks = null;
 
 	// the target folder to move items to
@@ -64,9 +64,6 @@ public class Bookmarks extends UIAction {
 
 	// all folders from the action weblog
 	private Set allFolders = Collections.EMPTY_SET;
-
-	// path of folders representing selected folders hierarchy
-	private List folderPath = Collections.EMPTY_LIST;
 
 	public Bookmarks() {
 		this.actionName = "bookmarks";
@@ -101,11 +98,10 @@ public class Bookmarks extends UIAction {
 	public String execute() {
 
 		// build list of folders for display
-		TreeSet newFolders = new TreeSet(new FolderPathComparator());
+		TreeSet newFolders = new TreeSet(new FolderNameComparator());
 
 		try {
-			// Build list of all folders, except for current one, sorted by
-			// path.
+			// Build list of all folders, except for current one, sorted by name
 			BookmarkManager bmgr = WebloggerFactory.getWeblogger()
 					.getBookmarkManager();
 			List<WeblogBookmarkFolder> folders = bmgr
@@ -118,17 +114,6 @@ public class Bookmarks extends UIAction {
 				}
 			}
 
-			// build folder path
-			WeblogBookmarkFolder parent = getFolder().getParent();
-			if (parent != null) {
-				List inFolderPath = new LinkedList();
-				inFolderPath.add(0, getFolder());
-				while (parent != null) {
-					inFolderPath.add(0, parent);
-					parent = parent.getParent();
-				}
-				setFolderPath(inFolderPath);
-			}
 		} catch (WebloggerException ex) {
 			log.error("Error building folders list", ex);
 			// TODO: i18n
@@ -221,7 +206,7 @@ public class Bookmarks extends UIAction {
     }
 
 	/**
-	 * Move folders and bookmarks to a new folder.
+	 * Move bookmarks to a new folder.
 	 */
 	public String move() {
 
@@ -230,28 +215,12 @@ public class Bookmarks extends UIAction {
 					.getBookmarkManager();
 
 			if (log.isDebugEnabled()) {
-                log.debug("Moving folders and bookmarks to folder - "
+                log.debug("Moving bookmarks to folder - "
                         + getTargetFolderId());
             }
 
-			// Move folders to new parent folder.
-			String folders[] = getSelectedFolders();
-			WeblogBookmarkFolder parent = bmgr.getFolder(getTargetFolderId());
-			if (null != folders && folders.length > 0) {
-				for (int i = 0; i < folders.length; i++) {
-					WeblogBookmarkFolder fd = bmgr.getFolder(folders[i]);
-
-					// Don't move folder into itself.
-					if (!fd.getId().equals(parent.getId())
-							&& !parent.descendentOf(fd)) {
-						bmgr.moveFolder(fd, parent);
-					} else {
-						addMessage("bookmarksForm.warn.notMoving", fd.getName());
-					}
-				}
-			}
-
 			// Move bookmarks to new parent folder.
+            WeblogBookmarkFolder parent = bmgr.getFolder(getTargetFolderId());
 			String bookmarks[] = getSelectedBookmarks();
 			if (null != bookmarks && bookmarks.length > 0) {
 				for (int j = 0; j < bookmarks.length; j++) {
@@ -269,18 +238,18 @@ public class Bookmarks extends UIAction {
 			CacheManager.invalidate(getActionWeblog());
 
 		} catch (WebloggerException e) {
-			log.error("Error doing folder/bookmark move", e);
+			log.error("Error doing bookmark move", e);
 			addError("bookmarksForm.error.move");
 		}
 
 		return execute();
 	}
 
-	private static final class FolderPathComparator implements Comparator {
+	private static final class FolderNameComparator implements Comparator {
 		public int compare(Object o1, Object o2) {
 			WeblogBookmarkFolder f1 = (WeblogBookmarkFolder) o1;
 			WeblogBookmarkFolder f2 = (WeblogBookmarkFolder) o2;
-			return f1.getPath().compareTo(f2.getPath());
+			return f1.getName().compareTo(f2.getName());
 		}
 	}
 
@@ -330,14 +299,6 @@ public class Bookmarks extends UIAction {
 
 	public void setFolder(WeblogBookmarkFolder folder) {
 		this.folder = folder;
-	}
-
-	public List getFolderPath() {
-		return folderPath;
-	}
-
-	public void setFolderPath(List folderPath) {
-		this.folderPath = folderPath;
 	}
 
     public String getViewFolderId() {

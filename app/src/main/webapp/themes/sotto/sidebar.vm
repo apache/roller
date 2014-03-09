@@ -21,7 +21,7 @@
         <div class="sidebarBox">
             <div class="links">
                 #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
-                #showBookmarkLinksList($rootFolder false false) 
+                #showBookmarkLinksList($rootFolder)
             </div>
         </div>
 

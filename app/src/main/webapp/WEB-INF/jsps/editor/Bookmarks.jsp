@@ -39,7 +39,7 @@ function onMove()
 // -->
 </script>
 
-<s:if test="folderPath.isEmpty">
+<s:if test="folder.parent == null">
     <p class="subtitle">
         <s:text name="bookmarksForm.subtitle" >
             <s:param value="weblog" />
@@ -49,21 +49,10 @@ function onMove()
         <s:text name="bookmarksForm.rootPrompt" />
     </p>
 </s:if>
-
 <s:else>
     <p class="subtitle">
-    <s:text name="bookmarksForm.path" />: /
-    <s:iterator id="pathItem" value="folderPath">
-        <s:url id="pathUrl" action="bookmarks">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-            <s:param name="folderId" value="#pathItem.id" />
-        </s:url>
-        <s:a href="%{pathUrl}"><s:property value="#pathItem.name" /></s:a> / 
-    </s:iterator>
-    <p>
-    <p><s:text name="bookmarksForm.folderPrompt" /></p>
+    <s:text name="bookmarksForm.path" />: <s:text name="%{folder.name}" />
 </s:else>
-
 
 <%-- Form is a table of folders followed by bookmarks, each with checkbox --%>
 <s:form action="bookmarks!delete">
@@ -77,7 +66,7 @@ function onMove()
         <s:submit type="button" action="bookmarks!view" key="bookmarksForm.viewFolder" />
 
         <%-- Folder to View combo-box --%>
-        <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="path" />
+        <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" />
 
         <br /><br />
 
@@ -205,7 +194,7 @@ function onMove()
             <s:submit type="button" action="bookmarks!move" key="bookmarksForm.move" onclick="onMove();return false;" />
 
             <%-- Move-to combo-box --%>
-            <s:select name="targetFolderId" list="allFolders" listKey="id" listValue="path" />
+            <s:select name="targetFolderId" list="allFolders" listKey="id" listValue="name" />
         </s:if>
     </div>
 

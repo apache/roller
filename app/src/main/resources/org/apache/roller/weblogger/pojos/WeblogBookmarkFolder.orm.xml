@@ -9,8 +9,8 @@
         <named-query name="WeblogBookmarkFolder.getByWebsite">
             <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.website = ?1</query>
         </named-query>
-        <named-query name="WeblogBookmarkFolder.getByWebsite&amp;Path">
-            <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.website = ?1 AND f.path = ?2</query>
+        <named-query name="WeblogBookmarkFolder.getByWebsite&amp;Name">
+            <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.website = ?1 AND f.name = ?2</query>
         </named-query>
         <named-query name="WeblogBookmarkFolder.getByWebsite&amp;ParentNull">
             <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.website = ?1 AND f.parent IS NULL</query>
@@ -21,9 +21,6 @@
             </id>
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <basic name="path">
-                <column name="path" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="description">
                 <column name="description" insertable="true" updatable="true" unique="false"/>

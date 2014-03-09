@@ -311,7 +311,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
         }
         else {
             BookmarkManager bMgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            List<WeblogBookmark> bookmarks = bMgr.getBookmarks(bMgr.getRootFolder(website), true);
+            List<WeblogBookmark> bookmarks = bMgr.getBookmarks(bMgr.getRootFolder(website));
 
             for (WeblogBookmark b : bookmarks) {
                 bookmarkMap.put(b.getName(), b);
@@ -319,7 +319,6 @@ public class TopicTagPlugin implements WeblogEntryPlugin
         }
         return bookmarkMap;
     }
-
 
     // Sets up properties.  For better and worse, doesn't use reflection
     private void initializeProperties()

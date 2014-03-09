@@ -19,7 +19,7 @@
 
 <p class="subtitle">
     <s:text name="bookmarkForm.add.subtitle" >
-        <s:param value="folder.path" />
+        <s:param value="folder.name" />
     </s:text>
 </p>
 

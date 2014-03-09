@@ -219,30 +219,25 @@ public class FolderFunctionalityTest extends TestCase {
     /**
      * Test folder lookup by id.
      */
-    public void testLookupFolderByPath() throws Exception {
+    public void testLookupFolderByName() throws Exception {
         
         log.info("BEGIN");
         
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogBookmarkFolder folder = bmgr.getFolder(testWeblog, "/folderFuncTest-f1");
+        WeblogBookmarkFolder folder = bmgr.getFolder(testWeblog, "folderFuncTest-f1");
         assertNotNull(folder);
         assertEquals(f1, folder);
         
-        folder = bmgr.getFolder(testWeblog, "/folderFuncTest-f1/folderFuncTest-f2/folderFuncTest-f3");
+        folder = bmgr.getFolder(testWeblog, "folderFuncTest-f3");
         assertNotNull(folder);
         assertEquals(f3, folder);
         
-        // test lazy lookup, with no slashes
-        folder = bmgr.getFolder(testWeblog, "folderFuncTest-f1");
-        assertNotNull(folder);
-        assertEquals(f1, folder);
-        
-        // if no path is specified then we should get root folder
+        // if no name is specified then we should get root folder
         folder = bmgr.getFolder(testWeblog, null);
         assertNotNull(folder);
-        assertEquals("/", folder.getPath());
+        assertEquals("root", folder.getName());
         
         log.info("END");
     }
