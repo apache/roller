@@ -20,10 +20,8 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -69,13 +67,9 @@ public class FolderAdd extends UIAction {
         if(!hasActionErrors())  {
             try {
                 WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder(
-                        getActionWeblog().getBookmarkFolder(null),
                         getBean().getName(),
                         getBean().getDescription(),
                         getActionWeblog());
-
-                // add new folder to weblog
-                getActionWeblog().getBookmarkFolder(null).addFolder(newFolder);
 
                 // save changes
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
@@ -95,7 +89,6 @@ public class FolderAdd extends UIAction {
 
             } catch(Exception ex) {
                 log.error("Error saving new folder", ex);
-                // TODO: i18n
                 addError("Error saving new folder");
             }
         }
@@ -111,7 +104,7 @@ public class FolderAdd extends UIAction {
         // name is required, has max length, no html
         
         // make sure new name is not a duplicate of an existing folder
-        if(getActionWeblog().getBookmarkFolder(null).hasFolder(getBean().getName())) {
+        if(getActionWeblog().hasBookmarkFolder(getBean().getName())) {
             addError("folderForm.error.duplicateName", getBean().getName());
         }
     }

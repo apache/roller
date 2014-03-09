@@ -193,11 +193,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // remove folders (including bookmarks)
-        WeblogBookmarkFolder rootFolder = bmgr.getRootFolder(website);
-        if (null != rootFolder) {
-            this.strategy.remove(rootFolder);
+        Query folderQuery = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite");
+        folderQuery.setParameter(1, website);
+        List<WeblogBookmarkFolder> folders = pageQuery.getResultList();
+        for (WeblogBookmarkFolder wbf : folders) {
+            this.strategy.remove(wbf);
         }
-        this.strategy.flush();
 
         // remove mediafile metadata
         // remove uploaded files
@@ -313,7 +314,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // add default bookmarks
         WeblogBookmarkFolder root = new WeblogBookmarkFolder(
-                null, "root", "root", newWeblog);
+                "default", null, newWeblog);
         this.strategy.store(root);
         
         Integer zero = 0;

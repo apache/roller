@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -80,7 +81,6 @@ public class FolderEdit extends UIAction {
     public String execute() {
         
         if(getFolder() == null) {
-            // TODO: i18n
             addError("Cannot edit null folder");
             return ERROR;
         }
@@ -98,7 +98,6 @@ public class FolderEdit extends UIAction {
     public String save() {
         
         if(getFolder() == null) {
-            // TODO: i18n
             addError("Cannot edit null folder");
             return ERROR;
         }
@@ -125,7 +124,6 @@ public class FolderEdit extends UIAction {
 
             } catch(Exception ex) {
                 log.error("Error saving folder", ex);
-                // TODO: i18n
                 addError("Error saving folder");
             }
         }
@@ -141,8 +139,8 @@ public class FolderEdit extends UIAction {
         
         // make sure new name is not a duplicate of an existing folder
         if(!getFolder().getName().equals(getBean().getName())) {
-            WeblogBookmarkFolder parent = getFolder().getParent();
-            if(parent != null && parent.hasFolder(getBean().getName())) {
+            Weblog weblog = getFolder().getWeblog();
+            if(weblog.hasBookmarkFolder(getBean().getName())) {
                 addError("folderForm.error.duplicateName", getBean().getName());
             }
         }

@@ -39,7 +39,7 @@ function onMove()
 // -->
 </script>
 
-<s:if test="folder.parent == null">
+<s:if test="folder.name == 'default'">
     <p class="subtitle">
         <s:text name="bookmarksForm.subtitle" >
             <s:param value="weblog" />
@@ -83,49 +83,7 @@ function onMove()
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.visitLink" /></th>
         </tr>
         
-        <s:if test="folder.folders.size > 0 || folder.bookmarks.size > 0">
-        
-        <%-- Folders --%>
-        <s:iterator id="folder" value="folder.folders" status="rowstatus">
-            <s:if test="#rowstatus.odd == true">
-                <tr class="rollertable_odd">
-            </s:if>
-            <s:else>
-                <tr class="rollertable_even">
-            </s:else>
-                
-                <td class="rollertable center" style="vertical-align:middle">
-                    <input type="checkbox" name="selectedFolders" value="<s:property value="#folder.id"/>" />
-                </td>
-                
-                <td class="rollertable" align="center"><img src='<s:url value="/images/folder.png"/>' alt="icon" /></td>
-                
-                <td class="rollertable">
-                    <s:url id="folderUrl" action="bookmarks">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="folderId" value="#folder.id" />
-                    </s:url>
-                    <s:a href="%{folderUrl}"><str:truncateNicely lower="15" upper="20" ><s:property value="#folder.name" /></str:truncateNicely></s:a>
-                </td>
-                
-                <td class="rollertable">
-                    <str:truncateNicely lower="30" upper="35" > </str:truncateNicely>
-                </td>
-                
-                <td class="rollertable"></td>
-                
-                <td class="rollertable" align="center">
-                    <s:url id="editUrl" action="folderEdit">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="bean.id" value="#folder.id" />
-                    </s:url>
-                    <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" /></s:a>
-                </td>
-                
-                <td class="rollertable">&nbsp;</td>
-                
-            </tr>
-        </s:iterator>
+        <s:if test="folder.bookmarks.size > 0">
         
         <%-- Bookmarks --%>
         <s:iterator id="bookmark" value="folder.bookmarks" status="rowstatus">
@@ -143,11 +101,11 @@ function onMove()
                 <td class="rollertable" align="center"><img src='<s:url value="/images/link.png"/>' alt="icon" /></td>
                 
                 <td class="rollertable">
-                    <str:truncateNicely lower="15" upper="20" ><s:property value="#bookmark.name" /></str:truncateNicely>
+                    <str:truncateNicely lower="25" upper="30" ><s:property value="#bookmark.name" /></str:truncateNicely>
                 </td>
                 
                 <td class="rollertable">
-                    <str:truncateNicely lower="30" upper="35" ><s:property value="#bookmark.url" /></str:truncateNicely>
+                    <str:truncateNicely lower="45" upper="55" ><s:property value="#bookmark.url" /></str:truncateNicely>
                 </td>
                 
                 <td class="rollertable">
@@ -184,12 +142,12 @@ function onMove()
     </table>
     
     <div class="control">
-        <s:if test="folder.folders.size > 0 || folder.bookmarks.size > 0">
+        <s:if test="folder.bookmarks.size > 0">
                 <%-- Delete-selected button --%>
                 <input type="button" value="<s:text name="bookmarksForm.delete"/>" onclick="onDelete()" />
         </s:if>
 
-        <s:if test="!allFolders.isEmpty && ( folder.folders.size > 0 || folder.bookmarks.size > 0)">
+        <s:if test="!allFolders.isEmpty && folder.bookmarks.size > 0">
             <%-- Move-selected button --%>
             <s:submit type="button" action="bookmarks!move" key="bookmarksForm.move" onclick="onMove();return false;" />
 

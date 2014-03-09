@@ -28,7 +28,6 @@ import javax.persistence.Query;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.pojos.Weblog;
 
 /*
  * JPAPingTargetManagerImpl.java

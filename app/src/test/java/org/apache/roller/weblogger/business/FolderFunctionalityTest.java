@@ -20,9 +20,7 @@ package org.apache.roller.weblogger.business;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,12 +58,12 @@ public class FolderFunctionalityTest extends TestCase {
             testWeblog = TestUtils.setupWeblog("folderFuncTestWeblog", testUser);
             
             // setup a category tree to use for testing
-            f1 = TestUtils.setupFolder(testWeblog, "folderFuncTest-f1", null);
-            f2 = TestUtils.setupFolder(testWeblog, "folderFuncTest-f2", f1);
-            f3 = TestUtils.setupFolder(testWeblog, "folderFuncTest-f3", f2);
+            f1 = TestUtils.setupFolder(testWeblog, "folderFuncTest-f1");
+            f2 = TestUtils.setupFolder(testWeblog, "folderFuncTest-f2");
+            f3 = TestUtils.setupFolder(testWeblog, "folderFuncTest-f3");
             
             // a simple test folder at the root level
-            testFolder = TestUtils.setupFolder(testWeblog, "folderFuncTest-testFolder", null);
+            testFolder = TestUtils.setupFolder(testWeblog, "folderFuncTest-testFolder");
             
             TestUtils.endSession(true);
         } catch (Exception ex) {
@@ -94,69 +92,16 @@ public class FolderFunctionalityTest extends TestCase {
     
     
     /**
-     * Test that we can walk a folder tree.
-     */
-    public void testWalkFolderTree() throws Exception {
-        
-        log.info("BEGIN");
-        
-        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
-        // start at root
-        WeblogBookmarkFolder root = bmgr.getRootFolder(TestUtils.getManagedWebsite(testWeblog));
-        
-        // walk first level
-        Set<WeblogBookmarkFolder> folders = root.getFolders();
-        assertEquals(2, folders.size());
-        assertTrue(folders.contains(testFolder));
-        
-        // find cat1
-        WeblogBookmarkFolder folder = null;
-        for(Iterator it = folders.iterator(); it.hasNext(); ) {
-            folder = (WeblogBookmarkFolder) it.next();
-            if(folder.getName().equals(f1.getName())) {
-                break;
-            }
-        }
-
-        // walk second level
-        folders = folder.getFolders();
-        assertEquals(1, folders.size());
-        assertTrue(folders.contains(f2));
-        
-        // find cat2
-        folder = folders.iterator().next();
-        
-        // walk third level
-        folders = folder.getFolders();
-        assertEquals(1, folders.size());
-        assertTrue(folders.contains(f3));
-        
-        // find cat3
-        folder = folders.iterator().next();
-        
-        // make sure this is the end of the tree
-        folders = folder.getFolders();
-        assertEquals(0, folders.size());
-        
-        log.info("END");
-    }
-    
-    
-    /**
-     * Test the hasFolder() method on WeblogBookmarkFolder.
+     * Test the hasBookmarkFolder() method on Weblog.
      */
     public void testHasFolder() throws Exception {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
-        
-        // check that root has folder
-        assertTrue(root.hasFolder(testFolder.getName()));
+
+        // check that weblog has folder
+        assertTrue(testWeblog.hasBookmarkFolder(testFolder.getName()));
         
         log.info("END");
     }
@@ -170,14 +115,12 @@ public class FolderFunctionalityTest extends TestCase {
         log.info("BEGIN");
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
 
             boolean exception = false;
             try {
                 // child folder with same name as first
-                WeblogBookmarkFolder dupeFolder = new WeblogBookmarkFolder(root, testFolder.getName(), null, testWeblog);
+                WeblogBookmarkFolder dupeFolder = new WeblogBookmarkFolder(testFolder.getName(), null, testWeblog);
                 bmgr.saveFolder(dupeFolder);
                 TestUtils.endSession(true);
             } catch (Throwable e) {
@@ -234,10 +177,10 @@ public class FolderFunctionalityTest extends TestCase {
         assertNotNull(folder);
         assertEquals(f3, folder);
         
-        // if no name is specified then we should get root folder
-        folder = bmgr.getFolder(testWeblog, null);
+        // test to check that default folder is accessible
+        folder = bmgr.getDefaultFolder(testWeblog);
         assertNotNull(folder);
-        assertEquals("root", folder.getName());
+        assertEquals("default", folder.getName());
         
         log.info("END");
     }

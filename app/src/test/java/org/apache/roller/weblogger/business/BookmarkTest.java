@@ -85,9 +85,9 @@ public class BookmarkTest extends TestCase {
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
+        WeblogBookmarkFolder root = bmgr.getDefaultFolder(testWeblog);
         
-        WeblogBookmarkFolder folder = new WeblogBookmarkFolder(root, "TestFolder2", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder folder = new WeblogBookmarkFolder("TestFolder2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(folder);
         TestUtils.endSession(true);
         
@@ -162,14 +162,14 @@ public class BookmarkTest extends TestCase {
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
+        WeblogBookmarkFolder root = bmgr.getDefaultFolder(testWeblog);
         
         // add some folders
-        WeblogBookmarkFolder f1 = new WeblogBookmarkFolder(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder f1 = new WeblogBookmarkFolder("f1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f1);
-        WeblogBookmarkFolder f2 = new WeblogBookmarkFolder(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder f2 = new WeblogBookmarkFolder("f2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f2);
-        WeblogBookmarkFolder f3 = new WeblogBookmarkFolder(root, "f3", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder f3 = new WeblogBookmarkFolder("f3", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f3);
         
         TestUtils.endSession(true);
@@ -233,13 +233,13 @@ public class BookmarkTest extends TestCase {
         try {        
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
+            WeblogBookmarkFolder root = bmgr.getDefaultFolder(testWeblog);
 
-            WeblogBookmarkFolder dest = new WeblogBookmarkFolder(root, "dest", null, testWeblog);
+            WeblogBookmarkFolder dest = new WeblogBookmarkFolder("dest", null, testWeblog);
             bmgr.saveFolder(dest);
 
             // create source folder f1
-            WeblogBookmarkFolder f1 = new WeblogBookmarkFolder(root, "f1", null, testWeblog);
+            WeblogBookmarkFolder f1 = new WeblogBookmarkFolder("f1", null, testWeblog);
             bmgr.saveFolder(f1);
 
             // create bookmark b1 inside source folder f1
@@ -250,7 +250,7 @@ public class BookmarkTest extends TestCase {
             f1.addBookmark(b1);
 
             // create folder f2 inside f1
-            WeblogBookmarkFolder f2 = new WeblogBookmarkFolder(f1, "f2", null, testWeblog);
+            WeblogBookmarkFolder f2 = new WeblogBookmarkFolder("f2", null, testWeblog);
             bmgr.saveFolder(f2);
 
             // create bookmark b2 inside folder f2
@@ -261,7 +261,7 @@ public class BookmarkTest extends TestCase {
             f2.addBookmark(b2);
 
             // create folder f3 inside folder f2
-            WeblogBookmarkFolder f3 = new WeblogBookmarkFolder(f2, "f3", null, testWeblog);
+            WeblogBookmarkFolder f3 = new WeblogBookmarkFolder("f3", null, testWeblog);
             bmgr.saveFolder(f3);
 
             // crete bookmark b3 inside folder f3
@@ -287,7 +287,7 @@ public class BookmarkTest extends TestCase {
 
             // check that paths and child folders are correct
             assertEquals("f1", f1.getName());
-            assertEquals(1, dest.getFolders().size());
+            assertEquals(1, dest.getWeblog().getBookmarkFolders().size());
         
             bmgr.removeFolder(f1);
             bmgr.removeFolder(dest);

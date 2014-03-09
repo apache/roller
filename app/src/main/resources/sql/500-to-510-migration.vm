@@ -36,3 +36,8 @@ delete from weblogcategory where name = 'root' and parentid is null;
 delete from pingtarget where websiteid is not null;
 #dropIndex("pt_websiteid_fk" "pingtarget")
 #dropColumn("pingtarget", "websiteid")
+
+-- Removal of bookmark subfolders and renaming of default folder to 'default'
+update folder set name = 'default' where name = 'root' and parentid is null;
+#dropColumn("folder" 'parentid')
+#dropColumn("folder" 'path')

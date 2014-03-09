@@ -311,7 +311,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
         }
         else {
             BookmarkManager bMgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            List<WeblogBookmark> bookmarks = bMgr.getBookmarks(bMgr.getRootFolder(website));
+            List<WeblogBookmark> bookmarks = bMgr.getBookmarks(bMgr.getDefaultFolder(website));
 
             for (WeblogBookmark b : bookmarks) {
                 bookmarkMap.put(b.getName(), b);

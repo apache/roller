@@ -19,7 +19,7 @@
 
 <p class="subtitle">
     <s:text name="folderForm.edit.subtitle" >
-        <s:param value="folder.path" />
+        <s:param value="folder.name" />
     </s:text>
 </p>
 
@@ -28,8 +28,9 @@
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
     
-    <%-- if we cancel then we need this attribute --%>
-    <s:hidden name="folderId" value="%{folder.parent.id}" />
+    <%-- if we cancel then we may need this attribute --%>
+    <%-- (Need to test after folder edit re-implemented) --%>
+    <%-- s:hidden name="folderId" value="%{folder.parent.id}" /--%>
     
     <table>
         <tr>

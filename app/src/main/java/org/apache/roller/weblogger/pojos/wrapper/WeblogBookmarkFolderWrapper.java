@@ -64,29 +64,8 @@ public final class WeblogBookmarkFolderWrapper {
     public String getDescription() {
         return this.pojo.getDescription();
     }
-    
-    
-    public WeblogBookmarkFolderWrapper getParent() {
-        return WeblogBookmarkFolderWrapper.wrap(this.pojo.getParent());
-    }
-    
-    public List<WeblogBookmarkFolderWrapper> getFolders() {
-        Set<WeblogBookmarkFolder> initialCollection = this.pojo.getFolders();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        List<WeblogBookmarkFolderWrapper> wrappedCollection = new ArrayList<WeblogBookmarkFolderWrapper>(initialCollection.size());
-        int i = 0;
-        for (WeblogBookmarkFolder folder : initialCollection) {
-            wrappedCollection.add(i, WeblogBookmarkFolderWrapper.wrap(folder));
-            i++;
-        }
-        
-        return wrappedCollection;
-    }
-    
-        
+
+
     public List<WeblogBookmarkWrapper> getBookmarks() {
         Set<WeblogBookmark> initialCollection = new TreeSet<WeblogBookmark>(new BookmarkComparator());
         initialCollection.addAll(this.pojo.getBookmarks());

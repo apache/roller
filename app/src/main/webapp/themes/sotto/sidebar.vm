@@ -20,8 +20,8 @@
 
         <div class="sidebarBox">
             <div class="links">
-                #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
-                #showBookmarkLinksList($rootFolder)
+                #set($defaultFolder = $model.weblog.getBookmarkFolder("/"))
+                #showBookmarkLinksList($defaultFolder)
             </div>
         </div>
 

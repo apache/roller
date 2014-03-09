@@ -34,27 +34,22 @@ import org.apache.roller.util.UUIDGenerator;
 
 
 /**
- * <p>Folder that holds Bookmarks and other Folders. A Roller Website has a
- * set of Folders (there is no one root folder) and each Folder may contain
- * Folders or Bookmarks. Don't construct one of these yourself, instead use
- * the create method in your BookmarkManager implementation.</p>
+ * <p>Folder that holds Bookmarks. A Roller Weblog has one or more Folders
+ * with one folder permanently labeled default.</p>
  */
 public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBookmarkFolder> {
     
     public static final long serialVersionUID = -6272468884763861944L;
     
     private static Log log = LogFactory.getLog(WeblogBookmarkFolder.class);
-    
-    
+
     // attributes
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String description = null;
 
     // associations
-    private Weblog website = null;
-    private WeblogBookmarkFolder parentFolder = null;
-    private Set<WeblogBookmarkFolder> childFolders = new TreeSet<WeblogBookmarkFolder>();
+    private Weblog weblog = null;
     private Set<WeblogBookmark> bookmarks = new TreeSet<WeblogBookmark>();
     
     
@@ -62,16 +57,14 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     }
     
     public WeblogBookmarkFolder(
-            WeblogBookmarkFolder parent,
             String name,
             String desc,
-            Weblog website) {
+            Weblog weblog) {
         
         this.name = name;
         this.description = desc;
-        
-        this.website = website;
-        this.parentFolder = parent;
+        this.weblog = weblog;
+        weblog.addBookmarkFolder(this);
     }
     
         
@@ -96,7 +89,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
             WeblogBookmarkFolder o = (WeblogBookmarkFolder) other;
             return new EqualsBuilder()
                 .append(getName(), o.getName())
-                .append(getWebsite(), o.getWebsite())
+                .append(getWeblog(), o.getWeblog())
                 .isEquals();
         }
         
@@ -107,7 +100,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     public int hashCode() {
         return new HashCodeBuilder()
             .append(getName())
-            .append(getWebsite())
+            .append(getWeblog())
             .toHashCode();
     }
     
@@ -161,38 +154,14 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     /**
      * Get the weblog which owns this folder.
      */
-    public Weblog getWebsite() {
-        return website;
+    public Weblog getWeblog() {
+        return weblog;
     }
     
-    public void setWebsite( Weblog website ) {
-        this.website = website;
+    public void setWeblog( Weblog website ) {
+        this.weblog = website;
     }
 
-    /**
-     * Return parent folder, or null if folder is root of hierarchy.
-     */
-    public WeblogBookmarkFolder getParent() {
-        return this.parentFolder;
-    }
-    
-    public void setParent(WeblogBookmarkFolder parent) {
-        this.parentFolder = parent;
-    }
-    
-    
-    /**
-     * Get child folders of this folder.
-     */
-    public Set<WeblogBookmarkFolder> getFolders() {
-        return this.childFolders;
-    }
-    
-    private void setFolders(Set<WeblogBookmarkFolder> folders) {
-        this.childFolders = folders;
-    }
-    
-    
     /**
      * Get bookmarks contained in this folder.
      */
@@ -204,31 +173,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     private void setBookmarks(Set<WeblogBookmark> bookmarks) {
         this.bookmarks = bookmarks;
     }
-    
-    
-    /**
-     * Add a folder as a child of this folder.
-     */
-    public void addFolder(WeblogBookmarkFolder folder) {
-        
-        // make sure folder is not null
-        if(folder == null || folder.getName() == null) {
-            throw new IllegalArgumentException("Folder cannot be null and must have a valid name");
-        }
-        
-        // make sure we don't already have a folder with that name
-        if(this.hasFolder(folder.getName())) {
-            throw new IllegalArgumentException("Duplicate folder name '"+folder.getName()+"'");
-        }
-        
-        // set ourselves as the parent of the folder
-        folder.setParent(this);
-        
-        // add it to our list of child folder
-        getFolders().add(folder);
-    }
-    
-    
+
     /** 
      * Add a bookmark to this folder.
      */
@@ -244,25 +189,8 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         return bmgr.getBookmarks(this);
     }
-    
-    
-    /**
-     * Does this folder have a child folder with the specified name?
-     *
-     * @param name The name of the folder to check for.
-     * @return boolean true if child folder exists, false otherwise.
-     */
-    public boolean hasFolder(String name) {
-        for (WeblogBookmarkFolder folder : this.getFolders()) {
-            if(name.equals(folder.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    
-    // convenience method for updating the folder name, which triggers a path tree rebuild
+
+    // convenience method for updating the folder name
     public void updateName(String newName) throws WebloggerException {
         setName(newName);
         WebloggerFactory.getWeblogger().getBookmarkManager().saveFolder(this);

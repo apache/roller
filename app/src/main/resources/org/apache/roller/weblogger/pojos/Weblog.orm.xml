@@ -166,7 +166,13 @@
             <one-to-many name="weblogCategories" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory" mapped-by="weblog" fetch="EAGER">
                 <order-by>position</order-by>
                 <cascade>
-                    <cascade-remove/>                                                                                                  1
+                    <cascade-remove/>
+                </cascade>
+            </one-to-many>
+            <one-to-many name="bookmarkFolders" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder" mapped-by="weblog">
+                <cascade>
+                    <cascade-persist/>
+                    <cascade-remove/>
                 </cascade>
             </one-to-many>
 			<transient name="theme"/>

@@ -94,25 +94,9 @@ public class Weblog implements Serializable {
 
     private List<WeblogCategory> weblogCategories = new ArrayList<WeblogCategory>();
 
+    private List<WeblogBookmarkFolder> bookmarkFolders = new ArrayList<WeblogBookmarkFolder>();
 
-    public List<WeblogCategory> getWeblogCategories() {
-        return weblogCategories;
-    }
-
-    public void setWeblogCategories(List<WeblogCategory> cats) {
-        this.weblogCategories = cats;
-    }
-
-    public boolean hasCategory(String name) {
-        for (WeblogCategory cat : getWeblogCategories()) {
-            if(name.equals(cat.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Weblog() {    
+    public Weblog() {
     }
     
     public Weblog(
@@ -890,7 +874,7 @@ public class Weblog implements Serializable {
             Weblogger roller = WebloggerFactory.getWeblogger();
             BookmarkManager bmgr = roller.getBookmarkManager();
             if (folderName == null || folderName.equals("nil") || folderName.trim().equals("/")) {
-                return bmgr.getRootFolder(this);
+                return bmgr.getDefaultFolder(this);
             } else {
                 return bmgr.getFolder(this, folderName);
             }
@@ -1020,4 +1004,62 @@ public class Weblog implements Serializable {
         getWeblogCategories().add(category);
     }
 
+    public List<WeblogCategory> getWeblogCategories() {
+        return weblogCategories;
+    }
+
+    public void setWeblogCategories(List<WeblogCategory> cats) {
+        this.weblogCategories = cats;
+    }
+
+    public boolean hasCategory(String name) {
+        for (WeblogCategory cat : getWeblogCategories()) {
+            if(name.equals(cat.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<WeblogBookmarkFolder> getBookmarkFolders() {
+        return bookmarkFolders;
+    }
+
+    public void setBookmarkFolders(List<WeblogBookmarkFolder> bookmarkFolders) {
+        this.bookmarkFolders = bookmarkFolders;
+    }
+
+    /**
+     * Add a bookmark folder to this weblog.
+     */
+    public void addBookmarkFolder(WeblogBookmarkFolder folder) {
+
+        // make sure folder is not null
+        if(folder == null || folder.getName() == null) {
+            throw new IllegalArgumentException("Folder cannot be null and must have a valid name");
+        }
+
+        // make sure we don't already have a folder with that name
+        if(this.hasBookmarkFolder(folder.getName())) {
+            throw new IllegalArgumentException("Duplicate folder name '" + folder.getName() + "'");
+        }
+
+        // add it to our list of child folder
+        getBookmarkFolders().add(folder);
+    }
+
+    /**
+     * Does this Weblog have a bookmark folder with the specified name?
+     *
+     * @param name The name of the folder to check for.
+     * @return boolean true if exists, false otherwise.
+     */
+    public boolean hasBookmarkFolder(String name) {
+        for (WeblogBookmarkFolder folder : this.getBookmarkFolders()) {
+            if(name.equals(folder.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

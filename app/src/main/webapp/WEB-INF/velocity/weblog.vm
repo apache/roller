@@ -487,7 +487,6 @@ Show bookmarks as a HTML ul list.
 #macro(showBookmarkLinksList $folderObject)
 <ul class="rFolder">
     #set($bookmarks = $folderObject.getBookmarks())
-    #set($folders = $folderObject.getFolders())
     #set($divId = $utils.replace($folderObject.name, " ", "_" ))
     #foreach($bookmark in $bookmarks)
         <li class="rFolderItem">

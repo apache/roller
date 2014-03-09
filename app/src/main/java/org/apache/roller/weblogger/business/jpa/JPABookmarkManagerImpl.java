@@ -102,35 +102,25 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             if (isDuplicateFolderName(folder)) {
                 throw new WebloggerException("Duplicate folder name");
             }
-
-            // And If it has a parent, maintain relationship from both sides
-            WeblogBookmarkFolder parent = folder.getParent();
-            if(parent != null) {
-                parent.getFolders().add(folder);
-            }
         }
 
         this.strategy.store(folder);
 
-        // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(folder.getWebsite());
+        // update weblog last modified date.  date updated by saveWeblog()
+        roller.getWeblogManager().saveWeblog(folder.getWeblog());
     }
 
     public void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException {
-        WeblogBookmarkFolder parent = folder.getParent();
-        if (parent != null) {
-            parent.getFolders().remove(folder);
-        }
-        String websiteid = folder.getWebsite().getId();
+        Weblog weblog = folder.getWeblog();
+        weblog.getBookmarkFolders().remove(folder);
         this.strategy.remove(folder);
 
-        // update weblog last modified date.  date updated by saveWebsite()
-        Weblog weblog = roller.getWeblogManager().getWeblog(websiteid);
+        // update weblog last modified date.  date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
     }
 
     /**
-     * Retrieve folder and lazy-load it's sub-folders and bookmarks.
+     * Retrieve folder and lazy-load its bookmarks.
      */
     public WeblogBookmarkFolder getFolder(String id) throws WebloggerException {
         return (WeblogBookmarkFolder) strategy.load(WeblogBookmarkFolder.class, id);
@@ -150,8 +140,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             WeblogBookmarkFolder newFolder = getFolder(website, folderName);
             if (newFolder == null) {
                 newFolder = new WeblogBookmarkFolder(
-                        getRootFolder(website), 
-                        folderName, folderName, website);
+                        folderName, null, website);
                 this.strategy.store(newFolder);
             }
 
@@ -224,35 +213,14 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         } else {
             // Store a folder
             WeblogBookmarkFolder fd = new WeblogBookmarkFolder(
-                    parent,
                     title,
                     desc,
-                    parent.getWebsite());
+                    parent.getWeblog());
             this.strategy.store(fd);
 
             // Import folder's children
             for (Object subelem : elem.getChildren("outline")) {
                 importOpmlElement( website, (Element) subelem, fd  );
-            }
-        }
-    }
-
-
-    public WeblogBookmarkFolder getFolder(Weblog website, String name)
-            throws WebloggerException {
-
-        if (name == null) {
-            return getRootFolder(website);
-        } else {
-
-            // now just do simple lookup by name
-            Query query = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name");
-            query.setParameter(1, website);
-            query.setParameter(2, name);
-            try {
-                return (WeblogBookmarkFolder)query.getSingleResult();
-            } catch (NoResultException e) {
-                return null;
             }
         }
     }
@@ -273,14 +241,30 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         return results;
     }
 
-    public WeblogBookmarkFolder getRootFolder(Weblog website)
+    public WeblogBookmarkFolder getFolder(Weblog website, String name)
             throws WebloggerException {
-        if (website == null) {
-            throw new WebloggerException("website is null");
+
+        // Do simple lookup by name
+        Query query = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name");
+        query.setParameter(1, website);
+        query.setParameter(2, name);
+        try {
+            return (WeblogBookmarkFolder) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public WeblogBookmarkFolder getDefaultFolder(Weblog weblog)
+            throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
         }
         
-        Query q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&ParentNull");
-        q.setParameter(1, website);
+        Query q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name");
+        q.setParameter(1, weblog);
+        q.setParameter(2, "default");
         try {
             return (WeblogBookmarkFolder)q.getSingleResult();
         } catch (NoResultException e) {
@@ -306,12 +290,8 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     private boolean isDuplicateFolderName(WeblogBookmarkFolder folder) 
         throws WebloggerException {
 
-        // ensure that no sibling categories share the same name
-        WeblogBookmarkFolder parent = folder.getParent();
-        if (null != parent) {
-            return (getFolder(folder.getWebsite(), folder.getName()) != null);
-        }
-        return false;
+        // ensure that no sibling folders share the same name
+        return getFolder(folder.getWeblog(), folder.getName()) != null;
     }
 
 

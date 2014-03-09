@@ -203,7 +203,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     private BookmarkComparator bookmarkComparator = new BookmarkComparator();
     
     public Weblog getWebsite() {
-        return getFolder().getWebsite();
+        return getFolder().getWeblog();
     }
     
 }

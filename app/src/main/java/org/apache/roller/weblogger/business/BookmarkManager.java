@@ -76,18 +76,17 @@ public interface BookmarkManager {
     
     
     /** 
-     * Get root folder for a weblog.  
-     * All weblogs should have only 1 root folder.
+     * Get the weblog's default folder
      *
-     * @param weblog The weblog we want the root folder from.
-     * @return FolderData The root folder, or null if not found.
-     * @throws WebloggerException If there is a problem.
+     * @param weblog The weblog we want the default folder from.
+     * @return FolderData The default folder
+     * @throws WebloggerException If the default folder was not found
      */
-    WeblogBookmarkFolder getRootFolder(Weblog weblog) throws WebloggerException;
+    WeblogBookmarkFolder getDefaultFolder(Weblog weblog) throws WebloggerException;
     
     
     /** 
-     * Get a folder from a weblog based on its path.
+     * Get a folder from a weblog based on its name.
      *
      * @param weblog The weblog we want the folder from.
      * @param name The folder name.

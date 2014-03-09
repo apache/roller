@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.business.pings;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.pojos.Weblog;
 
 
 /**

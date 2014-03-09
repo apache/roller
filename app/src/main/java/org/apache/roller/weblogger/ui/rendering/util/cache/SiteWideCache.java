@@ -368,8 +368,8 @@ public class SiteWideCache implements CacheHandler {
      * A folder has changed.
      */
     public void invalidate(WeblogBookmarkFolder folder) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(folder.getWebsite().getHandle())) {
-            invalidate(folder.getWebsite());
+        if(WebloggerRuntimeConfig.isSiteWideWeblog(folder.getWeblog().getHandle())) {
+            invalidate(folder.getWeblog());
         }
     }
     

@@ -610,20 +610,13 @@ public final class TestUtils {
     /**
      * Convenience method for creating a weblog folder.
      */
-    public static WeblogBookmarkFolder setupFolder(Weblog weblog, String name,
-            WeblogBookmarkFolder parent) throws Exception {
+    public static WeblogBookmarkFolder setupFolder(Weblog weblog, String name) throws Exception {
 
         BookmarkManager mgr = WebloggerFactory.getWeblogger()
                 .getBookmarkManager();
 
-        WeblogBookmarkFolder folderParent;
-        if (parent != null) {
-            folderParent = parent;
-        } else {
-            folderParent = mgr.getRootFolder(weblog);
-        }
         WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(
-                folderParent, name, null, weblog);
+                name, null, weblog);
         mgr.saveFolder(testFolder);
 
         // flush to db

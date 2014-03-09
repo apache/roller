@@ -69,9 +69,8 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
         String text = str;
         try {
             BookmarkManager bMgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            WeblogBookmarkFolder rootFolder = bMgr.getRootFolder(entry.getWebsite());
-            text = matchBookmarks(text, rootFolder);
-            text = lookInFolders(text, rootFolder.getFolders());
+            WeblogBookmarkFolder defaultFolder = bMgr.getDefaultFolder(entry.getWebsite());
+            text = lookInFolders(text, entry.getWebsite().getBookmarkFolders());
         } catch (WebloggerException e) {
             // nothing much I can do, go with default "Weblog" value
             // could be WebloggerException or NullPointerException
@@ -82,23 +81,16 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     
     
     /**
-     * Recursively travel down Folder tree, attempting
-     * to match up Bookmarks in each Folder.
+     * Travel given collection of folders, attempting to match up Bookmarks in each one.
      *
      * @param text
      * @param folders
      * @return
      */
     private String lookInFolders(String text, Collection<WeblogBookmarkFolder> folders) {
-        
         for (WeblogBookmarkFolder folder: folders) {
             text = matchBookmarks(text, folder);
-
-            if (!folder.getFolders().isEmpty()) {
-                lookInFolders(text, folder.getFolders());
-            }
         }
-
         return text;
     }
     
