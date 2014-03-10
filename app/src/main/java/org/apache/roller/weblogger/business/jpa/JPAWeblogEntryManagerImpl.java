@@ -296,7 +296,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             throws WebloggerException {
 
 		if (current == null) {
-			log.debug("WeblogEntry current cannot be null");			
+			log.debug("current WeblogEntry cannot be null");
 			return Collections.emptyList();
 		}
 

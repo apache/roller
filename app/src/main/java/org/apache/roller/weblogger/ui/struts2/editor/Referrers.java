@@ -38,7 +38,7 @@ public class Referrers extends UIAction {
     private static Log log = LogFactory.getLog(Referrers.class);
     
     // list of referrers to display
-    private List<WeblogReferrer> referrers = Collections.EMPTY_LIST;
+    private List<WeblogReferrer> referrers = Collections.emptyList();
 
     // referrers hits today
     private int dayHits = 0;

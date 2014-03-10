@@ -80,7 +80,7 @@ public abstract class EntryBase extends UIAction {
 	 * @return List of WeblogEntryData objects.
 	 */
 	public List<WeblogEntry> getRecentPublishedEntries() {
-		List<WeblogEntry> entries = Collections.EMPTY_LIST;
+		List<WeblogEntry> entries = Collections.emptyList();
 		try {
 			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
 					.getWeblogEntries(
@@ -106,7 +106,7 @@ public abstract class EntryBase extends UIAction {
 	 * @return List of WeblogEntryData objects.
 	 */
 	public List<WeblogEntry> getRecentScheduledEntries() {
-		List<WeblogEntry> entries = Collections.EMPTY_LIST;
+		List<WeblogEntry> entries = Collections.emptyList();
 		try {
 			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
 					.getWeblogEntries(
@@ -132,7 +132,7 @@ public abstract class EntryBase extends UIAction {
 	 * @return List of WeblogEntryData objects.
 	 */
 	public List<WeblogEntry> getRecentDraftEntries() {
-		List<WeblogEntry> entries = Collections.EMPTY_LIST;
+		List<WeblogEntry> entries = Collections.emptyList();
 		try {
 			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
 					.getWeblogEntries(
@@ -157,7 +157,7 @@ public abstract class EntryBase extends UIAction {
 	 * @return List of WeblogEntryData objects.
 	 */
 	public List<WeblogEntry> getRecentPendingEntries() {
-		List<WeblogEntry> entries = Collections.EMPTY_LIST;
+		List<WeblogEntry> entries = Collections.emptyList();
 		try {
 			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
 					.getWeblogEntries(
@@ -176,7 +176,7 @@ public abstract class EntryBase extends UIAction {
 	}
 
 	public List<WeblogEntryPlugin> getEntryPlugins() {
-		List<WeblogEntryPlugin> availablePlugins = Collections.EMPTY_LIST;
+		List<WeblogEntryPlugin> availablePlugins = Collections.emptyList();
 		try {
 			PluginManager ppmgr = WebloggerFactory.getWeblogger()
 					.getPluginManager();
@@ -184,7 +184,7 @@ public abstract class EntryBase extends UIAction {
 					.getWeblogEntryPlugins(getActionWeblog());
 
 			if (plugins.size() > 0) {
-				availablePlugins = new ArrayList();
+				availablePlugins = new ArrayList<WeblogEntryPlugin>();
 				for (WeblogEntryPlugin plugin : plugins.values()) {
 					availablePlugins.add(plugin);
 				}

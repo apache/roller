@@ -92,17 +92,6 @@ public class GeneratePlanetTask extends PlanetTask {
                 outputDirObj.mkdirs();
             }
             
-            List groups = Collections.EMPTY_LIST;
-            // groups must be part of a planet now, so getGroupHandles() was removed
-            //List groups = planetManager.getGroupHandles();
-            for (Object groupHandle : groups) {
-                String groupDirName = outputDirObj + File.separator + groupHandle;
-                File groupDir = new File(groupDirName);
-                if (!groupDir.exists()) {
-                    groupDir.mkdirs();
-                }
-            }
-
             // Generate files: execute control template
             Generator generator = Generator.getInstance();
             generator.setVelocityEngine(engine);

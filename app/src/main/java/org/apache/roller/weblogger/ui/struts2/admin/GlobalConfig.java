@@ -51,17 +51,17 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     
     private static Log log = LogFactory.getLog(GlobalConfig.class);
     
-    // the request parameters as <String, String[]>
-    private Map params = Collections.EMPTY_MAP;
+    // the request parameters
+    private Map<String, String[]> params = Collections.emptyMap();
     
     // map of config properties
-    private Map<String, RuntimeConfigProperty> properties = Collections.EMPTY_MAP;
+    private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
     
     // the runtime config def used to populate the display
     private ConfigDef globalConfigDef = null;
     
     // list of comment plugins
-    private List<WeblogEntryCommentPlugin> pluginsList = Collections.EMPTY_LIST;
+    private List<WeblogEntryCommentPlugin> pluginsList = Collections.emptyList();
     
     // comment plugins that are enabled.  this is what the html form submits to
     private String[] commentPlugins = new String[0];

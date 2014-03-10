@@ -47,7 +47,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
     private Map parameters = Collections.EMPTY_MAP;
     
     // runtime properties data
-    private Map<String, RuntimeConfigProperty> properties = Collections.EMPTY_MAP;
+    private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
     
     // the runtime config def used to populate the display
     private ConfigDef globalConfigDef = null;

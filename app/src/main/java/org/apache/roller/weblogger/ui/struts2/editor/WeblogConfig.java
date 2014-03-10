@@ -51,13 +51,13 @@ public class WeblogConfig extends UIAction {
     private WeblogConfigBean bean = new WeblogConfigBean();
     
     // categories list
-    private List weblogCategories = Collections.EMPTY_LIST;
+    private List weblogCategories = Collections.emptyList();
     
     // list of available editors
-    private List editorsList = Collections.EMPTY_LIST;
+    private List editorsList = Collections.emptyList();
     
     // list of available plugins
-    private List pluginsList = Collections.EMPTY_LIST;
+    private List pluginsList = Collections.emptyList();
     
     
     public WeblogConfig() {

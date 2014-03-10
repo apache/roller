@@ -49,7 +49,7 @@ public class TemplatesRemove extends UIAction {
     private String ids = null;
 
     // list of templates to display
-    private List<WeblogTemplate> templates = Collections.emptyList();;
+    private List<WeblogTemplate> templates = Collections.emptyList();
 
     public TemplatesRemove() {
         this.actionName = "templatesRemove";

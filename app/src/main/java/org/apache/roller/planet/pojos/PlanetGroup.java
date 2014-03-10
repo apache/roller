@@ -47,7 +47,7 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     
     // associations
     private Planet planet = null;
-    private Set subscriptions = new TreeSet();
+    private Set<Subscription> subscriptions = new TreeSet<Subscription>();
     
     
     public PlanetGroup() {}
@@ -131,11 +131,11 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
         this.planet = planet;
     }
     
-    public Set getSubscriptions() {
+    public Set<Subscription> getSubscriptions() {
         return subscriptions;
     }
     
-    public void setSubscriptions(Set subscriptions) {
+    public void setSubscriptions(Set<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
     
@@ -143,12 +143,12 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     /**
      * Return a list of the most recent 10 entries from this group.
      */
-    public List getRecentEntries() {
+    public List<SubscriptionEntry> getRecentEntries() {
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         try {
             return mgr.getEntries(this, 0, 10);
         } catch(Exception e) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
     

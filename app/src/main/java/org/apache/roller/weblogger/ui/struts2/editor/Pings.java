@@ -54,7 +54,7 @@ public class Pings extends UIAction {
     private PingTarget pingTarget = null;
     
     // commong ping targets list
-    private List<PingTarget> commonPingTargets = Collections.EMPTY_LIST;
+    private List<PingTarget> commonPingTargets = Collections.emptyList();
     
     // track the enabled/disabled status for pings
     private Map pingStatus = Collections.EMPTY_MAP;
@@ -212,7 +212,7 @@ public class Pings extends UIAction {
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
         Map<String, Boolean> isEnabled = new HashMap<String, Boolean>();
         
-        List<AutoPing> autoPings = Collections.EMPTY_LIST;
+        List<AutoPing> autoPings = Collections.emptyList();
         try {
             autoPings = autoPingMgr.getAutoPingsByWebsite(getActionWeblog());
         } catch (WebloggerException ex) {

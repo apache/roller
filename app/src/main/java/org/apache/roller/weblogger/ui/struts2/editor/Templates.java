@@ -42,10 +42,10 @@ public class Templates extends UIAction {
 	private static Log log = LogFactory.getLog(Templates.class);
 
 	// list of templates to display
-	private List<WeblogTemplate> templates = Collections.EMPTY_LIST;
+	private List<WeblogTemplate> templates = Collections.emptyList();
 
 	// list of template action types user is allowed to create
-	private List availableActions = Collections.EMPTY_LIST;
+	private List availableActions = Collections.emptyList();
 
 	// name and action of new template if we are adding a template
 	private String newTmplName = null;

@@ -896,7 +896,7 @@ public class Weblog implements Serializable {
         } catch (WebloggerException e) {
             log.error("PageModel getTodaysReferers()", e);
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
     
     /**

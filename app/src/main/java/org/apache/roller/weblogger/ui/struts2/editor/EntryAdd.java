@@ -237,7 +237,7 @@ public final class EntryAdd extends EntryBase {
 			log.error(
 					"Error getting category list for weblog - " + getWeblog(),
 					ex);
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 	}
 

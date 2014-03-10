@@ -93,11 +93,11 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     
     public void loadComments() {
         
-        List comments = Collections.EMPTY_LIST;
+        List<WeblogEntryComment> comments = Collections.emptyList();
         boolean hasMore = false;
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List rawComments = wmgr.getComments(
+            List<WeblogEntryComment> rawComments = wmgr.getComments(
                     null,
                     null,
                     getBean().getSearchString(),
@@ -107,17 +107,17 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
                     true, // reverse  chrono order
                     getBean().getPage() * COUNT,
                     COUNT + 1);
-            comments = new ArrayList();
+            comments = new ArrayList<WeblogEntryComment>();
             comments.addAll(rawComments);   
             
-            if(comments != null && comments.size() > 0) {
+            if(comments.size() > 0) {
                 if(comments.size() > COUNT) {
                     comments.remove(comments.size()-1);
                     hasMore = true;
                 }
                 
-                setFirstComment((WeblogEntryComment)comments.get(0));
-                setLastComment((WeblogEntryComment)comments.get(comments.size()-1));
+                setFirstComment(comments.get(0));
+                setLastComment(comments.get(comments.size()-1));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
@@ -133,7 +133,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     // use the action data to build a url representing this action, including query data
     private String buildBaseUrl() {
         
-        Map<String, String> params = new HashMap();
+        Map<String, String> params = new HashMap<String, String>();
         
         if(!StringUtils.isEmpty(getBean().getSearchString())) {
             params.put("bean.searchString", getBean().getSearchString());

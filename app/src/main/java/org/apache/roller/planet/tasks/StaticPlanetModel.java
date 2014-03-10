@@ -25,6 +25,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -53,13 +54,13 @@ public class StaticPlanetModel {
     }
     
     
-    public List getFeedEntries(String feedUrl, int maxEntries) throws Exception {
+    public List<SubscriptionEntry> getFeedEntries(String feedUrl, int maxEntries) throws Exception {
         try {
             Subscription sub = planetManager.getSubscription(feedUrl);
             if(sub != null) {
                 return planetManager.getEntries(sub, 0, maxEntries);
             } else {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,17 +68,6 @@ public class StaticPlanetModel {
         }
     }
        
-    // removed now that groups must be part of a planet, this method no longer makes sense
-//    public List getGroups() throws RollerException {
-//        return planetManager.getGroups();
-//    }
-    
-    // removed now that groups must be part of a planet, this method no longer makes sense
-//    public PlanetGroup getGroup(String handle) throws RollerException {
-//        return planetManager.getGroup(handle);
-//    }
-    
-    
     public List getAggregation(
             PlanetGroup group, int maxEntries) throws RollerException {
         return planetManager.getEntries(group, 0, maxEntries);

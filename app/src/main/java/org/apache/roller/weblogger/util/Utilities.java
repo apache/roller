@@ -985,7 +985,7 @@ public class Utilities {
     public static List splitStringAsTags(String tags) {
         String[] tagsarr = StringUtils.split(tags, TAG_SPLIT_CHARS);
         if (tagsarr == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return Arrays.asList(tagsarr);
     }

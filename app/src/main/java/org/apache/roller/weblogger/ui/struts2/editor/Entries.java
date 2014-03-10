@@ -101,7 +101,7 @@ public class Entries extends UIAction {
                     COUNT + 1);
             entries = new ArrayList<WeblogEntry>();
             entries.addAll(rawEntries);
-            if (entries != null && entries.size() > 0) {
+            if (entries.size() > 0) {
                 log.debug("query found "+rawEntries.size()+" results");
                 
                 if(rawEntries.size() > COUNT) {
@@ -129,7 +129,7 @@ public class Entries extends UIAction {
     // use the action data to build a url representing this action, including query data
     private String buildBaseUrl() {
         
-        Map<String, String> params = new HashMap();
+        Map<String, String> params = new HashMap<String, String>();
         
         if(!StringUtils.isEmpty(getBean().getCategoryPath())) {
             params.put("bean.categoryPath", getBean().getCategoryPath());
@@ -164,13 +164,13 @@ public class Entries extends UIAction {
     public List<WeblogCategory> getCategories() {
         // make list of categories with first option being being a transient
         // category just meant to represent the default option of any category
-        List<WeblogCategory> cats = new ArrayList();
+        List<WeblogCategory> cats = new ArrayList<WeblogCategory>();
         
         WeblogCategory tmpCat = new WeblogCategory();
         tmpCat.setName("Any");
         cats.add(tmpCat);
         
-        List<WeblogCategory> weblogCats = Collections.EMPTY_LIST;
+        List<WeblogCategory> weblogCats = Collections.emptyList();
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             weblogCats = wmgr.getWeblogCategories(getActionWeblog());
@@ -185,7 +185,7 @@ public class Entries extends UIAction {
     
     
     public List<KeyValueObject> getSortByOptions() {
-        List<KeyValueObject> opts = new ArrayList();
+        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
         opts.add(new KeyValueObject("pubTime", getText("weblogEntryQuery.label.pubTime")));
         opts.add(new KeyValueObject("updateTime", getText("weblogEntryQuery.label.updateTime")));
@@ -194,7 +194,7 @@ public class Entries extends UIAction {
     }
     
     public List<KeyValueObject> getStatusOptions() {
-        List<KeyValueObject> opts = new ArrayList();
+        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
         opts.add(new KeyValueObject("ALL", getText("weblogEntryQuery.label.allEntries")));
         opts.add(new KeyValueObject("DRAFT", getText("weblogEntryQuery.label.draftOnly")));

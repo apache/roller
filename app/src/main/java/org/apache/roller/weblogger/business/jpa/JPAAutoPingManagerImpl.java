@@ -119,14 +119,6 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         //            .execute(changedWeblogEntry.getWebsite());
     }
 
-    public List getCategoryRestrictions(AutoPing autoPing) throws WebloggerException {
-        return Collections.EMPTY_LIST;
-    }
-
-    public void setCategoryRestrictions(AutoPing autoPing, Collection newCategories) {
-        // NOT YET IMPLEMENTED
-    }
-
     public void release() {
     }
 }
