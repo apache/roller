@@ -162,7 +162,6 @@ create table rol_templatecode (
 create table folder (
     id               varchar(48) not null primary key,
     name             varchar(255) not null,
-    description      varchar(255),
     websiteid        varchar(48) not null
 );
 create index fo_websiteid_idx on folder( websiteid );
@@ -173,7 +172,6 @@ create table bookmark (
     name             varchar(255) not null,
     description      varchar(255),
     url              varchar(255) not null,
-    weight           integer default 0 not null,
     priority         integer default 100 not null,
     image            varchar(255),
     feedurl          varchar(255)

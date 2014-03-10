@@ -39,7 +39,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     private String name;
     private String description;
     private String url;
-    private Integer weight;
     private Integer priority;
     private String image;
     private String feedUrl;
@@ -56,7 +55,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
             String desc,
             String url,
             String feedUrl,
-            Integer weight,
             Integer priority,
             String image) {
         this.folder = parent;
@@ -64,7 +62,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         this.description = desc;
         this.url = url;
         this.feedUrl = feedUrl;
-        this.weight = weight;
         this.priority = priority;
         this.image = image;
     }
@@ -110,17 +107,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     public void setUrl(String url) {
         this.url = url;
-    }
-    
-    /**
-     * Weight indicates prominence of link
-     */
-    public java.lang.Integer getWeight() {
-        return this.weight;
-    }
-    
-    public void setWeight(java.lang.Integer weight) {
-        this.weight = weight;
     }
     
     /**

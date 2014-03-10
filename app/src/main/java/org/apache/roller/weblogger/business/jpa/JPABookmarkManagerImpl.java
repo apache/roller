@@ -140,7 +140,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             WeblogBookmarkFolder newFolder = getFolder(website, folderName);
             if (newFolder == null) {
                 newFolder = new WeblogBookmarkFolder(
-                        folderName, null, website);
+                        folderName, website);
                 this.strategy.store(newFolder);
             }
 
@@ -203,7 +203,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
                         desc,
                         url,
                         xmlUrl,
-                        0,
                         100,
                         null);
                 parent.addBookmark(bd);
@@ -214,7 +213,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             // Store a folder
             WeblogBookmarkFolder fd = new WeblogBookmarkFolder(
                     title,
-                    desc,
                     parent.getWeblog());
             this.strategy.store(fd);
 

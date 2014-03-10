@@ -22,9 +22,6 @@
             <basic name="url">
                 <column name="url" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <basic name="weight">
-                <column name="weight" insertable="true" updatable="true" unique="false"/>
-            </basic>
             <basic name="priority">
                 <column name="priority" insertable="true" updatable="true" unique="false"/>
             </basic>

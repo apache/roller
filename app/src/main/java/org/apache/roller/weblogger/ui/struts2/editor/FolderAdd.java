@@ -68,7 +68,6 @@ public class FolderAdd extends UIAction {
             try {
                 WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder(
                         getBean().getName(),
-                        getBean().getDescription(),
                         getActionWeblog());
 
                 // save changes

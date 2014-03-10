@@ -120,7 +120,7 @@ public class FolderFunctionalityTest extends TestCase {
             boolean exception = false;
             try {
                 // child folder with same name as first
-                WeblogBookmarkFolder dupeFolder = new WeblogBookmarkFolder(testFolder.getName(), null, testWeblog);
+                WeblogBookmarkFolder dupeFolder = new WeblogBookmarkFolder(testFolder.getName(), testWeblog);
                 bmgr.saveFolder(dupeFolder);
                 TestUtils.endSession(true);
             } catch (Throwable e) {

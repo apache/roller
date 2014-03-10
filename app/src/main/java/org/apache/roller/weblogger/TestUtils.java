@@ -616,7 +616,7 @@ public final class TestUtils {
                 .getBookmarkManager();
 
         WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(
-                name, null, weblog);
+                name, weblog);
         mgr.saveFolder(testFolder);
 
         // flush to db

@@ -46,7 +46,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     // attributes
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
-    private String description = null;
 
     // associations
     private Weblog weblog = null;
@@ -58,11 +57,9 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     
     public WeblogBookmarkFolder(
             String name,
-            String desc,
             Weblog weblog) {
         
         this.name = name;
-        this.description = desc;
         this.weblog = weblog;
         weblog.addBookmarkFolder(this);
     }
@@ -139,18 +136,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         this.name = name;
     }
     
-    
-    /**
-     * A full description for this folder.
-     */
-    public String getDescription() {
-        return this.description;
-    }
-    
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     /**
      * Get the weblog which owns this folder.
      */

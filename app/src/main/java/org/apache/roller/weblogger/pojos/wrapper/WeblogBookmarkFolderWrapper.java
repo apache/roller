@@ -61,11 +61,6 @@ public final class WeblogBookmarkFolderWrapper {
     }
     
     
-    public String getDescription() {
-        return this.pojo.getDescription();
-    }
-
-
     public List<WeblogBookmarkWrapper> getBookmarks() {
         Set<WeblogBookmark> initialCollection = new TreeSet<WeblogBookmark>(new BookmarkComparator());
         initialCollection.addAll(this.pojo.getBookmarks());

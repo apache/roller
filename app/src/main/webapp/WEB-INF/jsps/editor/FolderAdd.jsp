@@ -33,11 +33,6 @@
             <td><s:text name="folderForm.name" /></td>
             <td><s:textfield name="bean.name" size="70" maxlength="255" /></td>
         </tr>
-        
-        <tr>
-            <td><s:text name="folderForm.description" /></td>
-            <td><s:textarea name="bean.description" rows="5" cols="50" /></td>
-        </tr>
     </table>
     
     <p>

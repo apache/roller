@@ -93,7 +93,7 @@ public class FolderCRUDTest extends TestCase {
         assertEquals(0, root.getBookmarks().size());
         
         // add a folder
-        WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder("folderBasicCRUD", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder("folderBasicCRUD", TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(newFolder);
         TestUtils.endSession(true);
         

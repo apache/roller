@@ -314,7 +314,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // add default bookmarks
         WeblogBookmarkFolder root = new WeblogBookmarkFolder(
-                "default", null, newWeblog);
+                "default", newWeblog);
         this.strategy.store(root);
         
         Integer zero = 0;
@@ -330,7 +330,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                             "",                  // description
                             rollitems[1].trim(), // url
                             null,                // feedurl
-                            zero,                // weight
                             zero,                // priority
                             null);               // image
                     this.strategy.store(b);

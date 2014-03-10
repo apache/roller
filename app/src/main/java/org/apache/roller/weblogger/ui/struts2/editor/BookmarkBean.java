@@ -30,7 +30,6 @@ public class BookmarkBean {
     private String name = null;
     private String description = null;
     private String url = null;
-    private Integer weight = 0;
     private Integer priority = 0;
     private String image = null;
     private String feedUrl = null;
@@ -68,14 +67,6 @@ public class BookmarkBean {
         this.url = url;
     }
     
-    public Integer getWeight() {
-        return this.weight;
-    }
-    
-    public void setWeight( Integer weight ) {
-        this.weight = weight;
-    }
-    
     public Integer getPriority() {
         return this.priority;
     }
@@ -105,7 +96,6 @@ public class BookmarkBean {
         dataHolder.setName(this.name);
         dataHolder.setDescription(this.description);
         dataHolder.setUrl(this.url);
-        dataHolder.setWeight(this.weight);
         dataHolder.setPriority(this.priority);
         dataHolder.setImage(this.image);
         dataHolder.setFeedUrl(this.feedUrl);
@@ -117,7 +107,6 @@ public class BookmarkBean {
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();
         this.url = dataHolder.getUrl();
-        this.weight = dataHolder.getWeight();
         this.priority = dataHolder.getPriority();
         this.image = dataHolder.getImage();
         this.feedUrl = dataHolder.getFeedUrl();

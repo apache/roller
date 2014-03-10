@@ -506,8 +506,7 @@ Show bookmarks as a HTML ul list.
                src="$url.absoluteSite/images/smrssbadge.gif"
                alt="$text.get("macro.bookmark.urlFeed")"/></a>
             #end
-            <a href="$bookmark.url" title="$bookmark.description"
-            class="rBookmark$bookmark.weight">$bookmark.name</a>
+            <a href="$bookmark.url" title="$bookmark.description">$bookmark.name</a>
         #end
         </li>
     #end

@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 
-
 /**
  * Bean for managing folder data.
  */
@@ -29,9 +28,7 @@ public class FolderBean {
     
     protected String id = null;
     protected String name = null;
-    protected String description = null;
-    
-    
+
     public String getId() {
         return this.id;
     }
@@ -47,30 +44,15 @@ public class FolderBean {
     public void setName( String name ) {
         this.name = name;
     }
-    
-    public String getDescription() {
-        return this.description;
-    }
-    
-    public void setDescription( String description ) {
-        this.description = description;
-    }
-    
-    
+
     public void copyTo(WeblogBookmarkFolder dataHolder) throws WebloggerException {
-        
         if(!dataHolder.getName().equals(this.name)) {
             dataHolder.updateName(this.name);
         }
-        
-        dataHolder.setDescription(this.description);
     }
-    
-    
+
     public void copyFrom(WeblogBookmarkFolder dataHolder) {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
-        this.description = dataHolder.getDescription();
     }
-    
 }

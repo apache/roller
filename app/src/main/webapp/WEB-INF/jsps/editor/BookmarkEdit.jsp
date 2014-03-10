@@ -62,12 +62,7 @@
             <td><s:text name="bookmarkForm.priority" /></td>         
             <td><s:textfield name="bean.priority" maxlength="255" size="5" /></td>
         </tr>
-        
-        <tr>
-            <td><s:text name="bookmarkForm.weight" /></td>          
-            <td><s:textfield name="bean.weight" maxlength="255" size="5" /></td>
-        </tr>
-        
+
     </table>
     
     <p>

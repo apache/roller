@@ -33,8 +33,7 @@ public final class WeblogBookmarkWrapper {
     private WeblogBookmarkWrapper(WeblogBookmark toWrap) {
         this.pojo = toWrap;
     }
-    
-    
+
     // wrap the given pojo if it is not null
     public static WeblogBookmarkWrapper wrap(WeblogBookmark toWrap) {
         if(toWrap != null) {
@@ -43,8 +42,7 @@ public final class WeblogBookmarkWrapper {
         
         return null;
     }
-    
-    
+
     public String getId() {
         return this.pojo.getId();
     }
@@ -63,18 +61,11 @@ public final class WeblogBookmarkWrapper {
     public String getUrl() {
         return this.pojo.getUrl();
     }
-    
-    
-    public Integer getWeight() {
-        return this.pojo.getWeight();
-    }
-    
-    
+
     public Integer getPriority() {
         return this.pojo.getPriority();
     }
-    
-    
+
     public String getImage() {
         return this.pojo.getImage();
     }
