@@ -17,22 +17,31 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<%-- JavaScript for bookmarks table --%> 
+<%-- JavaScript for bookmarks table --%>
 <script type="text/javascript">
 // <!-- 
 function onDelete() 
 {
     if ( confirm("<s:text name='bookmarksForm.delete.confirm' />") ) 
     {
-        document.bookmarks.method.value = "deleteSelected";
         document.bookmarks.submit();
     }
- }
-function onMove() 
+}
+
+function onDeleteFolder()
+{
+    if ( confirm("<s:text name='bookmarksForm.deleteFolder.confirm' />") )
+    {
+        document.bookmarks.action='<s:url action="bookmarks!deleteFolder" />';
+        document.bookmarks.submit();
+    }
+}
+
+function onMove()
 {
     if ( confirm("<s:text name='bookmarksForm.move.confirm' />") ) 
     {
-        document.bookmarks.method.value = "moveSelected";
+        document.bookmarks.action='<s:url action="bookmarks!move" />';
         document.bookmarks.submit();
     }
 }
@@ -52,6 +61,12 @@ function onMove()
 <s:else>
     <p class="subtitle">
     <s:text name="bookmarksForm.path" />: <s:text name="%{folder.name}" />
+    <s:url id="editUrl" action="folderEdit">
+        <s:param name="weblog" value="%{actionWeblog.handle}" />
+        <s:param name="bean.id" value="%{folder.id}" />
+    </s:url>
+    <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" /
+        title="<s:text name='bookmarksForm.folder.edit.tip' />" /></s:a>
 </s:else>
 
 <%-- Form is a table of folders followed by bookmarks, each with checkbox --%>
@@ -153,6 +168,10 @@ function onMove()
 
             <%-- Move-to combo-box --%>
             <s:select name="targetFolderId" list="allFolders" listKey="id" listValue="name" />
+        </s:if>
+
+        <s:if test="folder.name != 'default'">
+            <s:submit type="button" action="bookmarks!deleteFolder" key="bookmarksForm.deleteFolder" onclick="onDeleteFolder();return false;"/>
         </s:if>
     </div>
 

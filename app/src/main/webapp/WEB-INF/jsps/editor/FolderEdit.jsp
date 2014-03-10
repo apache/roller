@@ -28,9 +28,9 @@
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
     
-    <%-- if we cancel then we may need this attribute --%>
+    <%-- if we cancel then we need this attribute --%>
     <%-- (Need to test after folder edit re-implemented) --%>
-    <%-- s:hidden name="folderId" value="%{folder.parent.id}" /--%>
+    <s:hidden name="folderId" value="%{folder.id}" />
     
     <table>
         <tr>
