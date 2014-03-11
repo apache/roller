@@ -317,7 +317,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 "default", newWeblog);
         this.strategy.store(root);
         
-        Integer zero = 0;
         String blogroll = WebloggerConfig.getProperty("newuser.blogroll");
         if (blogroll != null) {
             String[] splitroll = blogroll.split(",");
@@ -330,7 +329,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                             "",                  // description
                             rollitems[1].trim(), // url
                             null,                // feedurl
-                            zero,                // priority
                             null);               // image
                     this.strategy.store(b);
                     root.getBookmarks().add(b);

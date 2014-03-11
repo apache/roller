@@ -55,15 +55,21 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
             String desc,
             String url,
             String feedUrl,
-            Integer priority,
             String image) {
         this.folder = parent;
         this.name = name;
         this.description = desc;
         this.url = url;
         this.feedUrl = feedUrl;
-        this.priority = priority;
         this.image = image;
+
+        folder.addBookmark(this);
+        int size = folder.getBookmarks().size();
+        if (size == 1) {
+            this.priority = 0;
+        } else {
+            this.priority = folder.getBookmarks().get(size - 2).getPriority() + 1;
+        }
     }
     
     //------------------------------------------------------------- Attributes
@@ -168,6 +174,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         return new EqualsBuilder()
         .append(getName(), o.getName())
         .append(getFolder(), o.getFolder())
+        .append(getUrl(), o.getUrl())
         .isEquals();
     }
     
@@ -175,18 +182,16 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         return new HashCodeBuilder()
         .append(getName())
         .append(getFolder())
+        .append(getUrl())
         .toHashCode();
     }
-    
-    
+
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(WeblogBookmark o) {
-        return bookmarkComparator.compare(this, o);
+        return priority.compareTo(o.getPriority());
     }
-    
-    private BookmarkComparator bookmarkComparator = new BookmarkComparator();
     
     public Weblog getWebsite() {
         return getFolder().getWeblog();

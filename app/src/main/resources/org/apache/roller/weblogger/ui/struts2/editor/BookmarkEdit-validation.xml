@@ -31,16 +31,6 @@
         </field-validator>
     </field>
     
-    <field name="bean.priority">
-        <field-validator type="required">
-            <message key="Bookmark.error.priorityNull">unspecified key</message>
-        </field-validator>
-        
-        <field-validator type="int">
-            <message key="Bookmark.error.priorityNotInt">unspecified key</message>
-        </field-validator>
-    </field>
-    
     <field name="bean.image">
         <field-validator type="url">
             <message key="Bookmark.error.imageBad">unspecified key</message>

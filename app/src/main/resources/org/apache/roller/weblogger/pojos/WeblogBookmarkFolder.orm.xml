@@ -23,7 +23,7 @@
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <one-to-many name="bookmarks" mapped-by="folder" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmark" fetch="LAZY">
-                <order-by>name</order-by>
+                <order-by>priority</order-by>
                 <cascade>
                     <cascade-persist />
                     <cascade-remove />

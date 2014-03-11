@@ -55,11 +55,6 @@
             <td><s:textfield name="bean.image" maxlength="255" size="70" /></td>
         </tr>
         
-        <tr>
-            <td><s:text name="bookmarkForm.priority" /></td>         
-            <td><s:textfield name="bean.priority" maxlength="255" size="5" /></td>
-        </tr>
-
     </table>
     
     <p>

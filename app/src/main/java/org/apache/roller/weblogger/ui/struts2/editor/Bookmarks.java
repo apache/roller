@@ -97,7 +97,6 @@ public class Bookmarks extends UIAction {
             // Build list of all folders, except for current one
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             List<WeblogBookmarkFolder> folders = bmgr.getAllFolders(getActionWeblog());
-            log.info("*** Folder ID is: " + getFolderId());
             for (WeblogBookmarkFolder fd : folders) {
                 if (!fd.getId().equals(getFolderId())) {
                     newFolders.add(fd);
@@ -122,8 +121,6 @@ public class Bookmarks extends UIAction {
     public String delete() {
 
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-
-        log.info("Deleting selected bookmarks.");
 
         try {
             WeblogBookmark bookmark;

@@ -7,7 +7,7 @@
             class="org.apache.roller.weblogger.pojos.WeblogBookmark" access="PROPERTY">
         <table name="bookmark"/>
         <named-query name="BookmarkData.getByFolder">
-            <query>SELECT b FROM WeblogBookmark b WHERE b.folder = ?1</query>
+            <query>SELECT b FROM WeblogBookmark b WHERE b.folder = ?1 order by b.priority</query>
         </named-query>
         <attributes>
             <id name="id">

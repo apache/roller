@@ -30,7 +30,6 @@ public class BookmarkBean {
     private String name = null;
     private String description = null;
     private String url = null;
-    private Integer priority = 0;
     private String image = null;
     private String feedUrl = null;
     
@@ -67,14 +66,6 @@ public class BookmarkBean {
         this.url = url;
     }
     
-    public Integer getPriority() {
-        return this.priority;
-    }
-    
-    public void setPriority( Integer priority ) {
-        this.priority = priority;
-    }
-    
     public String getImage() {
         return this.image;
     }
@@ -96,7 +87,6 @@ public class BookmarkBean {
         dataHolder.setName(this.name);
         dataHolder.setDescription(this.description);
         dataHolder.setUrl(this.url);
-        dataHolder.setPriority(this.priority);
         dataHolder.setImage(this.image);
         dataHolder.setFeedUrl(this.feedUrl);
     }
@@ -107,7 +97,6 @@ public class BookmarkBean {
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();
         this.url = dataHolder.getUrl();
-        this.priority = dataHolder.getPriority();
         this.image = dataHolder.getImage();
         this.feedUrl = dataHolder.getFeedUrl();
     }

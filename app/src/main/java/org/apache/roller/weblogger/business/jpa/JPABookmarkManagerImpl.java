@@ -69,7 +69,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         boolean exists = getBookmark(bookmark.getId()) != null;        
         if (!exists) {
             // New object make sure that relationship is set on managed copy of other side
-            bookmark.getFolder().getBookmarks().add(bookmark);
+            bookmark.getFolder().addBookmark(bookmark);
         }
 
         this.strategy.store(bookmark);
@@ -203,7 +203,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
                         desc,
                         url,
                         xmlUrl,
-                        100,
                         null);
                 parent.addBookmark(bd);
                 // TODO: maybe this should be saving the folder?

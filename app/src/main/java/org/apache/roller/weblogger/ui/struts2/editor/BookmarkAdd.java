@@ -104,9 +104,12 @@ public class BookmarkAdd extends UIAction {
         if(!hasActionErrors()) {
             try {
 
-                WeblogBookmark newBookmark = new WeblogBookmark();
-                newBookmark.setFolder(getFolder());
-                getBean().copyTo(newBookmark);
+                WeblogBookmark newBookmark = new WeblogBookmark(getFolder(),
+                        getBean().getName(),
+                        getBean().getDescription(),
+                        getBean().getUrl(),
+                        getBean().getFeedUrl(),
+                        getBean().getImage());
 
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
                 bmgr.saveBookmark(newBookmark);

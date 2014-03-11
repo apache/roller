@@ -90,10 +90,9 @@ function onMove()
     
         <tr class="rHeaderTr">
             <th class="rollertable" width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"/></th>
-            <th class="rollertable" width="5%">&nbsp;</th>
-            <th class="rollertable" width="30%"><s:text name="bookmarksForm.name" /></th>
-            <th class="rollertable" width="45%"><s:text name="bookmarksForm.description" /></th>
-            <th class="rollertable" width="5%"><s:text name="bookmarksForm.priority" /></th>
+            <th class="rollertable" width="25%"><s:text name="bookmarksForm.name" /></th>
+            <th class="rollertable" width="30%"><s:text name="bookmarksForm.url" /></th>
+            <th class="rollertable" width="30%"><s:text name="bookmarksForm.feedurl" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.edit" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.visitLink" /></th>
         </tr>
@@ -113,20 +112,18 @@ function onMove()
                     <input type="checkbox" name="selectedBookmarks" value="<s:property value="#bookmark.id"/>" />
                 </td>
                 
-                <td class="rollertable" align="center"><img src='<s:url value="/images/link.png"/>' alt="icon" /></td>
-                
                 <td class="rollertable">
                     <str:truncateNicely lower="25" upper="30" ><s:property value="#bookmark.name" /></str:truncateNicely>
                 </td>
                 
                 <td class="rollertable">
-                    <str:truncateNicely lower="45" upper="55" ><s:property value="#bookmark.url" /></str:truncateNicely>
+                    <str:truncateNicely lower="40" upper="50" ><s:property value="#bookmark.url" /></str:truncateNicely>
                 </td>
                 
                 <td class="rollertable">
-                    &nbsp;<s:property value="#bookmark.priority" />
+                    <str:truncateNicely lower="40" upper="50" ><s:property value="#bookmark.feedUrl" /></str:truncateNicely>
                 </td>
-                
+
                 <td class="rollertable" align="center">
                     <s:url id="editUrl" action="bookmarkEdit">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />

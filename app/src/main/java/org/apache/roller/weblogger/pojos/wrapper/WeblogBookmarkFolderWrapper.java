@@ -20,10 +20,6 @@ package org.apache.roller.weblogger.pojos.wrapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.BookmarkComparator;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 
@@ -40,8 +36,7 @@ public final class WeblogBookmarkFolderWrapper {
     private WeblogBookmarkFolderWrapper(WeblogBookmarkFolder toWrap) {
         this.pojo = toWrap;
     }
-    
-    
+
     // wrap the given pojo if it is not null
     public static WeblogBookmarkFolderWrapper wrap(WeblogBookmarkFolder toWrap) {
         if (toWrap != null) {
@@ -49,51 +44,22 @@ public final class WeblogBookmarkFolderWrapper {
         }
         return null;
     }
-    
-    
+
     public String getId() {
         return this.pojo.getId();
     }
-    
-    
+
     public String getName() {
         return this.pojo.getName();
     }
-    
-    
+
     public List<WeblogBookmarkWrapper> getBookmarks() {
-        Set<WeblogBookmark> initialCollection = new TreeSet<WeblogBookmark>(new BookmarkComparator());
-        initialCollection.addAll(this.pojo.getBookmarks());
-        
         // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        List<WeblogBookmarkWrapper> wrappedCollection = new ArrayList<WeblogBookmarkWrapper>(initialCollection.size());
-        int i = 0;
-        for (WeblogBookmark bookmark : initialCollection) {
-            wrappedCollection.add(i,WeblogBookmarkWrapper.wrap(bookmark));
-            i++;
+        List<WeblogBookmarkWrapper> wrappedCollection = new ArrayList<WeblogBookmarkWrapper>(this.pojo.getBookmarks().size());
+        for (WeblogBookmark bookmark : this.pojo.getBookmarks()) {
+            wrappedCollection.add(WeblogBookmarkWrapper.wrap(bookmark));
         }
         return wrappedCollection;
     }    
-        
-    
-    public List<WeblogBookmarkWrapper> retrieveBookmarks()
-            throws WebloggerException {
-        
-        List<WeblogBookmark> initialCollection = this.pojo.retrieveBookmarks();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        List<WeblogBookmarkWrapper> wrappedCollection = new ArrayList<WeblogBookmarkWrapper>(initialCollection.size());
-        int i = 0;
-        for (WeblogBookmark bookmark : initialCollection) {
-            wrappedCollection.add(i,WeblogBookmarkWrapper.wrap(bookmark));
-            i++;
-        }
 
-        return wrappedCollection;
-    }
-    
 }

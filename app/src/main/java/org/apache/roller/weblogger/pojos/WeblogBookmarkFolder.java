@@ -19,9 +19,8 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
@@ -49,7 +48,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
 
     // associations
     private Weblog weblog = null;
-    private Set<WeblogBookmark> bookmarks = new TreeSet<WeblogBookmark>();
+    private List<WeblogBookmark> bookmarks = new ArrayList<WeblogBookmark>();
     
     
     public WeblogBookmarkFolder() {
@@ -150,21 +149,23 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     /**
      * Get bookmarks contained in this folder.
      */
-    public Set<WeblogBookmark> getBookmarks() {
+    public List<WeblogBookmark> getBookmarks() {
         return this.bookmarks;
     }
     
     // this is private to force the use of add/remove bookmark methods.
-    private void setBookmarks(Set<WeblogBookmark> bookmarks) {
+    private void setBookmarks(List<WeblogBookmark> bookmarks) {
         this.bookmarks = bookmarks;
     }
 
     /** 
      * Add a bookmark to this folder.
      */
-    public void addBookmark(WeblogBookmark bookmark) throws WebloggerException {
+    public void addBookmark(WeblogBookmark bookmark) {
         bookmark.setFolder(this);
-        getBookmarks().add(bookmark);
+        if (!getBookmarks().contains(bookmark)) {
+            getBookmarks().add(bookmark);
+        }
     }
     
     
