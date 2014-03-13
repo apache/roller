@@ -87,9 +87,10 @@ function onMove()
 
     </s:if>
     <table class="rollertable">
-    
+
         <tr class="rHeaderTr">
-            <th class="rollertable" width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"/></th>
+            <th class="rollertable" width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"
+                title="<s:text name="bookmarksForm.selectAllLabel"/>"/></th>
             <th class="rollertable" width="25%"><s:text name="bookmarksForm.name" /></th>
             <th class="rollertable" width="30%"><s:text name="bookmarksForm.url" /></th>
             <th class="rollertable" width="30%"><s:text name="bookmarksForm.feedurl" /></th>
@@ -109,7 +110,9 @@ function onMove()
             </s:else>
                 
                 <td class="rollertable center" style="vertical-align:middle">
-                    <input type="checkbox" name="selectedBookmarks" value="<s:property value="#bookmark.id"/>" />
+                    <input type="checkbox" name="selectedBookmarks"
+                    title="<s:text name="bookmarksForm.selectOneLabel"><s:param value="#bookmark.name"/></s:text>"
+                    value="<s:property value="#bookmark.id"/>" />
                 </td>
                 
                 <td class="rollertable">

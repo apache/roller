@@ -50,7 +50,6 @@
                     <img src='<s:url value="/images/link_add.png"/>' border="0"alt="icon" />
                     <s:url id="importBookmarks" action="bookmarksImport">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="folderId" />
                     </s:url>
                     <s:a href="%{importBookmarks}"><s:text name="bookmarksForm.importBookmarks" /></s:a>
                 </p>
