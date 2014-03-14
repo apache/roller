@@ -19,9 +19,7 @@
 package org.apache.roller.planet.tasks;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.Weblogger;

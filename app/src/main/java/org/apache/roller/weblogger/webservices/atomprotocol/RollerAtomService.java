@@ -65,7 +65,7 @@ public class RollerAtomService extends AtomService {
         } catch (WebloggerException re) {
             throw new AtomException("Getting user's weblogs", re);
         }
-        List uploadAccepts = new ArrayList();
+        List uploadAccepts;
         try {
             uploadAccepts = getAcceptedContentTypeRange();
         } catch (WebloggerException re) {

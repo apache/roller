@@ -51,8 +51,6 @@ public class WeblogMediaResourceRequest extends WeblogRequest {
         // parent determines weblog handle and locale if specified
         super(request);
         
-        String servlet = request.getServletPath();
-        
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
         

@@ -103,7 +103,6 @@ public class BookmarkAdd extends UIAction {
         
         if(!hasActionErrors()) {
             try {
-
                 WeblogBookmark newBookmark = new WeblogBookmark(getFolder(),
                         getBean().getName(),
                         getBean().getDescription(),
@@ -136,22 +135,10 @@ public class BookmarkAdd extends UIAction {
         return INPUT;
     }
 
-    
-    // TODO: validation
     public void myValidate() {
-        
         // name is required, max length, no html
-        
-        // url is required, valid url
-        
-        if (StringUtils.isNotEmpty(getBean().getUrl()) && !validURL(getBean().getUrl())) {
-            addError("bookmarkForm.error.invalidURL", getBean().getUrl());
-        }
-        if (StringUtils.isNotEmpty(getBean().getFeedUrl()) && !validURL(getBean().getFeedUrl())) {
-            addError("bookmarkForm.error.invalidURL", getBean().getFeedUrl());
-        }
-        if (StringUtils.isNotEmpty(getBean().getImage()) && !validURL(getBean().getImage())) {
-            addError("bookmarkForm.error.invalidURL", getBean().getImage());
+        if (getFolder().hasBookmarkOfName(getBean().getName())) {
+            addError("bookmarkForm.error.duplicateName", getBean().getUrl());
         }
     }
     

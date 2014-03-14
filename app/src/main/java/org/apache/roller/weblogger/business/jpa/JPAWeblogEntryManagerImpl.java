@@ -111,7 +111,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             throw new WebloggerException("Cannot remove category with entries");
         }
 
-        Weblog testWeblog = cat.getWeblog();
         cat.getWeblog().getWeblogCategories().remove(cat);
 
         // remove cat

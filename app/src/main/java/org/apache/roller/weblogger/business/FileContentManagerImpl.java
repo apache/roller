@@ -108,7 +108,7 @@ public class FileContentManagerImpl implements FileContentManager {
         File saveFile = new File(dirPath.getAbsolutePath() + File.separator + fileId);
         
         byte[] buffer = new byte[8192];
-        int bytesRead = 0;
+        int bytesRead;
         OutputStream bos = null;
         try {
             bos = new FileOutputStream(saveFile);
@@ -120,8 +120,10 @@ public class FileContentManagerImpl implements FileContentManager {
             throw new FileIOException("ERROR uploading file", e);
         } finally {
             try {
-                bos.flush();
-                bos.close();
+                if (bos != null) {
+                    bos.flush();
+                    bos.close();
+                }
             } catch (Exception ignored) {}
         }
         
@@ -156,7 +158,7 @@ public class FileContentManagerImpl implements FileContentManager {
     public boolean overQuota(Weblog weblog) {
         
         String maxDir = WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize");
-        String maxFile = WebloggerRuntimeConfig.getProperty("uploads.file.maxsize");
+
         // maxDirSize in megabytes
         BigDecimal maxDirSize = new BigDecimal(maxDir);
 
@@ -247,15 +249,18 @@ public class FileContentManagerImpl implements FileContentManager {
     private long getDirSize(File dir, boolean recurse) {
         
         long size = 0;
-        if(dir.exists() && dir.isDirectory() && dir.canRead()) {
-            File[] files = dir.listFiles();
+
+        if (dir.exists() && dir.isDirectory() && dir.canRead()) {
             long dirSize = 0l;
-            for (int i=0; i < files.length; i++) {
-                if (!files[i].isDirectory()) {
-                    dirSize += files[i].length();
-                } else if(recurse) {
-                    // count a subdirectory
-                    dirSize += getDirSize(files[i], recurse);
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (!file.isDirectory()) {
+                        dirSize += file.length();
+                    } else if(recurse) {
+                        // count a subdirectory
+                        dirSize += getDirSize(file, recurse);
+                    }
                 }
             }
             size += dirSize;
@@ -272,7 +277,7 @@ public class FileContentManagerImpl implements FileContentManager {
     private boolean checkFileType(String[] allowFiles, String[] forbidFiles,
                                   String fileName, String contentType) {
         
-        // TODO: Atom Publushing Protocol figure out how to handle file
+        // TODO: Atom Publishing Protocol figure out how to handle file
         // allow/forbid using contentType.
         // TEMPORARY SOLUTION: In the allow/forbid lists we will continue to
         // allow user to specify file extensions (e.g. gif, png, jpeg) but will

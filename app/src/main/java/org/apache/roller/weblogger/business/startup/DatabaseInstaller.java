@@ -785,7 +785,6 @@ public class DatabaseInstaller {
      * Return true if named table exists in database.
      */
     private boolean tableExists(Connection con, String tableName) throws SQLException {
-        String[] types = {"TABLE"};
         ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
         while (rs.next()) {
             if (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME").toLowerCase())) {
@@ -859,7 +858,7 @@ public class DatabaseInstaller {
             } else {
                 myversion = parsed;
             }
-        } catch(Exception e) {}  
+        } catch(Exception e) {}
         
         return myversion;
     }

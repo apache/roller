@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import javax.persistence.Query;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -115,8 +114,6 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
 
     public List<AutoPing> getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
         return getAutoPingsByWebsite(changedWeblogEntry.getWebsite());
-        //        return (List)strategy.newQuery(AutoPing.class, "AutoPing.getByWebsite")
-        //            .execute(changedWeblogEntry.getWebsite());
     }
 
     public void release() {

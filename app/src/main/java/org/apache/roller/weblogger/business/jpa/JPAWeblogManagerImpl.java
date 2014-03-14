@@ -29,7 +29,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.sql.Timestamp;
 import java.util.*;
-import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -114,10 +113,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         UserManager        umgr = roller.getUserManager();
         WeblogEntryManager emgr = roller.getWeblogEntryManager();
-        BookmarkManager    bmgr = roller.getBookmarkManager();
 
         //remove theme Assocs
-
         Query themeAssocQuery = strategy.getNamedQuery("WeblogThemeAssoc.getThemeAssocsByWeblog");
         themeAssocQuery.setParameter(1,website);
         List<WeblogThemeAssoc> assocResults = themeAssocQuery.getResultList();

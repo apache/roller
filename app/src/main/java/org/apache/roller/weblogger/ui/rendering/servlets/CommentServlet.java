@@ -97,11 +97,6 @@ public class CommentServlet extends HttpServlet {
         // instantiate a comment validation manager for comment spam checking
         commentValidationManager = new CommentValidationManager();
 
-        // instantiate a comment format manager for comment formatting
-        String fmtrs = WebloggerConfig
-                .getProperty("comment.formatter.classnames");
-        String[] formatters = Utilities.stringToStringArray(fmtrs, ",");
-
         // are we doing throttling?
         if (WebloggerConfig.getBooleanProperty("comment.throttle.enabled")) {
 
@@ -167,10 +162,10 @@ public class CommentServlet extends HttpServlet {
             throws IOException, ServletException {
 
         String error = null;
-        String dispatch_url = null;
+        String dispatch_url;
 
-        Weblog weblog = null;
-        WeblogEntry entry = null;
+        Weblog weblog;
+        WeblogEntry entry;
 
         String message = null;
         RollerMessages messages = new RollerMessages();
@@ -197,7 +192,7 @@ public class CommentServlet extends HttpServlet {
             return;
         }
 
-        WeblogCommentRequest commentRequest = null;
+        WeblogCommentRequest commentRequest;
         try {
             commentRequest = new WeblogCommentRequest(request);
 
@@ -242,7 +237,7 @@ public class CommentServlet extends HttpServlet {
         comment.setEmail(commentRequest.getEmail());
         comment.setUrl(commentRequest.getUrl());
         comment.setContent(commentRequest.getContent());
-        comment.setNotify(Boolean.valueOf(commentRequest.isNotify()));
+        comment.setNotify(commentRequest.isNotify());
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(new Timestamp(System.currentTimeMillis()));
@@ -324,7 +319,7 @@ public class CommentServlet extends HttpServlet {
                 // add specific error messages if they exist
                 if (messages.getErrorCount() > 0) {
                     Iterator errors = messages.getErrors();
-                    RollerMessage errorKey = null;
+                    RollerMessage errorKey;
 
                     StringBuilder buf = new StringBuilder();
                     buf.append("<ul>");

@@ -68,10 +68,7 @@ public class PreviewResourceServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Weblog weblog = null;
-        String ctx = request.getContextPath();
-        String servlet = request.getServletPath();
-        String reqURI = request.getRequestURI();
+        Weblog weblog;
 
         WeblogPreviewResourceRequest resourceRequest = null;
         try {

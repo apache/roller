@@ -66,9 +66,6 @@ public class MediaResourceServlet extends HttpServlet {
                 .getMediaFileManager();
 
         Weblog weblog = null;
-        String ctx = request.getContextPath();
-        String servlet = request.getServletPath();
-        String reqURI = request.getRequestURI();
 
         WeblogMediaResourceRequest resourceRequest = null;
         try {

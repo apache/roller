@@ -162,12 +162,24 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
      * Add a bookmark to this folder.
      */
     public void addBookmark(WeblogBookmark bookmark) {
-        bookmark.setFolder(this);
-        if (!getBookmarks().contains(bookmark)) {
-            getBookmarks().add(bookmark);
+        for (WeblogBookmark bookmarkItem : bookmarks) {
+            if (bookmarkItem.getId().equals(bookmark.getId())) {
+                // already in bookmark list
+                return;
+            }
         }
+        bookmark.setFolder(this);
+        getBookmarks().add(bookmark);
     }
-    
+
+    public boolean hasBookmarkOfName(String bookmarkName) {
+        for (WeblogBookmark bookmark : bookmarks) {
+            if (bookmark.getName().equals(bookmarkName)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     /**
      */

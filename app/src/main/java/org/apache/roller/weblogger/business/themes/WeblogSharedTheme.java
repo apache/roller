@@ -166,7 +166,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             return null;
         }
         
-        ThemeTemplate template = null;
+        ThemeTemplate template;
         
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
@@ -197,7 +197,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             return null;
         }
 
-        ThemeTemplate template = null;
+        ThemeTemplate template;
 
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
@@ -229,7 +229,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             return null;
         }
         
-        ThemeResource resource = null;
+        ThemeResource resource;
         
         // first check in our shared theme
         resource = this.theme.getResource(path);

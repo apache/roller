@@ -26,8 +26,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -66,26 +64,16 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     
     
     public String render(WeblogEntry entry, String str) {
-        String text = str;
-        try {
-            BookmarkManager bMgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            WeblogBookmarkFolder defaultFolder = bMgr.getDefaultFolder(entry.getWebsite());
-            text = lookInFolders(text, entry.getWebsite().getBookmarkFolders());
-        } catch (WebloggerException e) {
-            // nothing much I can do, go with default "Weblog" value
-            // could be WebloggerException or NullPointerException
-            mLogger.warn(e);
-        }
-        return text;
+        return lookInFolders(str, entry.getWebsite().getBookmarkFolders());
     }
     
     
     /**
      * Travel given collection of folders, attempting to match up Bookmarks in each one.
      *
-     * @param text
-     * @param folders
-     * @return
+     * @param text blog entry text
+     * @param folders list of bookmark folders to match against
+     * @return text with hyperlinks to blogroll items added
      */
     private String lookInFolders(String text, Collection<WeblogBookmarkFolder> folders) {
         for (WeblogBookmarkFolder folder: folders) {

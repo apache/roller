@@ -218,10 +218,10 @@ public class Bookmarks extends UIAction {
             if (null != bookmarks && bookmarks.length > 0) {
                 for (int j = 0; j < bookmarks.length; j++) {
                     WeblogBookmark bd = bmgr.getBookmark(bookmarks[j]);
-                    folder.getBookmarks().remove(bd);
                     newFolder.addBookmark(bd);
                     bd.setFolder(newFolder);
                     bmgr.saveBookmark(bd);
+                    folder.getBookmarks().remove(bd);
                 }
             }
 

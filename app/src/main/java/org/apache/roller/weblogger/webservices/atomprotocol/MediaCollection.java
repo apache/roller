@@ -130,9 +130,6 @@ public class MediaCollection {
                         throw new AtomException("Duplicate file name");
                     }
 
-                    if (path.length() > 0) {
-                        path = path + File.separator;
-                    }
                     FileInputStream fis = new FileInputStream(tempFile);
 
                     MediaFile mf = new MediaFile();
@@ -495,8 +492,6 @@ public class MediaCollection {
         String editMediaURI = 
                 atomURL+"/"+ website.getHandle()
                 + "/resource/" + filePath;
-        URLStrategy urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
-        
         String contentType = Utilities.getContentTypeFromFileName(file.getName());
         
         Entry entry = new Entry();

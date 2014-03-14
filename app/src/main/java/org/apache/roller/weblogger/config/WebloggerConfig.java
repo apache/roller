@@ -125,7 +125,6 @@ public class WebloggerConfig {
             }
             
             // initialize logging subsystem via WebloggerConfig
-            Properties log4jprops = new Properties();
             PropertyConfigurator.configure(WebloggerConfig.getPropertiesStartingWith("log4j."));
             
             // finally we can start logging...
