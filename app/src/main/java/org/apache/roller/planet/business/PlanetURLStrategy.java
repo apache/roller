@@ -73,7 +73,7 @@ public interface PlanetURLStrategy {
     /**
      * Compose a map of key=value params into a query string.
      */
-    String getQueryString(Map params);
+    String getQueryString(Map<String, String> params);
     
     
     /**

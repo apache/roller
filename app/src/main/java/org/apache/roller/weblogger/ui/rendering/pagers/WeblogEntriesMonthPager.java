@@ -121,11 +121,11 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
                               
                 // need to wrap pojos
                 int count = 0;
-                for (Date key : mmap.keySet()) {
+                for (Map.Entry<Date, List<WeblogEntry>> entry : mmap.entrySet()) {
                     // now we need to go through each entry in a day and wrap
                     List<WeblogEntryWrapper> wrapped = new ArrayList<WeblogEntryWrapper>();
-                    List<WeblogEntry> unwrapped = mmap.get(key);
-                    for(int i=0; i < unwrapped.size(); i++) {
+                    List<WeblogEntry> unwrapped = entry.getValue();
+                    for (int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
                             wrapped.add(i,WeblogEntryWrapper.wrap(unwrapped.get(i), urlStrategy));
                         } else {
@@ -134,8 +134,8 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
                     }
                     
                     // done with that day, put it in the map
-                    if(wrapped.size() > 0) {
-                        entries.put(key, wrapped);
+                    if (wrapped.size() > 0) {
+                        entries.put(entry.getKey(), wrapped);
                     }
                 }
             } catch (Exception e) {

@@ -79,10 +79,10 @@ public class HitCountProcessingJob implements Job {
             long startTime = System.currentTimeMillis();
             
             Weblog weblog;
-            for (String key : hitsTally.keySet()) {
+            for (Map.Entry<String, Long> entry : hitsTally.entrySet()) {
                 try {
-                    weblog = wmgr.getWeblogByHandle(key);
-                    emgr.incrementHitCount(weblog, (hitsTally.get(key)).intValue());
+                    weblog = wmgr.getWeblogByHandle(entry.getKey());
+                    emgr.incrementHitCount(weblog, entry.getValue().intValue());
                 } catch (WebloggerException ex) {
                     log.error(ex);
                 }

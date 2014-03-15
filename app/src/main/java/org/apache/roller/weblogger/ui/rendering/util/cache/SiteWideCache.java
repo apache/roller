@@ -422,18 +422,15 @@ public class SiteWideCache implements CacheHandler {
     
     private String paramsToString(Map<String, String[]> map) {
         
-        if(map == null) {
+        if (map == null) {
             return null;
         }
         
         StringBuilder string = new StringBuilder();
         
-        String[] value;
-        for (String key : map.keySet()) {
-            value = map.get(key);
-            
-            if(value != null) {
-                string.append(",").append(key).append("=").append(value[0]);
+        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+            if(entry.getValue() != null) {
+                string.append(",").append(entry.getKey()).append("=").append(entry.getValue()[0]);
             }
         }
         

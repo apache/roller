@@ -987,9 +987,9 @@ public class WeblogEntry implements Serializable {
                 // now loop over mPagePlugins, matching
                 // against Entry plugins (by name):
                 // where a match is found render Plugin.
-                for (String key : inPlugins.keySet()) {
-                    if (entryPlugins.contains(key)) {
-                        WeblogEntryPlugin pagePlugin = inPlugins.get(key);
+                for (Map.Entry<String, WeblogEntryPlugin> entry : inPlugins.entrySet()) {
+                    if (entryPlugins.contains(entry.getKey())) {
+                        WeblogEntryPlugin pagePlugin = entry.getValue();
                         try {
                             ret = pagePlugin.render(this, ret);
                         } catch (Exception e) {

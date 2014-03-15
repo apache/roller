@@ -45,8 +45,7 @@ public final class URLUtilities {
         }
         
         StringBuilder queryString = new StringBuilder();
-        for (String key : params.keySet()) {
-            String value = params.get(key);
+        for (Map.Entry<String, String> entry : params.entrySet()) {
 
             if (queryString.length() == 0) {
                 queryString.append("?");
@@ -54,9 +53,9 @@ public final class URLUtilities {
                 queryString.append("&");
             }
 
-            queryString.append(key);
+            queryString.append(entry.getKey());
             queryString.append("=");
-            queryString.append(value);
+            queryString.append(entry.getValue());
         }
 
         return queryString.toString();

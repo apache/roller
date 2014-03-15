@@ -214,14 +214,14 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     }
     
     
-    public void setParameters(Map parameters) {
+    public void setParameters(Map<String, String[]> parameters) {
         this.params = parameters;
         
         if (log.isDebugEnabled()) {
             log.debug("Parameter map:");
-            Set<String> keys = parameters.keySet();
-            for(String key : keys) {
-                log.debug(key+" = "+parameters.get(key));
+
+            for(Map.Entry<String, String[]> entry : parameters.entrySet()) {
+                log.debug(entry.getKey() + " = " + entry.getValue());
             }
         }
     }
@@ -229,7 +229,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     // convenience method for getting a single parameter as a String
     private String getParameter(String key) {
         
-        String[] p = (String[]) this.params.get(key);
+        String[] p = this.params.get(key);
         if(p != null && p.length > 0) {
             return p[0];
         }

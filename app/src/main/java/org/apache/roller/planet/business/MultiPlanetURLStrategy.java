@@ -107,28 +107,27 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
     /**
      * Compose a map of key=value params into a query string.
      */
-    public String getQueryString(Map params) {
+    public String getQueryString(Map<String, String> params) {
         
         if(params == null) {
             return null;
         }
         
         StringBuilder queryString = new StringBuilder();
-        
-        for(Object key : params.keySet()) {
-            String value = (String) params.get(key);
-            
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+
             if (queryString.length() == 0) {
                 queryString.append("?");
             } else {
                 queryString.append("&");
             }
-            
-            queryString.append(key);
+
+            queryString.append(entry.getKey());
             queryString.append("=");
-            queryString.append(value);
+            queryString.append(entry.getValue());
         }
-        
+
         return queryString.toString();
     }
     
