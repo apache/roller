@@ -47,10 +47,11 @@ public class ValidateSaltFilter implements Filter {
 			FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpReq = (HttpServletRequest) request;
 
-        // TODO multipart/form-data does not send parameters
+        // note enctype="multipart/form-data" does not send parameters (see ROL-1956)
+        // requests of this type are stored in salt.ignored.urls in roller.properties
         if (httpReq.getMethod().equals("POST") &&
                 !isIgnoredURL(((HttpServletRequest) request).getServletPath())) {
-            String salt = (String) httpReq.getParameter("salt");
+            String salt = httpReq.getParameter("salt");
             SaltCache saltCache = SaltCache.getInstance();
             if (salt == null || saltCache.get(salt) == null
                     || saltCache.get(salt).equals(false)) {
@@ -64,7 +65,7 @@ public class ValidateSaltFilter implements Filter {
 	// @Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 
-		// Construct our list of ignord urls
+		// Construct our list of ignored urls
 		String urls = WebloggerConfig.getProperty("salt.ignored.urls");
 		String[] urlsArray = StringUtils.stripAll(StringUtils.split(urls, ","));
 		for (int i = 0; i < urlsArray.length; i++) {
@@ -77,7 +78,7 @@ public class ValidateSaltFilter implements Filter {
 	}
 
 	/**
-	 * Checks if this is an ignored url.
+	 * Checks if this is an ignored url defined in the salt.ignored.urls property
 	 * 
 	 * @param theUrl
 	 *            the the url
