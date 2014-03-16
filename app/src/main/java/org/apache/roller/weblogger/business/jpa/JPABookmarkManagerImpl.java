@@ -156,9 +156,9 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
     // convenience method used when importing bookmarks
     // NOTE: this method does not commit any changes; 
-    // that is done by importBookmarks()
+    // that is done higher up in execution chain
     private void importOpmlElement(
-            Weblog website, Element elem, WeblogBookmarkFolder parent)
+            Weblog website, Element elem, WeblogBookmarkFolder folder)
             throws WebloggerException {
         String text = elem.getAttributeValue("text");
         String title = elem.getAttributeValue("title");
@@ -195,29 +195,20 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             // trying to skip invalid ones, but was letting ones 
             // with an xml url and no html url through
             // which could result in a db exception.
-            // TODO: Consider providing error feedback instead of 
-            // silently skipping the invalid bookmarks here.
             if (null != title && null != url) {
-                WeblogBookmark bd = new WeblogBookmark(parent,
+                WeblogBookmark bd = new WeblogBookmark(folder,
                         title,
                         desc,
                         url,
                         xmlUrl,
                         null);
-                parent.addBookmark(bd);
-                // TODO: maybe this should be saving the folder?
+                folder.addBookmark(bd);
                 this.strategy.store(bd);
             }
         } else {
-            // Store a folder
-            WeblogBookmarkFolder fd = new WeblogBookmarkFolder(
-                    title,
-                    parent.getWeblog());
-            this.strategy.store(fd);
-
-            // Import folder's children
+            // Import suboutline's children into folder
             for (Object subelem : elem.getChildren("outline")) {
-                importOpmlElement( website, (Element) subelem, fd  );
+                importOpmlElement( website, (Element) subelem, folder );
             }
         }
     }

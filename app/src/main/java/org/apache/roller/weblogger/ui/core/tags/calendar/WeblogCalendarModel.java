@@ -54,8 +54,8 @@ public class WeblogCalendarModel implements CalendarModel {
     protected String            locale = null;
     protected Calendar          calendar = null;
     protected Weblog       weblog = null;
-    protected Date              prevMonth = null; // prev month or null if none
-    protected Date              nextMonth = null; // next month or null if none    
+    protected Date              prevMonth = null;
+    protected Date              nextMonth = null;
     protected WeblogPageRequest pageRequest = null;
     
     
@@ -69,8 +69,6 @@ public class WeblogCalendarModel implements CalendarModel {
                         pageRequest.getWeblogHandle());
             }
             pageLink = pageRequest.getWeblogPageName();            
-//            day = DateUtil.parseWeblogURLDateString(pageRequest.getWeblogDate(),
-//                    weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             day = parseWeblogURLDateString(pageRequest.getWeblogDate(),
                   weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             locale = pageRequest.getLocale();
@@ -228,13 +226,8 @@ public class WeblogCalendarModel implements CalendarModel {
             char8DateFormat.setCalendar(cal);
             ParsePosition pos = new ParsePosition(0);
             ret = char8DateFormat.parse(dateString, pos);
-            
+
             // make sure the requested date is not in the future
-//            Date today = null;
-//            Calendar todayCal = Calendar.getInstance();
-//            todayCal = Calendar.getInstance(tz, locale);
-//            todayCal.setTime(new Date());
-//            today = todayCal.getTime();
             // Date is always ms offset from epoch in UTC, by no means of timezone.
             Date today = new Date();
             if(ret.after(today)) {
@@ -250,10 +243,6 @@ public class WeblogCalendarModel implements CalendarModel {
             ret = char6DateFormat.parse(dateString, pos);
             
             // make sure the requested date is not in the future
-//            Calendar todayCal = Calendar.getInstance();
-//            todayCal = Calendar.getInstance(tz, locale);
-//            todayCal.setTime(new Date());
-//            Date today = todayCal.getTime();
             Date today = new Date();
             if(ret.after(today)) {
                 ret = today;
@@ -280,13 +269,14 @@ public class WeblogCalendarModel implements CalendarModel {
             dateString = DateUtil.format8chars(day);
         	dateString = format8chars(day,getCalendar());
         } else if (dateString == null && monthURL) {
-//            dateString = DateUtil.format6chars(day);
             dateString = format6chars(day,getCalendar());
         }
         try {
-            if (pageLink == null) { // create date URL
+            if (pageLink == null) {
+                // create date URL
                 url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
-            } else { // create page URL
+            } else {
+                // create page URL
                 url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
             }
         } catch (Exception e) {
@@ -321,9 +311,11 @@ public class WeblogCalendarModel implements CalendarModel {
     
     public String computeTodayMonthUrl() {
     	String url;
-        if (pageLink == null) { // create default URL
+        if (pageLink == null) {
+            // create default URL
             url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, null, null, -1, false);
-        } else { // create page URL
+        } else {
+            // create page URL
             url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, locale, pageLink, null, cat, null, null, -1, false);
         }
     	return url;

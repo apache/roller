@@ -92,8 +92,8 @@ function onMove()
             <th class="rollertable" width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"
                 title="<s:text name="bookmarksForm.selectAllLabel"/>"/></th>
             <th class="rollertable" width="25%"><s:text name="bookmarksForm.name" /></th>
-            <th class="rollertable" width="30%"><s:text name="bookmarksForm.url" /></th>
-            <th class="rollertable" width="30%"><s:text name="bookmarksForm.feedurl" /></th>
+            <th class="rollertable" width="25%"><s:text name="bookmarksForm.url" /></th>
+            <th class="rollertable" width="35%"><s:text name="bookmarksForm.feedurl" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.edit" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.visitLink" /></th>
         </tr>
@@ -124,7 +124,7 @@ function onMove()
                 </td>
                 
                 <td class="rollertable">
-                    <str:truncateNicely lower="40" upper="50" ><s:property value="#bookmark.feedUrl" /></str:truncateNicely>
+                    <str:truncateNicely lower="60" upper="70" ><s:property value="#bookmark.feedUrl" /></str:truncateNicely>
                 </td>
 
                 <td class="rollertable" align="center">

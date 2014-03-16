@@ -123,7 +123,7 @@ public final class BookmarksImport extends UIAction {
                 } else {
                     String data = "The file is greater than " + WRITE_THRESHOLD_IN_MB
                             +" MB, and has not been written to stream."
-                            +" File Size: "+getOpmlFile().length()+" bytes. "
+                            +" File Size: " + getOpmlFile().length() + " bytes. "
                             +" This is a limitation of this particular "
                             +" web application";
                     addError("bookmarksImport.error", data);

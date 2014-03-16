@@ -760,8 +760,10 @@ public class JPAUserManagerImpl implements UserManager {
         q.setParameter(1, user.getUserName());
         List<UserRole> roles = q.getResultList();
         List<String> roleNames = new ArrayList<String>();
-        for (UserRole userRole : roles) {
-            roleNames.add(userRole.getRole());
+        if (roles != null) {
+            for (UserRole userRole : roles) {
+                roleNames.add(userRole.getRole());
+            }
         }
         return roleNames;
     }

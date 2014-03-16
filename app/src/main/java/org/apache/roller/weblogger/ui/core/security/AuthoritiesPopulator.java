@@ -60,7 +60,9 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             user = umgr.getUserByUserName(username, Boolean.TRUE);
-            roles = umgr.getRoles(user);
+            if (user != null) {
+                roles = umgr.getRoles(user);
+            }
         } catch (WebloggerException ex) {
             throw new DataRetrievalFailureException("ERROR in user lookup", ex);
         }
