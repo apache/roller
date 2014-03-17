@@ -310,9 +310,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.store(newWeblog);
 
         // add default bookmarks
-        WeblogBookmarkFolder root = new WeblogBookmarkFolder(
+        WeblogBookmarkFolder defaultFolder = new WeblogBookmarkFolder(
                 "default", newWeblog);
-        this.strategy.store(root);
+        this.strategy.store(defaultFolder);
         
         String blogroll = WebloggerConfig.getProperty("newuser.blogroll");
         if (blogroll != null) {
@@ -321,14 +321,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 String[] rollitems = splitroll[i].split("\\|");
                 if (rollitems != null && rollitems.length > 1) {
                     WeblogBookmark b = new WeblogBookmark(
-                            root,                // parent
+                            defaultFolder,       // parent
                             rollitems[0],        // name
                             "",                  // description
                             rollitems[1].trim(), // url
                             null,                // feedurl
                             null);               // image
                     this.strategy.store(b);
-                    root.getBookmarks().add(b);
                 }
             }
         }
