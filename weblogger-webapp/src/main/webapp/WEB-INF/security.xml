@@ -24,11 +24,6 @@
              http://www.springframework.org/schema/security
              http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
 
-    <!--
-xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
--->
-
     <http auto-config="false" lowercase-comparisons="true" access-decision-manager-ref="accessDecisionManager">
         <intercept-url pattern="/images/**" filters="none"/>
         <intercept-url pattern="/scripts/**" filters="none"/>
