@@ -20,7 +20,7 @@
        xmlns:beans="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+          http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
           http://www.springframework.org/schema/security
           http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
@@ -51,7 +51,7 @@
         <beans:property name="allowIfAllAbstainDecisions" value="false"/>
         <beans:property name="decisionVoters">
             <beans:list>
-                <beans:ref local="roleVoter"/>
+                <beans:ref bean="roleVoter"/>
             </beans:list>
         </beans:property>
     </beans:bean>
@@ -63,8 +63,11 @@
     <!-- Read users from Roller API -->
     <authentication-manager alias='rollerAuthenticationManager'>
         <authentication-provider ref="rememberMeAuthenticationProvider"/>
+        <!-- Uncomment one of the three below, based on whether database, LDAP, or
+             OpenID authentication is desired. -->
         <authentication-provider user-service-ref="rollerUserService"/>
-        <authentication-provider ref="openIDAuthProvider"/>
+        <!--authentication-provider ref="ldapAuthProvider"/>
+        <authentication-provider ref="openIDAuthProvider"/-->
     </authentication-manager>
 
     <beans:bean id="rollerUserService"
@@ -109,5 +112,36 @@
             </beans:props>
         </beans:property>
     </beans:bean>
+
+    <!-- Uncomment & customize below beans if using LDAP -->
+    <!--beans:bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+        <beans:constructor-arg value="ldap://localhost:10389/dc=example,dc=com" />
+        <beans:property name="userDn" value="uid=admin,ou=system" />
+        <beans:property name="password" value="secret" />
+    </beans:bean>
+
+    <beans:bean id="ldapAuthProvider"
+                class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+
+        <beans:constructor-arg>
+            <beans:bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
+                <beans:constructor-arg ref="contextSource" />
+                <beans:property name="userSearch" ref="userSearch" />
+            </beans:bean>
+        </beans:constructor-arg>
+        <beans:constructor-arg>
+            <beans:bean
+                    class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator">
+                <beans:property name="defaultRole" value="editor" />
+            </beans:bean>
+        </beans:constructor-arg>
+    </beans:bean>
+
+    <beans:bean id="userSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+        <beans:constructor-arg index="0" value="" />
+        <beans:constructor-arg index="1" value="(uid={0})" />
+        <beans:constructor-arg index="2" ref="contextSource" />
+        <beans:property name="searchSubtree" value="true" />
+    </beans:bean-->
 
 </beans:beans>

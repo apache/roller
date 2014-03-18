@@ -103,7 +103,7 @@ public class RollerSession
                         AutoProvision provisioner = RollerContext.getAutoProvision();
                         if(provisioner != null) {
                             boolean userProvisioned = provisioner.execute(request);
-                            if(userProvisioned) {
+                            if (userProvisioned) {
                                 // try lookup again real quick
                                 user = umgr.getUserByUserName(principal.getName());
                             }

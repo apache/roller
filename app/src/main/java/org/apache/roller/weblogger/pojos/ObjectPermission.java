@@ -30,7 +30,7 @@ import org.apache.roller.util.UUIDGenerator;
 public abstract class ObjectPermission extends RollerPermission {
     private static Log log = LogFactory.getLog(ObjectPermission.class);
 
-    protected String  id = UUIDGenerator.generateUUID();;
+    protected String  id = UUIDGenerator.generateUUID();
     protected String  userName;
     protected String  objectType;
     protected String  objectId;

@@ -22,9 +22,9 @@
         <testThemesDir>${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
         <testIndexDir>${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
-        <lucene.version>4.6.0</lucene.version>
-        <spring.version>3.2.4.RELEASE</spring.version>
-        <spring.security.version>3.2.0.RELEASE</spring.security.version>
+        <lucene.version>4.7.0</lucene.version>
+        <spring.version>4.0.2.RELEASE</spring.version>
+        <spring.security.version>3.2.2.RELEASE</spring.security.version>
     </properties>
 
     <dependencies>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
-            <version>2.5.0</version>
+            <version>2.5.1</version>
         </dependency>
 
         <!-- Alternative testing with Hibernate (used by default with JBoss)
@@ -275,13 +275,13 @@
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-spring-plugin</artifactId>
-            <version>2.3.16</version>
+            <version>2.3.16.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-tiles-plugin</artifactId>
-            <version>2.3.16</version>
+            <version>2.3.16.1</version>
         </dependency>
 
         <dependency>

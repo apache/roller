@@ -54,8 +54,8 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
             throw new IllegalArgumentException("The userData argument should not be null at this point.");
         }
 
-        User user = null;
-        List<String> roles = null;
+        User user;
+        List<String> roles = new ArrayList<String>();
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
@@ -65,10 +65,6 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
             }
         } catch (WebloggerException ex) {
             throw new DataRetrievalFailureException("ERROR in user lookup", ex);
-        }
-
-        if (user == null) {
-            throw new UsernameNotFoundException("ERROR user: " + username + " not found while granting authorities");
         }
 
         int roleCount = roles.size() + (defaultRole != null ? 1 : 0);

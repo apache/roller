@@ -33,13 +33,13 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserAttribute;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 //import org.springframework.security.userdetails.openid.OpenIDUserAttribute;
-
 
 
 /**
@@ -54,7 +54,7 @@ public class Register extends UIAction implements ServletRequestAware {
     // this is a no-no, we should not need this
     private HttpServletRequest servletRequest = null;
     
-    private boolean fromSS0 = false;
+    private boolean fromSSO = false;
     private String activationStatus = null;
     
     private String activationCode = null;
@@ -139,14 +139,14 @@ public class Register extends UIAction implements ServletRequestAware {
                 if (fromSSO != null) {
                     // Copy user details from Spring Security, including LDAP attributes
                     getBean().copyFrom(fromSSO);
-                    setFromSso(true);
+                    setFromSSO(true);
                 }
                 // See if user is already logged in via CMA
                 else if (getServletRequest().getUserPrincipal() != null) {
                     // Only detail we get is username, sadly no LDAP attributes
                     getBean().setUserName(getServletRequest().getUserPrincipal().getName());
                     getBean().setScreenName(getServletRequest().getUserPrincipal().getName());
-                    setFromSso(true);
+                    setFromSSO(true);
                 }
             }
             
@@ -248,15 +248,16 @@ public class Register extends UIAction implements ServletRequestAware {
                         // send activation mail to the user
                         MailUtil.sendUserActivationEmail(ud);
                     } catch (WebloggerException ex) {
-                        log.error("Error sending activation email to - "+ud.getEmailAddress(), ex);
+                        log.error("Error sending activation email to - " + ud.getEmailAddress(), ex);
                     }
 
                     setActivationStatus("pending");
                 }
 
                 // Invalidate session, otherwise new user who was originally
-                // authenticated via LDAP/SSO will remain logged in with
-                // a but without a valid Roller role.
+                // authenticated via LDAP/SSO will remain logged in but
+                // without a valid Roller role.
+                getServletRequest().getSession().removeAttribute(RollerSession.ROLLER_SESSION);
                 getServletRequest().getSession().invalidate();
 
                 // set a special page title
@@ -319,7 +320,7 @@ public class Register extends UIAction implements ServletRequestAware {
     public void myValidate() {
         
         // if usingSSO, we don't want to error on empty password/username from HTML form.
-        setFromSso(false);
+        setFromSSO(false);
         boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
         if (usingSSO) {
             boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
@@ -334,7 +335,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 getBean().setPasswordText(password);
                 getBean().setPasswordConfirm(password);
                 getBean().setUserName(fromSSO.getUserName());
-                setFromSso(true);
+                setFromSSO(true);
             }
 
             // Preserve username and password, CMA case             
@@ -342,7 +343,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 getBean().setUserName(getServletRequest().getUserPrincipal().getName());
                 getBean().setPasswordText(password);
                 getBean().setPasswordConfirm(password);
-                setFromSso(true);
+                setFromSSO(true);
             }
         }
         
@@ -358,7 +359,7 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         // check password, it is required if OpenID and SSO are disabled
-        if (getOpenIdConfiguration().equals("disabled") && !getFromSso()
+        if (getOpenIdConfiguration().equals("disabled") && !getFromSSO()
                 && StringUtils.isEmpty(getBean().getPasswordText())) {
                 addError("error.add.user.passwordEmpty");
                 return;
@@ -410,12 +411,12 @@ public class Register extends UIAction implements ServletRequestAware {
         this.bean = bean;
     }
 
-    public boolean getFromSso() {
-        return fromSS0;
+    public boolean getFromSSO() {
+        return fromSSO;
     }
 
-    public void setFromSso(boolean fromSS0) {
-        this.fromSS0 = fromSS0;
+    public void setFromSSO(boolean fromSSO) {
+        this.fromSSO = fromSSO;
     }
 
     public String getActivationStatus() {

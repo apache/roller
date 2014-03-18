@@ -167,8 +167,8 @@ public interface UserManager {
      * Lookup a user by User attribute
      * 
      * @param name attribute name
-     * @param value sttribute value
-     * @return UsUserhe user, or null if not found or is disabled.
+     * @param value attribute value
+     * @return User the user, or null if not found or is disabled.
      * @throws WebloggerException If there is a problem
      */
     User getUserByAttribute(String name, String value) throws WebloggerException;

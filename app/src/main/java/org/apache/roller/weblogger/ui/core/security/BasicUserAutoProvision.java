@@ -46,7 +46,7 @@ public class BasicUserAutoProvision implements AutoProvision {
 	public boolean execute(HttpServletRequest request) {
 		User ud = CustomUserRegistry.getUserDetailsFromAuthentication(request);
 
-		if (ud != null) {
+		if (hasNecessaryFields(ud)) {
 			UserManager mgr;
 			try {
 				mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -67,12 +67,19 @@ public class BasicUserAutoProvision implements AutoProvision {
 					}
 				}
 				WebloggerFactory.getWeblogger().flush();
+                return true;
 
-			} catch (WebloggerException e) {
+            } catch (WebloggerException e) {
 				log.warn("Error while auto-provisioning user from SSO.", e);
 			}
 		}
 
-		return true;
+        return false;
 	}
+
+    private boolean hasNecessaryFields(User user) {
+        return user != null && user.getUserName() != null && user.getFullName() != null
+                && user.getScreenName() != null && user.getEmailAddress() != null;
+    }
+
 }
