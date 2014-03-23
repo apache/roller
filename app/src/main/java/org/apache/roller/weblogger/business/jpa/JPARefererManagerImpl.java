@@ -383,7 +383,7 @@ public class JPARefererManagerImpl implements RefererManager {
             return;
         }
 
-        Weblog weblog = null;
+        Weblog weblog;
         WeblogEntry entry = null;
 
         // lookup the weblog now
@@ -406,7 +406,7 @@ public class JPARefererManagerImpl implements RefererManager {
         }
 
         try {
-            List matchRef = null;
+            List matchRef;
 
             // try to find existing WeblogReferrer for referrerUrl
             if (referrerUrl == null || referrerUrl.trim().length() < 8) {
@@ -421,8 +421,8 @@ public class JPARefererManagerImpl implements RefererManager {
                 matchRef = getMatchingReferers(weblog, requestUrl, referrerUrl);
 
                 // If referer was not found, try adding or leaving off 'www'
-                if ( matchRef.size() == 0 ) {
-                    String secondTryUrl = null;
+                if (matchRef.size() == 0) {
+                    String secondTryUrl;
                     if ( referrerUrl.startsWith("http://www") ) {
                         secondTryUrl = "http://"+referrerUrl.substring(11);
                     } else {
@@ -463,7 +463,7 @@ public class JPARefererManagerImpl implements RefererManager {
                         null,
                         requestUrl,
                         null,
-                        "", // Read comment above regarding Derby bug
+                        "",
                         Boolean.FALSE,
                         Boolean.FALSE,
                         one,

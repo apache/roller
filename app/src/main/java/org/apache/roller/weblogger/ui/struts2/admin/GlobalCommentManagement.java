@@ -104,7 +104,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
                     getBean().getStartDate(),
                     getBean().getEndDate(),
                     getBean().getStatus(),
-                    true, // reverse  chrono order
+                    true,
                     getBean().getPage() * COUNT,
                     COUNT + 1);
             comments = new ArrayList<WeblogEntryComment>();
@@ -189,7 +189,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
                     getBean().getStartDate(),
                     getBean().getEndDate(),
                     getBean().getStatus(),
-                    true, // reverse  chrono order
+                    true,
                     0,
                     -1);
             
@@ -255,7 +255,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             if(deletes != null && deletes.size() > 0) {
                 log.debug("Processing deletes - "+deletes.size());
                 
-                WeblogEntryComment deleteComment = null;
+                WeblogEntryComment deleteComment;
                 for(String deleteId : deletes) {
                     deleteComment = wmgr.getComment(deleteId);
                     flushList.add(deleteComment.getWeblogEntry().getWebsite());
@@ -319,9 +319,9 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     }
     
     
-    public List getCommentStatusOptions() {
+    public List<KeyValueObject> getCommentStatusOptions() {
         
-        List opts = new ArrayList();
+        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
         opts.add(new KeyValueObject("ALL", getText("commentManagement.all")));
         opts.add(new KeyValueObject("ONLY_PENDING", getText("commentManagement.onlyPending")));

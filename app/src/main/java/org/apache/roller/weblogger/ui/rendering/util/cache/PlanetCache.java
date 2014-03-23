@@ -55,17 +55,17 @@ public final class PlanetCache {
 
     private PlanetCache() {
         
-        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
+        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID + ".enabled");
         
-        Map cacheProps = new HashMap();
+        Map<String, String> cacheProps = new HashMap<String, String>();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
+        String prop;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
             
             // we are only interested in props for this cache
-            if(prop.startsWith(CACHE_ID+".")) {
+            if (prop.startsWith(CACHE_ID + ".")) {
                 cacheProps.put(prop.substring(CACHE_ID.length()+1), 
                         WebloggerConfig.getProperty(prop));
             }
@@ -159,8 +159,8 @@ public final class PlanetCache {
         // still null, we need to get a fresh value
         if(lastModified == null) {
             
-            // TODO: ROLLER40 last updated for planet
-            lastModified = null; // WebloggerFactory.getWeblogger().getWebloggerManager().getLastUpdated();
+            // TODO: get last updated for planet
+            lastModified = null; // WebloggerFactory.getWeblogger().getWeblogManager().getLastUpdated();
             
             if (lastModified == null) {
                 lastModified = new Date();
@@ -193,7 +193,7 @@ public final class PlanetCache {
         
         StringBuilder key = new StringBuilder();
         
-        key.append(this.CACHE_ID).append(":");
+        key.append(CACHE_ID).append(":");
         key.append(planetRequest.getContext());
         key.append("/");
         key.append(planetRequest.getType());

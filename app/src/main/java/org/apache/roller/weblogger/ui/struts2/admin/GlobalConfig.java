@@ -166,7 +166,8 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             // this is a bit hacky since we are assuming that any prop
             // with a value of "true" or "false" is meant to be a boolean
             // it may not always be the case, but we should be okay for now
-            if( updProp.getValue() != null // null check needed w/Oracle
+            // null check below needed w/Oracle
+            if( updProp.getValue() != null
                     && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
                 
                 if(incomingProp == null || !incomingProp.equals("on")) {

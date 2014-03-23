@@ -38,10 +38,10 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     private Date lastUpdated;
     private int inboundlinks = 0;
     private int inboundblogs = 0;
-    
+
     // associations
-    private Set groups = new HashSet();
-    private Set entries = new HashSet();
+    private Set<PlanetGroup> groups = new HashSet<PlanetGroup>();
+    private Set<SubscriptionEntry> entries = new HashSet<SubscriptionEntry>();
     
     
     public Subscription() {}
@@ -77,7 +77,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        
+
         buf.append("{");
         buf.append(getFeedURL()).append(", ");
         buf.append(getSiteURL()).append(", ");
@@ -87,7 +87,6 @@ public class Subscription implements Serializable, Comparable<Subscription> {
         buf.append("}");
         
         return buf.toString();
-        
     }
     
     
@@ -144,41 +143,41 @@ public class Subscription implements Serializable, Comparable<Subscription> {
         this.lastUpdated = lastUpdated;
     }
     
-    
+
     public int getInboundlinks() {
         return inboundlinks;
     }
-    
+
     public void setInboundlinks(int inboundlinks) {
         this.inboundlinks = inboundlinks;
     }
-    
-    
+
+
     public int getInboundblogs() {
         return inboundblogs;
     }
-    
+
     public void setInboundblogs(int inboundblogs) {
         this.inboundblogs = inboundblogs;
     }
-    
-    
-    public Set getGroups() {
+
+
+    public Set<PlanetGroup> getGroups() {
         return groups;
     }
     
     // private because there is no need for people to do this
-    private void setGroups(Set groups) {
+    private void setGroups(Set<PlanetGroup> groups) {
         this.groups = groups;
     }
+
     
-    
-    public Set getEntries() {
+    public Set<SubscriptionEntry> getEntries() {
         return entries;
     }
     
     // private because there is no need for people to do this
-    private void setEntries(Set entries) {
+    private void setEntries(Set<SubscriptionEntry> entries) {
         this.entries = entries;
     }
     
@@ -202,8 +201,8 @@ public class Subscription implements Serializable, Comparable<Subscription> {
         }
         this.getEntries().addAll(newEntries);
     }
-    
-    
+
+
     // for backwards compatability?
     public String getName() {
         return getTitle();

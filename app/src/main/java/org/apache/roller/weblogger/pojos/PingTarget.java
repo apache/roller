@@ -34,9 +34,12 @@ public class PingTarget implements Serializable {
 
     public static final long serialVersionUID = -6354583200913127874L;
 
-    public static final int CONDITION_OK = 0;           // last use (after possible retrials) was successful
-    public static final int CONDITION_FAILING = 1;      // last use failed after retrials
-    public static final int CONDITION_DISABLED = 2;     // disabled by failure policy after failures - editing resets
+    // last use (after possible retrials) was successful
+    public static final int CONDITION_OK = 0;
+    // last use failed after retrials
+    public static final int CONDITION_FAILING = 1;
+    // disabled by failure policy after failures - editing resets
+    public static final int CONDITION_DISABLED = 2;
 
     private String id = UUIDGenerator.generateUUID();
     private String name = null;

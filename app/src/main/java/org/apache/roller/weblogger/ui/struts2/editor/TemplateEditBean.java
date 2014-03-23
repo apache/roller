@@ -169,7 +169,8 @@ public class TemplateEditBean {
             tc.setTemplate(contentsMobile);
         } else {
             WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(dataHolder.getId(), "mobile");
-			tc.setTemplate(""); // empty, we've got no default mobile template 
+            // empty, we've got no default mobile template
+            tc.setTemplate("");
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
         }
 

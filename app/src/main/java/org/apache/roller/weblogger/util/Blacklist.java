@@ -231,7 +231,7 @@ public class Blacklist {
        
     /**
      * Read in the InputStream for rules.
-     * @param txtStream
+     * @param txtStream stream to read from
      */
     private String readFromStream(InputStream txtStream, boolean saveStream) {
         String line;
@@ -276,7 +276,8 @@ public class Blacklist {
         // line has a comment?
         if (str.indexOf('#') > 0) {
             int commentLoc = str.indexOf('#');
-            rule = str.substring(0, commentLoc-1).trim(); // strip comment
+            // strip comment
+            rule = str.substring(0, commentLoc-1).trim();
         }
 
         // regex rule?
@@ -364,7 +365,6 @@ public class Blacklist {
         
     /** Test String against the RegularExpression rules. */
     private static boolean testRegExRules(String str, List<Pattern> regexRules) {
-        boolean hit = false;
         for (Pattern testPattern : regexRules) {
             // want to see what it is matching on, but only in debug mode
             if (mLogger.isDebugEnabled()) {
@@ -380,7 +380,7 @@ public class Blacklist {
                 }
             }
         }
-        return hit;
+        return false;
     }
 
     /**

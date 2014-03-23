@@ -92,7 +92,8 @@ public class AkismetCommentValidator implements CommentValidator {
         } catch (Exception e) {
             log.error("ERROR checking comment against Akismet", e);
         }
-        return 0; // interpret error as spam: better safe than sorry? 
+        // interpreting error as spam: better safe than sorry?
+        return 0;
     }
 }
 

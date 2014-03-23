@@ -188,7 +188,8 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         if (romeEntry.getAuthor() != null) {
             newEntry.setAuthor(romeEntry.getAuthor());
         } else {
-            newEntry.setAuthor(entrydc.getCreator()); // use <dc:creator>
+            // use <dc:creator>
+            newEntry.setAuthor(entrydc.getCreator());
         }
         
         // Play some games to get the updated date
@@ -199,9 +200,11 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         
         // And more games getting publish date
         if (romeEntry.getPublishedDate() != null) {
-            newEntry.setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime())); // use <pubDate>
+            // use <pubDate>
+            newEntry.setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime()));
         } else if (entrydc != null && entrydc.getDate() != null) {
-            newEntry.setPubTime(new Timestamp(entrydc.getDate().getTime())); // use <dc:date>
+            // use <dc:date>
+            newEntry.setPubTime(new Timestamp(entrydc.getDate().getTime()));
         } else {
             newEntry.setPubTime(newEntry.getUpdateTime());
         }

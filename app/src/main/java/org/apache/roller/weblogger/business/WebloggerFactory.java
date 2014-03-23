@@ -29,22 +29,16 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  */
 public final class WebloggerFactory {
     
-    private static final Log log = LogFactory.getLog(WebloggerFactory.class);
+    private static final Log LOG = LogFactory.getLog(WebloggerFactory.class);
     
     // our configured weblogger provider
     private static WebloggerProvider webloggerProvider = null;
 
-	public static Object getweblogger() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-    
-    
     // non-instantiable
     private WebloggerFactory() {
         // hello all you beautiful people
     }
-    
-    
+
     /**
      * True if bootstrap process has been completed, False otherwise.
      */
@@ -127,9 +121,9 @@ public final class WebloggerFactory {
             throw new NullPointerException("WebloggerProvider is null");
         }
         
-        log.info("Bootstrapping Roller Weblogger business tier");
+        LOG.info("Bootstrapping Roller Weblogger business tier");
         
-        log.info("Weblogger Provider = "+provider.getClass().getName());
+        LOG.info("Weblogger Provider = " + provider.getClass().getName());
         
         // save reference to provider
         webloggerProvider = provider;
@@ -142,9 +136,9 @@ public final class WebloggerFactory {
             throw new BootstrapException("Bootstrapping failed, Weblogger instance is null");
         }
         
-        log.info("Roller Weblogger business tier successfully bootstrapped");
-        log.info("   Version: " + webloggerProvider.getWeblogger().getVersion());
-        log.info("   Revision: " + webloggerProvider.getWeblogger().getRevision());
+        LOG.info("Roller Weblogger business tier successfully bootstrapped");
+        LOG.info("   Version: " + webloggerProvider.getWeblogger().getVersion());
+        LOG.info("   Revision: " + webloggerProvider.getWeblogger().getRevision());
     }
     
 }

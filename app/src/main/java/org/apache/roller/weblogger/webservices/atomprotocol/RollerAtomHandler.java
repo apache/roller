@@ -115,14 +115,15 @@ public class RollerAtomHandler implements AtomHandler {
     public RollerAtomHandler(HttpServletRequest request, HttpServletResponse response) {
         roller = WebloggerFactory.getWeblogger();
 
-        String userName = null;
+        String userName;
         if ("oauth".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
             userName = authenticationOAUTH(request, response);
 
         } else if ("wsse".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
             userName = authenticateWSSE(request);
 
-        } else { // default to basic
+        } else {
+            // default to basic
             userName = authenticateBASIC(request);
         }
 
@@ -225,12 +226,11 @@ public class RollerAtomHandler implements AtomHandler {
     public Entry getEntry(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length > 2) // URI is /blogname/entries/entryid
-        {
+        // URI is /blogname/entries/entryid
+        if (pathInfo.length > 2) {
             if (pathInfo[1].equals("entry")) {
                 EntryCollection ecol = new EntryCollection(user, atomURL);
                 return ecol.getEntry(areq);
-
             } else if (pathInfo[1].equals("resource") && pathInfo[pathInfo.length - 1].endsWith(".media-link")) {
                 MediaCollection mcol = new MediaCollection(user, atomURL);
                 return mcol.getEntry(areq);                    
@@ -278,12 +278,11 @@ public class RollerAtomHandler implements AtomHandler {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         if (pathInfo.length > 2) {
-            if (pathInfo[1].equals("entry")) // URI is /blogname/entry/entryid
-            {                    
+            // URI is /blogname/entry/entryid
+            if (pathInfo[1].equals("entry")) {
                 EntryCollection ecol = new EntryCollection(user, atomURL);
                 ecol.deleteEntry(areq);
                 return;
-
             } else if (pathInfo[1].equals("resource")) {
                 MediaCollection mcol = new MediaCollection(user, atomURL);
                 mcol.deleteEntry(areq);
@@ -301,7 +300,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public boolean isAtomServiceURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length==0) {
+        if (pathInfo.length == 0) {
             return true;
         }
         return false;
@@ -322,7 +321,7 @@ public class RollerAtomHandler implements AtomHandler {
     }
         
     /**
-     * True if URL is media edit URI. Media can be udpated, but not metadata.
+     * True if URL is media edit URI. Media can be updated, but not metadata.
      */
     public boolean isMediaEditURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");

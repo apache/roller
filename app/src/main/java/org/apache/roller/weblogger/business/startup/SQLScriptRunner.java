@@ -49,8 +49,9 @@ public class SQLScriptRunner {
         String line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
-            
-            if (!line.startsWith("--")) { // ignore lines starting with "--"    
+
+            // ignore lines starting with "--"
+            if (!line.startsWith("--")) {
                 
                 if (line.indexOf("--") > 0) {
                     // trim comment off end of line
@@ -67,7 +68,8 @@ public class SQLScriptRunner {
                     commands.add(cmd);
                     command = "";
                 } else if (StringUtils.isNotEmpty(command)) {
-                    command += " "; // still more command coming so add space
+                    // still more command coming so add space
+                    command += " ";
                 }
             } 
         }

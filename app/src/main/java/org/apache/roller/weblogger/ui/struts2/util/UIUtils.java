@@ -31,19 +31,19 @@ import java.util.TimeZone;
  */
 public final class UIUtils {
     
-    private static final List locales;
-    private static final List timeZones;
+    private static final List LOCALES;
+    private static final List TIME_ZONES;
     
     
     // load up the locales and time zones lists
     static {
         // build locales list
-        locales = Arrays.asList(Locale.getAvailableLocales());
-        Collections.sort(locales, new LocaleComparator());
+        LOCALES = Arrays.asList(Locale.getAvailableLocales());
+        Collections.sort(LOCALES, new LocaleComparator());
         
         // build time zones list
-        timeZones = Arrays.asList(TimeZone.getAvailableIDs());
-        Collections.sort(timeZones);
+        TIME_ZONES = Arrays.asList(TimeZone.getAvailableIDs());
+        Collections.sort(TIME_ZONES);
     }
     
     
@@ -53,7 +53,7 @@ public final class UIUtils {
     }
     
     public static List getLocales() {
-        return locales;
+        return LOCALES;
     }
     
     public static String getTimeZone(String timeZoneName) {
@@ -61,11 +61,11 @@ public final class UIUtils {
     }
     
     public static List getTimeZones() {
-        return timeZones;
+        return TIME_ZONES;
     }
     
     
-    // special comparator for sorting locales
+    // special comparator for sorting LOCALES
     private static final class LocaleComparator implements Comparator {
         public int compare(Object obj1, Object obj2) {
             if (obj1 instanceof Locale && obj2 instanceof Locale) {

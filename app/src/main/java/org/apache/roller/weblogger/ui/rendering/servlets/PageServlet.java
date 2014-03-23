@@ -565,7 +565,7 @@ public class PageServlet extends HttpServlet {
     private void processHit(Weblog weblog, String url, String referrer) {
 
         HitCountQueue counter = HitCountQueue.getInstance();
-        counter.processHit(weblog, url, referrer);
+        counter.processHit(weblog);
     }
 
     /**

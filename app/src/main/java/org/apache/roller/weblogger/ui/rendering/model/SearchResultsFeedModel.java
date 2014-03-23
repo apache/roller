@@ -71,7 +71,7 @@ public class SearchResultsFeedModel implements Model {
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsFeedPager pager = null;
 
-	private List results = new LinkedList();
+	private List<WeblogEntryWrapper> results = new LinkedList<WeblogEntryWrapper>();
 
 	private Set categories = new TreeSet();
 
@@ -116,11 +116,8 @@ public class SearchResultsFeedModel implements Model {
 
 		String pagerUrl = urlStrategy.getWeblogFeedURL(weblog,
 				feedRequest.getLocale(), feedRequest.getType(),
-				feedRequest.getFormat(), null, null, /*
-													 * cat and term are null but
-													 * added to the url in the
-													 * pager
-													 */
+				// cat and term below null but added to URL in pager
+                feedRequest.getFormat(), null, null,
 				null, false, true);
 
 		// if there is no query, then we are done
@@ -200,7 +197,7 @@ public class SearchResultsFeedModel implements Model {
 		}
 
 		try {
-			TreeSet categories = new TreeSet();
+			TreeSet<String> categories = new TreeSet<String>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
@@ -209,23 +206,15 @@ public class SearchResultsFeedModel implements Model {
 			String handle = null;
 			Timestamp now = new Timestamp(new Date().getTime());
 			for (int i = offset; i < offset + limit; i++) {
-
-				entry = null; // reset for each iteration
-
 				doc = search.getSearcher().doc(hits[i].doc);
 				handle = doc.getField(FieldConstants.WEBSITE_HANDLE)
 						.stringValue();
 
-				if (websiteSpecificSearch
-						&& handle.equals(feedRequest.getWeblogHandle())) {
+                entry = weblogMgr.getWeblogEntry(doc.getField(
+                        FieldConstants.ID).stringValue());
 
-					entry = weblogMgr.getWeblogEntry(doc.getField(
-							FieldConstants.ID).stringValue());
-				} else {
-
-					entry = weblogMgr.getWeblogEntry(doc.getField(
-							FieldConstants.ID).stringValue());
-
+				if (!(websiteSpecificSearch
+						&& handle.equals(feedRequest.getWeblogHandle()))) {
 					if (doc.getField(FieldConstants.CATEGORY) != null) {
 						categories.add(doc.getField(FieldConstants.CATEGORY)
 								.stringValue());

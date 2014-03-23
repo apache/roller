@@ -45,7 +45,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private boolean navbar = false;
     private String  outputContentType = null;
     private String type = null;
-    
     private SharedTheme myTheme = null;
 
     //hash map to cache template Code objects parsed

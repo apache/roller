@@ -46,8 +46,6 @@ public class HitCountQueue {
     
     private static HitCountQueue instance = null;
     
-    private int numWorkers = 1;
-    private int sleepTime = 180000;
     private WorkerThread worker = null;
     private List<String> queue = null;
     
@@ -59,12 +57,12 @@ public class HitCountQueue {
     
     // non-instantiable because we are a singleton
     private HitCountQueue() {
-        
+        int sleepTime = 180000;
         String sleep = WebloggerConfig.getProperty("hitcount.queue.sleepTime", "180");
         
         try {
             // multiply by 1000 because we expect input in seconds
-            this.sleepTime = Integer.parseInt(sleep) * 1000;
+            sleepTime = Integer.parseInt(sleep) * 1000;
         } catch(NumberFormatException nfe) {
             log.warn("Invalid sleep time ["+sleep+"], using default");
         }
@@ -74,7 +72,7 @@ public class HitCountQueue {
         
         // start up a worker to process the hits at intervals
         HitCountProcessingJob job = new HitCountProcessingJob();
-        worker = new ContinuousWorkerThread("HitCountQueueProcessor", job, this.sleepTime);
+        worker = new ContinuousWorkerThread("HitCountQueueProcessor", job, sleepTime);
         worker.start();
     }
     
@@ -84,7 +82,7 @@ public class HitCountQueue {
     }
     
     
-    public void processHit(Weblog weblog, String url, String referrer) {
+    public void processHit(Weblog weblog) {
         
         // if the weblog isn't null then just drop its handle in the queue
         // each entry in the queue is a weblog handle and indicates a single hit

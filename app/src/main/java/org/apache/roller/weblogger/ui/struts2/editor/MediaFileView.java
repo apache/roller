@@ -199,7 +199,8 @@ public class MediaFileView extends MediaFileBase {
                 Collections.sort(this.childFiles,
                     new MediaFileComparator(MediaFileComparatorType.DATE_UPLOADED));
 
-            } else { // default to sort by name
+            } else {
+                // default to sort by name
                 sortBy = "name";
                 Collections.sort(this.childDirectories,
                     new MediaFileDirectoryComparator(DirectoryComparatorType.NAME));

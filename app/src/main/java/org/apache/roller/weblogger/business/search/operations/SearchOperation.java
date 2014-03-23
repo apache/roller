@@ -76,7 +76,7 @@ public class SearchOperation extends ReadFromIndexOperation {
     private String locale;
     private String parseError;
 
-    private int nMax = 500; // Limit documents.
+    private int docLimit = 500;
 
     // ~ Constructors
     // ===========================================================
@@ -155,7 +155,7 @@ public class SearchOperation extends ReadFromIndexOperation {
                 query = bQuery;
             }
 
-            searchresults = searcher.search(query, null/* Filter */, nMax,
+            searchresults = searcher.search(query, null/* Filter */, docLimit,
                     SORTER);
 
         } catch (IOException e) {

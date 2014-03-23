@@ -68,8 +68,7 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
         }
 
         int roleCount = roles.size() + (defaultRole != null ? 1 : 0);
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(roleCount); // SimpleGrantedAuthority[roleCount];
-        int i = 0;
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(roleCount);
         for(String role : roles) {
             authorities.add(new SimpleGrantedAuthority(role));
         }

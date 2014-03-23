@@ -42,7 +42,7 @@ public class ModifyUser extends UIAction {
     
     private static Log log = LogFactory.getLog(ModifyUser.class);
 
-    private static final boolean isCMA = WebloggerConfig.getBooleanProperty("authentication.cma.enabled");
+    private static final boolean IS_CMA = WebloggerConfig.getBooleanProperty("authentication.cma.enabled");
     
     // user we are modifying
     private User user = new User();
@@ -164,7 +164,7 @@ public class ModifyUser extends UIAction {
                     
                 }
             
-                if (!isCMA) {
+                if (!IS_CMA) {
                     RollerContext.flushAuthenticationUserCache(getUser().getUserName());
                 }
 
@@ -178,7 +178,6 @@ public class ModifyUser extends UIAction {
                 
             } catch (WebloggerException ex) {
                 log.error("ERROR in action", ex);
-                // TODO: i18n
                 addError("userAdmin.error.unexpectedError");
             }
             
@@ -186,7 +185,6 @@ public class ModifyUser extends UIAction {
         
         return INPUT;
     }
-    
     
     // TODO: replace with struts2 validation
     private void myValidate() {
@@ -198,8 +196,7 @@ public class ModifyUser extends UIAction {
             addError("error.add.user.missingEmailAddress");
         }
     }
-    
-    
+
     public CreateUserBean getBean() {
         return bean;
     }

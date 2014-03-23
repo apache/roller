@@ -152,7 +152,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             }
             
             // walk through all enable weblogs and add/update subs as needed
-            List liveUserFeeds = new ArrayList();
+            List<String> liveUserFeeds = new ArrayList<String>();
             List<Weblog> websites = WebloggerFactory.getWeblogger()
                     .getWeblogManager().getWeblogs(Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
             for ( Weblog weblog : websites ) {
@@ -196,7 +196,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             }
             
             // new subs added, existing subs updated, now delete old subs
-            Set<Subscription> deleteSubs = new HashSet();
+            Set<Subscription> deleteSubs = new HashSet<Subscription>();
             Set<Subscription> subs = group.getSubscriptions();
             for( Subscription sub : subs ) {
                 

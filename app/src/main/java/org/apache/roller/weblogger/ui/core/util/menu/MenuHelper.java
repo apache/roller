@@ -107,7 +107,7 @@ public class MenuHelper {
         Menu menu = null;
 
         // do we know the specified menu config?
-        ParsedMenu menuConfig = (ParsedMenu) menus.get(menuId);
+        ParsedMenu menuConfig = menus.get(menuId);
         if (menuConfig != null) {
             try {
                 menu = buildMenu(menuId, menuConfig, currentAction, user,
@@ -329,13 +329,8 @@ public class MenuHelper {
         // an item is also considered selected if it's a subforward of the
         // current action
         Set<String> subActions = tabItem.getSubActions();
-        if (subActions != null) {
-            if (subActions.contains(currentAction)) {
-                return true;
-            }
-        }
 
-        return false;
+        return subActions != null && subActions.contains(currentAction);
     }
 
     /**

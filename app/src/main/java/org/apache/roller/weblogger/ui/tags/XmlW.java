@@ -53,7 +53,6 @@ public final class XmlW {
     public static String removeXml(String str) {
         int sz = str.length();
         StringBuilder buffer = new StringBuilder(sz);
-        boolean inString = false;
         boolean inTag = false;
         for(int i=0; i<sz; i++) {
             char ch = str.charAt(i);
@@ -124,7 +123,8 @@ public final class XmlW {
         int count = StringUtils.countMatches(text.substring(start, nextCloseIdx), open);
 //        System.err.println("count: "+count);
         if(count == 0) {
-            return -1;  // tag is never opened
+            // tag is never opened
+            return -1;
         }
         int expected = 1;
         while(count != expected) {

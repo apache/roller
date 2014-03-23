@@ -36,8 +36,9 @@ import org.apache.roller.weblogger.pojos.Weblog;
 public class SmileysPlugin implements WeblogEntryPlugin {
     
     private static Log log = LogFactory.getLog(SmileysPlugin.class);
-    
-    public static Pattern[] smileyPatterns = new Pattern[0]; // public for tests
+
+    // public for tests
+    public static Pattern[] smileyPatterns = new Pattern[0];
     static String[] imageTags = new String[0];
     private static Properties smileyDefs = new Properties();
     

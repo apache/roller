@@ -63,6 +63,6 @@ public interface PropertiesManager {
     /**
      * Retrieve a list of all properties
      */
-    Map getProperties() throws WebloggerException;
+    Map<String, RuntimeConfigProperty> getProperties() throws WebloggerException;
     
 }

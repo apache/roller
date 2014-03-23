@@ -73,8 +73,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     
     
     public String render(WeblogEntry entry, String str) {
-        String text = str;
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("render(entry = "+entry.getId()+")");
         }
@@ -85,7 +84,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         Properties acronyms = loadAcronyms(entry.getWebsite());
         LOG.debug("acronyms.size()=" + acronyms.size());
         if (acronyms.size() == 0) {
-            return text;
+            return str;
         }
         
         /*
@@ -109,10 +108,10 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         
         // if there are none, no work to do
         if (acronymPatterns.length == 0) {
-            return text;
+            return str;
         }
         
-        return matchAcronyms(text, acronymPatterns, acronymTags);
+        return matchAcronyms(str, acronymPatterns, acronymTags);
     }
     
     
@@ -120,7 +119,6 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
      * Look for any _acronyms Page and parse it into Properties.
      * @param website
      * @return
-     * @throws WebloggerException
      */
     private Properties loadAcronyms(Weblog website) {
         Properties acronyms = new Properties();
@@ -144,7 +142,8 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
      * acronyms in the entry text with acronym html-tags.
      *
      * @param text entry text
-     * @param acronyms user provided set of acronyms
+     * @param acronymPatterns user provided set of acronyms
+     * @param acronymTags
      * @return entry text with acronym explanations
      */
     private String matchAcronyms(String text, Pattern[] acronymPatterns, String[] acronymTags) {
@@ -152,7 +151,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
             LOG.debug("matchAcronyms("+text+")");
         }
         
-        Matcher matcher = null;
+        Matcher matcher;
         for (int i=0; i<acronymPatterns.length; i++) {
             matcher = acronymPatterns[i].matcher(text);
             text = matcher.replaceAll(acronymTags[i]);
@@ -173,8 +172,9 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         if (LOG.isDebugEnabled()) {
             LOG.debug("parsing _acronyms template: \n'"+rawAcronyms+"'");
         }
-        
-        String regex = "\n"; // end of line
+
+        // split by end of line
+        String regex = "\n";
         String[] lines = rawAcronyms.split(regex);
         
         if (lines != null) {
