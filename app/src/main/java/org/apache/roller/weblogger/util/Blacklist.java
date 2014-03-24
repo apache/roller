@@ -39,6 +39,8 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.util.DateUtil;
@@ -89,11 +91,6 @@ public class Blacklist {
     /** Singleton factory method. */
     public static Blacklist getBlacklist() {
         return blacklist;
-    }
-    
-    /** Updated MT blacklist if necessary. */
-    public static void checkForUpdate() {
-        getBlacklist().update();
     }
     
     /** Non-Static update method. */
@@ -160,7 +157,7 @@ public class Blacklist {
                 mLogger.debug("writing updated MT blacklist to "+path);
                 
                 // read from url and write to file
-                byte[] buf = new byte[4096];
+                byte[] buf = new byte[RollerConstants.FOUR_KB_IN_BYTES];
                 int length;
                 while((length = instream.read(buf)) > 0) {
                     outstream.write(buf, 0, length);
@@ -357,10 +354,7 @@ public class Blacklist {
      */
     public static boolean matchesRulesOnly(
         String str, List<String> stringRules, List<Pattern> regexRules) {
-        if (testStringRules(str, stringRules)) {
-            return true;
-        }
-        return testRegExRules(str, regexRules);  
+        return testStringRules(str, stringRules) || testRegExRules(str, regexRules);
     }
         
     /** Test String against the RegularExpression rules. */
@@ -459,9 +453,8 @@ public class Blacklist {
         
     /** Return pretty list of String and RegEx rules. */
     public String toString() {
-        StringBuilder buf = new StringBuilder("blacklist ");
-        buf.append(blacklistStr).append("\n");
-        buf.append("Regex blacklist ").append(blacklistRegex);
-        return buf.toString();
+        String val = "blacklist " + blacklistStr;
+        val += "\nRegex blacklist " + blacklistRegex;
+        return val;
     }
 }

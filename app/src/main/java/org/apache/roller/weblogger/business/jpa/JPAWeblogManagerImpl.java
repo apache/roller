@@ -240,7 +240,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             try {
                 WeblogEntryTagAggregate agg = (WeblogEntryTagAggregate)query.getSingleResult();
                 agg.setTotal(agg.getTotal() - stat.getCount());
-            } catch (NoResultException ignored) {} // no agg to be updated
+            } catch (NoResultException ignored) {
+                // nothing to update
+            }
         }
     }
     
@@ -292,10 +294,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 continue;
             }
             WeblogCategory c = new WeblogCategory(
-                    newWeblog,       // newWeblog
-                    splitcats[i],    // name
-                    null,            // description
-                    null );          // image
+                    newWeblog,
+                    splitcats[i],
+                    null,
+                    null );
             if (firstCat == null) {
                 firstCat = c;
             }
@@ -321,12 +323,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 String[] rollitems = splitroll[i].split("\\|");
                 if (rollitems != null && rollitems.length > 1) {
                     WeblogBookmark b = new WeblogBookmark(
-                            defaultFolder,       // parent
-                            rollitems[0],        // name
-                            "",                  // description
-                            rollitems[1].trim(), // url
-                            null,                // feedurl
-                            null);               // image
+                            defaultFolder,
+                            rollitems[0],
+                            "",
+                            rollitems[1].trim(),
+                            null,
+                            null);
                     this.strategy.store(b);
                 }
             }

@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  */
 public abstract class RollerTaskWithLeasing extends RollerTask {
     private static Log log = LogFactory.getLog(RollerTaskWithLeasing.class);
-    
+    protected static final int DEFAULT_LEASE_MINS = 30;
     
     /**
      * Run the task.

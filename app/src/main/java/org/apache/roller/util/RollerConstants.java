@@ -15,39 +15,23 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * Job.java
- *
- * Created on December 16, 2005, 6:14 PM
- */
+package org.apache.roller.util;
 
-package org.apache.roller.weblogger.business.runnable;
+public final class RollerConstants {
 
-import java.util.List;
-import java.util.Map;
+    public static final int PERCENT_100 = 100;
 
-/**
- * A job to be executed.
- *
- * @author Allen Gilliland
- */
-public interface Job {
-    
-    /**
-     * Execute the job.
-     */
-    void execute();
-    
-    
-    /**
-     * Pass in input to be used for the job.
-     */
-    void input(Map<String, Object> input);
-    
-    
-    /**
-     * Get any output from the job.
-     */
-    Map<String, Object> output();
-    
+    public static final int ONE_KB_IN_BYTES = 1024;
+    public static final int FOUR_KB_IN_BYTES = 4096;
+    public static final int EIGHT_KB_IN_BYTES = 8192;
+    public static final int TWENTYFOUR_KB_IN_BYTES = 24576;
+
+    public static final int HALF_SEC_IN_MS = 500;
+    public static final int SEC_IN_MS = 1000;
+    public static final int MIN_IN_MS = 60 * SEC_IN_MS;
+
+    private RollerConstants(){
+        // never instantiable
+        throw new AssertionError();
+    }
 }

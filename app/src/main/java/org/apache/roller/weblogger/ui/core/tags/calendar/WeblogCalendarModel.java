@@ -106,17 +106,17 @@ public class WeblogCalendarModel implements CalendarModel {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List prevEntries = mgr.getWeblogEntries(
                     
-                    weblog,                    // website
+                    weblog,
                     null,                      // user
                     null,                      // startDate
                     // since we need an entry.pubTime<startDate, but the method use <=
                     new Date(startDate.getTime()-1),                 // endDate 
                     cat,                       // cat
-                    null,WeblogEntry.PUBLISHED, // status
+                    null,WeblogEntry.PUBLISHED,
                     null,                      // text
                     null,                      // sortby (null means pubTime)
-                    WeblogEntryManager.DESCENDING,  // sortorder, null means DESCENDING
-                    locale,                    // locale
+                    WeblogEntryManager.DESCENDING,
+                    locale,
                     0, 1);                     // offset, range
             if (prevEntries.size() > 0) {
                 WeblogEntry prevEntry = (WeblogEntry)prevEntries.get(0);
@@ -133,7 +133,7 @@ public class WeblogCalendarModel implements CalendarModel {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List nextEntries = mgr.getWeblogEntries(
                     
-                    weblog,                    // website
+                    weblog,
                     null,                      // user
                     // since we need an entry.pubTime>endDate, but the method use >=
                     new Date(endDate.getTime()+1),                   // startDate
@@ -168,11 +168,11 @@ public class WeblogCalendarModel implements CalendarModel {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             monthMap = mgr.getWeblogEntryStringMap(
                     
-                    weblog,                  // website
-                    startDate,                 // startDate
-                    endDate,                   // endDate
-                    catName,                   // cat
-                    null,WeblogEntry.PUBLISHED, // status
+                    weblog,
+                    startDate,
+                    endDate,
+                    catName,
+                    null,WeblogEntry.PUBLISHED,
                     locale,
                     0, -1);
         } catch (WebloggerException e) {
@@ -266,9 +266,8 @@ public class WeblogCalendarModel implements CalendarModel {
             return null;
         }
         else if (dateString == null && !monthURL) {
-            dateString = DateUtil.format8chars(day);
         	dateString = format8chars(day,getCalendar());
-        } else if (dateString == null && monthURL) {
+        } else if (dateString == null) {
             dateString = format6chars(day,getCalendar());
         }
         try {

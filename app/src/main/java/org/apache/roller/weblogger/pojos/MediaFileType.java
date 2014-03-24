@@ -24,10 +24,11 @@ package org.apache.roller.weblogger.pojos;
  */
 public enum MediaFileType {
 
-	AUDIO("audio", "Audio", "audio/"),  // audio files 
-	VIDEO("video", "Video", "video/"),  // video files
-	IMAGE("image", "Image", "image/"),  // image files
-	OTHERS("default", "Others", null);  // all other types
+	// Audio, video, image, other files
+    AUDIO("audio", "Audio", "audio/"),
+	VIDEO("video", "Video", "video/"),
+	IMAGE("image", "Image", "image/"),
+	OTHERS("default", "Others", null);
 
 	// Content type prefix used by files of this type
 	String contentTypePrefix;

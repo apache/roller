@@ -20,9 +20,9 @@ package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -32,28 +32,27 @@ import org.apache.roller.weblogger.util.Utilities;
  * Responsible for loading validators and using them to validate comments.
  */
 public class CommentValidationManager {
-    private static Log     log = LogFactory.getLog(CommentValidationManager.class);
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
+    private static Log log = LogFactory.getLog(CommentValidationManager.class);
     private List<CommentValidator> validators = new ArrayList<CommentValidator>();
-    
+
     public CommentValidationManager() {
         
         // instantiate the validators that are configured
         try {
             String vals = WebloggerConfig.getProperty("comment.validator.classnames");
             String[] valsarray = Utilities.stringToStringArray(vals, ",");
-            for(int i=0; i < valsarray.length; i++) {
+            for (String arrayVal : valsarray) {
                 try {
-                    Class valClass = Class.forName(valsarray[i]);
-                    CommentValidator val = (CommentValidator)valClass.newInstance();
+                    Class valClass = Class.forName(arrayVal);
+                    CommentValidator val = (CommentValidator) valClass.newInstance();
                     validators.add(val);
                     log.info("Configured CommentValidator: " + val.getName() + " / " + valClass.getName());
                 } catch (ClassNotFoundException cnfe) {
-                    log.warn("Error finding comment validator: " + valsarray[i]);
+                    log.warn("Error finding comment validator: " + arrayVal);
                 } catch (InstantiationException ie) {
-                    log.warn("Error insantiating comment validator: " + valsarray[i]);
+                    log.warn("Error insantiating comment validator: " + arrayVal);
                 } catch (IllegalAccessException iae) {
-                    log.warn("Error accessing comment validator: " + valsarray[i]);
+                    log.warn("Error accessing comment validator: " + arrayVal);
                 }
             }
                         
@@ -71,13 +70,6 @@ public class CommentValidationManager {
     }
     
     /**
-     * Return total number of validators (for teasting purposes).
-     */
-    public int getValidatorCount() {
-        return validators.size();
-    }
-    
-    /**
      * @param comment Comment to be validated
      * @param messages Messages object to which errors will be added
      * @return Number indicating confidence that comment is valid (100 meaning 100%)
@@ -92,7 +84,7 @@ public class CommentValidationManager {
             total = total / validators.size();
         } else {
             // When no validators: consider all comments valid
-            total = 100;
+            total = RollerConstants.PERCENT_100;
         }
         return total;
     }

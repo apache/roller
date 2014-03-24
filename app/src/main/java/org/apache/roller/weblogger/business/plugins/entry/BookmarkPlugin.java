@@ -106,20 +106,21 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
                 StringBuffer textBuf = new StringBuffer(workingText.length());
                 int inLink = 0;
                 while (m.find()) {
+                    // if m.group(1) is null, self-closed anchor tag <a  ... /> so ignore
                     if (m.group(1) != null) {
-                        // self-closed anchor tag <a  ... /> -- ignore
-                    } else if (m.group(2) != null) {
-                        // matched opening anchor tag <a ...>
-                        inLink++;
-                    } else if (m.group(3) != null) {
-                        // closing anchor tag </a>, but ignore nonmatching ones
-                        if (inLink > 0) {
-                            inLink--;
-                        }
-                    } else if (m.group(4) != null) {
-                        // matched the bookmark -- replace, but only if not within a link tag.
-                        if (inLink == 0) {
-                            m.appendReplacement(textBuf, bookmarkLink);
+                        if (m.group(2) != null) {
+                            // matched opening anchor tag <a ...>
+                            inLink++;
+                        } else if (m.group(3) != null) {
+                            // closing anchor tag </a>, but ignore nonmatching ones
+                            if (inLink > 0) {
+                                inLink--;
+                            }
+                        } else if (m.group(4) != null) {
+                            // matched the bookmark -- replace, but only if not within a link tag.
+                            if (inLink == 0) {
+                                m.appendReplacement(textBuf, bookmarkLink);
+                            }
                         }
                     }
                     // Any remaining case indicates a bug.  One could add an else with assertion here.  Conservatively don't substitute.

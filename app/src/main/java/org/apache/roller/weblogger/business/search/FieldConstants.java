@@ -43,9 +43,8 @@ public final class FieldConstants {
     public static final String C_EMAIL = "email";
     public static final String C_NAME = "name";
     public static final String CONSTANT = "constant";
-    public static final String CONSTANT_V = "v"; // must be lowercase, or match
-                                                 // the transform rules of
-                                                 // the analyzer
+    // CONSTANT_V must be lowercase or match transform rules of analyzer
+    public static final String CONSTANT_V = "v";
     public static final String WEBSITE_HANDLE = "handle";
     public static final String LOCALE = "locale";
 }

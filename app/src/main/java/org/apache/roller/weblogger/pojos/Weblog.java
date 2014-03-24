@@ -852,10 +852,10 @@ public class Weblog implements Serializable {
                     null,          // weblog entry
                     null,          // search String
                     null,          // startDate
-                    null,WeblogEntryComment.APPROVED, // approved comments only
+                    null,WeblogEntryComment.APPROVED,
                     true,          // we want reverse chrono order
                     0,             // offset
-                    length);       // length
+                    length);
         } catch (WebloggerException e) {
             log.error("ERROR: getting recent comments", e);
         }

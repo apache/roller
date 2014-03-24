@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -93,7 +94,7 @@ public class HitCountProcessingJob implements Job {
             
             long endTime = System.currentTimeMillis();
             
-            log.debug("Completed: "+ (endTime-startTime)/1000 + " secs");
+            log.debug("Completed: "+ (endTime-startTime)/ RollerConstants.SEC_IN_MS + " secs");
             
         } catch (WebloggerException ex) {
             log.error("Error persisting updated hit counts", ex);
@@ -104,11 +105,11 @@ public class HitCountProcessingJob implements Job {
     }
     
     
-    public void input(Map input) {
+    public void input(Map<String, Object> input) {
         // no-op
     }
     
-    public Map output() {
+    public Map<String, Object> output() {
         return null;
     }
     

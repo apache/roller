@@ -116,9 +116,9 @@ public class MediaFileSearchBean {
         return tags;
     }
 
-    public void setTags(String tags) {
+ /*   public void setTags(String tags) {
         this.tags = tags;
-    }
+    } */
 
     public int getPageNum() {
         return pageNum;

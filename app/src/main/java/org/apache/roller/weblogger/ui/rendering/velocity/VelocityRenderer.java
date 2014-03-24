@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
@@ -177,7 +178,7 @@ public class VelocityRenderer implements Renderer {
             }
 
             long endTime = System.currentTimeMillis();
-            long renderTime = (endTime - startTime) / 1000;
+            long renderTime = (endTime - startTime) / RollerConstants.SEC_IN_MS;
 
             log.debug("Rendered [" + renderTemplate.getId() + "] in "
                     + renderTime + " secs");
@@ -191,9 +192,6 @@ public class VelocityRenderer implements Renderer {
             // need to lookup parse error template
             renderException(model, out, "error-parse.vm");
 
-            // and we're done
-            return;
-
         } catch (MethodInvocationException ex) {
 
             // in the case of a parsing error including a page we want to render
@@ -203,9 +201,6 @@ public class VelocityRenderer implements Renderer {
             // need to lookup parse error template
             renderException(model, out, "error-parse.vm");
 
-            // and we're done
-            return;
-
         } catch (VelocityException ex) {
 
             // in the case of a parsing error including a macro we want to
@@ -214,9 +209,6 @@ public class VelocityRenderer implements Renderer {
 
             // need to lookup parse error template
             renderException(model, out, "error-parse.vm");
-
-            // and we're done
-            return;
 
         } catch (Exception ex) {
             // wrap and rethrow so caller can deal with it
@@ -256,9 +248,6 @@ public class VelocityRenderer implements Renderer {
 
             // render output to Writer
             velocityTemplate.merge(ctx, out);
-
-            // and we're done
-            return;
 
         } catch (Exception e) {
             // wrap and rethrow so caller can deal with it

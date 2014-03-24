@@ -36,6 +36,7 @@ import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.business.AbstractManagerImpl;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
@@ -275,7 +276,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             long startTime = System.currentTimeMillis();
             
             StringBuilder sb = new StringBuilder();
-            List params = new ArrayList();
+            List<Object> params = new ArrayList<Object>();
             int size = 0;
             sb.append("SELECT e FROM SubscriptionEntry e ");
             sb.append("JOIN e.subscription.groups g ");
@@ -308,7 +309,8 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             
             long endTime = System.currentTimeMillis();
             
-            log.debug("Generated aggregation of " + ret.size() + " in " + ((endTime-startTime)/1000.0) + " seconds");
+            log.debug("Generated aggregation of " + ret.size() + " in " +
+                    ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
             
         } catch (Exception e) {
             throw new WebloggerException(e);

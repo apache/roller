@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.runnable.Job;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
@@ -49,7 +50,7 @@ public class WeblogCacheWarmupJob implements Job {
     private static Log log = LogFactory.getLog(WeblogCacheWarmupJob.class);
     
     // inputs from the user
-    private Map inputs = null;
+    private Map<String, Object> inputs = null;
     
     
     public void execute() {
@@ -60,18 +61,18 @@ public class WeblogCacheWarmupJob implements Job {
         if(inputs != null) {
             
             // what weblogs will we handle?
-            List weblogs = (List) inputs.get("weblogs");
+            List<String> weblogs = (List<String>) inputs.get("weblogs");
             if(weblogs == null) {
                 return;
             }
             
             // should we do rss entries feeds?
-            if("true".equals((String) inputs.get("feed-entries-rss"))) {
+            if("true".equals(inputs.get("feed-entries-rss"))) {
                 this.warmupFeedCache(weblogs, "entries", "rss");
             }
             
             // should we do atom entries feeds?
-            if("true".equals((String) inputs.get("feed-entries-atom"))) {
+            if("true".equals(inputs.get("feed-entries-atom"))) {
                 this.warmupFeedCache(weblogs, "entries", "atom");
             }
         }
@@ -80,12 +81,12 @@ public class WeblogCacheWarmupJob implements Job {
     }
     
     
-    public Map output() {
+    public Map<String, Object> output() {
        return null; 
     }
     
     
-    public void input(Map input) {
+    public void input(Map<String, Object> input) {
         this.inputs = input;
     }
     
@@ -112,8 +113,8 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 
                 // populate the rendering model
-                Map model = new HashMap();
-                Map initData = new HashMap();
+                Map<String, Object> model = new HashMap<String, Object>();
+                Map<String, WeblogFeedRequest> initData = new HashMap<String, WeblogFeedRequest>();
                 initData.put("request", null);
                 initData.put("feedRequest", feedRequest);
                 initData.put("weblogRequest", feedRequest);
@@ -128,14 +129,14 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 
                 // lookup Renderer we are going to use
-                Renderer renderer = null;
+                Renderer renderer;
                 Template template = new StaticTemplate(
 					"weblog-"+type+"-"+format+".vm", "velocity");
                 renderer = RendererManager.getRenderer(template, DeviceType.standard);
                 
                 
                 // render content.  use default size of about 24K for a standard page
-                CachedContent rendererOutput = new CachedContent(24567);
+                CachedContent rendererOutput = new CachedContent(RollerConstants.TWENTYFOUR_KB_IN_BYTES);
                 renderer.render(model, rendererOutput.getCachedWriter());
                 
                 
@@ -154,7 +155,7 @@ public class WeblogCacheWarmupJob implements Job {
         }
         
         long end = System.currentTimeMillis();
-        long time = (end-start)*1000;
+        long time = (end-start) * RollerConstants.SEC_IN_MS;
         
         log.info("Completed warmup for "+type+"/"+format+" in "+time+" secs.");
         

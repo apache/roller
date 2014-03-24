@@ -50,7 +50,6 @@ public class Templates extends UIAction {
 	// name and action of new template if we are adding a template
 	private String newTmplName = null;
 	private String newTmplAction = null;
-	private String type = null;
 
 	public Templates() {
 		this.actionName = "templates";
@@ -86,7 +85,7 @@ public class Templates extends UIAction {
 			setTemplates(pages);
 
 			// build list of action types that may be added
-			List availableActions = new ArrayList();
+			List<String> availableActions = new ArrayList<String>();
 			availableActions.add(WeblogTemplate.ACTION_CUSTOM);
 
 			if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {

@@ -83,13 +83,11 @@ public abstract class EntryBase extends UIAction {
 		List<WeblogEntry> entries = Collections.emptyList();
 		try {
 			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
-					.getWeblogEntries(
-
-					getActionWeblog(), // userName
+					.getWeblogEntries(getActionWeblog(),
 							null, null, // startDate
 							null, // endDate
 							null, // catName
-							null, WeblogEntry.PUBLISHED, // status
+							null, WeblogEntry.PUBLISHED,
 							null, // text
 							null, // sortby (null for pubTime)
 							null, null, 0, 20);
@@ -109,13 +107,11 @@ public abstract class EntryBase extends UIAction {
 		List<WeblogEntry> entries = Collections.emptyList();
 		try {
 			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
-					.getWeblogEntries(
-
-					getActionWeblog(), // userName
+					.getWeblogEntries(getActionWeblog(),
 							null, null, // startDate
 							null, // endDate
 							null, // catName
-							null, WeblogEntry.SCHEDULED, // status
+							null, WeblogEntry.SCHEDULED,
 							null, // text
 							null, // sortby (null for pubTime)
 							null, null, 0, 20);
@@ -135,14 +131,12 @@ public abstract class EntryBase extends UIAction {
 		List<WeblogEntry> entries = Collections.emptyList();
 		try {
 			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
-					.getWeblogEntries(
-
-					getActionWeblog(), null, null, // startDate
+					.getWeblogEntries(getActionWeblog(), null, null,
 							null, // endDate
 							null, // catName
-							null, WeblogEntry.DRAFT, // status
+							null, WeblogEntry.DRAFT,
 							null, // text
-							"updateTime", // sortby
+							"updateTime",
 							null, null, 0, 20); // maxEntries
 		} catch (WebloggerException ex) {
 			log.error("Error getting entries list", ex);
@@ -160,14 +154,12 @@ public abstract class EntryBase extends UIAction {
 		List<WeblogEntry> entries = Collections.emptyList();
 		try {
 			entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
-					.getWeblogEntries(
-
-					getActionWeblog(), null, null, // startDate
+					.getWeblogEntries(getActionWeblog(), null, null,
 							null, // endDate
 							null, // catName
-							null, WeblogEntry.PENDING, // status
+							null, WeblogEntry.PENDING,
 							null, // text
-							"updateTime", // sortby
+							"updateTime",
 							null, null, 0, 20);
 		} catch (WebloggerException ex) {
 			log.error("Error getting entries list", ex);

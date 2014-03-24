@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -120,7 +121,7 @@ public class Trackback {
         
         // prepare http request
         HttpClient client = new HttpClient();
-        client.setConnectionTimeout(45 * 1000);
+        client.setConnectionTimeout(45 * RollerConstants.SEC_IN_MS);
         HttpMethod method = new PostMethod(trackbackURL);
         method.setQueryString(queryString);
         

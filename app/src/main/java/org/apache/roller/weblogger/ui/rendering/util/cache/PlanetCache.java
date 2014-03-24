@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.PlanetRequest;
 import org.apache.roller.weblogger.util.cache.Cache;
@@ -48,7 +49,7 @@ public final class PlanetCache {
     
     // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
-    private long timeout = 15 * 60 * 1000;
+    private long timeout = 15 * RollerConstants.MIN_IN_MS;
     
     // reference to our singleton instance
     private static PlanetCache singletonInstance = new PlanetCache();
@@ -83,7 +84,7 @@ public final class PlanetCache {
         String timeoutString = WebloggerConfig.getProperty("cache.planet.timeout");
         try {
             long timeoutSecs = Long.parseLong(timeoutString);
-            this.timeout = timeoutSecs * 1000;
+            this.timeout = timeoutSecs * RollerConstants.SEC_IN_MS;
         } catch(Exception e) {
             // ignored ... illegal value
         }

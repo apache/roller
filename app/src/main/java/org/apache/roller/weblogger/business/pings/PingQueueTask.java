@@ -49,8 +49,8 @@ public class PingQueueTask extends RollerTaskWithLeasing {
     // interval at which the task is run, default is 5 minutes
     private int interval = 5;
     
-    // lease time given to task lock, default is 30 minutes
-    private int leaseTime = 30;
+    // lease time given to task lock
+    private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
     
     
     public String getClientId() {

@@ -40,7 +40,7 @@ public class ReferrerProcessingJob implements Job {
     
     private static Log mLogger = LogFactory.getLog(ReferrerProcessingJob.class);
     
-    Map inputs = null;
+    Map<String, Object> inputs = null;
     IncomingReferrer referrer = null;
     
     public ReferrerProcessingJob() {}
@@ -79,7 +79,7 @@ public class ReferrerProcessingJob implements Job {
     /**
      * Set input.
      */
-    public void input(Map input) {
+    public void input(Map<String, Object> input) {
         this.inputs = input;
         
         // we are looking for the "referrer" key
@@ -94,7 +94,7 @@ public class ReferrerProcessingJob implements Job {
     /**
      * Get output.
      */
-    public Map output() {
+    public Map<String, Object> output() {
         
         return null;
     }

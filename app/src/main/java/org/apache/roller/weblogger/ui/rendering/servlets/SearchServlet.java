@@ -32,6 +32,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -178,7 +179,7 @@ public class SearchServlet extends HttpServlet {
         Map model = new HashMap();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory()
-                    .getPageContext(this, request, response, "", false, 8192,
+                    .getPageContext(this, request, response, "", false, RollerConstants.EIGHT_KB_IN_BYTES,
                             true);
 
             // populate the rendering model
@@ -254,7 +255,7 @@ public class SearchServlet extends HttpServlet {
         }
 
         // render content
-        CachedContent rendererOutput = new CachedContent(4096);
+        CachedContent rendererOutput = new CachedContent(RollerConstants.FOUR_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

@@ -522,7 +522,7 @@ public class WeblogEntry implements Serializable {
         this.locale = locale;
     }
     
-     public Set<WeblogEntryTag> getTags()
+    public Set<WeblogEntryTag> getTags()
      {
          return tagSet;
      }

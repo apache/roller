@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.FileContent;
@@ -107,12 +108,12 @@ public class FileContentManagerImpl implements FileContentManager {
         // create File that we are about to save
         File saveFile = new File(dirPath.getAbsolutePath() + File.separator + fileId);
         
-        byte[] buffer = new byte[8192];
+        byte[] buffer = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
         int bytesRead;
         OutputStream bos = null;
         try {
             bos = new FileOutputStream(saveFile);
-            while ((bytesRead = is.read(buffer, 0, 8192)) != -1) {
+            while ((bytesRead = is.read(buffer, 0, RollerConstants.EIGHT_KB_IN_BYTES)) != -1) {
                 bos.write(buffer, 0, bytesRead);
             }            
             log.debug("The file has been written to ["+saveFile.getAbsolutePath()+"]");

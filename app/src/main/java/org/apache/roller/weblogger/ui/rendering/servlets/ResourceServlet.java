@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -68,12 +69,12 @@ public class ResourceServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Weblog weblog = null;
+        Weblog weblog;
         //String ctx = request.getContextPath();
         //String servlet = request.getServletPath();
         //String reqURI = request.getRequestURI();
 
-        WeblogResourceRequest resourceRequest = null;
+        WeblogResourceRequest resourceRequest;
         try {
             // parse the incoming request and extract the relevant data
             resourceRequest = new WeblogResourceRequest(request);
@@ -155,11 +156,11 @@ public class ResourceServlet extends HttpServlet {
         response.setContentType(this.context.getMimeType(resourceRequest
                 .getResourcePath()));
 
-        OutputStream out = null;
+        OutputStream out;
         try {
             // ok, lets serve up the file
-            byte[] buf = new byte[8192];
-            int length = 0;
+            byte[] buf = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
+            int length;
             out = response.getOutputStream();
             while ((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);

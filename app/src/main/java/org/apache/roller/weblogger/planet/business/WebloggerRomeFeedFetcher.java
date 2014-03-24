@@ -122,13 +122,13 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
             // grab recent entries for this weblog
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List<WeblogEntry> entries = wmgr.getWeblogEntries(
-                    localWeblog,                 // weblog
+                    localWeblog,
                     null,                        // user
                     null,                        // startDate
                     null,                        // endDate
                     null,                        // catName
                     null,                        // tags
-                    WeblogEntry.PUBLISHED,       // status
+                    WeblogEntry.PUBLISHED,
                     null,                        // text
                     null,                        // sortby (null means pubTime)
                     null,                        // sortOrder

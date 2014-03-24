@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 // import org.apache.abdera.model.Feed;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -80,8 +81,6 @@ public final class WeblogExport extends UIAction
 
     private static final SimpleDateFormat MT_DATE_FORMAT =
             new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    private static final SimpleDateFormat ATOM_ID_DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd");
 
     private static final String MT_FORMAT = "mtimport";
     private static final String MT_PLUS_FORMAT = "mtimportplus";
@@ -154,7 +153,6 @@ public final class WeblogExport extends UIAction
 
         options.put(MT_FORMAT, getText("weblogExport.format.mtimport"));
         options.put(MT_PLUS_FORMAT, getText("weblogExport.format.mtimportplus"));
-        // options.put(ATOM_FORMAT, getText("weblogExport.format.atom"));
 
         return options;
     }
@@ -309,7 +307,7 @@ public final class WeblogExport extends UIAction
 
                 // Create a buffer for reading the files
                 byte[] buffer;
-                buffer = new byte[1024];
+                buffer = new byte[RollerConstants.ONE_KB_IN_BYTES];
 
                 ServletOutputStream servletOutput;
                 servletOutput = response.getOutputStream();

@@ -55,12 +55,11 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             monthMap = mgr.getWeblogEntryObjectMap(
-                    
-                    weblog,                  // website
-                    startDate,                 // startDate
-                    endDate,                   // endDate
-                    catName,                   // cat
-                    null,WeblogEntry.PUBLISHED, // status
+                    weblog,
+                    startDate,
+                    endDate,
+                    catName,
+                    null,WeblogEntry.PUBLISHED,
                     locale,
                     0, -1);
         } catch (WebloggerException e) {

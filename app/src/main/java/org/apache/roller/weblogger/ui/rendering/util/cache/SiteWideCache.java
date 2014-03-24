@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -65,7 +66,7 @@ public class SiteWideCache implements CacheHandler {
     
     // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
-    private long timeout = 15 * 60 * 1000;
+    private long timeout = 15 * 60 * RollerConstants.SEC_IN_MS;
     
     // reference to our singleton instance
     private static SiteWideCache singletonInstance = new SiteWideCache();
@@ -75,7 +76,7 @@ public class SiteWideCache implements CacheHandler {
         
         cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
         
-        Map cacheProps = new HashMap();
+        Map<String, String> cacheProps = new HashMap<String, String>();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
         String prop = null;
@@ -196,7 +197,7 @@ public class SiteWideCache implements CacheHandler {
         
         StringBuilder key = new StringBuilder();
         
-        key.append(this.CACHE_ID).append(":");
+        key.append(CACHE_ID).append(":");
         key.append("page/");
         key.append(pageRequest.getWeblogHandle());
         

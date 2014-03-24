@@ -29,6 +29,7 @@ import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
@@ -40,14 +41,10 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     
     private static Log log = LogFactory.getLog(SingleThreadedFeedUpdater.class);
 
-    private static final double MS_TO_SEC_DIVISOR = 1000.0;
-    
-    
     public SingleThreadedFeedUpdater() {
         // no-op
     }
-    
-    
+
     /**
      * @inheritDoc
      */
@@ -123,7 +120,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         long subEndTime = System.currentTimeMillis();
         log.debug("updated feed -- "+sub.getFeedURL()+" -- in " +
-                ((subEndTime-subStartTime) / MS_TO_SEC_DIVISOR) + " seconds.  " + entries +
+                ((subEndTime-subStartTime) / RollerConstants.SEC_IN_MS) + " seconds.  " + entries +
                 " entries updated.");
     }
     
@@ -149,7 +146,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
-                + ((endTime-startTime) / MS_TO_SEC_DIVISOR) + " seconds");
+                + ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
     }
     
     
@@ -172,7 +169,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
-                + ((endTime-startTime) / MS_TO_SEC_DIVISOR) + " seconds");
+                + ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
     }
     
     

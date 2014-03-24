@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.weblogger.business.runnable.HitCountProcessingJob;
 import org.apache.roller.weblogger.business.runnable.WorkerThread;
@@ -61,8 +62,8 @@ public class HitCountQueue {
         String sleep = WebloggerConfig.getProperty("hitcount.queue.sleepTime", "180");
         
         try {
-            // multiply by 1000 because we expect input in seconds
-            sleepTime = Integer.parseInt(sleep) * 1000;
+            // convert input in seconds to ms
+            sleepTime = Integer.parseInt(sleep) * RollerConstants.SEC_IN_MS;
         } catch(NumberFormatException nfe) {
             log.warn("Invalid sleep time ["+sleep+"], using default");
         }

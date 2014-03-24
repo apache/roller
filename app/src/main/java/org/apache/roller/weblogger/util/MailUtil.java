@@ -547,12 +547,12 @@ public class MailUtil {
         // send message to author of approved comment
         try {
             sendTextMessage(
-                    from, // from
+                    from,
                     new String[] {cd.getEmail()}, // to
                     null, // cc
                     null, // bcc
-                    subject, // subject
-                    msg.toString()); // message
+                    subject,
+                    msg.toString());
         } catch (Exception e) {
             log.warn("Exception sending comment mail: " + e.getMessage());
             // This will log the stack trace if debug is enabled

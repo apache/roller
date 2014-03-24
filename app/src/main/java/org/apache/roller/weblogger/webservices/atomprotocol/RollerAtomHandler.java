@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
@@ -519,7 +520,7 @@ public class RollerAtomHandler implements AtomHandler {
         if (throttle) {
             try {
                 synchronized (RollerAtomHandler.class) {
-                    Thread.sleep(1000);
+                    Thread.sleep(RollerConstants.SEC_IN_MS);
                 }
             } catch (Exception ignored) {}
         }

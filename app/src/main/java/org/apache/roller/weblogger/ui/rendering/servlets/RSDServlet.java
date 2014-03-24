@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
@@ -70,10 +71,9 @@ public class RSDServlet extends HttpServlet {
             throws ServletException, IOException {
 
         log.debug("Entering");
+        Weblog weblog;
+        WeblogRequest weblogRequest;
 
-        Weblog weblog = null;
-
-        WeblogRequest weblogRequest = null;
         try {
             weblogRequest = new WeblogRequest(request);
 
@@ -109,12 +109,12 @@ public class RSDServlet extends HttpServlet {
         response.setContentType("application/rsd+xml; charset=utf-8");
 
         // populate the model
-        HashMap model = new HashMap();
+        HashMap<String, Object> model = new HashMap<String, Object>();
         model.put("website", weblog);
         model.put("absBaseURL", WebloggerRuntimeConfig.getAbsoluteContextURL());
 
         // lookup Renderer we are going to use
-        Renderer renderer = null;
+        Renderer renderer;
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate("weblog/rsd.vm", "velocity");
@@ -132,7 +132,7 @@ public class RSDServlet extends HttpServlet {
         }
 
         // render content
-        CachedContent rendererOutput = new CachedContent(4096);
+        CachedContent rendererOutput = new CachedContent(RollerConstants.FOUR_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

@@ -54,15 +54,22 @@ public class HTMLSanitizer {
 	public static Pattern forbiddenTags = Pattern.compile("^(script|object|embed|link|style|form|input)$");
 	public static Pattern allowedTags = Pattern.compile("^(b|p|i|s|a|img|table|thead|tbody|tfoot|tr|th|td|dd|dl|dt|em|h1|h2|h3|h4|h5|h6|li|ul|ol|span|div|strike|strong|"
 			+ "sub|sup|pre|del|code|blockquote|strike|kbd|br|hr|area|map|object|embed|param|link|form|small|big)$");
-	private static Pattern commentPattern = Pattern.compile("<!--.*");  // <!--.........>
-	private static Pattern tagStartPattern = Pattern.compile("<(?i)(\\w+\\b)\\s*(.*)/?>$");  // <tag ....props.....>
-	private static Pattern tagClosePattern = Pattern.compile("</(?i)(\\w+\\b)\\s*>$");  // </tag .........>
+    // <!--.........>
+    private static Pattern commentPattern = Pattern.compile("<!--.*");
+    // <tag ....props.....>
+    private static Pattern tagStartPattern = Pattern.compile("<(?i)(\\w+\\b)\\s*(.*)/?>$");
+    // </tag .........>
+    private static Pattern tagClosePattern = Pattern.compile("</(?i)(\\w+\\b)\\s*>$");
 	private static Pattern standAloneTags = Pattern.compile("^(img|br|hr)$");
 	private static Pattern selfClosed = Pattern.compile("<.+/>");
-	private static Pattern attributesPattern = Pattern.compile("(\\w*)\\s*=\\s*\"([^\"]*)\"");  // prop="...."
-	private static Pattern stylePattern = Pattern.compile("([^\\s^:]+)\\s*:\\s*([^;]+);?");  // color:red;
-	private static Pattern urlStylePattern = Pattern.compile("(?i).*\\b\\s*url\\s*\\(['\"]([^)]*)['\"]\\)");  // url('....')"
-	public static Pattern forbiddenStylePattern = Pattern.compile("(?:(expression|eval|javascript))\\s*\\(");  // expression(....)"   thanks to Ben Summer
+    // prop="...."
+    private static Pattern attributesPattern = Pattern.compile("(\\w*)\\s*=\\s*\"([^\"]*)\"");
+    // color:red;
+    private static Pattern stylePattern = Pattern.compile("([^\\s^:]+)\\s*:\\s*([^;]+);?");
+    // url('....')"
+    private static Pattern urlStylePattern = Pattern.compile("(?i).*\\b\\s*url\\s*\\(['\"]([^)]*)['\"]\\)");
+    // expression(....)"   thanks to Ben Summer
+    private static Pattern forbiddenStylePattern = Pattern.compile("(?:(expression|eval|javascript))\\s*\\(");
 
 	/**
 	 *  This method should be used to test input.
@@ -114,7 +121,7 @@ public class HTMLSanitizer {
 
 	public static SanitizeResult sanitizer(String html, Pattern allowedTags, Pattern forbiddenTags) {
 		SanitizeResult ret = new SanitizeResult();
-		Stack<String> openTags = new Stack();
+		Stack<String> openTags = new Stack<String>();
 
 
 		List<String> tokens = tokenize(html);

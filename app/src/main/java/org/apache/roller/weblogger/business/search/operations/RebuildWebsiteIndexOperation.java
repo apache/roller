@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -115,11 +116,11 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                 // Add Doc
                 WeblogEntryManager weblogManager = roller
                         .getWeblogEntryManager();
-                List<WeblogEntry> entries = weblogManager.getWeblogEntries(website, // website
+                List<WeblogEntry> entries = weblogManager.getWeblogEntries(website,
                         null, null, // startDate
                         null, // endDate
                         null, // catName
-                        null, WeblogEntry.PUBLISHED, // status
+                        null, WeblogEntry.PUBLISHED,
                         null, // text
                         null, // sortby (null means pubTime)
                         null, null, 0, -1); // offset, length, locale
@@ -130,8 +131,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                     writer.addDocument(getDocument(entry));
                     mLogger.debug(MessageFormat.format(
                             "Indexed entry {0}: {1}",
-                            new Object[] { entry.getPubTime(),
-                                    entry.getAnchor() }));
+                            entry.getPubTime(), entry.getAnchor()));
                 }
 
                 // release the database connection
@@ -147,7 +147,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         }
 
         Date end = new Date();
-        double length = (end.getTime() - start.getTime()) / (double) 1000;
+        double length = (end.getTime() - start.getTime()) / (double) RollerConstants.SEC_IN_MS;
 
         if (website == null) {
             mLogger.info("Completed rebuilding index for all users in '"

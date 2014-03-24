@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -97,7 +98,7 @@ public class SaltCache {
     
     public void put(String key, Object value) {
 		// expire after 60 minutes
-        contentCache.put(key, new ExpiringCacheEntry(value, 60 * 60 * 1000));
+        contentCache.put(key, new ExpiringCacheEntry(value, 60 * RollerConstants.MIN_IN_MS));
         log.debug("PUT "+key);
     }
     

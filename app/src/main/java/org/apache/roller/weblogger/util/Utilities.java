@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RegexUtil;
+import org.apache.roller.util.RollerConstants;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -415,10 +416,10 @@ public class Utilities {
         BufferedOutputStream out = new BufferedOutputStream(output);
 
         byte[] buffer;
-        buffer = new byte[8192];
+        buffer = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
 
         for (length = byteCount; length > 0;) {
-            bytes = (int) (length > 8192 ? 8192 : length);
+            bytes = (int) (length > RollerConstants.EIGHT_KB_IN_BYTES ? RollerConstants.EIGHT_KB_IN_BYTES : length);
 
             try {
                 bytes = in.read(buffer, 0, bytes);
@@ -464,9 +465,9 @@ public class Utilities {
             throws IOException {
         BufferedInputStream in = new BufferedInputStream(input);
         BufferedOutputStream out = new BufferedOutputStream(output);
-        byte buffer[] = new byte[8192];
+        byte buffer[] = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
         for (int count = 0; count != -1;) {
-            count = in.read(buffer, 0, 8192);
+            count = in.read(buffer, 0, RollerConstants.EIGHT_KB_IN_BYTES);
             if (count != -1) {
                 out.write(buffer, 0, count);
             }
@@ -744,8 +745,8 @@ public class Utilities {
         StringBuilder result = new StringBuilder(str);
         StringBuilder lcresult = new StringBuilder(str.toLowerCase());
 
-        // <img should take care of smileys
-        String[] visibleTags = { "<img" }; // are there others to add?
+        // <img should take care of smileys, others to add?
+        String[] visibleTags = { "<img" };
         int stringIndex;
         for (int j = 0; j < visibleTags.length; j++) {
             while ((stringIndex = lcresult.indexOf(visibleTags[j])) != -1) {
@@ -771,9 +772,8 @@ public class Utilities {
 
         // TODO: This code is buggy by nature. It doesn't deal with nesting of
         // tags properly.
-        // remove certain elements with open & close tags
-        String[] openCloseTags = { "li", "a", "div", "h1", "h2", "h3", "h4" }; // more
-                                                                               // ?
+        // remove certain elements with open & close tags, more available?
+        String[] openCloseTags = { "li", "a", "div", "h1", "h2", "h3", "h4" };
         for (int j = 0; j < openCloseTags.length; j++) {
             // could this be better done with a regular expression?
             String closeTag = "</" + openCloseTags[j] + ">";
@@ -959,9 +959,10 @@ public class Utilities {
             char c = charArray[i];
 
             // fast-path exclusions quotes and commas are obvious
+            // 34 = double-quote, 44 = comma
             switch (c) {
-            case 34: // "
-            case 44: // ,
+            case 34:
+            case 44:
                 continue;
             }
 

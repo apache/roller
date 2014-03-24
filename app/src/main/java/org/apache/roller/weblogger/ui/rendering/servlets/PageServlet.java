@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -148,10 +149,10 @@ public class PageServlet extends HttpServlet {
             }
         }
 
-        Weblog weblog = null;
-        boolean isSiteWide = false;
+        Weblog weblog;
+        boolean isSiteWide;
 
-        WeblogPageRequest pageRequest = null;
+        WeblogPageRequest pageRequest;
         try {
             pageRequest = new WeblogPageRequest(request);
 
@@ -194,7 +195,7 @@ public class PageServlet extends HttpServlet {
         }
 
         // generate cache key
-        String cacheKey = null;
+        String cacheKey;
         if (isSiteWide) {
             cacheKey = siteWideCache.generateKey(pageRequest);
         } else {
@@ -231,7 +232,7 @@ public class PageServlet extends HttpServlet {
         if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn())
                 && request.getAttribute("skipCache") == null) {
 
-            CachedContent cachedContent = null;
+            CachedContent cachedContent;
             if (isSiteWide) {
                 cachedContent = (CachedContent) siteWideCache.get(cacheKey);
             } else {
@@ -244,8 +245,7 @@ public class PageServlet extends HttpServlet {
 
                 // allow for hit counting
                 if (!isSiteWide) {
-                    this.processHit(weblog, request.getRequestURL().toString(),
-                            request.getHeader("referer"));
+                    this.processHit(weblog);
                 }
 
                 response.setContentLength(cachedContent.getContent().length);
@@ -409,13 +409,12 @@ public class PageServlet extends HttpServlet {
 
         // allow for hit counting
         if (!isSiteWide) {
-            this.processHit(weblog, request.getRequestURL().toString(),
-                    request.getHeader("referer"));
+            this.processHit(weblog);
         }
 
         // looks like we need to render content
         // set the content deviceType
-        String contentType = "text/html; charset=utf-8";
+        String contentType;
         if (StringUtils.isNotEmpty(page.getOutputContentType())) {
             contentType = page.getOutputContentType() + "; charset=utf-8";
         } else {
@@ -429,17 +428,17 @@ public class PageServlet extends HttpServlet {
             }
         }
 
-        HashMap model = new HashMap();
+        HashMap<String, Object> model = new HashMap<String, Object>();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory()
-                    .getPageContext(this, request, response, "", false, 8192,
+                    .getPageContext(this, request, response, "", false, RollerConstants.EIGHT_KB_IN_BYTES,
                             true);
 
             // special hack for menu tag
             request.setAttribute("pageRequest", pageRequest);
 
             // populate the rendering model
-            Map initData = new HashMap();
+            Map<String, Object> initData = new HashMap<String, Object>();
             initData.put("requestParameters", request.getParameterMap());
             initData.put("parsedRequest", pageRequest);
             initData.put("pageContext", pageContext);
@@ -480,7 +479,7 @@ public class PageServlet extends HttpServlet {
         }
 
         // lookup Renderer we are going to use
-        Renderer renderer = null;
+        Renderer renderer;
         try {
             log.debug("Looking up renderer");
             renderer = RendererManager.getRenderer(page,
@@ -496,8 +495,8 @@ public class PageServlet extends HttpServlet {
             return;
         }
 
-        // render content. use size of about 24K for a standard page
-        CachedContent rendererOutput = new CachedContent(24567, contentType);
+        // render content
+        CachedContent rendererOutput = new CachedContent(RollerConstants.TWENTYFOUR_KB_IN_BYTES, contentType);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());
@@ -562,7 +561,7 @@ public class PageServlet extends HttpServlet {
     /**
      * Notify the hit tracker that it has an incoming page hit.
      */
-    private void processHit(Weblog weblog, String url, String referrer) {
+    private void processHit(Weblog weblog) {
 
         HitCountQueue counter = HitCountQueue.getInstance();
         counter.processHit(weblog);
@@ -623,7 +622,7 @@ public class PageServlet extends HttpServlet {
         }
 
         // validate the referrer
-        if (pageRequest != null && pageRequest.getWeblogHandle() != null) {
+        if (pageRequest.getWeblogHandle() != null) {
 
             // Base page URLs, with and without www.
             String basePageUrlWWW = WebloggerRuntimeConfig

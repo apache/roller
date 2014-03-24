@@ -52,7 +52,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
     private int interval = 1;
     
     // lease time given to task lock, default is 30 minutes
-    private int leaseTime = 30;
+    private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
     
 
     public String getClientId() {
@@ -144,7 +144,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
                     null,   // startDate
                     now,    // endDate
                     null,   // catName
-                    null,WeblogEntry.SCHEDULED, // status
+                    null,WeblogEntry.SCHEDULED,
                     null,   // text
                     null,   // sortBy
                     null,   // sortOrder

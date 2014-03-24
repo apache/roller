@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
@@ -65,7 +66,7 @@ public class ModDateHeaderUtil {
 			HttpServletResponse response, long lastModifiedTimeMillis,
 			MobileDeviceRepository.DeviceType deviceType) {
 
-		long sinceDate = 0;
+		long sinceDate;
 		try {
 			sinceDate = request.getDateHeader("If-Modified-Since");
 		} catch (IllegalArgumentException ex) {
@@ -75,7 +76,7 @@ public class ModDateHeaderUtil {
 		}
 
 		// truncate to seconds
-		lastModifiedTimeMillis -= (lastModifiedTimeMillis % 1000);
+		lastModifiedTimeMillis -= (lastModifiedTimeMillis % RollerConstants.SEC_IN_MS);
 
 		if (log.isDebugEnabled()) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat(

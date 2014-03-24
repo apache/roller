@@ -21,6 +21,8 @@ package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ResourceBundle;
+
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -44,7 +46,7 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
         // linkback validation can be toggled at runtime, so check if it's enabled
         // if it's disabled then just return a score of 100
         if(!WebloggerRuntimeConfig.getBooleanProperty("site.trackbackVerification.enabled")) {
-            return 100;
+            return RollerConstants.PERCENT_100;
         }
         
         int ret = 0;
@@ -61,7 +63,7 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
         } catch (IOException ignored2) {}
         
         if (linkback != null && linkback.getExcerpt() != null) {
-            ret = 100;
+            ret = RollerConstants.PERCENT_100;
         } else {
             messages.addError("comment.validator.trackbackLinkbackMessage");
         }

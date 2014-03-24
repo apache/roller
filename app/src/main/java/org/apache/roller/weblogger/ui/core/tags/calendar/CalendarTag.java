@@ -113,12 +113,17 @@ public class CalendarTag extends TagSupport {
         try {
             // build week day names
             this.buildDayNames();
-            
-            Date day=null;       // day to be displayed
-            Calendar dayCal;     // set to day to be displayed
-            Calendar cal;        // for iterating through days of month
-            Calendar todayCal;   // for iterating through days of month
-            CalendarModel model; // the calendar model
+
+            // day to be displayed
+            Date day;
+            // set to day to be displayed
+            Calendar dayCal;
+            // for iterating through days of month
+            Calendar cal;
+            // for iterating through days of month
+            Calendar todayCal;
+            // the calendar model
+            CalendarModel model;
             
             // ---------------------------------
             // --- initialize date variables ---
@@ -208,12 +213,12 @@ public class CalendarTag extends TagSupport {
                     Date tddate = cal.getTime();
                     String url = model.computeUrl(tddate, false, false);
                     String content = model.getContent( tddate );
-                    
-                    if // day is in calendar month
-                            ((cal.get(Calendar.MONTH) == dayCal.get(Calendar.MONTH))
+
+                    // day is in calendar month
+                    if ((cal.get(Calendar.MONTH) == dayCal.get(Calendar.MONTH))
                             && (cal.get(Calendar.YEAR) == dayCal.get(Calendar.YEAR))) {
-                        if // day is today then use today style
-                                ((          cal.get(Calendar.DAY_OF_MONTH)
+                        // day is today then use today style
+                        if ((          cal.get(Calendar.DAY_OF_MONTH)
                                 == todayCal.get(Calendar.DAY_OF_MONTH))
                                 && (        cal.get(Calendar.MONTH)
                                 == todayCal.get(Calendar.MONTH))
@@ -223,8 +228,8 @@ public class CalendarTag extends TagSupport {
                         } else {
                             printDayInThisMonth(pw, cal, url, content);
                         }
-                    } else // apply day-not-in-month style ;-)
-                    {
+                    } else {
+                        // apply day-not-in-month style ;-)
                         printDayNotInMonth(pw, cal);
                     }
                     

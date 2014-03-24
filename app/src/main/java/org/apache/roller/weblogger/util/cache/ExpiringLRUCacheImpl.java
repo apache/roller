@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.util.cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 
 
 /**
@@ -35,7 +36,7 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
     protected ExpiringLRUCacheImpl(String id) {
         
         super(id);
-        this.timeout = 60 * 60 * 1000;
+        this.timeout = 60 * RollerConstants.MIN_IN_MS;
     }
     
     
@@ -44,8 +45,8 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
         super(id, maxsize);
         
         // timeout is specified in seconds; only positive values allowed
-        if(timeout > 0) {
-            this.timeout = timeout * 1000;
+        if (timeout > 0) {
+            this.timeout = timeout * RollerConstants.SEC_IN_MS;
         }
     }
     

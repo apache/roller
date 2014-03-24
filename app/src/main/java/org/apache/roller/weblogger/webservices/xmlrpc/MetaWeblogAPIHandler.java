@@ -28,6 +28,7 @@ import java.util.Vector;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -187,7 +188,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
-            Thread.sleep(1000);
+            Thread.sleep(RollerConstants.SEC_IN_MS);
             
             return true;
         } catch (Exception e) {
@@ -306,7 +307,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
-            Thread.sleep(1000);
+            Thread.sleep(RollerConstants.SEC_IN_MS);
             
             return entry.getId();
         } catch (Exception e) {
@@ -436,7 +437,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
                 List<WeblogEntry> entries = weblogMgr.getWeblogEntries(
-                        website,           // website
+                        website,
                         null,
                         null,              // startDate
                         null,              // endDate

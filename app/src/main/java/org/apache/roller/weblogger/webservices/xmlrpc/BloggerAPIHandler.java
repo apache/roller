@@ -463,7 +463,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
                 Map<Date, List<WeblogEntry>> entries = weblogMgr.getWeblogEntryObjectMap(
-                        website,                // website
+                        website,
                         null,                   // startDate
                         new Date(),             // endDate
                         null,                   // catName

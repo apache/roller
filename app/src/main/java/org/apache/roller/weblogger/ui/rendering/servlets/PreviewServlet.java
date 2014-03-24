@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -208,7 +209,7 @@ public class PreviewServlet extends HttpServlet {
         Map model = new HashMap();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", false, 8192, true);
+                    this, request, response,"", false, RollerConstants.EIGHT_KB_IN_BYTES, true);
             
             // special hack for menu tag
             request.setAttribute("pageRequest", previewRequest);
@@ -261,8 +262,8 @@ public class PreviewServlet extends HttpServlet {
             return;
         }
         
-        // render content.  use default size of about 24K for a standard page
-        CachedContent rendererOutput = new CachedContent(24567);
+        // render content
+        CachedContent rendererOutput = new CachedContent(RollerConstants.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

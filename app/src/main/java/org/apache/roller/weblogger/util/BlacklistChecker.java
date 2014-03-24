@@ -34,7 +34,12 @@ import org.apache.roller.weblogger.pojos.Weblog;
 public class BlacklistChecker { 
     private static Log mLogger = LogFactory.getLog(BlacklistChecker.class);
     
-    /** 
+    private BlacklistChecker() {
+        // never instantiable
+        throw new AssertionError();
+    }
+
+    /**
      * Test comment, applying all blacklists, if configured 
      * @return True if comment matches blacklist term
      */
