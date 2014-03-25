@@ -26,6 +26,10 @@ delete mt from website w, roller_mediafile mf, roller_mediafiletag mt where w.id
 delete mf from website w, roller_mediafile mf where w.id = mf.weblogid and w.creator like 'junit_%';
 delete md from website w, roller_mediafiledir md where w.id = md.websiteid and w.creator like 'junit_%';
 
+-- no weblog
+-- delete from roller_mediafile WHERE creator like 'junit_%';
+-- delete from roller_mediafiledir;
+
 delete r from website w, referer r WHERE w.id = r.websiteid and w.creator like 'junit_%';
 
 delete from website WHERE creator like 'junit_%';
@@ -40,5 +44,4 @@ delete from roller_userattribute WHERE username like 'junit_%';
 delete from roller_oauthconsumer WHERE username like 'junit_%';
 delete from roller_oauthaccessor WHERE username like 'junit_%';
 delete from roller_tasklock WHERE name = 'TestTask';
-delete from roller_mediafile WHERE name like 'test%';
-delete from roller_mediafiledir;
+
