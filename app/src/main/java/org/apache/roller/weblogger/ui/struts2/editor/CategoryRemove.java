@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -134,6 +135,14 @@ public class CategoryRemove extends UIAction {
         return execute();
     }
 
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return "cancel";
+    }
     
     public String getRemoveId() {
         return removeId;

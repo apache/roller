@@ -26,9 +26,6 @@
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="removeId" />
-    
-    <%-- if we cancel then we need this attribute --%>
-    <s:hidden name="categoryId" value="%{category.website.defaultCategory.id}" />
 
     <s:if test="category.inUse" >
         <br />
@@ -49,6 +46,6 @@
     </p>
     
     <s:submit value="%{getText('application.yes')}" />&nbsp;
-    <s:submit value="%{getText('application.no')}" action="categories" />
+    <s:submit value="%{getText('application.no')}" action="categoryRemove!cancel" />
     
 </s:form>

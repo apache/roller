@@ -26,7 +26,6 @@
 <s:form action="folderAdd!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="folderId" />
     
     <table>
         <tr>
@@ -37,7 +36,7 @@
     
     <p>
         <s:submit value="%{getText('folderForm.save')}" />
-        <s:submit value="%{getText('folderForm.cancel')}" action="bookmarks" />
+        <s:submit value="%{getText('folderForm.cancel')}" action="folderAdd!cancel" />
     </p>
     
 </s:form>

@@ -28,7 +28,6 @@
 <s:form action="categoryAdd!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="categoryId" />
     
     <table>
         
@@ -51,7 +50,7 @@
     
     <p>
         <s:submit value="%{getText('categoryForm.save')}" />
-        <s:submit value="%{getText('categoryForm.cancel')}" action="categories" />
+        <s:submit value="%{getText('categoryForm.cancel')}" action="categoryAdd!cancel" />
     </p>
     
 </s:form>

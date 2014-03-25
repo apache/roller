@@ -41,7 +41,7 @@
     
     <p>
         <s:submit value="%{getText('folderForm.save')}" />
-        <s:submit value="%{getText('folderForm.cancel')}" action="bookmarks" />
+        <s:submit value="%{getText('folderForm.cancel')}" action="folderEdit!cancel" />
     </p>
     
 </s:form>

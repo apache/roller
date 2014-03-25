@@ -33,7 +33,7 @@
 <tr>
 <td>
     <s:form action="entryRemoveViaList!remove">
-		<s:hidden name="salt" />
+        <s:hidden name="salt" />
         <s:hidden name="weblog" />
         <s:hidden name="removeId" />
         <s:submit value="%{getText('weblogEntryRemove.yes')}" />
@@ -43,8 +43,7 @@
     <s:form action="entries">
 		<s:hidden name="salt" />
         <s:hidden name="weblog" />
-        <s:hidden name="bean.id" value="%{removeId}" />
-        <s:submit value="%{getText('weblogEntryRemove.no')}" />
+        <s:submit value="%{getText('weblogEntryRemove.no')}" action="entryRemove!cancel" />
     </s:form>
 </td>
 </tr>

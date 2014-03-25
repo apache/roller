@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,6 +42,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class BookmarkEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(BookmarkEdit.class);
+    
+    // the id of the folder we are working with
+    private String folderId = null;
     
     // the bookmark we are editing
     private WeblogBookmark bookmark = null;
@@ -122,6 +126,14 @@ public class BookmarkEdit extends UIAction {
         return INPUT;
     }
 
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return "cancel";
+    }
     
     public void myValidate() {
         if (StringUtils.isNotEmpty(getBean().getUrl()) && !validURL(getBean().getUrl())) {
@@ -144,6 +156,13 @@ public class BookmarkEdit extends UIAction {
         return valid;
     }
     
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
+    }
     
     public WeblogBookmark getBookmark() {
         return bookmark;

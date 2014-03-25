@@ -29,9 +29,6 @@
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
-    
-    <%-- if we cancel then we need this attribute --%>
-    <s:hidden name="categoryId" value="%{category.website.defaultCategory.id}" />
 
     <table>
         
@@ -54,7 +51,7 @@
     
     <p>
         <s:submit value="%{getText('categoryForm.save')}" />
-        <s:submit value="%{getText('categoryForm.cancel')}" action="categories" />
+        <s:submit value="%{getText('categoryForm.cancel')}" action="categoryEdit!cancel" />
     </p>
     
 </s:form>

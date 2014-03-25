@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +41,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class FolderEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(FolderEdit.class);
+    
+    // the id of the folder we are working with
+    private String folderId = null;
     
     // the folder we are editing
     private WeblogBookmarkFolder folder = null;
@@ -131,6 +135,14 @@ public class FolderEdit extends UIAction {
         return INPUT;
     }
 
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return "cancel";
+    }
     
     // TODO: validation
     public void myValidate() {
@@ -163,4 +175,11 @@ public class FolderEdit extends UIAction {
         this.bean = bean;
     }
     
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
+    }
 }
