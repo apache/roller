@@ -17,6 +17,11 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />"></script>
+<%-- Below two needed only if using popup date picker --%>
+<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/theme/sunny/jquery.ui.all.css"/>' />
+<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-ui.custom.min.js"/>'></script>
+
 <div class="sidebarFade">
     <div class="menu-tr">
         <div class="menu-tl">
@@ -42,37 +47,33 @@
     <div class="sideformrow">
         <label for="startDateString" class="sideformrow"><s:text name="commentManagement.startDate" />:</label>
             <script type="text/javascript" >
-            <!--
-            if (document.layers) { // Netscape 4 hack
-                var calStart = new CalendarPopup();
-            } else {
-                var calStart = new CalendarPopup("datetagdiv");
-                document.write(calStart.getStyles());
-            }
-            // -->
+            $(function() {
+                $( "#commentsQuery_bean_startDateString" ).datepicker({
+                    showOn: "button",
+                    buttonImage: "/roller/images/calendar.png",
+                    buttonImageOnly: true,
+                    changeMonth: true,
+                    changeYear: true
+                });
+            });
             </script>
-            <s:textfield name="bean.startDateString" size="12" />
-            <a href="#" id="anchorCalStart" name="anchorCalStart"
-               onclick="calStart.select(document.getElementById('commentsQuery_bean_startDateString'),'anchorCalStart','MM/dd/yy'); return false">
-            <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
+            <s:textfield name="bean.startDateString" size="12" readonly="true"/>
     </div>
         
     <div class="sideformrow">
         <label for="endDateString" class="sideformrow"><s:text name="commentManagement.endDate" />:</label>
             <script type="text/javascript" >
-            <!--
-            if (document.layers) { // Netscape 4 hack
-                var calEnd = new CalendarPopup();
-            } else {
-                var calEnd = new CalendarPopup("datetagdiv");
-                document.write(calEnd.getStyles());
-            }
-            // -->
+            $(function() {
+                $( "#commentsQuery_bean_endDateString" ).datepicker({
+                    showOn: "button",
+                    buttonImage: "/roller/images/calendar.png",
+                    buttonImageOnly: true,
+                    changeMonth: true,
+                    changeYear: true
+                });
+            });
             </script>
-            <s:textfield name="bean.endDateString" size="12" />
-            <a href="#" id="anchorCalEnd" name="anchorCalEnd"
-               onclick="calEnd.select(document.getElementById('commentsQuery_bean_endDateString'),'anchorCalEnd','MM/dd/yy'); return false">
-            <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
+            <s:textfield name="bean.endDateString" size="12" readonly="true"/>
     </div>
     <br />
     <br />

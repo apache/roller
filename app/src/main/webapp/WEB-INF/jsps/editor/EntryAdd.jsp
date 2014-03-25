@@ -26,7 +26,11 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/menu/menu-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/dragdrop/dragdrop-min.js' />"></script>
 
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.4.2.min.js" />"></script>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />"></script>
+<%-- Below two needed only if using popup date picker --%>
+<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/theme/sunny/jquery.ui.all.css"/>' />
+<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-ui.custom.min.js"/>'></script>
+
 <!-- Combo-handled YUI JS files: TODO add to roller-ui/yui or remove??
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0r4/build/autocomplete/assets/skins/sam/autocomplete.css">
 <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.8.0r4/build/animation/animation-min.js&2.8.0r4/build/connection/connection-min.js&2.8.0r4/build/datasource/datasource-min.js&2.8.0r4/build/autocomplete/autocomplete-min.js"></script>
@@ -159,19 +163,17 @@
             <s:select name="bean.seconds" list="secondsList" />
             &nbsp;&nbsp;
             <script type="text/javascript" >
-            <!--
-            if (document.layers) { // Netscape 4 hack
-                var cal = new CalendarPopup();
-            } else {
-                var cal = new CalendarPopup("datetagdiv");
-                document.write(cal.getStyles());
-            }
-            // -->
+            $(function() {
+                $( "#entry_bean_dateString" ).datepicker({
+                    showOn: "button",
+                    buttonImage: "/roller/images/calendar.png",
+                    buttonImageOnly: true,
+                    changeMonth: true,
+                    changeYear: true
+                });
+            });
             </script>
-            <s:textfield name="bean.dateString" size="12" />
-            <a href="#" id="anchorCal" name="anchorCal"
-               onclick="cal.select(document.getElementById('entry_bean_dateString'),'anchorCal','MM/dd/yy'); return false">
-            <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
+            <s:textfield name="bean.dateString" size="12" readonly="true"/>
             <s:property value="actionWeblog.timeZone" />
         </div>
         <br />
