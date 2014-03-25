@@ -23,7 +23,6 @@
 
 package org.apache.roller.weblogger.business.runnable;
 
-import java.util.List;
 import java.util.Map;
 
 /**
