@@ -129,7 +129,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                     // now we need to go through each entry in a day and wrap
                     List<WeblogEntryWrapper> wrapped = new ArrayList<WeblogEntryWrapper>();
                     List<WeblogEntry> unwrapped = entry.getValue();
-                    for(int i=0; i < unwrapped.size(); i++) {
+                    for (int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
                             wrapped.add(i,WeblogEntryWrapper.wrap(unwrapped.get(i), urlStrategy));
                         } else {

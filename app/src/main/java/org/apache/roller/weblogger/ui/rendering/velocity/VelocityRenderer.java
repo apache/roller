@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;

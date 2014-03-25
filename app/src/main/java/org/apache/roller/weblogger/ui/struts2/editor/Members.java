@@ -84,7 +84,7 @@ public class Members extends UIAction implements ParameterAware {
 
             // we have to copy the permissions list so that when we remove permissions
             // below we don't get ConcurrentModificationExceptions
-            for( WeblogPermission perm : permissions ) {
+            for (WeblogPermission perm : permissions) {
                 permsList.add(perm);
             }
             // one iteration for each line (user) in the members table

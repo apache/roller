@@ -86,7 +86,7 @@ public class CategoryRemove extends UIAction {
             // Build list of categories that the removed category's blog entries (if any) can be moved to
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog());
-            for(WeblogCategory cat : cats) {
+            for (WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getRemoveId())) {
                     allCategories.add(cat);
                 }

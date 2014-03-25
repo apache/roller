@@ -57,38 +57,36 @@ public class RequestMappingFilter implements Filter {
         
         // instantiate user defined request mapper classes
         if(userMappers != null && userMappers.trim().length() > 0) {
-            
-            RequestMapper requestMapper = null;
+            RequestMapper requestMapper;
             String[] uMappers = userMappers.split(",");
-            for(int i=0; i < uMappers.length; i++) {
+            for (String uMapper : uMappers) {
                 try {
-                    Class mapperClass = Class.forName(uMappers[i]);
+                    Class mapperClass = Class.forName(uMapper);
                     requestMapper = (RequestMapper) mapperClass.newInstance();
                     requestMappers.add(requestMapper);
                 } catch(ClassCastException cce) {
                     log.error("It appears that your mapper does not implement "+
                             "the RequestMapper interface", cce);
                 } catch(Exception e) {
-                    log.error("Unable to instantiate request mapper ["+uMappers[i]+"]", e);
+                    log.error("Unable to instantiate request mapper ["+uMapper+"]", e);
                 }
             }
         }
         
         // instantiate roller standard request mapper classes
         if(rollerMappers != null && rollerMappers.trim().length() > 0) {
-            
-            RequestMapper requestMapper = null;
+            RequestMapper requestMapper;
             String[] rMappers = rollerMappers.split(",");
-            for(int i=0; i < rMappers.length; i++) {
+            for (String rMapper : rMappers) {
                 try {
-                    Class mapperClass = Class.forName(rMappers[i]);
+                    Class mapperClass = Class.forName(rMapper);
                     requestMapper = (RequestMapper) mapperClass.newInstance();
                     requestMappers.add(requestMapper);
                 } catch(ClassCastException cce) {
                     log.error("It appears that your mapper does not implement "+
                             "the RequestMapper interface", cce);
                 } catch(Exception e) {
-                    log.error("Unable to instantiate request mapper ["+rMappers[i]+"]", e);
+                    log.error("Unable to instantiate request mapper ["+rMapper+"]", e);
                 }
             }
         }

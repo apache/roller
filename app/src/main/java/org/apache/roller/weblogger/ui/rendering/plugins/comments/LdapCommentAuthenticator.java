@@ -146,7 +146,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 	}
 
 	/**
-	 * Get the username string LDAP expects.
+	 * Get the qualified username string LDAP expects.
 	 * @param ldapDc
 	 * @param ldapOu
 	 * @param ldapUser
@@ -154,15 +154,14 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 	 */
 	private String getQualifedDc(String ldapDc, String ldapOu, String ldapUser) {
 		String qualifedDc = "";
-		for(String token : StringUtils.delimitedListToStringArray(ldapDc, ",")){
-			if(!qualifedDc.isEmpty()){
+		for (String token : StringUtils.delimitedListToStringArray(ldapDc, ",")) {
+			if (!qualifedDc.isEmpty()) {
 				qualifedDc += ",";
 			}
 			qualifedDc += "dc=" + token;
 		}
 		
-		String qualifedUser = "uid=" + ldapUser + ", ou=" + ldapOu + "," + qualifedDc;
-		return qualifedUser;
+		return "uid=" + ldapUser + ", ou=" + ldapOu + "," + qualifedDc;
 	}
 
 	/**

@@ -196,7 +196,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
             
             // iterate over list and build display list
             subs = new ArrayList<Subscription>();
-            for( Subscription sub : subsSet ) {
+            for (Subscription sub : subsSet) {
                 // only include external subs for display
                 if(!sub.getFeedURL().startsWith("weblogger:")) {
                     subs.add(sub);

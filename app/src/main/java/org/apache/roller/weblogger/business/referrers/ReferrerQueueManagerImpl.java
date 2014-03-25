@@ -107,7 +107,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
             this.workers = new ArrayList<WorkerThread>();
             ContinuousWorkerThread worker;
             QueuedReferrerProcessingJob job;
-            for(int i = 0; i < numWorkers; i++) {
+            for (int i = 0; i < numWorkers; i++) {
                 job = new QueuedReferrerProcessingJob();
                 worker = new ContinuousWorkerThread("ReferrerWorker" + i, job, sleepTime);
                 workers.add(worker);

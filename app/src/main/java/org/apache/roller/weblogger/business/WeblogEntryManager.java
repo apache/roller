@@ -22,13 +22,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogHitCount;
 
 
 /**
@@ -79,7 +80,7 @@ public interface WeblogEntryManager {
      */
     List<WeblogEntry> getWeblogEntries(
             Weblog website,
-            User    user,
+            User user,
             Date        startDate,
             Date        endDate,
             String      catName,
@@ -161,9 +162,9 @@ public interface WeblogEntryManager {
      * @param endDate    End date or null for no end date.
      * @param offset     Offset into results for paging
      * @param length     Max comments to return (or -1 for no limit)
-     * @return List of WeblogEntryData objects.
+     * @return List of StatCount objects.
      */
-    List getMostCommentedWeblogEntries(
+    List<StatCount> getMostCommentedWeblogEntries(
             Weblog website,             
             Date        startDate,
             Date        endDate,

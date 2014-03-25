@@ -84,7 +84,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
         // set config def used to draw the view
         RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
         List<ConfigDef> configDefs = defs.getConfigDefs();
-        for(ConfigDef configDef : configDefs) {
+        for (ConfigDef configDef : configDefs) {
             if("global-properties".equals(configDef.getName())) {
                 setGlobalConfigDef(configDef);
             }

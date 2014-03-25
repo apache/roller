@@ -103,10 +103,10 @@ public final class CacheManager {
         if(customHandlers != null && customHandlers.trim().length() > 0) {
             
             String[] cHandlers = customHandlers.split(",");
-            for(int i=0; i < cHandlers.length; i++) {
+            for (String cHandler : cHandlers) {
                 // use reflection to instantiate the handler class
                 try {
-                    Class handlerClass = Class.forName(cHandlers[i]);
+                    Class handlerClass = Class.forName(cHandler);
                     CacheHandler customHandler = 
                             (CacheHandler) handlerClass.newInstance();
                     
@@ -115,7 +115,7 @@ public final class CacheManager {
                     log.error("It appears that your handler does not implement "+
                             "the CacheHandler interface",cce);
                 } catch(Exception e) {
-                    log.error("Unable to instantiate cache handler ["+cHandlers[i]+"]", e);
+                    log.error("Unable to instantiate cache handler ["+cHandler+"]", e);
                 }
             }
         }
@@ -322,8 +322,8 @@ public final class CacheManager {
      * This is here with the full expectation that it will be replaced by
      * something a bit more elaborate, like JMX.
      */
-    public static Map getStats() {
-        Map allStats = new HashMap();
+    public static Map<String, Map<String, Object>> getStats() {
+        Map<String, Map<String, Object>> allStats = new HashMap<String, Map<String, Object>>();
         for (Cache cache : caches.values()) {
             allStats.put(cache.getId(), cache.getStats());
         }

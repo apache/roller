@@ -115,7 +115,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
             try {
                 SyndFeedInfo feedInfo = feedCache.getFeedInfo(new URL(newSub.getFeedURL()));
                 if(feedInfo.getLastModified() != null) {
-                    long lastUpdatedLong = ((Long)feedInfo.getLastModified()).longValue();
+                    long lastUpdatedLong = (Long) feedInfo.getLastModified();
                     if (lastUpdatedLong != 0) {
                         newSub.setLastUpdated(new Date(lastUpdatedLong));
                     }
@@ -132,7 +132,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         }
         
         if(log.isDebugEnabled()) {
-            log.debug("Subscription is: "+newSub.toString());
+            log.debug("Subscription is: " + newSub.toString());
         }
         
         
@@ -149,7 +149,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         
         // add entries
         List<SyndEntry> feedEntries = feed.getEntries();
-        for( SyndEntry feedEntry : feedEntries ) {
+        for (SyndEntry feedEntry : feedEntries) {
             SubscriptionEntry newEntry = buildEntry(feedEntry);
             
             // some kludge to handle feeds with no entry dates
@@ -228,7 +228,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         
         // copy categories
         if (romeEntry.getCategories().size() > 0) {
-            List list = new ArrayList();
+            List<String> list = new ArrayList<String>();
             for (Object cat : romeEntry.getCategories()) {
                 list.add(((SyndCategory) cat).getName());
             }
@@ -268,7 +268,8 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
                 cacheDir.mkdirs();
             }
         } catch (Exception e) {
-            log.error("Unable to create planet cache directory: " + cacheDir.getPath(), e);
+            log.error("Unable to create planet cache directory: " +
+                    ((cacheDir != null) ? cacheDir.getPath() : null), e);
             return null;
         }
         
@@ -287,7 +288,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         
         FeedFetcherCache feedCache = getRomeFetcherCache();
         
-        FeedFetcher feedFetcher = null;
+        FeedFetcher feedFetcher;
         if(feedCache != null) {
             feedFetcher = new HttpURLFeedFetcher(feedCache);
         } else {

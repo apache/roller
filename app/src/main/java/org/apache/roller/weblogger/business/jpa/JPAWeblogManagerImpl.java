@@ -72,7 +72,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of weblogHandles -> weblogIds
-    private Map weblogHandleToIdMap = new Hashtable();
+    private Map<String,String> weblogHandleToIdMap = new Hashtable<String,String>();
 
     @com.google.inject.Inject
     protected JPAWeblogManagerImpl(Weblogger roller, JPAPersistenceStrategy strat) {
@@ -118,7 +118,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         Query themeAssocQuery = strategy.getNamedQuery("WeblogThemeAssoc.getThemeAssocsByWeblog");
         themeAssocQuery.setParameter(1,website);
         List<WeblogThemeAssoc> assocResults = themeAssocQuery.getResultList();
-        for(WeblogThemeAssoc themeAssoc : assocResults) {
+        for (WeblogThemeAssoc themeAssoc : assocResults) {
             this.strategy.remove(themeAssoc);
         }
         
@@ -127,7 +127,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         tagQuery.setParameter(1, website);
         List<WeblogEntryTag> results = tagQuery.getResultList();
         
-        for(WeblogEntryTag tagData : results) {
+        for (WeblogEntryTag tagData : results) {
             if (tagData.getWeblogEntry() != null) {
                 tagData.getWeblogEntry().getTags().remove(tagData);
             }
@@ -233,7 +233,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     protected void updateTagAggregates(List<TagStat> tags) throws WebloggerException {
-        for(TagStat stat : tags) {
+        for (TagStat stat : tags) {
             Query query = strategy.getNamedUpdate(
                 "WeblogEntryTagAggregate.getByName&WebsiteNullOrderByLastUsedDesc");
             query.setParameter(1, stat.getName());
@@ -319,8 +319,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         String blogroll = WebloggerConfig.getProperty("newuser.blogroll");
         if (blogroll != null) {
             String[] splitroll = blogroll.split(",");
-            for (int i=0; i<splitroll.length; i++) {
-                String[] rollitems = splitroll[i].split("\\|");
+            for (String splitItem : splitroll) {
+                String[] rollitems = splitItem.split("\\|");
                 if (rollitems != null && rollitems.length > 1) {
                     WeblogBookmark b = new WeblogBookmark(
                             defaultFolder,
@@ -367,7 +367,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public Weblog getWeblogByHandle(String handle, Boolean enabled)
     throws WebloggerException {
         
-        if (handle==null ) {
+        if (handle==null) {
             throw new WebloggerException("Handle cannot be null");
         }
         
@@ -391,7 +391,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         Query query = strategy.getNamedQuery("Weblog.getByHandle");
         query.setParameter(1, handle);
-        Weblog website = null;
+        Weblog website;
         try {
             website = (Weblog)query.getSingleResult();
         } catch (NoResultException e) {
@@ -423,10 +423,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                       
         List params = new ArrayList();
         int size = 0;
-        StringBuilder queryString = new StringBuilder();
+        String queryString;
         StringBuilder whereClause = new StringBuilder();
         
-        queryString.append("SELECT w FROM Weblog w WHERE ");
+        queryString = "SELECT w FROM Weblog w WHERE ";
 
         if (startDate != null) {
             Timestamp start = new Timestamp(startDate.getTime());
@@ -461,7 +461,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 
         whereClause.append(" ORDER BY w.dateCreated DESC");
         
-        Query query = strategy.getDynamicQuery(queryString.toString() + whereClause.toString());
+        Query query = strategy.getDynamicQuery(queryString + whereClause.toString());
         if (offset != 0) {
             query.setFirstResult(offset);
         }

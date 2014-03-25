@@ -124,7 +124,7 @@ public class PluginManagerImpl implements PluginManager {
         String content = text;
         
         if (commentPlugins.size() > 0) {
-            for( WeblogEntryCommentPlugin plugin : commentPlugins ) {
+            for (WeblogEntryCommentPlugin plugin : commentPlugins) {
                 if(comment.getPlugins() != null &&
                         comment.getPlugins().contains(plugin.getId())) {
                     log.debug("Invoking comment plugin "+plugin.getId());
@@ -153,24 +153,24 @@ public class PluginManagerImpl implements PluginManager {
         if (pluginStr != null) {
             String[] plugins = StringUtils.stripAll(
                     StringUtils.split(pluginStr, ",") );
-            for (int i=0; i<plugins.length; i++) {
+            for (String plugin : plugins) {
                 if (log.isDebugEnabled()) {
-                    log.debug("try " + plugins[i]);
+                    log.debug("try " + plugin);
                 }
                 try {
-                    Class pluginClass = Class.forName(plugins[i]);
+                    Class pluginClass = Class.forName(plugin);
                     if (isPagePlugin(pluginClass)) {
-                        WeblogEntryPlugin plugin = (WeblogEntryPlugin)pluginClass.newInstance();
-                        mPagePlugins.put(plugin.getName(), pluginClass);
+                        WeblogEntryPlugin weblogEntryPlugin = (WeblogEntryPlugin)pluginClass.newInstance();
+                        mPagePlugins.put(weblogEntryPlugin.getName(), pluginClass);
                     } else {
                         log.warn(pluginClass + " is not a PagePlugin");
                     }
                 } catch (ClassNotFoundException e) {
-                    log.error("ClassNotFoundException for " + plugins[i]);
+                    log.error("ClassNotFoundException for " + plugin);
                 } catch (InstantiationException e) {
-                    log.error("InstantiationException for " + plugins[i]);
+                    log.error("InstantiationException for " + plugin);
                 } catch (IllegalAccessException e) {
-                    log.error("IllegalAccessException for " + plugins[i]);
+                    log.error("IllegalAccessException for " + plugin);
                 }
             }
         }
@@ -217,9 +217,11 @@ public class PluginManagerImpl implements PluginManager {
     
     private static boolean isPagePlugin(Class pluginClass) {
         Class[] interfaces = pluginClass.getInterfaces();
-        for (int i=0; i<interfaces.length; i++) {
-            if (interfaces[i].equals(WeblogEntryPlugin.class)) {
-                return true;
+        if (interfaces != null) {
+            for (Class clazz : interfaces) {
+                if (clazz.equals(WeblogEntryPlugin.class)) {
+                    return true;
+                }
             }
         }
         return false;

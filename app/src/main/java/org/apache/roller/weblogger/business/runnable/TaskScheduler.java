@@ -130,14 +130,13 @@ public class TaskScheduler implements Runnable {
         
         ThreadManager tmgr = WebloggerFactory.getWeblogger().getThreadManager();
         
-        for( RollerTask task : tasks ) {
+        for (RollerTask task : tasks) {
             try {
                 // get tasklock for the task
                 TaskLock tasklock = tmgr.getTaskLockByName(task.getName());
                 
                 // TODO: check if task is enabled, otherwise skip
-                if(tasklock == null) {
-                    log.debug("SKIPPING task : "+tasklock.getName());
+                if (tasklock == null) {
                     continue;
                 }
                 
@@ -152,7 +151,8 @@ public class TaskScheduler implements Runnable {
                 if(currentTime.getTime() > (nextRunTime.getTime() + RollerConstants.MIN_IN_MS)) {
                     
                     log.debug("MISSED last run, checking if waiting is necessary");
-                    if("startOfDay".equals(task.getStartTimeDesc())) {
+                    // add delays if task is non-immediate
+                    if ("startOfDay".equals(task.getStartTimeDesc())) {
                         // for daily tasks we only run during the first 
                         // couple minutes of the day
                         Date startOfDay = DateUtil.getStartOfDay(currentTime);
@@ -168,8 +168,6 @@ public class TaskScheduler implements Runnable {
                             needToWait = true;
                             log.debug("WAITING for next reasonable run time");
                         }
-                    } else {
-                        // for immediate tasks we just go ahead and run
                     }
                 }
                 

@@ -117,8 +117,8 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         // set config def used to draw the view
         RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
         List<ConfigDef> configDefs = defs.getConfigDefs();
-        for(ConfigDef configDef : configDefs) {
-            if("global-properties".equals(configDef.getName())) {
+        for (ConfigDef configDef : configDefs) {
+            if ("global-properties".equals(configDef.getName())) {
                 setGlobalConfigDef(configDef);
             }
         }
@@ -220,7 +220,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         if (log.isDebugEnabled()) {
             log.debug("Parameter map:");
 
-            for(Map.Entry<String, String[]> entry : parameters.entrySet()) {
+            for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
                 log.debug(entry.getKey() + " = " + entry.getValue());
             }
         }

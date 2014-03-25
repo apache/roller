@@ -54,16 +54,16 @@ public final class XmlW {
         int sz = str.length();
         StringBuilder buffer = new StringBuilder(sz);
         boolean inTag = false;
-        for(int i=0; i<sz; i++) {
+        for (int i=0; i<sz; i++) {
             char ch = str.charAt(i);
-            if(ch == '<') {
+            if (ch == '<') {
                 inTag = true;
             } else
-            if(ch == '>') {
+            if (ch == '>') {
                 inTag = false;
                 continue;
             }
-            if(!inTag) {
+            if (!inTag) {
                 buffer.append(ch);
             }
         }

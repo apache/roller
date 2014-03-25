@@ -112,7 +112,7 @@ public class LRUCacheImpl implements Cache {
     }
     
     
-    public Map getStats() {
+    public Map<String, Object> getStats() {
         
         Map stats = new HashMap();
         stats.put("startTime", this.startTime);

@@ -381,8 +381,8 @@ public class EntryBean {
         // enclosure url, if it exists
         Set<WeblogEntryAttribute> attrs = entry.getEntryAttributes();
         if(attrs != null && attrs.size() > 0) {
-            for(WeblogEntryAttribute attr : attrs) {
-                if("att_mediacast_url".equals(attr.getName())) {
+            for (WeblogEntryAttribute attr : attrs) {
+                if ("att_mediacast_url".equals(attr.getName())) {
                     setEnclosureURL(attr.getValue());
                 }
             }

@@ -43,8 +43,8 @@ public final class StringW {
         char[] chrs = str.toCharArray();
         int sz = chrs.length;
         StringBuilder buffer = new StringBuilder(2*sz);
-        for(int i=0; i<sz; i++) {
-            switch(chrs[i]) {
+        for (char c : chrs) {
+            switch(c) {
               case '[' :
               case ']' :
               case '?' :
@@ -56,7 +56,7 @@ public final class StringW {
               case '$' :
                 buffer.append("\\");
               default : 
-                buffer.append(chrs[i]);
+                buffer.append(c);
             }
         }
         return buffer.toString();
@@ -124,11 +124,11 @@ public final class StringW {
         }
         //        System.err.println( "width after: "+ width );
 
-        int idx = -1;
-        String substr = null;
+        int idx;
+        String substr;
 
         // beware: i is rolled-back inside the loop
-        for(int i=0; i<sz; i+=width) {
+        for (int i=0; i<sz; i+=width) {
 
             // on the last line
             if(i > sz - width) {
@@ -169,8 +169,8 @@ public final class StringW {
 
             // figure out where the last space is
             char[] chrs = substr.toCharArray();
-            for(int j=width; j>0; j--) {
-                if(Character.isWhitespace(chrs[j-1])) {
+            for (int j=width; j>0; j--) {
+                if (Character.isWhitespace(chrs[j-1])) {
                     idx = j;
 //                    System.err.println("Found whitespace: "+idx);
                     break;
@@ -179,15 +179,15 @@ public final class StringW {
 
             // idx is the last whitespace on the line.
 //            System.err.println("idx is "+idx);
-            if(idx == -1) {
-                for(int j=width; j>0; j--) {
+            if (idx == -1) {
+                for (int j=width; j>0; j--) {
                     if(chrs[j-1] == '-') {
                         idx = j;
 //                        System.err.println("Found Dash: "+idx);
                         break;
                     }
                 }
-                if(idx == -1) {
+                if (idx == -1) {
                     buffer.append(substr);
                     buffer.append(delim);
 //                    System.err.print(substr);
@@ -230,7 +230,7 @@ public final class StringW {
 //                }
             }
         }
-//        System.err.println("\n*************");
+
         return buffer.toString();
     }
 
@@ -254,8 +254,6 @@ public final class StringW {
      *                    This is appended ONLY if the string was indeed 
      *                    truncated. The append is does not count towards 
      *                    any lower/upper limits.
-     *
-     * @author timster@mac.com
      */
 	public static String truncateNicely(String str, int lower, int upper, String appendToEnd)
 	{

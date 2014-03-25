@@ -252,11 +252,11 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
-            if(deletes != null && deletes.size() > 0) {
+            if (deletes.size() > 0) {
                 log.debug("Processing deletes - "+deletes.size());
                 
                 WeblogEntryComment deleteComment;
-                for(String deleteId : deletes) {
+                for (String deleteId : deletes) {
                     deleteComment = wmgr.getComment(deleteId);
                     flushList.add(deleteComment.getWeblogEntry().getWebsite());
                     wmgr.removeComment(deleteComment);
@@ -268,19 +268,19 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             log.debug(spamIds.size()+" comments marked as spam");
             
             String[] ids = Utilities.stringToStringArray(getBean().getIds(),",");
-            for (int i=0; i < ids.length; i++) {
-                log.debug("processing id - "+ ids[i]);
+            for (String id : ids) {
+                log.debug("processing id - "+ id);
                 
                 // if we already deleted it then skip forward
-                if(deletes.contains(ids[i])) {
-                    log.debug("Already deleted, skipping - "+ids[i]);
+                if(deletes.contains(id)) {
+                    log.debug("Already deleted, skipping - "+id);
                     continue;
                 }
                 
-                WeblogEntryComment comment = wmgr.getComment(ids[i]);
+                WeblogEntryComment comment = wmgr.getComment(id);
                 
                 // mark/unmark spam
-                if (spamIds.contains(ids[i]) && 
+                if (spamIds.contains(id) &&
                         !WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                     log.debug("Marking as spam - "+comment.getId());
                     comment.setStatus(WeblogEntryComment.SPAM);
@@ -331,9 +331,9 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         return opts;
     }
     
-    public List getSpamStatusOptions() {
+    public List<KeyValueObject> getSpamStatusOptions() {
         
-        List opts = new ArrayList();
+        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
         opts.add(new KeyValueObject("ALL", getText("commentManagement.all")));
         opts.add(new KeyValueObject("NO_SPAM", getText("commentManagement.noSpam")));

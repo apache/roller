@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
+import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
@@ -113,7 +114,7 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 
                 // populate the rendering model
-                Map<String, Object> model = new HashMap<String, Object>();
+                Map<String, Object> modelMap = new HashMap<String, Object>();
                 Map<String, WeblogFeedRequest> initData = new HashMap<String, WeblogFeedRequest>();
                 initData.put("request", null);
                 initData.put("feedRequest", feedRequest);
@@ -121,7 +122,7 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 // Load models for feeds
                 String feedModels = WebloggerConfig.getProperty("rendering.feedModels");
-                ModelLoader.loadModels(feedModels, model, initData, true);
+                ModelLoader.loadModels(feedModels, modelMap, initData, true);
                 
                 // TODO: re-enable custom models when they are actually used
                 // Load weblog custom models
@@ -137,7 +138,7 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 // render content.  use default size of about 24K for a standard page
                 CachedContent rendererOutput = new CachedContent(RollerConstants.TWENTYFOUR_KB_IN_BYTES);
-                renderer.render(model, rendererOutput.getCachedWriter());
+                renderer.render(modelMap, rendererOutput.getCachedWriter());
                 
                 
                 // flush rendered output and close

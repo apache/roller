@@ -100,7 +100,7 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure it was created
-        WeblogHitCount hitCount = null;
+        WeblogHitCount hitCount;
         hitCount = mgr.getHitCount(id);
         assertNotNull(hitCount);
         assertEquals(testCount, hitCount);
@@ -112,7 +112,6 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure it was updated
-        hitCount = null;
         hitCount = mgr.getHitCount(id);
         assertNotNull(hitCount);
         assertEquals(testCount, hitCount);
@@ -123,7 +122,6 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure it was deleted
-        hitCount = null;
         hitCount = mgr.getHitCount(id);
         assertNull(hitCount);
     }
@@ -144,14 +142,13 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // test lookup by id
-        WeblogHitCount hitCount = null;
+        WeblogHitCount hitCount;
         hitCount = mgr.getHitCount(id);
         assertNotNull(hitCount);
         assertEquals(testCount, hitCount);
         assertEquals(10, hitCount.getDailyHits());
         
         // test lookup by weblog
-        hitCount = null;
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         hitCount = mgr.getHitCountByWeblog(testWeblog);
         assertNotNull(hitCount);
@@ -163,7 +160,6 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure it was deleted
-        hitCount = null;
         hitCount = mgr.getHitCount(id);
         assertNull(hitCount);
     }
@@ -184,7 +180,7 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure it was created
-        WeblogHitCount hitCount = null;
+        WeblogHitCount hitCount;
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         hitCount = mgr.getHitCountByWeblog(testWeblog);
         assertNotNull(hitCount);
@@ -195,7 +191,6 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure it was incremented properly
-        hitCount = null;
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         hitCount = mgr.getHitCountByWeblog(testWeblog);
         assertNotNull(hitCount);
@@ -206,7 +201,6 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure it was deleted
-        hitCount = null;
         hitCount = mgr.getHitCount(id);
         assertNull(hitCount);
     }
@@ -228,7 +222,7 @@ public class HitCountTest extends TestCase {
         
         try {
             // make sure data was properly initialized
-            WeblogHitCount testCount = null;
+            WeblogHitCount testCount;
             testCount = mgr.getHitCount(cnt1.getId());
             assertEquals(10, testCount.getDailyHits());
             testCount = mgr.getHitCount(cnt2.getId());
@@ -289,7 +283,7 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure data was properly initialized
-        WeblogHitCount testCount = null;
+        WeblogHitCount testCount;
         testCount = mgr.getHitCount(cnt1.getId());
         assertEquals(10, testCount.getDailyHits());
         testCount = mgr.getHitCount(cnt2.getId());
@@ -303,11 +297,10 @@ public class HitCountTest extends TestCase {
         assertEquals(3, hotBlogs.size());
         
         // also check ordering and values
-        WeblogHitCount hitCount = null;
+        WeblogHitCount hitCount;
         Iterator it = hotBlogs.iterator();
-        for(int i=3; it.hasNext(); i--) {
+        for (int i=3; it.hasNext(); i--) {
             hitCount = (WeblogHitCount) it.next();
-            
             assertEquals(i*10, hitCount.getDailyHits());
         }
         

@@ -199,8 +199,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             // new subs added, existing subs updated, now delete old subs
             Set<Subscription> deleteSubs = new HashSet<Subscription>();
             Set<Subscription> subs = group.getSubscriptions();
-            for( Subscription sub : subs ) {
-                
+            for (Subscription sub : subs) {
                 // only delete subs from the group if ...
                 // 1. they are local
                 // 2. they are no longer listed as a weblog 
@@ -214,8 +213,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             // this is required because deleting a sub in the loop above
             // causes a ConcurrentModificationException because we can't
             // modify a collection while we iterate over it
-            for( Subscription deleteSub : deleteSubs ) {
-                
+            for (Subscription deleteSub : deleteSubs) {
                 log.debug("DELETING feed: "+deleteSub.getFeedURL());
                 pmgr.deleteSubscription(deleteSub);
                 group.getSubscriptions().remove(deleteSub);

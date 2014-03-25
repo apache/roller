@@ -302,26 +302,25 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         Query query;
         WeblogCategory category;
         
-        List params = new ArrayList();
+        List<Object> params = new ArrayList<Object>();
         int size = 0;
-        StringBuilder queryString = new StringBuilder();
+        String queryString = "SELECT e FROM WeblogEntry e WHERE ";
         StringBuilder whereClause = new StringBuilder();
-        queryString.append("SELECT e FROM WeblogEntry e WHERE ");
-                     
+
         params.add(size++, current.getWebsite());
-        whereClause.append("e.website = ?" + size); 
+        whereClause.append("e.website = ?").append(size);
         
         params.add(size++, WeblogEntry.PUBLISHED);
-        whereClause.append(" AND e.status = ?" + size);
+        whereClause.append(" AND e.status = ?").append(size);
                 
         if (next) {
             params.add(size++, current.getPubTime());
-            whereClause.append(" AND e.pubTime > ?" + size);
+            whereClause.append(" AND e.pubTime > ?").append(size);
         } else {
             // pub time null if current article not yet published, in Draft view
             if (current.getPubTime() != null) {
                 params.add(size++, current.getPubTime());
-                whereClause.append(" AND e.pubTime < ?" + size);
+                whereClause.append(" AND e.pubTime < ?").append(size);
             }
         }
         
@@ -329,7 +328,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             category = getWeblogCategoryByName(current.getWebsite(), catName);
             if (category != null) {
                 params.add(size++, category);
-                whereClause.append(" AND e.category = ?" + size);
+                whereClause.append(" AND e.category = ?").append(size);
             } else {
                 throw new WebloggerException("Cannot find category: " + catName);
             } 
@@ -337,7 +336,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         if(locale != null) {
             params.add(size++, locale + '%');
-            whereClause.append(" AND e.locale like ?" + size);
+            whereClause.append(" AND e.locale like ?").append(size);
         }
         
         if (next) {
@@ -345,7 +344,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         } else {
             whereClause.append(" ORDER BY e.pubTime DESC");
         }
-        query = strategy.getDynamicQuery(queryString.toString() + whereClause.toString());
+        query = strategy.getDynamicQuery(queryString + whereClause.toString());
         for (int i=0; i<params.size(); i++) {
             query.setParameter(i+1, params.get(i));
         }
@@ -396,17 +395,16 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             }
         }
 
-        List params = new ArrayList();
+        List<Object> params = new ArrayList<Object>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
         
-        //queryString.append("SELECT e FROM WeblogEntry e WHERE ");
         if (tags == null || tags.size()==0) {
             queryString.append("SELECT e FROM WeblogEntry e WHERE ");
         } else {
             queryString.append("SELECT e FROM WeblogEntry e JOIN e.tags t WHERE ");
             queryString.append("(");
-            for(int i = 0; i < tags.size(); i++) {
+            for (int i = 0; i < tags.size(); i++) {
                 if (i != 0) {
                     queryString.append(" OR ");
                 }
@@ -431,7 +429,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append(" AND EXISTS (SELECT t FROM WeblogEntryTag t WHERE "
                     + " t.weblogEntry = e AND t.name IN (");
             final String PARAM_SEPERATOR = ", ";
-            for(int i = 0; i < tags.size(); i++) {
+            for (int i = 0; i < tags.size(); i++) {
                 params.add(size++, tags.get(i));
                 queryString.append("?").append(size).append(PARAM_SEPERATOR);
             }
@@ -460,7 +458,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append(" AND e.pubTime <= ?").append(size);
         }
         
-        if (cat != null && website != null) {
+        if (cat != null) {
             params.add(size++, cat.getId());
             queryString.append(" AND e.category.id = ?").append(size);
         }
@@ -623,7 +621,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     // TODO: this method should be removed and its functionality moved to getWeblogEntries()
     public List<WeblogEntry> getWeblogEntries(WeblogCategory cat, boolean publishedOnly)
     throws WebloggerException {
-        List results = null;
+        List results;
         
         if (publishedOnly) {
             Query q = strategy.getNamedQuery(
@@ -684,20 +682,13 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public boolean isWeblogCategoryInUse(WeblogCategory cat)
     throws WebloggerException {
-        
-        Query q = strategy.getNamedQuery("WeblogEntry.getByCategory");
-        q.setParameter(1, cat);
-        int entryCount = q.getResultList().size();
-        
-        if (entryCount > 0) {
-            return true;
-        }
-        
         if (cat.getWeblog().getBloggerCategory().equals(cat)) {
             return true;
         }
-        
-        return false;
+        Query q = strategy.getNamedQuery("WeblogEntry.getByCategory");
+        q.setParameter(1, cat);
+        int entryCount = q.getResultList().size();
+        return entryCount > 0;
     }
     
     /**
@@ -714,7 +705,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             int             offset,
             int             length) throws WebloggerException {
         
-        List params = new ArrayList();
+        List<Object> params = new ArrayList<Object>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT c FROM WeblogEntryComment c ");
@@ -962,11 +953,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List getMostCommentedWeblogEntries(Weblog website,
+    public List<StatCount> getMostCommentedWeblogEntries(Weblog website,
             Date startDate, Date endDate, int offset,
             int length) throws WebloggerException {
-        Query query = null;
-        List queryResults = null;        
+        Query query;
+        List<WeblogEntry> queryResults;
         if (endDate == null) {
             endDate = new Date();
         }
@@ -1009,7 +1000,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             query.setMaxResults(length);
         }
         queryResults = query.getResultList();
-        List results = new ArrayList();
+        List<StatCount> results = new ArrayList<StatCount>();
         for (Iterator iter = queryResults.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
             StatCount sc = new StatCount(
@@ -1082,8 +1073,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public List<TagStat> getPopularTags(Weblog website, Date startDate, int offset, int limit)
     throws WebloggerException {
-        Query query = null;
-        List queryResults = null;
+        Query query;
+        List queryResults;
         
         if (website != null) {
             if (startDate != null) {
@@ -1152,11 +1143,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public List<TagStat> getTags(Weblog website, String sortBy,
             String startsWith, int offset, int limit) throws WebloggerException {
-        Query query = null;
-        List queryResults = null;
+        Query query;
+        List queryResults;
         boolean sortByName = sortBy == null || !sortBy.equals("count");
                 
-        List params = new ArrayList();
+        List<Object> params = new ArrayList<Object>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE ");
@@ -1178,7 +1169,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         } else {
             sortBy = "w.name";
         }
-        queryString.append(" GROUP BY w.name, w.total ORDER BY " + sortBy);
+        queryString.append(" GROUP BY w.name, w.total ORDER BY ").append(sortBy);
 
         query = strategy.getDynamicQuery(queryString.toString());
         for (int i=0; i<params.size(); i++) {
@@ -1217,7 +1208,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public boolean getTagComboExists(List tags, Weblog weblog) throws WebloggerException{
         
-        if(tags == null || tags.size() == 0) {
+        if (tags == null || tags.size() == 0) {
             return false;
         }
         
@@ -1227,7 +1218,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         //?1) AND w.weblog = ?2");
         //Append tags as parameter markers to avoid potential escaping issues
         //The IN clause would be of form (?1, ?2, ?3, ..)
-        ArrayList params = new ArrayList(tags.size() + 1);
+        List<Object> params = new ArrayList<Object>(tags.size() + 1);
         final String paramSeparator = ", ";
         int i;
         for (i=0; i < tags.size(); i++) {
@@ -1427,7 +1418,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         Query q = strategy.getNamedQuery("WeblogHitCount.getByWeblog");
         q.setParameter(1, weblog);
-        WeblogHitCount hitCount = null;
+        WeblogHitCount hitCount;
         try {
             hitCount = (WeblogHitCount)q.getSingleResult();
         } catch (NoResultException e) {
@@ -1460,7 +1451,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public void resetHitCount(Weblog weblog) throws WebloggerException {
         Query q = strategy.getNamedQuery("WeblogHitCount.getByWeblog");
         q.setParameter(1, weblog);
-        WeblogHitCount hitCount = null;
+        WeblogHitCount hitCount;
         try {
             hitCount = (WeblogHitCount)q.getSingleResult();
             hitCount.setDailyHits(0);
