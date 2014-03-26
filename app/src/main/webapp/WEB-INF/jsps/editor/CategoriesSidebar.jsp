@@ -30,7 +30,6 @@
                     <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
                     <s:url id="addCategory" action="categoryAdd">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="categoryId" value="%{category.id}" />
                     </s:url>
                     <s:a href="%{addCategory}"><s:text name="categoriesForm.addCategory" /></s:a>
                 </p>
@@ -40,4 +39,4 @@
             
         </div>
     </div>
-</div>			
+</div>

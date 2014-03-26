@@ -114,8 +114,8 @@ public class BookmarkEdit extends UIAction {
 
                 CacheManager.invalidate(getBookmark());
 
-                // TODO: i18n
-                addMessage("bookmark updated");
+                addMessage("bookmarkForm.changesSaved");
+
             } catch(Exception ex) {
                 log.error("Error saving bookmark", ex);
                 // TODO: i18n

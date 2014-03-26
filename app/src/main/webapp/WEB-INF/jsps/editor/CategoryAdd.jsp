@@ -21,10 +21,6 @@
     <s:text name="categoryForm.add.subtitle" />
 </p>
 
-<p>
-    <b><s:text name="categoriesForm.name" /></b>:<s:property value="category.name" />
-</p>
-
 <s:form action="categoryAdd!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />

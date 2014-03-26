@@ -86,8 +86,7 @@ public class CategoryAdd extends UIAction {
                 // notify caches
                 CacheManager.invalidate(newCategory);
 
-                // TODO: i18n
-                addMessage("category added");
+                addMessage("categoryForm.created");
 
                 return SUCCESS;
 

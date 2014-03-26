@@ -118,8 +118,7 @@ public class CategoryEdit extends UIAction {
                 // notify caches
                 CacheManager.invalidate(getCategory());
 
-                // TODO: i18n
-                addMessage("category updated");
+                addMessage("categoryForm.changesSaved");
 
             } catch(Exception ex) {
                 log.error("Error saving category", ex);

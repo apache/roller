@@ -21,12 +21,8 @@
     <s:text name="categoryForm.edit.subtitle" />
 </p>
 
-<p>
-    <b><s:text name="categoriesForm.name" /></b>:<s:property value="category.name" />
-</p>
-
 <s:form action="categoryEdit!save">
-	<s:hidden name="salt" />
+    <s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
 

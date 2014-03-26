@@ -117,8 +117,7 @@ public class BookmarkAdd extends UIAction {
 
                 CacheManager.invalidate(newBookmark);
 
-                // TODO: i18n
-                addMessage("bookmark added");
+                addMessage("bookmarkForm.created");
 
                 // Set for next action
                 getBean().setId(newBookmark.getId());
