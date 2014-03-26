@@ -63,8 +63,5 @@
             <tiles:insertAttribute name="footer" />
         </div>
         
-        <div id="datetagdiv" 
-             style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
-        </div>
     </body>
 </html>
