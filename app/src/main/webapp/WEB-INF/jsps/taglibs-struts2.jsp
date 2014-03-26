@@ -22,5 +22,3 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
-
-<%-- <link rel="stylesheet" type="text/css" href='<s:url value="/roller-ui/yui/tabview/assets/skins/sam/tabview.css"></s:url>'/> --%>
