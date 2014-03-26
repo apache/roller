@@ -137,7 +137,7 @@ public class CategoryEdit extends UIAction {
      * @return the string
      */
     public String cancel() {
-        return "cancel";
+        return CANCEL;
     }
     
     // TODO: validation

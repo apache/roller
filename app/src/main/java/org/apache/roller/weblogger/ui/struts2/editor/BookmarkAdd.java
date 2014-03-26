@@ -142,7 +142,7 @@ public class BookmarkAdd extends UIAction {
      * @return the string
      */
     public String cancel() {
-        return "cancel";
+        return CANCEL;
     }
     
     public void myValidate() {

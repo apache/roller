@@ -59,7 +59,10 @@ public abstract class UIAction extends ActionSupport
     
     // a common result name used to indicate the result should list some data
     public static final String LIST = "list";
-
+    
+    // a result for a cancel.
+    public static final String CANCEL = "cancel";
+    
     // the authenticated user accessing this action, or null if client is not logged in
     private User authenticatedUser = null;
     
