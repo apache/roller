@@ -21,6 +21,9 @@ package org.apache.roller.weblogger.pojos;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -138,14 +141,6 @@ public class GlobalPermission extends RollerPermission {
         return sb.toString();
     }
 
-    public boolean equals(Object arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int hashCode() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     @Override
     public void setActions(String actions) {
         this.actions = actions;
@@ -155,4 +150,26 @@ public class GlobalPermission extends RollerPermission {
     public String getActions() {
         return actions;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof GlobalPermission)) {
+            return false;
+        }
+        GlobalPermission o = (GlobalPermission) other;
+        return new EqualsBuilder()
+                .append(getActions(), o.getActions())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(getActions())
+                .toHashCode();
+    }
+
 }

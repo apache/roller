@@ -78,7 +78,7 @@ public class CategoryEdit extends UIAction {
     @SkipValidation
     public String execute() {
         
-        if(getCategory() == null) {
+        if (getCategory() == null) {
             // TODO: i18n
             addError("Cannot edit null category");
             return ERROR;
@@ -145,10 +145,9 @@ public class CategoryEdit extends UIAction {
         // name is required, has max length, no html
         
         // make sure new name is not a duplicate of an existing category
-        if(!getCategory().getName().equals(getBean().getName())) {
-            if(getCategory().getWeblog().hasCategory(getBean().getName())) {
-                addError("categoryForm.error.duplicateName", getBean().getName());
-            }
+        if (!getCategory().getName().equals(bean.getName()) &&
+            getCategory().getWeblog().hasCategory(bean.getName())) {
+            addError("categoryForm.error.duplicateName", bean.getName());
         }
     }
 

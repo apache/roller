@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefsParser;
 import org.apache.roller.weblogger.business.PropertiesManager;
@@ -157,7 +158,7 @@ public final class WebloggerRuntimeConfig {
                     new InputStreamReader(WebloggerConfig.class.getResourceAsStream(RUNTIME_CONFIG));
             StringWriter configString = new StringWriter();
             
-            char[] buf = new char[8196];
+            char[] buf = new char[RollerConstants.EIGHT_KB_IN_BYTES];
             int length = 0;
             while((length = reader.read(buf)) > 0) {
                 configString.write(buf, 0, length);

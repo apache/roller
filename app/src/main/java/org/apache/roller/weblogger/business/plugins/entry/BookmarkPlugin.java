@@ -116,11 +116,9 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
                             if (inLink > 0) {
                                 inLink--;
                             }
-                        } else if (m.group(4) != null) {
+                        } else if (m.group(4) != null && inLink == 0) {
                             // matched the bookmark -- replace, but only if not within a link tag.
-                            if (inLink == 0) {
-                                m.appendReplacement(textBuf, bookmarkLink);
-                            }
+                            m.appendReplacement(textBuf, bookmarkLink);
                         }
                     }
                     // Any remaining case indicates a bug.  One could add an else with assertion here.  Conservatively don't substitute.

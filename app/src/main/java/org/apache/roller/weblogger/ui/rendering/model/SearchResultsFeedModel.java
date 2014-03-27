@@ -201,9 +201,9 @@ public class SearchResultsFeedModel implements Model {
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
-			WeblogEntry entry = null;
-			Document doc = null;
-			String handle = null;
+			WeblogEntry entry;
+			Document doc;
+			String handle;
 			Timestamp now = new Timestamp(new Date().getTime());
 			for (int i = offset; i < offset + limit; i++) {
 				doc = search.getSearcher().doc(hits[i].doc);
@@ -213,12 +213,9 @@ public class SearchResultsFeedModel implements Model {
                 entry = weblogMgr.getWeblogEntry(doc.getField(
                         FieldConstants.ID).stringValue());
 
-				if (!(websiteSpecificSearch
-						&& handle.equals(feedRequest.getWeblogHandle()))) {
-					if (doc.getField(FieldConstants.CATEGORY) != null) {
-						categories.add(doc.getField(FieldConstants.CATEGORY)
-								.stringValue());
-					}
+				if (!(websiteSpecificSearch && handle.equals(feedRequest.getWeblogHandle()))
+                        && doc.getField(FieldConstants.CATEGORY) != null) {
+                    categories.add(doc.getField(FieldConstants.CATEGORY).stringValue());
 				}
 
 				// maybe null if search result returned inactive user

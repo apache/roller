@@ -816,10 +816,8 @@ public class DatabaseInstaller {
                 // however, if roller_properties is not empty then we at least
                 // we have someone upgrading from 1.2.x
                 rs = stmt.executeQuery("select count(*) from roller_properties");
-                if(rs.next()) {
-                    if(rs.getInt(1) > 0) {
-                        dbversion = 120;
-                    }
+                if (rs.next() && rs.getInt(1) > 0) {
+                    dbversion = 120;
                 }
             }
             

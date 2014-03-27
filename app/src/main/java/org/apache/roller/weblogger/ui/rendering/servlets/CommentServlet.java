@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -110,12 +111,12 @@ public class CommentServlet extends HttpServlet {
                         e);
             }
 
-            int interval = 60000;
+            int interval = RollerConstants.MIN_IN_MS;
             try {
                 interval = Integer.parseInt(WebloggerConfig
                         .getProperty("comment.throttle.interval"));
                 // convert from seconds to milliseconds
-                interval = interval * 1000;
+                interval = interval * RollerConstants.SEC_IN_MS;
             } catch (Exception e) {
                 log.warn(
                         "bad input for config property comment.throttle.interval",

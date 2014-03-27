@@ -59,12 +59,12 @@ public class WeblogRequestMapper implements RequestMapper {
     
     
     // url patterns that are not allowed to be considered weblog handles
-    Set restricted = null;
+    Set<String> restricted = null;
     
     
     public WeblogRequestMapper() {
         
-        this.restricted = new HashSet();
+        this.restricted = new HashSet<String>();
         
         // build roller restricted list
         String restrictList = 
@@ -135,12 +135,10 @@ public class WeblogRequestMapper implements RequestMapper {
 
         String weblogAbsoluteURL =
             WebloggerConfig.getProperty("weblog.absoluteurl." + weblogHandle);
-        if (weblogAbsoluteURL != null) {
-            // An absolute URL is specified for this weblog, make sure request URL matches
-            if (!request.getRequestURL().toString().startsWith(weblogAbsoluteURL)) {
-                log.debug("SKIPPED "+weblogHandle);
-                return false;
-            }
+        // If an absolute URL is specified for this weblog, make sure request URL matches
+        if (weblogAbsoluteURL != null && !request.getRequestURL().toString().startsWith(weblogAbsoluteURL)) {
+            log.debug("SKIPPED " + weblogHandle);
+            return false;
         }
         
         log.debug("WEBLOG_URL "+request.getServletPath());

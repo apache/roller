@@ -169,11 +169,9 @@ public class HTMLSanitizer {
 							ret.invalidTags.add("<" + tag + ">");
 							continue;
 						}
-					} else if ("td".equals(tag) || "th".equals(tag)) {
-						if (openTags.search("tr") < 1) {
-							ret.invalidTags.add("<" + tag + ">");
-							continue;
-						}
+					} else if (("td".equals(tag) || "th".equals(tag)) && openTags.search("tr") < 1) {
+                        ret.invalidTags.add("<" + tag + ">");
+                        continue;
 					}
 
 

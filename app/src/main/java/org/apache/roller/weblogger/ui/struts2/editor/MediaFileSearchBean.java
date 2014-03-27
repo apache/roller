@@ -22,6 +22,7 @@ import java.util.List;
 
 import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;
@@ -116,9 +117,9 @@ public class MediaFileSearchBean {
         return tags;
     }
 
- /*   public void setTags(String tags) {
+    public void setTags(String tags) {
         this.tags = tags;
-    } */
+    }
 
     public int getPageNum() {
         return pageNum;
@@ -175,9 +176,9 @@ public class MediaFileSearchBean {
 
             long filterSize = this.size ;
             if ("mediaFileView.kb".equals(this.sizeUnit)) {
-                filterSize = this.size * 1024;
+                filterSize = this.size * RollerConstants.ONE_KB_IN_BYTES;
             } else if ("mediaFileView.mb".equals(this.sizeUnit)) {
-                    filterSize = this.size * 1024 * 1024;
+                    filterSize = this.size * RollerConstants.ONE_MB_IN_BYTES;
             }
             dataHolder.setSize(filterSize);
         }

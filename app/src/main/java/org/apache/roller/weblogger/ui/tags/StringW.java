@@ -154,12 +154,8 @@ public final class StringW {
 //                System.err.println("loop[i] is now: "+i);
 //                System.err.println("ounfd-whitespace: '"+substr.charAt(idx+1)+"'.");
                 // Erase a space after a delim. Is this too obscure?
-                if(substr.length() > idx+1) {
-                    if(substr.charAt(idx+1) != '\n') {
-                        if(Character.isWhitespace(substr.charAt(idx+1))) {
-                            i++;
-                        }
-                    }
+                if (substr.length() > idx+1 && (substr.charAt(idx+1) != '\n') && Character.isWhitespace(substr.charAt(idx+1))) {
+                    i++;
                 }
 //                System.err.println("i -= "+width+"-"+idx);
                 continue;

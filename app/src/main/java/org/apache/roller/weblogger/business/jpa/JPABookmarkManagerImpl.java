@@ -96,12 +96,10 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {
-        
-        if (folder.getId() == null || this.getFolder(folder.getId()) == null) {
-            // New folder, so make sure name is unique
-            if (isDuplicateFolderName(folder)) {
-                throw new WebloggerException("Duplicate folder name");
-            }
+
+        // If new folder make sure name is unique
+        if ((folder.getId() == null || this.getFolder(folder.getId()) == null) && isDuplicateFolderName(folder)) {
+            throw new WebloggerException("Duplicate folder name");
         }
 
         this.strategy.store(folder);
@@ -147,7 +145,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             // Iterate through children of OPML body, importing each
             Element body = doc.getRootElement().getChild("body");
             for (Object elem : body.getChildren()) {
-                importOpmlElement(website, (Element) elem, newFolder );
+                importOpmlElement((Element) elem, newFolder );
             }
         } catch (Exception ex) {
             throw new WebloggerException(ex);
@@ -158,13 +156,12 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     // NOTE: this method does not commit any changes; 
     // that is done higher up in execution chain
     private void importOpmlElement(
-            Weblog website, Element elem, WeblogBookmarkFolder folder)
+            Element elem, WeblogBookmarkFolder folder)
             throws WebloggerException {
         String text = elem.getAttributeValue("text");
         String title = elem.getAttributeValue("title");
         String desc = elem.getAttributeValue("description");
         String url = elem.getAttributeValue("url");
-        //String type = elem.getAttributeValue("type");
         String xmlUrl = elem.getAttributeValue("xmlUrl");
         String htmlUrl = elem.getAttributeValue("htmlUrl");
 
@@ -208,7 +205,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         } else {
             // Import suboutline's children into folder
             for (Object subelem : elem.getChildren("outline")) {
-                importOpmlElement( website, (Element) subelem, folder );
+                importOpmlElement((Element) subelem, folder );
             }
         }
     }

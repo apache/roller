@@ -145,12 +145,9 @@ public class Profile extends UIAction {
 
     
     public void myValidate() {
-
-        // check that passwords match if they were specified
-        if (!StringUtils.isEmpty(getBean().getPasswordText())) {
-            if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
-                addError("Register.error.passowordMismatch");
-            }
+        // check that passwords match if they were specified (w/StringUtils.equals, null == null)
+        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
+            addError("userRegister.error.mismatchedPasswords");
         }
     }
 

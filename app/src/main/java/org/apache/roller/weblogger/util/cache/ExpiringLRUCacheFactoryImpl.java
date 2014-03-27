@@ -63,7 +63,7 @@ public class ExpiringLRUCacheFactoryImpl implements CacheFactory {
         
         Cache cache = new ExpiringLRUCacheImpl(id, size, timeout);
         
-        log.debug("new cache constructed. size="+size+", timeout="+timeout);
+        log.debug("new cache constructed. size=" + size + ", timeout=" + timeout);
         
         return cache;
     }

@@ -26,11 +26,13 @@ public final class RollerConstants {
     public static final int EIGHT_KB_IN_BYTES = 8192;
     public static final int TWENTYFOUR_KB_IN_BYTES = 24576;
 
+    public static final int ONE_MB_IN_BYTES = ONE_KB_IN_BYTES * 2;
+
     public static final int HALF_SEC_IN_MS = 500;
     public static final int SEC_IN_MS = 1000;
     public static final int MIN_IN_MS = 60 * SEC_IN_MS;
 
-    private RollerConstants(){
+    private RollerConstants() {
         // never instantiable
         throw new AssertionError();
     }

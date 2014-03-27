@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.business.jpa;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -53,6 +54,7 @@ import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogThemeAssoc;
 import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
+
 
 
 /*
@@ -505,10 +507,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(user);
         for (WeblogPermission perm : perms) {
             Weblog weblog = perm.getWeblog();
-            if (!enabledOnly || weblog.getEnabled()) {
-                if (weblog.getActive() != null && weblog.getActive()) {
-                    weblogs.add(weblog);
-                }
+            if ((!enabledOnly || weblog.getEnabled()) && BooleanUtils.isTrue(weblog.getActive())) {
+                weblogs.add(weblog);
             }
         }
         return weblogs;

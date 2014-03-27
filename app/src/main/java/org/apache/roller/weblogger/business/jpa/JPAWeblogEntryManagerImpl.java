@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -91,12 +92,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public void saveWeblogCategory(WeblogCategory cat) throws WebloggerException {
         boolean exists = getWeblogCategory(cat.getId()) != null;
-        if (!exists) {
-            if (isDuplicateWeblogCategoryName(cat)) {
-                throw new WebloggerException("Duplicate category name, cannot save category");
-            }
+        if (!exists && isDuplicateWeblogCategoryName(cat)) {
+            throw new WebloggerException("Duplicate category name, cannot save category");
         }
-        
+
         // update weblog last modified date.  date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(cat.getWeblog());
         this.strategy.store(cat);
@@ -208,7 +207,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // we only consider an entry future published if it is scheduled
         // more than 1 minute into the future
         if ("PUBLISHED".equals(entry.getStatus()) &&
-                entry.getPubTime().after(new Date(System.currentTimeMillis() + 60000))) {
+                entry.getPubTime().after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
             entry.setStatus(WeblogEntry.SCHEDULED);
         }
         

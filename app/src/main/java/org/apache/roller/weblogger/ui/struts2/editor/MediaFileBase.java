@@ -103,9 +103,9 @@ public class MediaFileBase extends UIAction {
             if (fileIds != null && fileIds.length > 0) {
                 log.debug("Processing delete of " + fileIds.length
                         + " media files.");
-                for (int index = 0; index < fileIds.length; index++) {
-                    log.debug("Deleting media file - " + fileIds[index]);
-                    MediaFile mediaFile = manager.getMediaFile(fileIds[index]);
+                for (String fileId : fileIds) {
+                    log.debug("Deleting media file - " + fileId);
+                    MediaFile mediaFile = manager.getMediaFile(fileId);
                     if (mediaFile != null) {
                         manager.removeMediaFile(getActionWeblog(), mediaFile);
                     }
@@ -116,14 +116,11 @@ public class MediaFileBase extends UIAction {
                 log.debug("Processing delete of " + dirIds.length
                         + " media directories.");
                 manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-                for (int index = 0; index < dirIds.length; index++) {
-                    log.debug("Deleting media file directory - "
-                            + dirIds[index]);
-                    MediaFileDirectory mediaFileDir = manager
-                            .getMediaFileDirectory(dirIds[index]);
+                for (String dirId : dirIds) {
+                    log.debug("Deleting media file directory - " + dirId);
+                    MediaFileDirectory mediaFileDir = manager.getMediaFileDirectory(dirId);
                     if (mediaFileDir != null) {
-                        mediaFileDir.getParent().removeChildDirectory(
-                                mediaFileDir);
+                        mediaFileDir.getParent().removeChildDirectory(mediaFileDir);
                         manager.removeMediaFileDirectory(mediaFileDir);
                     }
                 }
@@ -159,16 +156,13 @@ public class MediaFileBase extends UIAction {
                         + " media files.");
                 MediaFileDirectory targetDirectory = manager
                         .getMediaFileDirectory(this.selectedDirectory);
-                for (int index = 0; index < fileIds.length; index++) {
-                    log.debug("Moving media file - " + fileIds[index]
+                for (String fileId : fileIds) {
+                    log.debug("Moving media file - " + fileId
                             + " to directory - " + this.selectedDirectory);
-                    MediaFile mediaFile = manager.getMediaFile(fileIds[index]);
-                    if (mediaFile != null) {
-                        if (!mediaFile.getDirectory().getId()
-                                .equals(targetDirectory.getId())) {
-                            manager.moveMediaFile(mediaFile, targetDirectory);
-                            movedFiles++;
-                        }
+                    MediaFile mediaFile = manager.getMediaFile(fileId);
+                    if (mediaFile != null && !mediaFile.getDirectory().getId().equals(targetDirectory.getId())) {
+                        manager.moveMediaFile(mediaFile, targetDirectory);
+                        movedFiles++;
                     }
                 }
             }
@@ -179,20 +173,16 @@ public class MediaFileBase extends UIAction {
                         + " media files directories.");
                 MediaFileDirectory targetDirectory = manager
                         .getMediaFileDirectory(this.selectedDirectory);
-                for (int index = 0; index < dirIds.length; index++) {
-                    log.debug("Moving media file - " + dirIds[index]
+                for (String dirId : dirIds) {
+                    log.debug("Moving media file - " + dirId
                             + " to directory - " + this.selectedDirectory);
                     MediaFileDirectory mediaFileDir = manager
-                            .getMediaFileDirectory(dirIds[index]);
-                    if (mediaFileDir != null) {
-                        if (!mediaFileDir.getId().equals(
-                                targetDirectory.getId())
-                                && !mediaFileDir.getParent().getId()
-                                        .equals(targetDirectory.getId())) {
-                            manager.moveMediaFileDirectory(mediaFileDir,
-                                    targetDirectory);
-                            movedDirs++;
-                        }
+                            .getMediaFileDirectory(dirId);
+                    if (mediaFileDir != null
+                            && !mediaFileDir.getId().equals(targetDirectory.getId())
+                            && !mediaFileDir.getParent().getId().equals(targetDirectory.getId())) {
+                        manager.moveMediaFileDirectory(mediaFileDir,targetDirectory);
+                        movedDirs++;
                     }
                 }
             }
@@ -220,8 +210,7 @@ public class MediaFileBase extends UIAction {
         try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger()
                     .getMediaFileManager();
-            List<MediaFileDirectory> directories = mgr
-                    .getMediaFileDirectories(getActionWeblog());
+            List<MediaFileDirectory> directories = mgr.getMediaFileDirectories(getActionWeblog());
             List<MediaFileDirectory> sortedDirList = new ArrayList<MediaFileDirectory>();
             sortedDirList.addAll(directories);
             Collections.sort(sortedDirList, new MediaFileDirectoryComparator(

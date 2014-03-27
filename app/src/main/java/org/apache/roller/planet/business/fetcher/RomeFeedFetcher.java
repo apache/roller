@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
@@ -220,10 +221,8 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         }
         
         // no content, try summary
-        if (newEntry.getText() == null || newEntry.getText().trim().length() == 0) {
-            if (romeEntry.getDescription() != null) {
-                newEntry.setText(romeEntry.getDescription().getValue());
-            }
+        if (StringUtils.isBlank(newEntry.getText()) && romeEntry.getDescription() != null)  {
+            newEntry.setText(romeEntry.getDescription().getValue());
         }
         
         // copy categories

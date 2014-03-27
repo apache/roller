@@ -350,12 +350,9 @@ public class PageServlet extends HttpServlet {
         if (pageRequest.getWeblogPageName() != null && page.isHidden()) {
             invalid = true;
         }
-        if (pageRequest.getLocale() != null) {
-
-            // locale view only allowed if weblog has enabled it
-            if (!pageRequest.getWeblog().isEnableMultiLang()) {
-                invalid = true;
-            }
+        // locale view allowed only if weblog has enabled it
+        if (pageRequest.getLocale() != null && !pageRequest.getWeblog().isEnableMultiLang()) {
+            invalid = true;
         }
         if (pageRequest.getWeblogAnchor() != null) {
 

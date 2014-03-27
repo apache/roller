@@ -209,13 +209,10 @@ public class SearchResultsModel extends PageModel {
                 entry = weblogMgr.getWeblogEntry(doc.getField(
                         FieldConstants.ID).stringValue());
 
-				if (!(websiteSpecificSearch
-						&& handle.equals(searchRequest.getWeblogHandle()))) {
-					if (doc.getField(FieldConstants.CATEGORY) != null) {
-						categories.add(doc.getField(FieldConstants.CATEGORY)
-								.stringValue());
-					}
-				}
+                if (!(websiteSpecificSearch && handle.equals(searchRequest.getWeblogHandle()))
+                        && doc.getField(FieldConstants.CATEGORY) != null) {
+                    categories.add(doc.getField(FieldConstants.CATEGORY).stringValue());
+                }
 
 				// maybe null if search result returned inactive user
 				// or entry's user is not the requested user.
