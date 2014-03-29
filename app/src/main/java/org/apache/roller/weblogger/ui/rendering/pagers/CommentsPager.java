@@ -42,7 +42,6 @@ public class CommentsPager extends AbstractPager {
     private static Log log = LogFactory.getLog(CommentsPager.class);
     
     private Weblog weblog = null;
-    private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
     
@@ -59,7 +58,6 @@ public class CommentsPager extends AbstractPager {
             URLStrategy    strat,
             String         baseUrl,
             Weblog         weblog,
-            String         locale,
             int            sinceDays,
             int            page,
             int            length) {
@@ -67,7 +65,6 @@ public class CommentsPager extends AbstractPager {
         super(strat, baseUrl, page);
         
         this.weblog = weblog;
-        this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
         

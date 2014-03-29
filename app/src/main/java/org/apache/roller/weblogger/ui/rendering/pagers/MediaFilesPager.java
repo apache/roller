@@ -38,16 +38,10 @@ import org.apache.roller.weblogger.pojos.Weblog;
 public class MediaFilesPager extends AbstractPager {
     
     private static Log log = LogFactory.getLog(MediaFilesPager.class);
-    
-    private Weblog weblog = null;
-    private int sinceDays = -1;
     private int length = 0;
     
     // the collection for the pager
     private List<MediaFile> mediaFiles;
-    
-    // are there more items?
-    private boolean more = false;
     
     // most recent update time of current set of entries
     private Date lastUpdated = null;        
@@ -55,15 +49,10 @@ public class MediaFilesPager extends AbstractPager {
     public MediaFilesPager(
             URLStrategy    strat,
             String         baseUrl,
-            Weblog         weblog,
-            int            sinceDays,
             int            page,
             int            length) {
         
         super(strat, baseUrl, page);
-        
-        this.weblog = weblog;
-        this.sinceDays = sinceDays;
         this.length = length;
         
         // initialize the collection
@@ -93,16 +82,16 @@ public class MediaFilesPager extends AbstractPager {
     
     
     public boolean hasMoreItems() {
-        return more;
+        return false;
     }
     
     /** Get last updated time from items in pager */
     public Date getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
-            List<MediaFile> items = (List<MediaFile>)getItems();
+            List<MediaFile> items = getItems();
             if (items != null && items.size() > 0) {
-                Timestamp newest = ((MediaFile)items.get(0)).getLastUpdated();
+                Timestamp newest = items.get(0).getLastUpdated();
                 for (MediaFile file : items) {
                     if (file.getLastUpdated().after(newest)) {
                         newest = file.getLastUpdated();

@@ -42,7 +42,6 @@ public class PlanetEntriesPager extends AbstractPager {
     
     private String feedURL = null;
     private String groupHandle = null;
-    private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
     
@@ -58,7 +57,6 @@ public class PlanetEntriesPager extends AbstractPager {
             String         feedURL,
             String         groupHandle,
             String         baseUrl,
-            String         locale,
             int            sinceDays,
             int            page,
             int            length) {
@@ -67,7 +65,6 @@ public class PlanetEntriesPager extends AbstractPager {
         
         this.feedURL = feedURL;
         this.groupHandle = groupHandle;
-        this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
         

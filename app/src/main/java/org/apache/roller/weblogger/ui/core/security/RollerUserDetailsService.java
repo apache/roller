@@ -24,9 +24,11 @@ import org.springframework.dao.DataRetrievalFailureException;
 public class RollerUserDetailsService implements UserDetailsService {
     private static Log log = LogFactory.getLog(RollerUserDetailsService.class);
     
-    public UserDetails loadUserByUsername(String userName) 
-            throws UsernameNotFoundException, DataAccessException {
-        Weblogger roller = null;
+    /**
+     * @throws UsernameNotFoundException, DataAccessException
+     */
+    public UserDetails loadUserByUsername(String userName) {
+        Weblogger roller;
         try {
             roller = WebloggerFactory.getWeblogger();
         } catch (Exception e) {

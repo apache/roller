@@ -121,11 +121,10 @@ public class WebappResourceLoader extends ResourceLoader {
 	 * @param name
 	 *            name of template to get
 	 * @return InputStream containing the template
-	 * @throws ResourceNotFoundException
-	 *             if template not found in classpath.
+	 * @throws ResourceNotFoundException if template not found in classpath.
+	 *
 	 */
-	public InputStream getResourceStream(String name)
-			throws ResourceNotFoundException {
+	public InputStream getResourceStream(String name) {
 
 		InputStream result = null;
 		Exception exception = null;
@@ -143,7 +142,7 @@ public class WebappResourceLoader extends ResourceLoader {
 			throw new ResourceNotFoundException("Invalid ThemeRL key " + name);
 		}
 
-		String savedPath = (String) templatePaths.get(name);
+		String savedPath = templatePaths.get(name);
 		if (savedPath != null) {
 			result = servletContext.getResourceAsStream(savedPath + split[0]);
 		}
@@ -214,7 +213,7 @@ public class WebappResourceLoader extends ResourceLoader {
 			fileName = fileName.substring(1);
 		}
 
-		String savedPath = (String) templatePaths.get(fileName);
+		String savedPath = templatePaths.get(fileName);
 
 		// names are <template>|<deviceType>
 		// loading weblog.vm etc will not have the type so only check for

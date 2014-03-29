@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -324,14 +323,12 @@ public class Utilities {
     }
 
     // --------------------------------------------------------------------------
-    /** Convert string with delimeters to string list. */
-    public static List<String> stringToStringList(String instr, String delim)
-            throws NoSuchElementException, NumberFormatException {
+    /** Convert string with delimiters to string list.
+     */
+    public static List<String> stringToStringList(String instr, String delim) {
         List<String> stringList = new ArrayList<String>();
         String[] str = StringUtils.split(instr, delim);
-        for (String string : str) {
-            stringList.add(string);
-        }
+        Collections.addAll(stringList, str);
         return stringList;
     }
 
@@ -343,7 +340,7 @@ public class Utilities {
         int i = 0;
         for (String string : str) {
             int nInt = Integer.parseInt(string);
-            intArray[i++] = new Integer(nInt).intValue();
+            intArray[i++] = nInt;
         }
         return intArray;
     }
@@ -364,8 +361,8 @@ public class Utilities {
 
     // ------------------------------------------------------------------------
     public static void copyFile(File from, File to) throws IOException {
-        InputStream in = null;
-        OutputStream out = null;
+        InputStream in;
+        OutputStream out;
 
         try {
             in = new FileInputStream(from);
@@ -497,7 +494,7 @@ public class Utilities {
     public static String encodePassword(String password, String algorithm) {
         byte[] unencodedPassword = password.getBytes();
 
-        MessageDigest md = null;
+        MessageDigest md;
 
         try {
             // first create an instance, given the provider

@@ -97,35 +97,35 @@ public class RollerVelocity {
     
     /**
      * Convenience static method for looking up a template.
+     * @throws ResourceNotFoundException, ParseErrorException
      */
-    public static Template getTemplate(String name)
-            throws ResourceNotFoundException, ParseErrorException, Exception {
+    public static Template getTemplate(String name) {
         return velocityEngine.getTemplate(name + "|standard");
     }
 
     /**
      * Convenience static method for looking up a template.
+     * @throws ResourceNotFoundException, ParseErrorException
      */
     public static Template getTemplate(String name, 
-			MobileDeviceRepository.DeviceType deviceType)
-            throws ResourceNotFoundException, ParseErrorException, Exception {
+			MobileDeviceRepository.DeviceType deviceType) {
         return velocityEngine.getTemplate(name + "|" + deviceType);
     }
     
     /**
      * Convenience static method for looking up a template.
+     * @throws ResourceNotFoundException, ParseErrorException
      */
-    public static Template getTemplate(String name, String encoding)
-            throws ResourceNotFoundException, ParseErrorException, Exception {
+    public static Template getTemplate(String name, String encoding) {
         return velocityEngine.getTemplate(name + "|standard", encoding);
     }
 	
     /**
      * Convenience static method for looking up a template.
+     * @throws ResourceNotFoundException, ParseErrorException
      */
     public static Template getTemplate(String name, 
-			MobileDeviceRepository.DeviceType deviceType, String encoding)
-            throws ResourceNotFoundException, ParseErrorException, Exception {
+			MobileDeviceRepository.DeviceType deviceType, String encoding) {
         return velocityEngine.getTemplate(name + "|" + deviceType, encoding);
     }
 }

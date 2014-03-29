@@ -108,7 +108,6 @@ public class PlanetModel implements Model {
             null,
             null,    
             pagerUrl,
-            weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
             length);
@@ -131,7 +130,6 @@ public class PlanetModel implements Model {
             null,
             groupHandle,
             pagerUrl,
-            weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
             length);
@@ -154,7 +152,6 @@ public class PlanetModel implements Model {
             feedURL,
             null,
             pagerUrl,
-            weblogRequest.getLocale(),
             -1,
             pageNum, 
             length);

@@ -300,12 +300,12 @@ public class CommentServlet extends HttpServlet {
 
         if (!preview) {
 
-            if (validationScore == 100 && weblog.getCommentModerationRequired()) {
+            if (validationScore == RollerConstants.PERCENT_100 && weblog.getCommentModerationRequired()) {
                 // Valid comments go into moderation if required
                 comment.setStatus(WeblogEntryComment.PENDING);
                 message = messageUtils
                         .getString("commentServlet.submittedToModerator");
-            } else if (validationScore == 100) {
+            } else if (validationScore == RollerConstants.PERCENT_100) {
                 // else they're approved
                 comment.setStatus(WeblogEntryComment.APPROVED);
                 message = messageUtils
@@ -355,7 +355,7 @@ public class CommentServlet extends HttpServlet {
 
                     // Send email notifications only to subscribers if comment
                     // is 100% valid
-                    boolean notifySubscribers = (validationScore == 100);
+                    boolean notifySubscribers = (validationScore == RollerConstants.PERCENT_100);
                     MailUtil.sendEmailNotification(comment, messages,
                             messageUtils, notifySubscribers);
 

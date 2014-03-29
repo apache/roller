@@ -57,9 +57,9 @@ public class RollerResourceLoader extends ResourceLoader {
 	 * @param name
 	 *            name of template
 	 * @return InputStream containing template
+     * @throws ResourceNotFoundException
 	 */
-	public InputStream getResourceStream(String name)
-			throws ResourceNotFoundException {
+	public InputStream getResourceStream(String name) {
 
 		logger.debug("Looking for: " + name);
 

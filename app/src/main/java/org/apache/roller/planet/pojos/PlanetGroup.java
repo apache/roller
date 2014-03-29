@@ -161,8 +161,8 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
         if (cats == null || cats.length == 0) {
             return true;
         }
-        for (int i=0; i<cats.length; i++) {
-            if (entry.inCategory(cats[i])) {
+        for (String cat : cats) {
+            if (entry.inCategory(cat)) {
                 return true;
             }
         }

@@ -217,7 +217,6 @@ public class SiteModel implements Model {
             urlStrategy,
             pagerUrl,
             null,
-            weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
             length);
