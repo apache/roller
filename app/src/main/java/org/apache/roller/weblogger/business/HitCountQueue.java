@@ -58,7 +58,7 @@ public class HitCountQueue {
     
     // non-instantiable because we are a singleton
     private HitCountQueue() {
-        int sleepTime = 180000;
+        int sleepTime = 3 * RollerConstants.MIN_IN_MS;
         String sleep = WebloggerConfig.getProperty("hitcount.queue.sleepTime", "180");
         
         try {

@@ -316,8 +316,8 @@ public class MediaFileTest extends TestCase {
      * Test deletion of media file
      */
     public void testDeleteMediaFile() throws Exception {
-        User testUser = null;
-        Weblog testWeblog = null;
+        User testUser;
+        Weblog testWeblog;
         testUser = TestUtils.setupUser("mediaFileTestUser4");
         testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog4", testUser);
 

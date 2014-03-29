@@ -131,8 +131,8 @@ public class SharedThemeFromDir extends SharedTheme {
      */
     public List<ThemeResource> getResources() {
 
+        List<ThemeResource> myResources = new ArrayList<ThemeResource>(this.resources.values());
         // make sure resources are sorted.
-        List myResources = new ArrayList<ThemeResource>(this.resources.values());
         Collections.sort(myResources);
 
         return myResources;
@@ -254,7 +254,7 @@ public class SharedThemeFromDir extends SharedTheme {
                 // here we set content and template language from standard
                 // template code assuming it is the default
                 SharedThemeTemplate theme_template = new SharedThemeTemplate(
-                        this, themeMetadata.getId() + ":"
+                        themeMetadata.getId() + ":"
                                 + stylesheetTmpl.getName(),
                         WeblogTemplate.ACTION_CUSTOM, stylesheetTmpl.getName(),
                         stylesheetTmpl.getDescription(), contents,
@@ -354,7 +354,7 @@ public class SharedThemeFromDir extends SharedTheme {
             }
 
             // construct ThemeTemplate representing this file
-            theme_template = new SharedThemeTemplate(this,
+            theme_template = new SharedThemeTemplate(
                     themeMetadata.getId() + ":" + templateMetadata.getName(),
                     templateMetadata.getAction(), templateMetadata.getName(),
                     templateMetadata.getDescription(), contents,

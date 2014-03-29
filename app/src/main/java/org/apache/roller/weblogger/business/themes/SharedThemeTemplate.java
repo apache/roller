@@ -45,7 +45,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private boolean navbar = false;
     private String  outputContentType = null;
     private String type = null;
-    private SharedTheme myTheme = null;
 
     //hash map to cache template Code objects parsed
     private HashMap<String, TemplateCode> templateCodeHashMap = new HashMap<String, TemplateCode>();
@@ -53,11 +52,10 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     
     public SharedThemeTemplate() {}
     
-    public SharedThemeTemplate(SharedTheme theme, String id, String action, String name, 
+    public SharedThemeTemplate(String id, String action, String name,
             String desc, String contents, String link, Date date, 
             String tempLang, boolean hid, boolean navbar) {
         
-        this.myTheme = theme;
         this.id = id;
         this.action = action;
         this.name = name;

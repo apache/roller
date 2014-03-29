@@ -46,8 +46,7 @@ public interface ThemeManager {
      * @throws WebloggerException
      *             If there is some kind of fatal backend error.
      **/
-    SharedTheme getTheme(String id) throws ThemeNotFoundException,
-            WebloggerException;
+    SharedTheme getTheme(String id) throws WebloggerException;
 
     /**
      * Get the WeblogTheme for a given weblog.
