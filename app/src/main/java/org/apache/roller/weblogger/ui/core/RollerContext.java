@@ -95,7 +95,7 @@ public class RollerContext extends ContextLoaderListener
         // First, initialize everything that requires no database
 
         // Keep a reference to ServletContext object
-        this.servletContext = sce.getServletContext();
+        RollerContext.servletContext = sce.getServletContext();
         
         // Call Spring's context ContextLoaderListener to initialize all the
         // context files specified in web.xml. This is necessary because
@@ -332,13 +332,9 @@ public class RollerContext extends ContextLoaderListener
             return null;
         }
         
-        if(null == clazz) {
-            return null;
-        }
-        
         Class[] interfaces = clazz.getInterfaces();
-        for (int i = 0; i < interfaces.length; i++) {
-            if (interfaces[i].equals(AutoProvision.class)) {
+        for (Class clazz2 : interfaces) {
+            if (clazz2.equals(AutoProvision.class)) {
                 try {
                     return (AutoProvision) clazz.newInstance();
                 } catch (InstantiationException e) {

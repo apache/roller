@@ -93,7 +93,7 @@ public class JPAUserManagerImpl implements UserManager {
     
     public void addUser(User newUser) throws WebloggerException {
 
-        if(newUser == null) {
+        if (newUser == null) {
             throw new WebloggerException("cannot add null user");
         }
         

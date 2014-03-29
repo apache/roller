@@ -39,10 +39,10 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     
     private static Log mLogger = LogFactory.getLog(BigWeblogCalendarModel.class);
     
-    protected static final SimpleDateFormat STAR_DATE_FORMAT =
+    protected final SimpleDateFormat starDateFormat =
             DateUtil.get8charDateFormat();
     
-    protected static final SimpleDateFormat SINGLE_DAY_FORMAT =
+    protected final SimpleDateFormat singleDayFormat =
             new SimpleDateFormat("dd");
     
     
@@ -76,10 +76,10 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             
             // get the 8 char YYYYMMDD datestring for day, returns null
             // if no weblog entry on that day
-            String dateString = null;
+            String dateString;
             List entries = (List)monthMap.get(day);
             if ( entries != null ) {
-                dateString = STAR_DATE_FORMAT.format(
+                dateString = starDateFormat.format(
                         ((WeblogEntry)entries.get(0)).getPubTime());
                 
                 // append 8 char date string on end of selfurl
@@ -89,7 +89,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                 sb.append("<a href=\"");
                 sb.append( dayUrl );
                 sb.append("\">");
-                sb.append(SINGLE_DAY_FORMAT.format(day));
+                sb.append(singleDayFormat.format(day));
                 sb.append("</a></div>");
                 
                 for ( int i=0; i<entries.size(); i++ ) {
@@ -112,7 +112,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                 
             } else {
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
-                sb.append(SINGLE_DAY_FORMAT.format(day));
+                sb.append(singleDayFormat.format(day));
                 sb.append("</div>");
                 sb.append("<div class=\"bCalendarDayContentBig\"/>");
             }
@@ -138,14 +138,14 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         List entries = (List)monthMap.get( day );
         if ( entries != null && day != null ) {
             WeblogEntry entry = (WeblogEntry)entries.get(0);
-            dateString = STAR_DATE_FORMAT.format(entry.getPubTime());
+            dateString = starDateFormat.format(entry.getPubTime());
         }
         if (dateString == null && !alwaysURL) {
             return null;
         }
         else if (dateString == null && !nextPrevMonthURL) {
             dateString = DateUtil.format8chars(day);
-        } else if (dateString == null && nextPrevMonthURL) {
+        } else if (dateString == null) {
             dateString = DateUtil.format6chars(day);
         }
         try {

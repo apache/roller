@@ -956,7 +956,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             Date startDate, Date endDate, int offset,
             int length) throws WebloggerException {
         Query query;
-        List<WeblogEntry> queryResults;
+        List queryResults;
         if (endDate == null) {
             endDate = new Date();
         }
