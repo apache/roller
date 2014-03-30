@@ -275,7 +275,7 @@ public class SearchResultsFeedModel implements Model {
 		return websiteSpecificSearch;
 	}
 
-	public String getCategoryPath() {
+	public String getCategoryName() {
 		return feedRequest.getWeblogCategoryName();
 	}
 

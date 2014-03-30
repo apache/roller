@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 
@@ -53,7 +54,7 @@ public class WeblogCalendarModel implements CalendarModel {
     protected String            pageLink = null;
     protected String            locale = null;
     protected Calendar          calendar = null;
-    protected Weblog       weblog = null;
+    protected Weblog            weblog = null;
     protected Date              prevMonth = null;
     protected Date              nextMonth = null;
     protected WeblogPageRequest pageRequest = null;
@@ -104,20 +105,17 @@ public class WeblogCalendarModel implements CalendarModel {
         // Use entry's date as previous month
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List prevEntries = mgr.getWeblogEntries(
-                    
-                    weblog,
-                    null,                      // user
-                    null,                      // startDate
-                    // since we need an entry.pubTime<startDate, but the method use <=
-                    new Date(startDate.getTime()-1),                 // endDate 
-                    cat,                       // cat
-                    null,WeblogEntry.PUBLISHED,
-                    null,                      // text
-                    null,                      // sortby (null means pubTime)
-                    WeblogEntryManager.DESCENDING,
-                    locale,
-                    0, 1);                     // offset, range
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(weblog);
+            // since we need an entry.pubTime < startDate, but the method uses endDate
+            wesc.setEndDate(new Date(startDate.getTime()-1));
+            wesc.setCatName(cat);
+            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.DESCENDING);
+            wesc.setLocale(locale);
+            wesc.setMaxResults(1);
+            List prevEntries = mgr.getWeblogEntries(wesc);
+
             if (prevEntries.size() > 0) {
                 WeblogEntry prevEntry = (WeblogEntry)prevEntries.get(0);
                 prevMonth = DateUtil.getStartOfMonth(new Date(prevEntry.getPubTime().getTime()),getCalendar());
@@ -131,20 +129,16 @@ public class WeblogCalendarModel implements CalendarModel {
         // Use entry's date as next month
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List nextEntries = mgr.getWeblogEntries(
-                    
-                    weblog,
-                    null,                      // user
-                    // since we need an entry.pubTime>endDate, but the method use >=
-                    new Date(endDate.getTime()+1),                   // startDate
-                    null,                      // endDate 
-                    cat,                       // cat
-                    null,WeblogEntry.PUBLISHED, // status
-                    null,                      // text
-                    null,                      // sortby (null means pubTime)
-                    WeblogEntryManager.ASCENDING,   // sortorder
-                    locale,                    // locale
-                    0, 1);                     // offset, range
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(weblog);
+            // since we need an entry.pubTime > endDate, but the method uses startDate
+            wesc.setStartDate(new Date(startDate.getTime()-1));
+            wesc.setCatName(cat);
+            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.ASCENDING);
+            wesc.setLocale(locale);
+            wesc.setMaxResults(1);
+            List nextEntries = mgr.getWeblogEntries(wesc);
             if (nextEntries.size() > 0) {
                 WeblogEntry nextEntry = (WeblogEntry)nextEntries.get(0);
                 nextMonth = DateUtil.getStartOfMonth(new Date(nextEntry.getPubTime().getTime()),getCalendar());
@@ -166,21 +160,20 @@ public class WeblogCalendarModel implements CalendarModel {
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            monthMap = mgr.getWeblogEntryStringMap(
-                    
-                    weblog,
-                    startDate,
-                    endDate,
-                    catName,
-                    null,WeblogEntry.PUBLISHED,
-                    locale,
-                    0, -1);
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(weblog);
+            wesc.setStartDate(startDate);
+            wesc.setEndDate(endDate);
+            wesc.setCatName(catName);
+            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setLocale(locale);
+            monthMap = mgr.getWeblogEntryStringMap(wesc);
         } catch (WebloggerException e) {
             log.error(e);
             monthMap = new HashMap<Date, String>();
         }
     }
-    
+
     public void setDay(String month) throws Exception {
         SimpleDateFormat fmt = DateUtil.get8charDateFormat();
         fmt.setCalendar(getCalendar());

@@ -768,20 +768,12 @@ public class Weblog implements Serializable {
         }
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            recentEntries = wmgr.getWeblogEntries(
-                    
-                    this, 
-                    null,       // user
-                    null,       // startDate
-                    null,       // endDate
-                    cat,        // cat or null
-                    null,WeblogEntry.PUBLISHED, 
-                    null,       // text
-                    "pubTime",  // sortby
-                    null,
-                    null, 
-                    0,
-                    length); 
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(this);
+            wesc.setCatName(cat);
+            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setMaxResults(length);
+            recentEntries = wmgr.getWeblogEntries(wesc);
         } catch (WebloggerException e) {
             log.error("ERROR: getting recent entries", e);
         }
@@ -801,8 +793,8 @@ public class Weblog implements Serializable {
         if (length > 100) {
             length = 100;
         }
-        List recentEntries = new ArrayList();
-        List tags = new ArrayList();
+        List<WeblogEntry> recentEntries = new ArrayList<WeblogEntry>();
+        List<String> tags = new ArrayList<String>();
         if (tag != null) {
             tags.add(tag);
         }
@@ -811,20 +803,12 @@ public class Weblog implements Serializable {
         }
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            recentEntries = wmgr.getWeblogEntries(
-                    
-                    this, 
-                    null,       // user
-                    null,       // startDate
-                    null,       // endDate
-                    null,       // cat or null
-                    tags,WeblogEntry.PUBLISHED, 
-                    null,       // text
-                    "pubTime",  // sortby
-                    null,
-                    null, 
-                    0,
-                    length); 
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(this);
+            wesc.setTags(tags);
+            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setMaxResults(length);
+            recentEntries = wmgr.getWeblogEntries(wesc);
         } catch (WebloggerException e) {
             log.error("ERROR: getting recent entries", e);
         }
@@ -840,7 +824,7 @@ public class Weblog implements Serializable {
         if (length > 100) {
             length = 100;
         }
-        List recentComments = new ArrayList();
+        List<WeblogEntryComment> recentComments = new ArrayList<WeblogEntryComment>();
         if (length < 1) {
             return recentComments;
         }

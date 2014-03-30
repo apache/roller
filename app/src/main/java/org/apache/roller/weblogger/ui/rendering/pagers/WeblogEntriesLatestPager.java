@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 
@@ -54,11 +55,11 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
             String             pageLink,
             String             entryAnchor,
             String             dateString,
-            String             catPath,
+            String             catName,
             List               tags,
             int                page) {
         
-        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
         
         // initialize the pager collection
         getEntries();
@@ -70,17 +71,17 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
         if (entries == null) {
             entries = new TreeMap<Date, List<WeblogEntryWrapper>>(new ReverseComparator());
             try {
-                Map<Date, List<WeblogEntry>> mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(
-                        weblog,
-                        null,
-                        new Date(),
-                        catPath,
-                        tags,
-                        WeblogEntry.PUBLISHED,
-                        locale,
-                        offset,
-                        length + 1);
-                
+                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+                wesc.setWeblog(weblog);
+                wesc.setEndDate(new Date());
+                wesc.setCatName(catName);
+                wesc.setTags(tags);
+                wesc.setStatus(WeblogEntry.PUBLISHED);
+                wesc.setLocale(locale);
+                wesc.setOffset(offset);
+                wesc.setMaxResults(length+1);
+                Map<Date, List<WeblogEntry>> mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(wesc);
+
                 // need to wrap pojos
                 int count = 0;
                 for (Map.Entry<Date, List<WeblogEntry>> entry : mmap.entrySet()) {

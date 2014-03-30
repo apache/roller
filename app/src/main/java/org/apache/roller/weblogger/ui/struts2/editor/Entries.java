@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
@@ -85,20 +87,18 @@ public class Entries extends UIAction {
             String status = getBean().getStatus();
             
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List<WeblogEntry> rawEntries = wmgr.getWeblogEntries(
-                    getActionWeblog(),
-                    null,
-                    getBean().getStartDate(),
-                    getBean().getEndDate(),
-                    getBean().getCategoryPath(),
-                    getBean().getTags(),
-                    ("ALL".equals(status)) ? null : status,
-                    getBean().getText(),
-                    getBean().getSortBy(),
-                    null,
-                    null,
-                    getBean().getPage() * COUNT,
-                    COUNT + 1);
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(getActionWeblog());
+            wesc.setStartDate(getBean().getStartDate());
+            wesc.setEndDate(getBean().getEndDate());
+            wesc.setCatName(getBean().getCategoryName());
+            wesc.setTags(getBean().getTags());
+            wesc.setStatus("ALL".equals(status) ? null : status);
+            wesc.setText(getBean().getText());
+            wesc.setSortBy(getBean().getSortBy());
+            wesc.setOffset(getBean().getPage() * COUNT);
+            wesc.setMaxResults(COUNT + 1);
+            List<WeblogEntry> rawEntries = wmgr.getWeblogEntries(wesc);
             entries = new ArrayList<WeblogEntry>();
             entries.addAll(rawEntries);
             if (entries.size() > 0) {
@@ -109,8 +109,8 @@ public class Entries extends UIAction {
                     hasMore = true;
                 }
                 
-                setFirstEntry((WeblogEntry)entries.get(0));
-                setLastEntry((WeblogEntry)entries.get(entries.size()-1));
+                setFirstEntry(entries.get(0));
+                setLastEntry(entries.get(entries.size()-1));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up entries", ex);
@@ -131,8 +131,8 @@ public class Entries extends UIAction {
         
         Map<String, String> params = new HashMap<String, String>();
         
-        if(!StringUtils.isEmpty(getBean().getCategoryPath())) {
-            params.put("bean.categoryPath", getBean().getCategoryPath());
+        if(!StringUtils.isEmpty(getBean().getCategoryName())) {
+            params.put("bean.categoryPath", getBean().getCategoryName());
         }
         if(!StringUtils.isEmpty(getBean().getTagsAsString())) {
             params.put("bean.tagsAsString", getBean().getTagsAsString());
@@ -149,10 +149,10 @@ public class Entries extends UIAction {
         if(!StringUtils.isEmpty(getBean().getStatus())) {
             params.put("bean.status", getBean().getStatus());
         }
-        if(!StringUtils.isEmpty(getBean().getSortBy())) {
-            params.put("bean.sortBy", getBean().getSortBy());
+        if(getBean().getSortBy() != null) {
+            params.put("bean.sortBy", getBean().getSortBy().toString());
         }
-        
+
         return WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("entries", "/roller-ui/authoring", 
                 getActionWeblog().getHandle(), params, false);
     }
@@ -187,8 +187,8 @@ public class Entries extends UIAction {
     public List<KeyValueObject> getSortByOptions() {
         List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
-        opts.add(new KeyValueObject("pubTime", getText("weblogEntryQuery.label.pubTime")));
-        opts.add(new KeyValueObject("updateTime", getText("weblogEntryQuery.label.updateTime")));
+        opts.add(new KeyValueObject(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.toString(), getText("weblogEntryQuery.label.pubTime")));
+        opts.add(new KeyValueObject(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.toString(), getText("weblogEntryQuery.label.updateTime")));
         
         return opts;
     }

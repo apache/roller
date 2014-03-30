@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -51,6 +52,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
@@ -198,9 +200,10 @@ public final class WeblogExport extends UIAction
             URLStrategy urlStrategy;
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
 
-            List rawEntries;
-            rawEntries = wmgr.getWeblogEntries(getActionWeblog(), null, null,
-                    null, null, null, null, null, null, null, null, 0, -1);
+            List<WeblogEntry> rawEntries;
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(getActionWeblog());
+            rawEntries = wmgr.getWeblogEntries(wesc);
 
             List<WeblogEntryWrapper> entries;
             entries = new ArrayList<WeblogEntryWrapper>();

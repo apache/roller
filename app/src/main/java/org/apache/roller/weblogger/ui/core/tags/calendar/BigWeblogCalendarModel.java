@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 
@@ -54,14 +55,14 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            monthMap = mgr.getWeblogEntryObjectMap(
-                    weblog,
-                    startDate,
-                    endDate,
-                    catName,
-                    null,WeblogEntry.PUBLISHED,
-                    locale,
-                    0, -1);
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(weblog);
+            wesc.setStartDate(startDate);
+            wesc.setEndDate(endDate);
+            wesc.setCatName(catName);
+            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setLocale(locale);
+            monthMap = mgr.getWeblogEntryObjectMap(wesc);
         } catch (WebloggerException e) {
             mLogger.error(e);
             monthMap = new HashMap();

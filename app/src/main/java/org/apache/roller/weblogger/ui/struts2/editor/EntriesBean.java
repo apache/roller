@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -33,11 +34,11 @@ public class EntriesBean {
     
     private String endDateString = null;
     private String startDateString = null;
-    private String categoryPath = null;
+    private String categoryName = null;
     private String tagsAsString = null;
     private String text = null;
     private String status = "ALL";
-    private String sortBy = "updateTime";
+    private WeblogEntrySearchCriteria.SortBy sortBy = WeblogEntrySearchCriteria.SortBy.UPDATE_TIME;
     private int page = 0;
     
     
@@ -74,12 +75,12 @@ public class EntriesBean {
     }
     
     
-    public String getCategoryPath() {
-        return categoryPath;
+    public String getCategoryName() {
+        return categoryName;
     }
     
-    public void setCategoryPath(String categoryId) {
-        this.categoryPath = categoryId;
+    public void setCategoryName(String categoryId) {
+        this.categoryName = categoryId;
     }
     
     public String getTagsAsString() {
@@ -106,12 +107,8 @@ public class EntriesBean {
         this.status = status;
     }
     
-    public String getSortBy() {
+    public WeblogEntrySearchCriteria.SortBy getSortBy() {
         return sortBy;
-    }
-    
-    public void setSortBy(String sortBy) {
-        this.sortBy = sortBy;
     }
     
     public int getPage() {
@@ -130,7 +127,7 @@ public class EntriesBean {
         buf.append("endDate = ").append(getEndDate()).append("\n");
         buf.append("status = ").append(getStatus()).append("\n");
         buf.append("sortBy = ").append(getSortBy()).append("\n");
-        buf.append("catPath = ").append(getCategoryPath()).append("\n");
+        buf.append("catName = ").append(getCategoryName()).append("\n");
         buf.append("tags = ").append(getTagsAsString()).append("\n");
         buf.append("text = ").append(getText()).append("\n");
         buf.append("page = ").append(getPage()).append("\n");

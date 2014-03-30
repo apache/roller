@@ -193,7 +193,13 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
      */
     public List<WeblogEntry> retrieveWeblogEntries(boolean publishedOnly) throws WebloggerException {
         WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        return wmgr.getWeblogEntries(this, publishedOnly);
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(weblog);
+        wesc.setCatName(this.getName());
+        if (publishedOnly) {
+            wesc.setStatus(WeblogEntry.PUBLISHED);
+        }
+        return wmgr.getWeblogEntries(wesc);
     }
     
     /**

@@ -51,6 +51,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagComparator;
 import org.apache.roller.weblogger.util.Utilities;
@@ -170,20 +171,12 @@ public class EntryCollection {
             if (!RollerAtomHandler.canView(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website: " + handle);
             }
-            List<WeblogEntry> entries = roller.getWeblogEntryManager().getWeblogEntries(
-                    website,
-                    null,              // user
-                    null,              // startDate
-                    null,              // endDate
-                    null,              // catName
-                    null,              // tags
-                    null,              // status
-                    null,              // text
-                    "updateTime",      // sortby
-                    null,
-                    null,              // locale
-                    start,             // offset (for range paging)
-                    max + 1);          // MAX_ENTRIES
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(website);
+            wesc.setSortBy(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
+            wesc.setOffset(start);
+            wesc.setMaxResults(max + 1);
+            List<WeblogEntry> entries = roller.getWeblogEntryManager().getWeblogEntries(wesc);
             Feed feed = new Feed();
             feed.setId(atomURL
                 +"/"+website.getHandle() + "/entries/" + start);

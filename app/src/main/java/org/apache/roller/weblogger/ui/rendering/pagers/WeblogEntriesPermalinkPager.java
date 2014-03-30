@@ -58,11 +58,11 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             String             pageLink,
             String             entryAnchor,
             String             dateString,
-            String             catPath,
+            String             catName,
             List               tags,
             int                page) {
         
-        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
         
         getEntries();
     }
@@ -90,7 +90,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return createURL(0, 0, weblog, locale, pageLink, null, dateString, catPath, tags);
+        return createURL(0, 0, weblog, locale, pageLink, null, dateString, catName, tags);
     }
     
     
@@ -101,7 +101,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public String getNextLink() {
         if (getNextEntry() != null) {
-            return createURL(0, 0, weblog, locale, pageLink, nextEntry.getAnchor(), dateString, catPath, tags);
+            return createURL(0, 0, weblog, locale, pageLink, nextEntry.getAnchor(), dateString, catName, tags);
         }
         return null;
     }
@@ -118,7 +118,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public String getPrevLink() {
         if (getPrevEntry() != null) {
-            return createURL(0, 0, weblog, locale, pageLink, prevEntry.getAnchor(), dateString, catPath, tags);
+            return createURL(0, 0, weblog, locale, pageLink, prevEntry.getAnchor(), dateString, catName, tags);
         }
         return null;
     }

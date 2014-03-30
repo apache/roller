@@ -24,11 +24,11 @@ import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 
 
@@ -37,9 +37,6 @@ import org.apache.roller.weblogger.pojos.WeblogHitCount;
  */
 public interface WeblogEntryManager {
 
-    String DESCENDING = "DESCENDING";
-    String ASCENDING = "ASCENDING";
-       
     /**
      * Save weblog entry.
      */
@@ -64,99 +61,35 @@ public interface WeblogEntryManager {
     /**
      * Get WeblogEntries by offset/length as list in reverse chronological order.
      * The range offset and list arguments enable paging through query results.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param user       User or null to get for all users.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category name or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param text       Text appearing in the text or summary, or null for all
-     * @param sortBy     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
-     * @param sortOrder  Sort order of ASCENDING or DESCENDING (null for DESCENDING)
-     * @param offset     Offset into results for paging
-     * @param range
-     * @return List of WeblogEntryData objects in reverse chrono order.
+     * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
+     * @return List of WeblogEntry objects in order specified by search criteria
      * @throws WebloggerException
      */
-    List<WeblogEntry> getWeblogEntries(
-            Weblog website,
-            User user,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,
-            String      status,
-            String      text,
-            String      sortBy, 
-            String      sortOrder,
-            String      locale,             
-            int         offset,
-            int         range)
+    List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc)
             throws WebloggerException;
-       
+
     /**
-     * Get Weblog Entries grouped by day. This method returns a Map that
-     * contains Lists, each List contains WeblogEntryData objects, and the
-     * Lists are keyed by Date objects.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category name or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param offset     Offset into results for paging
-     * @param range
-     * @return Map of Lists, keyed by Date, and containing WeblogEntry objects.
+     * Get Weblog Entries grouped by day.
+     * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
+     * @return Map of Lists of WeblogEntries keyed by calendar day
      * @throws WebloggerException
      */
-    Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(
-            Weblog website,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,            
-            String      status,
-            String      locale,
-            int         offset,
-            int         range)
+    Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc)
             throws WebloggerException;
-        
+
     /**
      * Get Weblog Entry date strings grouped by day. This method returns a Map
-     * that contains YYYYMMDD date strings object, keyed by Date objects
-     *
-     * @param website    Weblog or null to get for all weblogs.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category name or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param offset     Offset into results for paging
-     * @param range
+     * that contains one YYYYMMDD date string object for each calendar day having
+     * one or more blog entries.
+     * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
      * @return Map of date strings keyed by Date
      * @throws WebloggerException
      */
-    Map<Date, String> getWeblogEntryStringMap(
-            Weblog website,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,            
-            String      status,
-            String      locale,
-            int         offset,
-            int         range)
-            throws WebloggerException;    
+    Map<Date, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc)
+            throws WebloggerException;
     
     /**
-     * Get weblog entries with given category or, optionally, any sub-category
-     * of that category.
-     * @param cat     Category
-     * @return        List of weblog entries in category
-     */
-    List<WeblogEntry> getWeblogEntries(WeblogCategory cat, boolean subcats)
-            throws WebloggerException; 
-    
-    /** 
-     * Get weblog enties ordered by descending number of comments.
+     * Get weblog entries ordered by descending number of comments.
      * @param website    Weblog or null to get for all weblogs.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.

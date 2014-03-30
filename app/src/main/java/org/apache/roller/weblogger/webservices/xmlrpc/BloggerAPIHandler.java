@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
@@ -454,21 +455,18 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("     Number: " + numposts);
         
-        Weblog website = validate(blogid, userid,password);
+        Weblog weblog = validate(blogid, userid,password);
         
         try {
             Vector results = new Vector();
             
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-            if (website != null) {
-                Map<Date, List<WeblogEntry>> entries = weblogMgr.getWeblogEntryObjectMap(
-                        website,
-                        null,                   // startDate
-                        new Date(),             // endDate
-                        null,                   // catName
-                        null,                   // tags
-                        null, null, 0, -1);
+            if (weblog != null) {
+                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+                wesc.setWeblog(weblog);
+                wesc.setEndDate(new Date());
+                Map<Date, List<WeblogEntry>> entries = weblogMgr.getWeblogEntryObjectMap(wesc);
 
                 for (List<WeblogEntry> weList : entries.values()) {
                     for (WeblogEntry entry : weList) {

@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.IndexUtil;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 
 /**
  * An index operation that rebuilds a given users index (or all indexes).
@@ -116,14 +117,10 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                 // Add Doc
                 WeblogEntryManager weblogManager = roller
                         .getWeblogEntryManager();
-                List<WeblogEntry> entries = weblogManager.getWeblogEntries(website,
-                        null, null, // startDate
-                        null, // endDate
-                        null, // catName
-                        null, WeblogEntry.PUBLISHED,
-                        null, // text
-                        null, // sortby (null means pubTime)
-                        null, null, 0, -1); // offset, length, locale
+                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+                wesc.setWeblog(website);
+                wesc.setStatus(WeblogEntry.PUBLISHED);
+                List<WeblogEntry> entries = weblogManager.getWeblogEntries(wesc);
 
                 mLogger.debug("Entries to index: " + entries.size());
 

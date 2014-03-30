@@ -33,6 +33,7 @@ import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
@@ -45,7 +46,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 import org.apache.roller.weblogger.pojos.StatCountCountComparator;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 
@@ -367,92 +367,76 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         q.setParameter(1, website);
         return q.getResultList();
     }
-    
+
     /**
      * @inheritDoc
      */
-    public List<WeblogEntry> getWeblogEntries(
-            Weblog website,
-            User    user,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,
-            String      status,
-            String      text,
-            String      sortby,
-            String      sortOrder,
-            String      locale,
-            int         offset,
-            int         length) throws WebloggerException {
-        
+    public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc) throws WebloggerException {
+
         WeblogCategory cat = null;
-        if (StringUtils.isNotEmpty(catName) && website != null) {
-            cat = getWeblogCategoryByName(website, catName);
-            if (cat == null) {
-                catName = null;
-            }
+        if (StringUtils.isNotEmpty(wesc.getCatName()) && wesc.getWeblog() != null) {
+            cat = getWeblogCategoryByName(wesc.getWeblog(), wesc.getCatName());
         }
 
         List<Object> params = new ArrayList<Object>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
         
-        if (tags == null || tags.size()==0) {
+        if (wesc.getTags() == null || wesc.getTags().size()==0) {
             queryString.append("SELECT e FROM WeblogEntry e WHERE ");
         } else {
             queryString.append("SELECT e FROM WeblogEntry e JOIN e.tags t WHERE ");
             queryString.append("(");
-            for (int i = 0; i < tags.size(); i++) {
+            for (int i = 0; i < wesc.getTags().size(); i++) {
                 if (i != 0) {
                     queryString.append(" OR ");
                 }
-                params.add(size++, tags.get(i));
+                params.add(size++, wesc.getTags().get(i));
                 queryString.append(" t.name = ?").append(size);                
             }
             queryString.append(") AND ");
         }
         
-        if (website != null) {
-            params.add(size++, website.getId());
+        if (wesc.getWeblog() != null) {
+            params.add(size++, wesc.getWeblog().getId());
             queryString.append("e.website.id = ?").append(size);
         } else {
             params.add(size++, Boolean.TRUE);
             queryString.append("e.website.enabled = ?").append(size);
         }
         
-        /*if (tags != null && tags.size() > 0) {
-            // A JOIN with WeblogEntryTag in parent quert will cause a DISTINCT in SELECT clause
+        /*if (wesc.getTags() != null && wesc.getTags().size() > 0) {
+            // A JOIN with WeblogEntryTag in parent query will cause a DISTINCT in SELECT clause
             // WeblogEntry has a clob field and many databases do not link DISTINCT for CLOB fields
             // Hence as a workaround using corelated EXISTS query.
             queryString.append(" AND EXISTS (SELECT t FROM WeblogEntryTag t WHERE "
                     + " t.weblogEntry = e AND t.name IN (");
-            final String PARAM_SEPERATOR = ", ";
-            for (int i = 0; i < tags.size(); i++) {
-                params.add(size++, tags.get(i));
-                queryString.append("?").append(size).append(PARAM_SEPERATOR);
+            final String PARAM_SEPARATOR = ", ";
+            for (int i = 0; i < wesc.getTags().size(); i++) {
+                params.add(size++, wesc.getTags().get(i));
+                queryString.append("?").append(size).append(PARAM_SEPARATOR);
             }
-            // Remove the trailing PARAM_SEPERATOR
-            queryString.delete(queryString.length() - PARAM_SEPERATOR.length(),
+            // Remove the trailing PARAM_SEPARATOR
+            queryString.delete(queryString.length() - PARAM_SEPARATOR.length(),
                     queryString.length());
 
             // Close the brace FOR IN clause and EXIST clause
             queryString.append(" ) )");
         }*/
 
-        if (user != null) {
-            params.add(size++, user.getUserName());
+        if (wesc.getUser() != null) {
+            params.add(size++, wesc.getUser().getUserName());
             queryString.append(" AND e.creatorUserName = ?").append(size);
         }
         
-        if (startDate != null) {
-            Timestamp start = new Timestamp(startDate.getTime());
+        if (wesc.getStartDate() != null) {
+            Timestamp start = new Timestamp(wesc.getStartDate().getTime());
             params.add(size++, start);
             queryString.append(" AND e.pubTime >= ?").append(size);
         }
         
-        if (endDate != null) {
-            Timestamp end = new Timestamp(endDate.getTime());
+        if (wesc.getEndDate() != null) {
+            Timestamp end = new Timestamp(wesc.getEndDate().getTime());
             params.add(size++, end);
             queryString.append(" AND e.pubTime <= ?").append(size);
         }
@@ -462,31 +446,31 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append(" AND e.category.id = ?").append(size);
         }
                 
-        if (status != null) {
-            params.add(size++, status);
+        if (wesc.getStatus() != null) {
+            params.add(size++, wesc.getStatus());
             queryString.append(" AND e.status = ?").append(size);
         }
         
-        if (locale != null) {
-            params.add(size++, locale + '%');
+        if (wesc.getLocale() != null) {
+            params.add(size++, wesc.getLocale() + '%');
             queryString.append(" AND e.locale like ?").append(size);
         }
         
-        if (StringUtils.isNotEmpty(text)) {
-            params.add(size++, '%' + text + '%');
+        if (StringUtils.isNotEmpty(wesc.getText())) {
+            params.add(size++, '%' + wesc.getText() + '%');
             queryString.append(" AND ( e.text LIKE ?").append(size);
             queryString.append("    OR e.summary LIKE ?").append(size);
             queryString.append("    OR e.title LIKE ?").append(size);
             queryString.append(") ");
         }
         
-        if (sortby != null && sortby.equals("updateTime")) {
+        if (wesc.getSortBy() != null && wesc.getSortBy().equals("updateTime")) {
             queryString.append(" ORDER BY e.updateTime ");
         } else {
             queryString.append(" ORDER BY e.pubTime ");
         }
         
-        if (sortOrder != null && sortOrder.equals(ASCENDING)) {
+        if (wesc.getSortOrder() != null && wesc.getSortOrder().equals(WeblogEntrySearchCriteria.SortOrder.ASCENDING)) {
             queryString.append("ASC ");
         } else {
             queryString.append("DESC ");
@@ -498,11 +482,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             query.setParameter(i+1, params.get(i));
         }
         
-        if (offset != 0) {
-            query.setFirstResult(offset);
+        if (wesc.getOffset() != 0) {
+            query.setFirstResult(wesc.getOffset());
         }
-        if (length != -1) {
-            query.setMaxResults(length);
+        if (wesc.getMaxResults() != -1) {
+            query.setMaxResults(wesc.getMaxResults());
         }
         
         return query.getResultList();
@@ -612,30 +596,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             this.entryAnchorToIdMap.put(mappingKey, entry.getId());
         }
         return entry;
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    // TODO: this method should be removed and its functionality moved to getWeblogEntries()
-    public List<WeblogEntry> getWeblogEntries(WeblogCategory cat, boolean publishedOnly)
-    throws WebloggerException {
-        List results;
-        
-        if (publishedOnly) {
-            Query q = strategy.getNamedQuery(
-                    "WeblogEntry.getByStatus&Category");
-            q.setParameter(1, WeblogEntry.PUBLISHED);
-            q.setParameter(2, cat);
-            results = q.getResultList();
-        } else {
-            Query q = strategy.getNamedQuery(
-                    "WeblogEntry.getByCategory");
-            q.setParameter(1, cat);
-            results = q.getResultList();
-        }
-        
-        return results;
     }
     
     /**
@@ -846,88 +806,26 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(
-            Weblog website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            List    tags,
-            String  status,
-            String  locale,
-            int     offset,
-            int     length) throws WebloggerException {
-        return getWeblogEntryMap(
-                website,
-                startDate,
-                endDate,
-                catName,
-                tags,
-                status,
-                false,
-                locale,
-                offset,
-                length);
+    public Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc) throws WebloggerException {
+        return getWeblogEntryMap(wesc, false);
     }
-    
+
     /**
      * @inheritDoc
      */
-    public Map<Date, String> getWeblogEntryStringMap(
-            Weblog website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            List    tags,
-            String  status,
-            String  locale,
-            int     offset,
-            int     length
-            ) throws WebloggerException {
-        return getWeblogEntryMap(
-                website,
-                startDate,
-                endDate,
-                catName,
-                tags,
-                status,
-                true,
-                locale,
-                offset,
-                length);
+    public Map<Date, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc) throws WebloggerException {
+        return getWeblogEntryMap(wesc, true);
     }
     
-    private Map getWeblogEntryMap(
-            Weblog website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            List    tags,
-            String  status,
-            boolean stringsOnly,
-            String  locale,
-            int     offset,
-            int     length) throws WebloggerException {
-        
+    private Map getWeblogEntryMap(WeblogEntrySearchCriteria wesc, boolean stringsOnly) throws WebloggerException {
+
         TreeMap map = new TreeMap(REVERSE_COMPARATOR);
-        
-        List<WeblogEntry> entries = getWeblogEntries(
-                website,
-                null, // user
-                startDate,
-                endDate,
-                catName,
-                tags,
-                status,
-                null, // text
-                null, // sortBy
-                null, // sortOrder
-                locale,
-                offset,
-                length);
-        
+
+        List<WeblogEntry> entries = getWeblogEntries(wesc);
+
         Calendar cal = Calendar.getInstance();
-        if (website != null) {
-            cal.setTimeZone(website.getTimeZoneInstance());
+        if (wesc.getWeblog() != null) {
+            cal.setTimeZone(wesc.getWeblog().getTimeZoneInstance());
         }
         
         SimpleDateFormat formatter = DateUtil.get8charDateFormat();

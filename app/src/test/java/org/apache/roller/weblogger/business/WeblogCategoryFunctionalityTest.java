@@ -123,7 +123,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     
     
     /**
-     * Lookup category by path.
+     * Lookup category by name.
      */
     public void testLookupCategoryByName() throws Exception {
         

@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 
@@ -47,7 +48,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     private Weblog queryWeblog = null;
     private User queryUser = null;
     private String queryCat = null;
-    private List queryTags = null;
+    private List<String> queryTags = null;
     
     // entries for the pager
     private List<WeblogEntryWrapper> entries;
@@ -65,7 +66,7 @@ public class WeblogEntriesListPager extends AbstractPager {
             Weblog         queryWeblog,
             User           queryUser,
             String         queryCat,
-            List           queryTags,
+            List<String>   queryTags,
             String         locale,
             int            sinceDays,
             int            pageNum,
@@ -104,21 +105,19 @@ public class WeblogEntriesListPager extends AbstractPager {
             }
             
             try {
+                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+                wesc.setWeblog(queryWeblog);
+                wesc.setUser(queryUser);
+                wesc.setStartDate(startDate);
+                wesc.setCatName(queryCat);
+                wesc.setTags(queryTags);
+                wesc.setStatus(WeblogEntry.PUBLISHED);
+                wesc.setLocale(locale);
+                wesc.setOffset(offset);
+                wesc.setMaxResults(length+1);
                 List<WeblogEntry> rawEntries = WebloggerFactory.getWeblogger()
-                        .getWeblogEntryManager().getWeblogEntries(
-                        queryWeblog,
-                        queryUser,
-                        startDate,
-                        null,
-                        queryCat,
-                        queryTags,WeblogEntry.PUBLISHED,
-                        null,
-                        "pubTime",
-                        null,
-                        locale,
-                        offset,
-                        length + 1);
-                                
+                        .getWeblogEntryManager().getWeblogEntries(wesc);
+
                 // wrap the results
                 int count = 0;
                 for (WeblogEntry entry : rawEntries) {

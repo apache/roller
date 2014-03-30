@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
@@ -436,20 +437,12 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
-                List<WeblogEntry> entries = weblogMgr.getWeblogEntries(
-                        website,
-                        null,
-                        null,              // startDate
-                        null,              // endDate
-                        null,              // catName
-                        null,              // tags
-                        null,              // status
-                        null,              // text
-                        "updateTime",      // sortby
-                        null,
-                        null,
-                        0, numposts);
-                
+                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+                wesc.setWeblog(website);
+                wesc.setSortBy(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
+                wesc.setMaxResults(numposts);
+                List<WeblogEntry> entries = weblogMgr.getWeblogEntries(wesc);
+
                 for (WeblogEntry entry : entries) {
                     results.addElement(createPostStruct(entry, userid));
                 }

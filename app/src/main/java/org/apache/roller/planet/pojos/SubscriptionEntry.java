@@ -212,7 +212,6 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
             for (String catName : catArray) {
                 Category cat = new Category();
                 cat.setName(catName);
-                cat.setPath(catName);
                 list.add(cat);
             }
         }

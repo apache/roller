@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -107,7 +108,7 @@ public class WeblogEntryTest extends TestCase {
     public void testWeblogEntryCRUD() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        WeblogEntry entry = null;
+        WeblogEntry entry;
         
         WeblogEntry testEntry = new WeblogEntry();
         testEntry.setTitle("entryTestEntry");
@@ -138,7 +139,6 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure entry was updated
-        entry = null;
         entry = mgr.getWeblogEntry(id);
         assertNotNull(entry);
         assertEquals("testtest", entry.getTitle());
@@ -148,7 +148,6 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure entry was deleted
-        entry = null;
         entry = mgr.getWeblogEntry(id);
         assertNull(entry);
     }
@@ -160,9 +159,9 @@ public class WeblogEntryTest extends TestCase {
     public void testWeblogEntryLookups() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        WeblogEntry entry = null;
-        List entries = null;
-        Map entryMap = null;
+        WeblogEntry entry;
+        List entries;
+        Map entryMap;
 
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -209,97 +208,110 @@ public class WeblogEntryTest extends TestCase {
         entry5 = TestUtils.getManagedWeblogEntry(entry5);
         
         // get entry by id
-        entry = null;
         entry = mgr.getWeblogEntry(entry1.getId());
         assertNotNull(entry);
         assertEquals(entry1.getAnchor(), entry.getAnchor());
         
         // get entry by anchor
-        entry = null;
         entry = mgr.getWeblogEntryByAnchor(testWeblog, entry1.getAnchor());
         assertNotNull(entry);
         assertEquals(entry1.getTitle(), entry.getTitle());
         
         // get all entries for weblog
-        entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, null, null, 0, -1);
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(testWeblog);
+        entries = mgr.getWeblogEntries(wesc);
         assertNotNull(entries);
         assertEquals(5, entries.size());
         assertEquals(entry3, entries.get(0));
         
         // get all (non-future) PUBLISHED entries in category 
-        entries = null;
-        entries = mgr.getWeblogEntries(testWeblog.getDefaultCategory(), true);
+        WeblogEntrySearchCriteria wesc9 = new WeblogEntrySearchCriteria();
+        wesc9.setWeblog(testWeblog);
+        wesc9.setCatName(testWeblog.getDefaultCategory().getName());
+        wesc9.setStatus(WeblogEntry.PUBLISHED);
+        entries = mgr.getWeblogEntries(wesc9);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         
         // get all (non-future) PUBLISHED entries only 
-        entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, WeblogEntry.PUBLISHED, null, null, null, null, 0, -1);
+        WeblogEntrySearchCriteria wesc2 = new WeblogEntrySearchCriteria();
+        wesc2.setWeblog(testWeblog);
+        wesc2.setStatus(WeblogEntry.PUBLISHED);
+        entries = mgr.getWeblogEntries(wesc2);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         
         // get all entries in date range
-        entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, entry2.getPubTime(), entry2.getPubTime(), null, null, null, null, null, null, null, 0, -1);
+        WeblogEntrySearchCriteria wesc3 = new WeblogEntrySearchCriteria();
+        wesc3.setWeblog(testWeblog);
+        wesc3.setStartDate(entry2.getPubTime());
+        wesc3.setEndDate(entry2.getPubTime());
+        entries = mgr.getWeblogEntries(wesc3);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
         
         // get all entries, limited to maxSize
-        entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, null, null, 0, 2);
+        WeblogEntrySearchCriteria wesc4 = new WeblogEntrySearchCriteria();
+        wesc4.setWeblog(testWeblog);
+        wesc4.setMaxResults(2);
+        entries = mgr.getWeblogEntries(wesc4);
         assertNotNull(entries);
         assertEquals(2, entries.size());
         
         // get all entries in category
-        entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, testWeblog.getDefaultCategory().getName(), null, null, null, null, null, null, 0, -1);
+        WeblogEntrySearchCriteria wesc5 = new WeblogEntrySearchCriteria();
+        wesc5.setWeblog(testWeblog);
+        wesc5.setCatName(testWeblog.getDefaultCategory().getName());
+        entries = mgr.getWeblogEntries(wesc5);
         assertNotNull(entries);
         assertEquals(5, entries.size());
         
         // get all entries, limited by offset/range
-        entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, null, null, 1, 1);
+        WeblogEntrySearchCriteria wesc6 = new WeblogEntrySearchCriteria();
+        wesc6.setWeblog(testWeblog);
+        wesc6.setOffset(1);
+        wesc6.setMaxResults(1);
+        entries = mgr.getWeblogEntries(wesc6);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
         
         // get all entries, limited by locale
-        entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, null, "en_US", 0, -1);
+        WeblogEntrySearchCriteria wesc7 = new WeblogEntrySearchCriteria();
+        wesc7.setWeblog(testWeblog);
+        wesc7.setLocale("en_US");
+        entries = mgr.getWeblogEntries(wesc7);
         assertNotNull(entries);
         assertEquals(4, entries.size());
         assertEquals(entry3, entries.get(0));
         
         // get pinned entries only
-        entries = null;
         entries = mgr.getWeblogEntriesPinnedToMain(5);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry1, entries.get(0));
         
         // get next entry
-        entry = null;
         entry = mgr.getNextEntry(entry4, null, null);
         assertNotNull(entry);
         assertEquals(entry5, entry);
         
         // get previous entry
-        entry = null;
         entry = mgr.getPreviousEntry(entry5, null, null);
         assertNotNull(entry);
         assertEquals(entry4, entry);
         
         // get object map
-        entryMap = null;
-        entryMap = mgr.getWeblogEntryObjectMap(testWeblog, null, null, null, null, null, null, 0, -1);
+        WeblogEntrySearchCriteria wesc8 = new WeblogEntrySearchCriteria();
+        wesc8.setWeblog(testWeblog);
+        entryMap = mgr.getWeblogEntryObjectMap(wesc8);
         assertNotNull(entryMap);
         assertTrue(entryMap.keySet().size() > 1);
         
         // get string map
-        entryMap = null;
-        entryMap = mgr.getWeblogEntryStringMap(testWeblog, null, null, null, null, null, null, 0, -1);
+        entryMap = mgr.getWeblogEntryStringMap(wesc8);
         assertNotNull(entryMap);
         assertTrue(entryMap.keySet().size() > 1);
                 
@@ -316,9 +328,7 @@ public class WeblogEntryTest extends TestCase {
     public void testCreateAnchor() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        WeblogEntry entry = null;
-        List entries = null;
-        
+
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
@@ -347,7 +357,7 @@ public class WeblogEntryTest extends TestCase {
     public void testCreateAnEntryWithTagsShortcut() throws Exception {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            WeblogEntry entry = null;
+            WeblogEntry entry;
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             testUser = TestUtils.getManagedUser(testUser);
 
@@ -378,7 +388,7 @@ public class WeblogEntryTest extends TestCase {
             assertEquals(testEntry, entry);
             assertNotNull(entry.getTags());
             assertEquals(1, entry.getTags().size());
-            assertEquals("testtag", ((WeblogEntryTag) entry.getTags()
+            assertEquals("testtag", (entry.getTags()
                     .iterator().next()).getName());
             TestUtils.endSession(true);
 
@@ -511,22 +521,22 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
         
         // we'll need these
-        List tags1 = new ArrayList();
+        List<String> tags1 = new ArrayList<String>();
         tags1.add("nonExistTag");
         
-        List tags2 = new ArrayList();
+        List<String> tags2 = new ArrayList<String>();
         tags2.add("blahtag");
         
         // test site-wide
-        this.assertTrue(mgr.getTagComboExists(tags2, null));
-        this.assertFalse(mgr.getTagComboExists(tags1, null));
+        assertTrue(mgr.getTagComboExists(tags2, null));
+        assertFalse(mgr.getTagComboExists(tags1, null));
         
         // test weblog specific
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         weblog = TestUtils.getManagedWebsite(weblog);
-        this.assertTrue(mgr.getTagComboExists(tags2, testWeblog));
-        this.assertFalse(mgr.getTagComboExists(tags1, testWeblog));
-        this.assertFalse(mgr.getTagComboExists(tags2, weblog));
+        assertTrue(mgr.getTagComboExists(tags2, testWeblog));
+        assertFalse(mgr.getTagComboExists(tags1, testWeblog));
+        assertFalse(mgr.getTagComboExists(tags2, weblog));
         
         // teardown our test data
         TestUtils.teardownWeblogEntry(id1);
@@ -552,8 +562,11 @@ public class WeblogEntryTest extends TestCase {
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
-            List results = mgr.getWeblogEntries(testWeblog, null, null, null, null,
-                Arrays.asList(new String[] { "testtag" }), null, null, null, null, null, 0, -1);
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(testWeblog);
+            // tags are always saved lowercase (testTag -> testtag)
+            wesc.setTags(Arrays.asList("testtag"));
+            List results = mgr.getWeblogEntries(wesc);
             assertEquals(1, results.size());
             WeblogEntry testEntry = (WeblogEntry) results.iterator().next();
             assertEquals(entry, testEntry);
@@ -585,8 +598,11 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        List results = mgr.getWeblogEntries(testWeblog, null, null, null, null,
-        Arrays.asList(new String[] { "testtag" }), null, null, null, null, null, 0, -1);
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(testWeblog);
+        // tags are always saved lowercase (testTag -> testtag)
+        wesc.setTags(Arrays.asList("testtag"));
+        List results = mgr.getWeblogEntries(wesc);
         assertEquals(1, results.size());
         WeblogEntry testEntry = (WeblogEntry) results.iterator().next();
         assertEquals(entry, testEntry);
@@ -596,8 +612,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        results = mgr.getWeblogEntries(testWeblog, null, null, null, null,
-        Arrays.asList(new String[] { "testtag" }), null, null, null, null, null, 0, -1);
+        results = mgr.getWeblogEntries(wesc);
         assertEquals(0, results.size());
 
         // terminate
@@ -620,7 +635,7 @@ public class WeblogEntryTest extends TestCase {
         entry = mgr.getWeblogEntry(id);
         assertEquals(2, entry.getTags().size());
 
-        List updateTags = new ArrayList();
+        List<String> updateTags = new ArrayList<String>();
         updateTags.add("testwillstaytag");
         updateTags.add("testnewtag");
         updateTags.add("testnewtag3");
@@ -753,7 +768,7 @@ public class WeblogEntryTest extends TestCase {
                 if (!expectedWeblogTags.containsKey(stat.getName())) {
                     fail("Unexpected tagName.");
                 }
-                Integer expectedCount = (Integer)expectedWeblogTags.get(stat.getName());
+                Integer expectedCount = expectedWeblogTags.get(stat.getName());
                 assertEquals(expectedCount.intValue(), stat.getCount());
             }
 
@@ -782,7 +797,7 @@ public class WeblogEntryTest extends TestCase {
                 if (!expectedSiteTags.containsKey(stat.getName()))
                     fail("Unexpected tagName.");
 
-                Integer expectedCount = (Integer) expectedSiteTags.get(stat.getName());
+                Integer expectedCount = expectedSiteTags.get(stat.getName());
                 assertEquals(expectedCount.intValue(), stat.getCount());
             }
 
@@ -814,7 +829,7 @@ public class WeblogEntryTest extends TestCase {
                     fail("Unexpected tagName.");
                 }
                 Integer expectedCount =
-                        (Integer)expectedWeblogTags.get(stat.getName());
+                        expectedWeblogTags.get(stat.getName());
                 assertEquals(stat.getName(),
                         expectedCount.intValue(), stat.getCount());
             }
@@ -833,7 +848,7 @@ public class WeblogEntryTest extends TestCase {
                 if (!expectedSiteTags.containsKey(stat.getName())) {
                     fail("Unexpected tagName.");
                 }
-                Integer expectedCount = (Integer)expectedSiteTags.get(stat.getName());
+                Integer expectedCount = expectedSiteTags.get(stat.getName());
                 assertEquals(stat.getName(), expectedCount.intValue(), stat.getCount());
             }
 
@@ -894,7 +909,7 @@ public class WeblogEntryTest extends TestCase {
             if (!expectedWeblogTags.containsKey(stat.getName()))
                 fail("Unexpected tagName.");
 
-            Integer expectedCount = (Integer) expectedWeblogTags.get(stat.getName());
+            Integer expectedCount = expectedWeblogTags.get(stat.getName());
             assertEquals(expectedCount.intValue(), stat.getCount());
         }
 
@@ -919,7 +934,7 @@ public class WeblogEntryTest extends TestCase {
             if (!expectedSiteTags.containsKey(stat.getName()))
                 fail("Unexpected tagName.");
 
-            Integer expectedCount = (Integer) expectedSiteTags.get(stat.getName());
+            Integer expectedCount = expectedSiteTags.get(stat.getName());
             assertEquals(expectedCount.intValue(), stat.getCount());
         }
 
@@ -937,9 +952,8 @@ public class WeblogEntryTest extends TestCase {
      */
      public void testEntryAttributeCRUD() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        WeblogEntry entry = null;
+        WeblogEntry entry;
         
         WeblogEntry testEntry = new WeblogEntry();
         testEntry.setTitle("entryTestEntry");
@@ -985,7 +999,6 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure entry was updated
-        entry = null;
         entry = emgr.getWeblogEntry(id);
         assertNotNull(entry);
         assertEquals("testtest", entry.getTitle());
@@ -995,7 +1008,6 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure entry was deleted
-        entry = null;
         entry = emgr.getWeblogEntry(id);
         assertNull(entry);
     }
