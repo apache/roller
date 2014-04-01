@@ -105,7 +105,8 @@ public class Trackback {
         
         // Construct data
         String title = entry.getTitle();
-        String excerpt = StringUtils.left( Utilities.removeHTML(entry.getDisplayContent()),255 );
+        String excerpt = StringUtils.left( Utilities.removeHTML(entry.getDisplayContent()),
+                RollerConstants.TEXTWIDTH_255);
         String url = entry.getPermalink();
         String blog_name = entry.getWebsite().getName();
         

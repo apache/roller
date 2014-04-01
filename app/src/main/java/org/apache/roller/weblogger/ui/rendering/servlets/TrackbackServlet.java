@@ -110,8 +110,9 @@ public class TrackbackServlet extends HttpServlet {
                 
                 if (trackbackRequest.getExcerpt() == null) {
                     trackbackRequest.setExcerpt("");
-                } else if (trackbackRequest.getExcerpt().length() >= 255) {
-                    trackbackRequest.setExcerpt(trackbackRequest.getExcerpt().substring(0, 252)+"...");
+                } else if (trackbackRequest.getExcerpt().length() >= RollerConstants.TEXTWIDTH_255) {
+                    trackbackRequest.setExcerpt(trackbackRequest.getExcerpt().substring(0,
+                            RollerConstants.TEXTWIDTH_255 - 3)+"...");
                 }
                 
                 // lookup weblog specified by comment request

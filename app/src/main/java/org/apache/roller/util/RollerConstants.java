@@ -32,6 +32,8 @@ public final class RollerConstants {
     public static final int SEC_IN_MS = 1000;
     public static final int MIN_IN_MS = 60 * SEC_IN_MS;
 
+    public static final int TEXTWIDTH_255 = 255;
+
     private RollerConstants() {
         // never instantiable
         throw new AssertionError();

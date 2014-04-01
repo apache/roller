@@ -160,8 +160,8 @@ public final class PlanetCache {
         // still null, we need to get a fresh value
         if(lastModified == null) {
             
-            // TODO: get last updated for planet
-            lastModified = null; // WebloggerFactory.getWeblogger().getWeblogManager().getLastUpdated();
+            // TODO: create a WeblogManager.getLastUpdated() method to use below
+            lastModified = null;
             
             if (lastModified == null) {
                 lastModified = new Date();

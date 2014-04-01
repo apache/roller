@@ -28,8 +28,6 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 
 /**
@@ -97,7 +95,8 @@ public class RollerVelocity {
     
     /**
      * Convenience static method for looking up a template.
-     * @throws ResourceNotFoundException, ParseErrorException
+     * @throws org.apache.velocity.exception.ResourceNotFoundException,
+     *       org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name) {
         return velocityEngine.getTemplate(name + "|standard");
@@ -105,7 +104,8 @@ public class RollerVelocity {
 
     /**
      * Convenience static method for looking up a template.
-     * @throws ResourceNotFoundException, ParseErrorException
+     * @throws org.apache.velocity.exception.ResourceNotFoundException,
+     *       org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name, 
 			MobileDeviceRepository.DeviceType deviceType) {
@@ -114,7 +114,8 @@ public class RollerVelocity {
     
     /**
      * Convenience static method for looking up a template.
-     * @throws ResourceNotFoundException, ParseErrorException
+     * @throws org.apache.velocity.exception.ResourceNotFoundException,
+     *       org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name, String encoding) {
         return velocityEngine.getTemplate(name + "|standard", encoding);
@@ -122,7 +123,8 @@ public class RollerVelocity {
 	
     /**
      * Convenience static method for looking up a template.
-     * @throws ResourceNotFoundException, ParseErrorException
+     * @throws org.apache.velocity.exception.ResourceNotFoundException,
+     *       org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name, 
 			MobileDeviceRepository.DeviceType deviceType, String encoding) {
