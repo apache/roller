@@ -151,13 +151,11 @@ public class TagDataServlet extends HttpServlet {
             int count = 0;
             for (TagStat stat : tags) {
                 String term = stat.getName();
+                // gWCURL fields: weblog, locale, category, dateString, tags, pageNum, absolute
                 String viewURI = urlstrat.getWeblogCollectionURL(weblog,
-                        null,  // locale
-                        null,  // category
-                        null,  // date string
+                        null, null, null,
                         Collections.singletonList(stat.getName()),
-                        0,     // page
-                        true); // absolute
+                        0, true);
                 int frequency = stat.getCount();
                 pw.print("<atom:category term=\"" + term + "\" tagdata:frequency=\"" + frequency + "\" ");
                 pw.println("tagdata:href=\"" + viewURI + "\" />");

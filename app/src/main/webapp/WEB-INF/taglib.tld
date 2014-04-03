@@ -9,16 +9,6 @@
     Tags needed from the old Jakarta String Taglib, which has been retired.
     </info>
     <tag>
-        <name>trim</name>
-        <tagclass>org.apache.roller.weblogger.ui.tags.TrimTag</tagclass>
-        <bodycontent>JSP</bodycontent>
-        <attribute>
-            <name>var</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-    <tag>
         <name>wordWrap</name>
         <tagclass>org.apache.roller.weblogger.ui.tags.WordWrapTag</tagclass>
         <bodycontent>JSP</bodycontent>
