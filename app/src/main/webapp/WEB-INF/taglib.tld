@@ -39,21 +39,6 @@
         </attribute>
     </tag>
     <tag>
-        <name>left</name>
-        <tagclass>org.apache.roller.weblogger.ui.tags.LeftTag</tagclass>
-        <bodycontent>JSP</bodycontent>
-        <attribute>
-            <name>var</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>count</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-    <tag>
         <name>truncateNicely</name>
         <tagclass>org.apache.roller.weblogger.ui.tags.TruncateNicelyTag</tagclass>
         <bodycontent>JSP</bodycontent>
