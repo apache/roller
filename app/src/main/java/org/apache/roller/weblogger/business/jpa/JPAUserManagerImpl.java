@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.UserManager;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class JPAUserManagerImpl implements UserManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of userNames -> userIds
-    private Map userNameToIdMap = new Hashtable();
+    private Map<String, String> userNameToIdMap = new HashMap<String, String>();
     
 
     @com.google.inject.Inject
@@ -177,7 +178,7 @@ public class JPAUserManagerImpl implements UserManager {
         for (int i=0; i<params.length; i++) {
             query.setParameter(i+1, params[i]);
         }
-        User user = null;
+        User user;
         try {
             user = (User)query.getSingleResult();
         } catch (NoResultException e) {
@@ -196,14 +197,9 @@ public class JPAUserManagerImpl implements UserManager {
     public List<User> getUsers(Weblog weblog, Boolean enabled, Date startDate,
             Date endDate, int offset, int length)
             throws WebloggerException {
-        Query query = null;
+        Query query;
 
-        // if we are doing date range then we must have an end date
-        if (startDate != null && endDate == null) {
-            endDate = new Date();
-        }
-
-        List params = new ArrayList();
+        List<Object> params = new ArrayList<Object>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
         StringBuilder whereClause = new StringBuilder();
@@ -211,7 +207,7 @@ public class JPAUserManagerImpl implements UserManager {
         if (weblog != null) {
             queryString.append("SELECT u FROM User u JOIN u.permissions p ");
             params.add(size++, weblog);
-            whereClause.append(" WHERE p.website = ?" + size);
+            whereClause.append(" WHERE p.website = ?").append(size);
         } else {
             queryString.append("SELECT u FROM User u ");
         }
@@ -223,7 +219,7 @@ public class JPAUserManagerImpl implements UserManager {
                 whereClause.append(" AND ");
             }
             params.add(size++, enabled);
-            whereClause.append("u.enabled = ?" + size);
+            whereClause.append("u.enabled = ?").append(size);
         }
 
         if (startDate != null) {
@@ -233,16 +229,14 @@ public class JPAUserManagerImpl implements UserManager {
                 whereClause.append(" AND ");
             }
 
-            // if we are doing date range then we must have an end date
-            if(endDate == null) {
-                endDate = new Date();
-            }
             Timestamp start = new Timestamp(startDate.getTime());
-            Timestamp end = new Timestamp(endDate.getTime());
+            // if we are doing date range then we must have an end date
+            // TODO: why? confirm end date needed
+            Timestamp end = new Timestamp(endDate != null ? endDate.getTime() : new Date().getTime());
             params.add(size++, start);
-            whereClause.append("u.dateCreated > ?" + size);
+            whereClause.append("u.dateCreated > ?").append(size);
             params.add(size++, end);
-            whereClause.append(" AND u.dateCreated < ?" + size);
+            whereClause.append(" AND u.dateCreated < ?").append(size);
         }
         whereClause.append(" ORDER BY u.dateCreated DESC");
         query = strategy.getDynamicQuery(queryString.toString() + whereClause.toString());
@@ -268,25 +262,19 @@ public class JPAUserManagerImpl implements UserManager {
     public List<User> getUsers(Boolean enabled, Date startDate, Date endDate,
             int offset, int length)
             throws WebloggerException {
-        Query query = null;
-        List results = null;
-        boolean setRange = offset != 0 || length != -1;
+        Query query;
 
-        if (endDate == null) {
-            endDate = new Date();
-        }
-        
+        Timestamp end = new Timestamp(endDate != null ? endDate.getTime() : new Date().getTime());
+
         if (enabled != null) {
             if (startDate != null) {
                 Timestamp start = new Timestamp(startDate.getTime());
-                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "User.getByEnabled&EndDate&StartDateOrderByStartDateDesc");
                 query.setParameter(1, enabled);
                 query.setParameter(2, end);
                 query.setParameter(3, start);
             } else {
-                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "User.getByEnabled&EndDateOrderByStartDateDesc");
                 query.setParameter(1, enabled);
@@ -295,13 +283,11 @@ public class JPAUserManagerImpl implements UserManager {
         } else {
             if (startDate != null) {
                 Timestamp start = new Timestamp(startDate.getTime());
-                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "User.getByEndDate&StartDateOrderByStartDateDesc");
                 query.setParameter(1, end);
                 query.setParameter(2, start);
             } else {
-                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "User.getByEndDateOrderByStartDateDesc");
                 query.setParameter(1, end);
@@ -320,12 +306,8 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * Get users of a website
      */
-    public List getUsers(Weblog website, Boolean enabled, int offset, int length) throws WebloggerException {
-        Query query = null;
-
-        if (length == -1) {
-            length = Integer.MAX_VALUE - offset;
-        }
+    public List<User> getUsers(Weblog website, Boolean enabled, int offset, int length) throws WebloggerException {
+        Query query;
 
         if (enabled != null) {
             if (website != null) {
@@ -354,9 +336,9 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public List getUsersStartingWith(String startsWith, Boolean enabled,
+    public List<User> getUsersStartingWith(String startsWith, Boolean enabled,
             int offset, int length) throws WebloggerException {
-        Query query = null;
+        Query query;
 
         if (enabled != null) {
             if (startsWith != null) {
@@ -471,7 +453,7 @@ public class JPAUserManagerImpl implements UserManager {
         for (int i = 0; i < params.length; i++) {
             query.setParameter(i + 1, params[i]);
         }
-        User user = null;
+        User user;
         try {
             user = (User) query.getSingleResult();
         } catch (NoResultException e) {
@@ -647,7 +629,7 @@ public class JPAUserManagerImpl implements UserManager {
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
-        WeblogPermission existingPerm = null;
+        WeblogPermission existingPerm;
         try {
             existingPerm = (WeblogPermission)q.getSingleResult();
 
@@ -666,7 +648,7 @@ public class JPAUserManagerImpl implements UserManager {
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
-        WeblogPermission existingPerm = null;
+        WeblogPermission existingPerm;
         try {
             existingPerm = (WeblogPermission)q.getSingleResult();
         } catch (NoResultException ignored) {
@@ -683,7 +665,7 @@ public class JPAUserManagerImpl implements UserManager {
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
-        WeblogPermission oldperm = null;
+        WeblogPermission oldperm;
         try {
             oldperm = (WeblogPermission)q.getSingleResult();
         } catch (NoResultException ignored) {

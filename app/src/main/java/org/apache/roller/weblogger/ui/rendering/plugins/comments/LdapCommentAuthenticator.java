@@ -114,7 +114,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 		
 		if(rollerPropertiesValid && userDataValid){
 			try {
-				Hashtable<String,String> env = new Hashtable<String,String>();  
+				Hashtable<String,String> env = new Hashtable<String,String>();
 				env.put(Context.INITIAL_CONTEXT_FACTORY,  
 						"com.sun.jndi.ldap.LdapCtxFactory"); 
 				if(ldapSecurityLevel != null 
@@ -126,7 +126,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 				env.put(Context.SECURITY_PRINCIPAL,  getQualifedDc(ldapDc, ldapOu, ldapUser));  
 				env.put(Context.SECURITY_CREDENTIALS, ldapPass);
 				env.put(Context.PROVIDER_URL, "ldap://" + ldapHost + ":" + ldapPort);  
-				context = new InitialLdapContext(env, null);  
+				context = new InitialLdapContext(env, null);
 				validUser = true;
 				LOG.info("LDAP Authentication Successful. user: " + ldapUser);
 			} catch (Exception e) {
