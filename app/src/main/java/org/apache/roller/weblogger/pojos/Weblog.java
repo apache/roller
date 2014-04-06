@@ -830,16 +830,12 @@ public class Weblog implements Serializable {
         }
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            recentComments = wmgr.getComments(
-                    
-                    this,
-                    null,          // weblog entry
-                    null,          // search String
-                    null,          // startDate
-                    null,WeblogEntryComment.APPROVED,
-                    true,          // we want reverse chrono order
-                    0,             // offset
-                    length);
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setWeblog(this);
+            csc.setStatus(WeblogEntryComment.APPROVED);
+            csc.setReverseChrono(true);
+            csc.setMaxResults(length);
+            recentComments = wmgr.getComments(csc);
         } catch (WebloggerException e) {
             log.error("ERROR: getting recent comments", e);
         }

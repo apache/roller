@@ -737,16 +737,12 @@ public class WeblogEntry implements Serializable {
         List<WeblogEntryComment> list = new ArrayList<WeblogEntryComment>();
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            return wmgr.getComments(
-                    getWebsite(),
-                    this,
-                    null,  // search String
-                    null,  // startDate
-                    null,
-                    approvedOnly ? WeblogEntryComment.APPROVED : null,
-                    false, // we want chrono order
-                    0,    // offset
-                    -1);   // no limit
+
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setWeblog(getWebsite());
+            csc.setEntry(this);
+            csc.setStatus(approvedOnly ? WeblogEntryComment.APPROVED : null);
+            return wmgr.getComments(csc);
         } catch (WebloggerException alreadyLogged) {}
         return list;
     }

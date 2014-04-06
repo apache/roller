@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -198,28 +199,10 @@ public interface WeblogEntryManager {
        
     /**
      * Generic comments query method.
-     * @param website    Website or null for all comments on site
-     * @param entry      Entry or null to include all comments
-     * @param startDate  Start date or null for no restriction
-     * @param endDate    End date or null for no restriction
-     * @param status     The status of the comment, or null for any
-     * @param reverseChrono True for results in reverse chrono order
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
+     * @param csc CommentSearchCriteria object with fields indicating search criteria
+     * @return list of comments fitting search criteria
      */
-    List<WeblogEntryComment> getComments(
-            
-            Weblog          website,
-            WeblogEntry     entry,
-            String          searchString,
-            Date            startDate,
-            Date            endDate,
-            String          status,
-            boolean         reverseChrono,
-            int             offset,
-            int             length
-            
-            ) throws WebloggerException;
+    List<WeblogEntryComment> getComments(CommentSearchCriteria csc) throws WebloggerException;
 
     /**
      * Deletes comments that match paramters.

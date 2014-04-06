@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -101,22 +102,28 @@ public class Comments extends UIAction {
                 setQueryEntry(wmgr.getWeblogEntry(getBean().getEntryId()));
             }
 
-            // query for comments (reverse chrono order)
-            List<WeblogEntryComment> rawComments = wmgr.getComments(
-                    getActionWeblog(), getQueryEntry(), getBean()
-                            .getSearchString(), getBean().getStartDate(),
-                    getBean().getEndDate(), getBean().getStatus(), true,
-                    getBean().getPage() * COUNT, COUNT + 1);
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setWeblog(getActionWeblog());
+            csc.setEntry(getQueryEntry());
+            csc.setSearchText(getBean().getSearchString());
+            csc.setStartDate(getBean().getStartDate());
+            csc.setEndDate(getBean().getEndDate());
+            csc.setStatus(getBean().getStatus());
+            csc.setReverseChrono(true);
+            csc.setOffset(getBean().getPage() * COUNT);
+            csc.setMaxResults(COUNT + 1);
+
+            List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
             comments = new ArrayList<WeblogEntryComment>();
             comments.addAll(rawComments);
-            if (comments != null && comments.size() > 0) {
+            if (comments.size() > 0) {
                 if (comments.size() > COUNT) {
                     comments.remove(comments.size() - 1);
                     hasMore = true;
                 }
 
-                setFirstComment((WeblogEntryComment) comments.get(0));
-                setLastComment((WeblogEntryComment) comments.get(comments
+                setFirstComment(comments.get(0));
+                setLastComment(comments.get(comments
                         .size() - 1));
             }
         } catch (WebloggerException ex) {
@@ -189,12 +196,15 @@ public class Comments extends UIAction {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                     .getWeblogEntryManager();
 
-            // reverse chrono order
-            List<WeblogEntryComment> allMatchingComments = wmgr.getComments(
-                    getActionWeblog(), null, getBean().getSearchString(),
-                    getBean().getStartDate(), getBean().getEndDate(), getBean()
-                            .getStatus(), true, 0, -1);
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setWeblog(getActionWeblog());
+            csc.setSearchText(getBean().getSearchString());
+            csc.setStartDate(getBean().getStartDate());
+            csc.setEndDate(getBean().getEndDate());
+            csc.setStatus(getBean().getStatus());
+            csc.setReverseChrono(true);
 
+            List<WeblogEntryComment> allMatchingComments = wmgr.getComments(csc);
             if (allMatchingComments.size() > COUNT) {
                 setBulkDeleteCount(allMatchingComments.size());
             }
@@ -221,12 +231,17 @@ public class Comments extends UIAction {
             // comments that have been deleted, so build a list of those entries
             Set<WeblogEntry> reindexEntries = new HashSet<WeblogEntry>();
             if (WebloggerConfig.getBooleanProperty("search.enabled")) {
-                List<WeblogEntryComment> targetted = (List<WeblogEntryComment>) wmgr
-                        .getComments(getActionWeblog(), getQueryEntry(),
-                                getBean().getSearchString(), getBean()
-                                        .getStartDate(),
-                                getBean().getEndDate(), getBean().getStatus(),
-                                true, 0, -1);
+
+                CommentSearchCriteria csc = new CommentSearchCriteria();
+                csc.setWeblog(getActionWeblog());
+                csc.setEntry(getQueryEntry());
+                csc.setSearchText(getBean().getSearchString());
+                csc.setStartDate(getBean().getStartDate());
+                csc.setEndDate(getBean().getEndDate());
+                csc.setStatus(getBean().getStatus());
+                csc.setReverseChrono(true);
+
+                List<WeblogEntryComment> targetted = wmgr.getComments(csc);
                 for (WeblogEntryComment comment : targetted) {
                     reindexEntries.add(comment.getWeblogEntry());
                 }
@@ -280,7 +295,7 @@ public class Comments extends UIAction {
 
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
-            if (deletes != null && deletes.size() > 0) {
+            if (deletes.size() > 0) {
                 log.debug("Processing deletes - " + deletes.size());
 
                 WeblogEntryComment deleteComment = null;

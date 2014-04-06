@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -97,16 +98,17 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         boolean hasMore = false;
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List<WeblogEntryComment> rawComments = wmgr.getComments(
-                    null,
-                    null,
-                    getBean().getSearchString(),
-                    getBean().getStartDate(),
-                    getBean().getEndDate(),
-                    getBean().getStatus(),
-                    true,
-                    getBean().getPage() * COUNT,
-                    COUNT + 1);
+
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setSearchText(getBean().getSearchString());
+            csc.setStartDate(getBean().getStartDate());
+            csc.setEndDate(getBean().getEndDate());
+            csc.setStatus(getBean().getStatus());
+            csc.setReverseChrono(true);
+            csc.setOffset(getBean().getPage() * COUNT);
+            csc.setMaxResults(COUNT+1);
+
+            List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
             comments = new ArrayList<WeblogEntryComment>();
             comments.addAll(rawComments);   
             
@@ -182,17 +184,16 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List allMatchingComments = wmgr.getComments(
-                    null,
-                    null,
-                    getBean().getSearchString(),
-                    getBean().getStartDate(),
-                    getBean().getEndDate(),
-                    getBean().getStatus(),
-                    true,
-                    0,
-                    -1);
-            
+
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setSearchText(getBean().getSearchString());
+            csc.setStartDate(getBean().getStartDate());
+            csc.setEndDate(getBean().getEndDate());
+            csc.setStatus(getBean().getStatus());
+            csc.setReverseChrono(true);
+
+            List allMatchingComments = wmgr.getComments(csc);
+
             if(allMatchingComments.size() > COUNT) {
                 setBulkDeleteCount(allMatchingComments.size());
             }

@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
@@ -92,12 +93,20 @@ public class CommentsPager extends AbstractPager {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                List<WeblogEntryComment> entries = wmgr.getComments(
-                        weblog, null, null, startDate, null, WeblogEntryComment.APPROVED, true, offset, length + 1);
+
+                CommentSearchCriteria csc = new CommentSearchCriteria();
+                csc.setWeblog(weblog);
+                csc.setStartDate(startDate);
+                csc.setStatus(WeblogEntryComment.APPROVED);
+                csc.setReverseChrono(true);
+                csc.setOffset(offset);
+                csc.setMaxResults(length + 1);
+
+                List<WeblogEntryComment> comments = wmgr.getComments(csc);
                 
                 // wrap the results
                 int count = 0;
-                for (WeblogEntryComment comment : entries) {
+                for (WeblogEntryComment comment : comments) {
                     if (count++ < length) {
                         results.add(WeblogEntryCommentWrapper.wrap(comment, urlStrategy));
                     } else {

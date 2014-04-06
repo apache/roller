@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -114,7 +115,6 @@ public class CommentTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure comment was created
-        comment = null;
         comment = mgr.getComment(id);
         assertNotNull(comment);
         assertEquals("this is a test comment", comment.getContent());
@@ -125,7 +125,6 @@ public class CommentTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure comment was updated
-        comment = null;
         comment = mgr.getComment(id);
         assertNotNull(comment);
         assertEquals("testtest", comment.getContent());
@@ -135,7 +134,6 @@ public class CommentTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure comment was deleted
-        comment = null;
         comment = mgr.getComment(id);
         assertNull(comment);
     }
@@ -147,7 +145,7 @@ public class CommentTest extends TestCase {
     public void testCommentLookups() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        List comments = null;
+        List comments;
         
         // we need some comments to play with
         testEntry = TestUtils.getManagedWeblogEntry(testEntry);
@@ -157,15 +155,15 @@ public class CommentTest extends TestCase {
         TestUtils.endSession(true);
         
         // get all comments
-        comments = null;
-        comments = mgr.getComments(null, null, null, null, null, null, false, 0, -1);
+        CommentSearchCriteria csc = new CommentSearchCriteria();
+        comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(3, comments.size());
         
         // get all comments for entry
         testEntry = TestUtils.getManagedWeblogEntry(testEntry);
-        comments = null;
-        comments = mgr.getComments(null, testEntry, null, null, null, null, false, 0, -1);
+        csc.setEntry(testEntry);
+        comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(3, comments.size());
         
@@ -176,20 +174,22 @@ public class CommentTest extends TestCase {
         TestUtils.endSession(true);
         
         // get pending comments
-        comments = null;
-        comments = mgr.getComments(null, null, null, null, null, WeblogEntryComment.PENDING, false, 0, -1);
+        csc.setEntry(null);
+        csc.setStatus(WeblogEntryComment.PENDING);
+        comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(1, comments.size());
         
         // get approved comments
-        comments = null;
-        comments = mgr.getComments(null, null, null, null, null, WeblogEntryComment.APPROVED, false, 0, -1);
+        csc.setStatus(WeblogEntryComment.APPROVED);
+        comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
         // get comments with offset
-        comments = null;
-        comments = mgr.getComments(null, null, null, null, null, null, false, 1, -1);
+        csc.setStatus(null);
+        csc.setOffset(1);
+        comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
