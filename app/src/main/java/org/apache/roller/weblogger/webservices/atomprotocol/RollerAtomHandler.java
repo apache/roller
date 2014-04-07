@@ -96,14 +96,14 @@ public class RollerAtomHandler implements AtomHandler {
     protected int maxEntries = 20;
     protected String atomURL = null;
     
-    protected static boolean throttle = true;
+    protected static final boolean throttle;
     
     protected static Log log =
             LogFactory.getFactory().getInstance(RollerAtomHandler.class);
     
     static {
         throttle = WebloggerConfig
-            .getBooleanProperty("webservices.atomprotocol.oneSecondThrottle");
+            .getBooleanProperty("webservices.atomprotocol.oneSecondThrottle", true);
     }
     
     //------------------------------------------------------------ construction
@@ -301,10 +301,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public boolean isAtomServiceURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length == 0) {
-            return true;
-        }
-        return false;
+        return pathInfo.length == 0;
     }
     
     /**
@@ -383,14 +380,14 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Return true if user is allowed to view an entry.
      */
-    public static  boolean canView(User u, WeblogEntry entry) {
+    public static boolean canView(User u, WeblogEntry entry) {
         return canEdit(u, entry);
     }
     
     /**
      * Return true if user is allowed to view a website.
      */
-    public static  boolean canView(User u, Weblog website) {
+    public static boolean canView(User u, Weblog website) {
         return canEdit(u, website);
     }
     

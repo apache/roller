@@ -154,11 +154,11 @@ public class SearchResultsFeedModel implements Model {
 		if (search.getResultsCount() > -1) {
 
 			TopFieldDocs docs = search.getResults();
-			ScoreDoc[] hits = docs.scoreDocs;
+			ScoreDoc[] hitsArr = docs.scoreDocs;
 			this.hits = search.getResultsCount();
 
 			// Convert the Hits into WeblogEntryData instances.
-			convertHitsToEntries(hits, search);
+			convertHitsToEntries(hitsArr, search);
 		}
 
 		// search completed, setup pager based on results
@@ -197,7 +197,7 @@ public class SearchResultsFeedModel implements Model {
 		}
 
 		try {
-			TreeSet<String> categories = new TreeSet<String>();
+			TreeSet<String> categorySet = new TreeSet<String>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
@@ -215,7 +215,7 @@ public class SearchResultsFeedModel implements Model {
 
 				if (!(websiteSpecificSearch && handle.equals(feedRequest.getWeblogHandle()))
                         && doc.getField(FieldConstants.CATEGORY) != null) {
-                    categories.add(doc.getField(FieldConstants.CATEGORY).stringValue());
+                    categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
 				}
 
 				// maybe null if search result returned inactive user
@@ -226,8 +226,8 @@ public class SearchResultsFeedModel implements Model {
 				}
 			}
 
-			if (categories.size() > 0) {
-				this.categories = categories;
+			if (categorySet.size() > 0) {
+				this.categories = categorySet;
 			}
 		} catch (IOException e) {
 			throw new WebloggerException(e);

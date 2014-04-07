@@ -83,9 +83,9 @@ public class WeblogConfig extends UIAction {
             
             // set the Editor Page list
             UIPluginManager pmgr = RollerContext.getUIPluginManager();
-            List editorsList = pmgr.getWeblogEntryEditors();
-            if(editorsList != null) {
-                setEditorsList(editorsList);
+            List editorList = pmgr.getWeblogEntryEditors();
+            if(editorList != null) {
+                setEditorsList(editorList);
             }
             
             // set plugins list

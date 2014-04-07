@@ -166,8 +166,8 @@ public class FileContentManagerImpl implements FileContentManager {
         long maxDirBytes = (long)(RollerConstants.ONE_MB_IN_BYTES * maxDirSize.doubleValue());
         
         try {
-            File storageDir = this.getRealFile(weblog, null);
-            long weblogDirSize = this.getDirSize(storageDir, true);
+            File storageDirectory = this.getRealFile(weblog, null);
+            long weblogDirSize = this.getDirSize(storageDirectory, true);
             
             return weblogDirSize > maxDirBytes;
         } catch (Exception ex) {
@@ -215,8 +215,8 @@ public class FileContentManagerImpl implements FileContentManager {
                 WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize"));
         long maxDirBytes = (long)(RollerConstants.ONE_MB_IN_BYTES * maxDirMB.doubleValue());
         try {
-            File storageDir = this.getRealFile(weblog, null);
-            long userDirSize = getDirSize(storageDir, true);
+            File storageDirectory = this.getRealFile(weblog, null);
+            long userDirSize = getDirSize(storageDirectory, true);
             if (userDirSize + size > maxDirBytes) {
                 messages.addError("error.upload.dirmax", maxDirMB.toString());
                 return false;

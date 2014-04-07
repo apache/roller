@@ -135,10 +135,10 @@ public class Register extends UIAction implements ServletRequestAware {
             boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
             if (usingSSO) {
                 // See if user is already logged in via Spring Security
-                User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
-                if (fromSSO != null) {
+                User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+                if (fromSSOUser != null) {
                     // Copy user details from Spring Security, including LDAP attributes
-                    getBean().copyFrom(fromSSO);
+                    getBean().copyFrom(fromSSOUser);
                     setFromSSO(true);
                 }
                 // See if user is already logged in via CMA
@@ -327,14 +327,14 @@ public class Register extends UIAction implements ServletRequestAware {
             String password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
             
             // Preserve username and password, Spring Security case
-            User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
-            if (fromSSO != null) {
+            User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+            if (fromSSOUser != null) {
                 if (storePassword) {
-                    password = fromSSO.getPassword();
+                    password = fromSSOUser.getPassword();
                 }
                 getBean().setPasswordText(password);
                 getBean().setPasswordConfirm(password);
-                getBean().setUserName(fromSSO.getUserName());
+                getBean().setUserName(fromSSOUser.getUserName());
                 setFromSSO(true);
             }
 

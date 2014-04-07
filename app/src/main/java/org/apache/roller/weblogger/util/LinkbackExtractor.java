@@ -100,7 +100,9 @@ public class LinkbackExtractor
             mRequestURLWWW = "http://www." + mRequestURL.substring(7);
         }
 
-        // Trick gets Swing's HTML parser
+        // Trick gets Swing's HTML parser by making its protected getParser() method public
+        // Ignore inaccurate Sonar complaint about useless overriding method:
+        //    http://jira.codehaus.org/browse/SONARJAVA-287
         Parser parser = (new HTMLEditorKit() {
             public Parser getParser() {
                 return super.getParser();
@@ -112,7 +114,7 @@ public class LinkbackExtractor
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         try {
-            String line = null;
+            String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }

@@ -130,34 +130,34 @@ public final class EntryEdit extends EntryBase {
                 WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
 
-                WeblogEntry entry = getEntry();
+                WeblogEntry weblogEntry = getEntry();
 
                 // set updatetime & pubtime
-                entry.setUpdateTime(new Timestamp(new Date().getTime()));
-                entry.setPubTime(getBean().getPubTime(getLocale(),
+                weblogEntry.setUpdateTime(new Timestamp(new Date().getTime()));
+                weblogEntry.setPubTime(getBean().getPubTime(getLocale(),
                         getActionWeblog().getTimeZoneInstance()));
 
                 // copy data to pojo
-                getBean().copyTo(entry);
+                getBean().copyTo(weblogEntry);
 
                 // handle pubtime auto set
-                if (entry.isPublished()) {
-                    if (entry.getPubTime() == null) {
+                if (weblogEntry.isPublished()) {
+                    if (weblogEntry.getPubTime() == null) {
                         // no time specified, use current time
-                        entry.setPubTime(entry.getUpdateTime());
+                        weblogEntry.setPubTime(weblogEntry.getUpdateTime());
                     }
 
                     // if user does not have author perms then force PENDING
                     // status
                     if (!getActionWeblog().hasUserPermission(
                             getAuthenticatedUser(), WeblogPermission.POST)) {
-                        entry.setStatus(WeblogEntry.PENDING);
+                        weblogEntry.setStatus(WeblogEntry.PENDING);
                     }
 
                     // If the entry was published to future, set status as
                     // SCHEDULED we only consider an entry future published if
                     // it is scheduled more than 1 minute into the future
-                    if (entry.getPubTime().after(
+                    if (weblogEntry.getPubTime().after(
                             new Date(System.currentTimeMillis() + MINUTE_IN_MILLIS))) {
                         getBean().setStatus(WeblogEntry.SCHEDULED);
                     }
@@ -169,7 +169,7 @@ public final class EntryEdit extends EntryBase {
                         Collections.singletonList(GlobalPermission.ADMIN));
                 if (WebloggerFactory.getWeblogger().getUserManager()
                         .checkPermission(adminPerm, getAuthenticatedUser())) {
-                    entry.setPinnedToMain(getBean().getPinnedToMain());
+                    weblogEntry.setPinnedToMain(getBean().getPinnedToMain());
                 }
 
                 if (!StringUtils.isEmpty(getBean().getEnclosureURL())) {
@@ -180,11 +180,11 @@ public final class EntryEdit extends EntryBase {
                                 .lookupResource(getBean().getEnclosureURL());
 
                         // set mediacast attributes
-                        entry.putEntryAttribute("att_mediacast_url",
+                        weblogEntry.putEntryAttribute("att_mediacast_url",
                                 mediacast.getUrl());
-                        entry.putEntryAttribute("att_mediacast_type",
+                        weblogEntry.putEntryAttribute("att_mediacast_type",
                                 mediacast.getContentType());
-                        entry.putEntryAttribute("att_mediacast_length", ""
+                        weblogEntry.putEntryAttribute("att_mediacast_length", ""
                                 + mediacast.getLength());
 
                     } catch (MediacastException ex) {
@@ -195,11 +195,11 @@ public final class EntryEdit extends EntryBase {
                         // if MediaCast string is empty, clean out MediaCast
                         // attributes
                         weblogMgr.removeWeblogEntryAttribute(
-                                "att_mediacast_url", entry);
+                                "att_mediacast_url", weblogEntry);
                         weblogMgr.removeWeblogEntryAttribute(
-                                "att_mediacast_type", entry);
+                                "att_mediacast_type", weblogEntry);
                         weblogMgr.removeWeblogEntryAttribute(
-                                "att_mediacast_length", entry);
+                                "att_mediacast_length", weblogEntry);
 
                     } catch (WebloggerException e) {
                         addMessage(getText("weblogEdit.mediaCastErrorRemoving"));
@@ -208,35 +208,35 @@ public final class EntryEdit extends EntryBase {
 
                 if (log.isDebugEnabled()) {
                     log.debug("entry bean is ...\n" + getBean().toString());
-                    log.debug("final status = " + entry.getStatus());
-                    log.debug("updtime = " + entry.getUpdateTime());
-                    log.debug("pubtime = " + entry.getPubTime());
+                    log.debug("final status = " + weblogEntry.getStatus());
+                    log.debug("updtime = " + weblogEntry.getUpdateTime());
+                    log.debug("pubtime = " + weblogEntry.getPubTime());
                 }
 
                 log.debug("Saving entry");
-                weblogMgr.saveWeblogEntry(entry);
+                weblogMgr.saveWeblogEntry(weblogEntry);
                 WebloggerFactory.getWeblogger().flush();
 
                 // notify search of the new entry
-                if (entry.isPublished()) {
-                    reindexEntry(entry);
+                if (weblogEntry.isPublished()) {
+                    reindexEntry(weblogEntry);
                 } else {
-                    removeEntryIndex(entry);
+                    removeEntryIndex(weblogEntry);
                 }
 
                 // notify caches
-                CacheManager.invalidate(entry);
+                CacheManager.invalidate(weblogEntry);
 
                 // Queue applicable pings for this update.
-                if (entry.isPublished()) {
+                if (weblogEntry.isPublished()) {
                     WebloggerFactory.getWeblogger().getAutopingManager()
-                            .queueApplicableAutoPings(entry);
+                            .queueApplicableAutoPings(weblogEntry);
                 }
 
-                if (entry.isPending()) {
+                if (weblogEntry.isPending()) {
                     // implies that entry just changed to pending
                     if (MailUtil.isMailConfigured()) {
-                        MailUtil.sendPendingEntryNotice(entry);
+                        MailUtil.sendPendingEntryNotice(weblogEntry);
                     }
                     addMessage("weblogEdit.submittedForReview");
                 } else {

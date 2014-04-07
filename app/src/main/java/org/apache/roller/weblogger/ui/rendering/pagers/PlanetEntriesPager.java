@@ -92,21 +92,21 @@ public class PlanetEntriesPager extends AbstractPager {
                 PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
                 Planet planet = planetManager.getWeblogger("default");
                 
-                List<SubscriptionEntry> entries;
+                List<SubscriptionEntry> subEntries;
                 if (feedURL != null) {
                     Subscription sub = planetManager.getSubscription(feedURL);
-                    entries = planetManager.getEntries(sub, offset, length+1);
+                    subEntries = planetManager.getEntries(sub, offset, length+1);
                 } else if (groupHandle != null) {
                     PlanetGroup group = planetManager.getGroup(planet, groupHandle);
-                    entries = planetManager.getEntries(group, startDate, null, offset, length+1);
+                    subEntries = planetManager.getEntries(group, startDate, null, offset, length + 1);
                 } else {
                     PlanetGroup group = planetManager.getGroup(planet, "all");
-                    entries = planetManager.getEntries(group, startDate, null, offset, length+1);
+                    subEntries = planetManager.getEntries(group, startDate, null, offset, length + 1);
                 }
                 
                 // wrap 'em
                 int count = 0;
-                for (SubscriptionEntry entry : entries) {
+                for (SubscriptionEntry entry : subEntries) {
                     // TODO needs pojo wrapping from planet
                     if (count++ < length) { 
                         results.add(entry);

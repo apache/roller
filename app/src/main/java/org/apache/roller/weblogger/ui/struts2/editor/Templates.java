@@ -86,39 +86,39 @@ public class Templates extends UIAction {
 			setTemplates(pages);
 
 			// build list of action types that may be added
-			List<String> availableActions = new ArrayList<String>();
-			availableActions.add(WeblogTemplate.ACTION_CUSTOM);
+			List<String> actionsList = new ArrayList<String>();
+			actionsList.add(WeblogTemplate.ACTION_CUSTOM);
 
 			if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
 				// if the weblog is using a custom theme then determine which
 				// action templates are still available to be created
-				availableActions.add(WeblogTemplate.ACTION_PERMALINK);
-				availableActions.add(WeblogTemplate.ACTION_SEARCH);
-				availableActions.add(WeblogTemplate.ACTION_WEBLOG);
-				availableActions.add(WeblogTemplate.ACTION_TAGSINDEX);
+				actionsList.add(WeblogTemplate.ACTION_PERMALINK);
+				actionsList.add(WeblogTemplate.ACTION_SEARCH);
+				actionsList.add(WeblogTemplate.ACTION_WEBLOG);
+				actionsList.add(WeblogTemplate.ACTION_TAGSINDEX);
 
 				for (WeblogTemplate tmpPage : getTemplates()) {
 					if (!WeblogTemplate.ACTION_CUSTOM.equals(tmpPage
 							.getAction())) {
-						availableActions.remove(tmpPage.getAction());
+						actionsList.remove(tmpPage.getAction());
 					}
 				}
 			} else {
 				// Make sure we have an option for the default web page
-				availableActions.add(WeblogTemplate.ACTION_WEBLOG);
+				actionsList.add(WeblogTemplate.ACTION_WEBLOG);
 				if (StringUtils.isEmpty(getNewTmplAction())) {
 					setNewTmplAction(WeblogTemplate.ACTION_WEBLOG);
 				}
 				for (WeblogTemplate tmpPage : getTemplates()) {
 					if (WeblogTemplate.ACTION_WEBLOG
 							.equals(tmpPage.getAction())) {
-						availableActions.remove(WeblogTemplate.ACTION_WEBLOG);
+						actionsList.remove(WeblogTemplate.ACTION_WEBLOG);
 						setNewTmplAction(null);
 						break;
 					}
 				}
 			}
-			setAvailableActions(availableActions);
+			setAvailableActions(actionsList);
 
 		} catch (WebloggerException ex) {
 			log.error("Error getting templates for weblog - "

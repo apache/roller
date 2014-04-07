@@ -102,11 +102,11 @@ public class CommentsPager extends AbstractPager {
                 csc.setOffset(offset);
                 csc.setMaxResults(length + 1);
 
-                List<WeblogEntryComment> comments = wmgr.getComments(csc);
+                List<WeblogEntryComment> commentsList = wmgr.getComments(csc);
                 
                 // wrap the results
                 int count = 0;
-                for (WeblogEntryComment comment : comments) {
+                for (WeblogEntryComment comment : commentsList) {
                     if (count++ < length) {
                         results.add(WeblogEntryCommentWrapper.wrap(comment, urlStrategy));
                     } else {

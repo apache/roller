@@ -97,21 +97,21 @@ public class PlanetGroups extends PlanetUIAction {
         
         if (!hasActionErrors()) {
             try {
-                PlanetGroup group = getGroup();
-                if(group == null) {
+                PlanetGroup planetGroup = getGroup();
+                if(planetGroup == null) {
                     log.debug("Adding New Group");
-                    group = new PlanetGroup();
-                    group.setPlanet(getPlanet());
+                    planetGroup = new PlanetGroup();
+                    planetGroup.setPlanet(getPlanet());
                 } else {
                     log.debug("Updating Existing Group");
                 }
 
                 // copy in submitted data
-                getBean().copyTo(group);
+                getBean().copyTo(planetGroup);
 
                 // save and flush
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                pmgr.saveGroup(group);
+                pmgr.saveGroup(planetGroup);
                 WebloggerFactory.getWeblogger().flush();
 
                 addMessage("planetGroups.success.saved");
@@ -174,11 +174,11 @@ public class PlanetGroups extends PlanetUIAction {
     public List<PlanetGroup> getGroups() {
         List<PlanetGroup> displayGroups = new ArrayList<PlanetGroup>();
         
-        for (PlanetGroup group : getPlanet().getGroups()) {
+        for (PlanetGroup planetGroup : getPlanet().getGroups()) {
             // The "all" group is considered a special group and cannot be
             // managed independently
-            if (!group.getHandle().equals("all")) {
-                displayGroups.add(group);
+            if (!planetGroup.getHandle().equals("all")) {
+                displayGroups.add(planetGroup);
             }
         }
         return displayGroups;

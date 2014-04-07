@@ -137,11 +137,11 @@ public class SearchResultsModel extends PageModel {
 		} else {
 
 			TopFieldDocs docs = search.getResults();
-			ScoreDoc[] hits = docs.scoreDocs;
+			ScoreDoc[] hitsArr = docs.scoreDocs;
 			this.hits = search.getResultsCount();
 
 			// Convert the Hits into WeblogEntryData instances.
-			convertHitsToEntries(hits, search);
+			convertHitsToEntries(hitsArr, search);
 
 		}
 
@@ -193,7 +193,7 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		try {
-			TreeSet<String> categories = new TreeSet<String>();
+			TreeSet<String> categorySet = new TreeSet<String>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
@@ -211,7 +211,7 @@ public class SearchResultsModel extends PageModel {
 
                 if (!(websiteSpecificSearch && handle.equals(searchRequest.getWeblogHandle()))
                         && doc.getField(FieldConstants.CATEGORY) != null) {
-                    categories.add(doc.getField(FieldConstants.CATEGORY).stringValue());
+                    categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
                 }
 
 				// maybe null if search result returned inactive user
@@ -223,8 +223,8 @@ public class SearchResultsModel extends PageModel {
 				}
 			}
 
-			if (categories.size() > 0) {
-				this.categories = categories;
+			if (categorySet.size() > 0) {
+				this.categories = categorySet;
 			}
 		} catch (IOException e) {
 			throw new WebloggerException(e);
