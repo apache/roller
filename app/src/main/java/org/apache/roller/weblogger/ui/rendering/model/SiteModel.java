@@ -112,7 +112,7 @@ public class SiteModel implements Model {
      */
     public Pager getWeblogEntriesPager(int sinceDays, int length) {
         
-        String pagerUrl = null;
+        String pagerUrl;
         
         if (feedRequest != null) {
             pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
@@ -170,7 +170,7 @@ public class SiteModel implements Model {
      */   
     public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, User user, String cat, int sinceDays, int length) {
         
-        String pagerUrl = null;
+        String pagerUrl;
         if (feedRequest != null) {
             pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
                     weblogRequest.getLocale(), feedRequest.getType(),
@@ -201,7 +201,7 @@ public class SiteModel implements Model {
      */
     public Pager getCommentsPager(int sinceDays, int length) {
         
-        String pagerUrl = null;
+        String pagerUrl;
         if (feedRequest != null) {
             pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
                     weblogRequest.getLocale(), feedRequest.getType(),
@@ -226,7 +226,7 @@ public class SiteModel implements Model {
     /* Get pager of users whose names begin with specified letter */
     public Pager getUsersByLetterPager(String letter, int sinceDays, int length) {
         
-        String pagerUrl = null;
+        String pagerUrl;
         if (feedRequest != null) {
             pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
                     weblogRequest.getLocale(), feedRequest.getType(),
@@ -470,7 +470,6 @@ public class SiteModel implements Model {
         cal.add(Calendar.DATE, -1 * sinceDays);
         Date startDate = cal.getTime();
         try {            
-            Weblogger roller = WebloggerFactory.getWeblogger();
             results = WebloggerFactory.getWeblogger().getWeblogManager().getMostCommentedWeblogs(
                     startDate, new Date(), 0, length);
         } catch (Exception e) {

@@ -36,7 +36,7 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
     protected ExpiringLRUCacheImpl(String id) {
         
         super(id);
-        this.timeout = 60 * RollerConstants.MIN_IN_MS;
+        this.timeout = RollerConstants.HOUR_IN_MS;
     }
     
     

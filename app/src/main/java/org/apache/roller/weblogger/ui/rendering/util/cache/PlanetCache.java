@@ -49,7 +49,7 @@ public final class PlanetCache {
     
     // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
-    private long timeout = 15 * RollerConstants.MIN_IN_MS;
+    private long timeout = RollerConstants.FIFTEEN_MIN_IN_MS;
     
     // reference to our singleton instance
     private static PlanetCache singletonInstance = new PlanetCache();

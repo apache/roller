@@ -32,7 +32,6 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
  * Roller. See also: ValidateSalt filter.
  */
 public class LoadSaltFilter implements Filter {
-    private static Log log = LogFactory.getLog(LoadSaltFilter.class);
 
     //@Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

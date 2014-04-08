@@ -52,6 +52,8 @@ public class Weblog implements Serializable {
     public static final long serialVersionUID = 206437645033737127L;
     
     private static Log log = LogFactory.getLog(Weblog.class);
+
+    private static final int MAX_ENTRIES = 100;
     
     // Simple properties
     private String  id               = UUIDGenerator.generateUUID();
@@ -759,8 +761,8 @@ public class Weblog implements Serializable {
         if (cat != null && "nil".equals(cat)) {
             cat = null;
         }
-        if (length > 100) {
-            length = 100;
+        if (length > MAX_ENTRIES) {
+            length = MAX_ENTRIES;
         }
         List<WeblogEntry> recentEntries = new ArrayList<WeblogEntry>();
         if (length < 1) {
@@ -790,8 +792,8 @@ public class Weblog implements Serializable {
         if (tag != null && "nil".equals(tag)) {
             tag = null;
         }
-        if (length > 100) {
-            length = 100;
+        if (length > MAX_ENTRIES) {
+            length = MAX_ENTRIES;
         }
         List<WeblogEntry> recentEntries = new ArrayList<WeblogEntry>();
         List<String> tags = new ArrayList<String>();
@@ -821,8 +823,8 @@ public class Weblog implements Serializable {
      * @return List of comment objects.
      */
     public List<WeblogEntryComment> getRecentComments(int length) {
-        if (length > 100) {
-            length = 100;
+        if (length > MAX_ENTRIES) {
+            length = MAX_ENTRIES;
         }
         List<WeblogEntryComment> recentComments = new ArrayList<WeblogEntryComment>();
         if (length < 1) {

@@ -47,8 +47,7 @@ public class GeneratePlanetTask extends PlanetTask {
     
     public void run() {
         try {            
-            Weblogger weblogger = WebloggerFactory.getWeblogger();
-//          PlanetManager planetManager = weblogger.getPlanetManager();
+//          PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
                         
             // Ignore values from database
             //String mainPage = planetManager.getConfiguration().getMainPage();

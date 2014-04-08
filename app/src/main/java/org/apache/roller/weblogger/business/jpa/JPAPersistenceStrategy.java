@@ -297,8 +297,7 @@ public class JPAPersistenceStrategy {
     public Query getNamedUpdate(String queryName)
     throws WebloggerException {
         EntityManager em = getEntityManager(true);
-        Query q = em.createNamedQuery(queryName);
-        return q;
+        return em.createNamedQuery(queryName);
     }
     
     /**

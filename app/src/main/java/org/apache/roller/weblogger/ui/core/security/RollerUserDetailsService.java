@@ -38,7 +38,7 @@ public class RollerUserDetailsService implements UserDetailsService {
         }
         try {
             UserManager umgr = roller.getUserManager();
-            User userData = null;  
+            User userData;
             // OpenID user
             if (userName.startsWith("http://") || userName.startsWith("https://")) {
                 if (userName.endsWith("/")) {
@@ -69,10 +69,8 @@ public class RollerUserDetailsService implements UserDetailsService {
                      name = userData.getUserName();
                      password = userData.getPassword();
                 }
-                UserDetails usr = new org.springframework.security.core.userdetails.User(name, password,
+                return new org.springframework.security.core.userdetails.User(name, password,
                         true, true, true, true, authorities);
-                return  usr;
-                
             } else {
                 // standard username/password auth
                 try {
@@ -97,7 +95,6 @@ public class RollerUserDetailsService implements UserDetailsService {
      private ArrayList<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {
          List<String> roles = umgr.getRoles(userData);
          ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(roles.size());
-         int i = 0;
          for (String role : roles) {
              authorities.add(new SimpleGrantedAuthority(role));
          }

@@ -98,7 +98,7 @@ public class SaltCache {
     
     public void put(String key, Object value) {
 		// expire after 60 minutes
-        contentCache.put(key, new ExpiringCacheEntry(value, 60 * RollerConstants.MIN_IN_MS));
+        contentCache.put(key, new ExpiringCacheEntry(value, RollerConstants.HOUR_IN_MS));
         log.debug("PUT "+key);
     }
     

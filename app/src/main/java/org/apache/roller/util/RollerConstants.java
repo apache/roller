@@ -31,6 +31,8 @@ public final class RollerConstants {
     public static final int HALF_SEC_IN_MS = 500;
     public static final int SEC_IN_MS = 1000;
     public static final int MIN_IN_MS = 60 * SEC_IN_MS;
+    public static final int FIFTEEN_MIN_IN_MS = 15 * MIN_IN_MS;
+    public static final int HOUR_IN_MS = 60 * MIN_IN_MS;
 
     public static final int TEXTWIDTH_255 = 255;
 

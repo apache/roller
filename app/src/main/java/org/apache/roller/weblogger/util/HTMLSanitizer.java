@@ -453,7 +453,7 @@ public class HTMLSanitizer {
         public String text = "";
         public String val = "";
         public boolean isValid = true;
-        public List<String> invalidTags = new ArrayList();
+        public List<String> invalidTags = new ArrayList<String>();
     }
 
     public static String encode(String s) {
@@ -466,8 +466,7 @@ public class HTMLSanitizer {
 
     public static final String htmlEncodeApexes(String source) {
         if (source != null) {
-            String result = replaceAllNoRegex(source, new String[]{"\"", "'"}, new String[]{"&quot;", "&#39;"});
-            return result;
+            return replaceAllNoRegex(source, new String[]{"\"", "'"}, new String[]{"&quot;", "&#39;"});
         } else {
             return null;
         }
@@ -475,8 +474,7 @@ public class HTMLSanitizer {
 
     public static final String htmlEncodeTag(String source) {
         if (source != null) {
-            String result = replaceAllNoRegex(source, new String[]{"<", ">"}, new String[]{"&lt;", "&gt;"});
-            return result;
+            return replaceAllNoRegex(source, new String[]{"<", ">"}, new String[]{"&lt;", "&gt;"});
         } else {
             return null;
         }

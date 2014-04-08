@@ -272,8 +272,6 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         Vector result = new Vector();
         if (validateUser(userid, password)) {
             try {
-                String contextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-                
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 User user = umgr.getUserByUserName(userid);
                 

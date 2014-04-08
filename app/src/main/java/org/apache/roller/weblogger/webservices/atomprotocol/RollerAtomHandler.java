@@ -96,13 +96,13 @@ public class RollerAtomHandler implements AtomHandler {
     protected int maxEntries = 20;
     protected String atomURL = null;
     
-    protected static final boolean throttle;
+    protected static final boolean THROTTLE;
     
     protected static Log log =
             LogFactory.getFactory().getInstance(RollerAtomHandler.class);
     
     static {
-        throttle = WebloggerConfig
+        THROTTLE = WebloggerConfig
             .getBooleanProperty("webservices.atomprotocol.oneSecondThrottle", true);
     }
     
@@ -514,7 +514,7 @@ public class RollerAtomHandler implements AtomHandler {
     public static void oneSecondThrottle() {
         // Throttle one entry per second per weblog because time-
         // stamp in MySQL and other DBs has only 1 sec resolution
-        if (throttle) {
+        if (THROTTLE) {
             try {
                 synchronized (RollerAtomHandler.class) {
                     Thread.sleep(RollerConstants.SEC_IN_MS);
