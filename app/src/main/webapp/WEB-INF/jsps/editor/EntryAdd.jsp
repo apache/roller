@@ -227,14 +227,14 @@
 
 <script type="text/javascript">
 //Get cookie to determine state of control
-if (getCookie('control-miscControl') != null) {
-    if(getCookie('control-miscControl') == 'true'){
+if (getCookie('control_miscControl') != null) {
+    if(getCookie('control_miscControl') == 'true'){
         toggle('miscControl');
         togglePlusMinus('imiscControl');
     }
 }
-if (getCookie('control-pluginControl') != null) {
-    if(getCookie('control-pluginControl') == 'true'){
+if (getCookie('control_pluginControl') != null) {
+    if(getCookie('control_pluginControl') == 'true'){
         toggle('pluginControl');
         togglePlusMinus('ipluginControl');
     }

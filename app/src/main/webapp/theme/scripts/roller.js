@@ -164,7 +164,7 @@ function toggleControl(toggleId, targetId) {
         // set a cookie to remember this preference
         var expires = new Date();
         expires.setTime(expires.getTime() + 24 * 365 * 60 * 60 * 1000); // sets it for approx 365 days.
-        setCookie("control-"+targetId,expanded,expires,"/");
+        setCookie("control_"+targetId,expanded,expires,"/");
     }
 }
 
