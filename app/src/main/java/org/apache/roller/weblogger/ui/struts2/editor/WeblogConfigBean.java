@@ -27,7 +27,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public class WeblogConfigBean {
     
-    private String id = null;
     private String handle = null;
     private String name = null;
     private String description = null;
@@ -57,10 +56,6 @@ public class WeblogConfigBean {
     private String[] defaultPluginsArray = null;
     private boolean applyCommentDefaults = false;
     
-    
-    public void setId( String id ) {
-        this.id = id;
-    }
     
     public String getHandle() {
         return this.handle;
@@ -273,7 +268,6 @@ public class WeblogConfigBean {
     
     public void copyFrom(Weblog dataHolder) {
         
-        this.id = dataHolder.getId();
         this.handle = dataHolder.getHandle();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();

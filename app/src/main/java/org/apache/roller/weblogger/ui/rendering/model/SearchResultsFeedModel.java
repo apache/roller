@@ -29,8 +29,6 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
@@ -61,8 +59,6 @@ import org.apache.roller.weblogger.util.Utilities;
  * Also adds some new methods which are specific only to search results.
  */
 public class SearchResultsFeedModel implements Model {
-
-	private static Log log = LogFactory.getLog(SearchResultsFeedModel.class);
 
 	private WeblogFeedRequest feedRequest = null;
 	private URLStrategy urlStrategy = null;

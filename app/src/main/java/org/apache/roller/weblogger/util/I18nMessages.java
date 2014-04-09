@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A utility class for handling i18n messaging.
  */
-public class I18nMessages {
+public final class I18nMessages {
     
     private static final Log LOG = LogFactory.getLog(I18nMessages.class);
     

@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
  * rendering technology.  This allows us to provide easily pluggable rendering
  * implementations.
  */
-public class RendererManager {
+public final class RendererManager {
 
     private static Log log = LogFactory.getLog(RendererManager.class);
     // a set of all renderer factories we are consulting

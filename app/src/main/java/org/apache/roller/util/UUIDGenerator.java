@@ -24,7 +24,7 @@ import java.util.UUID;
 /**
  * Generates UUID values.
  */
-public class UUIDGenerator {
+public final class UUIDGenerator {
     
     // non-instantiable
     private UUIDGenerator() {}

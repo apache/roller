@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PingConfig {
+public final class PingConfig {
     private static final Log LOGGER = LogFactory.getLog(PingConfig.class);
 
 

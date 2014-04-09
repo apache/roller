@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 /**
  * Utility class to localize the modification date header-related logic.
  */
-public class ModDateHeaderUtil {
+public final class ModDateHeaderUtil {
 
 	private static Log log = LogFactory.getLog(ModDateHeaderUtil.class);
 

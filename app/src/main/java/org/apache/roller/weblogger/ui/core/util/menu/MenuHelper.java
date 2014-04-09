@@ -48,7 +48,7 @@ import org.jdom.input.SAXBuilder;
  * Note : Debug logging disabled here as it is too expensive time wise.
  * 
  */
-public class MenuHelper {
+public final class MenuHelper {
 
     private static Log log = LogFactory.getLog(MenuHelper.class);
 

@@ -62,7 +62,7 @@ import org.apache.roller.util.DateUtil;
  * @author Lance Lavandowska
  * @author Allen Gilliland
  */
-public class Blacklist {
+public final class Blacklist {
     
     private static Log mLogger = LogFactory.getLog(Blacklist.class);
     

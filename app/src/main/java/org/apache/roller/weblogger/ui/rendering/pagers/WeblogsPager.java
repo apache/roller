@@ -42,7 +42,6 @@ public class WeblogsPager extends AbstractPager {
     private static Log log = LogFactory.getLog(WeblogsPager.class);
     
     private String letter = null;
-    private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
     
@@ -63,7 +62,6 @@ public class WeblogsPager extends AbstractPager {
         
         super(strat, baseUrl, page);
         
-        this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
         
@@ -84,7 +82,6 @@ public class WeblogsPager extends AbstractPager {
         super(strat, baseUrl, page);
         
         this.letter = letter;
-        this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
         

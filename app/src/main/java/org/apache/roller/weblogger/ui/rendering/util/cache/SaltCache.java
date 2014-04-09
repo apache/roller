@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
  * by Roller. If you're running distributed, then you must use a distributed 
  * cache, e.g. memcached
  */
-public class SaltCache {
+public final class SaltCache {
     private static Log log = LogFactory.getLog(SaltCache.class);
     
     // a unique identifier for this cache, this is used as the prefix for

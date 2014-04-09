@@ -19,8 +19,8 @@ package org.apache.roller.weblogger.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.regex.Pattern;
+
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -31,9 +31,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * @author Lance Lavandowska
  * @author Dave Johnson
  */
-public class BlacklistChecker { 
-    private static Log mLogger = LogFactory.getLog(BlacklistChecker.class);
-    
+public final class BlacklistChecker {
+
     private BlacklistChecker() {
         // never instantiable
         throw new AssertionError();
@@ -67,8 +66,8 @@ public class BlacklistChecker {
      */
     public static boolean checkReferrer(Weblog website, String referrerURL) {
         if (WebloggerConfig.getBooleanProperty("site.blacklist.enable.referrers")) {
-            List stringRules = new ArrayList();
-            List regexRules = new ArrayList();
+            List<String> stringRules = new ArrayList<String>();
+            List<Pattern> regexRules = new ArrayList<Pattern>();
             Blacklist.populateSpamRules(
                 website.getBlacklist(), stringRules, regexRules, null);
             if (WebloggerRuntimeConfig.getProperty("spam.blacklist") != null) {
@@ -86,8 +85,8 @@ public class BlacklistChecker {
      */
     private static boolean testComment(WeblogEntryComment c) {
         boolean ret = false;
-        List stringRules = new ArrayList();
-        List regexRules = new ArrayList();
+        List<String> stringRules = new ArrayList<String>();
+        List<Pattern> regexRules = new ArrayList<Pattern>();
         Weblog website = c.getWeblogEntry().getWebsite();
         Blacklist.populateSpamRules(
             website.getBlacklist(), stringRules, regexRules, 

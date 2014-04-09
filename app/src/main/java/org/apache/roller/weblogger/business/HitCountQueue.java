@@ -41,7 +41,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * TODO: we may want to make this an interface that is pluggable if there is
  *   some indication that users want to override this implementation.
  */
-public class HitCountQueue {
+public final class HitCountQueue {
     
     private static Log log = LogFactory.getLog(HitCountQueue.class);
     

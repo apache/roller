@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -72,7 +71,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @param password Password for said username
      * @param publish Ignored
      * @throws XmlRpcException
-     * @return
+     * @return true if post deleted, false if entry not found
      */
     public boolean deletePost(String appkey, String postid, String userid,
             String password, boolean publish) throws Exception {

@@ -25,7 +25,7 @@ import org.apache.roller.weblogger.pojos.WeblogReferrer;
 /**
  * Pojo safety wrapper for WeblogReferrer object.
  */
-public class WeblogReferrerWrapper {
+public final class WeblogReferrerWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogReferrer pojo;

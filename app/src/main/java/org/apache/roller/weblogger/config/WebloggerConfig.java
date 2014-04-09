@@ -32,7 +32,7 @@ import org.apache.roller.util.PropertyExpander;
 /**
  * This is the single entry point for accessing configuration properties in Roller.
  */
-public class WebloggerConfig {
+public final class WebloggerConfig {
     
     private static String default_config = "/org/apache/roller/weblogger/config/roller.properties";
     private static String custom_config = "/roller-custom.properties";

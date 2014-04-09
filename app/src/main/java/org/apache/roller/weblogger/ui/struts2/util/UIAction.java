@@ -35,12 +35,9 @@ import org.apache.struts2.interceptor.RequestAware;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
@@ -392,8 +389,6 @@ public abstract class UIAction extends ActionSupport
         
         return opts;
     }
-
-    private static Set OPEN_CHARS = new HashSet(Arrays.asList('$', '%'));
 
     private static String cleanExpressions(String s) {
         return (s == null || s.contains("${") || s.contains("%{")) ? "" : s;

@@ -40,8 +40,6 @@ public class UsersPager extends AbstractPager {
     private static Log log = LogFactory.getLog(UsersPager.class);
     
     private String letter = null;
-    private String locale = null;
-    private int sinceDays = -1;
     private int length = 0;
     
     // collection for the pager
@@ -61,8 +59,6 @@ public class UsersPager extends AbstractPager {
         
         super(strat, baseUrl, page);
         
-        this.locale = locale;
-        this.sinceDays = sinceDays;
         this.length = length;
         
         // initialize the collection
@@ -82,8 +78,6 @@ public class UsersPager extends AbstractPager {
         super(strat, baseUrl, page);
         
         this.letter = letter;
-        this.locale = locale;
-        this.sinceDays = sinceDays;
         this.length = length;
         
         // initialize the collection

@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 
 
@@ -32,8 +30,6 @@ import org.apache.roller.util.RollerConstants;
  * A simple LRU Cache.
  */
 public class LRUCacheImpl implements Cache {
-    
-    private static Log log = LogFactory.getLog(LRUCacheImpl.class);
     
     private String id = null;
     private Map cache = null;

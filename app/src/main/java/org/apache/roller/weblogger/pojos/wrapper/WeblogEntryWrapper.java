@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.util.HTMLSanitizer;
 /**
  * Pojo safety wrapper for WeblogEntry objects.
  */
-public class WeblogEntryWrapper {
+public final class WeblogEntryWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogEntry pojo;

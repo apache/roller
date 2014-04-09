@@ -21,8 +21,6 @@ package org.apache.roller.weblogger.ui.rendering.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -42,8 +40,6 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * Model which provides information needed to render a feed.
  */
 public class FeedModel implements Model {
-    
-    private static Log log = LogFactory.getLog(FeedModel.class); 
     
     private static int DEFAULT_ENTRIES = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
     

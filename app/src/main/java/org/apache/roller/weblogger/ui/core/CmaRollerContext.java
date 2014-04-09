@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.ui.core;
 
 import javax.servlet.ServletContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -30,8 +28,6 @@ import org.apache.commons.logging.LogFactory;
  * @author Shing Wai Chan
  */
 public class CmaRollerContext extends RollerContext { 
-    
-    private static Log log = LogFactory.getLog(CmaRollerContext.class);
     
     public CmaRollerContext() {
         super();

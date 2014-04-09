@@ -19,8 +19,6 @@ package org.apache.roller.planet.tasks;
 
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
@@ -34,7 +32,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * to be duck-type compatible with old PlanetTool templates.
  */
 public class StaticPlanetModel {
-    private static Log logger = LogFactory.getFactory().getInstance(StaticPlanetModel.class);
     PlanetManager planetManager = null;
     
     

@@ -21,8 +21,6 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -32,8 +30,6 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Action for displaying rendering cache info.
  */
 public class CacheInfo extends UIAction {
-    
-    private static Log log = LogFactory.getLog(CacheInfo.class);
     
     // map of stats to display
     private Map stats = Collections.EMPTY_MAP;

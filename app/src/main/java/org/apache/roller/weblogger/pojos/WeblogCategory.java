@@ -22,8 +22,6 @@ import java.io.Serializable;
 import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -36,8 +34,6 @@ import org.apache.roller.util.UUIDGenerator;
 public class WeblogCategory implements Serializable, Comparable<WeblogCategory> {
     
     public static final long serialVersionUID = 1435782148712018954L;
-    
-    private static Log log = LogFactory.getLog(WeblogCategory.class);
     
     // attributes
     private String id = UUIDGenerator.generateUUID();

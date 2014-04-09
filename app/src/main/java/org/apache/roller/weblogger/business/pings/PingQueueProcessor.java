@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PingQueueProcessor {
+public final class PingQueueProcessor {
     
     private static final Log LOGGER = LogFactory.getLog(PingQueueProcessor.class);
     

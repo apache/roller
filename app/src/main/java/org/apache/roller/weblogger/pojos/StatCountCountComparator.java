@@ -24,18 +24,13 @@ import java.io.Serializable;
 /**
  * @author Markus Fuchs
  */
-public class StatCountCountComparator implements Comparator, Serializable {
+public final class StatCountCountComparator implements Comparator, Serializable {
 
     private static final long serialVersionUID = 4811314286365625712L;
     
     private static StatCountCountComparator instance = new StatCountCountComparator();
 
-    /**
-     * 
-     */
-    private StatCountCountComparator() {
-
-    }
+    private StatCountCountComparator() {}
 
     /** 
      * Compares two <em>StatCount</em> instances according to their count values.

@@ -23,8 +23,6 @@ import java.security.SecureRandom;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 
 /**

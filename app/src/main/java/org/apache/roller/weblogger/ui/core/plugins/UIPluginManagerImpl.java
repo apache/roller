@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Plugin management for UI layer plugins.
  */
-public class UIPluginManagerImpl implements UIPluginManager {
+public final class UIPluginManagerImpl implements UIPluginManager {
     
     private static Log log = LogFactory.getLog(UIPluginManagerImpl.class);
     
