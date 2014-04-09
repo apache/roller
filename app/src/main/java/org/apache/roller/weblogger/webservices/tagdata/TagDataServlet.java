@@ -54,7 +54,7 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class TagDataServlet extends HttpServlet {
 
-    private final int MAX = WebloggerConfig.getIntProperty("services.tagdata.max", 30);
+    private static final int MAX = WebloggerConfig.getIntProperty("services.tagdata.max", 30);
 
     
     protected void doPost(
@@ -69,9 +69,9 @@ public class TagDataServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String[] pathInfo = new String[0];
-        boolean siteWide = true;
-        String handle = null;
-        String prefix = null;
+        boolean siteWide;
+        String handle;
+        String prefix;
         String format = "json";
         int page = 0;
         
@@ -100,8 +100,8 @@ public class TagDataServlet extends HttpServlet {
         } catch (Exception ignored) {}
 
         Weblogger roller = WebloggerFactory.getWeblogger();
-        List<TagStat> tags = null;
-        Weblog weblog = null;
+        List<TagStat> tags;
+        Weblog weblog;
         try {
             WeblogManager wmgr = roller.getWeblogManager();
             WeblogEntryManager emgr = roller.getWeblogEntryManager();

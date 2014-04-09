@@ -249,9 +249,7 @@ public class MediaCollection {
                 try {
                     start = Integer.parseInt(rawPathInfo[rawPathInfo.length - 1]);
                     pathInfo = new String[rawPathInfo.length - 1];
-                    for (int i=0; i < rawPathInfo.length - 1; i++) {
-                        pathInfo[i] = rawPathInfo[i];
-                    }
+                    System.arraycopy(rawPathInfo, 0, pathInfo, 0, rawPathInfo.length - 1);
                 } catch (Exception ingored) {}
             }
             String path = filePathFromPathInfo(pathInfo);

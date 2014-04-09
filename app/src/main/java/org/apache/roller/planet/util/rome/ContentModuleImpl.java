@@ -19,16 +19,16 @@ package org.apache.roller.planet.util.rome;
 import com.sun.syndication.feed.module.ModuleImpl;
 
 public class ContentModuleImpl extends ModuleImpl implements ContentModule {
-    private String _encoded;
+    private String encoded;
 
     public ContentModuleImpl() {
         super(ContentModule.class,ContentModule.URI);
     }
     public String getEncoded() {
-        return _encoded;
+        return encoded;
     }
     public void setEncoded(String encoded) {
-        _encoded = encoded;
+        this.encoded = encoded;
     }
     public Class getInterface() {
         return ContentModule.class;
