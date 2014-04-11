@@ -69,11 +69,14 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         
         Map<String, RuntimeConfigProperty> props;
         try {
+            // retrieve properties from database
             props = this.getProperties();
-            initializeMissingProps(props);
 
-            // save our changes
+            // if any default props missing from the properties DB table,
+            // initialize them and save them to that table.
+            initializeMissingProps(props);
             this.saveProperties(props);
+
         } catch (Exception e) {
             log.fatal("Failed to initialize runtime configuration properties."+
                     "Please check that the database has been upgraded!", e);
@@ -174,10 +177,9 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
                         props.put(propDef.getName(), newprop);
 
-                        log.info("Found uninitialized property " +
-                                propDef.getName() +
-                                " ... setting value to [" +
-                                propDef.getDefaultValue() + "`]");
+                        log.info("Property " + propDef.getName() +
+                            " not yet in roller_properties database table, will store with " +
+                            "default value of [" + propDef.getDefaultValue() + "`]");
                     }
                 }
             }
