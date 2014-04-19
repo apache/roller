@@ -951,17 +951,17 @@ public class MediaFileTest extends TestCase {
         MediaFileDirectory directory1 = new MediaFileDirectory(rootDirectory,
                 "dir1", "directory 1", testWeblog);
         mfMgr.createMediaFileDirectory(directory1);
-        //rootDirectory.getChildDirectories().add(directory1);
+        rootDirectory.getChildDirectories().add(directory1);
 
         MediaFileDirectory directory2 = new MediaFileDirectory(rootDirectory,
                 "dir2", "directory 2", testWeblog);
         mfMgr.createMediaFileDirectory(directory2);
-        //rootDirectory.getChildDirectories().add(directory2);
+        rootDirectory.getChildDirectories().add(directory2);
 
         MediaFileDirectory directory3 = new MediaFileDirectory(rootDirectory,
                 "dir3", "directory 3", testWeblog);
         mfMgr.createMediaFileDirectory(directory3);
-        //rootDirectory.getChildDirectories().add(directory3);
+        rootDirectory.getChildDirectories().add(directory3);
         
         TestUtils.endSession(true);
         
