@@ -21,6 +21,7 @@ import org.jdom2.Namespace;
 
 import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.io.ModuleParser;
+import java.util.Locale;
 
 public class ContentModuleParser implements ModuleParser {
 
@@ -31,11 +32,11 @@ public class ContentModuleParser implements ModuleParser {
     public Namespace getContentNamespace() {
         return Namespace.getNamespace(ContentModule.URI);
     }
-    public Module parse(Element dcRoot) {
+    public Module parse(Element element, Locale locale) {
         boolean foundSomething = false;
         ContentModule fm = new ContentModuleImpl();
 
-        Element e = dcRoot.getChild("encoded", getContentNamespace());
+        Element e = element.getChild("encoded", getContentNamespace());
         if (e != null) {
             foundSomething = true;
             fm.setEncoded(e.getText());
