@@ -29,7 +29,7 @@
     <artifactId>roller-release</artifactId>
     <packaging>pom</packaging>
 
-    <name>Roller release assembly</name>
+    <name>Roller Release Assembly</name>
     <description>Assembles Roller into a distribution package</description>
 
     <!--
