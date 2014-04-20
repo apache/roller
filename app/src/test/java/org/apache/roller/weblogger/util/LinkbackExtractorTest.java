@@ -68,6 +68,7 @@ public class LinkbackExtractorTest extends TestCase {
 
         LinkbackExtractor le = new LinkbackExtractor(testrefs[0][0],testrefs[0][1]);
         assertEquals("The Apache Cassandra Project", le.getTitle());
+        
         le = new LinkbackExtractor(testrefs[1][0],testrefs[1][1]);
         assertEquals("Apache Roller Mobile Platform", le.getTitle());
 
