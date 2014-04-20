@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PingConfig {
+public final class PingConfig {
     private static final Log LOGGER = LogFactory.getLog(PingConfig.class);
 
 
@@ -59,13 +59,6 @@ public class PingConfig {
     // PingConfig property for logging pings (not actually performing them).  Used for debugging.
     private static final String PINGS_LOG_ONLY_PROP = "pings.logOnly";
     private static final boolean PINGS_LOG_ONLY_DEFAULT = false;
-
-    // PingConfig property for controlling whether or not to allow custom ping targets
-    // ("Weblog:Custom Ping Targets" page and actions).  If absent, this defaults to false.
-    // with the enabledProperty behavior in editor-menu.xml.
-    // NOTE: If this property name is changed, editor-menu.xml must also be adjusted.
-    private static final String PINGS_DISALLOW_CUSTOM_TARGETS_PROP = "pings.disallowCustomTargets";
-    private static final boolean PINGS_DISALLOW_CUSTOM_TARGETS_DEFAULT = false;
 
     // PingConfig property for controlling whether or not to allow usage of pings
     // ("Weblog:Pings" page and actions).  If absent, this defaults to false
@@ -98,7 +91,7 @@ public class PingConfig {
     // This was introduced in order to support certain buggy (but popular) ping
     // targets that implement minor variants of the WeblogUpdates.ping call.
     // This is initialized once at startup, and referenced when pings are made.
-    private static final Map CONFIGURED_VARIANTS = new HashMap();
+    private static final Map<String, Set<String>> CONFIGURED_VARIANTS = new HashMap<String, Set<String>>();
     
     // Pattern used to parse common ping targets as well as ping variants.
     // Each initial commmon ping target is specified in the format {{name}{url}}
@@ -139,16 +132,6 @@ public class PingConfig {
      */
     public static boolean getLogPingsOnly() {
         return getBooleanProperty(PINGS_LOG_ONLY_PROP, PINGS_LOG_ONLY_DEFAULT);
-    }
-
-    /**
-     * Determine whether the configuration disallows custom ping targets.  If this is true, users are not allowed to
-     * create or edit custom ping targets, and any auto ping configs that use them are ignored.
-     *
-     * @return the configured (or default) value of the "disallow custom targets" setting.
-     */
-    public static boolean getDisallowCustomTargets() {
-        return getBooleanProperty(PINGS_DISALLOW_CUSTOM_TARGETS_PROP, PINGS_DISALLOW_CUSTOM_TARGETS_DEFAULT);
     }
 
     /**
@@ -213,7 +196,7 @@ public class PingConfig {
                 String name = m.group(1).trim();
                 String url = m.group(2).trim();
                 LOGGER.info("Creating common ping target '" + name + "' from configuration properties.");
-                PingTarget pingTarget = new PingTarget(null, name, url, null, false);
+                PingTarget pingTarget = new PingTarget(null, name, url, false);
                 pingTargetMgr.savePingTarget(pingTarget);
             } else {
                 LOGGER.error("Unable to parse configured initial ping target '" + thisTarget + "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
@@ -242,7 +225,7 @@ public class PingConfig {
             if (m.matches() && m.groupCount() == 2) {
                 String url = m.group(1).trim();
                 String optionsList = m.group(2).trim();
-                Set variantOptions = new HashSet();
+                Set<String> variantOptions = new HashSet<String>();
                 String[] options = optionsList.split(",");
                 for (int j = 0; j < options.length; j++) {
                     String option = options[j].trim().toLowerCase();
@@ -268,10 +251,10 @@ public class PingConfig {
      * @return the set of variant options configured for the given ping target url, or
      *         the empty set if there are no variants configured.
      */
-    public static Set getVariantOptions(String pingTargetUrl) {
-        Set variantOptions = (Set) CONFIGURED_VARIANTS.get(pingTargetUrl);
+    public static Set<String> getVariantOptions(String pingTargetUrl) {
+        Set<String> variantOptions = CONFIGURED_VARIANTS.get(pingTargetUrl);
         if (variantOptions == null) {
-            variantOptions = Collections.EMPTY_SET;
+            variantOptions = Collections.emptySet();
         }
         return variantOptions;
     }

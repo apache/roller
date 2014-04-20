@@ -126,10 +126,10 @@ public class MediaFileImageChooser extends MediaFileBase {
         String fullPath = this.currentDirectory.getPath();
         if (fullPath.length() > 1) {
             String[] directoryNames = fullPath.substring(1).split("/");
-            String directoryPath = "";
+            String dirPath = "";
             for (String directoryName : directoryNames) {
-                directoryPath = directoryPath + "/" + directoryName;
-                directoryHierarchy.add(new KeyValueObject(directoryPath, directoryName));
+                dirPath = dirPath + "/" + directoryName;
+                directoryHierarchy.add(new KeyValueObject(dirPath, directoryName));
             }
         }
         return directoryHierarchy;

@@ -22,13 +22,13 @@ import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
@@ -85,10 +86,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         try {
             Hashtable result = new Hashtable();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-            List cats = weblogMgr.getWeblogCategories(website, false);
-            for (Iterator wbcItr = cats.iterator(); wbcItr.hasNext();) {
-                WeblogCategory category = (WeblogCategory) wbcItr.next();
-                result.put(category.getPath(),
+            List<WeblogCategory> cats = weblogMgr.getWeblogCategories(website);
+            for (WeblogCategory category : cats) {
+                result.put(category.getName(),
                         createCategoryStruct(category, userid));
             }
             return result;
@@ -176,7 +176,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             if ( cat != null ) {
                 // Use first category specified by request
                 WeblogCategory cd =
-                        weblogMgr.getWeblogCategoryByPath(entry.getWebsite(), cat);
+                        weblogMgr.getWeblogCategoryByName(entry.getWebsite(), cat);
                 entry.setCategory(cd);
             }
             
@@ -189,7 +189,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
-            Thread.sleep(1000);
+            Thread.sleep(RollerConstants.SEC_IN_MS);
             
             return true;
         } catch (Exception e) {
@@ -286,7 +286,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                     mLogger.debug("cat to string - "+cats[0].toString());
                     for (int i=0; i<cats.length; i++) {
                         Object cat = cats[i];
-                        rollerCat = weblogMgr.getWeblogCategoryByPath(website, (String)cat);
+                        rollerCat = weblogMgr.getWeblogCategoryByName(website, (String)cat);
                         if (rollerCat != null) {
                             entry.setCategory(rollerCat);
                             break;
@@ -308,7 +308,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
-            Thread.sleep(1000);
+            Thread.sleep(RollerConstants.SEC_IN_MS);
             
             return entry.getId();
         } catch (Exception e) {
@@ -437,23 +437,13 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
-                List entries = weblogMgr.getWeblogEntries(
-                        website,           // website
-                        null,
-                        null,              // startDate
-                        null,              // endDate
-                        null,              // catName
-                        null,              // tags
-                        null,              // status
-                        null,              // text
-                        "updateTime",      // sortby
-                        null,
-                        null,
-                        0, numposts);
-                
-                Iterator iter = entries.iterator();
-                while (iter.hasNext()) {
-                    WeblogEntry entry = (WeblogEntry)iter.next();
+                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+                wesc.setWeblog(website);
+                wesc.setSortBy(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
+                wesc.setMaxResults(numposts);
+                List<WeblogEntry> entries = weblogMgr.getWeblogEntries(wesc);
+
+                for (WeblogEntry entry : entries) {
                     results.addElement(createPostStruct(entry, userid));
                 }
             }
@@ -490,7 +480,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         struct.put("author", entry.getCreator().getEmailAddress());
         
         Vector catArray = new Vector();
-        catArray.addElement(entry.getCategory().getPath());
+        catArray.addElement(entry.getCategory().getName());
         struct.put("categories", catArray);
         
         return struct;
@@ -500,18 +490,18 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     private Hashtable createCategoryStruct(WeblogCategory category, String userid) {
         
         Hashtable struct = new Hashtable();
-        struct.put("title", category.getPath());
-        struct.put("description", category.getPath());
+        struct.put("title", category.getName());
+        struct.put("description", category.getName());
         
         Weblogger roller = WebloggerFactory.getWeblogger();
         URLStrategy strategy = roller.getUrlStrategy();
         
-        String catUrl = strategy.getWeblogCollectionURL(category.getWebsite(),
-        		null, category.getPath(), null, null, 0, true);
+        String catUrl = strategy.getWeblogCollectionURL(category.getWeblog(),
+        		null, category.getName(), null, null, 0, true);
         struct.put("htmlUrl", catUrl);
         
-        String rssUrl = strategy.getWeblogFeedURL(category.getWebsite(),
-               null, "entries", "rss", category.getPath(), null, null, false, true);
+        String rssUrl = strategy.getWeblogFeedURL(category.getWeblog(),
+               null, "entries", "rss", category.getName(), null, null, false, true);
         struct.put("rssUrl",rssUrl);
         
         return struct;

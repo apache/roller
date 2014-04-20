@@ -19,19 +19,16 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 
 /**
  * Automatic ping configuration.  An instance of this class relates a website 
  * and ping target; it indicates that the specified ping target should be pinged
- * when the corresponding website is changed.  Pinging can be restricted to
- * changes to specific categories on the website by instances of the
- * {@link PingCategoryRestrictionData} object.  In the absence of any category
- * restrictions, the ping target is pinged whenever the corresponding website
- * changes.
+ * when the corresponding website is changed.
+ *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class AutoPing implements Serializable {

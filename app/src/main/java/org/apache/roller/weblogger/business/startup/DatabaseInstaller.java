@@ -258,7 +258,7 @@ public class DatabaseInstaller {
     }
 
     /**
-     * Upgrade database for Roller 4.0.0
+     * Upgrade database to Roller 4.0.0
      */
     private void upgradeTo400(Connection con, boolean runScripts) throws StartupException {
         
@@ -701,7 +701,7 @@ public class DatabaseInstaller {
     
     
     /**
-     * Upgrade database for Roller 4.1.0
+     * Upgrade database to Roller 5.0
      */
     private void upgradeTo500(Connection con, boolean runScripts) throws StartupException {
         
@@ -727,6 +727,9 @@ public class DatabaseInstaller {
         }        
     }
 
+    /**
+     * Upgrade database to Roller 5.1
+     */
 	private void upgradeTo510(Connection con, boolean runScripts) throws StartupException {
         
         // first we need to run upgrade scripts 
@@ -782,7 +785,6 @@ public class DatabaseInstaller {
      * Return true if named table exists in database.
      */
     private boolean tableExists(Connection con, String tableName) throws SQLException {
-        String[] types = {"TABLE"};
         ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
         while (rs.next()) {
             if (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME").toLowerCase())) {
@@ -814,10 +816,8 @@ public class DatabaseInstaller {
                 // however, if roller_properties is not empty then we at least
                 // we have someone upgrading from 1.2.x
                 rs = stmt.executeQuery("select count(*) from roller_properties");
-                if(rs.next()) {
-                    if(rs.getInt(1) > 0) {
-                        dbversion = 120;
-                    }
+                if (rs.next() && rs.getInt(1) > 0) {
+                    dbversion = 120;
                 }
             }
             
@@ -856,7 +856,7 @@ public class DatabaseInstaller {
             } else {
                 myversion = parsed;
             }
-        } catch(Exception e) {}  
+        } catch(Exception e) {}
         
         return myversion;
     }

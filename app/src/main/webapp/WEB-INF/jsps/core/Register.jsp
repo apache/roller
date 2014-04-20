@@ -32,7 +32,7 @@
         </td>
     </tr>
         
-    <s:if test="fromSso">
+    <s:if test="fromSSO">
         <tr>
             <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
             <td class="field"><strong><s:property value="bean.userName" /></strong></td>
@@ -65,7 +65,7 @@
         <td class="description"><s:text name="userRegister.tip.email" /></td>
     </tr>
 
-    <s:if test="!fromSso">
+    <s:if test="!fromSSO">
         <tr>
             <td colspan="3">
                 <h2><s:text name="userRegister.heading.authentication" /></h2>
@@ -158,40 +158,45 @@
 function onChange() {
     var disabled = true;
     var openIdConfig    = '<s:property value="openIdConfiguration" />';
-    var ssoEnabled      = <s:property value="fromSso" />;
-    var passwordText    = document.register['bean.passwordText'].value;
-    var passwordConfirm = document.register['bean.passwordConfirm'].value;
-    var userName        = document.register['bean.userName'].value;
+    var ssoEnabled      = <s:property value="fromSSO" />;
     var emailAddress    = document.register['bean.emailAddress'].value;
-    var openIdUrl       = "";
+    var userName = passwordText = passwordConfirm = openIdUrl = "";
+
+    if (ssoEnabled) {
+        userName = '<s:property value="bean.userName" />';
+    } else {
+        userName = document.register['bean.userName'].value;
+    }
+
+    if (ssoEnabled == false && openIdConfig != 'only') {
+        passwordText    = document.register['bean.passwordText'].value;
+        passwordConfirm = document.register['bean.passwordConfirm'].value;
+    }
     if (openIdConfig != 'disabled') {
         openIdUrl = document.register['bean.openIdUrl'].value;
     }
-    
+
     if (ssoEnabled) {
         if (emailAddress) disabled = false;
-
     } else if (openIdConfig == 'disabled') {
         if (emailAddress && userName && passwordText && passwordConfirm) disabled = false;
-        
     } else if (openIdConfig == 'only') {
         if (emailAddress && openIdUrl) disabled = false;
-        
     } else if (openIdConfig == 'hybrid') {
         if (emailAddress && ((passwordText && passwordConfirm) || (openIdUrl)) ) disabled = false;
     }
 
-    if ((passwordText || passwordConfirm) && !(passwordText == passwordConfirm)) {
-        document.getElementById('readytip').innerHTML = '<s:text name="userRegister.error.mismatchedPasswords" />';
-        disabled = true;
-    } else if (disabled) {
-        document.getElementById('readytip').innerHTML = '<s:text name="userRegister.tip.ready" />'
-    } else {
-        document.getElementById('readytip').innerHTML = '<s:text name="userRegister.success.ready" />'
+    if (!ssoEnabled) {
+        if ((passwordText || passwordConfirm) && !(passwordText == passwordConfirm)) {
+            document.getElementById('readytip').innerHTML = '<s:text name="userRegister.error.mismatchedPasswords" />';
+            disabled = true;
+        } else if (disabled) {
+            document.getElementById('readytip').innerHTML = '<s:text name="userRegister.tip.ready" />'
+        } else {
+            document.getElementById('readytip').innerHTML = '<s:text name="userRegister.success.ready" />'
+        }
     }
     document.getElementById('submit').disabled = disabled;
 }
 document.getElementById('submit').disabled = true;
 </script>
-
-

@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.planet.business;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.fetcher.FetcherException;
@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 
 
 /**
@@ -121,21 +122,11 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
             
             // grab recent entries for this weblog
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List<WeblogEntry> entries = wmgr.getWeblogEntries(
-                    localWeblog,                 // weblog
-                    null,                        // user
-                    null,                        // startDate
-                    null,                        // endDate
-                    null,                        // catName
-                    null,                        // tags
-                    WeblogEntry.PUBLISHED,       // status
-                    null,                        // text
-                    null,                        // sortby (null means pubTime)
-                    null,                        // sortOrder
-                    null,                        // locale
-                    0,                           // offset
-                    entryCount);                 // range
-            
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(localWeblog);
+            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setMaxResults(entryCount);
+            List<WeblogEntry> entries = wmgr.getWeblogEntries(wesc);
             log.debug("Found " + entries.size());
 
             // Populate subscription object with new entries
@@ -156,7 +147,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
                 entry.setPubTime(rollerEntry.getPubTime());
                 entry.setText(content);
                 entry.setPermalink(rollerEntry.getPermalink());
-                entry.setCategoriesString(rollerEntry.getCategory().getPath());
+                entry.setCategoriesString(rollerEntry.getCategory().getName());
                 
                 newSub.addEntry(entry);
             }

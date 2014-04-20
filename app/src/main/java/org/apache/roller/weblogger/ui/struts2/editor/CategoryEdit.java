@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -78,7 +78,7 @@ public class CategoryEdit extends UIAction {
     @SkipValidation
     public String execute() {
         
-        if(getCategory() == null) {
+        if (getCategory() == null) {
             // TODO: i18n
             addError("Cannot edit null category");
             return ERROR;
@@ -118,8 +118,7 @@ public class CategoryEdit extends UIAction {
                 // notify caches
                 CacheManager.invalidate(getCategory());
 
-                // TODO: i18n
-                addMessage("category updated");
+                addMessage("categoryForm.changesSaved");
 
             } catch(Exception ex) {
                 log.error("Error saving category", ex);
@@ -131,6 +130,14 @@ public class CategoryEdit extends UIAction {
         return INPUT;
     }
 
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return CANCEL;
+    }
     
     // TODO: validation
     public void myValidate() {
@@ -138,11 +145,9 @@ public class CategoryEdit extends UIAction {
         // name is required, has max length, no html
         
         // make sure new name is not a duplicate of an existing category
-        if(!getCategory().getName().equals(getBean().getName())) {
-            WeblogCategory parent = getCategory().getParent();
-            if(parent != null && parent.hasCategory(getBean().getName())) {
-                addError("categoryForm.error.duplicateName", getBean().getName());
-            }
+        if (!getCategory().getName().equals(bean.getName()) &&
+            getCategory().getWeblog().hasCategory(bean.getName())) {
+            addError("categoryForm.error.duplicateName", bean.getName());
         }
     }
 

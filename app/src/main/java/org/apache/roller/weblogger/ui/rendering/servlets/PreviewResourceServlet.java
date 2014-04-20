@@ -27,9 +27,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -68,12 +69,9 @@ public class PreviewResourceServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Weblog weblog = null;
-        String ctx = request.getContextPath();
-        String servlet = request.getServletPath();
-        String reqURI = request.getRequestURI();
+        Weblog weblog;
 
-        WeblogPreviewResourceRequest resourceRequest = null;
+        WeblogPreviewResourceRequest resourceRequest;
         try {
             // parse the incoming request and extract the relevant data
             resourceRequest = new WeblogPreviewResourceRequest(request);
@@ -159,11 +157,11 @@ public class PreviewResourceServlet extends HttpServlet {
         response.setContentType(this.context.getMimeType(resourceRequest
                 .getResourcePath()));
 
-        OutputStream out = null;
+        OutputStream out;
         try {
             // ok, lets serve up the file
-            byte[] buf = new byte[8192];
-            int length = 0;
+            byte[] buf = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
+            int length;
             out = response.getOutputStream();
             while ((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);

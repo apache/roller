@@ -29,7 +29,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,13 +36,14 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
@@ -58,8 +58,6 @@ import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Represents a Weblog Entry.
- *
- * @struts.form include-all="true"
  */
 public class WeblogEntry implements Serializable {
     private static Log mLogger =
@@ -101,11 +99,11 @@ public class WeblogEntry implements Serializable {
     private WeblogCategory category = null;
     
     // Collection of name/value entry attributes
-    private Set attSet = new TreeSet();
+    private Set<WeblogEntryAttribute> attSet = new TreeSet<WeblogEntryAttribute>();
     
-    private Set tagSet = new HashSet(); 
-    private Set removedTags = new HashSet();
-    private Set addedTags = new HashSet();
+    private Set<WeblogEntryTag> tagSet = new HashSet<WeblogEntryTag>();
+    private Set<String> removedTags = new HashSet<String>();
+    private Set<String> addedTags = new HashSet<String>();
     
     //----------------------------------------------------------- Construction
     
@@ -227,17 +225,12 @@ public class WeblogEntry implements Serializable {
        
     /**
      * Return collection of WeblogCategory objects of this entry.
-     * Added for symetry with PlanetEntryData object.
+     * Added for symmetry with PlanetEntryData object.
      */
-    public List getCategories() {
-        List cats = new ArrayList();
+    public List<WeblogCategory> getCategories() {
+        List<WeblogCategory> cats = new ArrayList<WeblogCategory>();
         cats.add(getCategory());
         return cats;
-    }
-    
-    /** No-op method to please XDoclet */
-    public void setCategories(List cats) {
-        // no-op
     }
     
     public Weblog getWebsite() {
@@ -352,10 +345,8 @@ public class WeblogEntry implements Serializable {
     }
     
     //-------------------------------------------------------------------------
-    /**
-     * Map attributes as set because XDoclet 1.2b4 map support is broken.
-     */
-    public Set getEntryAttributes() {
+
+    public Set<WeblogEntryAttribute> getEntryAttributes() {
         return attSet;
     }
 
@@ -363,13 +354,9 @@ public class WeblogEntry implements Serializable {
         this.attSet = atts;
     }
     
-    /**
-     * Would be named getEntryAttribute, but that would set off XDoclet
-     */
     public String findEntryAttribute(String name) {
         if (getEntryAttributes() != null) {
-            for (Iterator it = getEntryAttributes().iterator(); it.hasNext(); ) {
-                WeblogEntryAttribute att = (WeblogEntryAttribute) it.next();
+            for (WeblogEntryAttribute att : getEntryAttributes()) {
                 if (name.equals(att.getName())) {
                     return att.getValue();
                 }
@@ -380,8 +367,7 @@ public class WeblogEntry implements Serializable {
         
     public void putEntryAttribute(String name, String value) throws Exception {
         WeblogEntryAttribute att = null;
-        for (Iterator it = getEntryAttributes().iterator(); it.hasNext(); ) {
-            WeblogEntryAttribute o = (WeblogEntryAttribute) it.next();
+        for (WeblogEntryAttribute o : getEntryAttributes()) {
             if (name.equals(o.getName())) {
                 att = o; 
                 break;
@@ -537,7 +523,7 @@ public class WeblogEntry implements Serializable {
         this.locale = locale;
     }
     
-     public Set<WeblogEntryTag> getTags()
+    public Set<WeblogEntryTag> getTags()
      {
          return tagSet;
      }
@@ -563,8 +549,7 @@ public class WeblogEntry implements Serializable {
             return;
         }
         
-        for (Iterator it = getTags().iterator(); it.hasNext();) {
-            WeblogEntryTag tag = (WeblogEntryTag) it.next();
+        for (WeblogEntryTag tag : getTags()) {
             if (tag.getName().equals(name)) {
                 return;
             }
@@ -599,19 +584,17 @@ public class WeblogEntry implements Serializable {
             return;
         }
         
-        HashSet newTags = new HashSet(updatedTags.size());
+        Set<String> newTags = new HashSet<String>(updatedTags.size());
         Locale localeObject = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
         
-        for(Iterator<String> it = updatedTags.iterator(); it.hasNext();) {
-            String name = it.next();
+        for (String name : updatedTags) {
             newTags.add(Utilities.normalizeTag(name, localeObject));
         }
         
-        HashSet removeTags = new HashSet();
+        Set<String> removeTags = new HashSet<String>();
 
         // remove old ones no longer passed.
-        for (Iterator it = getTags().iterator(); it.hasNext();) {
-            WeblogEntryTag tag = (WeblogEntryTag) it.next();
+        for (WeblogEntryTag tag : getTags()) {
             if (!newTags.contains(tag.getName())) {
                 removeTags.add(tag.getName());
             } else {
@@ -619,13 +602,13 @@ public class WeblogEntry implements Serializable {
             }
         }
 
-        WeblogEntryManager weblogManager = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        for (Iterator it = removeTags.iterator(); it.hasNext();) {
-            weblogManager.removeWeblogEntryTag((String) it.next(), this);
+        WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        for (String removeTag : removeTags) {
+            weblogEntryManager.removeWeblogEntryTag(removeTag, this);
         }
         
-        for (Iterator it = newTags.iterator(); it.hasNext();) {
-            addTag((String) it.next());
+        for (String newTag : newTags) {
+            addTag(newTag);
         }
     }
    
@@ -634,8 +617,8 @@ public class WeblogEntry implements Serializable {
         // Sort by name
         Set<WeblogEntryTag> tmp = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
         tmp.addAll(getTags());
-        for (Iterator it = tmp.iterator(); it.hasNext();) {
-            sb.append(((WeblogEntryTag) it.next()).getName()).append(" ");
+        for (WeblogEntryTag entryTag : tmp) {
+            sb.append(entryTag.getName()).append(" ");
         }
         if (sb.length() > 0) {
             sb.deleteCharAt(sb.length() - 1);
@@ -743,27 +726,23 @@ public class WeblogEntry implements Serializable {
     
     //------------------------------------------------------------------------
     
-    public List getComments() {
+    public List<WeblogEntryComment> getComments() {
         return getComments(true, true);
     }
     
     /**
      * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
-    public List getComments(boolean ignoreSpam, boolean approvedOnly) {
-        List list = new ArrayList();
+    public List<WeblogEntryComment> getComments(boolean ignoreSpam, boolean approvedOnly) {
+        List<WeblogEntryComment> list = new ArrayList<WeblogEntryComment>();
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            return wmgr.getComments(
-                    getWebsite(),
-                    this,
-                    null,  // search String
-                    null,  // startDate
-                    null,
-                    approvedOnly ? WeblogEntryComment.APPROVED : null,
-                    false, // we want chrono order
-                    0,    // offset
-                    -1);   // no limit
+
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setWeblog(getWebsite());
+            csc.setEntry(this);
+            csc.setStatus(approvedOnly ? WeblogEntryComment.APPROVED : null);
+            return wmgr.getComments(csc);
         } catch (WebloggerException alreadyLogged) {}
         return list;
     }
@@ -771,11 +750,6 @@ public class WeblogEntry implements Serializable {
     public int getCommentCount() {
         List comments = getComments(true, true);
         return comments.size();
-    }
-    
-    /** No-op to please XDoclet */
-    public void setCommentCount(int ignored) {
-        // no-op
     }
     
     public List getReferers() {
@@ -819,13 +793,6 @@ public class WeblogEntry implements Serializable {
         return getPermaLink() + "#comments";
     }
     
-    /** 
-     * to please XDoclet 
-     * @deprecated Use commentLink() instead
-     */
-    public void setCommentsLink(String ignored) {}
-    
-    
     /**
      * Return the Title of this post, or the first 255 characters of the
      * entry's text.
@@ -834,7 +801,7 @@ public class WeblogEntry implements Serializable {
      */
     public String getDisplayTitle() {
         if ( getTitle()==null || getTitle().trim().equals("") ) {
-            return StringUtils.left(Utilities.removeHTML(getText()),255);
+            return StringUtils.left(Utilities.removeHTML(getText()), RollerConstants.TEXTWIDTH_255);
         }
         return Utilities.removeHTML(getTitle());
     }
@@ -850,7 +817,7 @@ public class WeblogEntry implements Serializable {
      * Return RSS 09x style description (escaped HTML version of entry text)
      */
     public String getRss09xDescription(int maxLength) {
-        String ret = StringEscapeUtils.escapeHtml(getText());
+        String ret = StringEscapeUtils.escapeHtml3(getText());
         if (maxLength != -1 && ret.length() > maxLength) {
             ret = ret.substring(0,maxLength-3)+"...";
         }
@@ -929,63 +896,42 @@ public class WeblogEntry implements Serializable {
      * Convenience method to transform mPlugins to a List
      * @return
      */
-    public List getPluginsList() {
+    public List<String> getPluginsList() {
         if (getPlugins() != null) {
             return Arrays.asList( StringUtils.split(getPlugins(), ",") );
         }
-        return new ArrayList();
+        return new ArrayList<String>();
     }    
     
     /** Convenience method for checking status */
     public boolean isDraft() {
         return getStatus().equals(DRAFT);
     }
-    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
-    public void setDraft(boolean value) {
-    }
-    
+
     /** Convenience method for checking status */
     public boolean isPending() {
         return getStatus().equals(PENDING);
     }
-    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
-    public void setPending(boolean value) {
-    }
-    
+
     /** Convenience method for checking status */
     public boolean isPublished() {
         return getStatus().equals(PUBLISHED);
     }
-    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
-    public void setPublished(boolean value) {
-    }
-  
+
     /**
      * Get entry text, transformed by plugins enabled for entry.
      */
     public String getTransformedText() {
         return render(getText());
     }
-    /**
-     * No-op to please XDoclet.
-     */
-    public void setTransformedText(String t) {
-        // no-op
-    }
-    
+
     /**
      * Get entry summary, transformed by plugins enabled for entry.
      */
     public String getTransformedSummary() {
         return render(getSummary());
     }
-    /**
-     * No-op to please XDoclet.
-     */
-    public void setTransformedSummary(String t) {
-        // no-op
-    }    
-    
+
     /**
      * Determine if the specified user has permissions to edit this entry.
      */
@@ -1028,7 +974,7 @@ public class WeblogEntry implements Serializable {
     private String render(String str) {
         String ret = str;
         mLogger.debug("Applying page plugins to string");
-        Map inPlugins = getWebsite().getInitializedPlugins();
+        Map<String, WeblogEntryPlugin> inPlugins = getWebsite().getInitializedPlugins();
         if (str != null && inPlugins != null) {
             List entryPlugins = getPluginsList();
             
@@ -1038,11 +984,9 @@ public class WeblogEntry implements Serializable {
                 // now loop over mPagePlugins, matching
                 // against Entry plugins (by name):
                 // where a match is found render Plugin.
-                Iterator iter = inPlugins.keySet().iterator();
-                while (iter.hasNext()) {
-                    String key = (String)iter.next();
-                    if (entryPlugins.contains(key)) {
-                        WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin) inPlugins.get(key);
+                for (Map.Entry<String, WeblogEntryPlugin> entry : inPlugins.entrySet()) {
+                    if (entryPlugins.contains(entry.getKey())) {
+                        WeblogEntryPlugin pagePlugin = entry.getValue();
                         try {
                             ret = pagePlugin.render(this, ret);
                         } catch (Exception e) {
@@ -1084,7 +1028,7 @@ public class WeblogEntry implements Serializable {
                 displayContent = this.getTransformedSummary();
                 if(StringUtils.isNotEmpty(this.getText())) {
                     // add read more
-                    List args = new ArrayList();
+                    List<String> args = new ArrayList<String>();
                     args.add(readMoreLink);
                     
                     // TODO: we need a more appropriate way to get the view locale here
@@ -1108,6 +1052,4 @@ public class WeblogEntry implements Serializable {
         return displayContent(null);
     }
 
-    /** No-op method to please XDoclet */
-    public void setDisplayContent(String ignored) {}
 }

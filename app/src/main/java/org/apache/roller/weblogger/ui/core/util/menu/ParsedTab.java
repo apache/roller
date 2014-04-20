@@ -33,14 +33,12 @@ public class ParsedTab {
     private String enabledProperty = null;
     private String disabledProperty = null;
     
-    private List tabItems = new ArrayList();
-    
+    private List<ParsedTabItem> tabItems = new ArrayList<ParsedTabItem>();
     
     public void addItem(ParsedTabItem item) {
         this.tabItems.add(item);
     }
-    
-    
+
     public String getName() {
         return name;
     }
@@ -73,11 +71,11 @@ public class ParsedTab {
         this.enabledProperty = enabledProperty;
     }
 
-    public List getTabItems() {
+    public List<ParsedTabItem> getTabItems() {
         return tabItems;
     }
 
-    public void setTabItems(List tabItems) {
+    public void setTabItems(List<ParsedTabItem> tabItems) {
         this.tabItems = tabItems;
     }
 

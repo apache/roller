@@ -35,7 +35,7 @@ import javax.mail.Transport;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -75,8 +75,7 @@ public class MailUtil {
     /**
      * Send an email notice that a new pending entry has been submitted.
      */
-    public static void sendPendingEntryNotice(WeblogEntry entry) 
-            throws WebloggerException {
+    public static void sendPendingEntryNotice(WeblogEntry entry) throws WebloggerException {
         
         Session mailSession = WebloggerStartup.getMailProvider() != null
                 ? WebloggerStartup.getMailProvider().getSession() : null;
@@ -97,19 +96,18 @@ public class MailUtil {
             String content;
             
             // list of enabled website authors and admins
-            ArrayList reviewers = new ArrayList();
-            List websiteUsers = wmgr.getWeblogUsers(entry.getWebsite(), true);
+            List<String> reviewers = new ArrayList<String>();
+            List<User> websiteUsers = wmgr.getWeblogUsers(entry.getWebsite(), true);
             
             // build list of reviewers (website users with author permission)
-            Iterator websiteUserIter = websiteUsers.iterator();
-            while (websiteUserIter.hasNext()) {
-                User websiteUser = (User)websiteUserIter.next();
-                if (entry.getWebsite().hasUserPermission(                        
+            for (User websiteUser : websiteUsers) {
+                if (entry.getWebsite().hasUserPermission(
                         websiteUser, WeblogPermission.POST)
                         && websiteUser.getEmailAddress() != null) {
                     reviewers.add(websiteUser.getEmailAddress());
                 }
             }
+
             to = (String[])reviewers.toArray(new String[reviewers.size()]);
             
             // Figure URL to entry edit page
@@ -144,8 +142,7 @@ public class MailUtil {
     /**
      * Send a weblog invitation email.
      */
-    public static void sendWeblogInvitation(Weblog website, 
-                                            User user)
+    public static void sendWeblogInvitation(Weblog website, User user)
             throws WebloggerException {
         
         Session mailSession = WebloggerStartup.getMailProvider() != null
@@ -287,16 +284,15 @@ public class MailUtil {
         }
         
         // build list of email addresses to send notification to
-        Set subscribers = new TreeSet();
+        Set<String> subscribers = new TreeSet<String>();
         
         // If we are to notify subscribers, then...
         if (notifySubscribers) {
             log.debug("Sending notification email to all subscribers");
 
             // Get all the subscribers to this comment thread
-            List comments = entry.getComments(true, true);
-            for (Iterator it = comments.iterator(); it.hasNext();) {
-                WeblogEntryComment comment = (WeblogEntryComment) it.next();
+            List<WeblogEntryComment> comments = entry.getComments(true, true);
+            for (WeblogEntryComment comment : comments) {
                 if (!StringUtils.isEmpty(comment.getEmail()) && commentObject.getApproved()) {
                     // If user has commented twice, count the most recent notify setting
                     if (comment.getNotify()) {
@@ -410,7 +406,7 @@ public class MailUtil {
         ownermsg.append("Link to comment management page:");
         ownermsg.append((escapeHtml) ? "\n" : "<br />");
         
-        Map<String, String> parameters = new HashMap();
+        Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("bean.entryId", entry.getId());
         String deleteURL = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL(
                 "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);
@@ -513,8 +509,7 @@ public class MailUtil {
      *
      * TODO: Make the addressing options configurable on a per-website basis.
      */
-    public static void sendEmailApprovalNotification(WeblogEntryComment cd, 
-                                                     I18nMessages resources) 
+    public static void sendEmailApprovalNotification(WeblogEntryComment cd, I18nMessages resources)
             throws MailingException {
         
         WeblogEntry entry = cd.getWeblogEntry();
@@ -548,13 +543,7 @@ public class MailUtil {
         
         // send message to author of approved comment
         try {
-            sendTextMessage(
-                    from, // from
-                    new String[] {cd.getEmail()}, // to
-                    null, // cc
-                    null, // bcc
-                    subject, // subject
-                    msg.toString()); // message
+            sendTextMessage(from, new String[] {cd.getEmail()}, null, null, subject, msg.toString());
         } catch (Exception e) {
             log.warn("Exception sending comment mail: " + e.getMessage());
             // This will log the stack trace if debug is enabled
@@ -580,17 +569,8 @@ public class MailUtil {
      * @param mimeType type of message, i.e. text/plain or text/html
      * @throws MessagingException the exception to indicate failure
      */
-    public static void sendMessage
-            (
-            String from,
-            String[] to,
-            String[] cc,
-            String[] bcc,
-            String subject,
-            String content,
-            String mimeType
-            )
-            throws MessagingException {
+    public static void sendMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
+            String content, String mimeType) throws MessagingException {
         
         MailProvider mailProvider = WebloggerStartup.getMailProvider();
         if (mailProvider == null) {
@@ -695,16 +675,8 @@ public class MailUtil {
      * @param content the body of the e-mail
      * @throws MessagingException the exception to indicate failure
      */
-    public static void sendTextMessage
-            (
-            String from,
-            String[] to,
-            String[] cc,
-            String[] bcc,
-            String subject,
-            String content
-            )
-            throws MessagingException {
+    public static void sendTextMessage(String from, String[] to, String[] cc, String[] bcc,
+                                       String subject, String content) throws MessagingException {
         sendMessage(from, to, cc, bcc, subject, content, "text/plain; charset=utf-8");
     }
     
@@ -719,21 +691,12 @@ public class MailUtil {
      * @param content the body of the e-mail
      * @throws MessagingException the exception to indicate failure
      */
-    public static void sendTextMessage
-            (
-            String from,
-            String to,
-            String[] cc,
-            String[] bcc,
-            String subject,
-            String content
-            )
-            throws MessagingException {
+    public static void sendTextMessage(String from, String to, String[] cc, String[] bcc, String subject,
+                                       String content) throws MessagingException {
         String[] recipient = null;
         if (to != null) {
             recipient = new String[] {to};
         }
-        
         sendMessage(from, recipient, cc, bcc, subject, content, "text/plain; charset=utf-8");
     }
     
@@ -750,16 +713,8 @@ public class MailUtil {
      * @param content the body of the e-mail
      * @throws MessagingException the exception to indicate failure
      */
-    public static void sendTextMessage
-            (
-            String from,
-            String to,
-            String cc,
-            String bcc,
-            String subject,
-            String content
-            )
-            throws MessagingException {
+    public static void sendTextMessage(String from, String to, String cc, String bcc, String subject,
+            String content) throws MessagingException {
         String[] recipient = null;
         String[] copy = null;
         String[] bcopy = null;
@@ -787,16 +742,8 @@ public class MailUtil {
      * @param content the body of the e-mail
      * @throws MessagingException the exception to indicate failure
      */
-    public static void sendHTMLMessage
-            (
-            String from,
-            String[] to,
-            String[] cc,
-            String[] bcc,
-            String subject,
-            String content
-            )
-            throws MessagingException {
+    public static void sendHTMLMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
+                                       String content) throws MessagingException {
         sendMessage(from, to, cc, bcc, subject, content, "text/html; charset=utf-8");
     }
     
@@ -811,16 +758,8 @@ public class MailUtil {
      * @param content the body of the e-mail
      * @throws MessagingException the exception to indicate failure
      */
-    public static void sendHTMLMessage
-            (
-            String from,
-            String to,
-            String cc,
-            String bcc,
-            String subject,
-            String content
-            )
-            throws MessagingException {
+    public static void sendHTMLMessage(String from, String to, String cc, String bcc, String subject,
+                                       String content) throws MessagingException {
         String[] recipient = null;
         String[] copy = null;
         String[] bcopy = null;
@@ -850,16 +789,8 @@ public class MailUtil {
      * @param content the body of the e-mail
      * @throws MessagingException the exception to indicate failure
      */
-    public static void sendHTMLMessage
-            (
-            String from,
-            String to,
-            String[] cc,
-            String[] bcc,
-            String subject,
-            String content
-            )
-            throws MessagingException {
+    public static void sendHTMLMessage(String from, String to, String[] cc, String[] bcc, String subject,
+                                       String content) throws MessagingException {
         String[] recipient = null;
         if (to != null) {
             recipient = new String[] {to};

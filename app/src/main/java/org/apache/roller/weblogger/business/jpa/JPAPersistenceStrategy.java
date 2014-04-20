@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.io.InputStream;
@@ -113,7 +112,22 @@ public class JPAPersistenceStrategy {
             }
         }
     }
-                        
+    /**
+     * Refresh changes to the current object.
+     * 
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
+     */
+    public void refresh(Object clazz) throws WebloggerException {
+        if (clazz == null) {
+            return;
+        }
+        try {
+            EntityManager em = getEntityManager(true);
+            em.refresh(clazz);
+        } catch (Exception e) {
+            // ignored;
+        }
+    }
     /**
      * Flush changes to the datastore, commit transaction, release em.
      * @throws org.apache.roller.weblogger.WebloggerException on any error
@@ -183,11 +197,10 @@ public class JPAPersistenceStrategy {
      */
     public void removeAll(Collection pos) throws WebloggerException {
         EntityManager em = getEntityManager(true);
-        for (Iterator iterator = pos.iterator(); iterator.hasNext();) {
-            Object obj = iterator.next();
+        for (Object obj : pos) {
             em.remove(obj);
         }
-    }    
+    }
     
     /**
      * Retrieve object, no transaction needed.
@@ -284,8 +297,7 @@ public class JPAPersistenceStrategy {
     public Query getNamedUpdate(String queryName)
     throws WebloggerException {
         EntityManager em = getEntityManager(true);
-        Query q = em.createNamedQuery(queryName);
-        return q;
+        return em.createNamedQuery(queryName);
     }
     
     /**

@@ -33,8 +33,8 @@ public class ThemeMetadata {
     private String type = null;
     private String previewImage = null;
     private ThemeMetadataTemplate stylesheet = null;
-    private Set templates = new HashSet();
-    private Set resources = new HashSet();
+    private Set<ThemeMetadataTemplate> templates = new HashSet<ThemeMetadataTemplate>();
+    private Set<String> resources = new HashSet<String>();
     
     
     public ThemeMetadata() {}
@@ -73,19 +73,19 @@ public class ThemeMetadata {
         this.previewImage = previewImage;
     }
 
-    public Set getTemplates() {
+    public Set<ThemeMetadataTemplate> getTemplates() {
         return templates;
     }
 
-    public void setTemplates(Set templates) {
+    public void setTemplates(Set<ThemeMetadataTemplate> templates) {
         this.templates = templates;
     }
 
-    public Set getResources() {
+    public Set<String> getResources() {
         return resources;
     }
 
-    public void setResources(Set resources) {
+    public void setResources(Set<String> resources) {
         this.resources = resources;
     }
 

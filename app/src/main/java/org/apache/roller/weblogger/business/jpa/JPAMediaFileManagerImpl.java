@@ -31,17 +31,19 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-import javax.imageio.ImageIO;
 
+import javax.imageio.ImageIO;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -108,9 +110,25 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             MediaFileDirectory targetDir) throws WebloggerException {
 
         for (MediaFileDirectory mediaFileDir : mediaFileDirs) {
+            // Refresh associated parent for changes
+            strategy.refresh(mediaFileDir.getParent());
             mediaFileDir.setParent(targetDir);
+            if ("/".equals(targetDir.getPath())) {
+                mediaFileDir.setPath("/" + mediaFileDir.getName());
+            } else {
+                mediaFileDir.setPath(targetDir.getPath() + "/"
+                        + mediaFileDir.getName());
+            }
             this.strategy.store(mediaFileDir);
         }
+
+        // Refresh associated parent for changes
+        roller.flush();
+        strategy.refresh(targetDir);
+        if (targetDir.getParent() != null) {
+            strategy.refresh(targetDir.getParent());
+        }
+
         // update weblog last modified date. date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(targetDir.getWeblog());
     }
@@ -135,6 +153,15 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
         // update weblog last modified date. date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(targetDirectory.getWeblog());
+
+        // Refresh associated parent for changes
+        roller.flush();
+        if (moved.size() > 0) {
+            strategy.refresh(moved.get(0).getDirectory());
+        }
+
+        // Refresh associated parent for changes
+        strategy.refresh(targetDirectory);
     }
 
     /**
@@ -170,6 +197,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(newDirectory.getWeblog());
 
+        // Refresh associated parent for changes
+        roller.flush();
+        strategy.refresh(parentDirectory);
+
         return newDirectory;
     }
 
@@ -182,6 +213,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         // update weblog last modified date. date updated by saveWebsite()
         roller.getWeblogManager().saveWeblog(directory.getWeblog());
+
+        // Refresh associated parent for changes
+        strategy.refresh(directory.getParent());
     }
 
     /**
@@ -285,6 +319,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
         strategy.store(mediaFile);
 
+        // Refresh associated parent for changes
+        roller.flush();
+        strategy.refresh(mediaFile.getDirectory());
+
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
 
@@ -329,6 +367,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             cmgr.saveFileContent(mediaFile.getWeblog(), mediaFile.getId()
                     + "_sm", new ByteArrayInputStream(baos.toByteArray()));
 
+            roller.flush();
+            // Refresh associated parent for changes
+            strategy.refresh(mediaFile.getDirectory());
+
         } catch (Exception e) {
             log.debug("ERROR creating thumbnail", e);
         }
@@ -341,6 +383,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             throws WebloggerException {
         mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
         strategy.store(mediaFile);
+
+        roller.flush();
+        // Refresh associated parent for changes
+        strategy.refresh(mediaFile.getDirectory());
+
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
     }
@@ -352,6 +399,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             InputStream is) throws WebloggerException {
         mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
         strategy.store(mediaFile);
+
+        roller.flush();
+        // Refresh associated parent for changes
+        strategy.refresh(mediaFile.getDirectory());
 
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
@@ -526,6 +577,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 .getFileContentManager();
 
         this.strategy.remove(mediaFile);
+
+        // Refresh associated parent for changes
+        strategy.refresh(mediaFile.getDirectory());
+
         // update weblog last modified date. date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
 
@@ -827,6 +882,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                             : newDir.getPath()) + "/" + files[i].getName();
                     log.debug("    Upgrade file with original path: "
                             + originalPath);
+
                     MediaFile mf = new MediaFile();
                     try {
                         mf.setName(files[i].getName());
@@ -846,10 +902,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                         mf.setInputStream(new FileInputStream(files[i]));
                         mf.setContentType(Utilities
                                 .getContentTypeFromFileName(files[i].getName()));
-                        newDir.getMediaFiles().add(mf);
 
+                        // Create
                         this.roller.getMediaFileManager().createMediaFile(
                                 weblog, mf, messages);
+                        newDir.getMediaFiles().add(mf);
+
                         log.info(messages.toString());
 
                         fileCount++;
@@ -894,16 +952,32 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         for (MediaFile mf : files) {
             try {
                 cmgr.deleteFile(dir.getWeblog(), mf.getId());
+                // Now thumbnail
+                cmgr.deleteFile(dir.getWeblog(), mf.getId() + "_sm");
             } catch (Exception e) {
                 log.debug("File to be deleted already unavailable in the file store");
             }
             this.strategy.remove(mf);
         }
-        Set<MediaFileDirectory> dirs = dir.getChildDirectories();
+
+        // Children
+        roller.flush();
+
+        // Set<MediaFileDirectory> dirs = dir.getChildDirectories();
+        // Recursive fix ConcurrentModificationException
+        Set<MediaFileDirectory> dirs = Collections
+                .synchronizedSet(new HashSet<MediaFileDirectory>(dir
+                        .getChildDirectories()));
         for (MediaFileDirectory md : dirs) {
             removeMediaFileDirectory(md);
         }
+
         this.strategy.remove(dir);
+
+        // Refresh associated parent
+        roller.flush();
+        strategy.refresh(dir.getParent());
+
     }
 
     public void removeMediaFileTag(String name, MediaFile entry)
@@ -916,10 +990,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 // Call back the entity to adjust its internal state
                 entry.onRemoveTag(name);
 
-                // Remove it from database
+                // Refresh it from database
                 this.strategy.remove(tag);
 
-                // Remove it from the collection
+                // Refresh it from the collection
                 it.remove();
             }
         }

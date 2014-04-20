@@ -42,13 +42,13 @@
     <tr>
         <td>
             <s:form action="templateRemove!remove">
-				<s:hidden name="salt" />
+                <s:hidden name="salt" />
 
                 <s:hidden name="removeId" />
                 <s:hidden name="weblog" value="%{actionWeblog.handle}" />
                 
                 <s:submit value="%{getText('application.yes')}" />&nbsp;
-                <s:submit value="%{getText('application.no')}" action="templates" />
+                <s:submit value="%{getText('application.no')}" action="templateRemove!cancel" />
             </s:form>
         </td>
     </tr>

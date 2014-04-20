@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -109,8 +110,9 @@ public class TrackbackServlet extends HttpServlet {
                 
                 if (trackbackRequest.getExcerpt() == null) {
                     trackbackRequest.setExcerpt("");
-                } else if (trackbackRequest.getExcerpt().length() >= 255) {
-                    trackbackRequest.setExcerpt(trackbackRequest.getExcerpt().substring(0, 252)+"...");
+                } else if (trackbackRequest.getExcerpt().length() >= RollerConstants.TEXTWIDTH_255) {
+                    trackbackRequest.setExcerpt(trackbackRequest.getExcerpt().substring(0,
+                            RollerConstants.TEXTWIDTH_255 - 3)+"...");
                 }
                 
                 // lookup weblog specified by comment request
@@ -162,10 +164,10 @@ public class TrackbackServlet extends HttpServlet {
                 int validationScore = commentValidationManager.validateComment(comment, messages);
                 logger.debug("Comment Validation score: " + validationScore);
                 
-                if (validationScore == 100 && weblog.getCommentModerationRequired()) {
+                if (validationScore == RollerConstants.PERCENT_100 && weblog.getCommentModerationRequired()) {
                     // Valid comments go into moderation if required
                     comment.setStatus(WeblogEntryComment.PENDING);
-                } else if (validationScore == 100) {
+                } else if (validationScore == RollerConstants.PERCENT_100) {
                     // else they're approved
                     comment.setStatus(WeblogEntryComment.APPROVED);
                 } else {
@@ -190,7 +192,7 @@ public class TrackbackServlet extends HttpServlet {
                     // Send email notifications
                     MailUtil.sendEmailNotification(comment, messages, 
                             I18nMessages.getMessages(trackbackRequest.getLocaleInstance()),
-                            validationScore == 100);
+                            validationScore == RollerConstants.PERCENT_100);
                     
                     if(WeblogEntryComment.PENDING.equals(comment.getStatus())) {
                         pw.println(this.getSuccessResponse("Trackback submitted to moderator"));

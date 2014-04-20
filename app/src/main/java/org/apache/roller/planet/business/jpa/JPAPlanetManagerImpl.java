@@ -21,10 +21,8 @@ package org.apache.roller.planet.business.jpa;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -38,6 +36,7 @@ import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.business.AbstractManagerImpl;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
@@ -53,11 +52,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     
     /** The strategy for this manager. */
     private final JPAPersistenceStrategy strategy;
-    
-    protected Map lastUpdatedByGroup = new HashMap();
-    protected static final String NO_GROUP = "zzz_nogroup_zzz";
-    
-    
+
     @com.google.inject.Inject  
     protected JPAPlanetManagerImpl(JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Planet Manager");
@@ -116,7 +111,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     
     public Iterator getAllSubscriptions() {
         try {
-            return ((List)strategy.getNamedQuery(
+            return (strategy.getNamedQuery(
                     "Subscription.getAll").getResultList()).iterator();
         } catch (Exception e) {
             throw new RuntimeException(
@@ -129,7 +124,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return q.getResultList().size();
     }
     
-    public List getTopSubscriptions(int offset, int length)
+    public List<Subscription> getTopSubscriptions(int offset, int length)
     throws RollerException {
         return getTopSubscriptions(null, offset, length);
     }
@@ -137,9 +132,9 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     /**
      * Get top X subscriptions, restricted by group.
      */
-    public List getTopSubscriptions(
+    public List<Subscription> getTopSubscriptions(
             PlanetGroup group, int offset, int len) throws RollerException {
-        List result = null;
+        List<Subscription> result;
         if (group != null) {
             Query q = strategy.getNamedQuery(
                     "Subscription.getByGroupOrderByInboundBlogsDesc");
@@ -200,11 +195,11 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return (Planet)strategy.load(Planet.class, id);
     }
     
-    public List getWebloggers() throws RollerException {
-        return (List)strategy.getNamedQuery("Planet.getAll").getResultList();
+    public List<Planet> getWebloggers() throws RollerException {
+        return strategy.getNamedQuery("Planet.getAll").getResultList();
     }
     
-    public List getGroupHandles(Planet planet) throws RollerException {
+    public List<String> getGroupHandles(Planet planet) throws RollerException {
         List<String> handles = new ArrayList<String>();
         for (PlanetGroup group : getGroups(planet)) {
             handles.add(group.getHandle());
@@ -242,7 +237,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         sub.getEntries().clear();
     }
     
-    public List getSubscriptions() throws RollerException {
+    public List<Subscription> getSubscriptions() throws RollerException {
         Query q = strategy.getNamedQuery("Subscription.getAllOrderByFeedURL");
         return q.getResultList();
     }
@@ -251,7 +246,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return (SubscriptionEntry) strategy.load(SubscriptionEntry.class, id);
     }
 
-    public List getEntries(Subscription sub, int offset, int len) throws RollerException {            
+    public List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len) throws RollerException {
         if (sub == null) {
             throw new WebloggerException("subscription cannot be null");
         }
@@ -266,22 +261,22 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return q.getResultList();
     }
 
-    public List getEntries(PlanetGroup group, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(PlanetGroup group, int offset, int len) throws RollerException {
         return getEntries(group, null, null, offset, len);
     }
 
-    public List getEntries(PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws RollerException {
 
         if (group == null) {
             throw new WebloggerException("group cannot be null or empty");
         }
         
-        List ret = null;
+        List<SubscriptionEntry> ret = null;
         try {
             long startTime = System.currentTimeMillis();
             
             StringBuilder sb = new StringBuilder();
-            List params = new ArrayList();
+            List<Object> params = new ArrayList<Object>();
             int size = 0;
             sb.append("SELECT e FROM SubscriptionEntry e ");
             sb.append("JOIN e.subscription.groups g ");
@@ -314,7 +309,8 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             
             long endTime = System.currentTimeMillis();
             
-            log.debug("Generated aggregation of " + ret.size() + " in " + ((endTime-startTime)/1000.0) + " seconds");
+            log.debug("Generated aggregation of " + ret.size() + " in " +
+                    ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
             
         } catch (Exception e) {
             throw new WebloggerException(e);

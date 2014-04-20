@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
@@ -41,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;
 import net.oauth.server.OAuthServlet;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -95,14 +96,14 @@ public class RollerAtomHandler implements AtomHandler {
     protected int maxEntries = 20;
     protected String atomURL = null;
     
-    protected static boolean throttle = true;
+    protected static final boolean THROTTLE;
     
     protected static Log log =
             LogFactory.getFactory().getInstance(RollerAtomHandler.class);
     
     static {
-        throttle = WebloggerConfig
-            .getBooleanProperty("webservices.atomprotocol.oneSecondThrottle");
+        THROTTLE = WebloggerConfig
+            .getBooleanProperty("webservices.atomprotocol.oneSecondThrottle", true);
     }
     
     //------------------------------------------------------------ construction
@@ -115,14 +116,15 @@ public class RollerAtomHandler implements AtomHandler {
     public RollerAtomHandler(HttpServletRequest request, HttpServletResponse response) {
         roller = WebloggerFactory.getWeblogger();
 
-        String userName = null;
+        String userName;
         if ("oauth".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
             userName = authenticationOAUTH(request, response);
 
         } else if ("wsse".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
             userName = authenticateWSSE(request);
 
-        } else { // default to basic
+        } else {
+            // default to basic
             userName = authenticateBASIC(request);
         }
 
@@ -225,12 +227,11 @@ public class RollerAtomHandler implements AtomHandler {
     public Entry getEntry(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length > 2) // URI is /blogname/entries/entryid
-        {
+        // URI is /blogname/entries/entryid
+        if (pathInfo.length > 2) {
             if (pathInfo[1].equals("entry")) {
                 EntryCollection ecol = new EntryCollection(user, atomURL);
                 return ecol.getEntry(areq);
-
             } else if (pathInfo[1].equals("resource") && pathInfo[pathInfo.length - 1].endsWith(".media-link")) {
                 MediaCollection mcol = new MediaCollection(user, atomURL);
                 return mcol.getEntry(areq);                    
@@ -278,12 +279,11 @@ public class RollerAtomHandler implements AtomHandler {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         if (pathInfo.length > 2) {
-            if (pathInfo[1].equals("entry")) // URI is /blogname/entry/entryid
-            {                    
+            // URI is /blogname/entry/entryid
+            if (pathInfo[1].equals("entry")) {
                 EntryCollection ecol = new EntryCollection(user, atomURL);
                 ecol.deleteEntry(areq);
                 return;
-
             } else if (pathInfo[1].equals("resource")) {
                 MediaCollection mcol = new MediaCollection(user, atomURL);
                 mcol.deleteEntry(areq);
@@ -301,10 +301,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public boolean isAtomServiceURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length==0) {
-            return true;
-        }
-        return false;
+        return pathInfo.length == 0;
     }
     
     /**
@@ -322,7 +319,7 @@ public class RollerAtomHandler implements AtomHandler {
     }
         
     /**
-     * True if URL is media edit URI. Media can be udpated, but not metadata.
+     * True if URL is media edit URI. Media can be updated, but not metadata.
      */
     public boolean isMediaEditURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
@@ -383,14 +380,14 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Return true if user is allowed to view an entry.
      */
-    public static  boolean canView(User u, WeblogEntry entry) {
+    public static boolean canView(User u, WeblogEntry entry) {
         return canEdit(u, entry);
     }
     
     /**
      * Return true if user is allowed to view a website.
      */
-    public static  boolean canView(User u, Weblog website) {
+    public static boolean canView(User u, Weblog website) {
         return canEdit(u, website);
     }
     
@@ -517,10 +514,10 @@ public class RollerAtomHandler implements AtomHandler {
     public static void oneSecondThrottle() {
         // Throttle one entry per second per weblog because time-
         // stamp in MySQL and other DBs has only 1 sec resolution
-        if (throttle) {
+        if (THROTTLE) {
             try {
                 synchronized (RollerAtomHandler.class) {
-                    Thread.sleep(1000);
+                    Thread.sleep(RollerConstants.SEC_IN_MS);
                 }
             } catch (Exception ignored) {}
         }

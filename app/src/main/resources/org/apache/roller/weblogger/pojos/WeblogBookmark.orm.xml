@@ -6,11 +6,8 @@
     <entity metadata-complete="true" name="WeblogBookmark"
             class="org.apache.roller.weblogger.pojos.WeblogBookmark" access="PROPERTY">
         <table name="bookmark"/>
-        <named-query name="BoomarkData.getByFolder">
-            <query>SELECT b FROM WeblogBookmark b WHERE b.folder = ?1</query>
-        </named-query>
-        <named-query name="BoomarkData.getByFolder.pathLike&amp;Folder.website">
-            <query>SELECT b FROM WeblogBookmark b WHERE b.folder.path LIKE ?1 AND b.folder.website = ?2</query>
+        <named-query name="BookmarkData.getByFolder">
+            <query>SELECT b FROM WeblogBookmark b WHERE b.folder = ?1 order by b.priority</query>
         </named-query>
         <attributes>
             <id name="id">
@@ -24,9 +21,6 @@
             </basic>
             <basic name="url">
                 <column name="url" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <basic name="weight">
-                <column name="weight" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="priority">
                 <column name="priority" insertable="true" updatable="true" unique="false"/>

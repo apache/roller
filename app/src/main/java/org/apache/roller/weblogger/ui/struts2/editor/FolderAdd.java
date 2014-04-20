@@ -20,10 +20,9 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -40,11 +39,8 @@ public class FolderAdd extends UIAction {
     
     private static Log log = LogFactory.getLog(FolderAdd.class);
     
-    // the id of the folder we are adding the new subfolder into
+    // the id of the folder we are working with
     private String folderId = null;
-    
-    // the folder we are adding the new subfolder into
-    private WeblogBookmarkFolder folder = null;
     
     // bean for managing form data
     private FolderBean bean = new FolderBean();
@@ -62,52 +58,21 @@ public class FolderAdd extends UIAction {
     }
     
     
-    public void myPrepare() {
-        try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            if(!StringUtils.isEmpty(getFolderId())) {
-                setFolder(bmgr.getFolder(getFolderId()));
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up folder - "+getFolderId(), ex);
-        }
-    }
-    
-    
     @SkipValidation
     public String execute() {
-        
-        if(getFolder() == null) {
-            // TODO: i18n
-            addError("Cannot add folder to null parent folder");
-            return ERROR;
-        }
-        
         return INPUT;
     }
 
     
     public String save() {
-        
-        if(getFolder() == null) {
-            // TODO: i18n
-            addError("Cannot add folder to null parent folder");
-            return ERROR;
-        }
-        
         // validation
         myValidate();
         
         if(!hasActionErrors())  {
             try {
                 WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder(
-                        getFolder(),
                         getBean().getName(),
-                        getBean().getDescription(),
                         getActionWeblog());
-
-                // add new folder to parent
-                getFolder().addFolder(newFolder);
 
                 // save changes
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
@@ -127,7 +92,6 @@ public class FolderAdd extends UIAction {
 
             } catch(Exception ex) {
                 log.error("Error saving new folder", ex);
-                // TODO: i18n
                 addError("Error saving new folder");
             }
         }
@@ -136,6 +100,14 @@ public class FolderAdd extends UIAction {
         return INPUT;
     }
 
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return CANCEL;
+    }
     
     // TODO: validation
     public void myValidate() {
@@ -143,28 +115,12 @@ public class FolderAdd extends UIAction {
         // name is required, has max length, no html
         
         // make sure new name is not a duplicate of an existing folder
-        if(getFolder().hasFolder(getBean().getName())) {
+        if(getActionWeblog().hasBookmarkFolder(getBean().getName())) {
             addError("folderForm.error.duplicateName", getBean().getName());
         }
     }
     
     
-    public String getFolderId() {
-        return folderId;
-    }
-
-    public void setFolderId(String folderId) {
-        this.folderId = folderId;
-    }
-
-    public WeblogBookmarkFolder getFolder() {
-        return folder;
-    }
-
-    public void setFolder(WeblogBookmarkFolder folder) {
-        this.folder = folder;
-    }
-
     public FolderBean getBean() {
         return bean;
     }
@@ -173,4 +129,11 @@ public class FolderAdd extends UIAction {
         this.bean = bean;
     }
     
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
+    }
 }

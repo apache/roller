@@ -17,7 +17,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -145,12 +145,9 @@ public class Profile extends UIAction {
 
     
     public void myValidate() {
-
-        // check that passwords match if they were specified
-        if (!StringUtils.isEmpty(getBean().getPasswordText())) {
-            if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
-                addError("Register.error.passowordMismatch");
-            }
+        // check that passwords match if they were specified (w/StringUtils.equals, null == null)
+        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
+            addError("userRegister.error.mismatchedPasswords");
         }
     }
 

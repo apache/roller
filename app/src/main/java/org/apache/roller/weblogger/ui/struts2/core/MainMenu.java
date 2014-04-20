@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -99,21 +100,21 @@ public class MainMenu extends UIAction {
         return SUCCESS;
     }
 
-    public List getExistingPermissions() {
+    public List<WeblogPermission> getExistingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             return mgr.getWeblogPermissions(getAuthenticatedUser());
         } catch(Exception e) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
     
-    public List getPendingPermissions() {
+    public List<WeblogPermission> getPendingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             return mgr.getPendingWeblogPermissions(getAuthenticatedUser());
         } catch(Exception e) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
     

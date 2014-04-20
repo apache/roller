@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import org.apache.commons.lang.CharSetUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.CharSetUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -64,16 +64,19 @@ public class CreateUser extends UIAction {
         return false;
     }
     
-    
+    private void initializeBean() {
+        // defaults for locale and timezone
+        getBean().setLocale(Locale.getDefault().toString());
+        getBean().setTimeZone(TimeZone.getDefault().getID());
+    }
+
+
     /**
      * Show admin user creation form.
      */
     public String execute() {
         
-        // defaults for locale and timezone
-        getBean().setLocale(Locale.getDefault().toString());
-        getBean().setTimeZone(TimeZone.getDefault().getID());
-        
+        initializeBean();
         return INPUT;
     }
     
@@ -111,10 +114,11 @@ public class CreateUser extends UIAction {
                 WebloggerFactory.getWeblogger().flush();
 
                 // TODO: i18n
-                addMessage("New user created");
-
+                addMessage("User " + getBean().getUserName() + " created.  If desired, create another new user below or" +
+                        " select Cancel to return to User Administration.");
+                setBean(new CreateUserBean());
+                initializeBean();
                 return INPUT;
-
             } catch (WebloggerException e) {
                 log.error("Error adding new user", e);
                 // TODO: i18n

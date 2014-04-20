@@ -203,5 +203,4 @@ public interface MediaFileManager {
      */
     void removeMediaFileTag(String name, MediaFile entry)
             throws WebloggerException;
-
 }

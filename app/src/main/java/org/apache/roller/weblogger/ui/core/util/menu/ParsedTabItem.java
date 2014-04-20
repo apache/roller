@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.core.util.menu;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -28,7 +29,7 @@ public class ParsedTabItem {
     
     private String name = null;
     private String action = null;
-    private String[] subActions = null;
+    private Set<String> subActions = null;
     private List<String> weblogPermissionActions = null;
     private List<String> globalPermissionActions = null;
     private String enabledProperty = null;
@@ -51,11 +52,11 @@ public class ParsedTabItem {
         this.action = action;
     }
 
-    public String[] getSubActions() {
+    public Set<String> getSubActions() {
         return subActions;
     }
 
-    public void setSubActions(String[] subActions) {
+    public void setSubActions(Set<String> subActions) {
         this.subActions = subActions;
     }
 

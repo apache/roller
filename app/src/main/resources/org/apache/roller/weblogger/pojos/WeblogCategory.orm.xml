@@ -7,17 +7,14 @@
     <entity metadata-complete="true" name="WeblogCategory"
             class="org.apache.roller.weblogger.pojos.WeblogCategory" access="PROPERTY">
         <table name="weblogcategory"/>
-        <named-query name="WeblogCategory.getByPath&amp;Website">
-                <query>SELECT w FROM WeblogCategory w WHERE w.path = ?1 AND w.website = ?2</query>
+        <named-query name="WeblogCategory.getByWeblog">
+            <query>SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 order by w.position</query>
         </named-query>
-        <named-query name="WeblogCategory.getByWebsite">
-                <query>SELECT w FROM WeblogCategory w WHERE w.website = ?1</query>
+        <named-query name="WeblogCategory.getByWeblog&amp;Name">
+            <query>SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 AND w.name = ?2</query>
         </named-query>
-        <named-query name="WeblogCategory.getByWebsite&amp;ParentNull">
-                <query>SELECT w FROM WeblogCategory w WHERE w.website = ?1 AND w.parent IS NULL</query>
-        </named-query>
-        <named-query name="WeblogCategory.getByWebsite&amp;ParentNotNull">
-                <query>SELECT w FROM WeblogCategory w WHERE w.website = ?1 AND w.parent IS NOT NULL</query>
+        <named-query name="WeblogCategory.removeByWeblog">
+            <query>DELETE FROM WeblogCategory w WHERE w.weblog = ?1</query>
         </named-query>
         <attributes>
             <id name="id">
@@ -32,21 +29,13 @@
             <basic name="image">
                 <column name="image" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <basic name="path">
-                <column name="path" insertable="true" updatable="true" unique="false"/>
+            <basic name="position">
+                <column name="position" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+            <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <many-to-one name="parent" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory">
-                <join-column name="parentid" insertable="true" updatable="true" nullable="true"/>
-            </many-to-one>
-            <one-to-many name="weblogCategories" mapped-by="parent" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory" fetch="LAZY">
-                <cascade>
-                    <cascade-remove/>
-                </cascade>
-            </one-to-many>
-            <transient name="inUse"/> 
+            <transient name="inUse"/>
         </attributes>
     </entity>
 </entity-mappings>

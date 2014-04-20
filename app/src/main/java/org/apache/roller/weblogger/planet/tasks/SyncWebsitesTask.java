@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.GuiceWebloggerProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerProvider;
+import org.apache.roller.weblogger.business.runnable.RollerTask;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -59,10 +60,10 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     private String startTimeDesc = "startOfDay";
     
     // interval at which the task is run, default is 1 day
-    private int interval = 1440;
+    private int interval = RollerTask.DEFAULT_INTERVAL_MINS;
     
     // lease time given to ping task lock, default is 30 minutes
-    private int leaseTime = 30;
+    private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
     
     public String getClientId() {
         return clientId;
@@ -152,7 +153,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             }
             
             // walk through all enable weblogs and add/update subs as needed
-            List liveUserFeeds = new ArrayList();
+            List<String> liveUserFeeds = new ArrayList<String>();
             List<Weblog> websites = WebloggerFactory.getWeblogger()
                     .getWeblogManager().getWeblogs(Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
             for ( Weblog weblog : websites ) {
@@ -196,10 +197,9 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             }
             
             // new subs added, existing subs updated, now delete old subs
-            Set<Subscription> deleteSubs = new HashSet();
+            Set<Subscription> deleteSubs = new HashSet<Subscription>();
             Set<Subscription> subs = group.getSubscriptions();
-            for( Subscription sub : subs ) {
-                
+            for (Subscription sub : subs) {
                 // only delete subs from the group if ...
                 // 1. they are local
                 // 2. they are no longer listed as a weblog 
@@ -213,8 +213,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             // this is required because deleting a sub in the loop above
             // causes a ConcurrentModificationException because we can't
             // modify a collection while we iterate over it
-            for( Subscription deleteSub : deleteSubs ) {
-                
+            for (Subscription deleteSub : deleteSubs) {
                 log.debug("DELETING feed: "+deleteSub.getFeedURL());
                 pmgr.deleteSubscription(deleteSub);
                 group.getSubscriptions().remove(deleteSub);
@@ -247,7 +246,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
         WebloggerFactory.bootstrap(provider);
         
         SyncWebsitesTask task = new SyncWebsitesTask();
-        task.init(); // use default name
+        task.init();
         task.run();
     }
     

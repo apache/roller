@@ -22,9 +22,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Utilities;
@@ -49,26 +48,23 @@ public class GlobalCommentManagementBean {
     private String ids = null;
     
     
-    public void loadCheckboxes(List comments) {
+    public void loadCheckboxes(List<WeblogEntryComment> comments) {
         
-        List<String> allComments = new ArrayList();
-        List<String> spamList = new ArrayList();
+        List<String> allComments = new ArrayList<String>();
+        List<String> spamList = new ArrayList<String>();
         
-        Iterator it = comments.iterator();
-        while (it.hasNext()) {
-            WeblogEntryComment comment = (WeblogEntryComment)it.next();
+        for (WeblogEntryComment comment : comments) {
             allComments.add(comment.getId());
-            
+
             if (WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                 spamList.add(comment.getId());
             }
         }
-        
-        String[] idArray = (String[]) allComments.toArray(new String[allComments.size()]);
+
+        String[] idArray = allComments.toArray(new String[allComments.size()]);
         this.setIds(Utilities.stringArrayToString(idArray,","));
         
-        spamComments = (String[])spamList.toArray(
-            new String[spamList.size()]);
+        spamComments = spamList.toArray(new String[spamList.size()]);
     }
     
     

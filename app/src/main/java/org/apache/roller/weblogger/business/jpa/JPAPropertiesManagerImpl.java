@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,6 @@ import org.apache.roller.weblogger.config.runtime.DisplayGroup;
 import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
-import org.apache.roller.weblogger.business.Weblogger;
 
 
 /*
@@ -58,7 +56,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * Creates a new instance of JPAPropertiesManagerImpl
      */
     @com.google.inject.Inject
-    protected JPAPropertiesManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
+    protected JPAPropertiesManagerImpl(JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Properties Manager");
         this.strategy = strategy;
     }
@@ -69,13 +67,16 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      */
     public void initialize() throws InitializationException {
         
-        Map props = null;
+        Map<String, RuntimeConfigProperty> props;
         try {
+            // retrieve properties from database
             props = this.getProperties();
-            initializeMissingProps(props);
 
-            // save our changes
+            // if any default props missing from the properties DB table,
+            // initialize them and save them to that table.
+            initializeMissingProps(props);
             this.saveProperties(props);
+
         } catch (Exception e) {
             log.fatal("Failed to initialize runtime configuration properties."+
                     "Please check that the database has been upgraded!", e);
@@ -101,23 +102,19 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * uses the property name as the key and the RuntimeConfigProperty object
      * as the value.
      */
-    public Map getProperties() throws WebloggerException {
+    public Map<String, RuntimeConfigProperty> getProperties() throws WebloggerException {
 
-        HashMap props = new HashMap();
-        List list = (List) strategy.getNamedQuery("RuntimeConfigProperty.getAll").getResultList();
+        HashMap<String, RuntimeConfigProperty> props = new HashMap<String, RuntimeConfigProperty>();
+        List<RuntimeConfigProperty> list = strategy.getNamedQuery("RuntimeConfigProperty.getAll").getResultList();
         /*
          * for convenience sake we are going to put the list of props
          * into a map for users to access it.  The value element of the
          * hash still needs to be the RuntimeConfigProperty object so that
          * we can save the elements again after they have been updated
          */
-        RuntimeConfigProperty prop = null;
-        Iterator it = list.iterator();
-        while(it.hasNext()) {
-            prop = (RuntimeConfigProperty) it.next();
+        for (RuntimeConfigProperty prop : list) {
             props.put(prop.getName(), prop);
         }
-
         return props;
     }
 
@@ -137,9 +134,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     public void saveProperties(Map properties) throws WebloggerException {
 
         // just go through the list and saveProperties each property
-        Iterator props = properties.values().iterator();
-        while (props.hasNext()) {
-            this.strategy.store((RuntimeConfigProperty) props.next());
+        for (Object prop : properties.values()) {
+            this.strategy.store(prop);
         }
     }
     
@@ -151,10 +147,10 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      *
      * If the Map of props is empty/null then we will initialize all properties.
      **/
-    private Map initializeMissingProps(Map props) {
+    private Map initializeMissingProps(Map<String, RuntimeConfigProperty> props) {
 
         if(props == null) {
-            props = new HashMap();
+            props = new HashMap<String, RuntimeConfigProperty>();
         }
 
         // start by getting our runtimeConfigDefs
@@ -166,35 +162,24 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             return props;
         }
 
-        // iterator through all the definitions and add properties
+        // iterate through all the definitions and add properties
         // that are not already in our props map
-        ConfigDef configDef = null;
-        DisplayGroup dGroup = null;
-        PropertyDef propDef = null;
-        Iterator defs = runtimeConfigDefs.getConfigDefs().iterator();
-        while(defs.hasNext()) {
-            configDef = (ConfigDef) defs.next();
 
-            Iterator groups = configDef.getDisplayGroups().iterator();
-            while(groups.hasNext()) {
-                dGroup = (DisplayGroup) groups.next();
-
-                Iterator propdefs = dGroup.getPropertyDefs().iterator();
-                while(propdefs.hasNext()) {
-                    propDef = (PropertyDef) propdefs.next();
+        for (ConfigDef configDef : runtimeConfigDefs.getConfigDefs()) {
+            for (DisplayGroup dGroup : configDef.getDisplayGroups()) {
+                for (PropertyDef propDef : dGroup.getPropertyDefs()) {
 
                     // do we already have this prop?  if not then add it
                     if(!props.containsKey(propDef.getName())) {
                         RuntimeConfigProperty newprop =
-                            new RuntimeConfigProperty(
-                                propDef.getName(), propDef.getDefaultValue());
+                                new RuntimeConfigProperty(
+                                        propDef.getName(), propDef.getDefaultValue());
 
                         props.put(propDef.getName(), newprop);
 
-                        log.info("Found uninitialized property " +
-                            propDef.getName() +
-                            " ... setting value to [" + 
-                            propDef.getDefaultValue() + "]");
+                        log.info("Property " + propDef.getName() +
+                            " not yet in roller_properties database table, will store with " +
+                            "default value of [" + propDef.getDefaultValue() + "`]");
                     }
                 }
             }

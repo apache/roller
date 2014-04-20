@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.business;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -174,10 +174,10 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
         
         String cat = null;
-        if(category != null && "/".equals(category)) {
+        if("root".equals(category)) {
             cat = null;
-        } else if(category != null && category.startsWith("/")) {
-            cat = category.substring(1);
+        } else {
+            cat = category;
         }
         
         if(cat != null && dateString == null) {

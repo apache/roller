@@ -34,7 +34,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -55,10 +54,7 @@ public class Pings extends UIAction {
     private PingTarget pingTarget = null;
     
     // commong ping targets list
-    private List commonPingTargets = Collections.EMPTY_LIST;
-    
-    // custom ping targets list for weblog
-    private List customPingTargets = Collections.EMPTY_LIST;
+    private List<PingTarget> commonPingTargets = Collections.emptyList();
     
     // track the enabled/disabled status for pings
     private Map pingStatus = Collections.EMPTY_MAP;
@@ -93,12 +89,6 @@ public class Pings extends UIAction {
         try {
             // load common ping targets list
             setCommonPingTargets(pingTargetMgr.getCommonPingTargets());
-            
-            // load custom ping targets list for weblog, if applicable
-            if(!PingConfig.getDisallowCustomTargets()) {
-                setCustomPingTargets(pingTargetMgr.getCustomPingTargets(getActionWeblog()));
-            }
-            
         } catch (WebloggerException ex) {
             log.error("Error loading ping target lists for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
@@ -220,38 +210,27 @@ public class Pings extends UIAction {
         AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
         
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
-        Map isEnabled = new HashMap();
+        Map<String, Boolean> isEnabled = new HashMap<String, Boolean>();
         
-        List autopings = Collections.EMPTY_LIST;
+        List<AutoPing> autoPings = Collections.emptyList();
         try {
-            autopings = autoPingMgr.getAutoPingsByWebsite(getActionWeblog());
+            autoPings = autoPingMgr.getAutoPingsByWebsite(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error("Error looking up auto pings for weblog - "+getActionWeblog().getHandle(), ex);
         }
         
         // Add the enabled auto ping configs with TRUE
-        for (Iterator i = autopings.iterator(); i.hasNext();) {
-            AutoPing autoPing = (AutoPing) i.next();
+        for (AutoPing autoPing : autoPings) {
             isEnabled.put(autoPing.getPingTarget().getId(), Boolean.TRUE);
         }
         
-        // Somewhat awkward, but the two loops save building a separate combined list.
-        // Add disabled common ones with FALSE
-        for (Iterator i = getCommonPingTargets().iterator(); i.hasNext();) {
-            PingTarget inPingTarget = (PingTarget) i.next();
+        // Add disabled ping targets ones with FALSE
+        for (PingTarget inPingTarget : getCommonPingTargets()) {
             if (isEnabled.get(inPingTarget.getId()) == null) {
                 isEnabled.put(inPingTarget.getId(), Boolean.FALSE);
             }
         }
-        
-        // Add disabled custom ones with FALSE
-        for (Iterator i = getCustomPingTargets().iterator(); i.hasNext();) {
-            PingTarget inPingTarget = (PingTarget) i.next();
-            if (isEnabled.get(inPingTarget.getId()) == null) {
-                isEnabled.put(inPingTarget.getId(), Boolean.FALSE);
-            }
-        }
-        
+
         if (isEnabled.size() > 0) {
             setPingStatus(isEnabled);
         }
@@ -274,20 +253,12 @@ public class Pings extends UIAction {
         this.pingTarget = pingTarget;
     }
 
-    public List getCommonPingTargets() {
+    public List<PingTarget> getCommonPingTargets() {
         return commonPingTargets;
     }
 
-    public void setCommonPingTargets(List commonPingTargets) {
+    public void setCommonPingTargets(List<PingTarget> commonPingTargets) {
         this.commonPingTargets = commonPingTargets;
-    }
-
-    public List getCustomPingTargets() {
-        return customPingTargets;
-    }
-
-    public void setCustomPingTargets(List customPingTargets) {
-        this.customPingTargets = customPingTargets;
     }
 
     public Map getPingStatus() {

@@ -95,7 +95,7 @@ public interface AutoPingManager {
      * @param website
      * @return a list of auto ping configurations for the given website as <code>AuAutoPingcode> objects.
      */
-    List getAutoPingsByWebsite(Weblog website) throws WebloggerException;
+    List<AutoPing> getAutoPingsByWebsite(Weblog website) throws WebloggerException;
     
     
     /**
@@ -104,7 +104,7 @@ public interface AutoPingManager {
      * @param pingTarget
      * @return a list of auto ping configurations for the given target as <code>AuAutoPingcode> objects.
      */
-    List getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
+    List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
@@ -113,7 +113,7 @@ public interface AutoPingManager {
      * @param changedWeblogEntry the entry that has been created or changed
      * @return a list of the ping configurations that should be applied due to this change
      */
-    List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
+    List<AutoPing> getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
     
     
     /**
@@ -124,29 +124,6 @@ public interface AutoPingManager {
      * @param changedWeblogEntry the entry that has been created or changed
      */
     void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
-    
-    
-    /**
-     * Get the category restrictions on the given auto ping configuration.
-     *
-     * @param autoPing
-     * @return the category restrictions as a collection of <code>WeblogCategoryData</code> objects.  This collection
-     *         will be empty if there are no restrictions (meaning that the auto ping configuration applies to changes
-     *         in any category of the website).
-     */
-    List getCategoryRestrictions(AutoPing autoPing) throws WebloggerException;
-    
-    
-    /**
-     * Set the category restrictions on the given ping configuration to the specified ones.  If the new collection is
-     * empty, all category restrictions are removed.
-     *
-     * @param autoPing      auto ping configuration to change
-     * @param newCategories a collection of <code>WeblogCategoryData</code> objects for the new category restrictions
-     */
-    void setCategoryRestrictions(AutoPing autoPing,
-            Collection newCategories);
-    
     
     /**
      * Release all resources associated with Roller session.

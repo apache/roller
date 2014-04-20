@@ -154,8 +154,6 @@ create index raggs_sid_idx on rag_group_subscription(subscription_id);
 -- remove no-longer-used needed tables
 
 -- remove old rollerconfig table which has been deprecated since 1.2
--- NOTE: since this breaks the pre-1.2 -> 4.0+ direct upgrade path then
--- maybe we want to attempt to fix that by doing that upgrade via sql?
 #dropTableIfExists('rollerconfig')
 
 -- remove old id column of group subscription table

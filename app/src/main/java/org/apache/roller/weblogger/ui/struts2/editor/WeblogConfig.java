@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -29,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -51,13 +51,13 @@ public class WeblogConfig extends UIAction {
     private WeblogConfigBean bean = new WeblogConfigBean();
     
     // categories list
-    private List weblogCategories = Collections.EMPTY_LIST;
+    private List weblogCategories = Collections.emptyList();
     
     // list of available editors
-    private List editorsList = Collections.EMPTY_LIST;
+    private List editorsList = Collections.emptyList();
     
     // list of available plugins
-    private List pluginsList = Collections.EMPTY_LIST;
+    private List pluginsList = Collections.emptyList();
     
     
     public WeblogConfig() {
@@ -79,23 +79,23 @@ public class WeblogConfig extends UIAction {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             // set categories list
-            setWeblogCategories(wmgr.getWeblogCategories(getActionWeblog(), false));
+            setWeblogCategories(wmgr.getWeblogCategories(getActionWeblog()));
             
             // set the Editor Page list
             UIPluginManager pmgr = RollerContext.getUIPluginManager();
-            List editorsList = pmgr.getWeblogEntryEditors();
-            if(editorsList != null) {
-                setEditorsList(editorsList);
+            List editorList = pmgr.getWeblogEntryEditors();
+            if(editorList != null) {
+                setEditorsList(editorList);
             }
             
             // set plugins list
             PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
-            Map pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
-            List plugins = new ArrayList();
-            Iterator iter = pluginsMap.values().iterator();
-            while(iter.hasNext()) {
-                plugins.add(iter.next());
+            Map<String, WeblogEntryPlugin> pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
+            List<WeblogEntryPlugin> plugins = new ArrayList<WeblogEntryPlugin>();
+            for (WeblogEntryPlugin entryPlugin : pluginsMap.values()) {
+                plugins.add(entryPlugin);
             }
+
             // sort
             setPluginsList(plugins);
 

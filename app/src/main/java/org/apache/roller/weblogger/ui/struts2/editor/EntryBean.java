@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -306,7 +306,7 @@ public class EntryBean {
             
             if(cat == null) {
                 throw new WebloggerException("Category could not be found - "+getCategoryId());
-            } else if(!entry.getWebsite().equals(cat.getWebsite())) {
+            } else if(!entry.getWebsite().equals(cat.getWeblog())) {
                 throw new WebloggerException("Illegal category, not owned by action weblog");
             } else {
                 entry.setCategory(cat);
@@ -381,8 +381,8 @@ public class EntryBean {
         // enclosure url, if it exists
         Set<WeblogEntryAttribute> attrs = entry.getEntryAttributes();
         if(attrs != null && attrs.size() > 0) {
-            for(WeblogEntryAttribute attr : attrs) {
-                if("att_mediacast_url".equals(attr.getName())) {
+            for (WeblogEntryAttribute attr : attrs) {
+                if ("att_mediacast_url".equals(attr.getName())) {
                     setEnclosureURL(attr.getValue());
                 }
             }

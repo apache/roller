@@ -31,7 +31,7 @@ import org.apache.lucene.index.Term;
  * 
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
-public class IndexUtil {
+public final class IndexUtil {
 
     private IndexUtil() {}
 

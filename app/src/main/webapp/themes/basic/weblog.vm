@@ -5,6 +5,7 @@
     <title>$model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
     <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
+    #showMetaDescription()
 </head>
 <body>
 <script type="text/javascript">
@@ -22,8 +23,7 @@ setCookie("roller_user_request_type","standard",30);
     <h1 class="weblogName">$model.weblog.name</h1>
 
         <center>
-        #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
-        #showWeblogCategoryLinksList($rootCategory false false)
+        #showWeblogCategoryLinksList()
         </center>
 
         ## show next/previous paging controls

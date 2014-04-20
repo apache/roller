@@ -20,19 +20,18 @@ import com.sun.syndication.feed.CopyFrom;
 import com.sun.syndication.feed.module.ModuleImpl;
 
 public class ContentModuleImpl extends ModuleImpl implements ContentModule {
-	private static final long serialVersionUID = 1L;
-    private String _encoded;
+    private String encoded;
 
     public ContentModuleImpl() {
         super(ContentModule.class,ContentModule.URI);
     }
 	@Override
     public String getEncoded() {
-        return _encoded;
+        return encoded;
     }
 	@Override
     public void setEncoded(String encoded) {
-        _encoded = encoded;
+        this.encoded = encoded;
     }
 	@Override
     public Class getInterface() {

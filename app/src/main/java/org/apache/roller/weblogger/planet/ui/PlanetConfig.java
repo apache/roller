@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.planet.ui;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -48,7 +47,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
     private Map parameters = Collections.EMPTY_MAP;
     
     // runtime properties data
-    private Map properties = Collections.EMPTY_MAP;
+    private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
     
     // the runtime config def used to populate the display
     private ConfigDef globalConfigDef = null;
@@ -85,7 +84,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
         // set config def used to draw the view
         RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
         List<ConfigDef> configDefs = defs.getConfigDefs();
-        for(ConfigDef configDef : configDefs) {
+        for (ConfigDef configDef : configDefs) {
             if("global-properties".equals(configDef.getName())) {
                 setGlobalConfigDef(configDef);
             }
@@ -102,16 +101,12 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
         
         try {
             // only set values for properties that are already defined
-            String propName = null;
-            RuntimeConfigProperty updProp = null;
+            RuntimeConfigProperty updProp;
             String incomingProp = null;
-            Iterator propsIT = getProperties().keySet().iterator();
-            while(propsIT.hasNext()) {
-                propName = (String) propsIT.next();
-                
+            for (String propName : getProperties().keySet()) {
                 log.debug("Checking property ["+propName+"]");
                 
-                updProp = (RuntimeConfigProperty) getProperties().get(propName);
+                updProp = getProperties().get(propName);
                 String[] propValues = (String[]) getParameters().get(updProp.getName());
                 if(propValues != null && propValues.length > 0) {
                     // we don't deal with multi-valued props
@@ -122,7 +117,8 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
                 // this is a bit hacky since we are assuming that any prop
                 // with a value of "true" or "false" is meant to be a boolean
                 // it may not always be the case, but we should be okay for now
-                if( updProp.getValue() != null // null check needed w/Oracle
+                // below null check needed w/Oracle
+                if( updProp.getValue() != null
                         && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
                     
                     incomingProp = (incomingProp == null || !incomingProp.equals("on")) ? "false" : "true";
@@ -160,11 +156,11 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
         this.parameters = parameters;
     }
 
-    public Map getProperties() {
+    public Map<String, RuntimeConfigProperty> getProperties() {
         return properties;
     }
 
-    public void setProperties(Map properties) {
+    public void setProperties(Map<String, RuntimeConfigProperty> properties) {
         this.properties = properties;
     }
     

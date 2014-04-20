@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.business.pings;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.pojos.Weblog;
 
 
 /**
@@ -44,16 +43,9 @@ public interface PingTargetManager {
     /**
      * Remove a ping target.
      *
-     * @param id id of the ping target to be removed
      * @throws WebloggerException
      */
     void removePingTarget(PingTarget pingTarget) throws WebloggerException;
-    
-    
-    /**
-     * Remove all custom targets (regardless of website).
-     */
-    void removeAllCustomPingTargets() throws WebloggerException;
     
     
     /**
@@ -69,22 +61,11 @@ public interface PingTargetManager {
     /**
      * Get a list of the common (shared) ping targets.
      * 
-     * @return the list of common ping targets as a <code>List</code> of {@link PPingTarget objects
+     * @return the list of common ping targets as a <code>List</code> of {@link PingTarget objects
      * @throws WebloggerException
      */
-    List getCommonPingTargets() throws WebloggerException;
-    
-    
-    /**
-     * Get a list of the custom ping targets for the given website.
-     * 
-     * @param website the website whose custom targets should be returned.
-     * @return the list of custom ping targets for the given website as a <code>List</code> of {@link PiPingTarget         objects
-     * @throws WebloggerException
-     */
-    List getCustomPingTargets(Weblog website) throws WebloggerException;
-    
-    
+    List<PingTarget> getCommonPingTargets() throws WebloggerException;
+
     /**
      * Check if the ping target has a name that is unique in the appropriate set.  If the ping target has no website id
      * (is common), then this checks if the name is unique amongst common targets, and if custom then unique amongst

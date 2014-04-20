@@ -49,8 +49,7 @@ public class PingsTest extends TestCase {
     User testUser = null;
     Weblog testWeblog = null;
     PingTarget testCommonPing = null;
-    PingTarget testCustomPing = null;
-    
+
     
     public PingsTest(String name) {
         super(name);
@@ -82,10 +81,6 @@ public class PingsTest extends TestCase {
         testCommonPing = new PingTarget();
         testCommonPing.setName("testCommonPing");
         testCommonPing.setPingUrl("http://localhost/testCommonPing");
-        
-        testCustomPing = new PingTarget();
-        testCustomPing.setName("testCustomPing");
-        testCustomPing.setPingUrl("http://localhost/testCustomPing");
     }
     
     public void tearDown() throws Exception {
@@ -100,7 +95,6 @@ public class PingsTest extends TestCase {
         }
         
         testCommonPing = null;
-        testCustomPing = null;
     }
     
     
@@ -123,18 +117,6 @@ public class PingsTest extends TestCase {
         assertNotNull(ping);
         assertEquals(testCommonPing.getPingUrl(), ping.getPingUrl());
         
-        // create custom ping
-        testCustomPing.setWebsite(TestUtils.getManagedWebsite(testWeblog));
-        mgr.savePingTarget(testCustomPing);
-        String customId = testCustomPing.getId();
-        TestUtils.endSession(true);
-        
-        // make sure custom ping was stored
-        ping = null;
-        ping = mgr.getPingTarget(customId);
-        assertNotNull(ping);
-        assertEquals(testCustomPing.getPingUrl(), ping.getPingUrl());
-        
         // update common ping
         ping = null;
         ping = mgr.getPingTarget(commonId);
@@ -148,19 +130,6 @@ public class PingsTest extends TestCase {
         assertNotNull(ping);
         assertEquals("testtestCommon", ping.getName());
         
-        // update custom ping
-        ping = null;
-        ping = mgr.getPingTarget(customId);
-        ping.setName("testtestCustom");
-        mgr.savePingTarget(ping);
-        TestUtils.endSession(true);
-        
-        // make sure custom ping was updated
-        ping = null;
-        ping = mgr.getPingTarget(customId);
-        assertNotNull(ping);
-        assertEquals("testtestCustom", ping.getName());
-        
         // delete common ping
         ping = null;
         ping = mgr.getPingTarget(commonId);
@@ -171,22 +140,11 @@ public class PingsTest extends TestCase {
         ping = null;
         ping = mgr.getPingTarget(commonId);
         assertNull(ping);
-        
-        // delete custom ping
-        ping = null;
-        ping = mgr.getPingTarget(customId);
-        mgr.removePingTarget(ping);
-        TestUtils.endSession(true);
-        
-        // make sure custom ping was deleted
-        ping = null;
-        ping = mgr.getPingTarget(customId);
-        assertNull(ping);
     }
     
     
     /**
-     * Test lookup mechanisms ... id, all common, all custom for weblog
+     * Test lookup mechanisms ... id, all common for weblog
      */
     public void testPingTargetLookups() throws Exception {
         
@@ -196,13 +154,6 @@ public class PingsTest extends TestCase {
         // create common ping
         mgr.savePingTarget(testCommonPing);
         String commonId = testCommonPing.getId();
-        TestUtils.endSession(true);
-        
-        // create custom ping
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        testCustomPing.setWebsite(testWeblog);
-        mgr.savePingTarget(testCustomPing);
-        String customId = testCustomPing.getId();
         TestUtils.endSession(true);
         
         // lookup by id
@@ -217,21 +168,9 @@ public class PingsTest extends TestCase {
         // correct answer is: 4 pings in config + 1 new one = 5
         assertEquals(5, commonPings.size());
         
-        // lookup all custom pings for weblog
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        List customPings = mgr.getCustomPingTargets(testWeblog);
-        assertNotNull(customPings);
-        assertEquals(1, customPings.size());
-        
         // delete common ping
         ping = null;
         ping = mgr.getPingTarget(commonId);
-        mgr.removePingTarget(ping);
-        TestUtils.endSession(true);
-        
-        // delete custom ping
-        ping = null;
-        ping = mgr.getPingTarget(customId);
         mgr.removePingTarget(ping);
         TestUtils.endSession(true);
     }

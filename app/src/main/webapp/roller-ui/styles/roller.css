@@ -482,11 +482,7 @@ Error and status message styles
     border: 1px solid #f0c000;
 }
 div.notification {
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 25px;
-    font-size: larger;
+    padding: 10px;
     background-color: #ffffce;
     border: 1px solid #f0c000;
 }

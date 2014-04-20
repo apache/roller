@@ -25,13 +25,13 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
  * Plugin management for UI layer plugins.
  */
-public class UIPluginManagerImpl implements UIPluginManager {
+public final class UIPluginManagerImpl implements UIPluginManager {
     
     private static Log log = LogFactory.getLog(UIPluginManagerImpl.class);
     

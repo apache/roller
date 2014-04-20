@@ -29,11 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.security.openid.OpenIDAuthenticationFilter;
-import org.springframework.security.openid.OpenIDConsumer;
 //import org.springframework.security.userdetails.openid.OpenIDUserAttribute;
 
 
@@ -44,14 +42,14 @@ import org.springframework.security.openid.OpenIDConsumer;
 public class CustomOpenIDAuthenticationProcessingFilter 
         extends OpenIDAuthenticationFilter implements Filter {
 
-    private OpenIDConsumer consumer;
-    private String claimedIdentityFieldName = DEFAULT_CLAIMED_IDENTITY_FIELD;
     private static Log log = LogFactory.getLog(CustomOpenIDAuthenticationProcessingFilter.class);
 
+    /**
+     * @throws org.springframework.security.core.AuthenticationException
+     */
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse rsp) throws AuthenticationException,
-            IOException {
-        OpenIDAuthenticationToken auth = null;
+    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
+        OpenIDAuthenticationToken auth;
 
         // Processing standard OpenId user authentication    
         auth = (OpenIDAuthenticationToken) super.attemptAuthentication(req, rsp);

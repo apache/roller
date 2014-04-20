@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -84,10 +85,10 @@ public class FeedServlet extends HttpServlet {
 
         log.debug("Entering");
 
-        Weblog weblog = null;
-        boolean isSiteWide = false;
+        Weblog weblog;
+        boolean isSiteWide;
 
-        WeblogFeedRequest feedRequest = null;
+        WeblogFeedRequest feedRequest;
         try {
             // parse the incoming request and extract the relevant data
             feedRequest = new WeblogFeedRequest(request);
@@ -146,7 +147,7 @@ public class FeedServlet extends HttpServlet {
         }
 
         // generate cache key
-        String cacheKey = null;
+        String cacheKey;
         if (isSiteWide) {
             cacheKey = siteWideCache.generateKey(feedRequest);
         } else {
@@ -154,7 +155,7 @@ public class FeedServlet extends HttpServlet {
         }
 
         // cached content checking
-        CachedContent cachedContent = null;
+        CachedContent cachedContent;
         if (isSiteWide) {
             cachedContent = (CachedContent) siteWideCache.get(cacheKey);
         } else {
@@ -214,8 +215,8 @@ public class FeedServlet extends HttpServlet {
         }
 
         // looks like we need to render content
-        HashMap model = new HashMap();
-        String pageId = null;
+        HashMap<String, Object> model = new HashMap<String, Object>();
+        String pageId;
         try {
             // determine what template to render with
             boolean siteWide = WebloggerRuntimeConfig.isSiteWideWeblog(weblog
@@ -238,7 +239,7 @@ public class FeedServlet extends HttpServlet {
             }
 
             // populate the rendering model
-            Map initData = new HashMap();
+            Map<String, Object> initData = new HashMap<String, Object>();
             initData.put("parsedRequest", feedRequest);
 
             // define url strategy
@@ -279,7 +280,7 @@ public class FeedServlet extends HttpServlet {
         }
 
         // lookup Renderer we are going to use
-        Renderer renderer = null;
+        Renderer renderer;
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate(pageId, "velocity");
@@ -304,8 +305,8 @@ public class FeedServlet extends HttpServlet {
             return;
         }
 
-        // render content. use default size of about 24K for a standard page
-        CachedContent rendererOutput = new CachedContent(24567);
+        // render content. use default size of 24K for a standard page
+        CachedContent rendererOutput = new CachedContent(RollerConstants.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

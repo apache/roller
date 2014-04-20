@@ -24,6 +24,7 @@
 package org.apache.roller.weblogger.ui.core.filters;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -141,11 +142,7 @@ public class SchemeEnforcementFilter implements Filter {
 
         int i = theUrl.lastIndexOf('.');
 
-        if (i <= 0 || i == theUrl.length() - 1) {
-            return true;
-        }
-
-        return ignored.contains(theUrl.substring(i + 1));
+        return i <= 0 || i == theUrl.length()-1 || ignored.contains(theUrl.substring(i + 1));
 
     }
 
@@ -188,15 +185,12 @@ public class SchemeEnforcementFilter implements Filter {
             String cfgs = WebloggerConfig
                     .getProperty("schemeenforcement.https.urls");
             String[] cfgsArray = cfgs.split(",");
-            for (int i = 0; i < cfgsArray.length; i++) {
-                this.allowedUrls.add(cfgsArray[i]);
-            }
+            Collections.addAll(this.allowedUrls, cfgsArray);
+
             cfgs = WebloggerConfig
                     .getProperty("schemeenforcement.https.ignored");
             cfgsArray = StringUtils.stripAll(StringUtils.split(cfgs, ","));
-            for (int i = 0; i < cfgsArray.length; i++) {
-                this.ignored.add(cfgsArray[i]);
-            }
+            Collections.addAll(this.ignored, cfgsArray);
 
             // some logging for the curious
             log.info("Scheme enforcement = enabled");

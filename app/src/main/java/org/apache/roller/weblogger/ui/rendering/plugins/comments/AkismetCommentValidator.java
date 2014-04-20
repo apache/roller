@@ -26,6 +26,7 @@ import java.net.URLConnection;
 import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -87,12 +88,13 @@ public class AkismetCommentValidator implements CommentValidator {
                 return 0;
             }
             else {
-                return 100;
+                return RollerConstants.PERCENT_100;
             }
         } catch (Exception e) {
             log.error("ERROR checking comment against Akismet", e);
         }
-        return 0; // interpret error as spam: better safe than sorry? 
+        // interpreting error as spam: better safe than sorry?
+        return 0;
     }
 }
 

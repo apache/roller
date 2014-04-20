@@ -19,7 +19,7 @@
 
 <p class="subtitle">
     <s:text name="folderForm.edit.subtitle" >
-        <s:param value="folder.path" />
+        <s:param value="folder.name" />
     </s:text>
 </p>
 
@@ -29,23 +29,19 @@
     <s:hidden name="bean.id" />
     
     <%-- if we cancel then we need this attribute --%>
-    <s:hidden name="folderId" value="%{folder.parent.id}" />
+    <%-- (Need to test after folder edit re-implemented) --%>
+    <s:hidden name="folderId" value="%{folder.id}" />
     
     <table>
         <tr>
             <td><s:text name="folderForm.name" /></td>
             <td><s:textfield name="bean.name" size="70" maxlength="255" /></td>
         </tr>
-        
-        <tr>
-            <td><s:text name="folderForm.description" /></td>
-            <td><s:textarea name="bean.description" rows="5" cols="50" /></td>
-        </tr>
     </table>
     
     <p>
         <s:submit value="%{getText('folderForm.save')}" />
-        <s:submit value="%{getText('folderForm.cancel')}" action="bookmarks" />
+        <s:submit value="%{getText('folderForm.cancel')}" action="folderEdit!cancel" />
     </p>
     
 </s:form>

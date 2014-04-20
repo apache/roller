@@ -47,24 +47,12 @@ public interface BookmarkManager {
     /**
      * Remove a Folder.  
      * 
-     * Also removes any subfolders and bookmarks.
+     * Also removes any bookmarks it contains
      *
      * @param folder The folder to be removed.
      * @throws WebloggerException If there is a problem.
      */
     void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException;
-    
-    
-    /**
-     * Move a folder under another folder.
-     *
-     * This moves the src folder itself and all children and associated bookmarks.
-     */
-    void moveFolder(WeblogBookmarkFolder src,
-
-    WeblogBookmarkFolder dest
-)
-            throws WebloggerException;
     
     
     /**
@@ -84,29 +72,28 @@ public interface BookmarkManager {
      * @return List The list of FolderData objects from the weblog.
      * @throws WebloggerException If there is a problem.
      */
-    List getAllFolders(Weblog weblog) throws WebloggerException;
+    List<WeblogBookmarkFolder> getAllFolders(Weblog weblog) throws WebloggerException;
     
     
     /** 
-     * Get root folder for a weblog.  
-     * All weblogs should have only 1 root folder.
+     * Get the weblog's default folder
      *
-     * @param weblog The weblog we want the root folder from.
-     * @return FolderData The root folder, or null if not found.
-     * @throws WebloggerException If there is a problem.
+     * @param weblog The weblog we want the default folder from.
+     * @return FolderData The default folder
+     * @throws WebloggerException If the default folder was not found
      */
-    WeblogBookmarkFolder getRootFolder(Weblog weblog) throws WebloggerException;
+    WeblogBookmarkFolder getDefaultFolder(Weblog weblog) throws WebloggerException;
     
     
     /** 
-     * Get a folder from a weblog based on its path.
+     * Get a folder from a weblog based on its name.
      *
      * @param weblog The weblog we want the folder from.
-     * @param path The full path of the folder.
+     * @param name The folder name.
      * @return FolderData The folder from the given path, or null if not found.
      * @throws WebloggerException If there is a problem.
      */
-    WeblogBookmarkFolder getFolder(Weblog weblog, String path)
+    WeblogBookmarkFolder getFolder(Weblog weblog, String name)
             throws WebloggerException;
     
     
@@ -142,11 +129,10 @@ public interface BookmarkManager {
      * Lookup all Bookmarks in a folder, optionally search recursively.
      *
      * @param folder The folder to get the bookmarks from.
-     * @param recurse True if bookmarks should be included.
      * @return List The list of bookmarks found.
      * @throws WebloggerException If there is a problem.
      */
-    List getBookmarks(WeblogBookmarkFolder folder, boolean recurse)
+    List<WeblogBookmark> getBookmarks(WeblogBookmarkFolder folder)
             throws WebloggerException;
     
     

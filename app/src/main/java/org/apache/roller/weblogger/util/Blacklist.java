@@ -33,15 +33,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.util.DateUtil;
 
 /**
@@ -61,7 +62,7 @@ import org.apache.roller.util.DateUtil;
  * @author Lance Lavandowska
  * @author Allen Gilliland
  */
-public class Blacklist {
+public final class Blacklist {
     
     private static Log mLogger = LogFactory.getLog(Blacklist.class);
     
@@ -73,8 +74,8 @@ public class Blacklist {
     private static final String BLACKLIST_URL = null;
 
     private Date lastModified = null;
-    private List blacklistStr = new LinkedList();
-    private List blacklistRegex = new LinkedList();
+    private List<String> blacklistStr = new LinkedList<String>();
+    private List<Pattern> blacklistRegex = new LinkedList<Pattern>();
     
     // setup our singleton at class loading time
     static {
@@ -90,11 +91,6 @@ public class Blacklist {
     /** Singleton factory method. */
     public static Blacklist getBlacklist() {
         return blacklist;
-    }
-    
-    /** Updated MT blacklist if necessary. */
-    public static void checkForUpdate() {
-        getBlacklist().update();
     }
     
     /** Non-Static update method. */
@@ -161,8 +157,8 @@ public class Blacklist {
                 mLogger.debug("writing updated MT blacklist to "+path);
                 
                 // read from url and write to file
-                byte[] buf = new byte[4096];
-                int length = 0;
+                byte[] buf = new byte[RollerConstants.FOUR_KB_IN_BYTES];
+                int length;
                 while((length = instream.read(buf)) > 0) {
                     outstream.write(buf, 0, length);
                 }
@@ -193,7 +189,7 @@ public class Blacklist {
      */
     public void loadBlacklistFromFile(String blacklistFilePath) {
         
-        InputStream txtStream = null;
+        InputStream txtStream;
         try {
             String path = blacklistFilePath;
             if (path == null) {
@@ -232,7 +228,7 @@ public class Blacklist {
        
     /**
      * Read in the InputStream for rules.
-     * @param txtStream
+     * @param txtStream stream to read from
      */
     private String readFromStream(InputStream txtStream, boolean saveStream) {
         String line;
@@ -277,7 +273,8 @@ public class Blacklist {
         // line has a comment?
         if (str.indexOf('#') > 0) {
             int commentLoc = str.indexOf('#');
-            rule = str.substring(0, commentLoc-1).trim(); // strip comment
+            // strip comment
+            rule = str.substring(0, commentLoc-1).trim();
         }
 
         // regex rule?
@@ -319,7 +316,7 @@ public class Blacklist {
      * @param moreRegexRules  Additional regex rules to consider 
      */
     public boolean isBlacklisted(
-         String str, List moreStringRules, List moreRegexRules) {
+         String str, List<String> moreStringRules, List<Pattern> moreRegexRules) {
         if (str == null || StringUtils.isEmpty(str)) {
             return false;
         }
@@ -329,9 +326,9 @@ public class Blacklist {
         // As soon as there is a hit in either case return true
         
         // test plain String.indexOf
-        List stringRules = blacklistStr;
+        List<String> stringRules = blacklistStr;
         if (moreStringRules != null && moreStringRules.size() > 0) {
-            stringRules = new ArrayList();
+            stringRules = new ArrayList<String>();
             stringRules.addAll(moreStringRules);
             stringRules.addAll(blacklistStr);
         }
@@ -340,9 +337,9 @@ public class Blacklist {
         }
         
         // test regex blacklisted
-        List regexRules = blacklistRegex;
+        List<Pattern> regexRules = blacklistRegex;
         if (moreRegexRules != null && moreRegexRules.size() > 0) {
-            regexRules = new ArrayList();
+            regexRules = new ArrayList<Pattern>();
             regexRules.addAll(moreRegexRules);
             regexRules.addAll(blacklistRegex);
         }
@@ -356,27 +353,19 @@ public class Blacklist {
      * @param regexRules  Regex rules to consider
      */
     public static boolean matchesRulesOnly(
-        String str, List stringRules, List regexRules) {
-        if (testStringRules(str, stringRules)) {
-            return true;
-        }
-        return testRegExRules(str, regexRules);  
+        String str, List<String> stringRules, List<Pattern> regexRules) {
+        return testStringRules(str, stringRules) || testRegExRules(str, regexRules);
     }
         
     /** Test String against the RegularExpression rules. */
-    private static boolean testRegExRules(String str, List regexRules) {
-        boolean hit = false;
-        Pattern testPattern = null;
-        Iterator iter = regexRules.iterator();
-        while (iter.hasNext()) {
-            testPattern = (Pattern)iter.next();
-            
+    private static boolean testRegExRules(String str, List<Pattern> regexRules) {
+        for (Pattern testPattern : regexRules) {
             // want to see what it is matching on, but only in debug mode
             if (mLogger.isDebugEnabled()) {
                 Matcher matcher = testPattern.matcher(str);
                 if (matcher.find()) {
-                    mLogger.debug(matcher.group() 
-                         + " matched by " + testPattern.pattern());
+                    mLogger.debug(matcher.group()
+                            + " matched by " + testPattern.pattern());
                     return true;
                 }
             } else {
@@ -385,7 +374,7 @@ public class Blacklist {
                 }
             }
         }
-        return hit;
+        return false;
     }
 
     /**
@@ -444,7 +433,7 @@ public class Blacklist {
     
     /** Utility method to populate lists based a blacklist in string form */
     public static void populateSpamRules(
-        String blacklist, List stringRules, List regexRules, String addendum) {
+        String blacklist, List<String> stringRules, List<Pattern> regexRules, String addendum) {
         String weblogWords = blacklist;
         weblogWords = (weblogWords == null) ? "" : weblogWords;
         String siteWords = (addendum != null) ? addendum : "";
@@ -464,9 +453,8 @@ public class Blacklist {
         
     /** Return pretty list of String and RegEx rules. */
     public String toString() {
-        StringBuilder buf = new StringBuilder("blacklist ");
-        buf.append(blacklistStr).append("\n");
-        buf.append("Regex blacklist ").append(blacklistRegex);
-        return buf.toString();
+        String val = "blacklist " + blacklistStr;
+        val += "\nRegex blacklist " + blacklistRegex;
+        return val;
     }
 }

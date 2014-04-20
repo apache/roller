@@ -27,20 +27,22 @@
                  default stack -->
             <interceptor-stack name="rollerStack">
                 <interceptor-ref name="exception"/>
-                <interceptor-ref name="alias"/>
+                <!-- <interceptor-ref name="alias"/> -->
                 <interceptor-ref name="servletConfig"/>
-                <interceptor-ref name="prepare"/>
+                <!-- <interceptor-ref name="prepare"/> -->
                 <interceptor-ref name="i18n"/>
                 <interceptor-ref name="chain"/>
-                <interceptor-ref name="debugging"/>
-                <interceptor-ref name="profiling"/>
-                <interceptor-ref name="scopedModelDriven"/>
-                <interceptor-ref name="modelDriven"/>
+                <!-- <interceptor-ref name="debugging"/> -->
+                <!-- <interceptor-ref name="profiling"/> -->
+                <!-- <interceptor-ref name="scopedModelDriven"/> -->
+                <!-- <interceptor-ref name="modelDriven"/> -->
                 <interceptor-ref name="fileUpload"/>
                 <interceptor-ref name="checkbox"/>
-                <interceptor-ref name="staticParams"/>
+                <interceptor-ref name="multiselect"/>
+                <!-- <interceptor-ref name="staticParams"/> -->
+                <interceptor-ref name="actionMappingParams"/>
                 <interceptor-ref name="params">
-                  <param name="excludeParams">dojo\..*</param>
+                    <param name="excludeParams">^class\..*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*</param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError"/>
                 
@@ -290,6 +292,10 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryRemove">
             <result name="input" type="tiles">.EntryRemove</result>
             <result name="error" type="chain">menu</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">entries</param>
+                <param name="weblog">${weblog}</param>
+            </result>
             <result name="success" type="chain">entryAdd</result>
         </action>
 
@@ -332,17 +338,29 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.CategoryAdd">
             <result name="input" type="tiles">.CategoryAdd</result>
             <result name="success" type="chain">categories</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">categories</param>
+                <param name="weblog">${weblog}</param>
+            </result>
             <result name="error" type="chain">categories</result>
         </action>
         
         <action name="categoryEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.CategoryEdit">
             <result name="input" type="tiles">.CategoryEdit</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">categories</param>
+                <param name="weblog">${weblog}</param>
+            </result>
         </action>
         
         <action name="categoryRemove!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.CategoryRemove">
             <result name="input" type="tiles">.CategoryRemove</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">categories</param>
+                <param name="weblog">${weblog}</param>
+            </result>
             <result name="success" type="chain">categories</result>
         </action>
         
@@ -355,12 +373,24 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.BookmarkAdd">
             <result name="input" type="tiles">.BookmarkAdd</result>
             <result name="success" type="chain">bookmarks</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">bookmarks</param>
+                <param name="weblog">${weblog}</param>
+                <param name="folderId">${folderId}</param>
+                <param name="suppressEmptyParameters">true</param>
+            </result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
         <action name="bookmarkEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.BookmarkEdit">
             <result name="input" type="tiles">.BookmarkEdit</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">bookmarks</param>
+                <param name="weblog">${weblog}</param>
+                <param name="folderId">${folderId}</param>
+                <param name="suppressEmptyParameters">true</param>
+            </result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
@@ -374,12 +404,24 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.FolderAdd">
             <result name="input" type="tiles">.FolderAdd</result>
             <result name="success" type="chain">bookmarks</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">bookmarks</param>
+                <param name="weblog">${weblog}</param>
+                <param name="folderId">${folderId}</param>
+                <param name="suppressEmptyParameters">true</param>
+            </result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
         <action name="folderEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.FolderEdit">
             <result name="input" type="tiles">.FolderEdit</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">bookmarks</param>
+                <param name="weblog">${weblog}</param>
+                <param name="folderId">${folderId}</param>
+                <param name="suppressEmptyParameters">true</param>
+            </result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
@@ -440,6 +482,10 @@
         <action name="templateRemove!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.TemplateRemove">
             <result name="confirm" type="tiles">.TemplateRemove</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">templates</param>
+                <param name="weblog">${weblog}</param>
+            </result>
             <result name="success" type="chain">templates</result>
         </action>
         
@@ -450,9 +496,7 @@
             <result name="success" type="chain">templates</result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">templates</param>
-                <param name="parse">true</param>
                 <param name="weblog">${weblog}</param>
-                <param name="suppressEmptyParameters">true</param>
             </result>
             <result name="error" type="chain">templates</result>
         </action>
@@ -467,6 +511,10 @@
             <result name="input" type="tiles">.MembersInvite</result>
             <result name="disabled" type="tiles">.disabled</result>
             <result name="success" type="chain">members</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">members</param>
+                <param name="weblog">${weblog}</param>
+            </result>
         </action>
 
         <action name="memberResign!*" method="{1}"
@@ -480,25 +528,7 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.Pings">
             <result name="list" type="tiles">.Pings</result>
         </action>
-        
-        <action name="customPingTargets!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.CustomPingTargets">
-            <result name="list" type="tiles">.CustomPingTargets</result>
-            <result name="confirm" type="tiles">.CustomPingTargetConfirm</result>
-        </action>
-        
-        <action name="customPingTargetAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.CustomPingTargetAdd">
-            <result name="input" type="tiles">.CustomPingTargetAdd</result>
-            <result name="success" type="chain">customPingTargets</result>
-        </action>
-        
-        <action name="customPingTargetEdit!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.CustomPingTargetEdit">
-            <result name="input" type="tiles">.CustomPingTargetEdit</result>
-            <result name="error" type="chain">customPingTargets</result>
-        </action>
-        
+
         <action name="maintenance!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Maintenance">
             <result name="success" type="tiles">.Maintenance</result>

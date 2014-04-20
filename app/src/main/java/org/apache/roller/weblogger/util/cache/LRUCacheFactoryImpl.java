@@ -39,7 +39,6 @@ public class LRUCacheFactoryImpl implements CacheFactory {
      * Construct a new instance of a Roller LRUCache.
      */
     public Cache constructCache(Map properties) {
-        
         int size = 100;
         String id = "unknown";
         
@@ -50,7 +49,7 @@ public class LRUCacheFactoryImpl implements CacheFactory {
         }
         
         String cacheId = (String) properties.get("id");
-        if(cacheId != null) {
+        if (cacheId != null) {
             id = cacheId;
         }
         

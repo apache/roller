@@ -28,8 +28,6 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 
 /**
@@ -97,35 +95,39 @@ public class RollerVelocity {
     
     /**
      * Convenience static method for looking up a template.
+     * @throws org.apache.velocity.exception.ResourceNotFoundException,
+     *       org.apache.velocity.exception.ParseErrorException
      */
-    public static Template getTemplate(String name)
-            throws ResourceNotFoundException, ParseErrorException, Exception {
+    public static Template getTemplate(String name) {
         return velocityEngine.getTemplate(name + "|standard");
     }
 
     /**
      * Convenience static method for looking up a template.
+     * @throws org.apache.velocity.exception.ResourceNotFoundException,
+     *       org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name, 
-			MobileDeviceRepository.DeviceType deviceType)
-            throws ResourceNotFoundException, ParseErrorException, Exception {
+			MobileDeviceRepository.DeviceType deviceType) {
         return velocityEngine.getTemplate(name + "|" + deviceType);
     }
     
     /**
      * Convenience static method for looking up a template.
+     * @throws org.apache.velocity.exception.ResourceNotFoundException,
+     *       org.apache.velocity.exception.ParseErrorException
      */
-    public static Template getTemplate(String name, String encoding)
-            throws ResourceNotFoundException, ParseErrorException, Exception {
+    public static Template getTemplate(String name, String encoding) {
         return velocityEngine.getTemplate(name + "|standard", encoding);
     }
 	
     /**
      * Convenience static method for looking up a template.
+     * @throws org.apache.velocity.exception.ResourceNotFoundException,
+     *       org.apache.velocity.exception.ParseErrorException
      */
     public static Template getTemplate(String name, 
-			MobileDeviceRepository.DeviceType deviceType, String encoding)
-            throws ResourceNotFoundException, ParseErrorException, Exception {
+			MobileDeviceRepository.DeviceType deviceType, String encoding) {
         return velocityEngine.getTemplate(name + "|" + deviceType, encoding);
     }
 }

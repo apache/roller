@@ -20,12 +20,10 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -52,17 +50,17 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     
     private static Log log = LogFactory.getLog(GlobalConfig.class);
     
-    // the request parameters as <String, String[]>
-    private Map params = Collections.EMPTY_MAP;
+    // the request parameters
+    private Map<String, String[]> params = Collections.emptyMap();
     
     // map of config properties
-    private Map properties = Collections.EMPTY_MAP;
+    private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
     
     // the runtime config def used to populate the display
     private ConfigDef globalConfigDef = null;
     
     // list of comment plugins
-    private List<WeblogEntryCommentPlugin> pluginsList = Collections.EMPTY_LIST;
+    private List<WeblogEntryCommentPlugin> pluginsList = Collections.emptyList();
     
     // comment plugins that are enabled.  this is what the html form submits to
     private String[] commentPlugins = new String[0];
@@ -119,8 +117,8 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         // set config def used to draw the view
         RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
         List<ConfigDef> configDefs = defs.getConfigDefs();
-        for(ConfigDef configDef : configDefs) {
-            if("global-properties".equals(configDef.getName())) {
+        for (ConfigDef configDef : configDefs) {
+            if ("global-properties".equals(configDef.getName())) {
                 setGlobalConfigDef(configDef);
             }
         }
@@ -155,13 +153,10 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         }
         
         // only set values for properties that are already defined
-        String propName = null;
-        RuntimeConfigProperty updProp = null;
-        String incomingProp = null;
-        Iterator propsIT = getProperties().keySet().iterator();
-        while (propsIT.hasNext()) {
-            propName = (String) propsIT.next();
-            updProp = (RuntimeConfigProperty) getProperties().get(propName);
+        RuntimeConfigProperty updProp;
+        String incomingProp;
+        for (String propName : getProperties().keySet()) {
+            updProp = getProperties().get(propName);
             incomingProp = this.getParameter(updProp.getName());
             
             log.debug("Checking property ["+propName+"]");
@@ -171,7 +166,8 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             // this is a bit hacky since we are assuming that any prop
             // with a value of "true" or "false" is meant to be a boolean
             // it may not always be the case, but we should be okay for now
-            if( updProp.getValue() != null // null check needed w/Oracle
+            // null check below needed w/Oracle
+            if( updProp.getValue() != null
                     && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
                 
                 if(incomingProp == null || !incomingProp.equals("on")) {
@@ -196,8 +192,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         if(getCommentPlugins().length > 0) {
             enabledPlugins = StringUtils.join(getCommentPlugins(), ",");
         }
-        RuntimeConfigProperty prop = 
-                    (RuntimeConfigProperty) getProperties().get("users.comments.plugins");
+        RuntimeConfigProperty prop = getProperties().get("users.comments.plugins");
         prop.setValue(enabledPlugins);
             
         try {
@@ -219,14 +214,14 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     }
     
     
-    public void setParameters(Map parameters) {
+    public void setParameters(Map<String, String[]> parameters) {
         this.params = parameters;
         
         if (log.isDebugEnabled()) {
             log.debug("Parameter map:");
-            Set<String> keys = parameters.keySet();
-            for(String key : keys) {
-                log.debug(key+" = "+parameters.get(key));
+
+            for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+                log.debug(entry.getKey() + " = " + entry.getValue());
             }
         }
     }
@@ -234,7 +229,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     // convenience method for getting a single parameter as a String
     private String getParameter(String key) {
         
-        String[] p = (String[]) this.params.get(key);
+        String[] p = this.params.get(key);
         if(p != null && p.length > 0) {
             return p[0];
         }
@@ -242,11 +237,11 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     }
     
     
-    public Map getProperties() {
+    public Map<String, RuntimeConfigProperty> getProperties() {
         return properties;
     }
 
-    public void setProperties(Map properties) {
+    public void setProperties(Map<String, RuntimeConfigProperty> properties) {
         this.properties = properties;
     }
 

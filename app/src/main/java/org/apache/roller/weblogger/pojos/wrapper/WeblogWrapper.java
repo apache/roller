@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
@@ -80,22 +80,16 @@ public final class WeblogWrapper {
     }
     
     
-    public List getPages() throws WebloggerException {
-        
-        List initialCollection = this.pojo.getTheme().getTemplates();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
+    public List<ThemeTemplateWrapper> getPages() throws WebloggerException {
+        List<ThemeTemplate> unwrapped = this.pojo.getTheme().getTemplates();
+        List<ThemeTemplateWrapper> wrapped = new ArrayList<ThemeTemplateWrapper>(unwrapped.size());
+
         int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,ThemeTemplateWrapper.wrap((ThemeTemplate) it.next()));
+        for (ThemeTemplate template : unwrapped) {
+            wrapped.add(i,ThemeTemplateWrapper.wrap(template));
             i++;
         }
-        
-        return wrappedCollection;
+        return wrapped;
     }
     
     
@@ -110,7 +104,7 @@ public final class WeblogWrapper {
     
     
     public String getName() {
-        return StringEscapeUtils.escapeHtml(this.pojo.getName());
+        return StringEscapeUtils.escapeHtml4(this.pojo.getName());
     }
     
     
@@ -313,100 +307,61 @@ public final class WeblogWrapper {
     public WeblogEntryWrapper getWeblogEntry(String anchor) {
         return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry(anchor), urlStrategy);
     }
-    
-    
-    public List getWeblogCategories() {
-        Set initialCollection = this.pojo.getWeblogCategories();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
+
+
+    public List<WeblogCategoryWrapper> getWeblogCategories() {
+        List<WeblogCategory> unwrapped = this.pojo.getWeblogCategories();
+        List<WeblogCategoryWrapper> wrapped = new ArrayList<WeblogCategoryWrapper>(unwrapped.size());
+
         int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next(), urlStrategy));
+        for (WeblogCategory category : unwrapped) {
+            wrapped.add(i,WeblogCategoryWrapper.wrap(category, urlStrategy));
             i++;
         }
-        
-        return wrappedCollection;
+        return wrapped;
+    }
+
+    public WeblogCategoryWrapper getWeblogCategory(String categoryName) {
+        return WeblogCategoryWrapper.wrap(this.pojo.getWeblogCategory(categoryName), urlStrategy);
+    }
+
+    
+    public List<WeblogEntryWrapper> getRecentWeblogEntries(String cat,int length) {
+        List<WeblogEntry> unwrapped = this.pojo.getRecentWeblogEntries(cat, length);
+        List<WeblogEntryWrapper> wrapped = new ArrayList<WeblogEntryWrapper>(unwrapped.size());
+
+        int i = 0;
+        for (WeblogEntry we : unwrapped) {
+            wrapped.add(i,WeblogEntryWrapper.wrap(we, urlStrategy));
+            i++;
+        }
+        return wrapped;
     }
     
     
-    public List getWeblogCategories(String categoryPath) {
-        Set initialCollection = this.pojo.getWeblogCategories(categoryPath);
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
+    public List<WeblogEntryWrapper> getRecentWeblogEntriesByTag(String tag,int length) {
+        List<WeblogEntry> unwrapped = pojo.getRecentWeblogEntriesByTag(tag,length);
+        List<WeblogEntryWrapper> wrapped = new ArrayList<WeblogEntryWrapper>(unwrapped.size());
+
         int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next(), urlStrategy));
+        for (WeblogEntry we : unwrapped) {
+            wrapped.add(i,WeblogEntryWrapper.wrap(we, urlStrategy));
             i++;
         }
-        
-        return wrappedCollection;
+        return wrapped;
     }
     
     
-    public WeblogCategoryWrapper getWeblogCategory(String categoryPath) {
-        return WeblogCategoryWrapper.wrap(this.pojo.getWeblogCategory(categoryPath), urlStrategy);
-    }
-    
-    
-    public List getRecentWeblogEntries(String cat,int length) {
-        List initialCollection = this.pojo.getRecentWeblogEntries(cat,length);
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
+    public List<WeblogEntryCommentWrapper> getRecentComments(int length) {
+        List<WeblogEntryComment> unwrapped = this.pojo.getRecentComments(length);
+        List<WeblogEntryCommentWrapper> wrapped = new ArrayList<WeblogEntryCommentWrapper>(unwrapped.size());
+
         int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryWrapper.wrap((WeblogEntry) it.next(), urlStrategy));
+        for (WeblogEntryComment wec : unwrapped) {
+            wrapped.add(i, WeblogEntryCommentWrapper.wrap(wec, urlStrategy));
             i++;
         }
-        
-        return wrappedCollection;
-    }
-    
-    
-    public List getRecentWeblogEntriesByTag(String tag,int length) {
-        List initialCollection = this.pojo.getRecentWeblogEntriesByTag(tag,length);
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryWrapper.wrap((WeblogEntry) it.next(), urlStrategy));
-            i++;
-        }
-        
-        return wrappedCollection;
-    }
-    
-    
-    public List getRecentComments(int length) {
-        List initialCollection = this.pojo.getRecentComments(length);
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryCommentWrapper.wrap((WeblogEntryComment) it.next(), urlStrategy));
-            i++;
-        }
-        
-        return wrappedCollection;
+        return wrapped;
     }
     
     
@@ -415,21 +370,15 @@ public final class WeblogWrapper {
     }
     
     
-    public List getTodaysReferrers() {
-        List initialCollection = this.pojo.getTodaysReferrers();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
+    public List<WeblogReferrerWrapper> getTodaysReferrers() {
+        List<WeblogReferrer> unwrapped = this.pojo.getTodaysReferrers();
+        List<WeblogReferrerWrapper> wrapped = new ArrayList<WeblogReferrerWrapper>(unwrapped.size());
         int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogReferrerWrapper.wrap((WeblogReferrer) it.next(), urlStrategy));
+        for (WeblogReferrer referrer : unwrapped) {
+            wrapped.add(i,WeblogReferrerWrapper.wrap(referrer, urlStrategy));
             i++;
         }
-        
-        return wrappedCollection;
+        return wrapped;
     }
     
     

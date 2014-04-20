@@ -23,16 +23,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 
 
 /**
  * A simple LRU Cache.
  */
 public class LRUCacheImpl implements Cache {
-    
-    private static Log log = LogFactory.getLog(LRUCacheImpl.class);
     
     private String id = null;
     private Map cache = null;
@@ -112,19 +109,19 @@ public class LRUCacheImpl implements Cache {
     }
     
     
-    public Map getStats() {
+    public Map<String, Object> getStats() {
         
-        Map stats = new HashMap();
+        Map<String, Object> stats = new HashMap<String, Object>();
         stats.put("startTime", this.startTime);
-        stats.put("hits", new Double(this.hits));
-        stats.put("misses", new Double(this.misses));
-        stats.put("puts", new Double(this.puts));
-        stats.put("removes", new Double(this.removes));
+        stats.put("hits", this.hits);
+        stats.put("misses", this.misses);
+        stats.put("puts", this.puts);
+        stats.put("removes", this.removes);
         
         // calculate efficiency
         if((misses - removes) > 0) {
             double efficiency = hits / (misses + hits);
-            stats.put("efficiency", new Double(efficiency * 100));
+            stats.put("efficiency", efficiency * RollerConstants.PERCENT_100);
         }
         
         return stats;

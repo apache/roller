@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business.pings;
 
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +35,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PingQueueProcessor {
+public final class PingQueueProcessor {
     
     private static final Log LOGGER = LogFactory.getLog(PingQueueProcessor.class);
     
@@ -99,13 +98,13 @@ public class PingQueueProcessor {
                 LOGGER.debug("Started processing ping queue.");
             }
             // Get all of the entries
-            List entries = pingQueueMgr.getAllQueueEntries();
+            List<PingQueueEntry> entries = pingQueueMgr.getAllQueueEntries();
             
             // Process each entry
-            for (Iterator i = entries.iterator(); i.hasNext();) {
-                PingQueueEntry pingQueueEntry = (PingQueueEntry) i.next();
+            for (PingQueueEntry pingQueueEntry : entries) {
                 processQueueEntry(pingQueueEntry);
             }
+
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Finished processing ping queue.");
             }

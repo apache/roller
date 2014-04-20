@@ -116,6 +116,7 @@ public class CustomUserRegistry {
         
             if (!(oPrincipal instanceof UserDetails)) {
                 LOG.warn("Unsupported Principal type in Authentication. Skipping auto-registration.");
+                LOG.warn("oPrincipal found of type " + oPrincipal.getClass().getName() + "; needs to be UserDetails");
                 return null;
             }
         

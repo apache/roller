@@ -7,13 +7,10 @@
             access="PROPERTY">
         <table name="folder"/>
         <named-query name="WeblogBookmarkFolder.getByWebsite">
-            <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.website = ?1</query>
+            <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.weblog = ?1</query>
         </named-query>
-        <named-query name="WeblogBookmarkFolder.getByWebsite&amp;Path">
-            <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.website = ?1 AND f.path = ?2</query>
-        </named-query>
-        <named-query name="WeblogBookmarkFolder.getByWebsite&amp;ParentNull">
-            <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.website = ?1 AND f.parent IS NULL</query>
+        <named-query name="WeblogBookmarkFolder.getByWebsite&amp;Name">
+            <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.weblog = ?1 AND f.name = ?2</query>
         </named-query>
         <attributes>
             <id name="id">
@@ -22,31 +19,11 @@
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <basic name="path">
-                <column name="path" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <basic name="description">
-                <column name="description" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+            <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <many-to-one name="parent" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder">
-                <join-column name="parentid" insertable="true" updatable="true" nullable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                    <cascade-refresh />
-                </cascade>
-            </many-to-one>
-            <one-to-many name="folders" mapped-by="parent" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"  fetch="LAZY">
-                <cascade>
-                    <cascade-persist />
-                    <cascade-remove/>
-                </cascade>
-            </one-to-many>
             <one-to-many name="bookmarks" mapped-by="folder" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmark" fetch="LAZY">
-                <order-by>name</order-by>
+                <order-by>priority</order-by>
                 <cascade>
                     <cascade-persist />
                     <cascade-remove />

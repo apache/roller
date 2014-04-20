@@ -39,11 +39,11 @@ public class ModelLoader {
      *
      * Does not fail if there is a problem with one of the models.
      */
-    public static void loadCustomModels(Weblog weblog, Map model, Map initData) {
+    public static void loadCustomModels(Weblog weblog, Map<String, Object> modelMap, Map initData) {
         
         if (weblog.getPageModels() != null) {
             try {
-                loadModels(weblog.getPageModels(), model, initData, false);
+                loadModels(weblog.getPageModels(), modelMap, initData, false);
             } catch(WebloggerException ex) {
                 // shouldn't happen, but log it just in case
                 log.error("Error loading weblog custom models", ex);
@@ -58,40 +58,42 @@ public class ModelLoader {
      * Optionally fails if any exceptions are thrown when initializing
      * the Model instances.
      */
-    public static void loadModels(String modelsString, Map model, 
+    public static void loadModels(String modelsString, Map<String, Object> modelMap,
                                    Map initData, boolean fail) 
             throws WebloggerException {
         
         String[] models = Utilities.stringToStringArray(modelsString, ",");
-        for(int i=0; i < models.length; i++) {
-            try {
-                Class modelClass = Class.forName(models[i]);
-                Model pageModel = (Model) modelClass.newInstance();
-                pageModel.init(initData);
-                model.put(pageModel.getModelName(), pageModel);
-            } catch (WebloggerException re) {
-                if(fail) {
-                    throw re;
-                } else {
-                    log.warn("Error initializing model: " + models[i]);
-                }
-            } catch (ClassNotFoundException cnfe) {
-                if(fail) {
-                    throw new WebloggerException("Error finding model: " + models[i], cnfe);
-                } else {
-                    log.warn("Error finding model: " + models[i]);
-                }
-            } catch (InstantiationException ie) {
-                if(fail) {
-                    throw new WebloggerException("Error insantiating model: " + models[i], ie);
-                } else {
-                    log.warn("Error insantiating model: " + models[i]);
-                }
-            } catch (IllegalAccessException iae) {
-                if(fail) {
-                    throw new WebloggerException("Error accessing model: " + models[i], iae);
-                } else {
-                    log.warn("Error accessing model: " + models[i]);
+        if (models != null) {
+            for (String model : models) {
+                try {
+                    Class modelClass = Class.forName(model);
+                    Model pageModel = (Model) modelClass.newInstance();
+                    pageModel.init(initData);
+                    modelMap.put(pageModel.getModelName(), pageModel);
+                } catch (WebloggerException re) {
+                    if(fail) {
+                        throw re;
+                    } else {
+                        log.warn("Error initializing model: " + model);
+                    }
+                } catch (ClassNotFoundException cnfe) {
+                    if(fail) {
+                        throw new WebloggerException("Error finding model: " + model, cnfe);
+                    } else {
+                        log.warn("Error finding model: " + model);
+                    }
+                } catch (InstantiationException ie) {
+                    if(fail) {
+                        throw new WebloggerException("Error insantiating model: " + model, ie);
+                    } else {
+                        log.warn("Error instantiating model: " + model);
+                    }
+                } catch (IllegalAccessException iae) {
+                    if(fail) {
+                        throw new WebloggerException("Error accessing model: " + model, iae);
+                    } else {
+                        log.warn("Error accessing model: " + model);
+                    }
                 }
             }
         }

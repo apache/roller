@@ -22,12 +22,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogHitCount;
-import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
+import org.apache.roller.weblogger.pojos.StatCount;
+import org.apache.roller.weblogger.pojos.TagStat;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogHitCount;
 
 
 /**
@@ -35,9 +38,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public interface WeblogEntryManager {
 
-    String DESCENDING = "DESCENDING";
-    String ASCENDING = "ASCENDING";
-       
     /**
      * Save weblog entry.
      */
@@ -62,108 +62,43 @@ public interface WeblogEntryManager {
     /**
      * Get WeblogEntries by offset/length as list in reverse chronological order.
      * The range offset and list arguments enable paging through query results.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param user       User or null to get for all users.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category path or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param text       Text appearing in the text or summary, or null for all
-     * @param sortBy     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
-     * @param sortOrder  Sort order of ASCENDING or DESCENDING (null for DESCENDING)
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
-     * @return List of WeblogEntryData objects in reverse chrono order.
+     * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
+     * @return List of WeblogEntry objects in order specified by search criteria
      * @throws WebloggerException
      */
-    List getWeblogEntries(
-            Weblog website,
-            User    user,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,
-            String      status,
-            String      text,
-            String      sortBy, 
-            String      sortOrder,
-            String      locale,             
-            int         offset,
-            int         range)
+    List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc)
             throws WebloggerException;
-       
+
     /**
-     * Get Weblog Entries grouped by day. This method returns a Map that
-     * contains Lists, each List contains WeblogEntryData objects, and the
-     * Lists are keyed by Date objects.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category path or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
-     * @return Map of Lists, keyed by Date, and containing WeblogEntryData.
+     * Get Weblog Entries grouped by day.
+     * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
+     * @return Map of Lists of WeblogEntries keyed by calendar day
      * @throws WebloggerException
      */
-    Map getWeblogEntryObjectMap(
-            Weblog website,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,            
-            String      status,
-            String      locale,
-            int         offset,
-            int         range)
+    Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc)
             throws WebloggerException;
-        
+
     /**
      * Get Weblog Entry date strings grouped by day. This method returns a Map
-     * that contains Lists, each List contains YYYYMMDD date strings objects,
-     * and the Lists are keyed by Date objects.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category path or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
-     * @return Map of Lists, keyed by Date, and containing date strings.
+     * that contains one YYYYMMDD date string object for each calendar day having
+     * one or more blog entries.
+     * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
+     * @return Map of date strings keyed by Date
      * @throws WebloggerException
      */
-    Map getWeblogEntryStringMap(
-            Weblog website,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,            
-            String      status,
-            String      locale,
-            int         offset,
-            int         range)
-            throws WebloggerException;    
+    Map<Date, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc)
+            throws WebloggerException;
     
     /**
-     * Get weblog entries with given category or, optionally, any sub-category
-     * of that category.
-     * @param cat     Category
-     * @param subcats True if sub-categories are to be fetched
-     * @return        List of weblog entries in category
-     */
-    List getWeblogEntries(WeblogCategory cat, boolean subcats)
-            throws WebloggerException; 
-    
-    /** 
-     * Get weblog enties ordered by descending number of comments.
+     * Get weblog entries ordered by descending number of comments.
      * @param website    Weblog or null to get for all weblogs.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param offset     Offset into results for paging
      * @param length     Max comments to return (or -1 for no limit)
-     * @return List of WeblogEntryData objects.
+     * @return List of StatCount objects.
      */
-    List getMostCommentedWeblogEntries(
+    List<StatCount> getMostCommentedWeblogEntries(
             Weblog website,             
             Date        startDate,
             Date        endDate,
@@ -193,9 +128,9 @@ public interface WeblogEntryManager {
     /**
      * Get specified number of most recent pinned and published Weblog Entries.
      * @param max Maximum number to return.
-     * @return Collection of WeblogEntryData objects.
+     * @return Collection of WeblogEntry objects.
      */
-    List getWeblogEntriesPinnedToMain(Integer max) throws WebloggerException;
+    List<WeblogEntry> getWeblogEntriesPinnedToMain(Integer max) throws WebloggerException;
 
     /**
      * Remove attribute with given name from given WeblogEntryData
@@ -228,43 +163,25 @@ public interface WeblogEntryManager {
     
     
     /**
-     * Move a category under another category.
-     *
-     * This moves the src category itself and all children and associated entries.
-     */
-    void moveWeblogCategory(WeblogCategory src, WeblogCategory dest)
-            throws WebloggerException;
-    
-    
-    /**
      * Recategorize all entries with one category to another.
      */
     void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat)
             throws WebloggerException;
     
     /**
-     * Get top level categories for a website.
-     * @param website Website.
-     */
-    WeblogCategory getRootWeblogCategory(Weblog website) throws WebloggerException;
-    
-    
-    /**
-     * Get category specified by website and categoryPath.
+     * Get category specified by website and name.
      * @param website      Website of WeblogCategory.
-     * @param categoryPath Path of WeblogCategory, relative to category root.
+     * @param categoryName Name of WeblogCategory
      */
-    WeblogCategory getWeblogCategoryByPath(Weblog website,
-            String categoryPath) throws WebloggerException;
-    
-    
-    /** 
+    WeblogCategory getWeblogCategoryByName(Weblog website,
+            String categoryName) throws WebloggerException;
+
+    /**
      * Get WebLogCategory objects for a website. 
      */
-    List getWeblogCategories(Weblog website, boolean includeRoot)
+    List<WeblogCategory> getWeblogCategories(Weblog website)
             throws WebloggerException;
-    
-               
+
     /**
      * Save comment.
      */
@@ -282,28 +199,10 @@ public interface WeblogEntryManager {
        
     /**
      * Generic comments query method.
-     * @param website    Website or null for all comments on site
-     * @param entry      Entry or null to include all comments
-     * @param startDate  Start date or null for no restriction
-     * @param endDate    End date or null for no restriction
-     * @param status     The status of the comment, or null for any
-     * @param reverseChrono True for results in reverse chrono order
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
+     * @param csc CommentSearchCriteria object with fields indicating search criteria
+     * @return list of comments fitting search criteria
      */
-    List getComments(
-            
-            Weblog          website,
-            WeblogEntry     entry,
-            String          searchString,
-            Date            startDate,
-            Date            endDate,
-            String          status,
-            boolean         reverseChrono,
-            int             offset,
-            int             length
-            
-            ) throws WebloggerException;
+    List<WeblogEntryComment> getComments(CommentSearchCriteria csc) throws WebloggerException;
 
     /**
      * Deletes comments that match paramters.
@@ -362,7 +261,7 @@ public interface WeblogEntryManager {
      * @return
      * @throws WebloggerException
      */
-    List getPopularTags(Weblog website, Date startDate, int offset, int limit)
+    List<TagStat> getPopularTags(Weblog website, Date startDate, int offset, int limit)
             throws WebloggerException;
     
     /**
@@ -374,7 +273,7 @@ public interface WeblogEntryManager {
      * @return
      * @throws WebloggerException
      */
-    List getTags(Weblog website, String sortBy, String startsWith, int offset, int limit)
+    List<TagStat> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit)
             throws WebloggerException;    
     
     /**
@@ -444,7 +343,7 @@ public interface WeblogEntryManager {
      * @return The list of HitCountData objects ranked by hit count, descending.
      * @throws WebloggerException If there was a problem with the backend.
      */
-    List getHotWeblogs(int sinceDays, int offset, int length)
+    List<WeblogHitCount> getHotWeblogs(int sinceDays, int offset, int length)
         throws WebloggerException;
     
     

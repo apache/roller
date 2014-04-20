@@ -24,8 +24,6 @@ package org.apache.roller.planet.pojos;
 public class Category {
     
     private String name = null;
-    private String path = null;
-    
 
     public String getName() {
         return name;
@@ -35,12 +33,4 @@ public class Category {
         this.name = name;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-    
 }

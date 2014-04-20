@@ -18,9 +18,8 @@ package org.apache.roller.weblogger.planet.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
@@ -98,21 +97,21 @@ public class PlanetGroups extends PlanetUIAction {
         
         if (!hasActionErrors()) {
             try {
-                PlanetGroup group = getGroup();
-                if(group == null) {
+                PlanetGroup planetGroup = getGroup();
+                if(planetGroup == null) {
                     log.debug("Adding New Group");
-                    group = new PlanetGroup();
-                    group.setPlanet(getPlanet());
+                    planetGroup = new PlanetGroup();
+                    planetGroup.setPlanet(getPlanet());
                 } else {
                     log.debug("Updating Existing Group");
                 }
 
                 // copy in submitted data
-                getBean().copyTo(group);
+                getBean().copyTo(planetGroup);
 
                 // save and flush
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                pmgr.saveGroup(group);
+                pmgr.saveGroup(planetGroup);
                 WebloggerFactory.getWeblogger().flush();
 
                 addMessage("planetGroups.success.saved");
@@ -173,20 +172,15 @@ public class PlanetGroups extends PlanetUIAction {
     
     
     public List<PlanetGroup> getGroups() {
+        List<PlanetGroup> displayGroups = new ArrayList<PlanetGroup>();
         
-        List<PlanetGroup> displayGroups = new ArrayList();
-        
-        Iterator allgroups = getPlanet().getGroups().iterator();
-        while (allgroups.hasNext()) {
-            PlanetGroup agroup = (PlanetGroup) allgroups.next();
-            
+        for (PlanetGroup planetGroup : getPlanet().getGroups()) {
             // The "all" group is considered a special group and cannot be
             // managed independently
-            if (!agroup.getHandle().equals("all")) {
-                displayGroups.add(agroup);
+            if (!planetGroup.getHandle().equals("all")) {
+                displayGroups.add(planetGroup);
             }
         }
-        
         return displayGroups;
     }
     

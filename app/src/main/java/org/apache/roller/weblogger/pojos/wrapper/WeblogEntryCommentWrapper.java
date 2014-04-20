@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.pojos.wrapper;
 
 import java.sql.Timestamp;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
@@ -72,7 +72,7 @@ public final class WeblogEntryCommentWrapper {
      * Value is always html escaped.
      */
     public String getName() {
-        return StringEscapeUtils.escapeHtml(this.pojo.getName());
+        return StringEscapeUtils.escapeHtml4(this.pojo.getName());
     }
     
     
@@ -82,7 +82,7 @@ public final class WeblogEntryCommentWrapper {
      * Value is always html escaped.
      */
     public String getEmail() {
-        return StringEscapeUtils.escapeHtml(this.pojo.getEmail());
+        return StringEscapeUtils.escapeHtml4(this.pojo.getEmail());
     }
     
     
@@ -92,7 +92,7 @@ public final class WeblogEntryCommentWrapper {
      * Value is always html escaped.
      */
     public String getUrl() {
-        return StringEscapeUtils.escapeHtml(this.pojo.getUrl());
+        return StringEscapeUtils.escapeHtml4(this.pojo.getUrl());
     }
     
     
@@ -108,7 +108,7 @@ public final class WeblogEntryCommentWrapper {
         
         // escape content if content-type is text/plain
         if("text/plain".equals(this.pojo.getContentType())) {
-            content = StringEscapeUtils.escapeHtml(content);
+            content = StringEscapeUtils.escapeHtml4(content);
         }
         
         // apply plugins
@@ -151,7 +151,7 @@ public final class WeblogEntryCommentWrapper {
      * Value is always html escaped.
      */
     public String getReferrer() {
-        return StringEscapeUtils.escapeHtml(this.pojo.getReferrer());
+        return StringEscapeUtils.escapeHtml4(this.pojo.getReferrer());
     }
     
     

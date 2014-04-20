@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.search.FieldConstants;
@@ -105,7 +106,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         }
 
         Date end = new Date();
-        double length = (end.getTime() - start.getTime()) / (double) 1000;
+        double length = (end.getTime() - start.getTime()) / (double) RollerConstants.SEC_IN_MS;
 
         if (website != null) {
             mLogger.info("Completed deleting indices for website '"

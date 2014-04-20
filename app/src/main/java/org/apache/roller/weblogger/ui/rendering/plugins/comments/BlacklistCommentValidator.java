@@ -19,6 +19,8 @@
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.ResourceBundle;
+
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.BlacklistChecker;
@@ -28,7 +30,6 @@ import org.apache.roller.weblogger.util.BlacklistChecker;
  */
 public class BlacklistCommentValidator implements CommentValidator {
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");       
-    private BlacklistChecker checker = new BlacklistChecker();
 
     public String getName() {
         return bundle.getString("comment.validator.blacklistName");
@@ -39,7 +40,7 @@ public class BlacklistCommentValidator implements CommentValidator {
             messages.addError("comment.validator.blacklistMessage");
             return 0;
         }
-        return 100; 
+        return RollerConstants.PERCENT_100;
     }
     
 }

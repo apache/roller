@@ -35,7 +35,7 @@ import org.apache.roller.util.UUIDGenerator;
  * it should be replaced by more complete model that can fully represent all 
  * forms of RSS and Atom.
  */
-public class SubscriptionEntry implements Serializable, Comparable {
+public class SubscriptionEntry implements Serializable, Comparable<SubscriptionEntry> {
     
     // attributes
     private String id = UUIDGenerator.generateUUID();
@@ -59,8 +59,7 @@ public class SubscriptionEntry implements Serializable, Comparable {
     /**
      * Compare planet entries by comparing permalinks.
      */
-    public int compareTo(Object o) {
-        SubscriptionEntry other = (SubscriptionEntry)o;
+    public int compareTo(SubscriptionEntry other) {
         return getPermalink().compareTo(other.getPermalink());
     }
     
@@ -192,9 +191,8 @@ public class SubscriptionEntry implements Serializable, Comparable {
      * (case-insensitive comparison).
      */
     public boolean inCategory(String category) {
-        Iterator cats = getCategories().iterator();
-        while (cats.hasNext()) {
-            String catName = ((String)cats.next()).toLowerCase();
+        for (Category cat : getCategories()) {
+            String catName = cat.getName().toLowerCase();
             if (catName.contains(category.toLowerCase())) {
                 return true;
             }
@@ -207,14 +205,13 @@ public class SubscriptionEntry implements Serializable, Comparable {
     /**
      * Returns categories as list of WeblogCategoryData objects.
      */
-    public List getCategories() {
-        List list = new ArrayList();
+    public List<Category> getCategories() {
+        List<Category> list = new ArrayList<Category>();
         if (getCategoriesString() != null) {
             String[] catArray = Utilities.stringToStringArray(getCategoriesString(),",");
-            for (int i=0; i<catArray.length; i++) {
+            for (String catName : catArray) {
                 Category cat = new Category();
-                cat.setName(catArray[i]);
-                cat.setPath(catArray[i]);
+                cat.setName(catName);
                 list.add(cat);
             }
         }
@@ -233,12 +230,12 @@ public class SubscriptionEntry implements Serializable, Comparable {
         return cat;
     }
 
-    public void setCategoriesString(List categories) {
+    public void setCategoriesString(List<String> categoryNames) {
         StringBuilder sb = new StringBuilder();
-        Iterator cats = categories.iterator();
+        Iterator cats = categoryNames.iterator();
         while (cats.hasNext()) {
-            String cat = (String)cats.next();
-            sb.append(cat);
+            String catName = (String) cats.next();
+            sb.append(catName);
             if (cats.hasNext()) {
                 sb.append(",");
             }

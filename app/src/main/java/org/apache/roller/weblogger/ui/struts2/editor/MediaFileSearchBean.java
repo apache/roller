@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.ResourceBundle;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;
@@ -34,31 +35,31 @@ public class MediaFileSearchBean {
     private transient ResourceBundle bundle =
             ResourceBundle.getBundle("ApplicationResources");
 
-    public static int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 10;
 
     // Media file name as search criteria
-    String name;
+    private String name;
 
     // Media file type as search criteria
-    String type;
+    private String type;
 
     // Type of size filter as search criteria
-    String sizeFilterType;
+    private String sizeFilterType;
 
     // Size of file as search criteria
-    long size;
+    private long size;
 
     // Size unit
-    String sizeUnit;
+    private String sizeUnit;
 
     // Tags as search criteria
-    String tags;
+    private String tags;
 
     // Page number of results
-    int pageNum = 0;
+    private int pageNum = 0;
     
     // Sort option for search results
-    int sortOption;
+    private int sortOption;
 
     public String getName() {
         return name;
@@ -175,9 +176,9 @@ public class MediaFileSearchBean {
 
             long filterSize = this.size ;
             if ("mediaFileView.kb".equals(this.sizeUnit)) {
-                filterSize = this.size * 1024;
+                filterSize = this.size * RollerConstants.ONE_KB_IN_BYTES;
             } else if ("mediaFileView.mb".equals(this.sizeUnit)) {
-                    filterSize = this.size * 1024 * 1024;
+                    filterSize = this.size * RollerConstants.ONE_MB_IN_BYTES;
             }
             dataHolder.setSize(filterSize);
         }

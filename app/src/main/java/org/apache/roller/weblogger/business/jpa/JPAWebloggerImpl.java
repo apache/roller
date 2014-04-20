@@ -17,8 +17,6 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PlanetURLStrategy;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
@@ -50,8 +48,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 public class JPAWebloggerImpl extends WebloggerImpl {
 
     static final long serialVersionUID = 5256135928578074652L;
-
-    private static Log logger = LogFactory.getLog(JPAWebloggerImpl.class);
 
     // a persistence utility class
     private final JPAPersistenceStrategy strategy;

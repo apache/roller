@@ -25,9 +25,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.FileContent;
@@ -107,12 +108,12 @@ public class FileContentManagerImpl implements FileContentManager {
         // create File that we are about to save
         File saveFile = new File(dirPath.getAbsolutePath() + File.separator + fileId);
         
-        byte[] buffer = new byte[8192];
-        int bytesRead = 0;
+        byte[] buffer = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
+        int bytesRead;
         OutputStream bos = null;
         try {
             bos = new FileOutputStream(saveFile);
-            while ((bytesRead = is.read(buffer, 0, 8192)) != -1) {
+            while ((bytesRead = is.read(buffer, 0, RollerConstants.EIGHT_KB_IN_BYTES)) != -1) {
                 bos.write(buffer, 0, bytesRead);
             }            
             log.debug("The file has been written to ["+saveFile.getAbsolutePath()+"]");
@@ -120,8 +121,10 @@ public class FileContentManagerImpl implements FileContentManager {
             throw new FileIOException("ERROR uploading file", e);
         } finally {
             try {
-                bos.flush();
-                bos.close();
+                if (bos != null) {
+                    bos.flush();
+                    bos.close();
+                }
             } catch (Exception ignored) {}
         }
         
@@ -156,15 +159,15 @@ public class FileContentManagerImpl implements FileContentManager {
     public boolean overQuota(Weblog weblog) {
         
         String maxDir = WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize");
-        String maxFile = WebloggerRuntimeConfig.getProperty("uploads.file.maxsize");
+
         // maxDirSize in megabytes
         BigDecimal maxDirSize = new BigDecimal(maxDir);
 
-        long maxDirBytes = (long)(1024000 * maxDirSize.doubleValue());
+        long maxDirBytes = (long)(RollerConstants.ONE_MB_IN_BYTES * maxDirSize.doubleValue());
         
         try {
-            File storageDir = this.getRealFile(weblog, null);
-            long weblogDirSize = this.getDirSize(storageDir, true);
+            File storageDirectory = this.getRealFile(weblog, null);
+            long weblogDirSize = this.getDirSize(storageDirectory, true);
             
             return weblogDirSize > maxDirBytes;
         } catch (Exception ex) {
@@ -198,7 +201,7 @@ public class FileContentManagerImpl implements FileContentManager {
         // second check, does upload exceed max size for file?
         BigDecimal maxFileMB = new BigDecimal(
                 WebloggerRuntimeConfig.getProperty("uploads.file.maxsize"));
-        int maxFileBytes = (int)(1024000 * maxFileMB.doubleValue());
+        int maxFileBytes = (int)(RollerConstants.ONE_MB_IN_BYTES * maxFileMB.doubleValue());
         log.debug("max allowed file size = "+maxFileBytes);
         log.debug("attempted save file size = "+size);
         if (size > maxFileBytes) {
@@ -210,10 +213,10 @@ public class FileContentManagerImpl implements FileContentManager {
         // third check, does file cause weblog to exceed quota?
         BigDecimal maxDirMB = new BigDecimal(
                 WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize"));
-        long maxDirBytes = (long)(1024000 * maxDirMB.doubleValue());
+        long maxDirBytes = (long)(RollerConstants.ONE_MB_IN_BYTES * maxDirMB.doubleValue());
         try {
-            File storageDir = this.getRealFile(weblog, null);
-            long userDirSize = getDirSize(storageDir, true);
+            File storageDirectory = this.getRealFile(weblog, null);
+            long userDirSize = getDirSize(storageDirectory, true);
             if (userDirSize + size > maxDirBytes) {
                 messages.addError("error.upload.dirmax", maxDirMB.toString());
                 return false;
@@ -247,15 +250,18 @@ public class FileContentManagerImpl implements FileContentManager {
     private long getDirSize(File dir, boolean recurse) {
         
         long size = 0;
-        if(dir.exists() && dir.isDirectory() && dir.canRead()) {
-            File[] files = dir.listFiles();
+
+        if (dir.exists() && dir.isDirectory() && dir.canRead()) {
             long dirSize = 0l;
-            for (int i=0; i < files.length; i++) {
-                if (!files[i].isDirectory()) {
-                    dirSize += files[i].length();
-                } else if(recurse) {
-                    // count a subdirectory
-                    dirSize += getDirSize(files[i], recurse);
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (!file.isDirectory()) {
+                        dirSize += file.length();
+                    } else if(recurse) {
+                        // count a subdirectory
+                        dirSize += getDirSize(file, recurse);
+                    }
                 }
             }
             size += dirSize;
@@ -272,7 +278,7 @@ public class FileContentManagerImpl implements FileContentManager {
     private boolean checkFileType(String[] allowFiles, String[] forbidFiles,
                                   String fileName, String contentType) {
         
-        // TODO: Atom Publushing Protocol figure out how to handle file
+        // TODO: Atom Publishing Protocol figure out how to handle file
         // allow/forbid using contentType.
         // TEMPORARY SOLUTION: In the allow/forbid lists we will continue to
         // allow user to specify file extensions (e.g. gif, png, jpeg) but will

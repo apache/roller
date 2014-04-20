@@ -18,15 +18,15 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 
 /**
  * Weblog entry attribute.
  */
-public class WeblogEntryAttribute implements Comparable {
+public class WeblogEntryAttribute implements Comparable<WeblogEntryAttribute> {
     
     private String id = UUIDGenerator.generateUUID();
     private WeblogEntry entry;
@@ -107,8 +107,7 @@ public class WeblogEntryAttribute implements Comparable {
         .toHashCode();
     }
     
-    public int compareTo(Object o) {
-        WeblogEntryAttribute att = (WeblogEntryAttribute)o;
+    public int compareTo(WeblogEntryAttribute att) {
         return getName().compareTo(att.getName());
     }
     

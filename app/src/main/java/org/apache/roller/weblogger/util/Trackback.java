@@ -30,10 +30,11 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -104,7 +105,8 @@ public class Trackback {
         
         // Construct data
         String title = entry.getTitle();
-        String excerpt = StringUtils.left( Utilities.removeHTML(entry.getDisplayContent()),255 );
+        String excerpt = StringUtils.left( Utilities.removeHTML(entry.getDisplayContent()),
+                RollerConstants.TEXTWIDTH_255);
         String url = entry.getPermalink();
         String blog_name = entry.getWebsite().getName();
         
@@ -120,7 +122,7 @@ public class Trackback {
         
         // prepare http request
         HttpClient client = new HttpClient();
-        client.setConnectionTimeout(45 * 1000);
+        client.setConnectionTimeout(45 * RollerConstants.SEC_IN_MS);
         HttpMethod method = new PostMethod(trackbackURL);
         method.setQueryString(queryString);
         
@@ -175,7 +177,7 @@ public class Trackback {
         
         SAXBuilder builder = new SAXBuilder();
         Document doc = builder.build(
-                new StringReader(StringEscapeUtils.unescapeHtml(response)));
+                new StringReader(StringEscapeUtils.unescapeHtml4(response)));
         Element root = doc.getRootElement();
         
         if ("response".equals(root.getName())) {

@@ -32,10 +32,11 @@ import org.apache.roller.util.PropertyExpander;
 /**
  * This is the single entry point for accessing configuration properties in Roller.
  */
-public class WebloggerConfig {
+public final class WebloggerConfig {
     
     private static String default_config = "/org/apache/roller/weblogger/config/roller.properties";
     private static String custom_config = "/roller-custom.properties";
+    private static String junit_config = "/roller-junit.properties";
     private static String custom_jvm_param = "roller.custom.config";
     private static File custom_config_file = null;
 
@@ -59,14 +60,35 @@ public class WebloggerConfig {
             // first, lets load our default properties
             InputStream is = configClass.getResourceAsStream(default_config);
             config.load(is);
+            
+            // first, see if we can find our junit testing config
+            is = configClass.getResourceAsStream(junit_config);
+            if (is != null) {
 
-            // now, see if we can find our custom config
-            is = configClass.getResourceAsStream(custom_config);
-            if(is != null) {
                 config.load(is);
-                System.out.println("Roller Weblogger: Successfully loaded custom properties file from classpath");
+                System.out
+                        .println("Roller Weblogger: Successfully loaded junit properties file from classpath");
+                System.out.println("File path : "
+                        + configClass.getResource(junit_config).getFile());
+
             } else {
-                System.out.println("Roller Weblogger: No custom properties file found in classpath");
+
+                // now, see if we can find our custom config
+                is = configClass.getResourceAsStream(custom_config);
+
+                if (is != null) {
+                    config.load(is);
+                    System.out
+                            .println("Roller Weblogger: Successfully loaded custom properties file from classpath");
+                    System.out.println("File path : "
+                            + configClass.getResource(custom_config).getFile());
+                } else {
+                    System.out
+                            .println("Roller Weblogger: No custom properties file found in classpath");
+                }
+
+                System.out
+                .println("(To run eclipse junit local tests see docs/testing/roller-junit.properties)");
             }
 
             // finally, check for an external config file
@@ -103,7 +125,6 @@ public class WebloggerConfig {
             }
             
             // initialize logging subsystem via WebloggerConfig
-            Properties log4jprops = new Properties();
             PropertyConfigurator.configure(WebloggerConfig.getPropertiesStartingWith("log4j."));
             
             // finally we can start logging...

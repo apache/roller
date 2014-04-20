@@ -23,7 +23,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Template;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
@@ -35,11 +34,11 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
  * rendering technology.  This allows us to provide easily pluggable rendering
  * implementations.
  */
-public class RendererManager {
+public final class RendererManager {
 
     private static Log log = LogFactory.getLog(RendererManager.class);
     // a set of all renderer factories we are consulting
-    private static Set rendererFactories = new HashSet();
+    private static Set<RendererFactory> rendererFactories = new HashSet<RendererFactory>();
 
     static {
         // lookup set of renderer factories we are going to use
@@ -49,18 +48,18 @@ public class RendererManager {
         // instantiate user defined renderer factory classes
         if (userFactories != null && userFactories.trim().length() > 0) {
 
-            RendererFactory rendererFactory = null;
+            RendererFactory rendererFactory;
             String[] uFactories = userFactories.split(",");
-            for (int i = 0; i < uFactories.length; i++) {
+            for (String uFactory :uFactories) {
                 try {
-                    Class factoryClass = Class.forName(uFactories[i]);
+                    Class factoryClass = Class.forName(uFactory);
                     rendererFactory = (RendererFactory) factoryClass.newInstance();
                     rendererFactories.add(rendererFactory);
                 } catch (ClassCastException cce) {
                     log.error("It appears that your factory does not implement "
                             + "the RendererFactory interface", cce);
                 } catch (Exception e) {
-                    log.error("Unable to instantiate renderer factory [" + uFactories[i] + "]", e);
+                    log.error("Unable to instantiate renderer factory [" + uFactory + "]", e);
                 }
             }
         }
@@ -68,18 +67,18 @@ public class RendererManager {
         // instantiate roller standard renderer factory classes
         if (rollerFactories != null && rollerFactories.trim().length() > 0) {
 
-            RendererFactory rendererFactory = null;
+            RendererFactory rendererFactory;
             String[] rFactories = rollerFactories.split(",");
-            for (int i = 0; i < rFactories.length; i++) {
+            for (String rFactory : rFactories) {
                 try {
-                    Class factoryClass = Class.forName(rFactories[i]);
+                    Class factoryClass = Class.forName(rFactory);
                     rendererFactory = (RendererFactory) factoryClass.newInstance();
                     rendererFactories.add(rendererFactory);
                 } catch (ClassCastException cce) {
                     log.error("It appears that your factory does not implement "
                             + "the RendererFactory interface", cce);
                 } catch (Exception e) {
-                    log.error("Unable to instantiate renderer factory [" + rFactories[i] + "]", e);
+                    log.error("Unable to instantiate renderer factory [" + rFactory + "]", e);
                 }
             }
         }
@@ -107,14 +106,12 @@ public class RendererManager {
     public static Renderer getRenderer(Template template, MobileDeviceRepository.DeviceType deviceType)
             throws RenderingException {
 
-        Renderer renderer = null;
+        Renderer renderer;
 
         // iterate over our renderer factories and see if one of them
         // wants to handle this content
-        Iterator factories = rendererFactories.iterator();
-        while (factories.hasNext()) {
-            renderer = ((RendererFactory) factories.next()).getRenderer(template, deviceType);
-
+        for (RendererFactory rendererFactory : rendererFactories) {
+            renderer = rendererFactory.getRenderer(template, deviceType);
             if (renderer != null) {
                 return renderer;
             }

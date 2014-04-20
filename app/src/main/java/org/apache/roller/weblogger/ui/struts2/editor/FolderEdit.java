@@ -20,12 +20,14 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -39,6 +41,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class FolderEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(FolderEdit.class);
+    
+    // the id of the folder we are working with
+    private String folderId = null;
     
     // the folder we are editing
     private WeblogBookmarkFolder folder = null;
@@ -80,7 +85,6 @@ public class FolderEdit extends UIAction {
     public String execute() {
         
         if(getFolder() == null) {
-            // TODO: i18n
             addError("Cannot edit null folder");
             return ERROR;
         }
@@ -98,7 +102,6 @@ public class FolderEdit extends UIAction {
     public String save() {
         
         if(getFolder() == null) {
-            // TODO: i18n
             addError("Cannot edit null folder");
             return ERROR;
         }
@@ -125,7 +128,6 @@ public class FolderEdit extends UIAction {
 
             } catch(Exception ex) {
                 log.error("Error saving folder", ex);
-                // TODO: i18n
                 addError("Error saving folder");
             }
         }
@@ -133,6 +135,14 @@ public class FolderEdit extends UIAction {
         return INPUT;
     }
 
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return CANCEL;
+    }
     
     // TODO: validation
     public void myValidate() {
@@ -141,8 +151,8 @@ public class FolderEdit extends UIAction {
         
         // make sure new name is not a duplicate of an existing folder
         if(!getFolder().getName().equals(getBean().getName())) {
-            WeblogBookmarkFolder parent = getFolder().getParent();
-            if(parent != null && parent.hasFolder(getBean().getName())) {
+            Weblog weblog = getFolder().getWeblog();
+            if(weblog.hasBookmarkFolder(getBean().getName())) {
                 addError("folderForm.error.duplicateName", getBean().getName());
             }
         }
@@ -165,4 +175,11 @@ public class FolderEdit extends UIAction {
         this.bean = bean;
     }
     
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
+    }
 }

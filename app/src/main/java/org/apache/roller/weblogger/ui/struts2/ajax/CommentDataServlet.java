@@ -23,8 +23,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -66,7 +66,7 @@ public class CommentDataServlet extends HttpServlet {
                 if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
                     String content = Utilities.escapeHTML(c.getContent());
                     content = WordUtils.wrap(content, 72);
-                    content = StringEscapeUtils.escapeJavaScript(content);
+                    content = StringEscapeUtils.escapeEcmaScript(content);
                     String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("text/html; charset=utf-8");
@@ -113,7 +113,7 @@ public class CommentDataServlet extends HttpServlet {
                     c = wmgr.getComment(request.getParameter("id"));
                     content = Utilities.escapeHTML(c.getContent());
                     content = WordUtils.wrap(content, 72);
-                    content = StringEscapeUtils.escapeJavaScript(content);
+                    content = StringEscapeUtils.escapeEcmaScript(content);
                     String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("text/html; charset=utf-8");

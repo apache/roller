@@ -95,7 +95,7 @@ public class MenuModel implements Model {
      */
     public Menu getAuthorMenu() {
         if(pageRequest.isLoggedIn()) {
-            return MenuHelper.getMenu("editor", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
+            return MenuHelper.getMenu("editor", null, pageRequest.getUser(), pageRequest.getWeblog());
         }
         return null;
     }

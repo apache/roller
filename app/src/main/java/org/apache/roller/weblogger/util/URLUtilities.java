@@ -38,29 +38,26 @@ public final class URLUtilities {
     /**
      * Compose a map of key=value params into a query string.
      */
-    public static String getQueryString(Map params) {
+    public static String getQueryString(Map<String, String> params) {
         
         if(params == null) {
             return null;
         }
         
         StringBuilder queryString = new StringBuilder();
-        
-        for(Iterator keys = params.keySet().iterator(); keys.hasNext();) {
-            String key = (String) keys.next();
-            String value = (String) params.get(key);
-            
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+
             if (queryString.length() == 0) {
                 queryString.append("?");
             } else {
                 queryString.append("&");
             }
-            
-            queryString.append(key);
+
+            queryString.append(entry.getKey());
             queryString.append("=");
-            queryString.append(value);
+            queryString.append(entry.getValue());
         }
-        
+
         return queryString.toString();
     }
     
@@ -96,7 +93,7 @@ public final class URLUtilities {
     public static String getEncodedTagsString(List tags) {
         StringBuilder tagsString = new StringBuilder();
         if(tags != null && tags.size() > 0) {
-            String tag = null;
+            String tag;
             Iterator tagsIT = tags.iterator();
             
             // do first tag

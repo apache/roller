@@ -62,7 +62,7 @@ public interface Theme {
     /**
      * Get the list of all templates associated with this Theme.
      */
-    List getTemplates() throws WebloggerException;
+    List<ThemeTemplate> getTemplates() throws WebloggerException;
     
     
     /**

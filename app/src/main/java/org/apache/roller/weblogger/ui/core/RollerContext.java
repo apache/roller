@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.core;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Iterator;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -96,7 +95,7 @@ public class RollerContext extends ContextLoaderListener
         // First, initialize everything that requires no database
 
         // Keep a reference to ServletContext object
-        this.servletContext = sce.getServletContext();
+        RollerContext.servletContext = sce.getServletContext();
         
         // Call Spring's context ContextLoaderListener to initialize all the
         // context files specified in web.xml. This is necessary because
@@ -234,8 +233,7 @@ public class RollerContext extends ContextLoaderListener
         
         if (!rememberMeEnabled) {
             ProviderManager provider = (ProviderManager) ctx.getBean("_authenticationManager");
-            for (Iterator it = provider.getProviders().iterator(); it.hasNext();) {
-                AuthenticationProvider authProvider = (AuthenticationProvider) it.next();
+            for (AuthenticationProvider authProvider : provider.getProviders()) {
                 if (authProvider instanceof RememberMeAuthenticationProvider) {
                     provider.getProviders().remove(authProvider);
                 }
@@ -245,8 +243,11 @@ public class RollerContext extends ContextLoaderListener
         String encryptPasswords = WebloggerConfig.getProperty("passwds.encryption.enabled");
         boolean doEncrypt = Boolean.valueOf(encryptPasswords);
         
-        if (doEncrypt) {
-            DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean("org.springframework.security.authentication.dao.DaoAuthenticationProvider#0");
+        String daoBeanName = "org.springframework.security.authentication.dao.DaoAuthenticationProvider#0";
+
+        // for LDAP-only authentication, no daoBeanName (i.e., UserDetailsService) may be provided in security.xml.
+        if (doEncrypt && ctx.containsBean(daoBeanName)) {
+            DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean(daoBeanName);
             String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
             PasswordEncoder encoder = null;
             if (algorithm.equalsIgnoreCase("SHA")) {
@@ -331,13 +332,9 @@ public class RollerContext extends ContextLoaderListener
             return null;
         }
         
-        if(null == clazz) {
-            return null;
-        }
-        
         Class[] interfaces = clazz.getInterfaces();
-        for (int i = 0; i < interfaces.length; i++) {
-            if (interfaces[i].equals(AutoProvision.class)) {
+        for (Class clazz2 : interfaces) {
+            if (clazz2.equals(AutoProvision.class)) {
                 try {
                     return (AutoProvision) clazz.newInstance();
                 } catch (InstantiationException e) {

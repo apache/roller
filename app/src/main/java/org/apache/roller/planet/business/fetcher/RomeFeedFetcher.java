@@ -37,7 +37,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
@@ -115,7 +116,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
             try {
                 SyndFeedInfo feedInfo = feedCache.getFeedInfo(new URL(newSub.getFeedURL()));
                 if(feedInfo.getLastModified() != null) {
-                    long lastUpdatedLong = ((Long)feedInfo.getLastModified()).longValue();
+                    long lastUpdatedLong = (Long) feedInfo.getLastModified();
                     if (lastUpdatedLong != 0) {
                         newSub.setLastUpdated(new Date(lastUpdatedLong));
                     }
@@ -132,7 +133,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         }
         
         if(log.isDebugEnabled()) {
-            log.debug("Subscription is: "+newSub.toString());
+            log.debug("Subscription is: " + newSub.toString());
         }
         
         
@@ -149,7 +150,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         
         // add entries
         List<SyndEntry> feedEntries = feed.getEntries();
-        for( SyndEntry feedEntry : feedEntries ) {
+        for (SyndEntry feedEntry : feedEntries) {
             SubscriptionEntry newEntry = buildEntry(feedEntry);
             
             // some kludge to handle feeds with no entry dates
@@ -188,7 +189,8 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         if (romeEntry.getAuthor() != null) {
             newEntry.setAuthor(romeEntry.getAuthor());
         } else {
-            newEntry.setAuthor(entrydc.getCreator()); // use <dc:creator>
+            // use <dc:creator>
+            newEntry.setAuthor(entrydc.getCreator());
         }
         
         // Play some games to get the updated date
@@ -199,9 +201,11 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         
         // And more games getting publish date
         if (romeEntry.getPublishedDate() != null) {
-            newEntry.setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime())); // use <pubDate>
+            // use <pubDate>
+            newEntry.setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime()));
         } else if (entrydc != null && entrydc.getDate() != null) {
-            newEntry.setPubTime(new Timestamp(entrydc.getDate().getTime())); // use <dc:date>
+            // use <dc:date>
+            newEntry.setPubTime(new Timestamp(entrydc.getDate().getTime()));
         } else {
             newEntry.setPubTime(newEntry.getUpdateTime());
         }
@@ -210,22 +214,20 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         if (romeEntry.getContents().size() > 0) {
             SyndContent content= (SyndContent)romeEntry.getContents().get(0);
             if (content != null && content.getType().equals("text/plain")) {
-                newEntry.setText(StringEscapeUtils.unescapeHtml(content.getValue()));
+                newEntry.setText(StringEscapeUtils.unescapeHtml4(content.getValue()));
             } else if (content != null) {
                 newEntry.setText(content.getValue());
             }
         }
         
         // no content, try summary
-        if (newEntry.getText() == null || newEntry.getText().trim().length() == 0) {
-            if (romeEntry.getDescription() != null) {
-                newEntry.setText(romeEntry.getDescription().getValue());
-            }
+        if (StringUtils.isBlank(newEntry.getText()) && romeEntry.getDescription() != null)  {
+            newEntry.setText(romeEntry.getDescription().getValue());
         }
         
         // copy categories
         if (romeEntry.getCategories().size() > 0) {
-            List list = new ArrayList();
+            List<String> list = new ArrayList<String>();
             for (Object cat : romeEntry.getCategories()) {
                 list.add(((SyndCategory) cat).getName());
             }
@@ -265,7 +267,8 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
                 cacheDir.mkdirs();
             }
         } catch (Exception e) {
-            log.error("Unable to create planet cache directory: " + cacheDir.getPath(), e);
+            log.error("Unable to create planet cache directory: " +
+                    ((cacheDir != null) ? cacheDir.getPath() : null), e);
             return null;
         }
         
@@ -284,7 +287,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         
         FeedFetcherCache feedCache = getRomeFetcherCache();
         
-        FeedFetcher feedFetcher = null;
+        FeedFetcher feedFetcher;
         if(feedCache != null) {
             feedFetcher = new HttpURLFeedFetcher(feedCache);
         } else {

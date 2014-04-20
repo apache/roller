@@ -14,7 +14,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserAttribute;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataRetrievalFailureException;
 
@@ -24,9 +23,11 @@ import org.springframework.dao.DataRetrievalFailureException;
 public class RollerUserDetailsService implements UserDetailsService {
     private static Log log = LogFactory.getLog(RollerUserDetailsService.class);
     
-    public UserDetails loadUserByUsername(String userName) 
-            throws UsernameNotFoundException, DataAccessException {
-        Weblogger roller = null;
+    /**
+     * @throws UsernameNotFoundException, DataAccessException
+     */
+    public UserDetails loadUserByUsername(String userName) {
+        Weblogger roller;
         try {
             roller = WebloggerFactory.getWeblogger();
         } catch (Exception e) {
@@ -37,7 +38,7 @@ public class RollerUserDetailsService implements UserDetailsService {
         }
         try {
             UserManager umgr = roller.getUserManager();
-            User userData = null;  
+            User userData;
             // OpenID user
             if (userName.startsWith("http://") || userName.startsWith("https://")) {
                 if (userName.endsWith("/")) {
@@ -68,10 +69,8 @@ public class RollerUserDetailsService implements UserDetailsService {
                      name = userData.getUserName();
                      password = userData.getPassword();
                 }
-                UserDetails usr = new org.springframework.security.core.userdetails.User(name, password,
+                return new org.springframework.security.core.userdetails.User(name, password,
                         true, true, true, true, authorities);
-                return  usr;
-                
             } else {
                 // standard username/password auth
                 try {
@@ -96,7 +95,6 @@ public class RollerUserDetailsService implements UserDetailsService {
      private ArrayList<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {
          List<String> roles = umgr.getRoles(userData);
          ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(roles.size());
-         int i = 0;
          for (String role : roles) {
              authorities.add(new SimpleGrantedAuthority(role));
          }

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -108,11 +109,11 @@ public class PreviewThemeImageServlet extends HttpServlet {
         // set the content type based on whatever is in our web.xml mime defs
         response.setContentType(this.context.getMimeType(previewImagePath));
         
-        OutputStream out = null;
+        OutputStream out;
         try {
             // ok, lets serve up the file
-            byte[] buf = new byte[8192];
-            int length = 0;
+            byte[] buf = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
+            int length;
             out = response.getOutputStream();
             while((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);

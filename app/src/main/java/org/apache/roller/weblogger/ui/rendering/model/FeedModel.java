@@ -21,8 +21,6 @@ package org.apache.roller.weblogger.ui.rendering.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -42,8 +40,6 @@ import org.apache.roller.weblogger.util.URLUtilities;
  * Model which provides information needed to render a feed.
  */
 public class FeedModel implements Model {
-    
-    private static Log log = LogFactory.getLog(FeedModel.class); 
     
     private static int DEFAULT_ENTRIES = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
     
@@ -113,7 +109,7 @@ public class FeedModel implements Model {
     /**
      * Get category path or name specified by request.
      */
-    public String getCategoryPath() {
+    public String getCategoryName() {
         return feedRequest.getWeblogCategoryName();
     }
     
@@ -191,7 +187,7 @@ public class FeedModel implements Model {
             super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
-                    null, false, true), feedRequest.getWeblog(), feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+                    null, false, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
             this.feedRequest = feedRequest;
         }
         
@@ -223,7 +219,7 @@ public class FeedModel implements Model {
             super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
-                    null, false, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), 10);
+                    null, false, true), feedRequest.getPage(), 10);
             this.feedRequest = feedRequest;
         }
         

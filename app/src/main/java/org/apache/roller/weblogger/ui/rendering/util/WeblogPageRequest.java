@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -108,7 +108,7 @@ public class WeblogPageRequest extends WeblogRequest {
          */
         if(pathInfo != null && pathInfo.trim().length() > 0) {
             
-            // all views use 2 path elements, except category
+            // all views use 2 path elements
             String[] pathElements = pathInfo.split("/", 2);
             
             // the first part of the path always represents the context
@@ -130,12 +130,6 @@ public class WeblogPageRequest extends WeblogRequest {
                     
                 } else if("category".equals(this.context)) {
                     this.weblogCategoryName = URLUtilities.decode(pathElements[1]);
-                    
-                    // all categories must start with a /
-                    if(!this.weblogCategoryName.startsWith("/")) {
-                        this.weblogCategoryName = "/"+this.weblogCategoryName;
-                    }
-                    
                 } else if("page".equals(this.context)) {
                     this.weblogPageName = pathElements[1];
                     String tagsString = request.getParameter("tags");
@@ -207,11 +201,6 @@ public class WeblogPageRequest extends WeblogRequest {
                 if(request.getParameter("cat") != null) {
                     this.weblogCategoryName =
                             URLUtilities.decode(request.getParameter("cat"));
-                    
-                    // all categories must start with a /
-                    if(!this.weblogCategoryName.startsWith("/")) {
-                        this.weblogCategoryName = "/"+this.weblogCategoryName;
-                    }
                 }
             }
         }
@@ -365,7 +354,7 @@ public class WeblogPageRequest extends WeblogRequest {
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                weblogCategory = wmgr.getWeblogCategoryByPath(getWeblog(), weblogCategoryName);
+                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(), weblogCategoryName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);
             }

@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 
@@ -27,7 +27,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public class WeblogConfigBean {
     
-    private String id = null;
     private String handle = null;
     private String name = null;
     private String description = null;
@@ -54,14 +53,9 @@ public class WeblogConfigBean {
     private String about = null;
     
     private String bloggerCategoryId = null;
-    private String defaultCategoryId = null;
     private String[] defaultPluginsArray = null;
     private boolean applyCommentDefaults = false;
     
-    
-    public void setId( String id ) {
-        this.id = id;
-    }
     
     public String getHandle() {
         return this.handle;
@@ -246,15 +240,7 @@ public class WeblogConfigBean {
     public void setBloggerCategoryId(String bloggerCategoryId) {
         this.bloggerCategoryId = bloggerCategoryId;
     }
-    
-    public String getDefaultCategoryId() {
-        return defaultCategoryId;
-    }
-    
-    public void setDefaultCategoryId(String defeaultCategoryId) {
-        this.defaultCategoryId = defeaultCategoryId;
-    }
-    
+
     public String[] getDefaultPluginsArray() {
         return defaultPluginsArray;
     }
@@ -282,7 +268,6 @@ public class WeblogConfigBean {
     
     public void copyFrom(Weblog dataHolder) {
         
-        this.id = dataHolder.getId();
         this.handle = dataHolder.getHandle();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();
@@ -307,10 +292,6 @@ public class WeblogConfigBean {
         this.pageModels = dataHolder.getPageModels();
         setIcon(dataHolder.getIconPath());
         setAbout(dataHolder.getAbout());
-        
-        if (dataHolder.getDefaultCategory() != null) {
-            defaultCategoryId = dataHolder.getDefaultCategory().getId();
-        }
         if (dataHolder.getBloggerCategory() != null) {
             bloggerCategoryId = dataHolder.getBloggerCategory().getId();
         }

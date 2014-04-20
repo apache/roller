@@ -373,12 +373,6 @@ public abstract class WebloggerImpl implements Weblogger {
             // Initialize ping variants
             PingConfig.initializePingVariants();
             
-            // Remove custom ping targets if they have been disallowed
-            if (PingConfig.getDisallowCustomTargets()) {
-                log.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
-                WebloggerFactory.getWeblogger().getPingTargetManager().removeAllCustomPingTargets();
-            }
-            
             // Remove all autoping configurations if ping usage has been disabled.
             if (PingConfig.getDisablePingUsage()) {
                 log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");

@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.common;
 
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 public abstract class PingTargetsBase extends UIAction {
     
     // list of available ping targets
-    private List pingTargets = Collections.EMPTY_LIST;
+    private List<PingTarget> pingTargets = Collections.emptyList();
     
     // ping target we are working on, if any
     private PingTarget pingTarget = null;
@@ -124,11 +124,11 @@ public abstract class PingTargetsBase extends UIAction {
     }
     
     
-    public List getPingTargets() {
+    public List<PingTarget> getPingTargets() {
         return pingTargets;
     }
 
-    public void setPingTargets(List pingTargets) {
+    public void setPingTargets(List<PingTarget> pingTargets) {
         this.pingTargets = pingTargets;
     }
 

@@ -19,13 +19,14 @@
 
 <p class="subtitle">
     <s:text name="bookmarkForm.add.subtitle" >
-        <s:param value="folder.path" />
+        <s:param value="folder.name" />
     </s:text>
 </p>
 
 <s:form action="bookmarkAdd!save">
     <s:hidden name="salt" />
     <s:hidden name="weblog" />
+    <s:hidden name="folder.name" />
     <s:hidden name="folderId" />
     
     <table>
@@ -41,35 +42,25 @@
         </tr>
         
         <tr>
-            <td><s:text name="bookmarkForm.url" /></td>                
+            <td><s:text name="bookmarkForm.url" /></td>
             <td><s:textfield name="bean.url" maxlength="255" size="70" /></td>
         </tr>
         
         <tr>
-            <td><s:text name="bookmarkForm.rssUrl" /></td>         
+            <td><s:text name="bookmarkForm.rssUrl" /></td>
             <td><s:textfield name="bean.feedUrl" maxlength="255" size="70" /></td>
         </tr>
         
         <tr>
-            <td><s:text name="bookmarkForm.image" /></td>          
+            <td><s:text name="bookmarkForm.image" /></td>
             <td><s:textfield name="bean.image" maxlength="255" size="70" /></td>
-        </tr>
-        
-        <tr>
-            <td><s:text name="bookmarkForm.priority" /></td>         
-            <td><s:textfield name="bean.priority" maxlength="255" size="5" /></td>
-        </tr>
-        
-        <tr>
-            <td><s:text name="bookmarkForm.weight" /></td>          
-            <td><s:textfield name="bean.weight" maxlength="255" size="5" /></td>
         </tr>
         
     </table>
     
     <p>
         <s:submit value="%{getText('bookmarkForm.save')}" />
-        <s:submit value="%{getText('bookmarkForm.cancel')}" action="bookmarks" />
+        <s:submit value="%{getText('bookmarkForm.cancel')}" action="bookmarkAdd!cancel" />
     </p>
     
 </s:form>

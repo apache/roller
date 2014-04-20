@@ -214,8 +214,7 @@
     <definition name=".PlanetGroups" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetGroups.jsp" />
     </definition>
-    
-    
+
     <!-- weblog editor pages (and associates) -->
     <definition name=".MediaFileAdd" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
@@ -452,31 +451,14 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
-    <definition name=".MemberResign" extends=".tiles-tabbedpage" >
+    <definition name=".MemberResign" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MemberResign.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
     <definition name=".Pings" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Pings.jsp" />
     </definition>
-    
-    <definition name=".CustomPingTargets" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/CustomPingTargets.jsp" />
-    </definition>
-    
-    <definition name=".CustomPingTargetConfirm" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/CustomPingTargetConfirm.jsp" />
-    </definition>
-    
-    <definition name=".CustomPingTargetAdd" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/CustomPingTargetAdd.jsp" />
-    </definition>
-    
-    <definition name=".CustomPingTargetEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/CustomPingTargetEdit.jsp" />
-    </definition>
-    
+
     <definition name=".Maintenance" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Maintenance.jsp" />
     </definition>

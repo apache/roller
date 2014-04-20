@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.util.Date;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.UUIDGenerator;
 
 
@@ -28,9 +26,7 @@ import org.apache.roller.util.UUIDGenerator;
  * Base permission class for Roller. 
  */
 public abstract class ObjectPermission extends RollerPermission {
-    private static Log log = LogFactory.getLog(ObjectPermission.class);
-
-    protected String  id = UUIDGenerator.generateUUID();;
+    protected String  id = UUIDGenerator.generateUUID();
     protected String  userName;
     protected String  objectType;
     protected String  objectId;

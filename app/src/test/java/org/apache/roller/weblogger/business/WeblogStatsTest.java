@@ -3,6 +3,7 @@ package org.apache.roller.weblogger.business;
 import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.StatCount;
@@ -50,7 +51,7 @@ public class WeblogStatsTest extends TestCase {
         comment21 = TestUtils.setupComment("Comment21", entry21);
         TestUtils.endSession(true);
 
-        Thread.sleep(1000);
+        Thread.sleep(RollerConstants.SEC_IN_MS);
     }
     public void testGetMostCommentedWeblogs() throws Exception {        
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();     

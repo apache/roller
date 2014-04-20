@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;

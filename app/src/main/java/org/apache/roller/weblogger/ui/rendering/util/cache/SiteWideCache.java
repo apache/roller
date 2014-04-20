@@ -23,12 +23,12 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -66,7 +66,7 @@ public class SiteWideCache implements CacheHandler {
     
     // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
-    private long timeout = 15 * 60 * 1000;
+    private long timeout = RollerConstants.FIFTEEN_MIN_IN_MS;
     
     // reference to our singleton instance
     private static SiteWideCache singletonInstance = new SiteWideCache();
@@ -76,7 +76,7 @@ public class SiteWideCache implements CacheHandler {
         
         cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
         
-        Map cacheProps = new HashMap();
+        Map<String, String> cacheProps = new HashMap<String, String>();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
         String prop = null;
@@ -197,7 +197,7 @@ public class SiteWideCache implements CacheHandler {
         
         StringBuilder key = new StringBuilder();
         
-        key.append(this.CACHE_ID).append(":");
+        key.append(CACHE_ID).append(":");
         key.append("page/");
         key.append(pageRequest.getWeblogHandle());
         
@@ -369,8 +369,8 @@ public class SiteWideCache implements CacheHandler {
      * A folder has changed.
      */
     public void invalidate(WeblogBookmarkFolder folder) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(folder.getWebsite().getHandle())) {
-            invalidate(folder.getWebsite());
+        if(WebloggerRuntimeConfig.isSiteWideWeblog(folder.getWeblog().getHandle())) {
+            invalidate(folder.getWeblog());
         }
     }
     
@@ -405,8 +405,8 @@ public class SiteWideCache implements CacheHandler {
      * A category has changed.
      */
     public void invalidate(WeblogCategory category) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(category.getWebsite().getHandle())) {
-            invalidate(category.getWebsite());
+        if(WebloggerRuntimeConfig.isSiteWideWeblog(category.getWeblog().getHandle())) {
+            invalidate(category.getWeblog());
         }
     }
     
@@ -421,23 +421,17 @@ public class SiteWideCache implements CacheHandler {
     }
     
     
-    private String paramsToString(Map map) {
+    private String paramsToString(Map<String, String[]> map) {
         
-        if(map == null) {
+        if (map == null) {
             return null;
         }
         
         StringBuilder string = new StringBuilder();
         
-        String key = null;
-        String[] value = null;
-        Iterator keys = map.keySet().iterator();
-        while(keys.hasNext()) {
-            key = (String) keys.next();
-            value = (String[]) map.get(key);
-            
-            if(value != null) {
-                string.append(",").append(key).append("=").append(value[0]);
+        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+            if(entry.getValue() != null) {
+                string.append(",").append(entry.getKey()).append("=").append(entry.getValue()[0]);
             }
         }
         

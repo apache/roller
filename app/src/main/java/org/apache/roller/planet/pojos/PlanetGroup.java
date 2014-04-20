@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 /**
  * Planet Group.
  */
-public class PlanetGroup implements Serializable, Comparable {
+public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
 
     private transient String[] catArray = null;
     
@@ -47,7 +47,7 @@ public class PlanetGroup implements Serializable, Comparable {
     
     // associations
     private Planet planet = null;
-    private Set subscriptions = new TreeSet();
+    private Set<Subscription> subscriptions = new TreeSet<Subscription>();
     
     
     public PlanetGroup() {}
@@ -62,8 +62,7 @@ public class PlanetGroup implements Serializable, Comparable {
     /**
      * For comparing groups and sorting, ordered by Title.
      */
-    public int compareTo(Object o) {
-        PlanetGroup other = (PlanetGroup) o;
+    public int compareTo(PlanetGroup other) {
         return getTitle().compareTo(other.getTitle());
     }
     
@@ -132,11 +131,11 @@ public class PlanetGroup implements Serializable, Comparable {
         this.planet = planet;
     }
     
-    public Set getSubscriptions() {
+    public Set<Subscription> getSubscriptions() {
         return subscriptions;
     }
     
-    public void setSubscriptions(Set subscriptions) {
+    public void setSubscriptions(Set<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
     
@@ -144,12 +143,12 @@ public class PlanetGroup implements Serializable, Comparable {
     /**
      * Return a list of the most recent 10 entries from this group.
      */
-    public List getRecentEntries() {
+    public List<SubscriptionEntry> getRecentEntries() {
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         try {
             return mgr.getEntries(this, 0, 10);
         } catch(Exception e) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
     
@@ -162,8 +161,8 @@ public class PlanetGroup implements Serializable, Comparable {
         if (cats == null || cats.length == 0) {
             return true;
         }
-        for (int i=0; i<cats.length; i++) {
-            if (entry.inCategory(cats[i])) {
+        for (String cat : cats) {
+            if (entry.inCategory(cat)) {
                 return true;
             }
         }

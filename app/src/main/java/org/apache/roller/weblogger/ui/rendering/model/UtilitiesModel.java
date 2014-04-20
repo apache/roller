@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -244,11 +244,11 @@ public class UtilitiesModel implements Model {
     }
     
     public String escapeHTML(String str) {
-        return StringEscapeUtils.escapeHtml(str);
+        return StringEscapeUtils.escapeHtml4(str);
     }
     
     public String unescapeHTML(String str) {
-        return StringEscapeUtils.unescapeHtml(str);
+        return StringEscapeUtils.unescapeHtml4(str);
     }
     
     public String escapeXML(String str) {
@@ -260,11 +260,11 @@ public class UtilitiesModel implements Model {
     }
     
     public String escapeJavaScript(String str) {
-        return StringEscapeUtils.escapeJavaScript(str);
+        return StringEscapeUtils.escapeEcmaScript(str);
     }
     
     public String unescapeJavaScript(String str) {
-        return StringEscapeUtils.unescapeJavaScript(str);
+        return StringEscapeUtils.unescapeEcmaScript(str);
     }
     
     public String replace(String src, String target, String rWith) {

@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -27,7 +27,6 @@ import org.jdom2.input.SAXBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -82,23 +81,19 @@ public class ThemeMetadataParser {
         }
         
         // now grab the static resources
-        List resources = root.getChildren("resource");
-        Iterator resourcesIter = resources.iterator();
-        while (resourcesIter.hasNext()) {
-            Element resource = (Element) resourcesIter.next();
+        List<Element> resources = root.getChildren("resource");
+        for (Element resource : resources) {
             theme.addResource(resource.getAttributeValue("path"));
         }
         
         // now grab the templates
         boolean weblogActionTemplate = false;
-        List templates = root.getChildren("template");
-        Iterator templatesIter = templates.iterator();
-        while (templatesIter.hasNext()) {
-            Element template = (Element) templatesIter.next();
-            ThemeMetadataTemplate tmpl = elementToTemplateMetadata(template);
+        List<Element> templates = root.getChildren("template");
+        for (Element template : templates) {
 
+            ThemeMetadataTemplate tmpl = elementToTemplateMetadata(template);
             theme.addTemplate(tmpl);
-            
+
             if(WeblogTemplate.ACTION_WEBLOG.equals(tmpl.getAction())) {
                 weblogActionTemplate = true;
             }
@@ -128,13 +123,10 @@ public class ThemeMetadataParser {
 		template.setContentsFile(element.getChildText("contentsFile"));
 
 		//parsing tempaltecode segment
-		List templateCodeList = element.getChildren("templateCode");
-		Iterator templCodeitr = templateCodeList.iterator();
+		List<Element> templateCodeList = element.getChildren("templateCode");
 
 		boolean roller50format = false;
-		while (templCodeitr.hasNext()) {
-			Element templateCodeElement = (Element) templCodeitr.next();
-
+		for (Element templateCodeElement : templateCodeList) {
 			ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
 			templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
 			templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
@@ -201,13 +193,9 @@ public class ThemeMetadataParser {
         template.setLink(element.getChildText("link"));
 
         // parsing templatecode segment
-         List templateCodeList = element.getChildren("templateCode");
-        Iterator templCodeitr = templateCodeList.iterator();
-
+        List<Element> templateCodeList = element.getChildren("templateCode");
 		boolean roller50format = false;
-        while (templCodeitr.hasNext()){
-            Element templateCodeElement = (Element) templCodeitr.next();
-
+        for (Element templateCodeElement : templateCodeList) {
             ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
             templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
             templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));

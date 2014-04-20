@@ -75,7 +75,7 @@ public interface PingQueueManager {
      * @return the queue as a <code>List</code> of {@link PingQueueEntry objects.
      * @throws WebloggerException
      */
-    List getAllQueueEntries() throws WebloggerException;
+    List<PingQueueEntry> getAllQueueEntries() throws WebloggerException;
     
     
     /**

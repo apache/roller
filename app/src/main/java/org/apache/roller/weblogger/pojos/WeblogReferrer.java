@@ -19,9 +19,10 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.util.UUIDGenerator;
 
 
@@ -75,8 +76,8 @@ public class WeblogReferrer implements Serializable {
         this.dayHits = dayHits;
         this.totalHits = totalHits;
 
-        if (this.refererUrl != null && this.refererUrl.length() > 255) {
-            this.refererUrl = this.refererUrl.substring(0, 254);
+        if (this.refererUrl != null && this.refererUrl.length() > RollerConstants.TEXTWIDTH_255) {
+            this.refererUrl = this.refererUrl.substring(0, RollerConstants.TEXTWIDTH_255);
         }
     }
     
@@ -135,8 +136,8 @@ public class WeblogReferrer implements Serializable {
     }
     
     public void setRefererUrl(String refererUrl) {
-        if (refererUrl != null && refererUrl.length() > 255) {
-            refererUrl = refererUrl.substring(0, 255);
+        if (refererUrl != null && refererUrl.length() > RollerConstants.TEXTWIDTH_255) {
+            refererUrl = refererUrl.substring(0, RollerConstants.TEXTWIDTH_255);
         }
         this.refererUrl = refererUrl;
     }
@@ -232,7 +233,7 @@ public class WeblogReferrer implements Serializable {
     public String getDisplayUrl(int maxWidth, boolean includeHits) {
         StringBuilder sb = new StringBuilder();
         
-        String url = StringEscapeUtils.escapeHtml(getUrl());
+        String url = StringEscapeUtils.escapeHtml4(getUrl());
         String displayUrl = url.trim();
         String restOfUrl = null;
         

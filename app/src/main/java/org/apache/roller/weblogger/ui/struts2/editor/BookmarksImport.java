@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -93,9 +94,9 @@ public final class BookmarksImport extends UIAction {
                     stream = new FileInputStream(getOpmlFile());
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-                    byte[] buffer = new byte[8192];
+                    byte[] buffer = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
                     int bytesRead = 0;
-                    while ((bytesRead=stream.read(buffer,0,8192)) != -1) {
+                    while ((bytesRead=stream.read(buffer,0,RollerConstants.EIGHT_KB_IN_BYTES)) != -1) {
                         baos.write(buffer, 0, bytesRead);
                     }
                     String data = new String(baos.toByteArray());
@@ -123,7 +124,7 @@ public final class BookmarksImport extends UIAction {
                 } else {
                     String data = "The file is greater than " + WRITE_THRESHOLD_IN_MB
                             +" MB, and has not been written to stream."
-                            +" File Size: "+getOpmlFile().length()+" bytes. "
+                            +" File Size: " + getOpmlFile().length() + " bytes. "
                             +" This is a limitation of this particular "
                             +" web application";
                     addError("bookmarksImport.error", data);

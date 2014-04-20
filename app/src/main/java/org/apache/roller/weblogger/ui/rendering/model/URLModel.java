@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -197,13 +197,13 @@ public class URLModel implements Model {
     }
     
     
-    public String category(String catPath) {
-        return urlStrategy.getWeblogCollectionURL(weblog, locale, catPath, null, null, -1, true);
+    public String category(String catName) {
+        return urlStrategy.getWeblogCollectionURL(weblog, locale, catName, null, null, -1, true);
     }
     
     
-    public String category(String catPath, int pageNum) {
-        return urlStrategy.getWeblogCollectionURL(weblog, locale, catPath, null, null, pageNum, true);
+    public String category(String catName, int pageNum) {
+        return urlStrategy.getWeblogCollectionURL(weblog, locale, catName, null, null, pageNum, true);
     }
     
     
@@ -227,13 +227,13 @@ public class URLModel implements Model {
     }
     
     
-    public String collection(String dateString, String catPath) {
-        return urlStrategy.getWeblogCollectionURL(weblog, locale, catPath, dateString, null, -1, true);
+    public String collection(String dateString, String catName) {
+        return urlStrategy.getWeblogCollectionURL(weblog, locale, catName, dateString, null, -1, true);
     }
     
     
-    public String collection(String dateString, String catPath, int pageNum) {
-        return urlStrategy.getWeblogCollectionURL(weblog, locale, catPath, dateString, null, pageNum, true);
+    public String collection(String dateString, String catName, int pageNum) {
+        return urlStrategy.getWeblogCollectionURL(weblog, locale, catName, dateString, null, pageNum, true);
     }
     
     
@@ -246,12 +246,12 @@ public class URLModel implements Model {
     }
     
     
-    public String search(String query, String catPath, int pageNum) {
-        return urlStrategy.getWeblogSearchURL(weblog, locale, query, catPath, pageNum, false);
+    public String search(String query, String catName, int pageNum) {
+        return urlStrategy.getWeblogSearchURL(weblog, locale, query, catName, pageNum, false);
     }
     
-    public String absoluteSearch(String query, String catPath, int pageNum) {
-        return urlStrategy.getWeblogSearchURL(weblog, locale, query, catPath, pageNum, true);
+    public String absoluteSearch(String query, String catName, int pageNum) {
+        return urlStrategy.getWeblogSearchURL(weblog, locale, query, catName, pageNum, true);
     }        
     
     public String getOpenSearchSite() {
@@ -267,8 +267,8 @@ public class URLModel implements Model {
     }
     
     
-    public String page(String pageLink, String dateString, String catPath, int pageNum) {
-        return urlStrategy.getWeblogPageURL(weblog, locale, pageLink, null, catPath, dateString, null, pageNum, true);
+    public String page(String pageLink, String dateString, String catName, int pageNum) {
+        return urlStrategy.getWeblogPageURL(weblog, locale, pageLink, null, catName, dateString, null, pageNum, true);
     }
     
     
@@ -338,8 +338,8 @@ public class URLModel implements Model {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "rss", null, null, null, false, true);
         }
         
-        public String rss(String catPath, boolean excerpts) {
-            return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "rss", catPath, null, null, excerpts, true);
+        public String rss(String catName, boolean excerpts) {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "rss", catName, null, null, excerpts, true);
         }
         
         public String rssByTags(List tags, boolean excerpts) {
@@ -350,12 +350,12 @@ public class URLModel implements Model {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "atom", null, null, null, false, true);
         }
         
-        public String atom(String catPath, boolean excerpts) {
-            return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, null, null, excerpts, true);
+        public String atom(String catName, boolean excerpts) {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "atom", catName, null, null, excerpts, true);
         }
         
-        public String search(String term, String catPath) {
-            return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, term, null, false, true);
+        public String search(String term, String catName) {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "atom", catName, term, null, false, true);
         }        
         
         public String atomByTags(List tags, boolean excerpts) {
@@ -369,16 +369,16 @@ public class URLModel implements Model {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "comments", "rss", null, null, null, false, true);
         }
         
-        public String rss(String catPath, boolean excerpts) {
-            return urlStrategy.getWeblogFeedURL(weblog, locale, "comments", "rss", catPath, null, null, excerpts, true);
+        public String rss(String catName, boolean excerpts) {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "comments", "rss", catName, null, null, excerpts, true);
         }
         
         public String getAtom() {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "comments", "atom", null, null, null, false, true);
         }
         
-        public String atom(String catPath, boolean excerpts) {
-            return urlStrategy.getWeblogFeedURL(weblog, locale, "comments", "atom", catPath, null, null, excerpts, true);
+        public String atom(String catName, boolean excerpts) {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "comments", "atom", catName, null, null, excerpts, true);
         }
         
     }
@@ -389,16 +389,16 @@ public class URLModel implements Model {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "rss", null, null, null, false, true);
         }
         
-        public String rss(String catPath, boolean excerpts) {
-            return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "rss", catPath, null, null, excerpts, true);
+        public String rss(String catName, boolean excerpts) {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "rss", catName, null, null, excerpts, true);
         }
         
         public String getAtom() {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "atom", null, null, null, false, true);
         }
         
-        public String atom(String catPath, boolean excerpts) {
-            return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "atom", catPath, null, null, excerpts, true);
+        public String atom(String catName, boolean excerpts) {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "atom", catName, null, null, excerpts, true);
         }
         
     }

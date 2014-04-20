@@ -53,11 +53,11 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
             String             pageLink,
             String             entryAnchor,
             String             dateString,
-            String             catPath,
+            String             catName,
             List               tags,
             int                page) {
         
-        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
     }
     
     

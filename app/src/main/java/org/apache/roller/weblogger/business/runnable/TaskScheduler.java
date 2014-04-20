@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.TaskLock;
 
@@ -45,9 +46,6 @@ import org.apache.roller.weblogger.pojos.TaskLock;
 public class TaskScheduler implements Runnable {
     
     private static Log log = LogFactory.getLog(TaskScheduler.class);
-    
-    private static final long ONE_MINUTE_MS = (60 * 1000);
-    
     private final ExecutorService pool;
     private final List<RollerTask> tasks;
     
@@ -132,14 +130,13 @@ public class TaskScheduler implements Runnable {
         
         ThreadManager tmgr = WebloggerFactory.getWeblogger().getThreadManager();
         
-        for( RollerTask task : tasks ) {
+        for (RollerTask task : tasks) {
             try {
                 // get tasklock for the task
                 TaskLock tasklock = tmgr.getTaskLockByName(task.getName());
                 
                 // TODO: check if task is enabled, otherwise skip
-                if(tasklock == null) {
-                    log.debug("SKIPPING task : "+tasklock.getName());
+                if (tasklock == null) {
                     continue;
                 }
                 
@@ -151,14 +148,15 @@ public class TaskScheduler implements Runnable {
                 // if we missed the last scheduled run time then see when the
                 // most appropriate next run time should be and wait 'til then
                 boolean needToWait = false;
-                if(currentTime.getTime() > (nextRunTime.getTime() + ONE_MINUTE_MS)) {
+                if(currentTime.getTime() > (nextRunTime.getTime() + RollerConstants.MIN_IN_MS)) {
                     
                     log.debug("MISSED last run, checking if waiting is necessary");
-                    if("startOfDay".equals(task.getStartTimeDesc())) {
+                    // add delays if task is non-immediate
+                    if ("startOfDay".equals(task.getStartTimeDesc())) {
                         // for daily tasks we only run during the first 
                         // couple minutes of the day
                         Date startOfDay = DateUtil.getStartOfDay(currentTime);
-                        if(currentTime.getTime() > startOfDay.getTime() + (2 * ONE_MINUTE_MS)) {
+                        if(currentTime.getTime() > startOfDay.getTime() + (2 * RollerConstants.MIN_IN_MS)) {
                             needToWait = true;
                             log.debug("WAITING for next reasonable run time");
                         }
@@ -166,12 +164,10 @@ public class TaskScheduler implements Runnable {
                         // for hourly tasks we only run during the first
                         // couple minutes of the hour
                         Date startOfHour = DateUtil.getStartOfHour(currentTime);
-                        if(currentTime.getTime() > startOfHour.getTime() + (2 * ONE_MINUTE_MS)) {
+                        if(currentTime.getTime() > startOfHour.getTime() + (2 * RollerConstants.MIN_IN_MS)) {
                             needToWait = true;
                             log.debug("WAITING for next reasonable run time");
                         }
-                    } else {
-                        // for immediate tasks we just go ahead and run
                     }
                 }
                 

@@ -22,16 +22,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -94,31 +94,32 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     
     public void loadComments() {
         
-        List comments = Collections.EMPTY_LIST;
+        List<WeblogEntryComment> comments = Collections.emptyList();
         boolean hasMore = false;
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List rawComments = wmgr.getComments(
-                    null,
-                    null,
-                    getBean().getSearchString(),
-                    getBean().getStartDate(),
-                    getBean().getEndDate(),
-                    getBean().getStatus(),
-                    true, // reverse  chrono order
-                    getBean().getPage() * COUNT,
-                    COUNT + 1);
-            comments = new ArrayList();
+
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setSearchText(getBean().getSearchString());
+            csc.setStartDate(getBean().getStartDate());
+            csc.setEndDate(getBean().getEndDate());
+            csc.setStatus(getBean().getStatus());
+            csc.setReverseChrono(true);
+            csc.setOffset(getBean().getPage() * COUNT);
+            csc.setMaxResults(COUNT+1);
+
+            List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
+            comments = new ArrayList<WeblogEntryComment>();
             comments.addAll(rawComments);   
             
-            if(comments != null && comments.size() > 0) {
+            if(comments.size() > 0) {
                 if(comments.size() > COUNT) {
                     comments.remove(comments.size()-1);
                     hasMore = true;
                 }
                 
-                setFirstComment((WeblogEntryComment)comments.get(0));
-                setLastComment((WeblogEntryComment)comments.get(comments.size()-1));
+                setFirstComment(comments.get(0));
+                setLastComment(comments.get(comments.size()-1));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
@@ -134,7 +135,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     // use the action data to build a url representing this action, including query data
     private String buildBaseUrl() {
         
-        Map<String, String> params = new HashMap();
+        Map<String, String> params = new HashMap<String, String>();
         
         if(!StringUtils.isEmpty(getBean().getSearchString())) {
             params.put("bean.searchString", getBean().getSearchString());
@@ -183,17 +184,16 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List allMatchingComments = wmgr.getComments(
-                    null,
-                    null,
-                    getBean().getSearchString(),
-                    getBean().getStartDate(),
-                    getBean().getEndDate(),
-                    getBean().getStatus(),
-                    true, // reverse  chrono order
-                    0,
-                    -1);
-            
+
+            CommentSearchCriteria csc = new CommentSearchCriteria();
+            csc.setSearchText(getBean().getSearchString());
+            csc.setStartDate(getBean().getStartDate());
+            csc.setEndDate(getBean().getEndDate());
+            csc.setStatus(getBean().getStatus());
+            csc.setReverseChrono(true);
+
+            List allMatchingComments = wmgr.getComments(csc);
+
             if(allMatchingComments.size() > COUNT) {
                 setBulkDeleteCount(allMatchingComments.size());
             }
@@ -253,11 +253,11 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
-            if(deletes != null && deletes.size() > 0) {
+            if (deletes.size() > 0) {
                 log.debug("Processing deletes - "+deletes.size());
                 
-                WeblogEntryComment deleteComment = null;
-                for(String deleteId : deletes) {
+                WeblogEntryComment deleteComment;
+                for (String deleteId : deletes) {
                     deleteComment = wmgr.getComment(deleteId);
                     flushList.add(deleteComment.getWeblogEntry().getWebsite());
                     wmgr.removeComment(deleteComment);
@@ -269,19 +269,19 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             log.debug(spamIds.size()+" comments marked as spam");
             
             String[] ids = Utilities.stringToStringArray(getBean().getIds(),",");
-            for (int i=0; i < ids.length; i++) {
-                log.debug("processing id - "+ ids[i]);
+            for (String id : ids) {
+                log.debug("processing id - "+ id);
                 
                 // if we already deleted it then skip forward
-                if(deletes.contains(ids[i])) {
-                    log.debug("Already deleted, skipping - "+ids[i]);
+                if(deletes.contains(id)) {
+                    log.debug("Already deleted, skipping - "+id);
                     continue;
                 }
                 
-                WeblogEntryComment comment = wmgr.getComment(ids[i]);
+                WeblogEntryComment comment = wmgr.getComment(id);
                 
                 // mark/unmark spam
-                if (spamIds.contains(ids[i]) && 
+                if (spamIds.contains(id) &&
                         !WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                     log.debug("Marking as spam - "+comment.getId());
                     comment.setStatus(WeblogEntryComment.SPAM);
@@ -300,8 +300,8 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             WebloggerFactory.getWeblogger().flush();
             
             // notify caches of changes, flush weblogs affected by changes
-            for (Iterator sites = flushList.iterator(); sites.hasNext();) {
-                CacheManager.invalidate((Weblog)sites.next());
+            for (Weblog weblog : flushList) {
+                CacheManager.invalidate(weblog);
             }
             
             addMessage("commentManagement.updateSuccess");
@@ -320,9 +320,9 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     }
     
     
-    public List getCommentStatusOptions() {
+    public List<KeyValueObject> getCommentStatusOptions() {
         
-        List opts = new ArrayList();
+        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
         opts.add(new KeyValueObject("ALL", getText("commentManagement.all")));
         opts.add(new KeyValueObject("ONLY_PENDING", getText("commentManagement.onlyPending")));
@@ -332,9 +332,9 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         return opts;
     }
     
-    public List getSpamStatusOptions() {
+    public List<KeyValueObject> getSpamStatusOptions() {
         
-        List opts = new ArrayList();
+        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
         opts.add(new KeyValueObject("ALL", getText("commentManagement.all")));
         opts.add(new KeyValueObject("NO_SPAM", getText("commentManagement.noSpam")));

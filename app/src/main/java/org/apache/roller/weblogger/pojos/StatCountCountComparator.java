@@ -24,18 +24,13 @@ import java.io.Serializable;
 /**
  * @author Markus Fuchs
  */
-public class StatCountCountComparator implements Comparator, Serializable {
+public final class StatCountCountComparator implements Comparator, Serializable {
 
     private static final long serialVersionUID = 4811314286365625712L;
     
     private static StatCountCountComparator instance = new StatCountCountComparator();
 
-    /**
-     * 
-     */
-    private StatCountCountComparator() {
-
-    }
+    private StatCountCountComparator() {}
 
     /** 
      * Compares two <em>StatCount</em> instances according to their count values.
@@ -43,7 +38,7 @@ public class StatCountCountComparator implements Comparator, Serializable {
      * @throws ClassCastException if arguments are not instances of <em>StatCount</em>
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare(Object obj1, Object obj2) throws ClassCastException {
+    public int compare(Object obj1, Object obj2) {
         StatCount sc1 = (StatCount) obj1;
         StatCount sc2 = (StatCount) obj2;
         int compVal = sc1.getCount() < sc2.getCount() ? -1 :

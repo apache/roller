@@ -20,10 +20,9 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -34,59 +33,31 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
- * Add a new subCategory to an existing Category.
+ * Add a new WeblogCategory to the weblog
  */
 public class CategoryAdd extends UIAction {
     
     private static Log log = LogFactory.getLog(CategoryAdd.class);
     
-    // the id of the Category we are adding the new subCategory into
-    private String categoryId = null;
-    
-    // the category we are adding the new subcategory into
-    private WeblogCategory category = null;
-    
     // bean for managing form data
     private CategoryBean bean = new CategoryBean();
-    
-    
+
     public CategoryAdd() {
         this.actionName = "categoryAdd";
         this.desiredMenu = "editor";
         this.pageTitle = "categoryForm.add.title";
     }
-    
-    
+
     // author perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
-    public void myPrepare() {
-        try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            if(!StringUtils.isEmpty(getCategoryId())) {
-                setCategory(wmgr.getWeblogCategory(getCategoryId()));
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up category", ex);
-        }
-    }
-    
-    
+
     /**
      * Show category form.
      */
     @SkipValidation
     public String execute() {
-        
-        if(getCategory() == null) {
-            // TODO: i18n
-            addError("Cannot add category to null parent category");
-            return ERROR;
-        }
-        
         return INPUT;
     }
 
@@ -95,13 +66,6 @@ public class CategoryAdd extends UIAction {
      * Save new category.
      */
     public String save() {
-        
-        if(getCategory() == null) {
-            // TODO: i18n
-            addError("Cannot add category to null parent category");
-            return ERROR;
-        }
-        
         // validation
         myValidate();
         
@@ -110,13 +74,9 @@ public class CategoryAdd extends UIAction {
 
                 WeblogCategory newCategory = new WeblogCategory(
                         getActionWeblog(),
-                        getCategory(),
                         getBean().getName(),
                         getBean().getDescription(),
                         getBean().getImage());
-
-                // add new folder to parent
-                getCategory().addCategory(newCategory);
 
                 // save changes
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -126,8 +86,7 @@ public class CategoryAdd extends UIAction {
                 // notify caches
                 CacheManager.invalidate(newCategory);
 
-                // TODO: i18n
-                addMessage("category added");
+                addMessage("categoryForm.created");
 
                 return SUCCESS;
 
@@ -141,33 +100,22 @@ public class CategoryAdd extends UIAction {
         return INPUT;
     }
 
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return CANCEL;
+    }
     
-    // TODO: validation
     public void myValidate() {
-        
-        // name is required, has max length, no html
-        
+        // TODO: Check max length & no html
+
         // make sure new name is not a duplicate of an existing folder
-        if(getCategory().hasCategory(getBean().getName())) {
+        if(getActionWeblog().hasCategory(getBean().getName())) {
             addError("categoryForm.error.duplicateName", getBean().getName());
         }
-    }
-
-    
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public WeblogCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(WeblogCategory category) {
-        this.category = category;
     }
 
     public CategoryBean getBean() {

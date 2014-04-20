@@ -63,7 +63,7 @@ public class GenericThrottle {
         }
         
         // cache props
-        Map cacheProps = new HashMap();
+        Map<String,String> cacheProps = new HashMap<String,String>();
         cacheProps.put("id", "throttle");
         cacheProps.put("size", ""+maxEntries);
         cacheProps.put("timeout", ""+this.interval);
@@ -127,8 +127,7 @@ public class GenericThrottle {
         
         return false;
     }
-    
-    
+
     /**
      * Check the current status of a client.
      *
@@ -151,17 +150,13 @@ public class GenericThrottle {
             client = (ClientInfo) cacheEntry.getValue();
             
             // this means entry had expired
-            if(client == null) {
+            if (client == null) {
                 log.debug("EXPIRED "+clientId);
                 this.clientHistoryCache.remove(clientId);
             }
         }
-        
-        if(client != null) {
-            return (client.hits > this.threshold);
-        } else {
-            return false;
-        }
+
+        return client != null && client.hits > this.threshold;
     }
     
     

@@ -26,7 +26,6 @@
 <s:form action="weblogConfig!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-    <s:hidden name="bean.defaultCategoryId" />
 
 <table class="formtableNoDesc">
 
@@ -248,7 +247,7 @@
         </tr>
     </s:if>
     <s:else>
-        <s:hidden name="pageModels" />
+        <s:hidden name="bean.pageModels" />
     </s:else>
 
 </table>

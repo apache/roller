@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -30,9 +28,6 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
  * config properties.
  */
 public class ConfigModel implements Model {
-    
-    private static Log log = LogFactory.getLog(ConfigModel.class);
-    
     
     /** Template context name to be used for model */
     public String getModelName() {

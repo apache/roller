@@ -22,7 +22,7 @@ package org.apache.roller.weblogger.pojos;
 /**
  * A Resource that is attached to a Theme.
  */
-public interface ThemeResource extends Resource {
+public interface ThemeResource extends Resource, Comparable<ThemeResource> {
     
     /**
      * Does this resource represent a directory?  True if yes, False otherwise.

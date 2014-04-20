@@ -27,7 +27,7 @@ import org.apache.roller.util.UUIDGenerator;
 /**
  * Planet Subscription.
  */
-public class Subscription implements Serializable, Comparable {
+public class Subscription implements Serializable, Comparable<Subscription> {
     
     // attributes
     private String id = UUIDGenerator.generateUUID();
@@ -38,10 +38,10 @@ public class Subscription implements Serializable, Comparable {
     private Date lastUpdated;
     private int inboundlinks = 0;
     private int inboundblogs = 0;
-    
+
     // associations
-    private Set groups = new HashSet();
-    private Set entries = new HashSet();
+    private Set<PlanetGroup> groups = new HashSet<PlanetGroup>();
+    private Set<SubscriptionEntry> entries = new HashSet<SubscriptionEntry>();
     
     
     public Subscription() {}
@@ -51,8 +51,7 @@ public class Subscription implements Serializable, Comparable {
      * This ensures that feeds are sorted by title, but that identical titles 
      * don't make feeds equal.
      */
-    public int compareTo(Object o) {
-        Subscription other = (Subscription) o;
+    public int compareTo(Subscription other) {
         String otherString = other.getTitle() + other.getFeedURL();
         String thisString = getTitle() + getFeedURL();
         return thisString.compareTo(otherString);
@@ -78,7 +77,7 @@ public class Subscription implements Serializable, Comparable {
     
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        
+
         buf.append("{");
         buf.append(getFeedURL()).append(", ");
         buf.append(getSiteURL()).append(", ");
@@ -88,7 +87,6 @@ public class Subscription implements Serializable, Comparable {
         buf.append("}");
         
         return buf.toString();
-        
     }
     
     
@@ -145,41 +143,41 @@ public class Subscription implements Serializable, Comparable {
         this.lastUpdated = lastUpdated;
     }
     
-    
+
     public int getInboundlinks() {
         return inboundlinks;
     }
-    
+
     public void setInboundlinks(int inboundlinks) {
         this.inboundlinks = inboundlinks;
     }
-    
-    
+
+
     public int getInboundblogs() {
         return inboundblogs;
     }
-    
+
     public void setInboundblogs(int inboundblogs) {
         this.inboundblogs = inboundblogs;
     }
-    
-    
-    public Set getGroups() {
+
+
+    public Set<PlanetGroup> getGroups() {
         return groups;
     }
     
     // private because there is no need for people to do this
-    private void setGroups(Set groups) {
+    private void setGroups(Set<PlanetGroup> groups) {
         this.groups = groups;
     }
+
     
-    
-    public Set getEntries() {
+    public Set<SubscriptionEntry> getEntries() {
         return entries;
     }
     
     // private because there is no need for people to do this
-    private void setEntries(Set entries) {
+    private void setEntries(Set<SubscriptionEntry> entries) {
         this.entries = entries;
     }
     
@@ -203,8 +201,8 @@ public class Subscription implements Serializable, Comparable {
         }
         this.getEntries().addAll(newEntries);
     }
-    
-    
+
+
     // for backwards compatability?
     public String getName() {
         return getTitle();

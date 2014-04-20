@@ -43,10 +43,10 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
     private String startTimeDesc = "startOfDay";
     
     // interval at which the task is run, default is 1 day
-    private int interval = 1440;
+    private int interval = RollerTask.DEFAULT_INTERVAL_MINS;
     
     // lease time given to task lock, default is 30 minutes
-    private int leaseTime = 30;
+    private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
 
     
     public String getClientId() {

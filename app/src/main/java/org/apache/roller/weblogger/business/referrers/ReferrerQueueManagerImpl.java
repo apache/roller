@@ -21,10 +21,10 @@ package org.apache.roller.weblogger.business.referrers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
@@ -61,37 +61,32 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
     private final Weblogger roller;
     
     private boolean asyncMode = false;
-    private int numWorkers = 1;
-    private int sleepTime = 10000;
-    private List workers = null;
-    private List referrerQueue = null;
+    private List<WorkerThread> workers = null;
+    private List<IncomingReferrer> referrerQueue = null;
     private int referrerCount = 0;
     private int maxAsyncQueueSize = 0;
 
     // private because we are a singleton
     @com.google.inject.Inject
     protected ReferrerQueueManagerImpl(Weblogger roller) {
-        
         mLogger.info("Instantiating Referrer Queue Manager");
-        
         this.roller = roller;
+        int sleepTime = 10000;
+        int numWorkers = 1;
 
         // lookup config options
         this.asyncMode = WebloggerConfig.getBooleanProperty("referrers.asyncProcessing.enabled");
-        
         mLogger.info("Asynchronous referrer processing = "+this.asyncMode);
-        
+
         if(this.asyncMode) {
-            
-            
             String num = WebloggerConfig.getProperty("referrers.queue.numWorkers");
             String sleep = WebloggerConfig.getProperty("referrers.queue.sleepTime");
             
             try {
-                this.numWorkers = Integer.parseInt(num);
+                numWorkers = Integer.parseInt(num);
                 
-                if(numWorkers < 1) {
-                    this.numWorkers = 1;
+                if (numWorkers < 1) {
+                    numWorkers = 1;
                 }
                 
             } catch(NumberFormatException nfe) {
@@ -100,21 +95,21 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
             
             try {
                 // multiply by 1000 because we expect input in seconds
-                this.sleepTime = Integer.parseInt(sleep) * 1000;
+                sleepTime = Integer.parseInt(sleep) * RollerConstants.SEC_IN_MS;
             } catch(NumberFormatException nfe) {
                 mLogger.warn("Invalid sleep time ["+sleep+"], using default");
             }
             
             // create the processing queue
-            this.referrerQueue = Collections.synchronizedList(new ArrayList());
+            this.referrerQueue = Collections.synchronizedList(new ArrayList<IncomingReferrer>());
             
             // start up workers
-            this.workers = new ArrayList();
-            ContinuousWorkerThread worker = null;
-            QueuedReferrerProcessingJob job = null;
-            for(int i=0; i < this.numWorkers; i++) {
+            this.workers = new ArrayList<WorkerThread>();
+            ContinuousWorkerThread worker;
+            QueuedReferrerProcessingJob job;
+            for (int i = 0; i < numWorkers; i++) {
                 job = new QueuedReferrerProcessingJob();
-                worker = new ContinuousWorkerThread("ReferrerWorker"+i, job, this.sleepTime);
+                worker = new ContinuousWorkerThread("ReferrerWorker" + i, job, sleepTime);
                 workers.add(worker);
                 worker.start();
             }
@@ -142,7 +137,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
             ReferrerProcessingJob job = new ReferrerProcessingJob();
             
             // setup input
-            HashMap inputs = new HashMap();
+            HashMap<String, Object> inputs = new HashMap<String, Object>();
             inputs.put("referrer", referrer);
             job.input(inputs);
             
@@ -182,7 +177,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
     public synchronized IncomingReferrer dequeue() {
         
         if(!this.referrerQueue.isEmpty()) {
-            return (IncomingReferrer) this.referrerQueue.remove(0);
+            return this.referrerQueue.remove(0);
         }
         
         return null;
@@ -201,10 +196,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
                 mLogger.info("Max Async Referrer queue size: " + maxAsyncQueueSize);
             }
             // kill all of our threads
-            WorkerThread worker = null;
-            Iterator it = this.workers.iterator();
-            while(it.hasNext()) {
-                worker = (WorkerThread) it.next();
+            for (WorkerThread worker : workers) {
                 worker.interrupt();
             }
         }

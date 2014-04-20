@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.weblogger.business.runnable.HitCountProcessingJob;
 import org.apache.roller.weblogger.business.runnable.WorkerThread;
@@ -40,16 +41,14 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * TODO: we may want to make this an interface that is pluggable if there is
  *   some indication that users want to override this implementation.
  */
-public class HitCountQueue {
+public final class HitCountQueue {
     
     private static Log log = LogFactory.getLog(HitCountQueue.class);
     
     private static HitCountQueue instance = null;
     
-    private int numWorkers = 1;
-    private int sleepTime = 180000;
     private WorkerThread worker = null;
-    private List queue = null;
+    private List<String> queue = null;
     
     
     static {
@@ -59,22 +58,22 @@ public class HitCountQueue {
     
     // non-instantiable because we are a singleton
     private HitCountQueue() {
-        
+        int sleepTime = 3 * RollerConstants.MIN_IN_MS;
         String sleep = WebloggerConfig.getProperty("hitcount.queue.sleepTime", "180");
         
         try {
-            // multiply by 1000 because we expect input in seconds
-            this.sleepTime = Integer.parseInt(sleep) * 1000;
+            // convert input in seconds to ms
+            sleepTime = Integer.parseInt(sleep) * RollerConstants.SEC_IN_MS;
         } catch(NumberFormatException nfe) {
             log.warn("Invalid sleep time ["+sleep+"], using default");
         }
         
         // create the hits queue
-        this.queue = Collections.synchronizedList(new ArrayList());
+        this.queue = Collections.synchronizedList(new ArrayList<String>());
         
         // start up a worker to process the hits at intervals
         HitCountProcessingJob job = new HitCountProcessingJob();
-        worker = new ContinuousWorkerThread("HitCountQueueProcessor", job, this.sleepTime);
+        worker = new ContinuousWorkerThread("HitCountQueueProcessor", job, sleepTime);
         worker.start();
     }
     
@@ -84,7 +83,7 @@ public class HitCountQueue {
     }
     
     
-    public void processHit(Weblog weblog, String url, String referrer) {
+    public void processHit(Weblog weblog) {
         
         // if the weblog isn't null then just drop its handle in the queue
         // each entry in the queue is a weblog handle and indicates a single hit
@@ -94,8 +93,8 @@ public class HitCountQueue {
     }
     
     
-    public List getHits() {
-        return new ArrayList(this.queue);
+    public List<String> getHits() {
+        return new ArrayList<String>(this.queue);
     }
     
     
@@ -103,7 +102,7 @@ public class HitCountQueue {
      * Reset the queued hits.
      */
     public synchronized void resetHits() {
-        this.queue = Collections.synchronizedList(new ArrayList());
+        this.queue = Collections.synchronizedList(new ArrayList<String>());
     }
     
     

@@ -40,7 +40,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CharEncodingFilter implements Filter {
     
-    private FilterConfig mFilterConfig = null;
     private static Log mLogger =
             LogFactory.getFactory().getInstance(CharEncodingFilter.class);
     
@@ -48,7 +47,6 @@ public class CharEncodingFilter implements Filter {
      * init
      */
     public void init(FilterConfig filterConfig) throws ServletException {
-        mFilterConfig = filterConfig;
     }
     
     /**

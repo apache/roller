@@ -19,14 +19,9 @@
 package org.apache.roller.planet.tasks;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.Utilities;
 //import org.apache.roller.util.UtilitiesModel;
@@ -50,8 +45,7 @@ public class GeneratePlanetTask extends PlanetTask {
     
     public void run() {
         try {            
-            Weblogger weblogger = WebloggerFactory.getWeblogger();
-//          PlanetManager planetManager = weblogger.getPlanetManager();
+//          PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
                         
             // Ignore values from database
             //String mainPage = planetManager.getConfiguration().getMainPage();
@@ -91,18 +85,6 @@ public class GeneratePlanetTask extends PlanetTask {
             File outputDirObj = new File(outputDir);
             if (!outputDirObj.exists()) {
                 outputDirObj.mkdirs();
-            }
-            
-            List groups = Collections.EMPTY_LIST;
-            // groups must be part of a planet now, so getGroupHandles() was removed
-            //List groups = planetManager.getGroupHandles();
-            for (Iterator it = groups.iterator(); it.hasNext();) {
-                String groupHandle = (String) it.next();
-                String groupDirName = outputDirObj + File.separator + groupHandle;
-                File groupDir = new File(groupDirName);
-                if (!groupDir.exists()) {
-                    groupDir.mkdirs();
-                }
             }
             
             // Generate files: execute control template

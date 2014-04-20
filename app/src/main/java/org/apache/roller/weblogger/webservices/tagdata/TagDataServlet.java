@@ -54,7 +54,7 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class TagDataServlet extends HttpServlet {
 
-    private final int MAX = WebloggerConfig.getIntProperty("services.tagdata.max", 30);
+    private static final int MAX = WebloggerConfig.getIntProperty("services.tagdata.max", 30);
 
     
     protected void doPost(
@@ -69,9 +69,9 @@ public class TagDataServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String[] pathInfo = new String[0];
-        boolean siteWide = true;
-        String handle = null;
-        String prefix = null;
+        boolean siteWide;
+        String handle;
+        String prefix;
         String format = "json";
         int page = 0;
         
@@ -100,8 +100,8 @@ public class TagDataServlet extends HttpServlet {
         } catch (Exception ignored) {}
 
         Weblogger roller = WebloggerFactory.getWeblogger();
-        List tags = null;
-        Weblog weblog = null;
+        List<TagStat> tags;
+        Weblog weblog;
         try {
             WeblogManager wmgr = roller.getWeblogManager();
             WeblogEntryManager emgr = roller.getWeblogEntryManager();
@@ -149,16 +149,13 @@ public class TagDataServlet extends HttpServlet {
             pw.println("   xmlns:atom=\"http://www.w3.org/2005/Atom\""); 
             pw.println("   xmlns:tagdata=\"http://roller.apache.org/ns/tagdata\">");
             int count = 0;
-            for (Iterator it = tags.iterator(); it.hasNext();) {
-                TagStat stat = (TagStat) it.next();
+            for (TagStat stat : tags) {
                 String term = stat.getName();
-                String viewURI = urlstrat.getWeblogCollectionURL(weblog, 
-                        null,  // locale 
-                        null,  // category
-                        null,  // date string
-                        Collections.singletonList(stat.getName()), 
-                        0,     // page
-                        true); // absolute
+                // gWCURL fields: weblog, locale, category, dateString, tags, pageNum, absolute
+                String viewURI = urlstrat.getWeblogCollectionURL(weblog,
+                        null, null, null,
+                        Collections.singletonList(stat.getName()),
+                        0, true);
                 int frequency = stat.getCount();
                 pw.print("<atom:category term=\"" + term + "\" tagdata:frequency=\"" + frequency + "\" ");
                 pw.println("tagdata:href=\"" + viewURI + "\" />");
@@ -180,7 +177,6 @@ public class TagDataServlet extends HttpServlet {
             response.flushBuffer();
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
-            return;
         }
     }
 }

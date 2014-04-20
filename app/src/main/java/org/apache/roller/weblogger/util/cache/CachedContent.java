@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 
 
 /**
@@ -17,9 +18,6 @@ import org.apache.commons.logging.LogFactory;
 public class CachedContent implements Serializable {
     
     private static Log log = LogFactory.getLog(CachedContent.class);
-    
-    // default to an 8K buffered cache
-    public static final int DEFAULT_SIZE = 8192;
     
     // the byte array we use to maintain the cached content
     private byte[] content = new byte[0];
@@ -40,7 +38,7 @@ public class CachedContent implements Serializable {
         if(size > 0) {
             this.outstream = new ByteArrayOutputStream(size);
         } else {
-            this.outstream = new ByteArrayOutputStream(DEFAULT_SIZE);
+            this.outstream = new ByteArrayOutputStream(RollerConstants.EIGHT_KB_IN_BYTES);
         }
         
         // construct writer from output stream

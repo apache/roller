@@ -33,12 +33,12 @@ public class StartupException extends WebloggerException {
     
     public StartupException(String msg) {
         super(msg);
-        this.startupLog = Collections.EMPTY_LIST;
+        this.startupLog = Collections.emptyList();
     }
     
     public StartupException(String msg, Throwable t) {
         super(msg, t);
-        this.startupLog = Collections.EMPTY_LIST;
+        this.startupLog = Collections.emptyList();
     }
     
     public StartupException(String msg, List<String> log) {
@@ -47,7 +47,7 @@ public class StartupException extends WebloggerException {
         if(log != null) {
             this.startupLog = log;
         } else {
-            this.startupLog = Collections.EMPTY_LIST;
+            this.startupLog = Collections.emptyList();
         }
     }
     
@@ -57,7 +57,7 @@ public class StartupException extends WebloggerException {
         if(log != null) {
             this.startupLog = log;
         } else {
-            this.startupLog = Collections.EMPTY_LIST;
+            this.startupLog = Collections.emptyList();
         }
     }
     

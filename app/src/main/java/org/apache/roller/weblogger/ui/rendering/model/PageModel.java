@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -175,7 +175,7 @@ public class PageModel implements Model {
     
     
     /**
-     * Get weblog category specified by request, or null if the category path
+     * Get weblog category specified by request, or null if the category name
      * found in the request does not exist in the current weblog.
      */
     public WeblogCategoryWrapper getWeblogCategory() {

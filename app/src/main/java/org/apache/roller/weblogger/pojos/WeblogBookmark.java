@@ -19,8 +19,8 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 
@@ -29,7 +29,7 @@ import org.apache.roller.util.UUIDGenerator;
  * Don't construct one of these yourself, instead use the create method in
  * the your BookmarkManager implementation.</p>
  */
-public class WeblogBookmark implements Serializable, Comparable {
+public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> {
     
     public static final long serialVersionUID = 2315131256728236003L;
     
@@ -39,7 +39,6 @@ public class WeblogBookmark implements Serializable, Comparable {
     private String name;
     private String description;
     private String url;
-    private Integer weight;
     private Integer priority;
     private String image;
     private String feedUrl;
@@ -56,17 +55,21 @@ public class WeblogBookmark implements Serializable, Comparable {
             String desc,
             String url,
             String feedUrl,
-            Integer weight,
-            Integer priority,
             String image) {
         this.folder = parent;
         this.name = name;
         this.description = desc;
         this.url = url;
         this.feedUrl = feedUrl;
-        this.weight = weight;
-        this.priority = priority;
         this.image = image;
+
+        folder.addBookmark(this);
+        int size = folder.getBookmarks().size();
+        if (size == 1) {
+            this.priority = 0;
+        } else {
+            this.priority = folder.getBookmarks().get(size - 2).getPriority() + 1;
+        }
     }
     
     //------------------------------------------------------------- Attributes
@@ -81,9 +84,6 @@ public class WeblogBookmark implements Serializable, Comparable {
     
     /**
      * Name of bookmark.
-     *
-     * @struts.validator type="required" msgkey="errors.required"
-     * @struts.validator-args arg0resource="bookmarkForm.name"
      */
     public String getName() {
         return this.name;
@@ -116,26 +116,7 @@ public class WeblogBookmark implements Serializable, Comparable {
     }
     
     /**
-     * Weight indicates prominence of link
-     *
-     * @struts.validator type="required" msgkey="errors.required"
-     * @struts.validator type="integer" msgkey="errors.integer"
-     * @struts.validator-args arg0resource="bookmarkForm.weight"
-     */
-    public java.lang.Integer getWeight() {
-        return this.weight;
-    }
-    
-    public void setWeight(java.lang.Integer weight) {
-        this.weight = weight;
-    }
-    
-    /**
      * Priority determines order of display
-     *
-     * @struts.validator type="required" msgkey="errors.required"
-     * @struts.validator type="integer" msgkey="errors.integer"
-     * @struts.validator-args arg0resource="bookmarkForm.priority"
      */
     public java.lang.Integer getPriority() {
         return this.priority;
@@ -193,6 +174,7 @@ public class WeblogBookmark implements Serializable, Comparable {
         return new EqualsBuilder()
         .append(getName(), o.getName())
         .append(getFolder(), o.getFolder())
+        .append(getUrl(), o.getUrl())
         .isEquals();
     }
     
@@ -200,21 +182,19 @@ public class WeblogBookmark implements Serializable, Comparable {
         return new HashCodeBuilder()
         .append(getName())
         .append(getFolder())
+        .append(getUrl())
         .toHashCode();
     }
-    
-    
+
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object o) {
-        return bookmarkComparator.compare(this, o);
+    public int compareTo(WeblogBookmark o) {
+        return priority.compareTo(o.getPriority());
     }
     
-    private BookmarkComparator bookmarkComparator = new BookmarkComparator();
-    
     public Weblog getWebsite() {
-        return getFolder().getWebsite();
+        return getFolder().getWeblog();
     }
     
 }

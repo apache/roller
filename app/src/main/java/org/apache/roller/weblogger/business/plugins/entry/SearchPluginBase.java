@@ -69,12 +69,14 @@ public abstract class SearchPluginBase {
     public String render(WeblogEntry entry, String str) {
         Pattern pattern = getPattern();
         Matcher m = pattern.matcher(str);
-        StringBuffer result = new StringBuffer(str.length() + 128);   // rough guess at a reasonable length
+        // rough guess at a reasonable length
+        StringBuffer result = new StringBuffer(str.length() + 128);
         Object[] args = new Object[]{"", "", null, null};
         while (m.find()) {
             // parse out the parts of the match
             String type = m.group(1);
-            boolean feelinLucky = type.equals("!");   // are ya feelin lucky? are ya punk?
+            // are ya feelin lucky? are ya punk?
+            boolean feelinLucky = type.equals("!");
             String linkText = m.group(2);
             String searchText = m.group(3);
             if (searchText == null || searchText.length() == 0) {

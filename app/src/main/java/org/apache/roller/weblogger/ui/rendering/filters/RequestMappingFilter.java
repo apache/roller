@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.filters;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -48,8 +47,7 @@ public class RequestMappingFilter implements Filter {
     private static Log log = LogFactory.getLog(RequestMappingFilter.class);
     
     // list of RequestMappers that want to inspect the request
-    private final List requestMappers = new ArrayList();
-    
+    private final List<RequestMapper> requestMappers = new ArrayList<RequestMapper>();
     
     public void init(FilterConfig filterConfig) {
         
@@ -59,38 +57,36 @@ public class RequestMappingFilter implements Filter {
         
         // instantiate user defined request mapper classes
         if(userMappers != null && userMappers.trim().length() > 0) {
-            
-            RequestMapper requestMapper = null;
+            RequestMapper requestMapper;
             String[] uMappers = userMappers.split(",");
-            for(int i=0; i < uMappers.length; i++) {
+            for (String uMapper : uMappers) {
                 try {
-                    Class mapperClass = Class.forName(uMappers[i]);
+                    Class mapperClass = Class.forName(uMapper);
                     requestMapper = (RequestMapper) mapperClass.newInstance();
                     requestMappers.add(requestMapper);
                 } catch(ClassCastException cce) {
                     log.error("It appears that your mapper does not implement "+
                             "the RequestMapper interface", cce);
                 } catch(Exception e) {
-                    log.error("Unable to instantiate request mapper ["+uMappers[i]+"]", e);
+                    log.error("Unable to instantiate request mapper ["+uMapper+"]", e);
                 }
             }
         }
         
         // instantiate roller standard request mapper classes
         if(rollerMappers != null && rollerMappers.trim().length() > 0) {
-            
-            RequestMapper requestMapper = null;
+            RequestMapper requestMapper;
             String[] rMappers = rollerMappers.split(",");
-            for(int i=0; i < rMappers.length; i++) {
+            for (String rMapper : rMappers) {
                 try {
-                    Class mapperClass = Class.forName(rMappers[i]);
+                    Class mapperClass = Class.forName(rMapper);
                     requestMapper = (RequestMapper) mapperClass.newInstance();
                     requestMappers.add(requestMapper);
                 } catch(ClassCastException cce) {
                     log.error("It appears that your mapper does not implement "+
                             "the RequestMapper interface", cce);
                 } catch(Exception e) {
-                    log.error("Unable to instantiate request mapper ["+rMappers[i]+"]", e);
+                    log.error("Unable to instantiate request mapper ["+rMapper+"]", e);
                 }
             }
         }
@@ -118,22 +114,18 @@ public class RequestMappingFilter implements Filter {
         log.debug("entering");
         
         // give each mapper a chance to handle the request
-        RequestMapper mapper = null;
-        Iterator mappersIT = this.requestMappers.iterator();
-        while(mappersIT.hasNext()) {
-            mapper = (RequestMapper) mappersIT.next();
-            
-            log.debug("trying mapper "+mapper.getClass().getName());
-            
+        for (RequestMapper mapper : requestMappers) {
+            log.debug("trying mapper " + mapper.getClass().getName());
+
             boolean wasHandled = mapper.handleRequest(request, response);
             if(wasHandled) {
                 // if mapper has handled the request then we are done
-                log.debug("request handled by "+mapper.getClass().getName());
+                log.debug("request handled by " + mapper.getClass().getName());
                 log.debug("exiting");
                 return;
             }
         }
-        
+
         log.debug("request not mapped");
         
         // nobody handled the request, so let it continue as usual

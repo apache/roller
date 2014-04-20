@@ -12,9 +12,6 @@
         <named-query name="WeblogEntry.getByCategory">
             <query>SELECT w FROM WeblogEntry w WHERE w.category = ?1</query>
         </named-query>
-        <named-query name="WeblogEntry.getByStatus&amp;Category.pathLike&amp;Website">
-            <query>SELECT w FROM WeblogEntry w WHERE w.status = ?1 AND w.category.path LIKE ?2 AND w.website = ?3</query>
-        </named-query>
         <named-query name="WeblogEntry.getByPinnedToMain&amp;statusOrderByPubTimeDesc">
             <query>SELECT w FROM WeblogEntry w WHERE w.pinnedToMain = ?1 AND w.status = ?2 ORDER BY w.pubTime DESC</query>
         </named-query>

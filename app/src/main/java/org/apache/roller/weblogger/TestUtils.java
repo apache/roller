@@ -23,19 +23,28 @@
 
 package org.apache.roller.weblogger;
 
+import java.io.InputStream;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.business.BookmarkManager;
+import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.business.startup.ClasspathDatabaseScriptProvider;
+import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
@@ -68,6 +77,24 @@ public final class TestUtils {
             // always initialize the properties manager and flush
             WebloggerFactory.getWeblogger().initialize();
 
+            // Reset data for local tests see events-custom.properties
+            Boolean local = WebloggerConfig.getBooleanProperty(
+                    "junit.testdata.reset", false);
+
+            if (local) {
+
+                System.out
+                        .println("Reseting tables for local tests: junit.testdata.reset="
+                                + local);
+
+                try {
+                    clearTestData();
+                } catch (Exception e) {
+                    System.out.println("Error reseting tables : "
+                            + e.getMessage());
+                }
+            }
+
         }
     }
 
@@ -93,6 +120,68 @@ public final class TestUtils {
         }
 
         WebloggerFactory.getWeblogger().release();
+    }
+
+    /**
+     * Clear test data.
+     * 
+     * @throws Exception
+     *             the exception
+     */
+    private static void clearTestData() throws Exception {
+
+        String scriptFile = "junit-cleartables-mysql.sql";
+
+        ClasspathDatabaseScriptProvider scriptProvider = new ClasspathDatabaseScriptProvider();
+        InputStream script = scriptProvider.getDatabaseScript(scriptFile);
+
+        if (script == null) {
+
+            System.out.println("File /dbscripts/" + scriptFile
+                    + " not found on class path.");
+            return;
+
+        }
+
+        // Run script to remove the junit test user
+        try {
+
+            DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
+            Connection con = dbp.getConnection();
+
+            SQLScriptRunner runner = new SQLScriptRunner(script);
+
+            if (runner != null) {
+
+                System.out.println("Clearing files using script file : "
+                        + scriptProvider.getScriptURL(scriptFile));
+
+                // Loop script and remove invalid lines
+                List<String> updatedCommands = new ArrayList<String>();
+                List<String> commands = runner.getCommands();
+                for (String command : commands) {
+                    if (!command.startsWith("--")) {
+                        updatedCommands.add(command);
+                    }
+                }
+
+                // Run script
+                runner.setCommands(updatedCommands);
+                runner.runScript(con, true);
+
+                // Flush for this update
+                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.getWeblogger().release();
+
+            }
+
+        } finally {
+            try {
+                script.close();
+            } catch (Exception e) {
+                // ignored
+            }
+        }
     }
 
     /**
@@ -219,17 +308,12 @@ public final class TestUtils {
      * Convenience method for creating a weblog category.
      */
     public static WeblogCategory setupWeblogCategory(Weblog weblog,
-            String name, WeblogCategory parent) throws Exception {
+            String name) throws Exception {
 
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
                 .getWeblogEntryManager();
-        WeblogCategory root = mgr.getRootWeblogCategory(weblog);
 
-        WeblogCategory catParent = root;
-        if (parent != null) {
-            catParent = parent;
-        }
-        WeblogCategory testCat = new WeblogCategory(weblog, catParent, name,
+        WeblogCategory testCat = new WeblogCategory(weblog, name,
                 null, null);
         mgr.saveWeblogCategory(testCat);
 
@@ -264,10 +348,30 @@ public final class TestUtils {
     }
 
     /**
-     * Convenience method for creating a weblog entry.
+     * Convenience method for creating a published weblog entry.
      */
     public static WeblogEntry setupWeblogEntry(String anchor,
             WeblogCategory cat, Weblog weblog, User user) throws Exception {
+
+        return TestUtils.setupWeblogEntry(anchor, cat, WeblogEntry.PUBLISHED,
+                weblog, user);
+    }
+
+    /**
+     * Convenience method for creating a published weblog entry with the blog's default category
+     */
+    public static WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) throws Exception {
+
+        return TestUtils.setupWeblogEntry(anchor, weblog.getDefaultCategory(), WeblogEntry.PUBLISHED,
+                weblog, user);
+    }
+
+    /**
+     * Convenience method for creating a weblog entry
+     */
+    public static WeblogEntry setupWeblogEntry(String anchor,
+            WeblogCategory cat, String status, Weblog weblog, User user)
+            throws Exception {
 
         WeblogEntry testEntry = new WeblogEntry();
         testEntry.setTitle(anchor);
@@ -278,7 +382,7 @@ public final class TestUtils {
                 .getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date()
                 .getTime()));
-        testEntry.setStatus(WeblogEntry.PUBLISHED);
+        testEntry.setStatus(status);
         testEntry.setWebsite(getManagedWebsite(weblog));
         testEntry.setCreatorUserName(getManagedUser(user).getUserName());
         testEntry.setCategory(cat);
@@ -506,20 +610,13 @@ public final class TestUtils {
     /**
      * Convenience method for creating a weblog folder.
      */
-    public static WeblogBookmarkFolder setupFolder(Weblog weblog, String name,
-            WeblogBookmarkFolder parent) throws Exception {
+    public static WeblogBookmarkFolder setupFolder(Weblog weblog, String name) throws Exception {
 
         BookmarkManager mgr = WebloggerFactory.getWeblogger()
                 .getBookmarkManager();
 
-        WeblogBookmarkFolder folderParent;
-        if (parent != null) {
-            folderParent = parent;
-        } else {
-            folderParent = mgr.getRootFolder(weblog);
-        }
         WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(
-                folderParent, name, null, weblog);
+                name, weblog);
         mgr.saveFolder(testFolder);
 
         // flush to db

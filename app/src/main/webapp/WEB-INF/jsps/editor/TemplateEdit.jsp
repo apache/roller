@@ -289,8 +289,8 @@ function changeSize1(num) {
     setCookie("templateEditorRows", standardElem.rows, expires);
 }
 //Get cookie to determine state of control
-if (getCookie('control-advancedControl') != null) {
-    if(getCookie('control-advancedControl') == 'true'){
+if (getCookie('control_advancedControl') != null) {
+    if(getCookie('control_advancedControl') == 'true'){
         toggle('advancedControl');
         togglePlusMinus('iadvancedControl');
     }

@@ -21,9 +21,9 @@ package org.apache.roller.weblogger.ui.struts2.core;
 import java.util.TimeZone;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang.CharSetUtils;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.CharSetUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -33,13 +33,13 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserAttribute;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 //import org.springframework.security.userdetails.openid.OpenIDUserAttribute;
-
 
 
 /**
@@ -54,7 +54,7 @@ public class Register extends UIAction implements ServletRequestAware {
     // this is a no-no, we should not need this
     private HttpServletRequest servletRequest = null;
     
-    private boolean fromSS0 = false;
+    private boolean fromSSO = false;
     private String activationStatus = null;
     
     private String activationCode = null;
@@ -101,15 +101,14 @@ public class Register extends UIAction implements ServletRequestAware {
         
         /* TODO: when Spring Security 2.1 is release comment out this stuff, 
          * which pre-populates the user bean with info from OpenID provider.
-         * 
+         *
         Collection attrsCollect = (Collection)WebloggerFactory.getWeblogger()
                 .getUserManager().userAttributes.get(UserAttribute.Attributes.openidUrl.toString());
         
         if (attrsCollect != null) {
             ArrayList attrs = new ArrayList(attrsCollect);
-            for (Iterator it = attrs.iterator(); it.hasNext();) {                
-                OpenIDUserAttribute attr = (OpenIDUserAttribute) it.next();    
-                if (attr.getName().equals(OpenIDUserAttribute.Attributes.country.toString())) {                                        
+            for (OpenIDUserAttribute attr : attrs) {
+                if (attr.getName().equals(OpenIDUserAttribute.Attributes.country.toString())) {
                     getBean().setLocale(UIUtils.getLocale(attr.getValue()));
                 }                
                if (attr.getName().equals(OpenIDUserAttribute.Attributes.email.toString())) {
@@ -136,18 +135,18 @@ public class Register extends UIAction implements ServletRequestAware {
             boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
             if (usingSSO) {
                 // See if user is already logged in via Spring Security
-                User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
-                if (fromSSO != null) {
+                User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+                if (fromSSOUser != null) {
                     // Copy user details from Spring Security, including LDAP attributes
-                    getBean().copyFrom(fromSSO);
-                    setFromSso(true);
+                    getBean().copyFrom(fromSSOUser);
+                    setFromSSO(true);
                 }
                 // See if user is already logged in via CMA
                 else if (getServletRequest().getUserPrincipal() != null) {
                     // Only detail we get is username, sadly no LDAP attributes
                     getBean().setUserName(getServletRequest().getUserPrincipal().getName());
                     getBean().setScreenName(getServletRequest().getUserPrincipal().getName());
-                    setFromSso(true);
+                    setFromSSO(true);
                 }
             }
             
@@ -249,15 +248,16 @@ public class Register extends UIAction implements ServletRequestAware {
                         // send activation mail to the user
                         MailUtil.sendUserActivationEmail(ud);
                     } catch (WebloggerException ex) {
-                        log.error("Error sending activation email to - "+ud.getEmailAddress(), ex);
+                        log.error("Error sending activation email to - " + ud.getEmailAddress(), ex);
                     }
 
                     setActivationStatus("pending");
                 }
 
                 // Invalidate session, otherwise new user who was originally
-                // authenticated via LDAP/SSO will remain logged in with
-                // a but without a valid Roller role.
+                // authenticated via LDAP/SSO will remain logged in but
+                // without a valid Roller role.
+                getServletRequest().getSession().removeAttribute(RollerSession.ROLLER_SESSION);
                 getServletRequest().getSession().invalidate();
 
                 // set a special page title
@@ -320,22 +320,22 @@ public class Register extends UIAction implements ServletRequestAware {
     public void myValidate() {
         
         // if usingSSO, we don't want to error on empty password/username from HTML form.
-        setFromSso(false);
+        setFromSSO(false);
         boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
         if (usingSSO) {
             boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
             String password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
             
             // Preserve username and password, Spring Security case
-            User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
-            if (fromSSO != null) {
+            User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+            if (fromSSOUser != null) {
                 if (storePassword) {
-                    password = fromSSO.getPassword();
+                    password = fromSSOUser.getPassword();
                 }
                 getBean().setPasswordText(password);
                 getBean().setPasswordConfirm(password);
-                getBean().setUserName(fromSSO.getUserName());
-                setFromSso(true);
+                getBean().setUserName(fromSSOUser.getUserName());
+                setFromSSO(true);
             }
 
             // Preserve username and password, CMA case             
@@ -343,7 +343,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 getBean().setUserName(getServletRequest().getUserPrincipal().getName());
                 getBean().setPasswordText(password);
                 getBean().setPasswordConfirm(password);
-                setFromSso(true);
+                setFromSSO(true);
             }
         }
         
@@ -359,7 +359,7 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         // check password, it is required if OpenID and SSO are disabled
-        if (getOpenIdConfiguration().equals("disabled") && !getFromSso()
+        if (getOpenIdConfiguration().equals("disabled") && !getFromSSO()
                 && StringUtils.isEmpty(getBean().getPasswordText())) {
                 addError("error.add.user.passwordEmpty");
                 return;
@@ -411,12 +411,12 @@ public class Register extends UIAction implements ServletRequestAware {
         this.bean = bean;
     }
 
-    public boolean getFromSso() {
-        return fromSS0;
+    public boolean getFromSSO() {
+        return fromSSO;
     }
 
-    public void setFromSso(boolean fromSS0) {
-        this.fromSS0 = fromSS0;
+    public void setFromSSO(boolean fromSSO) {
+        this.fromSSO = fromSSO;
     }
 
     public String getActivationStatus() {

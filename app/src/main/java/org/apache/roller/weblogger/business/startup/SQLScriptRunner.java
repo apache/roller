@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.business.startup;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.sql.Connection;
@@ -49,8 +49,9 @@ public class SQLScriptRunner {
         String line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
-            
-            if (!line.startsWith("--")) { // ignore lines starting with "--"    
+
+            // ignore lines starting with "--"
+            if (!line.startsWith("--")) {
                 
                 if (line.indexOf("--") > 0) {
                     // trim comment off end of line
@@ -67,7 +68,8 @@ public class SQLScriptRunner {
                     commands.add(cmd);
                     command = "";
                 } else if (StringUtils.isNotEmpty(command)) {
-                    command += " "; // still more command coming so add space
+                    // still more command coming so add space
+                    command += " ";
                 }
             } 
         }
@@ -149,4 +151,23 @@ public class SQLScriptRunner {
         messages.add(msg);
     }
     
+    
+    /**
+     * Gets the commands.
+     * 
+     * @return the commands
+     */
+    public List<String> getCommands() {
+        return commands;
+    }
+
+    /**
+     * Sets the commands.
+     * 
+     * @param commands
+     *            the new commands
+     */
+    public void setCommands(List<String> commands) {
+        this.commands = commands;
+    }
 }

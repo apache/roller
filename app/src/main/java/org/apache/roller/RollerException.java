@@ -97,7 +97,7 @@ public abstract class RollerException extends Exception {
     
     
     /**
-     * Print stack trace for exception and for root cause exception if htere is one.
+     * Print stack trace for exception and for root cause exception if there is one.
      * @see java.lang.Throwable#printStackTrace()
      */
     public void printStackTrace() {
@@ -110,7 +110,7 @@ public abstract class RollerException extends Exception {
     
     
     /**
-     * Print stack trace for exception and for root cause exception if htere is one.
+     * Print stack trace for exception and for root cause exception if there is one.
      * @param s Stream to print to.
      */
     public void printStackTrace(PrintStream s) {
@@ -123,7 +123,7 @@ public abstract class RollerException extends Exception {
     
     
     /**
-     * Print stack trace for exception and for root cause exception if htere is one.
+     * Print stack trace for exception and for root cause exception if there is one.
      * @param s Writer to write to.
      */
     public void printStackTrace(PrintWriter s) {

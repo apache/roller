@@ -28,8 +28,6 @@ import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import javax.persistence.Query;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -96,37 +94,26 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         }
 
         PingQueueManager pingQueueMgr = roller.getPingQueueManager();
-        List applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
-        for (Iterator i = applicableAutopings.iterator(); i.hasNext();) {
-            AutoPing autoPing = (AutoPing) i.next();
+        List<AutoPing> applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
+        for (AutoPing autoPing : applicableAutopings) {
             pingQueueMgr.addQueueEntry(autoPing);
         }
     }
 
-    public List getAutoPingsByWebsite(Weblog website) throws WebloggerException {
+    public List<AutoPing> getAutoPingsByWebsite(Weblog website) throws WebloggerException {
         Query q = strategy.getNamedQuery("AutoPing.getByWebsite");
         q.setParameter(1, website);
         return q.getResultList();
     }
 
-    public List getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException {
+    public List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException {
         Query q = strategy.getNamedQuery("AutoPing.getByPingTarget");
         q.setParameter(1, pingTarget);
         return q.getResultList();
     }
 
-    public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
+    public List<AutoPing> getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
         return getAutoPingsByWebsite(changedWeblogEntry.getWebsite());
-        //        return (List)strategy.newQuery(AutoPing.class, "AutoPing.getByWebsite")
-        //            .execute(changedWeblogEntry.getWebsite());
-    }
-
-    public List getCategoryRestrictions(AutoPing autoPing) throws WebloggerException {
-        return Collections.EMPTY_LIST;
-    }
-
-    public void setCategoryRestrictions(AutoPing autoPing, Collection newCategories) {
-        // NOT YET IMPLEMENTED
     }
 
     public void release() {

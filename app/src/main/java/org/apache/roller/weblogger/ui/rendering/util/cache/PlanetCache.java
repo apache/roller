@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.PlanetRequest;
 import org.apache.roller.weblogger.util.cache.Cache;
@@ -48,24 +49,24 @@ public final class PlanetCache {
     
     // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
-    private long timeout = 15 * 60 * 1000;
+    private long timeout = RollerConstants.FIFTEEN_MIN_IN_MS;
     
     // reference to our singleton instance
     private static PlanetCache singletonInstance = new PlanetCache();
 
     private PlanetCache() {
         
-        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
+        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID + ".enabled");
         
-        Map cacheProps = new HashMap();
+        Map<String, String> cacheProps = new HashMap<String, String>();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
+        String prop;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
             
             // we are only interested in props for this cache
-            if(prop.startsWith(CACHE_ID+".")) {
+            if (prop.startsWith(CACHE_ID + ".")) {
                 cacheProps.put(prop.substring(CACHE_ID.length()+1), 
                         WebloggerConfig.getProperty(prop));
             }
@@ -83,7 +84,7 @@ public final class PlanetCache {
         String timeoutString = WebloggerConfig.getProperty("cache.planet.timeout");
         try {
             long timeoutSecs = Long.parseLong(timeoutString);
-            this.timeout = timeoutSecs * 1000;
+            this.timeout = timeoutSecs * RollerConstants.SEC_IN_MS;
         } catch(Exception e) {
             // ignored ... illegal value
         }
@@ -159,8 +160,8 @@ public final class PlanetCache {
         // still null, we need to get a fresh value
         if(lastModified == null) {
             
-            // TODO: ROLLER40 last updated for planet
-            lastModified = null; // WebloggerFactory.getWeblogger().getWebloggerManager().getLastUpdated();
+            // TODO: create a WeblogManager.getLastUpdated() method to use below
+            lastModified = null;
             
             if (lastModified == null) {
                 lastModified = new Date();
@@ -193,7 +194,7 @@ public final class PlanetCache {
         
         StringBuilder key = new StringBuilder();
         
-        key.append(this.CACHE_ID).append(":");
+        key.append(CACHE_ID).append(":");
         key.append(planetRequest.getContext());
         key.append("/");
         key.append(planetRequest.getType());

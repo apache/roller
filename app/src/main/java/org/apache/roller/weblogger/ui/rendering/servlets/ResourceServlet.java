@@ -21,21 +21,24 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.ThemeResource;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogResourceRequest;
 
@@ -44,6 +47,8 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogResourceRequest;
  * must exist at a fixed-path even if moved in media file folders.
  */
 public class ResourceServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1350679411381917714L;
 
     private static Log log = LogFactory.getLog(ResourceServlet.class);
 
@@ -64,12 +69,12 @@ public class ResourceServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Weblog weblog = null;
-        String ctx = request.getContextPath();
-        String servlet = request.getServletPath();
-        String reqURI = request.getRequestURI();
+        Weblog weblog;
+        //String ctx = request.getContextPath();
+        //String servlet = request.getServletPath();
+        //String reqURI = request.getRequestURI();
 
-        WeblogResourceRequest resourceRequest = null;
+        WeblogResourceRequest resourceRequest;
         try {
             // parse the incoming request and extract the relevant data
             resourceRequest = new WeblogResourceRequest(request);
@@ -82,6 +87,9 @@ public class ResourceServlet extends HttpServlet {
 
         } catch (Exception e) {
             // invalid resource request or weblog doesn't exist
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             log.debug("error creating weblog resource request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -106,6 +114,9 @@ public class ResourceServlet extends HttpServlet {
             }
         } catch (Exception ex) {
             // hmmm, some kind of error getting theme. that's an error.
+            if (!response.isCommitted()) {
+                response.reset();
+            }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -122,6 +133,9 @@ public class ResourceServlet extends HttpServlet {
 
             } catch (Exception ex) {
                 // still not found? then we don't have it, 404.
+                if (!response.isCommitted()) {
+                    response.reset();
+                }
                 log.debug("Unable to get resource", ex);
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
@@ -142,11 +156,11 @@ public class ResourceServlet extends HttpServlet {
         response.setContentType(this.context.getMimeType(resourceRequest
                 .getResourcePath()));
 
-        OutputStream out = null;
+        OutputStream out;
         try {
             // ok, lets serve up the file
-            byte[] buf = new byte[8192];
-            int length = 0;
+            byte[] buf = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
+            int length;
             out = response.getOutputStream();
             while ((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
@@ -158,8 +172,8 @@ public class ResourceServlet extends HttpServlet {
         } catch (Exception ex) {
             if (!response.isCommitted()) {
                 response.reset();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
             // make sure stream to resource file is closed
             resourceStream.close();

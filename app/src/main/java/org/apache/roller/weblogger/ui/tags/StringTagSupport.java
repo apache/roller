@@ -33,12 +33,8 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
  *             out to the html page.
  * </dd>
  * </dl> 
- * 
- * @author bayard@generationjava.com
  */
 public abstract class StringTagSupport extends BodyTagSupport {
-
-
 
     /**
      * PageContext attribute to store the result in.
@@ -73,15 +69,6 @@ public abstract class StringTagSupport extends BodyTagSupport {
      */
     public int doEndTag() throws JspException {
 
-	/*
-	 *  Although most of the tags that extends must have a body, some don't, like RandomStringTag
-	 *  So I'm removing the code below...
-     */
-		 
-//       if( (bodyContent == null) && (!canBeEmpty()) ) {
- //           return EVAL_PAGE;
- //      }
- 
         String text = "";
         if(bodyContent != null) {
             StringWriter body = new StringWriter();
@@ -101,15 +88,7 @@ public abstract class StringTagSupport extends BodyTagSupport {
           // then, try to transform it
           text = changeString(text);
         
-          // TODO: RandomString is not working if body is set...
-          /*
-            System.err.println("...."+text+"....");
-            if ( text  != null  ) {
-        	System.out.println( "length = " + text.length());
-            }
-          */
-        
-          if(this.var == null) {
+          if (this.var == null) {
             JspWriter writer = pageContext.getOut();
             try {
               writer.print(text);

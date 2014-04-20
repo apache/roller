@@ -33,7 +33,6 @@ import java.net.URLEncoder;
 import java.text.FieldPosition;
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -301,30 +300,25 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      * If ignoreBookmarks property is set, an empty map is returned.
      * @return map of the user's bookmarks (type BookmarkData), keyed by name (type String).
      */
-    protected Map buildBookmarkMap(Weblog website) throws WebloggerException
+    protected Map<String, WeblogBookmark> buildBookmarkMap(Weblog website) throws WebloggerException
     {
-        Map bookmarkMap = new HashMap();
+        Map<String, WeblogBookmark> bookmarkMap = new HashMap<String, WeblogBookmark>();
         if (WebloggerConfig.getBooleanProperty("plugins.topictag.ignoreBookmarks")) {
             return bookmarkMap;
         }
-        if (website == null)
-        {
+        if (website == null) {
             LOG.debug("Init called without website.  Skipping bookmark initialization.");
         }
-        else
-        {
+        else {
             BookmarkManager bMgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            List bookmarks = bMgr.getBookmarks(bMgr.getRootFolder(website), true);
+            List<WeblogBookmark> bookmarks = bMgr.getBookmarks(bMgr.getDefaultFolder(website));
 
-            for (Iterator i = bookmarks.iterator(); i.hasNext();)
-            {
-                WeblogBookmark b = (WeblogBookmark) i.next();
+            for (WeblogBookmark b : bookmarks) {
                 bookmarkMap.put(b.getName(), b);
             }
         }
         return bookmarkMap;
     }
-
 
     // Sets up properties.  For better and worse, doesn't use reflection
     private void initializeProperties()

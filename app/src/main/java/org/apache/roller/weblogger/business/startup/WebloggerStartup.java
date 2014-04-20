@@ -191,7 +191,7 @@ public final class WebloggerStartup {
             // if we are doing manual install then all that is needed is the
             // app handled database upgrade work, not the db scripts
             DatabaseInstaller dbInstaller = getDatabaseInstaller();
-            if(dbInstaller.isUpgradeRequired()) {
+            if (dbInstaller.isUpgradeRequired()) {
                 dbInstaller.upgradeDatabase(false);
             }
             
@@ -201,7 +201,7 @@ public final class WebloggerStartup {
             
             // we are in auto install mode, so see if there is any work to do
             DatabaseInstaller dbInstaller = getDatabaseInstaller();
-            if(!dbInstaller.isCreationRequired() && 
+            if (!dbInstaller.isCreationRequired() &&
                     !dbInstaller.isUpgradeRequired()) {
                 prepared = true;
             }

@@ -30,7 +30,7 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/yahoo-dom-event.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/treeview-min.js'/>"></script>
 <!--begin custom header content for this example-->
-<!--bring in the folder-style CSS for the TreeView Control-->
+<!--bring in the folder-style CSS for the TreeView Control -->
 
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/tree.css'/>" />
 <!-- Some custom style for the expand/contract section-->

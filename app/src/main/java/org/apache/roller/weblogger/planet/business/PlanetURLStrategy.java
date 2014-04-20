@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.planet.business;
 
 import org.apache.roller.planet.business.MultiPlanetURLStrategy;
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 
@@ -35,13 +33,8 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      * @param planet There's only one planet in Roller, so this is ignored.
      */
     public String getPlanetURL(String planet) {
-        
         StringBuilder url = new StringBuilder();
-        
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        
         url.append(WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
-        
         return url.toString();
     }
     
@@ -68,7 +61,6 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
             url.append(sep);
             url.append("page=");
             url.append(pageNum);
-            sep = "&";
         }
         
         return url.toString();
@@ -79,7 +71,7 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      * Get URL of planet group's newsfeed.
      * @param planet There's only one planet in Roller, so this is ignored.
      * @param group Handle of planet group (or null for default group).
-     * @param feed  Feed format to be returned (ignored, currently only RSS is supported).
+     * @param format  Feed format to be returned (ignored, currently only RSS is supported).
      */
     public String getPlanetGroupFeedURL(String planet, String group, String format) {
         
@@ -92,7 +84,6 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
         if (group != null) {
             url.append(sep);
             url.append("group=").append(group);
-            sep = "&";
         }
         
         return url.toString();

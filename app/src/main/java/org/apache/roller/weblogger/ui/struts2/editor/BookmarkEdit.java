@@ -22,7 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -41,6 +42,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class BookmarkEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(BookmarkEdit.class);
+    
+    // the id of the folder we are working with
+    private String folderId = null;
     
     // the bookmark we are editing
     private WeblogBookmark bookmark = null;
@@ -110,8 +114,8 @@ public class BookmarkEdit extends UIAction {
 
                 CacheManager.invalidate(getBookmark());
 
-                // TODO: i18n
-                addMessage("bookmark updated");
+                addMessage("bookmarkForm.changesSaved");
+
             } catch(Exception ex) {
                 log.error("Error saving bookmark", ex);
                 // TODO: i18n
@@ -122,6 +126,14 @@ public class BookmarkEdit extends UIAction {
         return INPUT;
     }
 
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return CANCEL;
+    }
     
     public void myValidate() {
         if (StringUtils.isNotEmpty(getBean().getUrl()) && !validURL(getBean().getUrl())) {
@@ -144,6 +156,13 @@ public class BookmarkEdit extends UIAction {
         return valid;
     }
     
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
+    }
     
     public WeblogBookmark getBookmark() {
         return bookmark;

@@ -93,9 +93,9 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
         this.saveQueueEntry(pingQueueEntry);
     }
 
-    public List getAllQueueEntries() 
+    public List<PingQueueEntry> getAllQueueEntries()
             throws WebloggerException {
-        return (List)strategy.getNamedQuery(
+        return (List<PingQueueEntry>) strategy.getNamedQuery(
                 "PingQueueEntry.getAllOrderByEntryTime").getResultList();
     }
 

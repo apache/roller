@@ -17,7 +17,6 @@
 */
 package org.apache.roller.weblogger.util;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,7 @@ import java.util.Map;
 public class LRUCache2
 {
     private long timeout;
-    private Map cache = null;
+    private Map<Object, CacheEntry> cache = null;
     private Environment environment = null;
 
     /**
@@ -72,10 +71,10 @@ public class LRUCache2
     public Object get(Object key)
     {
         Object value = null;
-        CacheEntry entry = null;
+        CacheEntry entry;
         synchronized(this)
         {
-            entry = (CacheEntry) cache.get(key);
+            entry = cache.get(key);
         }
         if (entry != null)
         {
@@ -98,43 +97,36 @@ public class LRUCache2
 
     public synchronized void purge(String[] patterns)
     {
-        List purgeList = new ArrayList();
-        Iterator keys = cache.keySet().iterator();
-        while (keys.hasNext())
-        {
-            String key = (String) keys.next();
-            for (int i = 0; i < patterns.length; i++)
-            {
-                if (key.contains(patterns[i]))
-                {
+        List<String> purgeList = new ArrayList<String>();
+        for (Object objKey : cache.keySet()) {
+            String key = (String) objKey;
+            for (String s : patterns) {
+                if (key.contains(s)) {
                     purgeList.add(key);
                     break;
                 }
             }
         }
-        Iterator purgeIter = purgeList.iterator();
-        while (purgeIter.hasNext())
-        {
-            String key = (String) purgeIter.next();
-            cache.remove(key);
+        for (String s: purgeList) {
+            cache.remove(s);
         }
     }
 
-    public int size()
-    {
+    public int size() {
         return cache.size();
     }
-    public interface Environment
-    {
+
+    public interface Environment {
         long getCurrentTimeInMillis();
     }
-    public static class DefaultEnvironment implements Environment
-    {
+
+    public static class DefaultEnvironment implements Environment {
         public long getCurrentTimeInMillis()
         {
             return System.currentTimeMillis();
         }
     }
+
     private static class CacheEntry
     {
         private Object value;
@@ -158,7 +150,7 @@ public class LRUCache2
     }
     
     // David Flanaghan: http://www.davidflanagan.com/blog/000014.html
-    private static class LRULinkedHashMap extends LinkedHashMap
+    private static class LRULinkedHashMap extends LinkedHashMap<Object, CacheEntry>
     {
         protected int maxsize;
 

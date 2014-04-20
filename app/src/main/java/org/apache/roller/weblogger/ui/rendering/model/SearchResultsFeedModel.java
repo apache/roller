@@ -26,11 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
@@ -62,8 +60,6 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class SearchResultsFeedModel implements Model {
 
-	private static Log log = LogFactory.getLog(SearchResultsFeedModel.class);
-
 	private WeblogFeedRequest feedRequest = null;
 	private URLStrategy urlStrategy = null;
 	private Weblog weblog = null;
@@ -71,7 +67,7 @@ public class SearchResultsFeedModel implements Model {
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsFeedPager pager = null;
 
-	private List results = new LinkedList();
+	private List<WeblogEntryWrapper> results = new LinkedList<WeblogEntryWrapper>();
 
 	private Set categories = new TreeSet();
 
@@ -116,11 +112,8 @@ public class SearchResultsFeedModel implements Model {
 
 		String pagerUrl = urlStrategy.getWeblogFeedURL(weblog,
 				feedRequest.getLocale(), feedRequest.getType(),
-				feedRequest.getFormat(), null, null, /*
-													 * cat and term are null but
-													 * added to the url in the
-													 * pager
-													 */
+				// cat and term below null but added to URL in pager
+                feedRequest.getFormat(), null, null,
 				null, false, true);
 
 		// if there is no query, then we are done
@@ -157,11 +150,11 @@ public class SearchResultsFeedModel implements Model {
 		if (search.getResultsCount() > -1) {
 
 			TopFieldDocs docs = search.getResults();
-			ScoreDoc[] hits = docs.scoreDocs;
+			ScoreDoc[] hitsArr = docs.scoreDocs;
 			this.hits = search.getResultsCount();
 
 			// Convert the Hits into WeblogEntryData instances.
-			convertHitsToEntries(hits, search);
+			convertHitsToEntries(hitsArr, search);
 		}
 
 		// search completed, setup pager based on results
@@ -200,36 +193,25 @@ public class SearchResultsFeedModel implements Model {
 		}
 
 		try {
-			TreeSet categories = new TreeSet();
+			TreeSet<String> categorySet = new TreeSet<String>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
-			WeblogEntry entry = null;
-			Document doc = null;
-			String handle = null;
+			WeblogEntry entry;
+			Document doc;
+			String handle;
 			Timestamp now = new Timestamp(new Date().getTime());
 			for (int i = offset; i < offset + limit; i++) {
-
-				entry = null; // reset for each iteration
-
 				doc = search.getSearcher().doc(hits[i].doc);
 				handle = doc.getField(FieldConstants.WEBSITE_HANDLE)
 						.stringValue();
 
-				if (websiteSpecificSearch
-						&& handle.equals(feedRequest.getWeblogHandle())) {
+                entry = weblogMgr.getWeblogEntry(doc.getField(
+                        FieldConstants.ID).stringValue());
 
-					entry = weblogMgr.getWeblogEntry(doc.getField(
-							FieldConstants.ID).stringValue());
-				} else {
-
-					entry = weblogMgr.getWeblogEntry(doc.getField(
-							FieldConstants.ID).stringValue());
-
-					if (doc.getField(FieldConstants.CATEGORY) != null) {
-						categories.add(doc.getField(FieldConstants.CATEGORY)
-								.stringValue());
-					}
+				if (!(websiteSpecificSearch && handle.equals(feedRequest.getWeblogHandle()))
+                        && doc.getField(FieldConstants.CATEGORY) != null) {
+                    categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
 				}
 
 				// maybe null if search result returned inactive user
@@ -240,8 +222,8 @@ public class SearchResultsFeedModel implements Model {
 				}
 			}
 
-			if (categories.size() > 0) {
-				this.categories = categories;
+			if (categorySet.size() > 0) {
+				this.categories = categorySet;
 			}
 		} catch (IOException e) {
 			throw new WebloggerException(e);
@@ -289,7 +271,7 @@ public class SearchResultsFeedModel implements Model {
 		return websiteSpecificSearch;
 	}
 
-	public String getCategoryPath() {
+	public String getCategoryName() {
 		return feedRequest.getWeblogCategoryName();
 	}
 

@@ -76,17 +76,13 @@ public class WeblogSharedTheme extends WeblogTheme {
     /**
      * Get the collection of all templates associated with this Theme.
      */
-    public List getTemplates() throws WebloggerException {
+    public List<ThemeTemplate> getTemplates() throws WebloggerException {
         
-        Map pages = new TreeMap();
+        Map<String, ThemeTemplate> pages = new TreeMap<String, ThemeTemplate>();
         
         // first get the pages from the db
         try {
-            ThemeTemplate template = null;
-            Iterator dbPages = WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getPages(this.weblog).iterator();
-            while(dbPages.hasNext()) {
-                template = (ThemeTemplate) dbPages.next();
+            for (ThemeTemplate template : WebloggerFactory.getWeblogger().getWeblogManager().getPages(this.weblog)) {
                 pages.put(template.getName(), template);
             }
         } catch(Exception e) {
@@ -97,11 +93,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // now get theme pages if needed and put them in place of db pages
         try {
-            ThemeTemplate template = null;
-            Iterator themePages = this.theme.getTemplates().iterator();
-            while(themePages.hasNext()) {
-                template = (ThemeTemplate) themePages.next();
-                
+            for (ThemeTemplate template : this.theme.getTemplates()) {
                 // note that this will put theme pages over custom
                 // pages in the pages list, which is what we want
                 pages.put(template.getName(), template);
@@ -111,7 +103,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             log.error(e);
         }
         
-        return new ArrayList(pages.values());
+        return new ArrayList<ThemeTemplate>(pages.values());
     }
     
     
@@ -174,7 +166,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             return null;
         }
         
-        ThemeTemplate template = null;
+        ThemeTemplate template;
         
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
@@ -205,7 +197,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             return null;
         }
 
-        ThemeTemplate template = null;
+        ThemeTemplate template;
 
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
@@ -237,7 +229,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             return null;
         }
         
-        ThemeResource resource = null;
+        ThemeResource resource;
         
         // first check in our shared theme
         resource = this.theme.getResource(path);

@@ -54,8 +54,10 @@ public class ThemeResourceLoader extends ResourceLoader {
         logger.debug(configuration);
     }
 
-    public InputStream getResourceStream(String name)
-            throws ResourceNotFoundException {
+    /**
+     * @throws ResourceNotFoundException
+     */
+    public InputStream getResourceStream(String name) {
 
         if (log.isDebugEnabled()) {
             logger.debug("Looking for: " + name);

@@ -25,8 +25,8 @@
   <link>$url.absoluteSite</link>
   #if($model.tags)
     <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rssByTags($model.tags, $model.excerpts)" />
-  #elseif($model.categoryPath)
-    <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.categoryPath, $model.excerpts)" />
+  #elseif($model.categoryName)
+    <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.categoryName, $model.excerpts)" />
   #else
     <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss" />
   #end

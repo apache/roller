@@ -21,14 +21,9 @@
     <s:text name="categoryForm.add.subtitle" />
 </p>
 
-<p>
-    <b><s:text name="categoriesForm.path" /></b>:<s:property value="category.path" />
-</p>
-
 <s:form action="categoryAdd!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="categoryId" />
     
     <table>
         
@@ -51,7 +46,7 @@
     
     <p>
         <s:submit value="%{getText('categoryForm.save')}" />
-        <s:submit value="%{getText('categoryForm.cancel')}" action="categories" />
+        <s:submit value="%{getText('categoryForm.cancel')}" action="categoryAdd!cancel" />
     </p>
     
 </s:form>

@@ -27,19 +27,17 @@ import java.util.List;
  */
 public class ParsedMenu {
     
-    private List tabs = new ArrayList();
-    
+    private List<ParsedTab> tabs = new ArrayList<ParsedTab>();
     
     public void addTab(ParsedTab tab) {
         this.tabs.add(tab);
     }
-    
-    
-    public List getTabs() {
+
+    public List<ParsedTab> getTabs() {
         return tabs;
     }
 
-    public void setTabs(List tabs) {
+    public void setTabs(List<ParsedTab> tabs) {
         this.tabs = tabs;
     }
     

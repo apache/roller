@@ -76,8 +76,6 @@ public class SearchOperation extends ReadFromIndexOperation {
     private String locale;
     private String parseError;
 
-    private int nMax = 500; // Limit documents.
-
     // ~ Constructors
     // ===========================================================
 
@@ -103,8 +101,8 @@ public class SearchOperation extends ReadFromIndexOperation {
      * @see java.lang.Runnable#run()
      */
     public void doRun() {
+        final int docLimit = 500;
         searchresults = null;
-
         searcher = null;
 
         try {
@@ -155,7 +153,7 @@ public class SearchOperation extends ReadFromIndexOperation {
                 query = bQuery;
             }
 
-            searchresults = searcher.search(query, null/* Filter */, nMax,
+            searchresults = searcher.search(query, null/* Filter */, docLimit,
                     SORTER);
 
         } catch (IOException e) {
@@ -211,7 +209,7 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     /**
      * Gets the parses the error.
-     * 
+     *
      * @return the parses the error
      */
     public String getParseError() {

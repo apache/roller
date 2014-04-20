@@ -6,44 +6,48 @@ See comments in editor-menu.xml for info about attributes.
 -->
 <menu-bar>
     
+    <!--  if we already have checked globalPerms="admin" we should -->
+    <!--  not need to recheck on each tab item as they are the same -->
     <menu name="tabbedmenu.admin" globalPerms="admin">
         
-        <menu-item action="globalConfig"       
-                   name="tabbedmenu.admin.config" 
-                   globalPerms="admin" />
+        <!-- globalPerms="admin" -->
+        <menu-item action="globalConfig"
+                   name="tabbedmenu.admin.config" />
         
-        <menu-item action="userAdmin"          
-                   name="tabbedmenu.admin.userAdmin" 
-                   globalPerms="admin"
+        <!-- globalPerms="admin" -->
+        <menu-item action="userAdmin"
+                   name="tabbedmenu.admin.userAdmin"
                    subactions="createUser,modifyUser" />
         
+        <!-- globalPerms="admin" -->
         <menu-item action="globalCommentManagement" 
-                   name="tabbedmenu.admin.commentManagement" 
-                   globalPerms="admin" />
+                   name="tabbedmenu.admin.commentManagement" />
         
-        <menu-item action="commonPingTargets"  
+        <!-- globalPerms="admin" -->
+        <menu-item action="commonPingTargets"
                    name="tabbedmenu.admin.pingTargets"
-                   globalPerms="admin" 
                    subactions="commonPingTargetAdd,commonPingTargetEdit" />
         
-        <menu-item action="cacheInfo"          
-                   name="tabbedmenu.admin.cacheInfo"
-                   globalPerms="admin" />
+        <!-- globalPerms="admin" -->
+        <menu-item action="cacheInfo"
+                   name="tabbedmenu.admin.cacheInfo" />
     </menu>
     
+    <!--  if we already have checked globalPerms="admin" we should -->
+    <!--  not need to recheck on each tab item as they are the same -->
     <menu name="tabbedmenu.planet" globalPerms="admin" enabledProperty="planet.aggregator.enabled">
         
-        <menu-item action="planetConfig"       
-                   name="tabbedmenu.admin.planetConfig" 
-                   globalPerms="admin" />
+        <!-- globalPerms="admin" -->
+        <menu-item action="planetConfig"
+                   name="tabbedmenu.admin.planetConfig" />
         
-        <menu-item action="planetSubscriptions" 
-                   name="tabbedmenu.admin.planetSubscriptions" 
-                   globalPerms="admin" />
+        <!-- globalPerms="admin" -->
+        <menu-item action="planetSubscriptions"
+                   name="tabbedmenu.admin.planetSubscriptions" />
         
-        <menu-item action="planetGroups"        
-                   name="tabbedmenu.admin.planetGroups" 
-                   globalPerms="admin" />
+        <!-- globalPerms="admin" -->
+        <menu-item action="planetGroups"
+                   name="tabbedmenu.admin.planetGroups" />
     </menu>
     
 </menu-bar>

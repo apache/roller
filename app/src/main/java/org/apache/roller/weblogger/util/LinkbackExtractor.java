@@ -25,7 +25,6 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.text.MutableAttributeSet;
@@ -73,50 +72,39 @@ public class LinkbackExtractor
      * @param refererURL
      * @param requestURL
      */
-    public LinkbackExtractor(String refererURL, String requestURL)
-            throws IOException
-    {
-        try
-        {
+    public LinkbackExtractor(String refererURL, String requestURL) throws IOException {
+        try {
             extractByParsingHtml(refererURL, requestURL);
-            if (mRssLink != null)
-            {
+            if (mRssLink != null) {
                 extractByParsingRss(mRssLink, requestURL);
             }
-        }
-        catch (Exception e)
-        {
-            if (mLogger.isDebugEnabled())
-            {
+        } catch (Exception e) {
+            if (mLogger.isDebugEnabled()) {
                 mLogger.debug("Extracting linkback", e);
             }
         }
     }
 
     //------------------------------------------------------------------------
-    private void extractByParsingHtml(String refererURL, String requestURL)
-            throws IOException
-    {
+    private void extractByParsingHtml(String refererURL, String requestURL) throws IOException {
         URL url = new URL(refererURL);
         InputStream is = url.openStream();
 
         mRefererURL = refererURL;
 
-        if (requestURL.startsWith("http://www."))
-        {
+        if (requestURL.startsWith("http://www.")) {
             mRequestURLWWW = requestURL;
             mRequestURL = "http://" + mRequestURLWWW.substring(11);
-        }
-        else
-        {
+        } else {
             mRequestURL = requestURL;
             mRequestURLWWW = "http://www." + mRequestURL.substring(7);
         }
 
-        // Trick gets Swing's HTML parser
+        // Trick gets Swing's HTML parser by making its protected getParser() method public
+        // Ignore inaccurate Sonar complaint about useless overriding method:
+        //    http://jira.codehaus.org/browse/SONARJAVA-287
         Parser parser = (new HTMLEditorKit() {
-            public Parser getParser()
-            {
+            public Parser getParser() {
                 return super.getParser();
             }
         }).getParser();
@@ -125,16 +113,12 @@ public class LinkbackExtractor
         StringBuilder sb = new StringBuilder();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
-        try
-        {
-            String line = null;
-            while ((line = br.readLine()) != null)
-            {
+        try {
+            String line;
+            while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-        }
-        finally
-        {
+        } finally {
             br.close();
         }
 
@@ -143,70 +127,56 @@ public class LinkbackExtractor
         StringReader sr = new StringReader(sb.toString());
         parser.parse(sr, new LinkbackCallback(), true);
 
-        if (mStart != 0 && mEnd != 0 && mEnd > mStart)
-        {
+        if (mStart != 0 && mEnd != 0 && mEnd > mStart) {
             mExcerpt = sb.toString().substring(mStart, mEnd);
             mExcerpt = Utilities.removeHTML(mExcerpt);
 
-            if (mExcerpt.length() > MAX_EXCERPT_CHARS)
-            {
+            if (mExcerpt.length() > MAX_EXCERPT_CHARS) {
                 mExcerpt = mExcerpt.substring(0, MAX_EXCERPT_CHARS) + "...";
             }
         }
 
-        if (mTitle.startsWith(">") && mTitle.length() > 1)
-        {
+        if (mTitle.startsWith(">") && mTitle.length() > 1) {
             mTitle = mTitle.substring(1);
         }
     }
 
     //------------------------------------------------------------------------
     private void extractByParsingRss(String rssLink, String requestURL)
-            throws IllegalArgumentException, FeedException, IOException
-    {
+            throws FeedException, IOException {
         SyndFeedInput feedInput = new SyndFeedInput();       
         SyndFeed feed = feedInput.build(
             new InputStreamReader(new URL(rssLink).openStream()));
-        Iterator itemIter = feed.getEntries().iterator();
         String feedTitle = feed.getTitle();
 
         int count = 0;
 
-        if (mLogger.isDebugEnabled())
-        {
+        if (mLogger.isDebugEnabled()) {
             mLogger.debug("Feed parsed, title: " + feedTitle);
         }
 
-        while (itemIter.hasNext())
-        {
+        for (Object objItem : feed.getEntries()) {
             count++;
-            SyndEntry item = (SyndEntry) itemIter.next();
-            if (item.getDescription().getValue().contains(requestURL))
-            {
+            SyndEntry item = (SyndEntry) objItem;
+            if (item.getDescription().getValue().contains(requestURL)) {
                 mFound = true;
                 mPermalink = item.getLink();
-                if (feedTitle != null && feedTitle.trim().length() > 0)
-                {
+                if (feedTitle != null && feedTitle.trim().length() > 0) {
                     mTitle = feedTitle + ": " + item.getTitle();
-                }
-                else
-                {
+                } else {
                     mTitle = item.getTitle();
                 }
                 mExcerpt = item.getDescription().getValue();
                 mExcerpt = Utilities.removeHTML(mExcerpt);
-                if (mExcerpt.length() > MAX_EXCERPT_CHARS)
-                {
+                if (mExcerpt.length() > MAX_EXCERPT_CHARS) {
                     mExcerpt = mExcerpt.substring(0, MAX_EXCERPT_CHARS) + "...";
                 }
                 break;
             }
         }
 
-        if (mLogger.isDebugEnabled())
-        {
-            mLogger.debug("Parsed " + count + " articles, found linkback="
-                    + mFound);
+        if (mLogger.isDebugEnabled()) {
+            mLogger.debug("Parsed " + count + " articles, found linkback=" + mFound);
         }
     }
 
@@ -216,8 +186,7 @@ public class LinkbackExtractor
      * 
      * @return String
      */
-    public String getExcerpt()
-    {
+    public String getExcerpt() {
         return mExcerpt;
     }
 
@@ -227,8 +196,7 @@ public class LinkbackExtractor
      * 
      * @return String
      */
-    public String getTitle()
-    {
+    public String getTitle() {
         return mTitle;
     }
 
@@ -238,8 +206,7 @@ public class LinkbackExtractor
      * 
      * @return String
      */
-    public String getPermalink()
-    {
+    public String getPermalink() {
         return mPermalink;
     }
 

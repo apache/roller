@@ -26,10 +26,7 @@
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="removeId" />
-    
-    <%-- if we cancel then we need this attribute --%>
-    <s:hidden name="categoryId" value="%{category.parent.id}" />
-    
+
     <s:if test="category.inUse" >
         <br />
         <span class="warning">
@@ -37,7 +34,7 @@
         </span>
         <p><s:text name="categoryDeleteOK.youMustMoveEntries" /><p>
             <s:text name="categoryDeleteOK.moveToWhere" />
-            <s:select name="targetCategoryId" list="allCategories" listKey="id" listValue="path" />
+            <s:select name="targetCategoryId" list="allCategories" listKey="id" listValue="name" />
         </p>
     </s:if>
     <s:else>
@@ -49,6 +46,6 @@
     </p>
     
     <s:submit value="%{getText('application.yes')}" />&nbsp;
-    <s:submit value="%{getText('application.no')}" action="categories" />
+    <s:submit value="%{getText('application.no')}" action="categoryRemove!cancel" />
     
 </s:form>

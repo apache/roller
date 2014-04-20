@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.util.Utilities;
 public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
     private static final Log LOG = LogFactory.getLog(LinkMarkupPlugin.class);
 
-    private static final Pattern pattern = Pattern.compile(
+    private static final Pattern PATTERN = Pattern.compile(
             "http[s]?://[^/][\\S]+", Pattern.CASE_INSENSITIVE);  
     
     public LinkMarkupPlugin() {
@@ -77,7 +77,7 @@ public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
         
         if (text != null) {
             Matcher matcher;
-            matcher = pattern.matcher(text);
+            matcher = PATTERN.matcher(text);
 
             int start = 0;
             int end = text.length();
@@ -111,9 +111,6 @@ public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
                     start = end;
                 }
             }
-        }
-        else {
-            result.append(text);    
         }
 
         return result.toString();

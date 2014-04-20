@@ -85,9 +85,8 @@ function confirmSubDelete(subUrl) {
         </td>
         
         <td class="rollertable">
-            <str:left count="100" >
-                <s:property value="#sub.feedURL" />
-            </str:left>
+            <s:set name="feedURL" value="#sub.feedURL" />
+            ${fn:substring(feedURL, 0, 100)}
         </td>
         
         <td class="rollertable">

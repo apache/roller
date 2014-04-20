@@ -38,20 +38,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.UUID;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -131,9 +129,6 @@ public class MediaCollection {
                         throw new AtomException("Duplicate file name");
                     }
 
-                    if (path.length() > 0) {
-                        path = path + File.separator;
-                    }
                     FileInputStream fis = new FileInputStream(tempFile);
 
                     MediaFile mf = new MediaFile();
@@ -157,8 +152,8 @@ public class MediaCollection {
                                       
                     MediaFile stored = fileMgr.getMediaFile(mf.getId());
                     Entry mediaEntry = createAtomResourceEntry(website, stored);
-                    for (Iterator it = mediaEntry.getOtherLinks().iterator(); it.hasNext();) {
-                        Link link = (Link)it.next();
+                    for (Object objLink : mediaEntry.getOtherLinks()) {
+                        Link link = (Link) objLink;
                         if ("edit".equals(link.getRel())) {
                             log.debug("Exiting");
                             return mediaEntry;
@@ -254,9 +249,7 @@ public class MediaCollection {
                 try {
                     start = Integer.parseInt(rawPathInfo[rawPathInfo.length - 1]);
                     pathInfo = new String[rawPathInfo.length - 1];
-                    for (int i=0; i < rawPathInfo.length - 1; i++) {
-                        pathInfo[i] = rawPathInfo[i];
-                    }
+                    System.arraycopy(rawPathInfo, 0, pathInfo, 0, rawPathInfo.length - 1);
                 } catch (Exception ingored) {}
             }
             String path = filePathFromPathInfo(pathInfo);
@@ -496,8 +489,6 @@ public class MediaCollection {
         String editMediaURI = 
                 atomURL+"/"+ website.getHandle()
                 + "/resource/" + filePath;
-        URLStrategy urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
-        
         String contentType = Utilities.getContentTypeFromFileName(file.getName());
         
         Entry entry = new Entry();

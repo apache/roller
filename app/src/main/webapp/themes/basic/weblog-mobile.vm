@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <title>$model.weblog.name</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  #showMetaDescription()
 
   <link rel="stylesheet" type="text/css" href="$model.weblog.stylesheet">
   <link rel="stylesheet" type="text/css" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 
   <script type="text/javascript">

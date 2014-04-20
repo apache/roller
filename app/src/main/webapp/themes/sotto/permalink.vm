@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>$model.weblogEntry.title : $model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
+    #showMetaDescription()
     <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
 </head>
 

@@ -38,7 +38,7 @@ public class Referrers extends UIAction {
     private static Log log = LogFactory.getLog(Referrers.class);
     
     // list of referrers to display
-    private List<WeblogReferrer> referrers = Collections.EMPTY_LIST;
+    private List<WeblogReferrer> referrers = Collections.emptyList();
 
     // referrers hits today
     private int dayHits = 0;
@@ -105,17 +105,17 @@ public class Referrers extends UIAction {
      */
     public String remove() {
         
-        String[] removeIds = getRemoveIds();
-        if(removeIds != null) {
+        String[] idsToRemove = getRemoveIds();
+        if (idsToRemove != null) {
             RefererManager refmgr = WebloggerFactory.getWeblogger().getRefererManager();
             
             try {
-                WeblogReferrer referer = null;
-                for (int i=0; i < removeIds.length; i++) {
-                    referer = refmgr.getReferer(removeIds[i]);
+                WeblogReferrer referer;
+                for (String idToRemove : idsToRemove) {
+                    referer = refmgr.getReferer(idToRemove);
                     
                     // make sure referrer belongs to action weblog
-                    if(getActionWeblog().equals(referer.getWebsite())) {
+                    if (getActionWeblog().equals(referer.getWebsite())) {
                         refmgr.removeReferer(referer);
                     }
                 }

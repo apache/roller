@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -232,12 +232,12 @@ public final class EntryAdd extends EntryBase {
 		try {
 			WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
 					.getWeblogEntryManager();
-			return wmgr.getWeblogCategories(getActionWeblog(), false);
+			return wmgr.getWeblogCategories(getActionWeblog());
 		} catch (WebloggerException ex) {
 			log.error(
 					"Error getting category list for weblog - " + getWeblog(),
 					ex);
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 	}
 

@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.business.referrers;
 
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -56,35 +57,35 @@ public interface RefererManager {
     /**
      * Get all referers for specified weblog.
      * @param weblog
-     * @return List of type RefererData
+     * @return List of type WeblogReferrer
      */
-    List getReferers(Weblog weblog) throws WebloggerException;
+    List<WeblogReferrer> getReferers(Weblog weblog) throws WebloggerException;
     
     /**
-     * Get all referers for specified user that were made today.
-     * @param userName Name of user.
-     * @return List of type RefererData
+     * Get all referers for specified website that were made today.
+     * @param weblog
+     * @return List of type WeblogReferrer
      */
-    List getTodaysReferers(Weblog website) throws WebloggerException;
+    List<WeblogReferrer> getTodaysReferers(Weblog weblog) throws WebloggerException;
     
     /**
      * Get referers for a specified date.
-     * @param userName Name of user.
+     * @param weblog
      * @param date YYYYMMDD format of day's date.
-     * @return List of type RefererData.
+     * @return List of type WeblogReferrer
      * @throws WebloggerException
      */
-    List getReferersToDate(Weblog website, String date)
+    List<WeblogReferrer> getReferersToDate(Weblog weblog, String date)
         throws WebloggerException;    
         
     /**
      * Returns hot weblogs as StatCount objects, in descending order by today's hits.
      * @param sinceDays Restrict to last X days (or -1 for all)
      * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
+     * @param length       Maximum number of results to return (for paging)
      * @return List of StatCount objects.
      */
-    List getHotWeblogs(int sinceDays, int offset, int length)
+    List<StatCount> getHotWeblogs(int sinceDays, int offset, int length)
         throws WebloggerException; 
 
     /**
@@ -93,7 +94,7 @@ public interface RefererManager {
      * @return List of RefererData objects.
      * @throws WebloggerException
      */
-    List getReferersToEntry(String entryid) throws WebloggerException;
+    List<WeblogReferrer> getReferersToEntry(String entryid) throws WebloggerException;
     
     /** 
      * Get user's day hits 

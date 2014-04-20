@@ -27,8 +27,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
@@ -66,7 +66,8 @@ public class SearchResultsModel extends PageModel {
 	private URLStrategy urlStrategy = null;
 
 	// the actual search results mapped by Day -> Set of entries
-	private TreeMap results = new TreeMap(new ReverseComparator());
+	private TreeMap<Date, TreeSet<WeblogEntryWrapper>> results
+            = new TreeMap<Date, TreeSet<WeblogEntryWrapper>>(new ReverseComparator());
 
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsPager pager = null;
@@ -136,11 +137,11 @@ public class SearchResultsModel extends PageModel {
 		} else {
 
 			TopFieldDocs docs = search.getResults();
-			ScoreDoc[] hits = docs.scoreDocs;
+			ScoreDoc[] hitsArr = docs.scoreDocs;
 			this.hits = search.getResultsCount();
 
 			// Convert the Hits into WeblogEntryData instances.
-			convertHitsToEntries(hits, search);
+			convertHitsToEntries(hitsArr, search);
 
 		}
 
@@ -192,37 +193,26 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		try {
-			TreeSet categories = new TreeSet();
+			TreeSet<String> categorySet = new TreeSet<String>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
-			WeblogEntry entry = null;
-			Document doc = null;
-			String handle = null;
+			WeblogEntry entry;
+			Document doc;
+			String handle;
 			Timestamp now = new Timestamp(new Date().getTime());
 			for (int i = offset; i < offset + limit; i++) {
-
-				entry = null; // reset for each iteration
-
 				doc = search.getSearcher().doc(hits[i].doc);
 				handle = doc.getField(FieldConstants.WEBSITE_HANDLE)
 						.stringValue();
 
-				if (websiteSpecificSearch
-						&& handle.equals(searchRequest.getWeblogHandle())) {
+                entry = weblogMgr.getWeblogEntry(doc.getField(
+                        FieldConstants.ID).stringValue());
 
-					entry = weblogMgr.getWeblogEntry(doc.getField(
-							FieldConstants.ID).stringValue());
-				} else {
-
-					entry = weblogMgr.getWeblogEntry(doc.getField(
-							FieldConstants.ID).stringValue());
-
-					if (doc.getField(FieldConstants.CATEGORY) != null) {
-						categories.add(doc.getField(FieldConstants.CATEGORY)
-								.stringValue());
-					}
-				}
+                if (!(websiteSpecificSearch && handle.equals(searchRequest.getWeblogHandle()))
+                        && doc.getField(FieldConstants.CATEGORY) != null) {
+                    categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
+                }
 
 				// maybe null if search result returned inactive user
 				// or entry's user is not the requested user.
@@ -233,8 +223,8 @@ public class SearchResultsModel extends PageModel {
 				}
 			}
 
-			if (categories.size() > 0) {
-				this.categories = categories;
+			if (categorySet.size() > 0) {
+				this.categories = categorySet;
 			}
 		} catch (IOException e) {
 			throw new WebloggerException(e);
@@ -248,10 +238,10 @@ public class SearchResultsModel extends PageModel {
 
 		// ensure we do not get duplicates from Lucene by
 		// using a Set Collection. Entries sorted by pubTime.
-		TreeSet set = (TreeSet) this.results.get(midnight);
+		TreeSet<WeblogEntryWrapper> set = this.results.get(midnight);
 		if (set == null) {
 			// date is not mapped yet, so we need a new Set
-			set = new TreeSet(new WeblogEntryWrapperComparator());
+			set = new TreeSet<WeblogEntryWrapper>(new WeblogEntryWrapperComparator());
 			this.results.put(midnight, set);
 		}
 		set.add(entry);

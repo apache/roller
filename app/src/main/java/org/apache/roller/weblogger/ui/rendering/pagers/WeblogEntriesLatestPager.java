@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -28,11 +27,10 @@ import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 
@@ -44,7 +42,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     private static Log log = LogFactory.getLog(WeblogEntriesLatestPager.class);
     
     // collection for the pager
-    private Map entries = null;
+    private Map<Date, List<WeblogEntryWrapper>> entries = null;
     
     // are there more pages?
     private boolean more = false;
@@ -57,56 +55,50 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
             String             pageLink,
             String             entryAnchor,
             String             dateString,
-            String             catPath,
+            String             catName,
             List               tags,
             int                page) {
         
-        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
         
         // initialize the pager collection
         getEntries();
     }
     
     
-    public Map getEntries() {
+    public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         
         if (entries == null) {
-            entries = new TreeMap(new ReverseComparator());
+            entries = new TreeMap<Date, List<WeblogEntryWrapper>>(new ReverseComparator());
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                Map mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(
-                        weblog,
-                        null,
-                        new Date(),
-                        catPath,
-                        tags,
-                        WeblogEntry.PUBLISHED,
-                        locale,
-                        offset,
-                        length + 1);
-                
+                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+                wesc.setWeblog(weblog);
+                wesc.setEndDate(new Date());
+                wesc.setCatName(catName);
+                wesc.setTags(tags);
+                wesc.setStatus(WeblogEntry.PUBLISHED);
+                wesc.setLocale(locale);
+                wesc.setOffset(offset);
+                wesc.setMaxResults(length+1);
+                Map<Date, List<WeblogEntry>> mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(wesc);
+
                 // need to wrap pojos
                 int count = 0;
-                java.util.Date key = null;
-                Iterator days = mmap.keySet().iterator();
-                while(days.hasNext()) {
-                    key = (java.util.Date)days.next();
-                    
+                for (Map.Entry<Date, List<WeblogEntry>> entry : mmap.entrySet()) {
                     // now we need to go through each entry in a day and wrap
-                    List wrapped = new ArrayList();
-                    List unwrapped= (List) mmap.get(key);
-                    for(int i=0; i < unwrapped.size(); i++) {
+                    List<WeblogEntryWrapper> wrapped = new ArrayList<WeblogEntryWrapper>();
+                    List<WeblogEntry> unwrapped = entry.getValue();
+                    for (int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
-                            wrapped.add(i,WeblogEntryWrapper.wrap((WeblogEntry)unwrapped.get(i), urlStrategy));
+                            wrapped.add(i,WeblogEntryWrapper.wrap(unwrapped.get(i), urlStrategy));
                         } else {
                             more = true;
                         }
                     }
                     
                     // done with that day, put it in the map
-                    if(wrapped.size() > 0) {
-                        entries.put(key, wrapped);
+                    if (wrapped.size() > 0) {
+                        entries.put(entry.getKey(), wrapped);
                     }
                 }
             } catch (Exception e) {

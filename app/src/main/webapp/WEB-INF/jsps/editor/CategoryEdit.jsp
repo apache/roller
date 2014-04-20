@@ -21,18 +21,11 @@
     <s:text name="categoryForm.edit.subtitle" />
 </p>
 
-<p>
-    <b><s:text name="categoriesForm.path" /></b>:<s:property value="category.path" />
-</p>
-
 <s:form action="categoryEdit!save">
-	<s:hidden name="salt" />
+    <s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
-    
-    <%-- if we cancel then we need this attribute --%>
-    <s:hidden name="categoryId" value="%{category.parent.id}" />
-    
+
     <table>
         
         <tr>
@@ -54,7 +47,7 @@
     
     <p>
         <s:submit value="%{getText('categoryForm.save')}" />
-        <s:submit value="%{getText('categoryForm.cancel')}" action="categories" />
+        <s:submit value="%{getText('categoryForm.cancel')}" action="categoryEdit!cancel" />
     </p>
     
 </s:form>

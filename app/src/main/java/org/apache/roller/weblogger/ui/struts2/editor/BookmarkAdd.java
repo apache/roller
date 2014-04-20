@@ -22,7 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -103,10 +104,12 @@ public class BookmarkAdd extends UIAction {
         
         if(!hasActionErrors()) {
             try {
-
-                WeblogBookmark newBookmark = new WeblogBookmark();
-                newBookmark.setFolder(getFolder());
-                getBean().copyTo(newBookmark);
+                WeblogBookmark newBookmark = new WeblogBookmark(getFolder(),
+                        getBean().getName(),
+                        getBean().getDescription(),
+                        getBean().getUrl(),
+                        getBean().getFeedUrl(),
+                        getBean().getImage());
 
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
                 bmgr.saveBookmark(newBookmark);
@@ -114,8 +117,7 @@ public class BookmarkAdd extends UIAction {
 
                 CacheManager.invalidate(newBookmark);
 
-                // TODO: i18n
-                addMessage("bookmark added");
+                addMessage("bookmarkForm.created");
 
                 // Set for next action
                 getBean().setId(newBookmark.getId());
@@ -133,22 +135,19 @@ public class BookmarkAdd extends UIAction {
         return INPUT;
     }
 
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return CANCEL;
+    }
     
-    // TODO: validation
     public void myValidate() {
-        
         // name is required, max length, no html
-        
-        // url is required, valid url
-        
-        if (StringUtils.isNotEmpty(getBean().getUrl()) && !validURL(getBean().getUrl())) {
-            addError("bookmarkForm.error.invalidURL", getBean().getUrl());
-        }
-        if (StringUtils.isNotEmpty(getBean().getFeedUrl()) && !validURL(getBean().getFeedUrl())) {
-            addError("bookmarkForm.error.invalidURL", getBean().getFeedUrl());
-        }
-        if (StringUtils.isNotEmpty(getBean().getImage()) && !validURL(getBean().getImage())) {
-            addError("bookmarkForm.error.invalidURL", getBean().getImage());
+        if (getFolder().hasBookmarkOfName(getBean().getName())) {
+            addError("bookmarkForm.error.duplicateName", getBean().getUrl());
         }
     }
     

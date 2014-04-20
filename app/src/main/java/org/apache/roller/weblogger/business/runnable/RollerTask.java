@@ -34,6 +34,7 @@ import org.apache.roller.util.DateUtil;
  */
 public abstract class RollerTask implements Runnable {
     private String taskName = null;
+    protected static final int DEFAULT_INTERVAL_MINS = 1440;
 
     
     /**

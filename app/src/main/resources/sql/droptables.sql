@@ -25,20 +25,17 @@ drop table rag_properties;
 -- non-associated tables
 drop table newsfeed;
 drop table usercookie;
-drop table rollerconfig;
 drop table roller_properties;
 drop table roller_audit_log;
 drop table roller_tasklock;
 
 -- supplemental services tables
 drop table pingqueueentry;
-drop table pingcategory;
 drop table autoping;
 drop table pingtarget;
 drop table referer;
 drop table bookmark;
 drop table folder;
-drop table folderassoc;
 drop table roller_userattribute;
 drop table roller_mediafiletag;
 drop table roller_mediafile;
@@ -52,7 +49,6 @@ drop table roller_weblogentrytag;
 drop table roller_weblogentrytagagg;
 drop table entryattribute;
 drop table weblogentry;
-drop table weblogcategoryassoc;
 drop table weblogcategory;
 drop table webpage;
 drop table rol_weblogtheme;

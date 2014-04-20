@@ -145,10 +145,10 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         }
 
         String cat = null;
-        if(category != null && "/".equals(category)) {
+        if("root".equals(category)) {
             cat = null;
-        } else if(category != null && category.startsWith("/")) {
-            cat = category.substring(1);
+        } else {
+            cat = category;
         }
         
         if(cat != null && dateString == null) {

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -97,11 +98,6 @@ public class CommentServlet extends HttpServlet {
         // instantiate a comment validation manager for comment spam checking
         commentValidationManager = new CommentValidationManager();
 
-        // instantiate a comment format manager for comment formatting
-        String fmtrs = WebloggerConfig
-                .getProperty("comment.formatter.classnames");
-        String[] formatters = Utilities.stringToStringArray(fmtrs, ",");
-
         // are we doing throttling?
         if (WebloggerConfig.getBooleanProperty("comment.throttle.enabled")) {
 
@@ -115,12 +111,12 @@ public class CommentServlet extends HttpServlet {
                         e);
             }
 
-            int interval = 60000;
+            int interval = RollerConstants.MIN_IN_MS;
             try {
                 interval = Integer.parseInt(WebloggerConfig
                         .getProperty("comment.throttle.interval"));
                 // convert from seconds to milliseconds
-                interval = interval * 1000;
+                interval = interval * RollerConstants.SEC_IN_MS;
             } catch (Exception e) {
                 log.warn(
                         "bad input for config property comment.throttle.interval",
@@ -167,10 +163,10 @@ public class CommentServlet extends HttpServlet {
             throws IOException, ServletException {
 
         String error = null;
-        String dispatch_url = null;
+        String dispatch_url;
 
-        Weblog weblog = null;
-        WeblogEntry entry = null;
+        Weblog weblog;
+        WeblogEntry entry;
 
         String message = null;
         RollerMessages messages = new RollerMessages();
@@ -197,7 +193,7 @@ public class CommentServlet extends HttpServlet {
             return;
         }
 
-        WeblogCommentRequest commentRequest = null;
+        WeblogCommentRequest commentRequest;
         try {
             commentRequest = new WeblogCommentRequest(request);
 
@@ -242,7 +238,7 @@ public class CommentServlet extends HttpServlet {
         comment.setEmail(commentRequest.getEmail());
         comment.setUrl(commentRequest.getUrl());
         comment.setContent(commentRequest.getContent());
-        comment.setNotify(Boolean.valueOf(commentRequest.isNotify()));
+        comment.setNotify(commentRequest.isNotify());
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(new Timestamp(System.currentTimeMillis()));
@@ -304,12 +300,12 @@ public class CommentServlet extends HttpServlet {
 
         if (!preview) {
 
-            if (validationScore == 100 && weblog.getCommentModerationRequired()) {
+            if (validationScore == RollerConstants.PERCENT_100 && weblog.getCommentModerationRequired()) {
                 // Valid comments go into moderation if required
                 comment.setStatus(WeblogEntryComment.PENDING);
                 message = messageUtils
                         .getString("commentServlet.submittedToModerator");
-            } else if (validationScore == 100) {
+            } else if (validationScore == RollerConstants.PERCENT_100) {
                 // else they're approved
                 comment.setStatus(WeblogEntryComment.APPROVED);
                 message = messageUtils
@@ -324,7 +320,7 @@ public class CommentServlet extends HttpServlet {
                 // add specific error messages if they exist
                 if (messages.getErrorCount() > 0) {
                     Iterator errors = messages.getErrors();
-                    RollerMessage errorKey = null;
+                    RollerMessage errorKey;
 
                     StringBuilder buf = new StringBuilder();
                     buf.append("<ul>");
@@ -359,7 +355,7 @@ public class CommentServlet extends HttpServlet {
 
                     // Send email notifications only to subscribers if comment
                     // is 100% valid
-                    boolean notifySubscribers = (validationScore == 100);
+                    boolean notifySubscribers = (validationScore == RollerConstants.PERCENT_100);
                     MailUtil.sendEmailNotification(comment, messages,
                             messageUtils, notifySubscribers);
 

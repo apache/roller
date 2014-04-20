@@ -10,8 +10,8 @@
 	     <hr />
 
          <h3>Blogroll</h3>
-         #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
-         #showBookmarkLinksList($rootFolder false false) 
+         #set($defaultFolder = $model.weblog.getBookmarkFolder("/"))
+         #showBookmarkLinksList($defaultFolder)
 
          <h3>Newsfeeds</h3>
          #showAtomFeedsList($model.weblog)

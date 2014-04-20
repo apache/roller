@@ -22,7 +22,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +29,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
@@ -43,12 +43,11 @@ public class CommentsPager extends AbstractPager {
     private static Log log = LogFactory.getLog(CommentsPager.class);
     
     private Weblog weblog = null;
-    private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
     
     // the collection for the pager
-    private List comments = null;
+    private List<WeblogEntryCommentWrapper> comments = null;
     
     // are there more items?
     private boolean more = false;
@@ -60,7 +59,6 @@ public class CommentsPager extends AbstractPager {
             URLStrategy    strat,
             String         baseUrl,
             Weblog         weblog,
-            String         locale,
             int            sinceDays,
             int            page,
             int            length) {
@@ -68,7 +66,6 @@ public class CommentsPager extends AbstractPager {
         super(strat, baseUrl, page);
         
         this.weblog = weblog;
-        this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
         
@@ -77,13 +74,13 @@ public class CommentsPager extends AbstractPager {
     }
     
     
-    public List getItems() {
+    public List<WeblogEntryCommentWrapper> getItems() {
         
         if (comments == null) {
             // calculate offset
             int offset = getPage() * length;
             
-            List results = new ArrayList();
+            List<WeblogEntryCommentWrapper> results = new ArrayList<WeblogEntryCommentWrapper>();
             
             Date startDate = null;
             if(sinceDays > 0) {
@@ -96,13 +93,20 @@ public class CommentsPager extends AbstractPager {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                List entries = wmgr.getComments(
-                        weblog, null, null, startDate, null, WeblogEntryComment.APPROVED, true, offset, length + 1);
+
+                CommentSearchCriteria csc = new CommentSearchCriteria();
+                csc.setWeblog(weblog);
+                csc.setStartDate(startDate);
+                csc.setStatus(WeblogEntryComment.APPROVED);
+                csc.setReverseChrono(true);
+                csc.setOffset(offset);
+                csc.setMaxResults(length + 1);
+
+                List<WeblogEntryComment> commentsList = wmgr.getComments(csc);
                 
                 // wrap the results
                 int count = 0;
-                for (Iterator it = entries.iterator(); it.hasNext();) {
-                    WeblogEntryComment comment = (WeblogEntryComment) it.next();
+                for (WeblogEntryComment comment : commentsList) {
                     if (count++ < length) {
                         results.add(WeblogEntryCommentWrapper.wrap(comment, urlStrategy));
                     } else {
@@ -129,9 +133,9 @@ public class CommentsPager extends AbstractPager {
     public Date getLastUpdated() {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
-            List<WeblogEntryCommentWrapper> items = (List<WeblogEntryCommentWrapper>)getItems();
+            List<WeblogEntryCommentWrapper> items = getItems();
             if (getItems() != null && getItems().size() > 0) {
-                Timestamp newest = ((WeblogEntryCommentWrapper)getItems().get(0)).getPostTime();
+                Timestamp newest = (getItems().get(0)).getPostTime();
                 for (WeblogEntryCommentWrapper c : items) {
                     if (c.getPostTime().after(newest)) {
                         newest = c.getPostTime();

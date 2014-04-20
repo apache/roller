@@ -59,6 +59,6 @@ public interface Cache {
     /**
      * get cache stats.
      */
-    Map getStats();
+    Map<String, Object> getStats();
     
 }

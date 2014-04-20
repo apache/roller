@@ -32,7 +32,6 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  */
 public class PreviewURLModel extends URLModel {
     
-    private WeblogPreviewRequest previewRequest = null;
     private Weblog weblog = null;
 
     private URLStrategy urlStrategy = null;
@@ -48,9 +47,7 @@ public class PreviewURLModel extends URLModel {
         
         // PreviewURLModel only works on preview requests, so cast weblogRequest
         // into a WeblogPreviewRequest and if it fails then throw exception
-        if(weblogRequest instanceof WeblogPreviewRequest) {
-            this.previewRequest = (WeblogPreviewRequest) weblogRequest;
-        } else {
+        if(!(weblogRequest instanceof WeblogPreviewRequest)) {
             throw new WebloggerException("weblogRequest is not a WeblogPreviewRequest."+
                     "  PreviewURLModel only supports preview requests.");
         }

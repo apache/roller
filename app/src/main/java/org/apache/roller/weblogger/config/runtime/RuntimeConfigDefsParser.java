@@ -25,7 +25,6 @@ package org.apache.roller.weblogger.config.runtime;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -62,10 +61,8 @@ public class RuntimeConfigDefsParser {
         Document doc = builder.build(instream);
         
         Element root = doc.getRootElement();
-        List configdefs = root.getChildren("config-def");
-        Iterator iter = configdefs.iterator();
-        while (iter.hasNext()) {
-            Element e = (Element) iter.next();
+        List<Element> configdefs = root.getChildren("config-def");
+        for (Element e : configdefs) {
             configs.addConfigDef(this.elementToConfigDef(e));
         }
         
@@ -79,10 +76,8 @@ public class RuntimeConfigDefsParser {
         
         configdef.setName(element.getAttributeValue("name"));
         
-        List displaygroups = element.getChildren("display-group");
-        Iterator iter = displaygroups.iterator();
-        while (iter.hasNext()) {
-            Element e = (Element) iter.next();
+        List<Element> displaygroups = element.getChildren("display-group");
+        for (Element e : displaygroups) {
             configdef.addDisplayGroup(this.elementToDisplayGroup(e));
         }
         
@@ -91,17 +86,13 @@ public class RuntimeConfigDefsParser {
     
     
     private DisplayGroup elementToDisplayGroup(Element element) {
-        
         DisplayGroup displaygroup = new DisplayGroup();
         
         displaygroup.setName(element.getAttributeValue("name"));
         displaygroup.setKey(element.getAttributeValue("key"));
         
-        List displaygroups = element.getChildren("property-def");
-        Iterator iter = displaygroups.iterator();
-        while (iter.hasNext())
-        {
-            Element e = (Element) iter.next();
+        List<Element> displaygroups = element.getChildren("property-def");
+        for (Element e : displaygroups) {
             displaygroup.addPropertyDef(this.elementToPropertyDef(e));
         }
         
@@ -110,7 +101,6 @@ public class RuntimeConfigDefsParser {
     
     
     private PropertyDef elementToPropertyDef(Element element) {
-        
         PropertyDef prop = new PropertyDef();
         
         prop.setName(element.getAttributeValue("name"));

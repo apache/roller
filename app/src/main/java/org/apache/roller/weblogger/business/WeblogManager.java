@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -90,9 +91,9 @@ public interface WeblogManager {
      * @param endDate   Restrict to those created before (or null for all)
      * @param offset    Offset into results (for paging)
      * @param length    Maximum number of results to return (for paging)
-     * @return List of WebsiteData objects.
+     * @return List of Weblog objects.
      */
-    List getWeblogs(
+    List<Weblog> getWeblogs(
             Boolean  enabled,
             Boolean  active,
             Date     startDate,
@@ -106,18 +107,18 @@ public interface WeblogManager {
      * Get websites of a user.
      * @param user        Get all weblogs for this user
      * @param enabledOnly Include only enabled weblogs?
-     * @return List of WebsiteData objects.
+     * @return List of Weblog objects.
      */
-    List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException;
+    List<Weblog> getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException;
     
     
     /**
      * Get users of a weblog.
-     * @param user        Get all users for this weblog
+     * @param weblog Weblog to retrieve users for
      * @param enabledOnly Include only enabled users?
      * @return List of WebsiteData objects.
      */
-    List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
+    List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
     
     
     /**
@@ -125,10 +126,10 @@ public interface WeblogManager {
      * @param startDate Restrict to those created after (or null for all)
      * @param endDate Restrict to those created before (or null for all)
      * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
-     * @return List of WebsiteData objects.
+     * @param length       Maximum number of results to return (for paging)
+     * @return List of StatCount objects.
      */
-    List getMostCommentedWeblogs(
+    List<StatCount> getMostCommentedWeblogs(
             Date startDate,
             Date endDate,
             int  offset,
@@ -147,7 +148,7 @@ public interface WeblogManager {
     /** 
      * Get collection of weblogs whose handles begin with specified letter 
      */
-    List getWeblogsByLetter(char letter, int offset, int length)
+    List<Weblog> getWeblogsByLetter(char letter, int offset, int length)
         throws WebloggerException;
     
         /**
@@ -200,7 +201,7 @@ public interface WeblogManager {
     /**
      * Get website's pages
      */
-    List getPages(Weblog w) throws WebloggerException;
+    List<WeblogTemplate> getPages(Weblog w) throws WebloggerException;
    
     
     /**

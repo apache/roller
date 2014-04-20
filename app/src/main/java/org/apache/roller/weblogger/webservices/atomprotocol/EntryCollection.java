@@ -23,6 +23,7 @@ import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.feed.atom.Person;
+import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.feed.synd.SyndPerson;
 import org.rometools.propono.atom.common.rome.AppModule;
 import org.rometools.propono.atom.common.rome.AppModuleImpl;
@@ -35,12 +36,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -53,6 +53,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagComparator;
 import org.apache.roller.weblogger.util.Utilities;
@@ -114,8 +115,8 @@ public class EntryCollection {
 
             rollerEntry = mgr.getWeblogEntry(rollerEntry.getId());
             Entry newEntry = createAtomEntry(rollerEntry);
-            for (Iterator it = newEntry.getOtherLinks().iterator(); it.hasNext();) {
-                Link link = (Link)it.next();
+            for (Object objLink : newEntry.getOtherLinks()) {
+                Link link = (Link) objLink;
                 if ("edit".equals(link.getRel())) {
                     log.debug("Exiting");
                     return createAtomEntry(rollerEntry);
@@ -172,20 +173,12 @@ public class EntryCollection {
             if (!RollerAtomHandler.canView(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website: " + handle);
             }
-            List entries = roller.getWeblogEntryManager().getWeblogEntries( 
-                    website,           // website
-                    null,              // user
-                    null,              // startDate
-                    null,              // endDate
-                    null,              // catName
-                    null,              // tags
-                    null,              // status
-                    null,              // text
-                    "updateTime",      // sortby
-                    null,
-                    null,              // locale
-                    start,             // offset (for range paging)
-                    max + 1);          // MAX_ENTRIES
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(website);
+            wesc.setSortBy(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
+            wesc.setOffset(start);
+            wesc.setMaxResults(max + 1);
+            List<WeblogEntry> entries = roller.getWeblogEntryManager().getWeblogEntries(wesc);
             Feed feed = new Feed();
             feed.setId(atomURL
                 +"/"+website.getHandle() + "/entries/" + start);
@@ -197,18 +190,20 @@ public class EntryCollection {
             link.setType("text/html");
             feed.setAlternateLinks(Collections.singletonList(link));
 
-            List atomEntries = new ArrayList();
+            List<Entry> atomEntries = new ArrayList<Entry>();
             int count = 0;
-            for (Iterator iter = entries.iterator(); iter.hasNext() && count < MAX_ENTRIES; count++) {
-                WeblogEntry rollerEntry = (WeblogEntry)iter.next();
+            for (WeblogEntry rollerEntry : entries) {
+                if (count++ >= MAX_ENTRIES) {
+                    break;
+                }
                 Entry entry = createAtomEntry(rollerEntry);
                 atomEntries.add(entry);
-                if (count == 0) {
+                if (count == 1) {
                     // first entry is most recent
                     feed.setUpdated(entry.getUpdated());
                 }
             }
-            List links = new ArrayList();
+            List<Link> links = new ArrayList<Link>();
             if (entries.size() > max) {
                 // add next link
                 int nextOffset = start + max;
@@ -326,7 +321,7 @@ public class EntryCollection {
         Content content = new Content();
         content.setType(Content.HTML);
         content.setValue(entry.getText());
-        List contents = new ArrayList();
+        List<Content> contents = new ArrayList<Content>();
         contents.add(content);
         
         atomEntry.setContents(contents);
@@ -345,17 +340,16 @@ public class EntryCollection {
         atomEntry.setAuthors(   (List<SyndPerson>)Collections.singletonList(author));
         
         // Add Atom category for Weblogger category, using category scheme
-        List categories = new ArrayList();
+        List<Category> categories = new ArrayList<Category>();
         Category atomCat = new Category();
         atomCat.setScheme(RollerAtomService.getWeblogCategoryScheme(entry.getWebsite()));
-        atomCat.setTerm(entry.getCategory().getPath().substring(1));
+        atomCat.setTerm(entry.getCategory().getName());
         categories.add(atomCat);
         
         // Add Atom categories for each Weblogger tag with null scheme
         Set<WeblogEntryTag> tmp = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
         tmp.addAll(entry.getTags());
-        for (Iterator tagit = tmp.iterator(); tagit.hasNext();) {
-            WeblogEntryTag tag = (WeblogEntryTag) tagit.next();
+        for (WeblogEntryTag tag : tmp) {
             Category newcat = new Category();
             newcat.setTerm(tag.getName());
             categories.add(newcat);
@@ -365,7 +359,7 @@ public class EntryCollection {
         Link altlink = new Link();
         altlink.setRel("alternate");
         altlink.setHref(entry.getPermalink());
-        List altlinks = new ArrayList();
+        List<Link> altlinks = new ArrayList<Link>();
         altlinks.add(altlink);
         atomEntry.setAlternateLinks(altlinks);
         
@@ -374,11 +368,11 @@ public class EntryCollection {
         editlink.setHref(
                 atomURL
                 +"/"+entry.getWebsite().getHandle() + "/entry/" + entry.getId());
-        List otherlinks = new ArrayList();
+        List<Link> otherlinks = new ArrayList<Link>();
         otherlinks.add(editlink);
         atomEntry.setOtherLinks(otherlinks);
         
-        List modules = new ArrayList();
+        List<Module> modules = new ArrayList<Module>();
         AppModule app = new AppModuleImpl();
         app.setDraft(!WeblogEntry.PUBLISHED.equals(entry.getStatus()));
         app.setEdited(entry.getUpdateTime());
@@ -425,17 +419,15 @@ public class EntryCollection {
         // Atom categories with weblog-level scheme are Weblogger categories.
         // Atom supports multiple cats, but Weblogger supports one/entry
         // so here we take accept the first category that exists.
-        List categories = entry.getCategories();
+        List<Category> categories = entry.getCategories();
         if (categories != null && categories.size() > 0) {
-            for (int i=0; i<categories.size(); i++) {
-                Category cat = (Category)categories.get(i);
-                
+            for (Category cat : categories) {
                 if (cat.getScheme() != null && cat.getScheme().equals(
                         RollerAtomService.getWeblogCategoryScheme(rollerEntry.getWebsite()))) {
                     String catString = cat.getTerm();
                     if (catString != null) {
                         WeblogCategory rollerCat =
-                                roller.getWeblogEntryManager().getWeblogCategoryByPath(
+                                roller.getWeblogEntryManager().getWeblogCategoryByName(
                                 rollerEntry.getWebsite(), catString);
                         if (rollerCat != null) {
                             // Found a valid category, so break out
@@ -456,8 +448,7 @@ public class EntryCollection {
         String tags = "";
         StringBuilder buff = new StringBuilder();
         if (categories != null && categories.size() > 0) {
-            for (int i=0; i<categories.size(); i++) {
-                Category cat = (Category)categories.get(i);            
+            for (Category cat : categories) {
                 if (cat.getScheme() == null) {
                     buff.append(" ").append(cat.getTerm());
                 }                

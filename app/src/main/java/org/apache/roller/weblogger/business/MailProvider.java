@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.business;
 
 import java.util.Properties;
 import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.naming.Context;
@@ -39,7 +38,7 @@ public class MailProvider {
     
     private static final Log LOG = LogFactory.getLog(MailProvider.class);
     
-    private enum ConfigurationType {JNDI_NAME, MAIL_PROPERTIES; }
+    private enum ConfigurationType {JNDI_NAME, MAIL_PROPERTIES }
     
     private Session session = null;
     
@@ -76,7 +75,7 @@ public class MailProvider {
                 jndiName = "java:comp/env/" + jndiName;
             }
             try {
-                Context ctx = (Context) new InitialContext();
+                Context ctx = new InitialContext();
                 session = (Session) ctx.lookup(jndiName);
             } catch (NamingException ex) {
                 throw new StartupException("ERROR looking up mail-session with JNDI name: " + jndiName);
@@ -114,9 +113,9 @@ public class MailProvider {
     /**
      * Create and connect to transport, caller is responsible for closing transport.
      */
-    public Transport getTransport() throws NoSuchProviderException, MessagingException {
+    public Transport getTransport() throws MessagingException {
         
-        Transport transport = null;
+        Transport transport;
         
         if (type == ConfigurationType.MAIL_PROPERTIES) {
             // Configure transport ourselves using mail properties

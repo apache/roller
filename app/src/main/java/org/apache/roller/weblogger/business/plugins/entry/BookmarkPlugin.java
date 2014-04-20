@@ -19,16 +19,13 @@
 package org.apache.roller.weblogger.business.plugins.entry;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -59,7 +56,7 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     
     
     public String getDescription() {
-        return StringEscapeUtils.escapeJavaScript(description);
+        return StringEscapeUtils.escapeEcmaScript(description);
     }
     
     
@@ -67,50 +64,28 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     
     
     public String render(WeblogEntry entry, String str) {
-        String text = str;
-        try {
-            BookmarkManager bMgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            WeblogBookmarkFolder rootFolder = bMgr.getRootFolder(entry.getWebsite());
-            text = matchBookmarks(text, rootFolder);
-            text = lookInFolders(text, rootFolder.getFolders());
-        } catch (WebloggerException e) {
-            // nothing much I can do, go with default "Weblog" value
-            // could be WebloggerException or NullPointerException
-            mLogger.warn(e);
-        }
-        return text;
+        return lookInFolders(str, entry.getWebsite().getBookmarkFolders());
     }
     
     
     /**
-     * Recursively travel down Folder tree, attempting
-     * to match up Bookmarks in each Folder.
+     * Travel given collection of folders, attempting to match up Bookmarks in each one.
      *
-     * @param text
-     * @param folders
-     * @return
+     * @param text blog entry text
+     * @param folders list of bookmark folders to match against
+     * @return text with hyperlinks to blogroll items added
      */
-    private String lookInFolders(String text, Collection folders) {
-        
-        Iterator it = folders.iterator();
-        while (it.hasNext()) {
-            WeblogBookmarkFolder folder = (WeblogBookmarkFolder)it.next();
+    private String lookInFolders(String text, Collection<WeblogBookmarkFolder> folders) {
+        for (WeblogBookmarkFolder folder: folders) {
             text = matchBookmarks(text, folder);
-            
-            if (!folder.getFolders().isEmpty()) {
-                lookInFolders(text, folder.getFolders());
-            }
         }
-        
         return text;
     }
     
     
-    private String matchBookmarks(String text,WeblogBookmarkFolder folder) {
-        Iterator bookmarks = folder.getBookmarks().iterator();
+    private String matchBookmarks(String text, WeblogBookmarkFolder folder) {
         String workingText = text;
-        while (bookmarks.hasNext()) {
-            WeblogBookmark bookmark = (WeblogBookmark)bookmarks.next();
+        for (WeblogBookmark bookmark : folder.getBookmarks()) {
             String bkDescription = bookmark.getDescription();
             if (bkDescription == null) {
                 bkDescription = "";
@@ -131,19 +106,18 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
                 StringBuffer textBuf = new StringBuffer(workingText.length());
                 int inLink = 0;
                 while (m.find()) {
+                    // if m.group(1) is null, self-closed anchor tag <a  ... /> so ignore
                     if (m.group(1) != null) {
-                        // self-closed anchor tag <a  ... /> -- ignore
-                    } else if (m.group(2) != null) {
-                        // matched opening anchor tag <a ...>
-                        inLink++;
-                    } else if (m.group(3) != null) {
-                        // closing anchor tag </a>, but ignore nonmatching ones
-                        if (inLink > 0) {
-                            inLink--;
-                        }
-                    } else if (m.group(4) != null) {
-                        // matched the bookmark -- replace, but only if not within a link tag.
-                        if (inLink == 0) {
+                        if (m.group(2) != null) {
+                            // matched opening anchor tag <a ...>
+                            inLink++;
+                        } else if (m.group(3) != null) {
+                            // closing anchor tag </a>, but ignore nonmatching ones
+                            if (inLink > 0) {
+                                inLink--;
+                            }
+                        } else if (m.group(4) != null && inLink == 0) {
+                            // matched the bookmark -- replace, but only if not within a link tag.
                             m.appendReplacement(textBuf, bookmarkLink);
                         }
                     }

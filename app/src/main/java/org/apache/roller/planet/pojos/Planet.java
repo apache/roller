@@ -25,13 +25,13 @@ import java.util.TreeSet;
 /**
  * A Roller "Planet".
  */
-public class Planet implements Comparable {
+public class Planet implements Comparable<Planet> {
     
     private String id = UUIDGenerator.generateUUID();
     private String handle = null;
     private String title = null;
     private String description = null;
-    private Set groups = new TreeSet();
+    private Set<PlanetGroup> groups = new TreeSet<PlanetGroup>();
     
     
     public Planet() {
@@ -48,8 +48,7 @@ public class Planet implements Comparable {
     /**
      * For comparing planets and sorting, ordered by Title.
      */
-    public int compareTo(Object o) {
-        Planet other = (Planet) o;
+    public int compareTo(Planet other) {
         return getTitle().compareTo(other.getTitle());
     }
     
@@ -85,11 +84,11 @@ public class Planet implements Comparable {
         this.description = description;
     }
 
-    public Set getGroups() {
+    public Set<PlanetGroup> getGroups() {
         return groups;
     }
 
-    public void setGroups(Set groups) {
+    public void setGroups(Set<PlanetGroup> groups) {
         this.groups = groups;
     }
     

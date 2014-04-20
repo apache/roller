@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.runnable;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
@@ -29,6 +28,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 
@@ -53,7 +53,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
     private int interval = 1;
     
     // lease time given to task lock, default is 30 minutes
-    private int leaseTime = 30;
+    private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
     
 
     public String getClientId() {
@@ -138,48 +138,29 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             log.debug("looking up scheduled entries older than "+now);
             
             // get all published entries older than current time
-            List scheduledEntries = wMgr.getWeblogEntries(
-                    
-                    null,   // website
-                    null,   // user
-                    null,   // startDate
-                    now,    // endDate
-                    null,   // catName
-                    null,WeblogEntry.SCHEDULED, // status
-                    null,   // text
-                    null,   // sortBy
-                    null,   // sortOrder
-                    null,   // locale
-                    0, -1); // offset, length
-                    
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setEndDate(now);
+            wesc.setStatus(WeblogEntry.SCHEDULED);
+            List<WeblogEntry> scheduledEntries = wMgr.getWeblogEntries(wesc);
             log.debug("promoting "+scheduledEntries.size()+" entries to PUBLISHED state");
             
-            WeblogEntry entry = null;
-            Iterator it = scheduledEntries.iterator();
-            while(it.hasNext()) {
-                entry = (WeblogEntry) it.next();
-                
-                // update status to PUBLISHED and save
+            for (WeblogEntry entry : scheduledEntries) {
                 entry.setStatus(WeblogEntry.PUBLISHED);
                 wMgr.saveWeblogEntry(entry);
             }
-            
+
             // commit the changes
             WebloggerFactory.getWeblogger().flush();
             
             // take a second pass to trigger reindexing and cache invalidations
             // this is because we need the updated entries flushed first
-            it = scheduledEntries.iterator();
-            while(it.hasNext()) {
-                entry = (WeblogEntry) it.next();
-                
+            for (WeblogEntry entry : scheduledEntries) {
                 // trigger a cache invalidation
                 CacheManager.invalidate(entry);
-                
                 // trigger search index on entry
                 searchMgr.addEntryReIndexOperation(entry);
             }
-            
+
         } catch (WebloggerException e) {
             log.error("Error getting scheduled entries", e);
         } catch(Exception e) {

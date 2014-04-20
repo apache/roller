@@ -24,9 +24,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -106,7 +107,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
         TaskScheduler scheduler = new TaskScheduler(webloggerTasks);
         
         // start scheduler thread, but only if it's not already running
-        if (schedulerThread == null && scheduler != null) {
+        if (schedulerThread == null) {
             LOG.debug("Starting scheduler thread");
             schedulerThread = new Thread(scheduler, "Roller Weblogger Task Scheduler");
             // set thread priority between MAX and NORM so we get slightly preferential treatment
@@ -118,7 +119,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     
     public void executeInBackground(Runnable runnable)
             throws InterruptedException {
-        Future task = serviceScheduler.submit(runnable);
+        serviceScheduler.submit(runnable);
     }
     
     
@@ -130,7 +131,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
         // thread, here we can add a little code here to loop until it realizes 
         // the task is done
         while(!task.isDone()) {
-            Thread.sleep(500);
+            Thread.sleep(RollerConstants.HALF_SEC_IN_MS);
         }
     }
     

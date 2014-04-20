@@ -22,9 +22,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 
 /**
@@ -32,7 +30,6 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
  * Roller. See also: ValidateSalt filter.
  */
 public class LoadSaltFilter implements Filter {
-    private static Log log = LogFactory.getLog(LoadSaltFilter.class);
 
     //@Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

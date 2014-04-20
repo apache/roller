@@ -140,6 +140,15 @@ public class TemplateRemove extends UIAction {
 
 		return "confirm";
 	}
+	
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return CANCEL;
+    }
 
 	public String getRemoveId() {
 		return removeId;

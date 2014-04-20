@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.pojos.wrapper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -75,45 +74,15 @@ public final class WeblogCategoryWrapper {
     public String getImage() {
         return this.pojo.getImage();
     }
-    
-    
-    public String getPath() {
-        return this.pojo.getPath();
-    }
-    
-    
+
     public WeblogWrapper getWebsite() {
-        return WeblogWrapper.wrap(this.pojo.getWebsite(), urlStrategy);
+        return WeblogWrapper.wrap(this.pojo.getWeblog(), urlStrategy);
     }
-    
-    
-    public WeblogCategoryWrapper getParent() {
-        return WeblogCategoryWrapper.wrap(this.pojo.getParent(), urlStrategy);
-    }
-    
-    
-    public List getWeblogCategories() {
-        Set initialCollection = this.pojo.getWeblogCategories();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next(), urlStrategy));
-            i++;
-        }
-        
-        return wrappedCollection;
-    }
-    
-    
-    public List retrieveWeblogEntries(boolean subcats)
+
+    public List retrieveWeblogEntries(boolean publishedOnly)
             throws WebloggerException {
         
-        List initialCollection = this.pojo.retrieveWeblogEntries(subcats);
+        List initialCollection = this.pojo.retrieveWeblogEntries(publishedOnly);
         
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
@@ -127,12 +96,6 @@ public final class WeblogCategoryWrapper {
         }
         
         return wrappedCollection;
-    }
-    
-    
-    // TODO: this method doesn't work and propably doesn't need to be here anyways?
-    public boolean descendentOf(WeblogCategory ancestor) {
-        return this.pojo.descendentOf(ancestor);
     }
     
     

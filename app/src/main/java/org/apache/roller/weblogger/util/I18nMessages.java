@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A utility class for handling i18n messaging.
  */
-public class I18nMessages {
+public final class I18nMessages {
     
     private static final Log LOG = LogFactory.getLog(I18nMessages.class);
     
@@ -68,7 +68,7 @@ public class I18nMessages {
         LOG.debug("request for messages in locale = " + locale);
         
         // check if we already have a message utils created for that locale
-        I18nMessages messages = messagesMap.get(locale);
+        I18nMessages messages = messagesMap.get(I18nUtils.toLocale(locale));
         
         // if no utils for that language yet then construct
         if(messages == null) {
@@ -166,7 +166,7 @@ public class I18nMessages {
 	 * @param key
 	 *            the key
 	 */
-	public static final void reloadBundle(Locale key) {
+	public static void reloadBundle(Locale key) {
 
 		try {
 
