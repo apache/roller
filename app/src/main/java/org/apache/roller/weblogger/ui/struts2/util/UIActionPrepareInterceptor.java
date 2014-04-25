@@ -32,44 +32,48 @@ import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
  */
 public class UIActionPrepareInterceptor extends MethodFilterInterceptor {
 
-	private static final long serialVersionUID = 7770184756145702592L;
-	private static Log log = LogFactory
-			.getLog(UIActionPrepareInterceptor.class);
+    private static final long serialVersionUID = 7770184756145702592L;
+    private static Log log = LogFactory
+            .getLog(UIActionPrepareInterceptor.class);
 
-	public String doIntercept(ActionInvocation invocation) throws Exception {
+    public String doIntercept(ActionInvocation invocation) throws Exception {
 
-		log.debug("Entering UIActionPrepareInterceptor");
+        if (log.isDebugEnabled()) {
+            log.debug("Entering UIActionPrepareInterceptor");
+        }
 
-		final Object action = invocation.getAction();
-		//final ActionContext context = invocation.getInvocationContext();
+        final Object action = invocation.getAction();
+        // final ActionContext context = invocation.getInvocationContext();
 
-		// is this one of our own UIAction classes?
-		if (action instanceof UIActionPreparable) {
+        // is this one of our own UIAction classes?
+        if (action instanceof UIActionPreparable) {
 
-			log.debug("action is UIActionPreparable, calling myPrepare() method");
+            if (log.isDebugEnabled()) {
+                log.debug("action is UIActionPreparable, calling myPrepare() method");
+            }
 
-			// The EntryAdd->EntryEdit chain is the one place where we need
-			// to pass a parameter along the chain, thus this somewhat ugly hack
-			if (invocation.getStack().getRoot().size() > 1) {
-				Object action0 = invocation.getStack().getRoot().get(0);
-				Object action1 = invocation.getStack().getRoot().get(1);
-				if (action0 instanceof EntryEdit && action1 instanceof EntryAdd) {
-					EntryEdit editAction = (EntryEdit) action0;
-					EntryAdd addAction = (EntryAdd) action1;
-					editAction.getBean().setId(addAction.getBean().getId());
-				} else if (action0 instanceof EntryAdd
-						&& action1 instanceof EntryAddWithMediaFile) {
-					EntryAdd addAction = (EntryAdd) action0;
-					EntryAddWithMediaFile mediaAction = (EntryAddWithMediaFile) action1;
-					addAction.setBean(mediaAction.getBean());
-				}
-			}
+            // The EntryAdd->EntryEdit chain is the one place where we need
+            // to pass a parameter along the chain, thus this somewhat ugly hack
+            if (invocation.getStack().getRoot().size() > 1) {
+                Object action0 = invocation.getStack().getRoot().get(0);
+                Object action1 = invocation.getStack().getRoot().get(1);
+                if (action0 instanceof EntryEdit && action1 instanceof EntryAdd) {
+                    EntryEdit editAction = (EntryEdit) action0;
+                    EntryAdd addAction = (EntryAdd) action1;
+                    editAction.getBean().setId(addAction.getBean().getId());
+                } else if (action0 instanceof EntryAdd
+                        && action1 instanceof EntryAddWithMediaFile) {
+                    EntryAdd addAction = (EntryAdd) action0;
+                    EntryAddWithMediaFile mediaAction = (EntryAddWithMediaFile) action1;
+                    addAction.setBean(mediaAction.getBean());
+                }
+            }
 
-			UIActionPreparable theAction = (UIActionPreparable) action;
-			theAction.myPrepare();
-		}
+            UIActionPreparable theAction = (UIActionPreparable) action;
+            theAction.myPrepare();
+        }
 
-		return invocation.invoke();
-	}
+        return invocation.invoke();
+    }
 
 }

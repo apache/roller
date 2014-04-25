@@ -47,10 +47,14 @@
                 <interceptor-ref name="conversionError"/>
                 
                 <!-- custom Roller interceptors -->
-                <interceptor-ref name="UIActionInterceptor"/>
-                <interceptor-ref name="UISecurityInterceptor"/>
+                <interceptor-ref name="UIActionInterceptor">
+                    <param name="excludeMethods">cancel</param>
+                </interceptor-ref>
+                <interceptor-ref name="UISecurityInterceptor">
+                    <param name="excludeMethods">cancel</param>
+                </interceptor-ref>
                 <interceptor-ref name="UIActionPrepareInterceptor">
-                    <param name="excludeMethods">input,back,cancel,browse</param>
+                    <param name="excludeMethods">cancel</param>
                 </interceptor-ref>
                 
                 <!-- validation interceptors, MUST come after our custom interceptors -->
