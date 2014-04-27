@@ -15,7 +15,7 @@
     <name>Roller</name>
     <description>
         Roller is an open source blog server built with open source Java
-        libraries including Spring, Struts2, Velocity and Commons.
+        libraries including Struts2, Velocity, ROME and Guice.
     </description>
     <url>http://roller.apache.org</url>
     <inceptionYear>2002</inceptionYear>

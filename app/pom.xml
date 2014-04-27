@@ -643,7 +643,7 @@
 
     </build>
 
-    <!-- Temporary solution until ROME gets unto Maven Central -->
+    <!-- Temporary solution until ROME 1.5 gets unto Maven Central -->
 	<repositories>
 		<repository>
 			<id>local-dependencies</id>

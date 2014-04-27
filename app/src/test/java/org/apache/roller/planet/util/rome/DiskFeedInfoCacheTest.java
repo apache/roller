@@ -21,8 +21,8 @@ import java.net.URL;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.rometools.fetcher.impl.SyndFeedInfo;
-import org.rometools.fetcher.impl.DiskFeedInfoCache;
+import com.rometools.fetcher.impl.SyndFeedInfo;
+import com.rometools.fetcher.impl.DiskFeedInfoCache;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
 

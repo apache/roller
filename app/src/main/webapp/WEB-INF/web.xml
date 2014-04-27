@@ -263,7 +263,7 @@
 
     <servlet>
         <servlet-name>AtomServlet</servlet-name>
-        <servlet-class>org.rometools.propono.atom.server.AtomServlet</servlet-class>
+        <servlet-class>com.rometools.propono.atom.server.AtomServlet</servlet-class>
     </servlet>
 
     <servlet>

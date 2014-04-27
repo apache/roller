@@ -25,12 +25,12 @@ import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.feed.atom.Person;
 import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.feed.synd.SyndPerson;
-import org.rometools.propono.atom.common.rome.AppModule;
-import org.rometools.propono.atom.common.rome.AppModuleImpl;
-import org.rometools.propono.atom.server.AtomException;
-import org.rometools.propono.atom.server.AtomNotAuthorizedException;
-import org.rometools.propono.atom.server.AtomNotFoundException;
-import org.rometools.propono.atom.server.AtomRequest;
+import com.rometools.propono.atom.common.rome.AppModule;
+import com.rometools.propono.atom.common.rome.AppModuleImpl;
+import com.rometools.propono.atom.server.AtomException;
+import com.rometools.propono.atom.server.AtomNotAuthorizedException;
+import com.rometools.propono.atom.server.AtomNotFoundException;
+import com.rometools.propono.atom.server.AtomRequest;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

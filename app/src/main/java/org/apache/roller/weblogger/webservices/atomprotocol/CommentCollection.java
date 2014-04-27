@@ -19,8 +19,8 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Feed;
-import org.rometools.propono.atom.server.AtomException;
-import org.rometools.propono.atom.server.AtomRequest;
+import com.rometools.propono.atom.server.AtomException;
+import com.rometools.propono.atom.server.AtomRequest;
 
 
 /**

@@ -18,14 +18,14 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import org.rometools.propono.atom.server.AtomHandlerFactory;
-import org.rometools.propono.atom.server.AtomHandler;
+import com.rometools.propono.atom.server.AtomHandlerFactory;
+import com.rometools.propono.atom.server.AtomHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Extends {@link org.rometools.propono.atom.server.AtomHandlerFactory} to create and return 
- * {@link org.rometools.propono.atom.server.impl.FileBasedAtomHandler}.
+ * Extends {@link com.rometools.propono.atom.server.AtomHandlerFactory} to create and return 
+ * {@link com.rometools.propono.atom.server.impl.FileBasedAtomHandler}.
  */
 public class RollerAtomHandlerFactory extends AtomHandlerFactory {
     
