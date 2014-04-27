@@ -263,7 +263,7 @@
 
     <servlet>
         <servlet-name>AtomServlet</servlet-name>
-        <servlet-class>com.sun.syndication.propono.atom.server.AtomServlet</servlet-class>
+        <servlet-class>org.rometools.propono.atom.server.AtomServlet</servlet-class>
     </servlet>
 
     <servlet>

@@ -100,8 +100,7 @@ public class RollerAtomService extends AtomService {
                     }
                     entryCol.addCategories(cats);
 
-                    // Add tags as free-form categories using scheme that points
-                    // to site because tags can be considered site-wide
+                    // Indicte that free form categories are allowed
                     Categories tags = new Categories();
                     tags.setFixed(false);
                     entryCol.addCategories(tags);
