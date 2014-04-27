@@ -43,11 +43,14 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Test media file related business operations.
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MediaFileTest extends TestCase {
 
     public static Log log = LogFactory.getLog(MediaFileTest.class);
