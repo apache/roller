@@ -83,7 +83,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	private Map<String, Theme> themes = null;
 
 	// list of available types for templates
-	private static ArrayList<String> typeList = new ArrayList<String>();
+	private static List<String> typeList = new ArrayList<String>();
 
 	@com.google.inject.Inject
 	protected ThemeManagerImpl(Weblogger roller) {
@@ -472,7 +472,7 @@ public class ThemeManagerImpl implements ThemeManager {
         ThemeManagerImpl.getTypesList().add("mobile");
 	}
 
-	public static ArrayList<String> getTypesList() {
+	public static List<String> getTypesList() {
 		return typeList;
 	}
 

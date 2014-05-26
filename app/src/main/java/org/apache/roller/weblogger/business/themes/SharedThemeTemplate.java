@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -47,7 +48,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private String type = null;
 
     //hash map to cache template Code objects parsed
-    private HashMap<String, TemplateCode> templateCodeHashMap = new HashMap<String, TemplateCode>();
+    private Map<String, TemplateCode> templateCodeHashMap = new HashMap<String, TemplateCode>();
     
     
     public SharedThemeTemplate() {}

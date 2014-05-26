@@ -45,7 +45,7 @@ public final class IndexUtil {
      * 
      * @return Lucene search term
      */
-    public static final Term getTerm(String field, String input) {
+    public static Term getTerm(String field, String input) {
 
         if (input == null || field == null) {
             return null;

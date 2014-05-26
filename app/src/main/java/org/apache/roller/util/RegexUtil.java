@@ -20,6 +20,7 @@ package org.apache.roller.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.codec.binary.Hex;
@@ -80,10 +81,10 @@ public final class RegexUtil {
      * @param pattern The Pattern to use.
      * @param match The String to match against.
      * @param group The group number to return in case of a match.
-     * @return
+     * @return List of matched groups from the pattern.
      */
-    public static ArrayList getMatches(Pattern pattern, String match, int group) {
-        ArrayList matches = new ArrayList();
+    public static List<String> getMatches(Pattern pattern, String match, int group) {
+        List<String> matches = new ArrayList<String>();
         Matcher matcher = pattern.matcher(match);
         while (matcher.find()) {
             matches.add( matcher.group(group) );

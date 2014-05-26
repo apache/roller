@@ -52,7 +52,7 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
 /**
  * Cache for site-wide weblog content.
  */
-public class SiteWideCache implements CacheHandler {
+public final class SiteWideCache implements CacheHandler {
     
     private static Log log = LogFactory.getLog(SiteWideCache.class);
     
@@ -66,8 +66,7 @@ public class SiteWideCache implements CacheHandler {
     
     // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
-    private long timeout = RollerConstants.FIFTEEN_MIN_IN_MS;
-    
+
     // reference to our singleton instance
     private static SiteWideCache singletonInstance = new SiteWideCache();
     
@@ -169,7 +168,7 @@ public class SiteWideCache implements CacheHandler {
         // still null, we need to get a fresh value
         if(lastModified == null) {
             lastModified = new Date();
-            this.lastUpdateTime = new ExpiringCacheEntry(lastModified, this.timeout);
+            this.lastUpdateTime = new ExpiringCacheEntry(lastModified, RollerConstants.FIFTEEN_MIN_IN_MS);
         }
         
         return lastModified;
@@ -287,7 +286,7 @@ public class SiteWideCache implements CacheHandler {
         
         StringBuilder key = new StringBuilder();
         
-        key.append(this.CACHE_ID).append(":");
+        key.append(CACHE_ID).append(":");
         key.append("feed/");
         key.append(feedRequest.getWeblogHandle());
         

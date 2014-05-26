@@ -66,7 +66,7 @@ public class SearchResultsModel extends PageModel {
 	private URLStrategy urlStrategy = null;
 
 	// the actual search results mapped by Day -> Set of entries
-	private TreeMap<Date, TreeSet<WeblogEntryWrapper>> results
+	private Map<Date, TreeSet<WeblogEntryWrapper>> results
             = new TreeMap<Date, TreeSet<WeblogEntryWrapper>>(new ReverseComparator());
 
 	// the pager used by the 3.0+ rendering system
@@ -270,7 +270,7 @@ public class SearchResultsModel extends PageModel {
 		return limit;
 	}
 
-	public TreeMap getResults() {
+	public Map getResults() {
 		return results;
 	}
 

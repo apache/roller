@@ -53,7 +53,7 @@ public class RollerUserDetailsService implements UserDetailsService {
                 }
                 String name;
                 String password;
-                ArrayList<SimpleGrantedAuthority> authorities;
+                List<SimpleGrantedAuthority> authorities;
                 
                 // We are not throwing UsernameNotFound exception in case of 
                 // openid authentication in order to receive OpenID Simple Registration (SREG)
@@ -81,7 +81,7 @@ public class RollerUserDetailsService implements UserDetailsService {
                 if (userData == null) {
                     throw new UsernameNotFoundException("ERROR no user: " + userName);
                 }
-                ArrayList<SimpleGrantedAuthority> authorities =  getAuthorities(userData, umgr);
+                List<SimpleGrantedAuthority> authorities =  getAuthorities(userData, umgr);
                 return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
                         true, true, true, true, authorities);
             }            
@@ -92,9 +92,9 @@ public class RollerUserDetailsService implements UserDetailsService {
 
     }
         
-     private ArrayList<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {
+     private List<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {
          List<String> roles = umgr.getRoles(userData);
-         ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(roles.size());
+         List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(roles.size());
          for (String role : roles) {
              authorities.add(new SimpleGrantedAuthority(role));
          }

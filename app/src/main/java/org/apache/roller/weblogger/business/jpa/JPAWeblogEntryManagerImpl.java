@@ -66,7 +66,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
-    private HashMap<String, String> entryAnchorToIdMap = new HashMap<String, String>();
+    private Map<String, String> entryAnchorToIdMap = new HashMap<String, String>();
     
     /* inline creation of reverse comparator, anonymous inner class */
     private static final Comparator REVERSE_COMPARATOR = new ReverseComparator();
