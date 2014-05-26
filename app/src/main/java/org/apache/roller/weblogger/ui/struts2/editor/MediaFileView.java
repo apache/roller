@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryC
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -75,6 +76,9 @@ public class MediaFileView extends MediaFileBase {
 
     // Path of new directory to be created.
     private String newDirectoryPath;
+
+    // a new directory the user wishes to view
+    private String viewDirectoryId = null;
 
     private MediaFileSearchBean bean = new MediaFileSearchBean();
 
@@ -120,7 +124,7 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
-     * Create a new directory by name under current directory
+     * Create a new directory by name.  All folders placed at the root.
      */
     public String createNewDirectory() {
         boolean dirCreated = false;
@@ -132,7 +136,7 @@ public class MediaFileView extends MediaFileBase {
             try {
                 log.debug("Creating new directory - " + this.newDirectoryName);
                 MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-                MediaFileDirectory parentDirectory = manager.getMediaFileDirectory(this.directoryId);
+                MediaFileDirectory parentDirectory = manager.getMediaFileRootDirectory(getActionWeblog());
                 manager.createMediaFileDirectory(parentDirectory, this.newDirectoryName);
                 // flush changes
                 WebloggerFactory.getWeblogger().flush();
@@ -223,6 +227,22 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
+     * View the contents of another Media folder.
+     */
+    public String view() {
+        try {
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            if (!StringUtils.isEmpty(viewDirectoryId)) {
+                setDirectoryId(viewDirectoryId);
+                setCurrentDirectory(manager.getMediaFileDirectory(viewDirectoryId));
+            }
+        } catch (WebloggerException ex) {
+            log.error("Error looking up directory", ex);
+        }
+        return execute();
+    }
+
+    /**
      * Save a media file.
      *
      * @return String The result of the action.
@@ -295,6 +315,43 @@ public class MediaFileView extends MediaFileBase {
         doDeleteMediaFile();
         return execute();
     }
+
+    /**
+     * Delete folder
+     */
+    public String deleteFolder() {
+
+        try {
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            if (directoryId != null) {
+                log.debug("Deleting media file folder - " + directoryId + " (" + directoryPath + ")");
+                MediaFileDirectory mediaFileDir = manager.getMediaFileDirectory(directoryId);
+                mediaFileDir.getParent().removeChildDirectory(mediaFileDir);
+                manager.removeMediaFileDirectory(mediaFileDir);
+                refreshAllDirectories();
+                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(this.getActionWeblog());
+
+                // flush changes
+                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.getWeblogger().release();
+                addMessage("mediaFile.deleteFolder.success");
+
+                // notify caches
+                CacheManager.invalidate(getActionWeblog());
+
+                // re-route to default folder
+                mediaFileDir = manager.getMediaFileRootDirectory(getActionWeblog());
+                setDirectoryId(mediaFileDir.getId());
+                setDirectoryPath(mediaFileDir.getPath());
+            } else {
+                log.error("(System error) No directory ID provided for media file folder delete.");
+            }
+        } catch (WebloggerException ex) {
+            log.error("Error deleting folder", ex);
+        }
+        return execute();
+    }
+
 
     /**
      * Include selected media file in gallery
@@ -420,4 +477,13 @@ public class MediaFileView extends MediaFileBase {
     public void setNewDirectoryPath(String newDirectoryPath) {
         this.newDirectoryPath = newDirectoryPath;
     }
+
+    public String getViewDirectoryId() {
+        return viewDirectoryId;
+    }
+
+    public void setViewDirectoryId(String viewDirectoryId) {
+        this.viewDirectoryId = viewDirectoryId;
+    }
+
 }

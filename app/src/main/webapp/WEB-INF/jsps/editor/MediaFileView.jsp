@@ -68,15 +68,39 @@
 
 
 <script type="text/javascript">
+    toggleState = 'Off'
 
     function onSelectDirectory(id) {
         window.location = "<s:url action="mediaFileView" />?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
+    }
+
+    function onToggle() {
+        if (toggleState == 'Off') {
+            toggleState = 'On';
+            toggleFunction(true, 'selectedMediaFiles');
+            $("#deleteButton").attr('disabled',false)
+            $("#moveButton").attr('disabled',false)
+            $("#moveTargetMenu").attr('disabled',false)
+        } else {
+            toggleState = 'Off';
+            toggleFunction(false, 'selectedMediaFiles');
+            $("#deleteButton").attr('disabled',true)
+            $("#moveButton").attr('disabled',true)
+            $("#moveTargetMenu").attr('disabled',true)
+        }
     }
 
     function onDeleteSelected() {
         if ( confirm("<s:text name='mediaFile.delete.confirm' />") ) {
             document.mediaFileViewForm.action='<s:url action="mediaFileView!deleteSelected" />';
             document.mediaFileViewForm.submit();
+        }
+    }
+
+    function onDeleteFolder() {
+        if (confirm("<s:text name='mediaFile.deleteFolder.confirm' />")) {
+            document.bookmarks.action='<s:url action="mediaFileView!deleteFolder" />';
+            document.bookmarks.submit();
         }
     }
 
@@ -295,8 +319,7 @@
     <input type="hidden" name="mediaFileId" value="" />
 
     <div class="control">
-
-        <span style="padding-left:20px">
+        <span style="padding-left:7px">
             <s:text name="mediaFileView.sortby" />
             <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key"
                   listValue="value"
@@ -304,17 +327,16 @@
         </span>
 
         <span style="float:right">
-            <input id="deleteButton" type="button" style="padding-right:20px"
-               value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
+            <s:if test="!allDirectories.isEmpty">
+                <%-- View button --%>
+                <s:submit type="button" action="mediaFileView!view" key="mediaFileView.viewFolder" />
 
-            <input id="moveButton" type="button" style="padding-left:20px"
-               value=<s:text name="mediaFileView.moveSelected" /> onclick="onMoveSelected()" />
+                <%-- Folder to View combo-box --%>
+                <s:select name="viewDirectoryId" list="allDirectories" listKey="id" listValue="path" />
 
-            <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
+            </s:if>
         </span>
-
     </div>
-
 
     <%-- ***************************************************************** --%>
 
@@ -339,32 +361,11 @@
 
                 <%-- NOT SEARCH RESULTS --%>
 
-                <s:if test="childDirectories.size() == 0 && childFiles.size() ==0">
+                <s:if test="childFiles.size() ==0">
                     <p style="text-align: center"><s:text name="mediaFileView.noFiles"/></p>
                 </s:if>
 
-                <%-- List media directories first --%>
-
-                <s:iterator id="directory" value="childDirectories">
-                    <li class="align-images"
-                            onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
-                        <div class="mediaObject">
-                            <img  border="0" src='<s:url value="/images/folder.png"/>'
-                                  class="dir-image" alt="mediaFolder.png"
-                                  onclick="onSelectDirectory('<s:property value="#directory.id"/>')"/>
-                        </div>
-                        <div class="mediaObjectInfo">
-                            <input type="checkbox"
-                                   name="selectedMediaFileDirectories"
-                                   value="<s:property value="#directory.id"/>"/>
-                            <inut type="hidden" id="mediadiridentity"
-                                   value="<s:property value='#directory.id'/>">
-                            <s:property value="#directory.name" />
-                        </div>
-                    </li>
-                </s:iterator>
-
-                <%-- List media files next --%>
+                <%-- List media files --%>
 
                 <s:iterator id="mediaFile" value="childFiles">
 
@@ -474,6 +475,30 @@
     </div>
 
     <div style="clear:left;"></div>
+
+        <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'root' && !pager)">
+            <div class="control">
+
+                <span style="padding-left:7px">
+                    <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
+                        <input id="toggleButton" type="button"
+                           value='<s:text name="mediaFileView.toggleSelected" />' onclick="onToggle()" />
+
+                        <input id="deleteButton" type="button"
+                           value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
+
+                        <input id="moveButton" type="button"
+                           value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
+
+                        <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
+                    </s:if>
+
+                    <s:if test="currentDirectory.name != 'root' && !pager">
+                        <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
+                    </s:if>
+                </span>
+            </div>
+        </s:if>
 
 </s:form>
 

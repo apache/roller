@@ -77,7 +77,6 @@ function onMove()
     <s:hidden name="folderId" /> 
     
     <s:if test="!allFolders.isEmpty">
-
         <%-- View button --%>
         <s:submit type="button" action="bookmarks!view" key="bookmarksForm.viewFolder" />
 
@@ -85,7 +84,6 @@ function onMove()
         <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" />
 
         <br /><br />
-
     </s:if>
     <table class="rollertable">
 
