@@ -33,7 +33,6 @@ public class MediaFileDirectory {
     String name;
     String description;
     Weblog weblog;
-    String path;
     MediaFileDirectory parent;
     Set<MediaFileDirectory> childDirectories = new HashSet<MediaFileDirectory>();
     Set<MediaFile> mediaFiles = new HashSet<MediaFile>();
@@ -50,15 +49,6 @@ public class MediaFileDirectory {
 
         this.weblog = weblog;
         this.parent = parent;
-
-        // calculate path
-        if (parent == null) {
-            this.path = "/";
-        } else if ("/".equals(parent.getPath())) {
-            this.path = "/" + name;
-        } else {
-            this.path = parent.getPath() + "/" + name;
-        }
     }
 
     public boolean isEmpty() {
@@ -127,18 +117,6 @@ public class MediaFileDirectory {
 
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
-    }
-
-    /**
-     * The full path to this folder in the hierarchy.
-     * 
-     */
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     /**
@@ -266,13 +244,12 @@ public class MediaFileDirectory {
         MediaFileDirectory o = (MediaFileDirectory) other;
         return new EqualsBuilder().append(getId(), o.getId())
                 .append(getName(), o.getName())
-                .append(getDescription(), o.getDescription())
-                .append(getPath(), o.getPath()).isEquals();
+                .append(getDescription(), o.getDescription()).isEquals();
     }
 
     public int hashCode() {
         return new HashCodeBuilder().append(getId()).append(getName())
-                .append(getDescription()).append(getPath()).toHashCode();
+                .append(getDescription()).toHashCode();
     }
 
 }

@@ -61,7 +61,7 @@
 
 <%-- Subtitle and folder path --%>
 
-<s:if test='currentDirectory.path.equals("/")'>
+<s:if test='currentDirectory.name.equals("default")'>
 
     <p class="subtitle">
         <s:text name="mediaFileImageChooser.subtitle" >
@@ -78,10 +78,10 @@
 <s:else>
 
     <p class="subtitle">
-        <s:text name="mediaFileView.path"/> /
+        <s:text name="mediaFileView.folderName"/> /
         <s:iterator id="directory" value="currentDirectoryHierarchy">
             <s:url id="getDirectoryByPathUrl" action="mediaFileImageChooser">
-                <s:param name="directoryPath" value="#directory.key" />
+                <s:param name="directoryName" value="#directory.key" />
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
             </s:url>
             <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.value" /></s:a> /

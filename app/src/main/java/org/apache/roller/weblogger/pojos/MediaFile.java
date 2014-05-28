@@ -318,7 +318,7 @@ public class MediaFile implements Serializable {
     }
 
     public String getPath() {
-        return getDirectory().getPath();
+        return getDirectory().getName();
     }
 
     /**

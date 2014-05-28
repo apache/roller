@@ -204,7 +204,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		WeblogManager wmgr = roller.getWeblogManager();
 		MediaFileManager fileMgr = roller.getMediaFileManager();
 
-		MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
+		MediaFileDirectory root = fileMgr.getDefaultMediaFileDirectory(website);
         if (root == null) {
             log.warn("Weblog " + website.getHandle()
                     + " does not have a root MediaFile directory");
@@ -319,12 +319,12 @@ public class ThemeManagerImpl implements ThemeManager {
 			log.debug("Importing resource " + resource.getPath());
 
 			if (resource.isDirectory()) {
-				MediaFileDirectory mdir = fileMgr.getMediaFileDirectoryByPath(
+				MediaFileDirectory mdir = fileMgr.getMediaFileDirectoryByName(
 						website, resource.getPath());
 				if (mdir == null) {
 					log.debug("    Creating directory: " + resource.getPath());
 					mdir = fileMgr.createMediaFileDirectory(
-							fileMgr.getMediaFileRootDirectory(website),
+							fileMgr.getDefaultMediaFileDirectory(website),
 							resource.getPath());
 					roller.flush();
 				} else {
@@ -339,7 +339,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				String justPath;
 
 				if (resourcePath.indexOf('/') == -1) {
-					mdir = fileMgr.getMediaFileRootDirectory(website);
+					mdir = fileMgr.getDefaultMediaFileDirectory(website);
 					justPath = "";
 					justName = resourcePath;
 
@@ -351,11 +351,11 @@ public class ThemeManagerImpl implements ThemeManager {
                     }
 					justName = resourcePath.substring(resourcePath
 							.lastIndexOf('/') + 1);
-					mdir = fileMgr.getMediaFileDirectoryByPath(website,
+					mdir = fileMgr.getMediaFileDirectoryByName(website,
 							justPath);
 					if (mdir == null) {
 						log.debug("    Creating directory: " + justPath);
-						mdir = fileMgr.createMediaFileDirectoryByPath(website,
+						mdir = fileMgr.createMediaFileDirectoryByName(website,
 								justPath);
 						roller.flush();
 					}

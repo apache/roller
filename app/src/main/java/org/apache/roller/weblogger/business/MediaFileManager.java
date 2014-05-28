@@ -88,9 +88,9 @@ public interface MediaFileManager {
             MediaFileFilter filter) throws WebloggerException;
 
     /**
-     * Create root directory for media files in a weblog.
+     * Create default folder for media files in a weblog.
      */
-    MediaFileDirectory createRootMediaFileDirectory(Weblog weblog)
+    MediaFileDirectory createDefaultMediaFileDirectory(Weblog weblog)
             throws WebloggerException;
 
     /**
@@ -109,8 +109,8 @@ public interface MediaFileManager {
     /**
      * Create a media file directory given its path
      */
-    MediaFileDirectory createMediaFileDirectoryByPath(Weblog weblog,
-            String path) throws WebloggerException;
+    MediaFileDirectory createMediaFileDirectoryByName(Weblog weblog,
+            String name) throws WebloggerException;
 
     /**
      * Get media file directory by id
@@ -121,11 +121,11 @@ public interface MediaFileManager {
     /**
      * Get media file directory by its path
      */
-    MediaFileDirectory getMediaFileDirectoryByPath(Weblog weblog,
-            String path) throws WebloggerException;
+    MediaFileDirectory getMediaFileDirectoryByName(Weblog weblog,
+            String name) throws WebloggerException;
 
     /**
-     * Get media file by path.
+     * Get media file by directory path (single folder + file name).
      */
     MediaFile getMediaFileByPath(Weblog weblog, String path)
             throws WebloggerException;
@@ -144,9 +144,9 @@ public interface MediaFileManager {
             throws WebloggerException;
 
     /**
-     * Get the root directory for media files for the given weblog.
+     * Get the default folder for media files for the given weblog.
      */
-    MediaFileDirectory getMediaFileRootDirectory(Weblog weblog)
+    MediaFileDirectory getDefaultMediaFileDirectory(Weblog weblog)
             throws WebloggerException;
 
     /**
@@ -160,19 +160,6 @@ public interface MediaFileManager {
      */
     void moveMediaFile(MediaFile mediaFile, MediaFileDirectory directory)
             throws WebloggerException;
-
-    /**
-     * Move a set of media files to a new directory.
-     */
-    void moveMediaFileDirectories(
-            Collection<MediaFileDirectory> mediaFilesDir,
-            MediaFileDirectory directory) throws WebloggerException;
-
-    /**
-     * Move one media file to a new directory.
-     */
-    void moveMediaFileDirectory(MediaFileDirectory mediaFileDir,
-            MediaFileDirectory directory) throws WebloggerException;
 
     /**
      * Return recently added media files that are public.

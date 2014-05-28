@@ -30,7 +30,7 @@
                 <img src='<s:url value="/images/image_add.png"/>' border="0"alt="icon" />
                 <s:url id="mediaFileAddURL" action="mediaFileAdd">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    <s:param name="directoryPath" value="%{directoryPath}" />
+                    <s:param name="directoryName" value="%{directoryName}" />
                 </s:url>
                 <a href='<s:property escape="false" value="%{mediaFileAddURL}" />'
                     <s:if test="actionName.equals('mediaFileAdd')">style='font-weight:bold;'</s:if> >

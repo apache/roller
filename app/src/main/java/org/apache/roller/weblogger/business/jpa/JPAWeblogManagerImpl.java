@@ -336,7 +336,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
         }
 
-        roller.getMediaFileManager().createRootMediaFileDirectory(newWeblog);
+        roller.getMediaFileManager().createDefaultMediaFileDirectory(newWeblog);
 
         // flush so that all data up to this point can be available in db
         this.strategy.flush();

@@ -43,7 +43,7 @@ public class MediaFileImageChooser extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileImageChooser.class);
 
     private String directoryId;
-    private String directoryPath;
+    private String directoryName;
 
     private List<MediaFile>          childFiles;
     private MediaFileDirectory       currentDirectory;
@@ -75,11 +75,11 @@ public class MediaFileImageChooser extends MediaFileBase {
             MediaFileDirectory directory;
             if (this.directoryId != null) {
                 directory = manager.getMediaFileDirectory(this.directoryId);
-            } else if (this.directoryPath != null) {
-                directory = manager.getMediaFileDirectoryByPath(getActionWeblog(), this.directoryPath);
+            } else if (this.directoryName != null) {
+                directory = manager.getMediaFileDirectoryByName(getActionWeblog(), this.directoryName);
                 this.directoryId = directory.getId();
             } else {
-                directory = manager.getMediaFileRootDirectory(getActionWeblog());
+                directory = manager.getDefaultMediaFileDirectory(getActionWeblog());
                 this.directoryId = directory.getId();
             }
 
@@ -122,8 +122,7 @@ public class MediaFileImageChooser extends MediaFileBase {
     public List<KeyValueObject> getCurrentDirectoryHierarchy() {
         List<KeyValueObject> directoryHierarchy = new ArrayList<KeyValueObject>();
 
-        directoryHierarchy.add(new KeyValueObject("/", "root"));
-        String fullPath = this.currentDirectory.getPath();
+        String fullPath = "/" + this.currentDirectory.getName();
         if (fullPath.length() > 1) {
             String[] directoryNames = fullPath.substring(1).split("/");
             String dirPath = "";
@@ -150,17 +149,17 @@ public class MediaFileImageChooser extends MediaFileBase {
     }
 
     /**
-     * @return the directoryPath
+     * @return the directory name
      */
-    public String getDirectoryPath() {
-        return directoryPath;
+    public String getDirectoryName() {
+        return directoryName;
     }
 
     /**
-     * @param directoryPath the directoryPath to set
+     * @param directoryName the directoryName to set
      */
-    public void setDirectoryPath(String directoryPath) {
-        this.directoryPath = directoryPath;
+    public void setDirectoryName(String directoryName) {
+        this.directoryName = directoryName;
     }
 
     /**

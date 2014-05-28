@@ -505,8 +505,7 @@ create table roller_mediafiledir (
     name             varchar(255) not null,
     description      varchar(255),
     websiteid        varchar(48) not null,
-    parentid         varchar(48),
-    path             varchar(255)
+    parentid         varchar(48)
 );
 
 
@@ -561,9 +560,6 @@ alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
 
 alter table roller_mediafiledir add constraint mf_websiteid_fk
     foreign key ( websiteid ) references website( id ) $!db.ADDL_FK_PARAMS ;
-
-alter table roller_mediafiledir add constraint mf_parentid_fk
-    foreign key ( parentid ) references roller_mediafiledir( id )  $!db.ADDL_FK_PARAMS ;
 
 -- newsfeed
 

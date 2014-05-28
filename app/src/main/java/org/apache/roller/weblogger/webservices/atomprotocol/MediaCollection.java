@@ -123,7 +123,7 @@ public class MediaCollection {
                     }
 
                     MediaFileDirectory mdir =
-                        fileMgr.getMediaFileDirectoryByPath(website, justPath);
+                        fileMgr.getMediaFileDirectoryByName(website, justPath);
 
                     if (mdir.hasMediaFile(fileName)) {
                         throw new AtomException("Duplicate file name");
@@ -279,13 +279,13 @@ public class MediaCollection {
             feed.setAlternateLinks(Collections.singletonList(link));
 
             MediaFileManager fmgr = roller.getMediaFileManager();
-            MediaFileDirectory dir = null;
+            MediaFileDirectory dir;
             if (StringUtils.isNotEmpty(path)) {
-                log.debug("Fetching resource collection from weblog " + handle + " at path: " + path);
-                dir = fmgr.getMediaFileDirectoryByPath(website, path);
+                log.debug("Fetching resource collection from weblog " + handle + " in folder: " + path);
+                dir = fmgr.getMediaFileDirectoryByName(website, path);
             } else {
                 log.debug("Fetching root resource collection from weblog " + handle);
-                dir = fmgr.getMediaFileRootDirectory(website);
+                dir = fmgr.getDefaultMediaFileDirectory(website);
             }
             Set<MediaFile> files = dir.getMediaFiles();
 
@@ -570,7 +570,7 @@ public class MediaCollection {
             throw new IllegalArgumentException("contentType cannot be null");
         }
         
-        String fileName = null;
+        String fileName;
         
         // Determine the extension based on the contentType. This is a hack.
         // The info we need to map from contentType to file extension is in 

@@ -61,7 +61,7 @@ public class MediaFileAdd extends MediaFileBase {
 
     private List<MediaFile> newFiles = new ArrayList<MediaFile>();
 
-    private String directoryPath = null;
+    private String directoryName = null;
 
     public MediaFileAdd() {
         this.actionName = "mediaFileAdd";
@@ -81,19 +81,19 @@ public class MediaFileAdd extends MediaFileBase {
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
 
-            } else if (StringUtils.isNotEmpty(directoryPath)) {
-                setDirectory(mgr.getMediaFileDirectoryByPath(getActionWeblog(),
-                        directoryPath));
+            } else if (StringUtils.isNotEmpty(directoryName)) {
+                setDirectory(mgr.getMediaFileDirectoryByName(getActionWeblog(),
+                        directoryName));
 
             } else {
                 MediaFileDirectory root = mgr
-                        .getMediaFileRootDirectory(getActionWeblog());
+                        .getDefaultMediaFileDirectory(getActionWeblog());
                 if (root == null) {
-                    root = mgr.createRootMediaFileDirectory(getActionWeblog());
+                    root = mgr.createDefaultMediaFileDirectory(getActionWeblog());
                 }
                 setDirectory(root);
             }
-            directoryPath = getDirectory().getPath();
+            directoryName = getDirectory().getName();
             bean.setDirectoryId(getDirectory().getId());
 
         } catch (WebloggerException ex) {
@@ -321,17 +321,17 @@ public class MediaFileAdd extends MediaFileBase {
     }
 
     /**
-     * @return the directoryPath
+     * @return the directoryName
      */
-    public String getDirectoryPath() {
-        return directoryPath;
+    public String getDirectoryName() {
+        return directoryName;
     }
 
     /**
-     * @param directoryPath
-     *            the directoryPath to set
+     * @param directoryName
+     *            the directoryName to set
      */
-    public void setDirectoryPath(String directoryPath) {
-        this.directoryPath = directoryPath;
+    public void setDirectoryName(String directoryName) {
+        this.directoryName = directoryName;
     }
 }

@@ -37,9 +37,19 @@ delete from pingtarget where websiteid is not null;
 #dropIndex("pt_websiteid_fk" "pingtarget")
 #dropColumn("pingtarget", "websiteid")
 
--- Removal of bookmark subfolders and renaming of default folder to 'default'
+-- Removal of bookmark subfolders and renaming of former root folder to 'default'
+-- If a folder with name 'default' already exists, rename it by adding its id to it.
+update folder set name = #concat("name" "id") where name = 'default';
 update folder set name = 'default' where name = 'root' and parentid is null;
 #dropColumn("folder" 'parentid')
 #dropColumn("folder" 'path')
 #dropColumn("folder" "description")
 #dropColumn("bookmark" "weight")
+
+-- Removal of bookmark subfolders and renaming of former root folder to 'default'
+-- If a folder with name 'default' already exists, rename it by adding its id to it.
+update roller_mediafiledir set name = #concat("name" "id") where name = 'default';
+update roller_mediafiledir set name = 'default' where name = 'root' and parentid is null;
+#dropColumn("roller_mediafiledir", "path")
+-- #dropColumn("roller_mediafiledir", "parentid")
+

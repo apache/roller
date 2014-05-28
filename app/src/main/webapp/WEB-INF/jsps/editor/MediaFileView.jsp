@@ -217,7 +217,7 @@
 
 <%-- Subtitle and folder path --%>
 
-<s:if test='currentDirectory.path.equals("/")'>
+<s:if test='currentDirectory.name.equals("default")'>
 
     <p class="subtitle">
         <s:text name="mediaFileView.subtitle" >
@@ -291,11 +291,11 @@
 <s:else>
 
     <p class="subtitle">
-        <s:text name="mediaFileView.path"/> /
+        <s:text name="mediaFileView.name"/> /
         <s:iterator id="directory" value="currentDirectoryHierarchy">
 
             <s:url id="getDirectoryByPathUrl" action="mediaFileView">
-                <s:param name="directoryPath" value="#directory.key" />
+                <s:param name="directoryName" value="#directory.key" />
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
             </s:url>
             <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.value" /></s:a> /
@@ -332,7 +332,7 @@
                 <s:submit type="button" action="mediaFileView!view" key="mediaFileView.viewFolder" />
 
                 <%-- Folder to View combo-box --%>
-                <s:select name="viewDirectoryId" list="allDirectories" listKey="id" listValue="path" />
+                <s:select name="viewDirectoryId" list="allDirectories" listKey="id" listValue="name" />
 
             </s:if>
         </span>
@@ -476,7 +476,7 @@
 
     <div style="clear:left;"></div>
 
-        <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'root' && !pager)">
+        <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'default' && !pager)">
             <div class="control">
 
                 <span style="padding-left:7px">
@@ -490,10 +490,10 @@
                         <input id="moveButton" type="button"
                            value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
 
-                        <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
+                        <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="name" />
                     </s:if>
 
-                    <s:if test="currentDirectory.name != 'root' && !pager">
+                    <s:if test="currentDirectory.name != 'default' && !pager">
                         <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
                     </s:if>
                 </span>

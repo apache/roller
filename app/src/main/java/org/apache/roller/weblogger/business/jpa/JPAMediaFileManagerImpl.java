@@ -105,37 +105,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
-    public void moveMediaFileDirectories(
-            Collection<MediaFileDirectory> mediaFileDirs,
-            MediaFileDirectory targetDir) throws WebloggerException {
-
-        for (MediaFileDirectory mediaFileDir : mediaFileDirs) {
-            // Refresh associated parent for changes
-            strategy.refresh(mediaFileDir.getParent());
-            mediaFileDir.setParent(targetDir);
-            if ("/".equals(targetDir.getPath())) {
-                mediaFileDir.setPath("/" + mediaFileDir.getName());
-            } else {
-                mediaFileDir.setPath(targetDir.getPath() + "/"
-                        + mediaFileDir.getName());
-            }
-            this.strategy.store(mediaFileDir);
-        }
-
-        // Refresh associated parent for changes
-        roller.flush();
-        strategy.refresh(targetDir);
-        if (targetDir.getParent() != null) {
-            strategy.refresh(targetDir.getParent());
-        }
-
-        // update weblog last modified date. date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(targetDir.getWeblog());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void moveMediaFiles(Collection<MediaFile> mediaFiles,
             MediaFileDirectory targetDirectory) throws WebloggerException {
 
@@ -170,14 +139,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public void moveMediaFile(MediaFile mediaFile,
             MediaFileDirectory targetDirectory) throws WebloggerException {
         moveMediaFiles(Arrays.asList(mediaFile), targetDirectory);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void moveMediaFileDirectory(MediaFileDirectory mediaFileDir,
-            MediaFileDirectory targetDirectory) throws WebloggerException {
-        moveMediaFileDirectories(Arrays.asList(mediaFileDir), targetDirectory);
     }
 
     /**
@@ -221,10 +182,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
-    public MediaFileDirectory createMediaFileDirectoryByPath(Weblog weblog,
-            String requestedPath) throws WebloggerException {
+    public MediaFileDirectory createMediaFileDirectoryByName(Weblog weblog,
+            String requestedName) throws WebloggerException {
 
-        String path = requestedPath;
+        String path = requestedName;
         log.debug("Creating dir: " + path);
 
         if (path.startsWith("/")) {
@@ -235,19 +196,19 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             path = path.substring(0, path.length() - 1);
         }
 
-        if (path.equals("")) {
-            // Root cannot be created using this method.
-            // Use createRootMediaFileDirectory instead
-            throw new WebloggerException("Invalid path!");
+        if (path.equals("") || path.equals("default")) {
+            // Default cannot be created using this method.
+            // Use createDefaultMediaFileDirectory instead
+            throw new WebloggerException("Invalid name!");
         }
 
         int lastPathIndex = path.lastIndexOf('/');
 
-        MediaFileDirectory newDirectory = null;
+        MediaFileDirectory newDirectory;
         if (lastPathIndex == -1) {
 
             // Directory needs to be created under root
-            MediaFileDirectory root = getMediaFileRootDirectory(weblog);
+            MediaFileDirectory root = getDefaultMediaFileDirectory(weblog);
 
             if (root.hasDirectory(path)) {
                 throw new WebloggerException("Directory exists");
@@ -260,8 +221,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
             boolean created = false;
 
-            MediaFileDirectory base = getMediaFileRootDirectory(weblog);
-            String token = null;
+            MediaFileDirectory base = getDefaultMediaFileDirectory(weblog);
+            String token;
             String pathpart = "";
             StringTokenizer toker = new StringTokenizer(path, "/");
             while (toker.hasMoreTokens()) {
@@ -271,18 +232,18 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 } else {
                     pathpart += token;
                 }
-                MediaFileDirectory possibleBase = getMediaFileDirectoryByPath(
+                MediaFileDirectory possibleBase = getMediaFileDirectoryByName(
                         weblog, pathpart);
                 if (possibleBase == null) {
                     base = base.createNewDirectory(token);
-                    log.debug("   Created new directory: " + base.getPath());
+                    log.debug("   Created new directory: " + base.getName());
                     created = true;
                     roller.flush();
                 } else {
                     base = possibleBase;
                 }
             }
-            if (!created || !requestedPath.equals(base.getPath())) {
+            if (!created || !requestedName.equals(base.getName())) {
                 throw new WebloggerException("ERROR directory not created");
             }
             newDirectory = base;
@@ -297,12 +258,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
-    public MediaFileDirectory createRootMediaFileDirectory(Weblog weblog)
+    public MediaFileDirectory createDefaultMediaFileDirectory(Weblog weblog)
             throws WebloggerException {
-        MediaFileDirectory rootDirectory = new MediaFileDirectory(null, "root",
-                "root directory", weblog);
-        createMediaFileDirectory(rootDirectory);
-        return rootDirectory;
+        MediaFileDirectory defaultDirectory = new MediaFileDirectory(null, "default",
+                "default directory", weblog);
+        createMediaFileDirectory(defaultDirectory);
+        return defaultDirectory;
     }
 
     /**
@@ -340,7 +301,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                     .getFileContentManager();
             FileContent fc = cmgr.getFileContent(mediaFile.getWeblog(),
                     mediaFile.getId());
-            BufferedImage img = null;
+            BufferedImage img;
 
             img = ImageIO.read(fc.getInputStream());
 
@@ -462,17 +423,17 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
-    public MediaFileDirectory getMediaFileDirectoryByPath(Weblog weblog,
-            String path) throws WebloggerException {
+    public MediaFileDirectory getMediaFileDirectoryByName(Weblog weblog,
+            String name) throws WebloggerException {
 
-        path = !path.startsWith("/") ? "/" + path : path;
+        name = name.startsWith("/") ? name.substring(1) : name;
 
-        log.debug("Looking up weblog|path: " + weblog.getHandle() + "|" + path);
+        log.debug("Looking up weblog|media file directory: " + weblog.getHandle() + "|" + name);
 
         Query q = this.strategy
-                .getNamedQuery("MediaFileDirectory.getByWeblogAndPath");
+                .getNamedQuery("MediaFileDirectory.getByWeblogAndName");
         q.setParameter(1, weblog);
-        q.setParameter(2, path);
+        q.setParameter(2, name);
         try {
             return (MediaFileDirectory) q.getSingleResult();
         } catch (NoResultException e) {
@@ -488,12 +449,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         // get directory
         String fileName = path;
-        MediaFileDirectory mdir = null;
+        MediaFileDirectory mdir;
         int slash = path.lastIndexOf('/');
         if (slash > 0) {
-            mdir = getMediaFileDirectoryByPath(weblog, path.substring(0, slash));
+            mdir = getMediaFileDirectoryByName(weblog, path.substring(0, slash));
         } else {
-            mdir = getMediaFileRootDirectory(weblog);
+            mdir = getDefaultMediaFileDirectory(weblog);
         }
         if (slash != -1) {
             fileName = fileName.substring(slash + 1);
@@ -519,7 +480,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 .getNamedQuery("MediaFile.getByWeblogAndOrigpath");
         q.setParameter(1, weblog);
         q.setParameter(2, origpath);
-        MediaFile mf = null;
+        MediaFile mf;
         try {
             mf = (MediaFile) q.getSingleResult();
         } catch (NoResultException e) {
@@ -545,7 +506,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
-    public MediaFileDirectory getMediaFileRootDirectory(Weblog weblog)
+    public MediaFileDirectory getDefaultMediaFileDirectory(Weblog weblog)
             throws WebloggerException {
         Query q = this.strategy
                 .getNamedQuery("MediaFileDirectory.getByWeblogAndNoParent");
@@ -792,10 +753,10 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                                     // create weblog's mediafile directory if
                                     // needed
                                     MediaFileDirectory root = this
-                                            .getMediaFileRootDirectory(weblog);
+                                            .getDefaultMediaFileDirectory(weblog);
                                     if (root == null) {
                                         root = this
-                                                .createRootMediaFileDirectory(weblog);
+                                                .createDefaultMediaFileDirectory(weblog);
                                         roller.flush();
                                     }
 
@@ -864,7 +825,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
                     } catch (WebloggerException ex) {
                         log.error("ERROR creating directory: "
-                                + newDir.getPath() + "/" + files[i].getName());
+                                + newDir.getName() + "/" + files[i].getName());
                     }
                     upgradeUploadsDir(weblog, user, files[i], subDir);
                 }
@@ -878,10 +839,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
                 } else {
 
-                    String originalPath = ("/".equals(newDir.getPath()) ? ""
-                            : newDir.getPath()) + "/" + files[i].getName();
-                    log.debug("    Upgrade file with original path: "
-                            + originalPath);
+                    String originalPath = "/" + newDir.getName() + "/" + files[i].getName();
+                    log.debug("Upgrade file with original path: " + originalPath);
 
                     MediaFile mf = new MediaFile();
                     try {
@@ -933,12 +892,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             log.debug("Count of files created: " + fileCount);
 
         } catch (WebloggerException ex) {
-            log.error("ERROR flushing changes to dir: " + newDir.getPath(), ex);
+            log.error("ERROR flushing changes to dir: " + newDir.getName(), ex);
         }
     }
 
     public void removeAllFiles(Weblog website) throws WebloggerException {
-        removeMediaFileDirectory(getMediaFileRootDirectory(website));
+        removeMediaFileDirectory(getDefaultMediaFileDirectory(website));
     }
 
     public void removeMediaFileDirectory(MediaFileDirectory dir)

@@ -50,7 +50,7 @@ public class MediaFileView extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileView.class);
 
     private String directoryId;
-    private String directoryPath;
+    private String directoryName;
     private String sortBy;
     private String newDirectoryName;
     
@@ -136,7 +136,7 @@ public class MediaFileView extends MediaFileBase {
             try {
                 log.debug("Creating new directory - " + this.newDirectoryName);
                 MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-                MediaFileDirectory parentDirectory = manager.getMediaFileRootDirectory(getActionWeblog());
+                MediaFileDirectory parentDirectory = manager.getDefaultMediaFileDirectory(getActionWeblog());
                 manager.createMediaFileDirectory(parentDirectory, this.newDirectoryName);
                 // flush changes
                 WebloggerFactory.getWeblogger().flush();
@@ -180,14 +180,14 @@ public class MediaFileView extends MediaFileBase {
             if (StringUtils.isNotEmpty(this.directoryId)) {
                 directory = manager.getMediaFileDirectory(this.directoryId);
 
-            } else if (StringUtils.isNotEmpty(this.directoryPath)) {
-                directory = manager.getMediaFileDirectoryByPath(getActionWeblog(), this.directoryPath);
+            } else if (StringUtils.isNotEmpty(this.directoryName)) {
+                directory = manager.getMediaFileDirectoryByName(getActionWeblog(), this.directoryName);
 
             } else {
-                directory = manager.getMediaFileRootDirectory(getActionWeblog());
+                directory = manager.getDefaultMediaFileDirectory(getActionWeblog());
             }
             this.directoryId = directory.getId();
-            this.directoryPath = directory.getPath();
+            this.directoryName = directory.getName();
 
             this.childDirectories = new ArrayList<MediaFileDirectory>();
             this.childDirectories.addAll(directory.getChildDirectories());
@@ -285,8 +285,7 @@ public class MediaFileView extends MediaFileBase {
     public List<KeyValueObject> getCurrentDirectoryHierarchy() {
         List<KeyValueObject> directoryHierarchy = new ArrayList<KeyValueObject>();
 
-        directoryHierarchy.add(new KeyValueObject("/", "root"));
-        String fullPath = this.currentDirectory.getPath();
+        String fullPath = "/" + this.currentDirectory.getName();
         String dpath = "";
         if (fullPath.length() > 1) {
             String[] directoryNames = fullPath.substring(1).split("/");
@@ -324,7 +323,7 @@ public class MediaFileView extends MediaFileBase {
         try {
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             if (directoryId != null) {
-                log.debug("Deleting media file folder - " + directoryId + " (" + directoryPath + ")");
+                log.debug("Deleting media file folder - " + directoryId + " (" + directoryName + ")");
                 MediaFileDirectory mediaFileDir = manager.getMediaFileDirectory(directoryId);
                 mediaFileDir.getParent().removeChildDirectory(mediaFileDir);
                 manager.removeMediaFileDirectory(mediaFileDir);
@@ -340,9 +339,9 @@ public class MediaFileView extends MediaFileBase {
                 CacheManager.invalidate(getActionWeblog());
 
                 // re-route to default folder
-                mediaFileDir = manager.getMediaFileRootDirectory(getActionWeblog());
+                mediaFileDir = manager.getDefaultMediaFileDirectory(getActionWeblog());
                 setDirectoryId(mediaFileDir.getId());
-                setDirectoryPath(mediaFileDir.getPath());
+                setDirectoryName(mediaFileDir.getName());
             } else {
                 log.error("(System error) No directory ID provided for media file folder delete.");
             }
@@ -411,12 +410,12 @@ public class MediaFileView extends MediaFileBase {
         this.currentDirectory = currentDirectory;
     }
 
-    public String getDirectoryPath() {
-        return directoryPath;
+    public String getDirectoryName() {
+        return directoryName;
     }
 
-    public void setDirectoryPath(String path) {
-        this.directoryPath = path;
+    public void setDirectoryName(String path) {
+        this.directoryName = path;
     }
 
     public String getSortBy() {
