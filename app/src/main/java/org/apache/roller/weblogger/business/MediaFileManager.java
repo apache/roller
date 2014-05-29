@@ -94,22 +94,15 @@ public interface MediaFileManager {
             throws WebloggerException;
 
     /**
-     * Create a media file directory with the given name
-     */
-    MediaFileDirectory createMediaFileDirectory(
-            MediaFileDirectory parentDirectory, String newDirName)
-            throws WebloggerException;
-
-    /**
      * Create a media file directory
      */
     void createMediaFileDirectory(MediaFileDirectory directory)
             throws WebloggerException;
 
     /**
-     * Create a media file directory given its path
+     * Create a media file directory with a given name.
      */
-    MediaFileDirectory createMediaFileDirectoryByName(Weblog weblog,
+    MediaFileDirectory createMediaFileDirectory(Weblog weblog,
             String name) throws WebloggerException;
 
     /**

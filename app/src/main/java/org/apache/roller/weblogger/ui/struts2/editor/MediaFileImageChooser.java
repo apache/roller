@@ -47,7 +47,7 @@ public class MediaFileImageChooser extends MediaFileBase {
 
     private List<MediaFile>          childFiles;
     private MediaFileDirectory       currentDirectory;
-    private List<MediaFileDirectory> childDirectories;
+
 
     public MediaFileImageChooser() {
         this.actionName = "mediaFileImageChooser";
@@ -83,9 +83,6 @@ public class MediaFileImageChooser extends MediaFileBase {
                 this.directoryId = directory.getId();
             }
 
-            this.childDirectories = new ArrayList<MediaFileDirectory>();
-            this.childDirectories.addAll(directory.getChildDirectories());
-
             this.childFiles = new ArrayList<MediaFile>();
 
             // only add image files
@@ -95,8 +92,6 @@ public class MediaFileImageChooser extends MediaFileBase {
                 }
             }
 
-            Collections.sort(this.childDirectories,
-                    new MediaFileDirectoryComparator(DirectoryComparatorType.NAME));
             Collections.sort(this.childFiles,
                     new MediaFileComparator(MediaFileComparatorType.NAME));
 
@@ -190,17 +185,4 @@ public class MediaFileImageChooser extends MediaFileBase {
         this.currentDirectory = currentDirectory;
     }
 
-    /**
-     * @return the childDirectories
-     */
-    public List<MediaFileDirectory> getChildDirectories() {
-        return childDirectories;
-    }
-
-    /**
-     * @param childDirectories the childDirectories to set
-     */
-    public void setChildDirectories(List<MediaFileDirectory> childDirectories) {
-        this.childDirectories = childDirectories;
-    }
 }

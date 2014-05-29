@@ -323,8 +323,7 @@ public class ThemeManagerImpl implements ThemeManager {
 						website, resource.getPath());
 				if (mdir == null) {
 					log.debug("    Creating directory: " + resource.getPath());
-					mdir = fileMgr.createMediaFileDirectory(
-							fileMgr.getDefaultMediaFileDirectory(website),
+					mdir = fileMgr.createMediaFileDirectory(website,
 							resource.getPath());
 					roller.flush();
 				} else {
@@ -355,7 +354,7 @@ public class ThemeManagerImpl implements ThemeManager {
 							justPath);
 					if (mdir == null) {
 						log.debug("    Creating directory: " + justPath);
-						mdir = fileMgr.createMediaFileDirectoryByName(website,
+						mdir = fileMgr.createMediaFileDirectory(website,
 								justPath);
 						roller.flush();
 					}

@@ -51,5 +51,4 @@ update folder set name = 'default' where name = 'root' and parentid is null;
 update roller_mediafiledir set name = #concat("name" "id") where name = 'default';
 update roller_mediafiledir set name = 'default' where name = 'root' and parentid is null;
 #dropColumn("roller_mediafiledir", "path")
--- #dropColumn("roller_mediafiledir", "parentid")
-
+#dropColumn("roller_mediafiledir", "parentid")

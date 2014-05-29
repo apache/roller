@@ -291,16 +291,7 @@
 <s:else>
 
     <p class="subtitle">
-        <s:text name="mediaFileView.name"/> /
-        <s:iterator id="directory" value="currentDirectoryHierarchy">
-
-            <s:url id="getDirectoryByPathUrl" action="mediaFileView">
-                <s:param name="directoryName" value="#directory.key" />
-                <s:param name="weblog" value="%{actionWeblog.handle}" />
-            </s:url>
-            <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.value" /></s:a> /
-
-        </s:iterator>
+        <s:text name="mediaFileView.name"/>: <s:text name="currentDirectory.name" />
     </p>
     <p class="pagetip">
         <s:text name="mediaFileView.dirPageTip" />
@@ -309,7 +300,7 @@
 </s:else>
 
 
-<s:if test="childFiles || childDirectories || (pager && pager.items.size() > 0)">
+<s:if test="childFiles || (pager && pager.items.size() > 0)">
 
   <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
 	<s:hidden name="salt" />
@@ -492,11 +483,13 @@
 
                         <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="name" />
                     </s:if>
-
-                    <s:if test="currentDirectory.name != 'default' && !pager">
-                        <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
-                    </s:if>
                 </span>
+
+                <s:if test="currentDirectory.name != 'default' && !pager">
+                    <span style="float:right">
+                            <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
+                    </span>
+                </s:if>
             </div>
         </s:if>
 

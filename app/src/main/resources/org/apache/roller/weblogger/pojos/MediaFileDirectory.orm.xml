@@ -9,9 +9,6 @@
         <named-query name="MediaFileDirectory.getByWeblog">
             <query>SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1</query>
         </named-query>
-        <named-query name="MediaFileDirectory.getByWeblogAndNoParent">
-            <query>SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1 AND d.parent IS NULL</query>
-        </named-query>
         <named-query name="MediaFileDirectory.getByWeblogAndName">
             <query>SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1 AND d.name = ?2</query>
         </named-query>
@@ -28,16 +25,6 @@
             <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <many-to-one name="parent" target-entity="org.apache.roller.weblogger.pojos.MediaFileDirectory">
-                <join-column name="parentid" insertable="true" updatable="true" nullable="true"/>
-            </many-to-one>
-            <one-to-many name="childDirectories" mapped-by="parent" target-entity="org.apache.roller.weblogger.pojos.MediaFileDirectory" fetch="LAZY">
-                <order-by>name</order-by>
-                <cascade>
-                    <cascade-persist/>
-                    <cascade-remove/>
-                </cascade>
-            </one-to-many>
             <one-to-many name="mediaFiles" mapped-by="directory" target-entity="org.apache.roller.weblogger.pojos.MediaFile" fetch="LAZY">
                 <order-by>name</order-by>
                 <cascade>

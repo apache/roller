@@ -175,6 +175,12 @@
                     <cascade-remove/>
                 </cascade>
             </one-to-many>
+            <one-to-many name="mediaFileDirectories" target-entity="org.apache.roller.weblogger.pojos.MediaFileDirectory" mapped-by="weblog">
+                <cascade>
+                    <cascade-persist/>
+                    <cascade-remove/>
+                </cascade>
+            </one-to-many>
 			<transient name="theme"/>
 			<transient name="creator"/>
 			<transient name="defaultPage"/>

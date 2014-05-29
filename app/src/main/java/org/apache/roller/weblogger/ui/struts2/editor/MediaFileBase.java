@@ -112,20 +112,6 @@ public class MediaFileBase extends UIAction {
                 }
             }
 
-            if (dirIds != null && dirIds.length > 0) {
-                log.debug("Processing delete of " + dirIds.length
-                        + " media directories.");
-                manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-                for (String dirId : dirIds) {
-                    log.debug("Deleting media file directory - " + dirId);
-                    MediaFileDirectory mediaFileDir = manager.getMediaFileDirectory(dirId);
-                    if (mediaFileDir != null) {
-                        mediaFileDir.getParent().removeChildDirectory(mediaFileDir);
-                        manager.removeMediaFileDirectory(mediaFileDir);
-                    }
-                }
-                refreshAllDirectories();
-            }
             WebloggerFactory.getWeblogger().getWeblogManager()
                     .saveWeblog(this.getActionWeblog());
 

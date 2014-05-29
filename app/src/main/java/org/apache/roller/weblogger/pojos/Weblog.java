@@ -98,6 +98,8 @@ public class Weblog implements Serializable {
 
     private List<WeblogBookmarkFolder> bookmarkFolders = new ArrayList<WeblogBookmarkFolder>();
 
+    private List<MediaFileDirectory> mediaFileDirectories = new ArrayList<MediaFileDirectory>();
+
     public Weblog() {
     }
     
@@ -1011,6 +1013,14 @@ public class Weblog implements Serializable {
         this.bookmarkFolders = bookmarkFolders;
     }
 
+    public List<MediaFileDirectory> getMediaFileDirectories() {
+        return mediaFileDirectories;
+    }
+
+    public void setMediaFileDirectories(List<MediaFileDirectory> mediaFileDirectories) {
+        this.mediaFileDirectories = mediaFileDirectories;
+    }
+
     /**
      * Add a bookmark folder to this weblog.
      */
@@ -1044,4 +1054,30 @@ public class Weblog implements Serializable {
         }
         return false;
     }
+
+    /**
+     * Indicates whether this weblog contains the specified media file directory
+     *
+     * @param name directory name
+     *
+     * @return true if directory is present, false otherwise.
+     */
+    public boolean hasMediaFileDirectory(String name) {
+        for (MediaFileDirectory directory : this.getMediaFileDirectories()) {
+            if (directory.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public MediaFileDirectory getMediaFileDirectory(String name) {
+        for (MediaFileDirectory dir : this.getMediaFileDirectories()) {
+            if (name.equals(dir.getName())) {
+                return dir;
+            }
+        }
+        return null;
+    }
+
 }
