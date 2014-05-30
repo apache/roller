@@ -52,3 +52,6 @@ update roller_mediafiledir set name = #concat("name" "id") where name = 'default
 update roller_mediafiledir set name = 'default' where name = 'root' and parentid is null;
 #dropColumn("roller_mediafiledir", "path")
 #dropColumn("roller_mediafiledir", "parentid")
+
+-- Adding blog-specific web analytics (e.g. Google Analytics) tracking code
+#addColumnNull("website" "analyticscode" $db.TEXT_SQL_TYPE)

@@ -89,6 +89,8 @@ public class Weblog implements Serializable {
     private String  about            = null;
     private String  creator          = null;
 
+    private String  analyticsCode    = null;
+
     // Associated objects
     private WeblogCategory bloggerCategory = null;
 
@@ -685,7 +687,14 @@ public class Weblog implements Serializable {
         this.iconPath = iconPath;
     }
 
-    
+    public String getAnalyticsCode() {
+        return analyticsCode;
+    }
+
+    public void setAnalyticsCode(String analyticsCode) {
+        this.analyticsCode = analyticsCode;
+    }
+
     /**
      * A description for the weblog (its purpose, authors, etc.)
      *

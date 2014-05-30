@@ -133,7 +133,8 @@ create table website (
     showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null,
     customstylesheet  varchar(128),
     about             varchar(255),
-    icon              varchar(255)
+    icon              varchar(255),
+    analyticscode      $db.TEXT_SQL_TYPE
 );
 create index ws_isenabled_idx on website(isenabled);
 alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);

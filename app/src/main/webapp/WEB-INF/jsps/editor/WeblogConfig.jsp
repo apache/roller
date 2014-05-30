@@ -235,6 +235,20 @@
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
 
+
+    <%-- ***** Web analytics settings ***** --%>
+
+    <s:if test="getBooleanProp('analytics.code.override.allowed')">
+        <tr>
+            <td colspan="3"><h2><s:text name="configForm.webAnalytics" /></h2></td>
+        </tr>
+
+        <tr>
+            <td class="label"><s:text name="websiteSettings.analyticsTrackingCode" /></td>
+            <td class="field"><s:textarea name="bean.analyticsCode" rows="10" cols="70"/></td>
+        </tr>
+    </s:if>
+
     <%-- ***** Global admin only settings ***** --%>
     <s:if test="authenticatedUser.hasGlobalPermission('admin')">
         <tr>

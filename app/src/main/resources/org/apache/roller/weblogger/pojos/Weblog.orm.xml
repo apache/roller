@@ -95,6 +95,9 @@
 			<basic name="blacklist">
 				<column name="blacklist" insertable="true" updatable="true" unique="false"/>
 			</basic>
+            <basic name="analyticsCode">
+                <column name="analyticscode" insertable="true" updatable="true" unique="false"/>
+            </basic>
 			<basic name="allowComments">
 				<column name="allowcomments" insertable="true" updatable="true" unique="false"/>
 			</basic>

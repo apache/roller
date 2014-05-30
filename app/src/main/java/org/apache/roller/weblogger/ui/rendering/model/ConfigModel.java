@@ -64,7 +64,7 @@ public class ConfigModel implements Model {
     public String getRegistrationURL() {
         return getProperty("users.registration.url");
     }
-    
+
     public boolean getFeedHistoryEnabled() {
         return getBooleanProperty("site.newsfeeds.history.enabled");
     }
@@ -120,8 +120,15 @@ public class ConfigModel implements Model {
     public String getRollerBuildUser() {
         return WebloggerFactory.getWeblogger().getBuildUser();
     }
-    
-    
+
+    public String getDefaultAnalyticsTrackingCode() {
+        return getProperty("analytics.default.tracking.code");
+    }
+
+    public boolean getAnalyticsOverrideAllowed() {
+        return getBooleanProperty("analytics.code.override.allowed");
+    }
+
     private String getProperty(String name) {
         return WebloggerRuntimeConfig.getProperty(name);
     }
