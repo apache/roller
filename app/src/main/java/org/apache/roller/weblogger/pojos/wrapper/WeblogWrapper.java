@@ -171,8 +171,12 @@ public final class WeblogWrapper {
     public Boolean getModerateComments() {
         return this.pojo.getModerateComments();
     }
-    
-    
+
+    public String getAnalyticsCode() {
+        return this.pojo.getAnalyticsCode();
+    }
+
+
     public Boolean getEmailComments() {
         return this.pojo.getEmailComments();
     }

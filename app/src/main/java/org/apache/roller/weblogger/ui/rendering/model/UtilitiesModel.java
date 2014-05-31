@@ -215,6 +215,7 @@ public class UtilitiesModel implements Model {
     
     //------------------------------------------------------------ String utils
     
+    // isEmpty = empty (size = 0) or null
     public boolean isEmpty(String str) {
         return StringUtils.isEmpty(str);
     }

@@ -24,6 +24,7 @@ These are the documented macros in order defined in this file:
     #showAutodiscoveryLinks($weblog)
     #showTrackbackAutodiscovery($entry)
     #showMetaDescription()
+    #showAnalyticsTrackingCode($weblog)
 
     #showWeblogEntriesPager($pager)
     #showNextPrevEntriesControl($pager)
@@ -152,6 +153,19 @@ will be created.
         #end
     #elseif ($utils.isNotEmpty($model.weblog.description))
         <meta name="description" content="$model.weblog.description">
+    #end
+#end
+
+#**
+Adds a tracking code for website analytics (e.g. Google Analytics). Will use the blog-defined
+tracking code if defined and permitted by the installation, else the server-defined tracking
+code if defined will be used.
+*#
+#macro(showAnalyticsTrackingCode $weblog)
+    #if ($config.analyticsOverrideAllowed && $utils.isNotEmpty($weblog.analyticsCode))
+        $weblog.analyticsCode
+    #elseif ($utils.isNotEmpty($config.defaultAnalyticsTrackingCode)
+        $config.defaultAnalyticsTrackingCode
     #end
 #end
 

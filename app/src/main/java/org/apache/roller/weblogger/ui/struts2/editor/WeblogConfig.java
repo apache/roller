@@ -129,6 +129,10 @@ public class WeblogConfig extends UIAction {
 
                 Weblog weblog = getActionWeblog();
 
+                if (getBean().getAnalyticsCode() != null) {
+                    getBean().setAnalyticsCode(getBean().getAnalyticsCode().trim());
+                }
+
                 getBean().copyTo(weblog);
 
                 // if blogger category changed then lookup new cat and set it
