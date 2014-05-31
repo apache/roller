@@ -162,9 +162,6 @@ public class WeblogConfig extends UIAction {
                     wmgr.applyCommentDefaultsToEntries(weblog);
                 }
 
-                // apply referer filters
-                WebloggerFactory.getWeblogger().getRefererManager().applyRefererFilters(weblog);
-
                 // flush
                 WebloggerFactory.getWeblogger().flush();
 

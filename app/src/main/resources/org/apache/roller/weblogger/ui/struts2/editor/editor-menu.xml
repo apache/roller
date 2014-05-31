@@ -70,11 +70,6 @@ Each menu or menu item is governed by four attributes:
                    weblogPerms="admin"
                    subactions="exportEntries,exportResources"/>
 
-        <!-- globalPerms="login" -->
-         <menu-item action="referrers"
-                   name="tabbedmenu.weblog.referers"
-                   weblogPerms="admin"
-                   enabledProperty="referrers.processing.enabled" />
     </menu>
     
     <!--  if we already have checked weblogPerms="admin" globalPerms="login" we should -->

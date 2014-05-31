@@ -29,8 +29,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.referrers.RefererManager;
-import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -58,8 +56,6 @@ public abstract class WebloggerImpl implements Weblogger {
     private final PingTargetManager    pingTargetManager;
     private final PluginManager        pluginManager;
     private final PropertiesManager    propertiesManager;
-    private final RefererManager       refererManager;
-    private final ReferrerQueueManager refererQueueManager;
     private final ThemeManager         themeManager;
     private final ThreadManager        threadManager;
     private final UserManager          userManager;
@@ -90,8 +86,6 @@ public abstract class WebloggerImpl implements Weblogger {
         PingTargetManager    pingTargetManager,
         PluginManager        pluginManager,
         PropertiesManager    propertiesManager,
-        RefererManager       refererManager,
-        ReferrerQueueManager refererQueueManager, 
         ThemeManager         themeManager,
         ThreadManager        threadManager,
         UserManager          userManager,
@@ -112,8 +106,6 @@ public abstract class WebloggerImpl implements Weblogger {
         this.pingTargetManager   = pingTargetManager;
         this.pluginManager       = pluginManager;
         this.propertiesManager   = propertiesManager;
-        this.refererManager      = refererManager;
-        this.refererQueueManager = refererQueueManager;
         this.themeManager        = themeManager;
         this.threadManager       = threadManager;
         this.userManager         = userManager;
@@ -152,7 +144,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getIndexManager()
+     * @see org.apache.roller.weblogger.model.Weblogger#getIndexManager()
      */
     public IndexManager getIndexManager() {
         return indexManager;
@@ -167,15 +159,6 @@ public abstract class WebloggerImpl implements Weblogger {
     public ThemeManager getThemeManager() {
         return themeManager;
     }
-    
-    
-    /**
-     * @see org.apache.roller.weblogger.business.referrers.ReferrerQueueManager
-     */
-    public ReferrerQueueManager getReferrerQueueManager() {
-        return refererQueueManager;
-    }
-    
     
     
     /**
@@ -236,17 +219,7 @@ public abstract class WebloggerImpl implements Weblogger {
         return weblogManager;
     }
     
-    
-    /**
-     * 
-     * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getRefererManager()
-     */
-    public RefererManager getRefererManager() {
-        return refererManager;
-    }
-    
-    
+
     /**
      * 
      * 
@@ -338,7 +311,6 @@ public abstract class WebloggerImpl implements Weblogger {
             pingTargetManager.release();
             pingQueueManager.release();
             pluginManager.release();
-            refererManager.release();
             threadManager.release();
             userManager.release();
             weblogManager.release();
@@ -400,9 +372,6 @@ public abstract class WebloggerImpl implements Weblogger {
     public void shutdown() {
         try {
             HitCountQueue.getInstance().shutdown();
-            if (getReferrerQueueManager() != null) {
-                getReferrerQueueManager().shutdown();
-            }
             if (indexManager != null) {
                 indexManager.shutdown();
             }

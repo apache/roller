@@ -233,13 +233,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public void removeWeblogEntry(WeblogEntry entry) throws WebloggerException {
         Weblog weblog = entry.getWebsite();
         
-        Query q = strategy.getNamedQuery("WeblogReferrer.getByWeblogEntry");
-        q.setParameter(1, entry);
-        List referers = q.getResultList();
-        for (Object obj : referers) {
-            this.strategy.remove(obj);
-        }
-
         CommentSearchCriteria csc = new CommentSearchCriteria();
         csc.setEntry(entry);
 

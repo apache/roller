@@ -46,9 +46,6 @@ import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.PluginManagerImpl;
-import org.apache.roller.weblogger.business.referrers.RefererManager;
-import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
-import org.apache.roller.weblogger.business.referrers.ReferrerQueueManagerImpl;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
@@ -73,8 +70,7 @@ public class JPAWebloggerModule implements Module {
         binder.bind(PingQueueManager.class).to(    JPAPingQueueManagerImpl.class);   
         binder.bind(PingTargetManager.class).to(   JPAPingTargetManagerImpl.class); 
         binder.bind(PropertiesManager.class).to(   JPAPropertiesManagerImpl.class);   
-        binder.bind(RefererManager.class).to(      JPARefererManagerImpl.class);
-        binder.bind(ThreadManager.class).to(       JPAThreadManagerImpl.class);  
+        binder.bind(ThreadManager.class).to(       JPAThreadManagerImpl.class);
         binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);   
         binder.bind(WeblogManager.class).to(       JPAWeblogManagerImpl.class);   
         binder.bind(WeblogEntryManager.class).to(  JPAWeblogEntryManagerImpl.class);   
@@ -82,7 +78,6 @@ public class JPAWebloggerModule implements Module {
 
         binder.bind(OAuthValidator.class).to(      SimpleOAuthValidator.class);
                 
-        binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class);  
         binder.bind(MediaFileManager.class).to(    JPAMediaFileManagerImpl.class);
         binder.bind(FileContentManager.class).to(  FileContentManagerImpl.class);
         binder.bind(IndexManager.class).to(        IndexManagerImpl.class);

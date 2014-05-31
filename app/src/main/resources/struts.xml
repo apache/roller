@@ -441,13 +441,7 @@
             <result name="input" type="tiles">.WeblogExport</result>
             <!--<result name="success" type="chain">weblogExport</result>-->
         </action>
-        
-        <action name="referrers!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Referrers">
-            <result name="list" type="tiles">.Referrers</result>
-        </action>
-        
-        
+
         <action name="weblogConfig!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.WeblogConfig">
             <result name="input" type="tiles">.WeblogConfig</result>

@@ -33,7 +33,6 @@ drop table roller_tasklock;
 drop table pingqueueentry;
 drop table autoping;
 drop table pingtarget;
-drop table referer;
 drop table bookmark;
 drop table folder;
 drop table roller_userattribute;

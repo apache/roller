@@ -32,7 +32,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagComparator;
-import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 
@@ -285,24 +284,6 @@ public final class WeblogEntryWrapper {
     
     public int getCommentCount() {
         return this.pojo.getCommentCount();
-    }
-    
-    
-    public List getReferers() {
-        List initialCollection = this.pojo.getReferers();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogReferrerWrapper.wrap((WeblogReferrer) it.next(), urlStrategy));
-            i++;
-        }
-        
-        return wrappedCollection;
     }
     
     

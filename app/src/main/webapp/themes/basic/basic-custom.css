@@ -63,7 +63,7 @@ li.selected {
 
 /* other lists ----------------------------------------------- */
 
-ul.rNavigationBar, ul.rMenu, ul.rFolder, ul.rFeeds, ul.rReferersList, ul.rEntriesList {
+ul.rNavigationBar, ul.rMenu, ul.rFolder, ul.rFeeds, ul.rEntriesList {
     list-style-type: none;
     padding: 0;
     margin: 0;

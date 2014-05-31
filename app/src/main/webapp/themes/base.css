@@ -119,21 +119,6 @@ span.rNewsfeedDesc {
     font-weight: normal;
 }
 
-/* referer.vm */
-
-ul.rReferersList {
-    list-style: none;
-    margin-left: 0;
-    padding-left: 0;
-}
-li.rReferersListItem {
-    font-size : small;
-    font-weight: normal;
-}
-a.linkback {
-    border-style: double;
-}
-
 /* comments.vm */
 
 a.entrycommentslink {

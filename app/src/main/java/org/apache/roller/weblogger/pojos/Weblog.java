@@ -25,7 +25,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
-import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -602,9 +601,8 @@ public class Weblog implements Serializable {
      * This includes a change to weblog settings, entries, themes, templates, 
      * comments, categories, bookmarks, folders, etc.
      *
-     * Pings and Referrers are explicitly not included because pings do not
-     * affect visible changes to a weblog, and referrers change so often that
-     * it would diminish the usefulness of the attribute.
+     * Pings are explicitly not included because pings do not
+     * affect visible changes to a weblog.
      *
      */
     public Date getLastModified() {
@@ -877,21 +875,7 @@ public class Weblog implements Serializable {
         return ret;
     }
 
-    
-    /** 
-     * Return collection of referrers for current day.
-     */
-    public List<WeblogReferrer> getTodaysReferrers() {
-        try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            RefererManager rmgr = roller.getRefererManager();
-            return rmgr.getTodaysReferers(this);
-        } catch (WebloggerException e) {
-            log.error("PageModel getTodaysReferers()", e);
-        }
-        return Collections.emptyList();
-    }
-    
+
     /**
      * Get number of hits counted today.
      */

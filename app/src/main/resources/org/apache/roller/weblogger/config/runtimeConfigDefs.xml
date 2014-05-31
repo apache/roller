@@ -194,10 +194,6 @@
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
-      <property-def name="site.linkbacks.enabled" key="configForm.enableLinkback">
-         <type>boolean</type>
-         <default-value>false</default-value>
-      </property-def>
 
    </display-group >
    

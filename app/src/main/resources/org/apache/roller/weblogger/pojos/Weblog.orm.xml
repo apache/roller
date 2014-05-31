@@ -192,7 +192,6 @@
 			<transient name="commentCount"/>
 			<transient name="commentModerationRequired"/>
 			<transient name="todaysHits"/>
-			<transient name="todaysReferrers"/>
 			<transient name="URL"/>
 			<transient name="userCount"/>
 			<transient name="entryCount"/>

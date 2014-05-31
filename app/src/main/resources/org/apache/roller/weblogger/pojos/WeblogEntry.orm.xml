@@ -166,7 +166,6 @@
             <transient name="transformedSummary"/>         
             <transient name="comments"/>
             <transient name="pluginsList"/>
-            <transient name="referers"/>
             <transient name="addedTags"/>
             <transient name="removedTags"/>
         </attributes>
