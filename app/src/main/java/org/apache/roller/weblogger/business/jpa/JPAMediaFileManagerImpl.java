@@ -162,6 +162,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public MediaFileDirectory createMediaFileDirectory(Weblog weblog,
             String requestedName) throws WebloggerException {
 
+        requestedName = requestedName.startsWith("/") ? requestedName.substring(1) : requestedName;
+
         if (requestedName.equals("") || requestedName.equals("default")) {
             // Default cannot be created using this method.
             // Use createDefaultMediaFileDirectory instead
