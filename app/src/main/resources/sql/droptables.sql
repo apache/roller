@@ -50,8 +50,8 @@ drop table entryattribute;
 drop table weblogentry;
 drop table weblogcategory;
 drop table webpage;
-drop table rol_weblogtheme;
-drop table rol_templatecode;
+drop table roller_weblogtheme;
+drop table roller_templatecode;
 
 -- core platform tables
 drop table roller_permission;

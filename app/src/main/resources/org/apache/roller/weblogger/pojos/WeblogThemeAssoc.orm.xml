@@ -6,7 +6,7 @@
     <package>org.apache.roller.weblogger.pojos</package>
     <entity metadata-complete="true" name="WeblogThemeAssoc"
             class="org.apache.roller.weblogger.pojos.WeblogThemeAssoc" access="PROPERTY">
-        <table name="rol_weblogtheme"/>
+        <table name="roller_weblogtheme"/>
         <named-query name="WeblogThemeAssoc.getThemeAssocByType">
             <query>SELECT a FROM WeblogThemeAssoc a WHERE a.weblog = ?1 AND a.type =?2</query>
         </named-query>

@@ -143,7 +143,7 @@ alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
 -- create index ws_handle_idx    on website(handle);
 
 
-create table rol_weblogtheme (
+create table roller_weblogtheme (
     id              varchar(48)  not null primary key,
     weblogid varchar(48) not null,
     name            varchar(255)  not null,
@@ -151,7 +151,7 @@ create table rol_weblogtheme (
     #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
 );
 
-create table rol_templatecode (
+create table roller_templatecode (
     id                 varchar(48)  not null primary key,
     templateid varchar(48) not null,
     template     $db.TEXT_SQL_TYPE not null,
