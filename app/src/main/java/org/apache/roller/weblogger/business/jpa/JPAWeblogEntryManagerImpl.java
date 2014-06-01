@@ -966,7 +966,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
         
-        List<TagStat> results = new ArrayList<TagStat>(limit);
+        List<TagStat> results = new ArrayList<TagStat>(limit >= 0 ? limit : 25);
         
         for (Iterator iter = queryResults.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
