@@ -87,7 +87,7 @@ public final class WebloggerFactory {
                 Class providerClass = Class.forName(providerClassname);
                 defaultProvider = (WebloggerProvider) providerClass.newInstance();
             } catch (Exception ex) {
-                throw new BootstrapException("Error instantiating default provider: " + providerClassname + "; Exception message: " + ex.getMessage(), ex);
+                throw new BootstrapException("Error instantiating default provider: " + providerClassname + "; exception message: " + ex.getMessage(), ex);
             }
         } else {
             throw new NullPointerException("No provider specified in config property 'weblogger.provider.class'");
