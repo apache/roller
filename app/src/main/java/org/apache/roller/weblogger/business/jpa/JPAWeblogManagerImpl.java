@@ -185,7 +185,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove folders (including bookmarks)
         Query folderQuery = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite");
         folderQuery.setParameter(1, website);
-        List<WeblogBookmarkFolder> folders = pageQuery.getResultList();
+        List<WeblogBookmarkFolder> folders = folderQuery.getResultList();
         for (WeblogBookmarkFolder wbf : folders) {
             this.strategy.remove(wbf);
         }
