@@ -123,8 +123,7 @@ public class Templates extends UIAction {
 		} catch (WebloggerException ex) {
 			log.error("Error getting templates for weblog - "
 					+ getActionWeblog().getHandle(), ex);
-			// TODO: i18n
-			addError("Error getting template list");
+			addError("Error getting template list - check Roller logs");
 		}
 
 		return LIST;
@@ -209,8 +208,7 @@ public class Templates extends UIAction {
             } catch (WebloggerException ex) {
                 log.error("Error adding new template for weblog - "
                         + getActionWeblog().getHandle(), ex);
-                // TODO: i18n
-                addError("Error adding new template");
+                addError("Error adding new template - check Roller logs");
             }
         }
 

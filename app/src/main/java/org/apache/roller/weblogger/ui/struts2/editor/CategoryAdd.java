@@ -92,8 +92,7 @@ public class CategoryAdd extends UIAction {
 
             } catch(Exception ex) {
                 log.error("Error saving new category", ex);
-                // TODO: i18n
-                addError("Error saving new category");
+                addError("categoryForm.error.saving");
             }
         }
         

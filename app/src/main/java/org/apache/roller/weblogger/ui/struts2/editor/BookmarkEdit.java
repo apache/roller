@@ -81,7 +81,6 @@ public class BookmarkEdit extends UIAction {
     public String execute() {
         
         if(getBookmark() == null) {
-            // TODO: i18n
             addError("Cannot edit null bookmark");
             return ERROR;
         }
@@ -96,7 +95,6 @@ public class BookmarkEdit extends UIAction {
     public String save() {
         
         if(getBookmark() == null) {
-            // TODO: i18n
             addError("Cannot edit null bookmark");
             return ERROR;
         }
@@ -118,8 +116,7 @@ public class BookmarkEdit extends UIAction {
 
             } catch(Exception ex) {
                 log.error("Error saving bookmark", ex);
-                // TODO: i18n
-                addError("Error saving bookmark");
+                addError("bookmarkForm.error.saving");
             }
         }
         

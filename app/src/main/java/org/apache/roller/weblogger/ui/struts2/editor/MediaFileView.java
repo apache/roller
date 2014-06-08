@@ -141,9 +141,8 @@ public class MediaFileView extends MediaFileBase {
                 addMessage("mediaFile.directoryCreate.success");
                 dirCreated = true;
             } catch (WebloggerException e) {
-                log.error("Error creating new directory by path", e);
-                // TODO: i18n
-                addError("Error creating new directory by path");
+                log.error("Error creating new directory", e);
+                addError("Error creating new directory");
             }
         }
 
@@ -262,8 +261,7 @@ public class MediaFileView extends MediaFileBase {
                 
             } catch (Exception e) {
                 log.error("Error applying search criteria", e);
-                // TODO: i18n
-                addError("Error applying search criteria");
+                addError("Error applying search criteria - check Roller logs");
             }
 
         }

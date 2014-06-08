@@ -71,8 +71,7 @@ public abstract class PingTargetAddBase extends UIAction {
 
             } catch (WebloggerException ex) {
                 getLogger().error("Error adding ping target", ex);
-                // TODO: i18n
-                addError("Error adding ping target.");
+                addError("pingTarget.saved.error");
             }
         }
         
@@ -98,7 +97,6 @@ public abstract class PingTargetAddBase extends UIAction {
             }
         } catch (WebloggerException ex) {
             getLogger().error("Error validating ping target", ex);
-            // TODO: i18n
             addError("Error doing ping target validation");
         }
     }

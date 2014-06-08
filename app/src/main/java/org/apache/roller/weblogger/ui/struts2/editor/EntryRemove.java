@@ -107,7 +107,6 @@ public class EntryRemove extends EntryBase {
 
 			} catch (Exception e) {
 				log.error("Error removing entry " + getRemoveId(), e);
-				// TODO: i18n
 				addError("Error removing entry");
 			}
         } else {

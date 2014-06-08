@@ -127,7 +127,6 @@ public class CategoryRemove extends UIAction {
 
             } catch(Exception ex) {
                 log.error("Error removing category - "+getRemoveId(), ex);
-                // TODO: i18n
                 addError("Error removing category");
             }
         }

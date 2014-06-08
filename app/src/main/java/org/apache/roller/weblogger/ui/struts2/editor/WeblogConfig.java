@@ -172,7 +172,6 @@ public class WeblogConfig extends UIAction {
 
             } catch (Exception ex) {
                 log.error("Error updating weblog config", ex);
-                // TODO: i18n
                 addError("Error updating configuration");
             }
         }

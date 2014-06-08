@@ -71,8 +71,7 @@ public class CreateWeblog extends UIAction {
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled
-                    // TODO: i18n
-                    addError("Sorry, you are only allowed to have 1 weblog.");
+                    addError("createWebsite.oneBlogLimit");
                     return "menu";
                 }
             }
@@ -99,8 +98,7 @@ public class CreateWeblog extends UIAction {
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled
-                    // TODO: i18n
-                    addError("Sorry, you are only allowed to have 1 weblog.");
+                    addError("createWebsite.oneBlogLimit");
                     return "menu";
                 }
             }
@@ -176,8 +174,7 @@ public class CreateWeblog extends UIAction {
                 }
             } catch (WebloggerException ex) {
                 log.error("error checking for weblog", ex);
-                // TODO: i18n
-                addError("unexpected error");
+                addError("Unexpected error validating weblog -- check Roller logs");
             }
         }
     }

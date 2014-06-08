@@ -91,7 +91,6 @@ public class Pings extends UIAction {
             setCommonPingTargets(pingTargetMgr.getCommonPingTargets());
         } catch (WebloggerException ex) {
             log.error("Error loading ping target lists for weblog - "+getActionWeblog().getHandle(), ex);
-            // TODO: i18n
             addError("Error loading ping targets");
         }
     }
@@ -122,7 +121,6 @@ public class Pings extends UIAction {
                 WebloggerFactory.getWeblogger().flush();
             } catch(Exception ex) {
                 log.error("Error saving auto ping for target - "+getPingTargetId(), ex);
-                // TODO: i18n
                 addError("Error enabling auto ping");
             }
         }
@@ -143,7 +141,6 @@ public class Pings extends UIAction {
                 WebloggerFactory.getWeblogger().flush();
             } catch (Exception ex) {
                 log.error("Error removing auto ping for target - "+getPingTargetId(), ex);
-                // TODO: i18n
                 addError("Error disabling auto ping");
             }
         }
