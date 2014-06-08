@@ -17,20 +17,21 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import com.sun.syndication.feed.atom.Category;
-import com.sun.syndication.feed.atom.Content;
-import com.sun.syndication.feed.atom.Entry;
-import com.sun.syndication.feed.atom.Feed;
-import com.sun.syndication.feed.atom.Link;
-import com.sun.syndication.feed.atom.Person;
-import com.sun.syndication.feed.module.Module;
-import com.sun.syndication.feed.synd.SyndPerson;
+
 import com.rometools.propono.atom.common.rome.AppModule;
 import com.rometools.propono.atom.common.rome.AppModuleImpl;
 import com.rometools.propono.atom.server.AtomException;
 import com.rometools.propono.atom.server.AtomNotAuthorizedException;
 import com.rometools.propono.atom.server.AtomNotFoundException;
 import com.rometools.propono.atom.server.AtomRequest;
+import com.rometools.rome.feed.atom.Category;
+import com.rometools.rome.feed.atom.Content;
+import com.rometools.rome.feed.atom.Entry;
+import com.rometools.rome.feed.atom.Feed;
+import com.rometools.rome.feed.atom.Link;
+import com.rometools.rome.feed.atom.Person;
+import com.rometools.rome.feed.module.Module;
+import com.rometools.rome.feed.synd.SyndPerson;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

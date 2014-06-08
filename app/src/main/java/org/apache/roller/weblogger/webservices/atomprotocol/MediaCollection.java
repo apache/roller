@@ -17,10 +17,6 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import com.sun.syndication.feed.atom.Content;
-import com.sun.syndication.feed.atom.Entry;
-import com.sun.syndication.feed.atom.Feed;
-import com.sun.syndication.feed.atom.Link;
 import com.rometools.propono.atom.common.rome.AppModule;
 import com.rometools.propono.atom.common.rome.AppModuleImpl;
 import com.rometools.propono.atom.server.AtomException;
@@ -28,6 +24,10 @@ import com.rometools.propono.atom.server.AtomMediaResource;
 import com.rometools.propono.atom.server.AtomNotAuthorizedException;
 import com.rometools.propono.atom.server.AtomNotFoundException;
 import com.rometools.propono.atom.server.AtomRequest;
+import com.rometools.rome.feed.atom.Content;
+import com.rometools.rome.feed.atom.Entry;
+import com.rometools.rome.feed.atom.Feed;
+import com.rometools.rome.feed.atom.Link;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

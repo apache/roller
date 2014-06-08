@@ -18,11 +18,11 @@
 
 package org.apache.roller.planet.business.fetcher;
 
-import com.sun.syndication.feed.module.DCModule;
-import com.sun.syndication.feed.synd.SyndCategory;
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
+import com.rometools.rome.feed.module.DCModule;
+import com.rometools.rome.feed.synd.SyndCategory;
+import com.rometools.rome.feed.synd.SyndContent;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.fetcher.FeedFetcher;
 import com.rometools.fetcher.impl.FeedFetcherCache;
 import com.rometools.fetcher.impl.HttpURLFeedFetcher;

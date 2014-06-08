@@ -16,7 +16,7 @@
  */
 package org.apache.roller.planet.util.rome;
 
-import com.sun.syndication.feed.module.Module;
+import com.rometools.rome.feed.module.Module;
 
 public interface ContentModule extends Module {
 

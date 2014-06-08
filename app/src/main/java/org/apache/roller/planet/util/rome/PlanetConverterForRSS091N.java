@@ -16,9 +16,9 @@
  */
 package org.apache.roller.planet.util.rome;
 
-import com.sun.syndication.feed.rss.Item;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.impl.ConverterForRSS091Userland;
+import com.rometools.rome.feed.rss.Item;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.impl.ConverterForRSS091Userland;
 
 /**
  */

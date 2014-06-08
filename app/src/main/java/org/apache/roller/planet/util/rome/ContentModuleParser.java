@@ -19,8 +19,8 @@ package org.apache.roller.planet.util.rome;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import com.sun.syndication.feed.module.Module;
-import com.sun.syndication.io.ModuleParser;
+import com.rometools.rome.feed.module.Module;
+import com.rometools.rome.io.ModuleParser;
 import java.util.Locale;
 
 public class ContentModuleParser implements ModuleParser {

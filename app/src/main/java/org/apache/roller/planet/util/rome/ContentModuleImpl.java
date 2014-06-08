@@ -16,8 +16,8 @@
  */
 package org.apache.roller.planet.util.rome;
 
-import com.sun.syndication.feed.CopyFrom;
-import com.sun.syndication.feed.module.ModuleImpl;
+import com.rometools.rome.feed.CopyFrom;
+import com.rometools.rome.feed.module.ModuleImpl;
 
 public class ContentModuleImpl extends ModuleImpl implements ContentModule {
     private String encoded;

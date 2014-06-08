@@ -16,11 +16,11 @@
  */
 package org.apache.roller.planet.util.rome;
 
+import com.rometools.rome.feed.rss.Item;
+import com.rometools.rome.io.impl.DateParser;
+import com.rometools.rome.io.impl.RSS091UserlandParser;
 import org.jdom2.Element;
 
-import com.sun.syndication.feed.rss.Item;
-import com.sun.syndication.io.impl.DateParser;
-import com.sun.syndication.io.impl.RSS091UserlandParser;
 import java.util.Locale;
 
 /**

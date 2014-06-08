@@ -36,12 +36,12 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.Utilities;
 
-import com.sun.syndication.feed.atom.Category;
 import com.rometools.propono.atom.common.AtomService;
 import com.rometools.propono.atom.common.Categories;
 import com.rometools.propono.atom.common.Collection;
 import com.rometools.propono.atom.common.Workspace;
 import com.rometools.propono.atom.server.AtomException;
+import com.rometools.rome.feed.atom.Category;
 
 
 /**
