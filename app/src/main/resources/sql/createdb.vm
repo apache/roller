@@ -133,7 +133,8 @@ create table website (
     showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null,
     customstylesheet  varchar(128),
     about             varchar(255),
-    icon              varchar(255)
+    icon              varchar(255),
+    analyticscode      $db.TEXT_SQL_TYPE
 );
 create index ws_isenabled_idx on website(isenabled);
 alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
@@ -142,7 +143,7 @@ alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
 -- create index ws_handle_idx    on website(handle);
 
 
-create table rol_weblogtheme (
+create table roller_weblogtheme (
     id              varchar(48)  not null primary key,
     weblogid varchar(48) not null,
     name            varchar(255)  not null,
@@ -150,7 +151,7 @@ create table rol_weblogtheme (
     #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
 );
 
-create table rol_templatecode (
+create table roller_templatecode (
     id                 varchar(48)  not null primary key,
     templateid varchar(48) not null,
     template     $db.TEXT_SQL_TYPE not null,
@@ -316,32 +317,6 @@ create index pqe_entrytime_idx on pingqueueentry( entrytime );
 create index pqe_pingtid_idx on pingqueueentry( pingtargetid );
 create index pqe_websiteid_idx on pingqueueentry( websiteid );
 
-
--- Referer tracks URLs that refer to websites and entries
-create table referer (
-    id        varchar(48) not null primary key,
-    websiteid varchar(48) not null,
-    entryid   varchar(48),
-    datestr   varchar(10),
-    refurl    varchar(255) not null,
-    refpermalink varchar(255),
-    reftime   $db.TIMESTAMP_SQL_TYPE,
-    requrl    varchar(255),
-    title     varchar(255),
-    excerpt   $db.TEXT_SQL_TYPE,
-    dayhits   integer default 0 not null,
-    totalhits integer default 0 not null,
-    visible   $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    duplicate $db.BOOLEAN_SQL_TYPE_FALSE not null
-);
-create index ref_websiteid_idx on referer( websiteid );
-create index ref_entryid_idx on referer( entryid );
-create index ref_refurl_idx on referer( refurl$!db.INDEXSIZE );
-create index ref_requrl_idx on referer( requrl$!db.INDEXSIZE );
-create index ref_datestr_idx on referer( datestr );
-create index ref_refpermlnk_idx on referer( refpermalink$!db.INDEXSIZE );
-create index ref_duplicate_idx on referer( duplicate );
-
 create table roller_properties (
     name     varchar(255) not null primary key,
     value    $db.TEXT_SQL_TYPE
@@ -504,9 +479,7 @@ create table roller_mediafiledir (
     id               varchar(48) not null primary key,
     name             varchar(255) not null,
     description      varchar(255),
-    websiteid        varchar(48) not null,
-    parentid         varchar(48),
-    path             varchar(255)
+    websiteid        varchar(48) not null
 );
 
 
@@ -535,14 +508,6 @@ alter table roller_comment add constraint co_entryid_fk
 alter table entryattribute add constraint att_entryid_fk
     foreign key ( entryid ) references weblogentry( id ) $!db.ADDL_FK_PARAMS ;
 
--- referer
-
-alter table referer add constraint ref_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) $!db.ADDL_FK_PARAMS ;
-
-alter table referer add constraint ref_websiteid_fk
-    foreign key ( websiteid ) references website( id ) $!db.ADDL_FK_PARAMS ;
-
 -- folder and bookmark
 
 alter table folder add constraint fo_websiteid_fk
@@ -561,9 +526,6 @@ alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
 
 alter table roller_mediafiledir add constraint mf_websiteid_fk
     foreign key ( websiteid ) references website( id ) $!db.ADDL_FK_PARAMS ;
-
-alter table roller_mediafiledir add constraint mf_parentid_fk
-    foreign key ( parentid ) references roller_mediafiledir( id )  $!db.ADDL_FK_PARAMS ;
 
 -- newsfeed
 

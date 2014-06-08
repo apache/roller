@@ -51,6 +51,8 @@ public class WeblogConfigBean {
     private String pageModels = null;
     private String icon = null;
     private String about = null;
+
+    private String analyticsCode = null;
     
     private String bloggerCategoryId = null;
     private String[] defaultPluginsArray = null;
@@ -264,8 +266,15 @@ public class WeblogConfigBean {
     public void setActive(boolean active) {
         this.active = active;
     }
-    
-    
+
+    public String getAnalyticsCode() {
+        return analyticsCode;
+    }
+
+    public void setAnalyticsCode(String analyticsCode) {
+        this.analyticsCode = analyticsCode;
+    }
+
     public void copyFrom(Weblog dataHolder) {
         
         this.handle = dataHolder.getHandle();
@@ -290,6 +299,7 @@ public class WeblogConfigBean {
         this.enableMultiLang = dataHolder.isEnableMultiLang();
         this.showAllLangs = dataHolder.isShowAllLangs();
         this.pageModels = dataHolder.getPageModels();
+        this.analyticsCode = dataHolder.getAnalyticsCode();
         setIcon(dataHolder.getIconPath());
         setAbout(dataHolder.getAbout());
         if (dataHolder.getBloggerCategory() != null) {
@@ -325,6 +335,7 @@ public class WeblogConfigBean {
         dataHolder.setPageModels(this.pageModels);
         dataHolder.setIconPath(getIcon());
         dataHolder.setAbout(getAbout());
+        dataHolder.setAnalyticsCode(this.analyticsCode);
         
         dataHolder.setDefaultPlugins( StringUtils.join(this.defaultPluginsArray,",") );
         
@@ -333,4 +344,6 @@ public class WeblogConfigBean {
         dataHolder.setDefaultPlugins(StringUtils.join(this.defaultPluginsArray, ","));
     }
     
+
+
 }

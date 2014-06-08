@@ -112,20 +112,6 @@ public class MediaFileBase extends UIAction {
                 }
             }
 
-            if (dirIds != null && dirIds.length > 0) {
-                log.debug("Processing delete of " + dirIds.length
-                        + " media directories.");
-                manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-                for (String dirId : dirIds) {
-                    log.debug("Deleting media file directory - " + dirId);
-                    MediaFileDirectory mediaFileDir = manager.getMediaFileDirectory(dirId);
-                    if (mediaFileDir != null) {
-                        mediaFileDir.getParent().removeChildDirectory(mediaFileDir);
-                        manager.removeMediaFileDirectory(mediaFileDir);
-                    }
-                }
-                refreshAllDirectories();
-            }
             WebloggerFactory.getWeblogger().getWeblogManager()
                     .saveWeblog(this.getActionWeblog());
 
@@ -167,34 +153,11 @@ public class MediaFileBase extends UIAction {
                 }
             }
 
-            int movedDirs = 0;
-            if (dirIds != null && dirIds.length > 0) {
-                log.debug("Processing move of " + dirIds.length
-                        + " media files directories.");
-                MediaFileDirectory targetDirectory = manager
-                        .getMediaFileDirectory(this.selectedDirectory);
-                for (String dirId : dirIds) {
-                    log.debug("Moving media file - " + dirId
-                            + " to directory - " + this.selectedDirectory);
-                    MediaFileDirectory mediaFileDir = manager
-                            .getMediaFileDirectory(dirId);
-                    if (mediaFileDir != null
-                            && !mediaFileDir.getId().equals(targetDirectory.getId())
-                            && !mediaFileDir.getParent().getId().equals(targetDirectory.getId())) {
-                        manager.moveMediaFileDirectory(mediaFileDir,targetDirectory);
-                        movedDirs++;
-                    }
-                }
-            }
-
             // flush changes
             WebloggerFactory.getWeblogger().flush();
             WebloggerFactory.getWeblogger().release();
-            if (movedFiles > 0 || movedDirs > 0) {
+            if (movedFiles > 0) {
                 addMessage("mediaFile.move.success");
-                if (movedDirs > 0) {
-                    refreshAllDirectories();
-                }
             }
 
         } catch (WebloggerException e) {
@@ -214,7 +177,7 @@ public class MediaFileBase extends UIAction {
             List<MediaFileDirectory> sortedDirList = new ArrayList<MediaFileDirectory>();
             sortedDirList.addAll(directories);
             Collections.sort(sortedDirList, new MediaFileDirectoryComparator(
-                    DirectoryComparatorType.PATH));
+                    DirectoryComparatorType.NAME));
             setAllDirectories(sortedDirList);
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directories", ex);

@@ -26,8 +26,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.referrers.IncomingReferrer;
-import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -98,11 +96,11 @@ public class PageServlet extends HttpServlet {
         // get a reference to the site wide cache
         this.siteWideCache = SiteWideCache.getInstance();
 
-        // see if built-in referrer processing is enabled
+        // see if built-in referrer spam check is enabled
         this.processReferrers = WebloggerConfig
-                .getBooleanProperty("referrers.processing.enabled");
+                .getBooleanProperty("site.blacklist.enable.referrers");
 
-        log.info("Referrer processing enabled = " + this.processReferrers);
+        log.info("Referrer spam check enabled = " + this.processReferrers);
 
         // check for possible robot pattern
         String robotPatternStr = WebloggerConfig
@@ -657,22 +655,6 @@ public class PageServlet extends HttpServlet {
                 log.debug("Ignoring referer = " + referrerUrl);
                 return false;
             }
-        }
-
-        // referrer is valid, lets record it
-        try {
-            IncomingReferrer referrer = new IncomingReferrer();
-            referrer.setReferrerUrl(referrerUrl);
-            referrer.setRequestUrl(requestUrl);
-            referrer.setWeblogHandle(pageRequest.getWeblogHandle());
-            referrer.setWeblogAnchor(pageRequest.getWeblogAnchor());
-            referrer.setWeblogDateString(pageRequest.getWeblogDate());
-
-            ReferrerQueueManager refQueue = WebloggerFactory.getWeblogger()
-                    .getReferrerQueueManager();
-            refQueue.processReferrer(referrer);
-        } catch (Exception e) {
-            log.error("Error processing referrer", e);
         }
 
         return false;

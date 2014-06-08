@@ -6,7 +6,7 @@
     <package>org.apache.roller.weblogger.pojos</package>
     <entity metadata-complete="true" name="WeblogThemeTemplateCode"
             class="org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode" access="PROPERTY">
-        <table name="rol_templatecode"/>
+        <table name="roller_templatecode"/>
         <named-query name="WeblogThemeTemplateCode.getTemplateCodeByType">
             <query>SELECT c FROM WeblogThemeTemplateCode c WHERE c.templateId = ?1 AND c.type =?2</query>
         </named-query>

@@ -18,8 +18,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -29,78 +27,99 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
+import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 
 /**
  * A struts2 interceptor for configuring specifics of the weblogger ui.
  */
-public class UISecurityInterceptor extends AbstractInterceptor {
-    
+public class UISecurityInterceptor extends MethodFilterInterceptor {
+
+    private static final long serialVersionUID = -7787813271277874462L;
     private static Log log = LogFactory.getLog(UISecurityInterceptor.class);
-    
-    
-    public String intercept(ActionInvocation invocation) throws Exception {
-        
-        log.debug("Entering UISecurityInterceptor");
-        
+
+    public String doIntercept(ActionInvocation invocation) throws Exception {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Entering UISecurityInterceptor");
+        }
+
         final Object action = invocation.getAction();
-        
+
         // is this one of our own UIAction classes?
-        if (action instanceof UISecurityEnforced &&
-                action instanceof UIAction) {
-            
-            log.debug("action is UISecurityEnforced ... enforcing security rules");
-            
+        if (action instanceof UISecurityEnforced && action instanceof UIAction) {
+
+            if (log.isDebugEnabled()) {
+                log.debug("action is UISecurityEnforced ... enforcing security rules");
+            }
+
             final UISecurityEnforced theAction = (UISecurityEnforced) action;
-            
+
             // are we requiring an authenticated user?
             if (theAction.isUserRequired()) {
-                
-                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                
-                User authenticatedUser = ((UIAction)theAction).getAuthenticatedUser();
-                if(authenticatedUser == null) {
-                    log.debug("DENIED: required user not found");
+
+                UserManager umgr = WebloggerFactory.getWeblogger()
+                        .getUserManager();
+
+                User authenticatedUser = ((UIAction) theAction)
+                        .getAuthenticatedUser();
+                if (authenticatedUser == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("DENIED: required user not found");
+                    }
                     return "access-denied";
                 }
-                
+
                 // are we also enforcing global permissions?
-                if (theAction.requiredGlobalPermissionActions() != null 
-                        && !theAction.requiredGlobalPermissionActions().isEmpty()) {
-                    GlobalPermission perm = new GlobalPermission(theAction.requiredGlobalPermissionActions());
+                if (theAction.requiredGlobalPermissionActions() != null
+                        && !theAction.requiredGlobalPermissionActions()
+                                .isEmpty()) {
+                    GlobalPermission perm = new GlobalPermission(
+                            theAction.requiredGlobalPermissionActions());
                     if (!umgr.checkPermission(perm, authenticatedUser)) {
-                        log.debug("DENIED: user does not have permission = " + perm.toString());
+                        if (log.isDebugEnabled()) {
+                            log.debug("DENIED: user does not have permission = "
+                                    + perm.toString());
+                        }
                         return "access-denied";
                     }
                 }
-                
+
                 // are we requiring a valid action weblog?
                 if (theAction.isWeblogRequired()) {
-                    
-                    Weblog actionWeblog = ((UIAction)theAction).getActionWeblog();
-                    if(actionWeblog == null) {
-                        log.debug("DENIED: required action weblog not found");
+
+                    Weblog actionWeblog = ((UIAction) theAction)
+                            .getActionWeblog();
+                    if (actionWeblog == null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("DENIED: required action weblog not found");
+                        }
                         return "access-denied";
                     }
-                    
+
                     // are we also enforcing a specific weblog permission?
-                    if (theAction.requiredWeblogPermissionActions() != null 
-                            && !theAction.requiredWeblogPermissionActions().isEmpty()) {                        
+                    if (theAction.requiredWeblogPermissionActions() != null
+                            && !theAction.requiredWeblogPermissionActions()
+                                    .isEmpty()) {
                         WeblogPermission required = new WeblogPermission(
-                                actionWeblog,  
+                                actionWeblog,
                                 theAction.requiredWeblogPermissionActions());
-                        
+
                         if (!umgr.checkPermission(required, authenticatedUser)) {
-                            log.debug("DENIED: user does not have required weblog permissions = "+required);
+                            if (log.isDebugEnabled()) {
+                                log.debug("DENIED: user does not have required weblog permissions = "
+                                        + required);
+                            }
                             return "access-denied";
                         }
                     }
                 }
-                
+
             }
-            
+
         }
-        
+
         return invocation.invoke();
     }
-    
+
 }

@@ -22,9 +22,9 @@
         <testThemesDir>${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
         <testIndexDir>${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
-        <lucene.version>4.7.0</lucene.version>
-        <spring.version>4.0.2.RELEASE</spring.version>
-        <spring.security.version>3.2.2.RELEASE</spring.security.version>
+        <lucene.version>4.8.1</lucene.version>
+        <spring.version>4.0.5.RELEASE</spring.version>
+        <spring.security.version>3.2.4.RELEASE</spring.security.version>
     </properties>
 
     <dependencies>
@@ -274,13 +274,13 @@
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-spring-plugin</artifactId>
-            <version>2.3.16.1</version>
+            <version>2.3.16.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-tiles-plugin</artifactId>
-            <version>2.3.16.1</version>
+            <version>2.3.16.3</version>
         </dependency>
 
         <dependency>
@@ -337,7 +337,7 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.9.1</version>
+            <version>1.9.2</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -357,7 +357,7 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.9.3</version>
+            <version>1.9.4</version>
             <scope>test</scope>
         </dependency>
 
@@ -586,7 +586,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.1</version>
+                <version>1.3</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>

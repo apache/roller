@@ -173,7 +173,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
         
-        String cat = null;
+        String cat;
         if("root".equals(category)) {
             cat = null;
         } else {

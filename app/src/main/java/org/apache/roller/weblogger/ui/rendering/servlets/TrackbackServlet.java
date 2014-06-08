@@ -96,7 +96,6 @@ public class TrackbackServlet extends HttpServlet {
         
         WeblogTrackbackRequest trackbackRequest = null;
         if (!WebloggerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
-            // TODO: i18n
             error = "Trackbacks are disabled for this site";
         } else {
             
@@ -202,10 +201,8 @@ public class TrackbackServlet extends HttpServlet {
                 }
                 
             } else if (entry!=null) {
-                // TODO: i18n
-                error = "Comments and Trackbacks are disabled for the entry you specified.";
+                error = "Comments and Trackbacks are disabled for the entry specified.";
             } else {
-                // TODO: i18n
                 error = "Entry not specified.";
             }
             

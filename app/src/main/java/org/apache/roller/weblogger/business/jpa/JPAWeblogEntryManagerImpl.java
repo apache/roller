@@ -66,7 +66,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
-    private HashMap<String, String> entryAnchorToIdMap = new HashMap<String, String>();
+    private Map<String, String> entryAnchorToIdMap = new HashMap<String, String>();
     
     /* inline creation of reverse comparator, anonymous inner class */
     private static final Comparator REVERSE_COMPARATOR = new ReverseComparator();
@@ -233,13 +233,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public void removeWeblogEntry(WeblogEntry entry) throws WebloggerException {
         Weblog weblog = entry.getWebsite();
         
-        Query q = strategy.getNamedQuery("WeblogReferrer.getByWeblogEntry");
-        q.setParameter(1, entry);
-        List referers = q.getResultList();
-        for (Object obj : referers) {
-            this.strategy.remove(obj);
-        }
-
         CommentSearchCriteria csc = new CommentSearchCriteria();
         csc.setEntry(entry);
 
@@ -973,7 +966,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
         
-        List<TagStat> results = new ArrayList<TagStat>(limit);
+        List<TagStat> results = new ArrayList<TagStat>(limit >= 0 ? limit : 25);
         
         for (Iterator iter = queryResults.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();

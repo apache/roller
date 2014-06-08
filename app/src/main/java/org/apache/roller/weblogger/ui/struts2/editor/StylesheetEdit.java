@@ -201,8 +201,7 @@ public class StylesheetEdit extends UIAction {
     public String save() {
 
         if (getTemplate() == null) {
-            // TODO: i18n
-            addError("Unable to locate stylesheet template");
+            addError("stylesheetEdit.error.cannotFind");
             return ERROR;
         }
 
@@ -260,8 +259,7 @@ public class StylesheetEdit extends UIAction {
             } catch (WebloggerException ex) {
                 log.error("Error updating stylesheet template for weblog - "
                         + getActionWeblog().getHandle(), ex);
-                // TODO: i18n
-                addError("Error saving template");
+                addError("Error saving template - check Roller logs");
             }
         }
 
@@ -274,15 +272,13 @@ public class StylesheetEdit extends UIAction {
     public String revert() {
 
         if (getTemplate() == null) {
-            // TODO: i18n
-            addError("Unable to locate stylesheet template");
+            addError("stylesheetEdit.error.cannotFind");
             return ERROR;
         }
 
         // make sure we are still using a shared theme so that reverting is
         // possible
         if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-            // TODO: i18n
             addError("stylesheetEdit.error.customTheme");
         }
 
@@ -336,8 +332,7 @@ public class StylesheetEdit extends UIAction {
             } catch (WebloggerException ex) {
                 log.error("Error updating stylesheet template for weblog - "
                         + getActionWeblog().getHandle(), ex);
-                // TODO: i18n
-                addError("Error saving template");
+                addError("stylesheetEdit.revert.failure");
             }
         }
 

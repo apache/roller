@@ -386,10 +386,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Resources.jsp" />
     </definition>
     
-    <definition name=".Referrers" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/Referrers.jsp" />
-    </definition>
-
     <definition name=".WeblogExport" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogExport.jsp" />
     </definition>

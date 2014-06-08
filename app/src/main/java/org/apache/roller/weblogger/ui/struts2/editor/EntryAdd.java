@@ -217,8 +217,7 @@ public final class EntryAdd extends EntryBase {
 
             } catch (Exception e) {
                 log.error("Error saving new entry", e);
-                // TODO: i18n
-                addError("Error saving new entry");
+                addError("weblogEdit.error.saving");
             }
         }
 

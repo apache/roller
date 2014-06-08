@@ -20,5 +20,13 @@
             <message key="WeblogConfig.error.descriptionSize">unspecified key</message>
         </field-validator>
     </field>
-    
+
+    <field name="bean.analyticsCode">
+        <field-validator type="stringlength">
+            <param name="maxLength">1200</param>
+            <message key="WeblogConfig.error.analyticsCodeSize">unspecified key</message>
+        </field-validator>
+    </field>
+
+
 </validators>

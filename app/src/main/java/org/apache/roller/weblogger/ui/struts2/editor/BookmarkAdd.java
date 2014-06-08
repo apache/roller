@@ -82,7 +82,6 @@ public class BookmarkAdd extends UIAction {
     public String execute() {
         
         if(getFolder() == null) {
-            // TODO: i18n
             addError("Cannot add bookmark to null folder");
             return ERROR;
         }
@@ -94,7 +93,6 @@ public class BookmarkAdd extends UIAction {
     public String save() {
         
         if(getFolder() == null) {
-            // TODO: i18n
             addError("Cannot add bookmark to null folder");
             return ERROR;
         }
@@ -126,8 +124,7 @@ public class BookmarkAdd extends UIAction {
 
             } catch(Exception ex) {
                 log.error("Error saving new bookmark", ex);
-                // TODO: i18n
-                addError("Error saving new bookmark");
+                addError("bookmarkForm.error.saving");
             }
         }
 

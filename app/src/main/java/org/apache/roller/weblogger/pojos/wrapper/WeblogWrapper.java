@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogReferrer;
 
 
 /**
@@ -171,8 +170,12 @@ public final class WeblogWrapper {
     public Boolean getModerateComments() {
         return this.pojo.getModerateComments();
     }
-    
-    
+
+    public String getAnalyticsCode() {
+        return this.pojo.getAnalyticsCode();
+    }
+
+
     public Boolean getEmailComments() {
         return this.pojo.getEmailComments();
     }
@@ -368,20 +371,7 @@ public final class WeblogWrapper {
     public WeblogBookmarkFolderWrapper getBookmarkFolder(String folderName) {
         return WeblogBookmarkFolderWrapper.wrap(this.pojo.getBookmarkFolder(folderName));
     }
-    
-    
-    public List<WeblogReferrerWrapper> getTodaysReferrers() {
-        List<WeblogReferrer> unwrapped = this.pojo.getTodaysReferrers();
-        List<WeblogReferrerWrapper> wrapped = new ArrayList<WeblogReferrerWrapper>(unwrapped.size());
-        int i = 0;
-        for (WeblogReferrer referrer : unwrapped) {
-            wrapped.add(i,WeblogReferrerWrapper.wrap(referrer, urlStrategy));
-            i++;
-        }
-        return wrapped;
-    }
-    
-    
+
     public int getTodaysHits() {
         return this.pojo.getTodaysHits();
     }

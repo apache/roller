@@ -752,16 +752,6 @@ public class WeblogEntry implements Serializable {
         return comments.size();
     }
     
-    public List getReferers() {
-        List referers = null;
-        try {
-            referers = WebloggerFactory.getWeblogger().getRefererManager().getReferersToEntry(getId());
-        } catch (WebloggerException e) {
-            mLogger.error("Unexpected exception", e);
-        }
-        return referers;
-    }
-    
     //------------------------------------------------------------------------
         
     /**

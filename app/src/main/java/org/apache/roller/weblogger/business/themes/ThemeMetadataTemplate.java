@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business.themes;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A parsed 'template' element of a theme metadata descriptor.
@@ -36,7 +37,7 @@ public class ThemeMetadataTemplate {
     private String contentsFile = null;
     private String type = null;
     // Hash table to keep metadata about parsed template code files
-    private HashMap<String, ThemeMetadataTemplateCode> templateCodeTable
+    private Map<String, ThemeMetadataTemplateCode> templateCodeTable
             = new HashMap<String, ThemeMetadataTemplateCode>();
 
     public String getAction() {
@@ -127,7 +128,7 @@ public class ThemeMetadataTemplate {
         return this.getTemplateCodeTable().get(type);
     }
 
-    public HashMap<String, ThemeMetadataTemplateCode> getTemplateCodeTable() {
+    public Map<String, ThemeMetadataTemplateCode> getTemplateCodeTable() {
         return templateCodeTable;
     }
 

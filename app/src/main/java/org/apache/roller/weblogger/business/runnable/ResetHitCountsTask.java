@@ -130,7 +130,7 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
             log.info("task completed");
             
         } catch (WebloggerException e) {
-            log.error("Error while checking for referer turnover", e);
+            log.error("Error while resetting hit counts", e);
         } catch (Exception ee) {
             log.error("unexpected exception", ee);
         } finally {

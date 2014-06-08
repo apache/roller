@@ -144,7 +144,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         	pathinfo.append(locale).append("/");
         }
 
-        String cat = null;
+        String cat;
         if("root".equals(category)) {
             cat = null;
         } else {

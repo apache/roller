@@ -117,9 +117,8 @@ public class PlanetGroups extends PlanetUIAction {
                 addMessage("planetGroups.success.saved");
 
             } catch(Exception ex) {
-                log.error("Error saving planet group - "+getBean().getId(), ex);
-                // TODO: i18n
-                addError("Error saving planet group");
+                log.error("Error saving planet group - " + getBean().getId(), ex);
+                addError("planetGroups.error.saved");
             }
         }
         
@@ -141,7 +140,6 @@ public class PlanetGroups extends PlanetUIAction {
                 addMessage("planetSubscription.success.deleted");
             } catch(Exception ex) {
                 log.error("Error deleting planet group - "+getBean().getId());
-                // TODO: i18n
                 addError("Error deleting planet group");
             }
         }

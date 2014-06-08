@@ -95,6 +95,9 @@
 			<basic name="blacklist">
 				<column name="blacklist" insertable="true" updatable="true" unique="false"/>
 			</basic>
+            <basic name="analyticsCode">
+                <column name="analyticscode" insertable="true" updatable="true" unique="false"/>
+            </basic>
 			<basic name="allowComments">
 				<column name="allowcomments" insertable="true" updatable="true" unique="false"/>
 			</basic>
@@ -175,6 +178,12 @@
                     <cascade-remove/>
                 </cascade>
             </one-to-many>
+            <one-to-many name="mediaFileDirectories" target-entity="org.apache.roller.weblogger.pojos.MediaFileDirectory" mapped-by="weblog">
+                <cascade>
+                    <cascade-persist/>
+                    <cascade-remove/>
+                </cascade>
+            </one-to-many>
 			<transient name="theme"/>
 			<transient name="creator"/>
 			<transient name="defaultPage"/>
@@ -183,7 +192,6 @@
 			<transient name="commentCount"/>
 			<transient name="commentModerationRequired"/>
 			<transient name="todaysHits"/>
-			<transient name="todaysReferrers"/>
 			<transient name="URL"/>
 			<transient name="userCount"/>
 			<transient name="entryCount"/>

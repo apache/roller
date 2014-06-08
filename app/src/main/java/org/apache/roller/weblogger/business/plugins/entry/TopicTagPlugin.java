@@ -245,7 +245,6 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      */
     public String getName()
     {
-        // TODO: i18n
         return "Topic Tags";
     }
 
@@ -256,7 +255,6 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      */
     public String getDescription()
     {
-        // TODO: i18n
         return "Expands topic tags for <a href=\\'http://www.technorati.com\\'>Technorati</a> and similar sites. " +
             "Topic tags are of the form <code>topic:{topicbookmark}[tag]</code>, where <code>topicbookmark</code> " +
             "is the name of a bookmark whose URL will be used for the site name in the topic tag. " +

@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
-import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -250,19 +249,6 @@ public final class CacheManager {
         log.debug("invalidating comment = "+comment.getId());
         for (CacheHandler handler : cacheHandlers) {
             handler.invalidate(comment);
-        }
-    }
-    
-    
-    public static void invalidate(WeblogReferrer referer) {
-        
-        log.debug("invalidating referer = "+referer.getId());
-        
-        // NOTE: Invalidating an entire website for each referer is not
-        //       good for our caching.  This may need reevaluation later.
-        //lastExpiredCache.put(referer.getWebsite().getHandle(), new Date());
-        for (CacheHandler handler : cacheHandlers) {
-            handler.invalidate(referer);
         }
     }
     

@@ -1,6 +1,6 @@
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
-    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
 <struts>
     
     <!-- Weblogger default package -->
@@ -42,15 +42,19 @@
                 <!-- <interceptor-ref name="staticParams"/> -->
                 <interceptor-ref name="actionMappingParams"/>
                 <interceptor-ref name="params">
-                    <param name="excludeParams">^class\..*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*</param>
+                    <param name="excludeParams">(.*\.|^|.*|\[('|"))(c|C)lass(\.|('|")]|\[).*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*</param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError"/>
                 
                 <!-- custom Roller interceptors -->
-                <interceptor-ref name="UIActionInterceptor"/>
-                <interceptor-ref name="UISecurityInterceptor"/>
+                <interceptor-ref name="UIActionInterceptor">
+                    <param name="excludeMethods">cancel</param>
+                </interceptor-ref>
+                <interceptor-ref name="UISecurityInterceptor">
+                    <param name="excludeMethods">cancel</param>
+                </interceptor-ref>
                 <interceptor-ref name="UIActionPrepareInterceptor">
-                    <param name="excludeMethods">input,back,cancel,browse</param>
+                    <param name="excludeMethods">cancel</param>
                 </interceptor-ref>
                 
                 <!-- validation interceptors, MUST come after our custom interceptors -->
@@ -437,13 +441,7 @@
             <result name="input" type="tiles">.WeblogExport</result>
             <!--<result name="success" type="chain">weblogExport</result>-->
         </action>
-        
-        <action name="referrers!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Referrers">
-            <result name="list" type="tiles">.Referrers</result>
-        </action>
-        
-        
+
         <action name="weblogConfig!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.WeblogConfig">
             <result name="input" type="tiles">.WeblogConfig</result>

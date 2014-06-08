@@ -107,7 +107,7 @@ public final class I18nMessages {
     /**
      * The locale representing this message utils.
      */
-    public final Locale getLocale() {
+    public Locale getLocale() {
         return this.locale;
     }
     
@@ -115,7 +115,7 @@ public final class I18nMessages {
     /**
      * Get a message from the bundle.
      */
-    public final String getString(String key) {
+    public String getString(String key) {
         
         try {
             return bundle.getString(key);
@@ -131,7 +131,7 @@ public final class I18nMessages {
      * Get a message from the bundle and substitute the given args into
      * the message contents.
      */
-    public final String getString(String key, List args) {
+    public String getString(String key, List args) {
         
         try {
             String msg = bundle.getString(key);
@@ -148,7 +148,7 @@ public final class I18nMessages {
      * Get a message from the bundle and substitute the given args into
      * the message contents.
      */
-    public final String getString(String key, Object[] args) {
+    public String getString(String key, Object[] args) {
         
         try {
             String msg = bundle.getString(key);

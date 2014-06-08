@@ -113,7 +113,6 @@ public class Entries extends UIAction {
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up entries", ex);
-            // TODO: i18n
             addError("Error looking up entries");
         }
         

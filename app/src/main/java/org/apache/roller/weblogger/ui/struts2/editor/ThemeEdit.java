@@ -156,8 +156,7 @@ public class ThemeEdit extends UIAction {
                 } catch (Exception re) {
                     log.error("Error customizing theme for weblog - "
                             + getActionWeblog().getHandle(), re);
-                    // TODO: i18n
-                    addError("Error importing theme");
+                    addError("Error importing theme - check Roller logs");
                 }
 
                 if (!hasActionErrors()) {
@@ -175,9 +174,7 @@ public class ThemeEdit extends UIAction {
                         // change
                         CacheManager.invalidate(weblog);
 
-                        // TODO: i18n
-                        addMessage("Successfully set theme to - "
-                                + WeblogTheme.CUSTOM);
+                        addMessage("themeEditor.setTheme.success", WeblogTheme.CUSTOM);
                         if (t != null) {
                             addMessage("Successfully copied templates from theme - "
                                     + t.getName());
@@ -194,8 +191,7 @@ public class ThemeEdit extends UIAction {
                     }
                 }
             } else {
-                // TODO: i18n
-                addError("Sorry, custom themes are not allowed");
+                addError("themeEditor.customTheme.disallowed");
             }
 
             // we are dealing with a shared theme scenario
@@ -204,9 +200,7 @@ public class ThemeEdit extends UIAction {
             // make sure theme is valid and enabled
             Theme newTheme = null;
             if (getThemeId() == null) {
-                // TODO: i18n
                 addError("No theme specified");
-
             } else {
                 try {
                     ThemeManager themeMgr = WebloggerFactory.getWeblogger()
@@ -214,13 +208,11 @@ public class ThemeEdit extends UIAction {
                     newTheme = themeMgr.getTheme(getThemeId());
 
                     if (!newTheme.isEnabled()) {
-                        // TODO: i18n
                         addError("Theme not enabled");
                     }
 
                 } catch (Exception ex) {
                     log.warn(ex);
-                    // TODO: i18n
                     addError("Theme not found");
                 }
             }
@@ -266,7 +258,7 @@ public class ThemeEdit extends UIAction {
 
                     // Theme set to..
                     if (!originalTheme.equals(getThemeId())) {
-                        addMessage("themeEditor.settheme", newTheme.getName());
+                        addMessage("themeEditor.setTheme.success", newTheme.getName());
                     }
 
                 } catch (WebloggerException re) {
@@ -279,7 +271,6 @@ public class ThemeEdit extends UIAction {
             // unknown theme scenario, error
         } else {
             // invalid theme type
-            // TODO: i18n
             addError("no valid theme type submitted");
         }
 

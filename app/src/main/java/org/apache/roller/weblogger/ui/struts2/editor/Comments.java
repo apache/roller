@@ -128,7 +128,6 @@ public class Comments extends UIAction {
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
-            // TODO: i18n
             addError("Error looking up comments");
         }
 
@@ -211,7 +210,6 @@ public class Comments extends UIAction {
 
         } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
-            // TODO: i18n
             addError("Error looking up comments");
         }
 
@@ -270,7 +268,6 @@ public class Comments extends UIAction {
 
         } catch (WebloggerException ex) {
             log.error("Error doing bulk delete", ex);
-            // TODO: i18n
             addError("Bulk delete failed due to unexpected error");
         }
 

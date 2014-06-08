@@ -55,7 +55,7 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
             throw t;
         } catch (Throwable e) {
             // Fatal misconfiguration, cannot recover
-            throw new RuntimeException("Error instantiating backend module " + moduleClassname, e);
+            throw new RuntimeException("Error instantiating backend module " + moduleClassname + "; exception message: " + e.getMessage(), e);
         }
     }
     
@@ -79,7 +79,7 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
             throw t;
         } catch (Throwable e) {
             // Fatal misconfiguration, cannot recover
-            throw new RuntimeException("Error instantiating backend module " + moduleClassname, e);
+            throw new RuntimeException("Error instantiating backend module " + moduleClassname + "; exception message: " + e.getMessage(), e);
         }
     }
     

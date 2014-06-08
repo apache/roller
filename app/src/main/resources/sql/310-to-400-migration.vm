@@ -137,17 +137,17 @@ create index co_combo1_idx on roller_comment(status, posttime);
 
 
 -- remove old indexes that are no longer of value
-#dropIndex('we_pubentry_idx' 'weblogentry')
+#dropIndex('weblogentry' 'we_pubentry_idx')
 
 
 -- fix wacky indexs which ended up with a size constraint
-#dropIndex('rage_sid_idx' 'rag_entry')
+#dropIndex('rag_entry' 'rage_sid_idx')
 create index rage_sid_idx on rag_entry(subscription_id);
 
-#dropIndex('raggs_gid_idx' 'rag_group_subscription')
+#dropIndex('rag_group_subscription' 'raggs_gid_idx')
 create index raggs_gid_idx on rag_group_subscription(group_id);
 
-#dropIndex('raggs_sid_idx' 'rag_group_subscription')
+#dropIndex('rag_group_subscription' 'raggs_sid_idx')
 create index raggs_sid_idx on rag_group_subscription(subscription_id);
 
 
@@ -165,9 +165,9 @@ create index raggs_sid_idx on rag_group_subscription(subscription_id);
 #dropColumn('roller_comment' 'pending')
 
 -- remove bastard columns and indexes (optional)
--- #dropIndex('index_we_pubtime_idx' 'weblogentry')
--- #dropIndex('co_pending_idx' 'roller_comment')
--- #dropIndex('co_approved_idx' 'roller_comment')
+-- #dropIndex('weblogentry' 'index_we_pubtime_idx')
+-- #dropIndex('roller_comment' 'co_pending_idx')
+-- #dropIndex('roller_comment' 'co_approved_idx')
 -- #dropColumn('website' 'userid')
 -- #dropColumn('website' 'weblogdayid')
 -- #dropColumn('weblogentry' 'publishentry')

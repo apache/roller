@@ -50,7 +50,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogThemeAssoc;
 import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
@@ -167,14 +166,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             this.strategy.remove(autoPing);
         }
         
-        // remove associated referers
-        Query refQuery2 = strategy.getNamedQuery("WeblogReferrer.getByWebsite");
-        refQuery2.setParameter(1, website);
-        List referers = refQuery2.getResultList();
-        for (Object obj : referers) {
-            WeblogReferrer referer = (WeblogReferrer) obj;
-            this.strategy.remove(referer.getClass(), referer.getId());
-        }
         // TODO: can we eliminate this unnecessary flush with OpenJPA 1.0
         this.strategy.flush(); 
        
@@ -194,7 +185,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove folders (including bookmarks)
         Query folderQuery = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite");
         folderQuery.setParameter(1, website);
-        List<WeblogBookmarkFolder> folders = pageQuery.getResultList();
+        List<WeblogBookmarkFolder> folders = folderQuery.getResultList();
         for (WeblogBookmarkFolder wbf : folders) {
             this.strategy.remove(wbf);
         }
@@ -336,7 +327,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
         }
 
-        roller.getMediaFileManager().createRootMediaFileDirectory(newWeblog);
+        roller.getMediaFileManager().createDefaultMediaFileDirectory(newWeblog);
 
         // flush so that all data up to this point can be available in db
         this.strategy.flush();

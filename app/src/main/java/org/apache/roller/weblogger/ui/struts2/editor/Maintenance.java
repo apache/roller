@@ -69,8 +69,7 @@ public class Maintenance extends UIAction {
             addMessage("maintenance.message.indexed");
         } catch (Exception ex) {
             log.error("Error doing index rebuild", ex);
-            // TODO: i18n
-            addError("Error rebuilding search index");
+            addError("maintenance.message.indexed.failure");
         }
         
         return SUCCESS;
@@ -98,7 +97,6 @@ public class Maintenance extends UIAction {
             
         } catch (Exception ex) {
             log.error("Error saving weblog - "+getActionWeblog().getHandle(), ex);
-            // TODO: i18n
             addError("Error flushing page cache");
         }
 

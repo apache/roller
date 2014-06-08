@@ -113,16 +113,13 @@ public class CreateUser extends UIAction {
                 mgr.addUser(newUser);
                 WebloggerFactory.getWeblogger().flush();
 
-                // TODO: i18n
-                addMessage("User " + getBean().getUserName() + " created.  If desired, create another new user below or" +
-                        " select Cancel to return to User Administration.");
+                addMessage("createUser.add.success", getBean().getUserName());
                 setBean(new CreateUserBean());
                 initializeBean();
                 return INPUT;
             } catch (WebloggerException e) {
                 log.error("Error adding new user", e);
-                // TODO: i18n
-                addError("Error creating user");
+                addError("Error creating user -- see Roller logs for more details");
             }
         }
         

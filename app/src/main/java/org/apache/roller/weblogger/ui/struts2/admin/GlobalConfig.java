@@ -102,7 +102,6 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             setProperties(mgr.getProperties());
         } catch (WebloggerException ex) {
             log.error("Error getting runtime properties map", ex);
-            // TODO: i18n
             addError("Unexpected error accessing Roller properties");
         }
         
@@ -206,7 +205,6 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             
         } catch (WebloggerException ex) {
             log.error("Error saving roller properties", ex);
-            // TODO: i18n
             addError("error.update.rollerConfig");
         }
                 

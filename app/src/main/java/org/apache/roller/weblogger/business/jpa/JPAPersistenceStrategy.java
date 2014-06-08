@@ -313,7 +313,6 @@ public class JPAPersistenceStrategy {
         InputStream in;
         in = cl.getResourceAsStream(resourceName);
         if (in == null) {
-            //TODO: Check how i18n is done in roller
             throw new WebloggerException(
                     "Could not locate properties to load " + resourceName);
         }

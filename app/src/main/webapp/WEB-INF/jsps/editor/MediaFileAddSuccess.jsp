@@ -161,7 +161,7 @@
             <li>
                 <s:url id="mediaFileAddURL" action="mediaFileAdd">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    <s:param name="directoryPath" value="%{directoryPath}" />
+                    <s:param name="directoryName" value="%{directoryName}" />
                 </s:url>
                 <s:a href="%{mediaFileAddURL}">
                     <s:text name="mediaFileSuccess.addAnother" />

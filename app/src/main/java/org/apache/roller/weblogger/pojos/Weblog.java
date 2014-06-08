@@ -25,7 +25,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
-import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -89,6 +88,8 @@ public class Weblog implements Serializable {
     private String  about            = null;
     private String  creator          = null;
 
+    private String  analyticsCode    = null;
+
     // Associated objects
     private WeblogCategory bloggerCategory = null;
 
@@ -97,6 +98,8 @@ public class Weblog implements Serializable {
     private List<WeblogCategory> weblogCategories = new ArrayList<WeblogCategory>();
 
     private List<WeblogBookmarkFolder> bookmarkFolders = new ArrayList<WeblogBookmarkFolder>();
+
+    private List<MediaFileDirectory> mediaFileDirectories = new ArrayList<MediaFileDirectory>();
 
     public Weblog() {
     }
@@ -598,9 +601,8 @@ public class Weblog implements Serializable {
      * This includes a change to weblog settings, entries, themes, templates, 
      * comments, categories, bookmarks, folders, etc.
      *
-     * Pings and Referrers are explicitly not included because pings do not
-     * affect visible changes to a weblog, and referrers change so often that
-     * it would diminish the usefulness of the attribute.
+     * Pings are explicitly not included because pings do not
+     * affect visible changes to a weblog.
      *
      */
     public Date getLastModified() {
@@ -683,7 +685,14 @@ public class Weblog implements Serializable {
         this.iconPath = iconPath;
     }
 
-    
+    public String getAnalyticsCode() {
+        return analyticsCode;
+    }
+
+    public void setAnalyticsCode(String analyticsCode) {
+        this.analyticsCode = analyticsCode;
+    }
+
     /**
      * A description for the weblog (its purpose, authors, etc.)
      *
@@ -866,21 +875,7 @@ public class Weblog implements Serializable {
         return ret;
     }
 
-    
-    /** 
-     * Return collection of referrers for current day.
-     */
-    public List<WeblogReferrer> getTodaysReferrers() {
-        try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            RefererManager rmgr = roller.getRefererManager();
-            return rmgr.getTodaysReferers(this);
-        } catch (WebloggerException e) {
-            log.error("PageModel getTodaysReferers()", e);
-        }
-        return Collections.emptyList();
-    }
-    
+
     /**
      * Get number of hits counted today.
      */
@@ -1011,6 +1006,14 @@ public class Weblog implements Serializable {
         this.bookmarkFolders = bookmarkFolders;
     }
 
+    public List<MediaFileDirectory> getMediaFileDirectories() {
+        return mediaFileDirectories;
+    }
+
+    public void setMediaFileDirectories(List<MediaFileDirectory> mediaFileDirectories) {
+        this.mediaFileDirectories = mediaFileDirectories;
+    }
+
     /**
      * Add a bookmark folder to this weblog.
      */
@@ -1044,4 +1047,30 @@ public class Weblog implements Serializable {
         }
         return false;
     }
+
+    /**
+     * Indicates whether this weblog contains the specified media file directory
+     *
+     * @param name directory name
+     *
+     * @return true if directory is present, false otherwise.
+     */
+    public boolean hasMediaFileDirectory(String name) {
+        for (MediaFileDirectory directory : this.getMediaFileDirectories()) {
+            if (directory.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public MediaFileDirectory getMediaFileDirectory(String name) {
+        for (MediaFileDirectory dir : this.getMediaFileDirectories()) {
+            if (name.equals(dir.getName())) {
+                return dir;
+            }
+        }
+        return null;
+    }
+
 }

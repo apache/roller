@@ -66,8 +66,7 @@ public class MembersInvite extends UIAction {
         
         // if group blogging is disabled then you can't change permissions
         if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
-            // TODO: i18n
-            addError("invitations disabled");
+            addError("inviteMember.disabled");
             return SUCCESS;
         }
         
@@ -84,8 +83,7 @@ public class MembersInvite extends UIAction {
         
         // if group blogging is disabled then you can't change permissions
         if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
-            // TODO: i18n
-            addError("invitations disabled");
+            addError("inviteMember.disabled");
             return SUCCESS;
         }
         
@@ -102,7 +100,6 @@ public class MembersInvite extends UIAction {
             }
         } catch(WebloggerException ex) {
             log.error("Error looking up user by id - "+getUserName(), ex);
-            // TODO: i18n
             addError("Error looking up invitee");
         }
         
@@ -123,7 +120,6 @@ public class MembersInvite extends UIAction {
             
         } catch (WebloggerException ex) {
             log.error("Error looking up permissions for weblog - "+getActionWeblog().getHandle(), ex);
-            // TODO: i18n
             addError("Error checking existing permissions");
         }
         
@@ -153,8 +149,7 @@ public class MembersInvite extends UIAction {
 
             } catch (Exception ex) {
                 log.error("Error creating user invitation", ex);
-                // TODO: i18n
-                addError("Error creating user invitation");
+                addError("Error creating user invitation - check Roller logs");
             }
         }
         

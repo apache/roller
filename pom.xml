@@ -29,7 +29,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <derby.version>10.10.1.1</derby.version>
+        <derby.version>10.10.2.0</derby.version>
     </properties>
 
     <modules>

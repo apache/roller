@@ -131,7 +131,6 @@ public final class BookmarksImport extends UIAction {
                 }
             } catch (Exception ex) {
                 log.error("ERROR: importing bookmarks", ex);
-                // TODO: i18n
                 addError("bookmarksImport.error", ex.toString());
             } finally {
                 if (stream != null) {

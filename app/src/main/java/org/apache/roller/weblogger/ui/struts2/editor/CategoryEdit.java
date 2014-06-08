@@ -79,7 +79,6 @@ public class CategoryEdit extends UIAction {
     public String execute() {
         
         if (getCategory() == null) {
-            // TODO: i18n
             addError("Cannot edit null category");
             return ERROR;
         }
@@ -97,7 +96,6 @@ public class CategoryEdit extends UIAction {
     public String save() {
         
         if(getCategory() == null) {
-            // TODO: i18n
             addError("Cannot edit null category");
             return ERROR;
         }
@@ -122,8 +120,7 @@ public class CategoryEdit extends UIAction {
 
             } catch(Exception ex) {
                 log.error("Error saving category", ex);
-                // TODO: i18n
-                addError("Error saving category");
+                addError("categoryForm.error.saving");
             }
         }
         

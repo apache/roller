@@ -89,7 +89,7 @@ Macro to account for lack of comparable long varchar in MySQL
 #macro(longtext $size) #if($db.DBTYPE == "MYSQL") text #else varchar($size) #end #end
 
 
-#macro(dropIndex $indexName $tableName)
+#macro(dropIndex $tableName $indexName)
 #if ($db.DBTYPE == "DERBY" || $db.DBTYPE == 'POSTGRESQL')
 drop index $indexName;
 #elseif ($db.DBTYPE == "MYSQL")

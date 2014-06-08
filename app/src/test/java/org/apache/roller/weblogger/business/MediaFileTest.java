@@ -43,11 +43,14 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Test media file related business operations.
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MediaFileTest extends TestCase {
 
     public static Log log = LogFactory.getLog(MediaFileTest.class);
@@ -95,34 +98,28 @@ public class MediaFileTest extends TestCase {
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
-        // no need to create root directory, that is done automatically now
-        // MediaFileDirectory rootDirectory = new MediaFileDirectory(null,
-        // "root", "root d", testWeblog);
-        // mfMgr.createMediaFileDirectory(rootDirectory);
-        // assertNotNull(rootDirectory.getId() != null);
-
         TestUtils.endSession(true);
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
         try {
-            mfMgr.createMediaFileDirectoryByPath(testWeblog, "");
+            mfMgr.createMediaFileDirectory(testWeblog, "");
             assertTrue(false);
         } catch (WebloggerException e) {
             assertTrue(true);
         }
 
         try {
-            mfMgr.createMediaFileDirectoryByPath(testWeblog, "/");
+            mfMgr.createMediaFileDirectory(testWeblog, "default");
             assertTrue(false);
         } catch (WebloggerException e) {
             assertTrue(true);
         }
 
         MediaFileDirectory newDirectory1 = mfMgr
-                .createMediaFileDirectoryByPath(testWeblog, "/test1");
+                .createMediaFileDirectory(testWeblog, "test1");
         MediaFileDirectory newDirectory2 = mfMgr
-                .createMediaFileDirectoryByPath(testWeblog, "/test2/");
+                .createMediaFileDirectory(testWeblog, "test2");
         TestUtils.endSession(true);
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -137,39 +134,14 @@ public class MediaFileTest extends TestCase {
 
         // show throw error when creating directory that already exists
         try {
-            mfMgr.createMediaFileDirectoryByPath(testWeblog, "test1");
+            mfMgr.createMediaFileDirectory(testWeblog, "test1");
             assertTrue(false);
         } catch (WebloggerException e) {
             assertTrue(true);
         }
 
-        MediaFileDirectory newDirectory3 = mfMgr
-                .createMediaFileDirectoryByPath(testWeblog, "/test1/test2");
         TestUtils.endSession(true);
-
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        MediaFileDirectory newDirectory3ById = mfMgr
-                .getMediaFileDirectory(newDirectory3.getId());
-        assertEquals(newDirectory3, newDirectory3ById);
-
-        MediaFileDirectory newDirectory4 = mfMgr
-                .createMediaFileDirectoryByPath(testWeblog,
-                        "/test1/test2/test3");
-        TestUtils.endSession(true);
-
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        MediaFileDirectory newDirectory4ById = mfMgr
-                .getMediaFileDirectory(newDirectory4.getId());
-        assertEquals(newDirectory4, newDirectory4ById);
-
-        // show throw error when creating directory that already exists
-        try {
-            mfMgr.createMediaFileDirectoryByPath(testWeblog,
-                    "/test1/test2/test3");
-            assertTrue(false);
-        } catch (WebloggerException e) {
-            assertTrue(true);
-        }
 
         TestUtils.endSession(true);
         TestUtils.teardownWeblog(testWeblog.getId());
@@ -207,13 +179,7 @@ public class MediaFileTest extends TestCase {
 
         // no need to create root directory, that is done automatically now
         MediaFileDirectory directory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
-
-        // MediaFileDirectory directory = new MediaFileDirectory(null, "root",
-        // "root d", testWeblog);
-        // mfMgr.createMediaFileDirectory(directory);
-        // assertEquals("/", directory.getPath());
-        // assertNotNull(directory.getId() != null);
+                .getDefaultMediaFileDirectory(testWeblog);
 
         TestUtils.endSession(true);
 
@@ -223,7 +189,7 @@ public class MediaFileTest extends TestCase {
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
+                .getDefaultMediaFileDirectory(testWeblog);
         assertEquals(directory, rootDirectory);
 
         TestUtils.endSession(true);
@@ -247,21 +213,15 @@ public class MediaFileTest extends TestCase {
 
         // no need to create root directory, that is done automatically now
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
+                .getDefaultMediaFileDirectory(testWeblog);
 
-        // MediaFileDirectory rootDirectory = new MediaFileDirectory(null,
-        // "root", "root d", testWeblog);
-        // mfMgr.createMediaFileDirectory(rootDirectory);
-
-        MediaFileDirectory directory2 = new MediaFileDirectory(rootDirectory,
-                "dir2", "directory 2", testWeblog);
+        MediaFileDirectory directory2 = new MediaFileDirectory(testWeblog,
+                "dir2", "directory 2" );
         mfMgr.createMediaFileDirectory(directory2);
-        rootDirectory.getChildDirectories().add(directory2);
 
-        MediaFileDirectory directory3 = new MediaFileDirectory(rootDirectory,
-                "dir3", "directory 3", testWeblog);
+        MediaFileDirectory directory3 = new MediaFileDirectory(testWeblog,
+                "dir3", "directory 3");
         mfMgr.createMediaFileDirectory(directory3);
-        rootDirectory.getChildDirectories().add(directory3);
 
         TestUtils.endSession(true);
 
@@ -270,9 +230,9 @@ public class MediaFileTest extends TestCase {
                 .getMediaFileDirectories(testWeblog);
         assertNotNull(directories);
         assertEquals(3, directories.size());
-        assertTrue(containsPath(directories, "/"));
-        assertTrue(containsPath(directories, "/dir2"));
-        assertTrue(containsPath(directories, "/dir3"));
+        assertTrue(containsName(directories, "default"));
+        assertTrue(containsName(directories, "dir2"));
+        assertTrue(containsName(directories, "dir3"));
 
         TestUtils.endSession(true);
         TestUtils.teardownWeblog(testWeblog.getId());
@@ -285,10 +245,10 @@ public class MediaFileTest extends TestCase {
      * a directory of given path.
      * 
      */
-    private boolean containsPath(Collection<MediaFileDirectory> directories,
-            String path) {
+    private boolean containsName(Collection<MediaFileDirectory> directories,
+            String name) {
         for (MediaFileDirectory directory : directories) {
-            if (path.equals(directory.getPath())) {
+            if (name.equals(directory.getName())) {
                 return true;
             }
         }
@@ -326,11 +286,7 @@ public class MediaFileTest extends TestCase {
 
         // no need to create root directory, that is done automatically now
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
-
-        // MediaFileDirectory rootDirectory = new MediaFileDirectory(null,
-        // "root", "root d", testWeblog);
-        // mfMgr.createMediaFileDirectory(rootDirectory);
+                .getDefaultMediaFileDirectory(testWeblog);
 
         TestUtils.endSession(true);
 
@@ -391,8 +347,8 @@ public class MediaFileTest extends TestCase {
      */
     public void testCreateMediaFile() throws Exception {
 
-        User testUser = null;
-        Weblog testWeblog = null;
+        User testUser;
+        Weblog testWeblog;
         testUser = TestUtils.setupUser("mediaFileTestUser3");
         testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog3", testUser);
 
@@ -401,11 +357,7 @@ public class MediaFileTest extends TestCase {
 
         // no need to create root directory, that is done automatically now
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
-
-        // MediaFileDirectory rootDirectory = new MediaFileDirectory(null,
-        // "root", "root d", testWeblog);
-        // mfMgr.createMediaFileDirectory(rootDirectory);
+                .getDefaultMediaFileDirectory(testWeblog);
 
         TestUtils.endSession(true);
 
@@ -459,7 +411,7 @@ public class MediaFileTest extends TestCase {
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
+                .getDefaultMediaFileDirectory(testWeblog);
 
         try {
 
@@ -567,10 +519,10 @@ public class MediaFileTest extends TestCase {
             filter2.setName("test_home.jpg");
             searchResults = mfMgr.searchMediaFiles(testWeblog, filter2);
             assertFalse(searchResults.isEmpty());
-            assertEquals(id2, ((MediaFile) searchResults.get(0)).getId());
-            assertNotNull(((MediaFile) searchResults.get(0)).getDirectory());
-            assertEquals("/", ((MediaFile) searchResults.get(0)).getDirectory()
-                    .getPath());
+            assertEquals(id2, (searchResults.get(0)).getId());
+            assertNotNull((searchResults.get(0)).getDirectory());
+            assertEquals("default", (searchResults.get(0)).getDirectory()
+                    .getName());
 
             MediaFileFilter filter3 = new MediaFileFilter();
             filter3.setName("test_work.jpg");
@@ -684,12 +636,7 @@ public class MediaFileTest extends TestCase {
 
             // no need to create root directory, that is done automatically now
             MediaFileDirectory rootDirectory = mfMgr
-                    .getMediaFileRootDirectory(testWeblog);
-
-            // MediaFileDirectory rootDirectory = new MediaFileDirectory(null,
-            // "root", "root d", testWeblog);
-            // mfMgr.createMediaFileDirectory(rootDirectory);
-            // TestUtils.endSession(true);
+                    .getDefaultMediaFileDirectory(testWeblog);
 
             for (int i = 0; i < 15; i++) {
                 rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory
@@ -778,11 +725,7 @@ public class MediaFileTest extends TestCase {
 
         // no need to create root directory, that is done automatically now
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
-
-        // MediaFileDirectory rootDirectory = new MediaFileDirectory(null,
-        // "root", "root d", testWeblog);
-        // mfMgr.createMediaFileDirectory(rootDirectory);
+                .getDefaultMediaFileDirectory(testWeblog);
 
         TestUtils.endSession(true);
 
@@ -871,11 +814,7 @@ public class MediaFileTest extends TestCase {
 
         // no need to create root directory, that is done automatically now
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
-
-        // MediaFileDirectory rootDirectory = new MediaFileDirectory(null,
-        // "root", "root d", testWeblog);
-        // mfMgr.createMediaFileDirectory(rootDirectory);
+                .getDefaultMediaFileDirectory(testWeblog);
 
         TestUtils.endSession(true);
 
@@ -942,27 +881,20 @@ public class MediaFileTest extends TestCase {
 
         // no need to create root directory, that is done automatically now
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
+                .getDefaultMediaFileDirectory(testWeblog);
 
-        // MediaFileDirectory rootDirectory = new MediaFileDirectory(null,
-        // "root", "root d", testWeblog);
-        // mfMgr.createMediaFileDirectory(rootDirectory);
-
-        MediaFileDirectory directory1 = new MediaFileDirectory(rootDirectory,
-                "dir1", "directory 1", testWeblog);
+        MediaFileDirectory directory1 = new MediaFileDirectory(testWeblog,
+                "dir1", "directory 1");
         mfMgr.createMediaFileDirectory(directory1);
-        rootDirectory.getChildDirectories().add(directory1);
 
-        MediaFileDirectory directory2 = new MediaFileDirectory(rootDirectory,
-                "dir2", "directory 2", testWeblog);
+        MediaFileDirectory directory2 = new MediaFileDirectory(testWeblog,
+                "dir2", "directory 2");
         mfMgr.createMediaFileDirectory(directory2);
-        rootDirectory.getChildDirectories().add(directory2);
 
-        MediaFileDirectory directory3 = new MediaFileDirectory(rootDirectory,
-                "dir3", "directory 3", testWeblog);
+        MediaFileDirectory directory3 = new MediaFileDirectory(testWeblog,
+                "dir3", "directory 3");
         mfMgr.createMediaFileDirectory(directory3);
-        rootDirectory.getChildDirectories().add(directory3);
-        
+
         TestUtils.endSession(true);
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -999,12 +931,12 @@ public class MediaFileTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
 
-        Set<MediaFileDirectory> childDirectories = rootDirectory
-                .getChildDirectories();
-        assertEquals(3, childDirectories.size());
-        assertTrue(containsPath(childDirectories, "/dir1"));
-        assertTrue(containsPath(childDirectories, "/dir2"));
-        assertTrue(containsPath(childDirectories, "/dir3"));
+        List<MediaFileDirectory> childDirectories = testWeblog
+                .getMediaFileDirectories();
+        assertEquals(4, childDirectories.size());
+        assertTrue(containsName(childDirectories, "dir1"));
+        assertTrue(containsName(childDirectories, "dir2"));
+        assertTrue(containsName(childDirectories, "dir3"));
 
         Set<MediaFile> mediaFiles = rootDirectory.getMediaFiles();
         assertEquals(2, mediaFiles.size());
@@ -1037,27 +969,21 @@ public class MediaFileTest extends TestCase {
 
         // no need to create root directory, that is done automatically now
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
+                .getDefaultMediaFileDirectory(testWeblog);
 
         try {
 
-            // MediaFileDirectory rootDirectory = new MediaFileDirectory(null,
-            // "root", "root d", testWeblog);
-            //mfMgr.createMediaFileDirectory(rootDirectory);
-
             MediaFileDirectory directory1 = new MediaFileDirectory(
-                    rootDirectory, "dir1", "directory 1", testWeblog);
+                    testWeblog, "dir1", "directory 1");
             mfMgr.createMediaFileDirectory(directory1);
-            rootDirectory.getChildDirectories().add(directory1);
             String dir1Id = directory1.getId();
 
             MediaFileDirectory directory2 = new MediaFileDirectory(
-                    rootDirectory, "dir2", "directory 2", testWeblog);
+                    testWeblog, "dir2", "directory 2");
             mfMgr.createMediaFileDirectory(directory2);
-            rootDirectory.getChildDirectories().add(directory2);
 
             MediaFileDirectory directory3 = new MediaFileDirectory(
-                    rootDirectory, "dir3", "directory 3", testWeblog);
+                    testWeblog, "dir3", "directory 3");
             mfMgr.createMediaFileDirectory(directory3);
             //rootDirectory.getChildDirectories().add(directory3);
             
@@ -1074,8 +1000,7 @@ public class MediaFileTest extends TestCase {
             mediaFile.setCopyrightText("test 7.1 copyright text");
             mediaFile.setSharedForGallery(false);
             mediaFile.setLength(4000);
-            mediaFile
-                    .setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
+            mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
             mediaFile.setContentType("image/jpeg");
             mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
             //rootDirectory.getMediaFiles().add(mediaFile);
@@ -1164,11 +1089,11 @@ public class MediaFileTest extends TestCase {
             // now, let's check to see if migration was successful
 
             MediaFileDirectory root1 = mgr
-                    .getMediaFileRootDirectory(testWeblog1);
+                    .getDefaultMediaFileDirectory(testWeblog1);
             assertNotNull("testblog1's mediafile dir exists", root1);
             assertNotNull(mgr.getMediaFileByPath(testWeblog1, "/sub1/hawk.jpg"));
             assertNotNull(mgr.getMediaFileByPath(testWeblog1,
-                    "/sub1/sub2/nasa.jpg"));
+                    "/sub2/nasa.jpg"));
             assertNotNull(mgr.getMediaFileByPath(testWeblog1,
                     "/roller50-prop.png"));
 
@@ -1176,7 +1101,7 @@ public class MediaFileTest extends TestCase {
                     "/sub1/hawk.jpg"));
 
             MediaFileDirectory root2 = mgr
-                    .getMediaFileRootDirectory(testWeblog2);
+                    .getDefaultMediaFileDirectory(testWeblog2);
             assertNotNull("testblog2's mediafile dir exists", root2);
             assertNotNull(root2.getMediaFile("amsterdam.jpg"));
             assertNotNull(root2.getMediaFile("p47-thunderbolt.jpg"));
@@ -1220,41 +1145,32 @@ public class MediaFileTest extends TestCase {
 
         // no need to create root directory, that is done automatically now
         MediaFileDirectory rootDirectory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
+                .getDefaultMediaFileDirectory(testWeblog);
 
-        MediaFileDirectory directory1 = new MediaFileDirectory(rootDirectory,
-                "dir1", "directory 1", testWeblog);
+        MediaFileDirectory directory1 = new MediaFileDirectory(testWeblog,
+                "dir1", "directory 1");
         mfMgr.createMediaFileDirectory(directory1);
-        rootDirectory.getChildDirectories().add(directory1);
 
-        MediaFileDirectory directory2 = new MediaFileDirectory(rootDirectory,
-                "dir2", "directory 2", testWeblog);
+        MediaFileDirectory directory2 = new MediaFileDirectory(testWeblog,
+                "dir2", "directory 2");
         mfMgr.createMediaFileDirectory(directory2);
-        rootDirectory.getChildDirectories().add(directory2);
 
-        MediaFileDirectory directory3 = new MediaFileDirectory(rootDirectory,
-                "dir3", "directory 3", testWeblog);
+        MediaFileDirectory directory3 = new MediaFileDirectory(testWeblog,
+                "dir3", "directory 3");
         mfMgr.createMediaFileDirectory(directory3);
-        rootDirectory.getChildDirectories().add(directory3);
 
         TestUtils.endSession(true);
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         rootDirectory = mfMgr.getMediaFileDirectory(rootDirectory.getId());
 
-        Set<MediaFileDirectory> childDirectories = rootDirectory
-                .getChildDirectories();
+        List<MediaFileDirectory> childDirectories = testWeblog.getMediaFileDirectories();
+
         assertEquals(3, childDirectories.size());
 
         TestUtils.endSession(true);
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-
-        // Using named query MediaFileDirectory.getByWeblogAndNoParent
-        MediaFileDirectory directory = mfMgr
-                .getMediaFileRootDirectory(testWeblog);
-
-        assertEquals(3, directory.getChildDirectories().size());
 
         // Delete folder
         MediaFileDirectory directoryById = mfMgr
@@ -1262,14 +1178,6 @@ public class MediaFileTest extends TestCase {
 
         mfMgr.removeMediaFileDirectory(directoryById);
         TestUtils.endSession(true);
-
-        directory = null;
-
-        // Using named query again MediaFileDirectory.getByWeblogAndNoParent
-        directory = mfMgr.getMediaFileRootDirectory(testWeblog);
-
-        // There should only be two, the database only has two.
-        assertEquals(2, directory.getChildDirectories().size());
 
         TestUtils.endSession(true);
         TestUtils.teardownWeblog(testWeblog.getId());

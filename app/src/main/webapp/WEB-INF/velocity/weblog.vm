@@ -24,6 +24,7 @@ These are the documented macros in order defined in this file:
     #showAutodiscoveryLinks($weblog)
     #showTrackbackAutodiscovery($entry)
     #showMetaDescription()
+    #showAnalyticsTrackingCode($weblog)
 
     #showWeblogEntriesPager($pager)
     #showNextPrevEntriesControl($pager)
@@ -37,7 +38,6 @@ These are the documented macros in order defined in this file:
     #showBookmarkLinksList($folderObj)
     #showWeblogCategoryLinksList()
     #showMobileCategoryLinksList()
-    #showReferrersList($weblog)
     #showAtomFeedsList($weblog)
     #showRSSFeedsList($weblog)
 
@@ -152,6 +152,19 @@ will be created.
         #end
     #elseif ($utils.isNotEmpty($model.weblog.description))
         <meta name="description" content="$model.weblog.description">
+    #end
+#end
+
+#**
+Adds a tracking code for website analytics (e.g. Google Analytics). Will use the blog-defined
+tracking code if defined and permitted by the installation, else the server-defined tracking
+code if defined will be used.
+*#
+#macro(showAnalyticsTrackingCode $weblog)
+    #if ($config.analyticsOverrideAllowed && $utils.isNotEmpty($weblog.analyticsCode))
+        $weblog.analyticsCode
+    #elseif ($utils.isNotEmpty($config.defaultAnalyticsTrackingCode))
+        $config.defaultAnalyticsTrackingCode
     #end
 #end
 
@@ -564,49 +577,6 @@ Show weblog's categories in specified parent category.
       </div>
     </div>
     <a href="#categories" data-rel="popup" data-role="button">Categories - $active</a>
-#end
-
-#**
- * Display list of referrers.
- *#
-#macro(showReferrersList $refs $max $maxWidth $includeHits)
-    <ul class="rReferersList">
-    #foreach( $ref in $refs )
-        #if ($velocityCount <= $max)
-        <li class="rReferersListItem">
-
-            #set( $qq = '"' )
-            #set( $myUrl = $utils.escapeHTML( $ref.RefererUrl ) )
-            #set( $displayUrl = $myUrl )
-            #set( $restOfUrl = "" )
-            #set( $displayLink = "" )
-            #if ( $displayUrl.startsWith("http://") )
-                #set( $displayUrl = $displayUrl.substring( 7 ) )
-            #end
-            #if ( $displayUrl.length() > $maxWidth )
-                #set( $restOfUrl = "...$displayUrl.substring($maxWidth, $displayUrl.length())" )
-                #set( $displayUrl = $displayUrl.substring(0, $maxWidth) )
-            #end
-            #if ( $myUrl.startsWith("http://") )
-                #set( $displayLink = "<a rel=${qq}nofollow${qq} href=${qq}$myUrl${qq}" )
-                #if ( $restOfUrl )
-                    #set( $displayLink = "$displayLink title=${qq}$restOfUrl${qq}" )
-                #end
-                #set( $displayLink = "$displayLink >" )
-            #end
-            #set( $displayLink = "$displayLink$displayUrl" )
-            #if ( $includeHits )
-                #set( $displayLink = "$displayLink ($ref.DayHits)" )
-            #end
-            #if ( $myUrl.startsWith("http://") )
-                #set( $displayLink = "$displayLink</a>" )
-            #end
-            $displayLink
-
-        </li>
-        #end
-    #end
-    </ul>
 #end
 
 

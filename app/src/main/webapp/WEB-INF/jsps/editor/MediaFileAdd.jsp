@@ -70,7 +70,7 @@
 <s:form id="entry" action="mediaFileAdd!save" method="POST" enctype="multipart/form-data">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="directoryPath" />
+    <s:hidden name="directoryName" />
 
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
@@ -118,7 +118,7 @@
                 <label for="status"><s:text name="mediaFileAdd.directory" /></label>
             </td>
             <td>
-                <s:select name="bean.directoryId" list="allDirectories" listKey="id" listValue="path" />
+                <s:select name="bean.directoryId" list="allDirectories" listKey="id" listValue="name" />
             </td>
        </tr>
 

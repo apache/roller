@@ -267,7 +267,6 @@ public class Register extends UIAction implements ServletRequestAware {
 
             } catch (WebloggerException ex) {
                 log.error("Error adding new user", ex);
-                // TODO: i18n
                 addError("Error adding new user");
             }
         }
@@ -388,8 +387,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 }
             } catch (WebloggerException ex) {
                 log.error("error checking for user", ex);
-                // TODO: i18n
-                addError("unexpected error");
+                addError("Unexpected error checking user -- check Roller logs");
             }
         }
     }

@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -62,7 +63,7 @@ public class WebappResourceLoader extends ResourceLoader {
 
 	// The root paths for templates (relative to webapp's root).
 	protected String[] paths = null;
-	protected HashMap<String, String> templatePaths = null;
+	protected Map<String, String> templatePaths = null;
 	protected ServletContext servletContext = null;
 
 	/**
@@ -148,21 +149,16 @@ public class WebappResourceLoader extends ResourceLoader {
 		}
 
 		if (result == null) {
-
-			for (int i = 0; i < paths.length; i++) {
-
-				String path = paths[i] + split[0];
-
+            for (String pathSegment : paths) {
+				String path = pathSegment + split[0];
 				try {
-
 					result = servletContext.getResourceAsStream(path);
 
 					// save the path and exit the loop if we found the template
 					if (result != null) {
-						templatePaths.put(name, paths[i]);
+						templatePaths.put(name, pathSegment);
 						break;
 					}
-
 				} catch (NullPointerException npe) {
 					// no servletContext was set, whine about it!
 					throw npe;
@@ -255,8 +251,8 @@ public class WebappResourceLoader extends ResourceLoader {
 		 * found in the previously saved path
 		 */
 		File currentFile = null;
-		for (int i = 0; i < paths.length; i++) {
-			currentFile = new File(rootPath + paths[i], fileName);
+		for (String path : paths) {
+			currentFile = new File(rootPath + path, fileName);
 			if (currentFile.canRead()) {
 				/*
 				 * stop at the first resource found (just like in

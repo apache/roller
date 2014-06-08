@@ -123,8 +123,7 @@ public class FolderEdit extends UIAction {
                 // notify caches
                 CacheManager.invalidate(getFolder());
 
-                // TODO: i18n
-                addMessage("folder updated");
+                addMessage("folderForm.update.success");
 
             } catch(Exception ex) {
                 log.error("Error saving folder", ex);

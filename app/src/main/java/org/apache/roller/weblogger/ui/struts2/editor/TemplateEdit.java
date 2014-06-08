@@ -79,7 +79,6 @@ public class TemplateEdit extends UIAction {
     public String execute() {
         try {
             if (getTemplate() == null) {
-                // TODO: i18n
                 addError("Unable to locate specified template");
                 return LIST;
             }
@@ -96,8 +95,7 @@ public class TemplateEdit extends UIAction {
 
         } catch (WebloggerException ex) {
            log.error("Error updating page - " + getBean().getId(), ex);
-           // TODO: i18n
-           addError("Error saving template");
+           addError("Error saving template - check Roller logs");
         }
 
         return INPUT;
@@ -110,7 +108,6 @@ public class TemplateEdit extends UIAction {
         log.debug("Entering save()");
 
         if (getTemplate() == null) {
-            // TODO: i18n
             addError("Unable to locate specified template");
             return LIST;
         }
@@ -148,8 +145,7 @@ public class TemplateEdit extends UIAction {
 
             } catch (Exception ex) {
                 log.error("Error updating page - " + getBean().getId(), ex);
-                // TODO: i18n
-                addError("Error saving template");
+                addError("Error updating template - check Roller logs");
             }
         }
 

@@ -116,8 +116,8 @@ public class RollerAtomService extends AtomService {
                     List<MediaFileDirectory> dirs = mgr.getMediaFileDirectories(weblog);
                     for (MediaFileDirectory dir : dirs) {
                         Collection uploadSubCol = new Collection(
-                            "Media Files: " + dir.getPath(), "text",
-                            atomURL + "/" + weblog.getHandle() + "/resources/" + dir.getPath());
+                            "Media Files: " + dir.getName(), "text",
+                            atomURL + "/" + weblog.getHandle() + "/resources/" + dir.getName());
                         uploadSubCol.setAccepts(uploadAccepts);
                         workspace.addCollection(uploadSubCol);
                     }
@@ -133,17 +133,19 @@ public class RollerAtomService extends AtomService {
      * Build accept range by taking things that appear to be content-type rules 
      * from site's file-upload allowed extensions.
      */
-    private List getAcceptedContentTypeRange() throws WebloggerException {
-        List accepts = new ArrayList();
+    private List<String> getAcceptedContentTypeRange() throws WebloggerException {
+        List<String> accepts = new ArrayList<String>();
         Weblogger roller = WebloggerFactory.getWeblogger();
         Map config = roller.getPropertiesManager().getProperties();        
         String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
-        for (int i = 0; i < rules.length; i++) {
-            if (rules[i].indexOf('/') == -1) {
-                continue;
+        if (rules != null) {
+            for (String rule : rules) {
+                if (rule.indexOf('/') == -1) {
+                    continue;
+                }
+                accepts.add(rule);
             }
-            accepts.add(rules[i]);
         }
         return accepts;             
     }      

@@ -69,8 +69,7 @@ public class MemberResign extends UIAction {
             addMessage("yourWebsites.resigned", getWeblog());
         } catch (WebloggerException ex) {
             log.error("Error doing weblog resign - " + getActionWeblog().getHandle(), ex);
-            // TODO: i18n
-            addError("Resignation failed.");
+            addError("Resignation failed - check system logs");
         }
         return SUCCESS;
     }

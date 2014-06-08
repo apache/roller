@@ -82,8 +82,7 @@ public class FolderAdd extends UIAction {
                 // notify caches
                 CacheManager.invalidate(newFolder);
 
-                // TODO: i18n
-                addMessage("folder added");
+                addMessage("folderForm.add.success");
 
                 // Set for next action
                 getBean().setId(newFolder.getId());

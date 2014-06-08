@@ -166,7 +166,7 @@ $("#d_clip_button").ready(function() {
             </td>
             <td>
                 <s:select name="bean.directoryId" list="allDirectories"
-                    listKey="id" listValue="path" tabindex="5" />
+                    listKey="id" listValue="name" tabindex="5" />
             </td>
        </tr>
 
@@ -192,7 +192,7 @@ $("#d_clip_button").ready(function() {
             </td>
         </tr>
 
-        <!-- orginal path from base URL of ctx/resources/ -->
+        <!-- original path from base URL of ctx/resources/ -->
         <% if (WebloggerConfig.getBooleanProperty("mediafile.originalPathEdit.enabled")) { %>
         <tr>
             <td class="originalPathLabel">

@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryC
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -49,14 +50,13 @@ public class MediaFileView extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileView.class);
 
     private String directoryId;
-    private String directoryPath;
+    private String directoryName;
     private String sortBy;
     private String newDirectoryName;
     
     private List<MediaFile>          childFiles;
     private MediaFileDirectory       currentDirectory;
-    private List<MediaFileDirectory> childDirectories;
-    
+
 
     // Search criteria - drop-down for file type
     private static List<KeyValueObject> FILE_TYPES = null;
@@ -75,6 +75,9 @@ public class MediaFileView extends MediaFileBase {
 
     // Path of new directory to be created.
     private String newDirectoryPath;
+
+    // a new directory the user wishes to view
+    private String viewDirectoryId = null;
 
     private MediaFileSearchBean bean = new MediaFileSearchBean();
 
@@ -120,7 +123,7 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
-     * Create a new directory by name under current directory
+     * Create a new directory by name.  All folders placed at the root.
      */
     public String createNewDirectory() {
         boolean dirCreated = false;
@@ -132,16 +135,14 @@ public class MediaFileView extends MediaFileBase {
             try {
                 log.debug("Creating new directory - " + this.newDirectoryName);
                 MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-                MediaFileDirectory parentDirectory = manager.getMediaFileDirectory(this.directoryId);
-                manager.createMediaFileDirectory(parentDirectory, this.newDirectoryName);
+                manager.createMediaFileDirectory(getActionWeblog(), this.newDirectoryName);
                 // flush changes
                 WebloggerFactory.getWeblogger().flush();
                 addMessage("mediaFile.directoryCreate.success");
                 dirCreated = true;
             } catch (WebloggerException e) {
-                log.error("Error creating new directory by path", e);
-                // TODO: i18n
-                addError("Error creating new directory by path");
+                log.error("Error creating new directory", e);
+                addError("Error creating new directory");
             }
         }
 
@@ -176,17 +177,14 @@ public class MediaFileView extends MediaFileBase {
             if (StringUtils.isNotEmpty(this.directoryId)) {
                 directory = manager.getMediaFileDirectory(this.directoryId);
 
-            } else if (StringUtils.isNotEmpty(this.directoryPath)) {
-                directory = manager.getMediaFileDirectoryByPath(getActionWeblog(), this.directoryPath);
+            } else if (StringUtils.isNotEmpty(this.directoryName)) {
+                directory = manager.getMediaFileDirectoryByName(getActionWeblog(), this.directoryName);
 
             } else {
-                directory = manager.getMediaFileRootDirectory(getActionWeblog());
+                directory = manager.getDefaultMediaFileDirectory(getActionWeblog());
             }
             this.directoryId = directory.getId();
-            this.directoryPath = directory.getPath();
-
-            this.childDirectories = new ArrayList<MediaFileDirectory>();
-            this.childDirectories.addAll(directory.getChildDirectories());
+            this.directoryName = directory.getName();
 
             this.childFiles = new ArrayList<MediaFile>();
             this.childFiles.addAll(directory.getMediaFiles());
@@ -202,8 +200,6 @@ public class MediaFileView extends MediaFileBase {
             } else {
                 // default to sort by name
                 sortBy = "name";
-                Collections.sort(this.childDirectories,
-                    new MediaFileDirectoryComparator(DirectoryComparatorType.NAME));
                 Collections.sort(this.childFiles,
                     new MediaFileComparator(MediaFileComparatorType.NAME));
             }
@@ -220,6 +216,22 @@ public class MediaFileView extends MediaFileBase {
             addError("MediaFile.error.view");
         }
         return SUCCESS;
+    }
+
+    /**
+     * View the contents of another Media folder.
+     */
+    public String view() {
+        try {
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            if (!StringUtils.isEmpty(viewDirectoryId)) {
+                setDirectoryId(viewDirectoryId);
+                setCurrentDirectory(manager.getMediaFileDirectory(viewDirectoryId));
+            }
+        } catch (WebloggerException ex) {
+            log.error("Error looking up directory", ex);
+        }
+        return execute();
     }
 
     /**
@@ -249,33 +261,12 @@ public class MediaFileView extends MediaFileBase {
                 
             } catch (Exception e) {
                 log.error("Error applying search criteria", e);
-                // TODO: i18n
-                addError("Error applying search criteria");
+                addError("Error applying search criteria - check Roller logs");
             }
 
         }
         
         return SUCCESS;
-    }
-
-    /**
-     * Returns the hierarchy of the current directory. This is useful in
-     * displaying path information as breadcrumb.
-     */
-    public List<KeyValueObject> getCurrentDirectoryHierarchy() {
-        List<KeyValueObject> directoryHierarchy = new ArrayList<KeyValueObject>();
-
-        directoryHierarchy.add(new KeyValueObject("/", "root"));
-        String fullPath = this.currentDirectory.getPath();
-        String dpath = "";
-        if (fullPath.length() > 1) {
-            String[] directoryNames = fullPath.substring(1).split("/");
-            for (String directoryName : directoryNames) {
-                dpath = dpath + "/" + directoryName;
-                directoryHierarchy.add(new KeyValueObject(dpath, directoryName));
-            }
-        }
-        return directoryHierarchy;
     }
 
     /**
@@ -295,6 +286,42 @@ public class MediaFileView extends MediaFileBase {
         doDeleteMediaFile();
         return execute();
     }
+
+    /**
+     * Delete folder
+     */
+    public String deleteFolder() {
+
+        try {
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            if (directoryId != null) {
+                log.debug("Deleting media file folder - " + directoryId + " (" + directoryName + ")");
+                MediaFileDirectory mediaFileDir = manager.getMediaFileDirectory(directoryId);
+                manager.removeMediaFileDirectory(mediaFileDir);
+                refreshAllDirectories();
+                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(this.getActionWeblog());
+
+                // flush changes
+                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.getWeblogger().release();
+                addMessage("mediaFile.deleteFolder.success");
+
+                // notify caches
+                CacheManager.invalidate(getActionWeblog());
+
+                // re-route to default folder
+                mediaFileDir = manager.getDefaultMediaFileDirectory(getActionWeblog());
+                setDirectoryId(mediaFileDir.getId());
+                setDirectoryName(mediaFileDir.getName());
+            } else {
+                log.error("(System error) No directory ID provided for media file folder delete.");
+            }
+        } catch (WebloggerException ex) {
+            log.error("Error deleting folder", ex);
+        }
+        return execute();
+    }
+
 
     /**
      * Include selected media file in gallery
@@ -322,14 +349,6 @@ public class MediaFileView extends MediaFileBase {
         this.directoryId = id;
     }
 
-    public List<MediaFileDirectory> getChildDirectories() {
-        return childDirectories;
-    }
-
-    public void setChildDirectories(List<MediaFileDirectory> directories) {
-        this.childDirectories = directories;
-    }
-
     public List<MediaFile> getChildFiles() {
         return childFiles;
     }
@@ -354,12 +373,12 @@ public class MediaFileView extends MediaFileBase {
         this.currentDirectory = currentDirectory;
     }
 
-    public String getDirectoryPath() {
-        return directoryPath;
+    public String getDirectoryName() {
+        return directoryName;
     }
 
-    public void setDirectoryPath(String path) {
-        this.directoryPath = path;
+    public void setDirectoryName(String path) {
+        this.directoryName = path;
     }
 
     public String getSortBy() {
@@ -420,4 +439,13 @@ public class MediaFileView extends MediaFileBase {
     public void setNewDirectoryPath(String newDirectoryPath) {
         this.newDirectoryPath = newDirectoryPath;
     }
+
+    public String getViewDirectoryId() {
+        return viewDirectoryId;
+    }
+
+    public void setViewDirectoryId(String viewDirectoryId) {
+        this.viewDirectoryId = viewDirectoryId;
+    }
+
 }

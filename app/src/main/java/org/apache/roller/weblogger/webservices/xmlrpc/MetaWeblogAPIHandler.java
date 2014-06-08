@@ -378,7 +378,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             Weblogger roller = WebloggerFactory.getWeblogger();
             MediaFileManager fmgr = roller.getMediaFileManager();
-            MediaFileDirectory root = fmgr.getMediaFileRootDirectory(website);
+            MediaFileDirectory root = fmgr.getDefaultMediaFileDirectory(website);
  
             // Try to save file
             MediaFile mf = new MediaFile();

@@ -36,8 +36,6 @@ import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
-import org.apache.roller.weblogger.business.referrers.RefererManager;
-import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
@@ -69,8 +67,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         PingTargetManager    pingTargetManager,
         PluginManager        pluginManager,
         PropertiesManager    propertiesManager,
-        RefererManager       refererManager,
-        ReferrerQueueManager refererQueueManager,
         ThemeManager         themeManager,
         ThreadManager        threadManager,
         UserManager          userManager,
@@ -92,8 +88,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
             pingTargetManager,
             pluginManager,
             propertiesManager,
-            refererManager,
-            refererQueueManager,
             themeManager,
             threadManager,
             userManager,

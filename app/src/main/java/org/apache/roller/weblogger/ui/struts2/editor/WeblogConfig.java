@@ -129,6 +129,10 @@ public class WeblogConfig extends UIAction {
 
                 Weblog weblog = getActionWeblog();
 
+                if (getBean().getAnalyticsCode() != null) {
+                    getBean().setAnalyticsCode(getBean().getAnalyticsCode().trim());
+                }
+
                 getBean().copyTo(weblog);
 
                 // if blogger category changed then lookup new cat and set it
@@ -158,9 +162,6 @@ public class WeblogConfig extends UIAction {
                     wmgr.applyCommentDefaultsToEntries(weblog);
                 }
 
-                // apply referer filters
-                WebloggerFactory.getWeblogger().getRefererManager().applyRefererFilters(weblog);
-
                 // flush
                 WebloggerFactory.getWeblogger().flush();
 
@@ -171,7 +172,6 @@ public class WeblogConfig extends UIAction {
 
             } catch (Exception ex) {
                 log.error("Error updating weblog config", ex);
-                // TODO: i18n
                 addError("Error updating configuration");
             }
         }

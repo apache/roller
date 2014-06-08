@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -52,10 +53,10 @@ public final class MenuHelper {
 
     private static Log log = LogFactory.getLog(MenuHelper.class);
 
-    private static HashMap<String, ParsedMenu> menus = new HashMap<String, ParsedMenu>();
+    private static Map<String, ParsedMenu> menus = new HashMap<String, ParsedMenu>();
 
     // menu, menuName, tabName action/subaction check
-    private static HashMap<String, HashMap<String, HashSet<String>>> itemMenu = new HashMap<String, HashMap<String, HashSet<String>>>();
+    private static Map<String, HashMap<String, HashSet<String>>> itemMenu = new HashMap<String, HashMap<String, HashSet<String>>>();
 
     private MenuHelper() {
     }

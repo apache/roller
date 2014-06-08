@@ -126,16 +126,13 @@ public class Profile extends UIAction {
                 // save the updated profile
                 mgr.saveUser(existingUser);
                 WebloggerFactory.getWeblogger().flush();
-
-                // TODO: i18n
-                addMessage("profile updated.");
+                addMessage("yourProfile.saved");
 
                 return SUCCESS;
 
             } catch (WebloggerException ex) {
                 log.error("ERROR in action", ex);
-                // TODO: i18n
-                addError("unexpected error doing profile save");
+                addError("Unexpected error doing profile save");
             }
 
         }

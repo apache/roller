@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.util.cache;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
-import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -49,8 +48,6 @@ public interface CacheHandler {
     void invalidate(WeblogBookmarkFolder folder);
 
     void invalidate(WeblogEntryComment comment);
-
-    void invalidate(WeblogReferrer referer);
 
     void invalidate(User user);
 
