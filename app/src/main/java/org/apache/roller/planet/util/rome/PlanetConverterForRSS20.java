@@ -16,12 +16,11 @@
  */
 package org.apache.roller.planet.util.rome;
 
+import com.rometools.rome.feed.module.DCModule;
+import com.rometools.rome.feed.rss.Item;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.impl.ConverterForRSS20;
 import java.util.Date;
-
-import com.sun.syndication.feed.module.DCModule;
-import com.sun.syndication.feed.rss.Item;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.impl.ConverterForRSS20;
 
 /**
  * Workaround Rome bug.

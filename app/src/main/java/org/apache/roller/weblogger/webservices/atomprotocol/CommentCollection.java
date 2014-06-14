@@ -17,10 +17,10 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import com.sun.syndication.feed.atom.Entry;
-import com.sun.syndication.feed.atom.Feed;
-import com.sun.syndication.propono.atom.server.AtomException;
-import com.sun.syndication.propono.atom.server.AtomRequest;
+import com.rometools.propono.atom.server.AtomException;
+import com.rometools.propono.atom.server.AtomRequest;
+import com.rometools.rome.feed.atom.Feed;
+import java.util.Map.Entry;
 
 
 /**

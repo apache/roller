@@ -17,18 +17,21 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import com.sun.syndication.feed.atom.Category;
-import com.sun.syndication.feed.atom.Content;
-import com.sun.syndication.feed.atom.Entry;
-import com.sun.syndication.feed.atom.Feed;
-import com.sun.syndication.feed.atom.Link;
-import com.sun.syndication.feed.atom.Person;
-import com.sun.syndication.propono.atom.common.rome.AppModule;
-import com.sun.syndication.propono.atom.common.rome.AppModuleImpl;
-import com.sun.syndication.propono.atom.server.AtomException;
-import com.sun.syndication.propono.atom.server.AtomNotAuthorizedException;
-import com.sun.syndication.propono.atom.server.AtomNotFoundException;
-import com.sun.syndication.propono.atom.server.AtomRequest;
+
+import com.rometools.propono.atom.common.rome.AppModule;
+import com.rometools.propono.atom.common.rome.AppModuleImpl;
+import com.rometools.propono.atom.server.AtomException;
+import com.rometools.propono.atom.server.AtomNotAuthorizedException;
+import com.rometools.propono.atom.server.AtomNotFoundException;
+import com.rometools.propono.atom.server.AtomRequest;
+import com.rometools.rome.feed.atom.Category;
+import com.rometools.rome.feed.atom.Content;
+import com.rometools.rome.feed.atom.Entry;
+import com.rometools.rome.feed.atom.Feed;
+import com.rometools.rome.feed.atom.Link;
+import com.rometools.rome.feed.atom.Person;
+import com.rometools.rome.feed.module.Module;
+import com.rometools.rome.feed.synd.SyndPerson;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -332,10 +335,10 @@ public class EntryCollection {
         }
         
         User creator = entry.getCreator();
-        Person author = new Person();
+        SyndPerson author = new Person();
         author.setName(         creator.getUserName());
         author.setEmail(        creator.getEmailAddress());
-        atomEntry.setAuthors(   Collections.singletonList(author));
+        atomEntry.setAuthors(   (List<SyndPerson>)Collections.singletonList(author));
         
         // Add Atom category for Weblogger category, using category scheme
         List<Category> categories = new ArrayList<Category>();
@@ -370,7 +373,7 @@ public class EntryCollection {
         otherlinks.add(editlink);
         atomEntry.setOtherLinks(otherlinks);
         
-        List<AppModule> modules = new ArrayList<AppModule>();
+        List<Module> modules = new ArrayList<Module>();
         AppModule app = new AppModuleImpl();
         app.setDraft(!WeblogEntry.PUBLISHED.equals(entry.getStatus()));
         app.setEdited(entry.getUpdateTime());

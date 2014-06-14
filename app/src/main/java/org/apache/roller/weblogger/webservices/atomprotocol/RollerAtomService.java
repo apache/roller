@@ -36,12 +36,12 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.Utilities;
 
-import com.sun.syndication.feed.atom.Category;
-import com.sun.syndication.propono.atom.common.AtomService;
-import com.sun.syndication.propono.atom.common.Categories;
-import com.sun.syndication.propono.atom.common.Collection;
-import com.sun.syndication.propono.atom.common.Workspace;
-import com.sun.syndication.propono.atom.server.AtomException;
+import com.rometools.propono.atom.common.AtomService;
+import com.rometools.propono.atom.common.Categories;
+import com.rometools.propono.atom.common.Collection;
+import com.rometools.propono.atom.common.Workspace;
+import com.rometools.propono.atom.server.AtomException;
+import com.rometools.rome.feed.atom.Category;
 
 
 /**
@@ -100,8 +100,7 @@ public class RollerAtomService extends AtomService {
                     }
                     entryCol.addCategories(cats);
 
-                    // Add tags as free-form categories using scheme that points
-                    // to site because tags can be considered site-wide
+                    // Indicte that free form categories are allowed
                     Categories tags = new Categories();
                     tags.setFixed(false);
                     entryCol.addCategories(tags);

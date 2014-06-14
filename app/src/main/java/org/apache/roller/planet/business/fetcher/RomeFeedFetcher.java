@@ -18,16 +18,16 @@
 
 package org.apache.roller.planet.business.fetcher;
 
-import com.sun.syndication.feed.module.DCModule;
-import com.sun.syndication.feed.synd.SyndCategory;
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.fetcher.FeedFetcher;
-import com.sun.syndication.fetcher.impl.FeedFetcherCache;
-import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
-import com.sun.syndication.fetcher.impl.SyndFeedInfo;
-import com.sun.syndication.fetcher.impl.DiskFeedInfoCache;
+import com.rometools.rome.feed.module.DCModule;
+import com.rometools.rome.feed.synd.SyndCategory;
+import com.rometools.rome.feed.synd.SyndContent;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.fetcher.FeedFetcher;
+import com.rometools.fetcher.impl.FeedFetcherCache;
+import com.rometools.fetcher.impl.HttpURLFeedFetcher;
+import com.rometools.fetcher.impl.SyndFeedInfo;
+import com.rometools.fetcher.impl.DiskFeedInfoCache;
 
 import java.io.File;
 import java.net.MalformedURLException;

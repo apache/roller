@@ -219,8 +219,8 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     
     // upate proxy settings for jvm based on planet configuration
     private void updateProxySettings() {
-        String proxyHost = WebloggerRuntimeConfig.getProperty("site.proxyhost");
-        int proxyPort = WebloggerRuntimeConfig.getIntProperty("site.proxyport");
+        String proxyHost = WebloggerRuntimeConfig.getProperty("planet.site.proxyhost");
+        int proxyPort = WebloggerRuntimeConfig.getIntProperty("planet.site.proxyport");
         if (proxyHost != null && proxyPort > 0) {
             System.setProperty("proxySet", "true");
             System.setProperty("http.proxyHost", proxyHost);

@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
@@ -128,6 +129,7 @@ public class PlanetFeedServlet extends HttpServlet {
         // looks like we need to render content
         HashMap<String, Object> model = new HashMap<String, Object>();
         try {
+
             // populate the rendering model
             if (request.getParameter("group") != null) {
                 Planet planetObject = planet.getWeblogger("default");
@@ -136,29 +138,34 @@ public class PlanetFeedServlet extends HttpServlet {
                         planet.getGroup(planetObject,
                                 request.getParameter("group")));
             }
+
             model.put("planet", planet);
             model.put("date", new Date());
             model.put("utils", new UtilitiesModel());
-            model.put("siteName",
-                    WebloggerRuntimeConfig.getProperty("site.name"));
-            model.put("siteDescription",
-                    WebloggerRuntimeConfig.getProperty("site.description"));
             model.put("lastModified", lastModified);
+
+            model.put("siteName",
+                    PlanetRuntimeConfig.getProperty("planet.site.name"));
+
+            model.put("siteDescription",
+                    PlanetRuntimeConfig.getProperty("planet.site.description"));
+
+
             if (StringUtils.isNotEmpty(WebloggerRuntimeConfig
-                    .getProperty("site.absoluteurl"))) {
+                    .getProperty("planet.site.absoluteurl"))) {
                 model.put("absoluteSite",
-                        WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
+                        PlanetRuntimeConfig.getProperty("planet.site.absoluteurl"));
             } else {
                 model.put("absoluteSite",
                         WebloggerRuntimeConfig.getAbsoluteContextURL());
             }
-            model.put(
-                    "feedStyle",
-                    WebloggerRuntimeConfig
-                            .getBooleanProperty("site.newsfeeds.styledFeeds"));
+
+            model.put("feedStyle", WebloggerRuntimeConfig
+                    .getBooleanProperty("site.newsfeeds.styledFeeds"));
 
             int numEntries = WebloggerRuntimeConfig
                     .getIntProperty("site.newsfeeds.defaultEntries");
+
             int entryCount = numEntries;
             String sCount = request.getParameter("count");
             if (sCount != null) {
