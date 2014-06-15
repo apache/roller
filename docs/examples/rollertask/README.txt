@@ -19,11 +19,6 @@ Here are the steps I used to setup rollertask.sh to run on my UNIX based system.
    Edit the roller-custom.properties file to set your database connection info
 
 5) Create a cron entry for each task you run.
-   For example here are cron entries for running the RefreshEntriesTask
-   every 30 minutes and the Technorati rankings task every night.
+   For example here is a cron entry for running the RefreshEntriesTask every 30 minutes.
 
       30 * * * * (cd /usr/local/rollertask.sh; ./rollertask.sh org.apache.roller.ui.core.tasks.RefreshEntriesTask >> ~/logs/planet.log)
-
-      0 0 * * * (cd /usr/local/rollertask.sh; ./rollertask.sh org.apache.roller.ui.core.tasks.TechnoratiRankings >> ~/logs/rankings.log)
-
-

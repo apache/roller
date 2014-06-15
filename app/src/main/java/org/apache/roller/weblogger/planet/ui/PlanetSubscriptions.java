@@ -178,7 +178,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
     
     
     /** 
-     * Validate posted subscription, fill in blanks via Technorati 
+     * Validate posted subscription
      */
     private void myValidate() {
         
