@@ -16,11 +16,12 @@
  */
 package org.apache.roller.planet.util.rome;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
-import com.sun.syndication.feed.rss.Item;
-import com.sun.syndication.io.impl.DateParser;
-import com.sun.syndication.io.impl.RSS091UserlandParser;
+import com.rometools.rome.feed.rss.Item;
+import com.rometools.rome.io.impl.DateParser;
+import com.rometools.rome.io.impl.RSS091UserlandParser;
+import java.util.Locale;
 
 /**
  */
@@ -34,11 +35,12 @@ public class PlanetRSS091NParser extends RSS091UserlandParser {
         super(type);
     }
 
-    protected Item parseItem(Element rssRoot,Element eItem) {
-        Item item = super.parseItem(rssRoot, eItem);
+    @Override
+    protected Item parseItem(Element rssRoot,Element eItem, Locale locale) {
+        Item item = super.parseItem(rssRoot, eItem, locale);
         Element e = eItem.getChild("pubDate",getRSSNamespace());
         if (e!=null) {
-            item.setPubDate(DateParser.parseRFC822(e.getText()));
+            item.setPubDate(DateParser.parseRFC822(e.getText(), locale));
         }
         return item;
     }

@@ -16,7 +16,8 @@
  */
 package org.apache.roller.planet.util.rome;
 
-import com.sun.syndication.feed.module.ModuleImpl;
+import com.rometools.rome.feed.CopyFrom;
+import com.rometools.rome.feed.module.ModuleImpl;
 
 public class ContentModuleImpl extends ModuleImpl implements ContentModule {
     private String encoded;
@@ -24,18 +25,22 @@ public class ContentModuleImpl extends ModuleImpl implements ContentModule {
     public ContentModuleImpl() {
         super(ContentModule.class,ContentModule.URI);
     }
+	@Override
     public String getEncoded() {
         return encoded;
     }
+	@Override
     public void setEncoded(String encoded) {
         this.encoded = encoded;
     }
+	@Override
     public Class getInterface() {
         return ContentModule.class;
     }
-    public void copyFrom(Object obj) {
+
+	@Override
+    public void copyFrom(CopyFrom obj) {
         ContentModule sm = (ContentModule) obj;
         setEncoded(sm.getEncoded());
-    }
-
+	}
 }
