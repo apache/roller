@@ -42,7 +42,7 @@
                 <!-- <interceptor-ref name="staticParams"/> -->
                 <interceptor-ref name="actionMappingParams"/>
                 <interceptor-ref name="params">
-                    <param name="excludeParams">(.*\.|^|.*|\[('|"))(c|C)lass(\.|('|")]|\[).*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*</param>
+                    <param name="excludeParams">^action:.*,^method:.*</param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError"/>
                 
