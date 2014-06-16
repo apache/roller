@@ -21,14 +21,17 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Iterator;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -276,6 +279,14 @@ public class CommentServlet extends HttpServlet {
                     .getString("error.commentPostFailedEmailAddress");
             log.debug("Email Adddress is invalid : "
                     + commentRequest.getEmail());
+            // if there is an URL it must be valid
+        } else if (commentRequest.getUrl() != null) {
+            String[] customSchemes = { "http", "https" };
+            if (!new UrlValidator(customSchemes).isValid(commentRequest
+                    .getUrl())) {
+                error = messageUtils.getString("error.commentPostFailedURL");
+                log.debug("URL is invalid : " + commentRequest.getUrl());
+            }
             // if this is a real comment post then authenticate request
         } else if (!preview && !this.authenticator.authenticate(request)) {
             String[] msg = { request.getParameter("answer") };

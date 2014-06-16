@@ -373,7 +373,7 @@ Show comments form for weblog entry.
         <span class="status">$cform.message</span>
     #end
 
-    <form method="post" action="$url.entry($entry.anchor)" focus="name" name="commentForm" onsubmit="fixURL(this); return validateComments(this)">
+    <form method="post" action="$url.entry($entry.anchor)" focus="name" name="commentForm" onsubmit="saveUserInformation(this); return validateComments(this)">
         <input type="hidden" name="method" value="post" />
 
         <ul>
@@ -447,14 +447,6 @@ Show comments form for weblog entry.
 
     if (author || email || url) {
         document.forms['commentForm'].rememberInfo.checked = true;
-    }
-
-    function fixURL(theForm) {
-        if (theForm.url.value != "" &&
-            theForm.url.value.indexOf("http://") == -1) { //prepend http://
-            theForm.url.value = "http://"+theForm.url.value;
-        }
-        saveUserInformation(theForm);
     }
 
     function saveUserInformation(theForm) {
