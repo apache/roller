@@ -50,7 +50,7 @@ public class MediaFileComparator implements Comparator<MediaFile> {
 		switch (this.type) {
 		    case NAME: return file1.getName().compareTo(file2.getName());
 		    case TYPE: return file1.getContentType().compareTo(file2.getContentType());
-		    // Do descending comparison by default for date field
+		    // Do last uploaded first comparison by default for date field
 		    case DATE_UPLOADED: return file2.getDateUploaded().compareTo(file1.getDateUploaded());  
 		    default: return 0;
 		}

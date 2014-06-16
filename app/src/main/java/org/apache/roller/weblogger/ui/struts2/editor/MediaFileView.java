@@ -31,10 +31,8 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileComparator;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
 import org.apache.roller.weblogger.pojos.MediaFileComparator.MediaFileComparatorType;
-import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
+import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
@@ -86,7 +84,13 @@ public class MediaFileView extends MediaFileBase {
         this.actionName = "mediaFileView";
         this.desiredMenu = "editor";
         this.pageTitle = "mediaFileView.title";
+    }
 
+    /**
+     * Prepares view action
+     */
+    public void myPrepare() {
+        
         if (SIZE_FILTER_TYPES == null) {
 
             SIZE_FILTER_TYPES = Arrays.asList(
@@ -109,16 +113,11 @@ public class MediaFileView extends MediaFileBase {
                 new KeyValueObject("mediaFileView.mb",    getText("mediaFileView.mb")));
 
             SORT_OPTIONS = Arrays.asList(
-                new KeyValueObject("mediaFileView.name", getText("mediaFileView.name")),
-                new KeyValueObject("mediaFileView.date", getText("mediaFileView.date")),
-                new KeyValueObject("mediaFileView.type", getText("mediaFileView.type")));
+                new KeyValueObject("name", getText("mediaFileView.name")),
+                new KeyValueObject("date_uploaded", getText("mediaFileView.date")),
+                new KeyValueObject("type", getText("mediaFileView.type")));
         }
-    }
-
-    /**
-     * Prepares view action
-     */
-    public void myPrepare() {
+        
         refreshAllDirectories();
     }
 

@@ -291,7 +291,7 @@
 <s:else>
 
     <p class="subtitle">
-        <s:text name="mediaFileView.name"/>: <s:text name="currentDirectory.name" />
+        <s:text name="mediaFileView.folderName"/>: <s:text name="currentDirectory.name" />
     </p>
     <p class="pagetip">
         <s:text name="mediaFileView.dirPageTip" />
