@@ -62,7 +62,7 @@
                 <br />
 
                 <s:form id="mediaFileSearchForm" name="mediaFileSearchForm"
-                        action="mediaFileView!search" onsubmit="editorCleanup()">
+                        action="mediaFileView!search">
 					<s:hidden name="salt" />
                     <s:hidden name="weblog" />
 

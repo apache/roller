@@ -48,7 +48,7 @@
     </s:text>
 </p>
 
-<s:form id="entry" action="entryAdd!save" onsubmit="editorCleanup()">
+<s:form id="entry" action="entryAdd!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
 

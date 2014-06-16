@@ -26,7 +26,7 @@
     <s:text name="maintenance.prompt.flush" /><br /><br />
     <s:submit value="%{getText('maintenance.button.flush')}" action="maintenance!flushCache" />
 
-    <s:if test="getProp('search.enabled')">
+    <s:if test="getBooleanProp('search.enabled')">
         <br /><br />
         <s:text name="maintenance.prompt.index" /><br /><br />
         <s:submit value="%{getText('maintenance.button.index')}" action="maintenance!index" />	

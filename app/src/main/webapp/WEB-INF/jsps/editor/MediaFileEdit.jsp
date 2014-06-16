@@ -80,7 +80,6 @@ $("#d_clip_button").ready(function() {
     <s:hidden name="mediaFileId" id="mediaFileId" />
     <s:hidden name="bean.permalink" />
 
-
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
 
@@ -193,7 +192,7 @@ $("#d_clip_button").ready(function() {
         </tr>
 
         <!-- original path from base URL of ctx/resources/ -->
-        <% if (WebloggerConfig.getBooleanProperty("mediafile.originalPathEdit.enabled")) { %>
+        <s:if test="getBooleanProp('mediafile.originalPathEdit.enabled')">
         <tr>
             <td class="originalPathLabel">
                 <label for="originalPath"><s:text name="mediaFileEdit.originalPath" /></label>
@@ -205,7 +204,7 @@ $("#d_clip_button").ready(function() {
                 </div>
             </td>
         </tr>
-        <% } %>
+        </s:if>
 
     </table>
 

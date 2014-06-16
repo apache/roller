@@ -56,7 +56,7 @@ function fullPreviewMode() {
     </s:text>
 </p>
 
-<s:form id="entry" action="entryEdit!save" onsubmit="editorCleanup()">
+<s:form id="entry" action="entryEdit!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
