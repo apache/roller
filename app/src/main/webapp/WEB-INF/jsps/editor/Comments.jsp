@@ -20,18 +20,36 @@
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />"></script>
 
 <script type="text/javascript">
-    <!--
-    function setChecked(val, name) {
-        $("input[name=" + name + "]").attr('checked', val);
-    }
-
+//<!--
+<s:if test="pager.items != null">
+    $(document).ready(function(){
+        $('#checkallapproved').click(function() {
+            toggleFunction(true,"bean.approvedComments");
+        });
+        $('#clearallapproved').click(function() {
+            toggleFunction(false,"bean.approvedComments");
+        });
+        $('#checkallspam').click(function() {
+            toggleFunction(true,"bean.spamComments");
+        });
+        $('#clearallspam').click(function() {
+            toggleFunction(false,"bean.spamComments");
+        });
+        $('#checkalldelete').click(function() {
+            toggleFunction(true,"bean.deleteComments");
+        });
+        $('#clearalldelete').click(function() {
+            toggleFunction(false,"bean.deleteComments");
+        });
+    });
+</s:if>
     function bulkDelete() {
         if (window.confirm('<s:text name="commentManagement.confirmBulkDelete"><s:param value="bulkDeleteCount" /></s:text>')) {
             document.commentQueryForm.method.value = "bulkDelete";
             document.commentQueryForm.submit();
         }
     }
-    -->
+// -->
 </script>
 
 <p class="subtitle">
@@ -58,15 +76,14 @@
 <%-- ============================================================= --%>
 
     <s:form action="comments!update">
-		<s:hidden name="salt" />
+        <s:hidden name="salt" />
         <s:hidden name="weblog" />
         <s:hidden name="bean.ids" />
         <s:hidden name="bean.entryId" />
-        <s:hidden name="bean.offset" />
-        <s:hidden name="bean.count" />
+        <s:hidden name="bean.searchString" />
         <s:hidden name="bean.startDateString" />
         <s:hidden name="bean.endDateString" />
-        <s:hidden name="bean.pendingString" />
+        <s:hidden name="bean.approvedString" />
         <s:hidden name="bean.spamString" />
 
 <%-- ============================================================= --%>
@@ -168,29 +185,20 @@
                 <td align="center">
                     <s:text name="commentManagement.select" /><br/>
 
-                    <a href="#" onclick='setChecked(1,"bean.approvedComments")'>
-                    <s:text name="commentManagement.all" /></a><br />
-
-                    <a href="#" onclick='setChecked(0,"bean.approvedComments")'>
-                    <s:text name="commentManagement.none" /></a>
+                    <span id="checkallapproved"><a href="#"><s:text name="commentManagement.all" /></a></span><br />
+                    <span id="clearallapproved"><a href="#"><s:text name="commentManagement.none" /></a></span>
                 </td>
                 <td align="center">
                     <s:text name="commentManagement.select" /><br/>
 
-                    <a href="#" onclick='setChecked(1,"bean.spamComments")'>
-                    <s:text name="commentManagement.all" /></a><br />
-
-                    <a href="#" onclick='setChecked(0,"bean.spamComments")'>
-                    <s:text name="commentManagement.none" /></a>
+                    <span id="checkallspam"><a href="#"><s:text name="commentManagement.all" /></a></span><br />
+                    <span id="clearallspam"><a href="#"><s:text name="commentManagement.none" /></a></span>
                 </td>
                 <td align="center">
                     <s:text name="commentManagement.select" /><br/>
 
-                    <a href="#" onclick='setChecked(1,"bean.deleteComments")'>
-                    <s:text name="commentManagement.all" /></a><br />
-
-                    <a href="#" onclick='setChecked(0,"bean.deleteComments")'>
-                    <s:text name="commentManagement.none" /></a>
+                    <span id="checkalldelete"><a href="#"><s:text name="commentManagement.all" /></a></span><br />
+                    <span id="clearalldelete"><a href="#"><s:text name="commentManagement.none" /></a></span>
                 </td>
                 <td align="right">
                     <br />
@@ -390,7 +398,7 @@
 </script>
 
 
-        <%-- ========================================================= --%>
+<%-- ========================================================= --%>
 <%-- Save changes and  cancel buttons --%>
 <%-- ========================================================= --%>
 

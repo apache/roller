@@ -401,6 +401,14 @@ public class Comments extends UIAction {
 
             // reset form and load fresh comments list
             CommentsBean freshBean = new CommentsBean();
+            
+            // Maintain filter options
+            freshBean.setSearchString(getBean().getSearchString());
+            freshBean.setStartDateString(getBean().getStartDateString());
+            freshBean.setEndDateString(getBean().getEndDateString());
+            freshBean.setSearchString(getBean().getSearchString());
+            freshBean.setApprovedString(getBean().getApprovedString());
+            freshBean.setSpamString(getBean().getSpamString());
 
             // but if we're editing an entry's comments stick with that entry
             if (bean.getEntryId() != null) {
