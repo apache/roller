@@ -94,7 +94,8 @@
 </s:else>
 
 
-<s:if test="childFiles || childDirectories || (pager && pager.items.size() > 0)">
+<%-- || (pager && pager.items.size() > 0) --%>
+<s:if test="childFiles || allDirectories">
 
 <s:form id="mediaFileChooserForm" name="mediaFileChooserForm" action="mediaFileView">
 	<s:hidden name="salt" />
@@ -121,7 +122,7 @@
     <div  width="720px" height="500px">
         <ul id = "myMenu">
 
-            <s:if test="childDirectories.size() == 0 && childFiles.size() ==0">
+            <s:if test="childFiles.size() == 0">
                 <p style="text-align: center"><s:text name="mediaFileView.noFiles"/></p>
             </s:if>
 
@@ -129,7 +130,7 @@
 
             <%-- List media directories first --%>
 
-            <s:iterator id="directory" value="childDirectories">
+            <s:iterator id="directory" value="allDirectories">
                 <li class="align-images"
                         onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
                     <div class="mediaObject">
@@ -146,10 +147,11 @@
             <%-- --------------------------------------------------------- --%>
 
             <%-- List media files next --%>
+            <s:if test="childFiles.size() > 0">
 
-            <s:iterator id="mediaFile" value="childFiles">
+                <s:iterator id="mediaFile" value="childFiles">
 
-                <li class="align-images"
+                    <li class="align-images"
                         onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
                         <s:url id="mediaFileURL" includeContext="false"
@@ -158,29 +160,30 @@
                         <s:url id="mediaFileThumbnailURL"
                             value="%{#mediaFile.thumbnailURL}"></s:url>
 
-                    <div class="mediaObject"
-                         onclick="onSelectImage('<s:property value="#mediaFile.name"/>','<s:property value="%{mediaFileURL}" />')" >
+                        <div class="mediaObject"
+                             onclick="onSelectImage('<s:property value="#mediaFile.name"/>','<s:property value="%{mediaFileURL}" />')" >
 
-                        <s:if test="#mediaFile.imageFile">
+                            <s:if test="#mediaFile.imageFile">
 
-                            <img border="0" src='<s:property value="%{mediaFileThumbnailURL}" />'
-                                 width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                 height='<s:property value="#mediaFile.thumbnailHeight"/>' />
-                        </s:if>
+                                <img border="0" src='<s:property value="%{mediaFileThumbnailURL}" />'
+                                     width='<s:property value="#mediaFile.thumbnailWidth"/>'
+                                     height='<s:property value="#mediaFile.thumbnailHeight"/>' />
+                            </s:if>
 
-                    </div>
+                        </div>
 
-                    <div class="mediaObjectInfo">
-                        <label>
-                            <str:truncateNicely upper="50">
-                                <s:property value="#mediaFile.name" />
-                            </str:truncateNicely>
-                        </label>
-                    </div>
+                        <div class="mediaObjectInfo">
+                            <label>
+                                <str:truncateNicely upper="50">
+                                    <s:property value="#mediaFile.name" />
+                                </str:truncateNicely>
+                            </label>
+                        </div>
 
-                </li>
+                    </li>
 
-            </s:iterator>
+                </s:iterator>
+            </s:if>
 
         </ul>
     </div>
