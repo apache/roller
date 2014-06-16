@@ -31,6 +31,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 
@@ -40,58 +42,67 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
  * instance.
  */
 public class ValidateSaltFilter implements Filter {
-	private Set<String> ignored = new HashSet<String>();
 
-	// @Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest httpReq = (HttpServletRequest) request;
+    private static Log log = LogFactory.getLog(ValidateSaltFilter.class);
 
-        // note enctype="multipart/form-data" does not send parameters (see ROL-1956)
-        // requests of this type are stored in salt.ignored.urls in roller.properties
-        if (httpReq.getMethod().equals("POST") &&
-                !isIgnoredURL(((HttpServletRequest) request).getServletPath())) {
+    private Set<String> ignored = new HashSet<String>();
+
+    public void doFilter(ServletRequest request, ServletResponse response,
+            FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest httpReq = (HttpServletRequest) request;
+
+        // note enctype="multipart/form-data" does not send parameters (see
+        // ROL-1956) requests of this type are stored in salt.ignored.urls in
+        // roller.properties
+        if (httpReq.getMethod().equals("POST")
+                && !isIgnoredURL(httpReq.getServletPath())) {
+
             String salt = httpReq.getParameter("salt");
             SaltCache saltCache = SaltCache.getInstance();
             if (salt == null || saltCache.get(salt) == null
                     || saltCache.get(salt).equals(false)) {
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Salt value not found on POST to URL : "
+                            + httpReq.getServletPath());
+                }
+
                 throw new ServletException("Security Violation");
             }
         }
 
-		chain.doFilter(request, response);
-	}
+        chain.doFilter(request, response);
+    }
 
-	// @Override
-	public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) throws ServletException {
 
-		// Construct our list of ignored urls
-		String urls = WebloggerConfig.getProperty("salt.ignored.urls");
-		String[] urlsArray = StringUtils.stripAll(StringUtils.split(urls, ","));
-		for (int i = 0; i < urlsArray.length; i++) {
+        // Construct our list of ignored urls
+        String urls = WebloggerConfig.getProperty("salt.ignored.urls");
+        String[] urlsArray = StringUtils.stripAll(StringUtils.split(urls, ","));
+        for (int i = 0; i < urlsArray.length; i++) {
             this.ignored.add(urlsArray[i]);
         }
-	}
+    }
 
-	// @Override
-	public void destroy() {
-	}
+    public void destroy() {
+    }
 
-	/**
-	 * Checks if this is an ignored url defined in the salt.ignored.urls property
-	 * 
-	 * @param theUrl
-	 *            the the url
-	 * 
-	 * @return true, if is ignored resource
-	 */
-	private boolean isIgnoredURL(String theUrl) {
-		int i = theUrl.lastIndexOf('/');
+    /**
+     * Checks if this is an ignored url defined in the salt.ignored.urls
+     * property
+     * 
+     * @param theUrl
+     *            the the url
+     * 
+     * @return true, if is ignored resource
+     */
+    private boolean isIgnoredURL(String theUrl) {
+        int i = theUrl.lastIndexOf('/');
 
-		// If it's not a resource then don't ignore it
-		if (i <= 0 || i == theUrl.length() - 1) {
+        // If it's not a resource then don't ignore it
+        if (i <= 0 || i == theUrl.length() - 1) {
             return false;
         }
-		return ignored.contains(theUrl.substring(i + 1));
-	}
+        return ignored.contains(theUrl.substring(i + 1));
+    }
 }
