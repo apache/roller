@@ -155,8 +155,11 @@
     function onEditSuccess() {
         $("#mediaFileEditor").attr('src','about:blank');
         YAHOO.mediaFileEditor.lightbox.hide();
-        //window.location.reload(true); Endless refresh loops in FF
-        window.parent.location = window.parent.location.href;
+        <%--
+        // window.location.reload(true); // Endless refresh loops in FF
+        // window.parent.location = window.parent.location.href + "?weblog="+<s:property value="%{actionWeblog.handle}" />;
+        --%>
+        $("#mediaFileSearchForm").submit();
     }
 
     function onEditCancelled() {
