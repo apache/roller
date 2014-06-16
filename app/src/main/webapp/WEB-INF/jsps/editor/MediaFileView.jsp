@@ -467,31 +467,32 @@
 
     <div style="clear:left;"></div>
 
-        <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'default' && !pager)">
-            <div class="control">
+    <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'default' && !pager)">
+        <div class="control">
 
-                <span style="padding-left:7px">
-                    <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
-                        <input id="toggleButton" type="button"
-                           value='<s:text name="mediaFileView.toggleSelected" />' onclick="onToggle()" />
+            <span style="padding-left:7px">
+                <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
+                    <input id="toggleButton" type="button"
+                       value='<s:text name="mediaFileView.toggleSelected" />' onclick="onToggle()" />
 
-                        <input id="deleteButton" type="button"
-                           value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
+                    <input id="deleteButton" type="button"
+                       value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
 
-                        <input id="moveButton" type="button"
-                           value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
+                    <input id="moveButton" type="button"
+                       value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
 
-                        <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="name" />
-                    </s:if>
-                </span>
-
-                <s:if test="currentDirectory.name != 'default' && !pager">
-                    <span style="float:right">
-                            <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
-                    </span>
+                    <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="name" />
                 </s:if>
-            </div>
-        </s:if>
+            </span>
+
+            <s:if test="currentDirectory.name != 'default' && !pager">
+                <!-- need a clearfix to use this float -->
+                <!-- <span style="float:right"> -->
+                    <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
+                <!-- </span> -->
+            </s:if>
+        </div>
+    </s:if>
 
 </s:form>
 
