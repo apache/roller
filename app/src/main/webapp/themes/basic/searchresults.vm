@@ -20,7 +20,9 @@
         #set($pager = $model.getWeblogEntriesPager()) 
         <div class="next-previous">
             #showWeblogSearchAgainForm($model.weblog)
-            #showNextPrevSearchControl($pager)
+            #if($model.hits > 0)
+                #showNextPrevSearchControl($pager)
+            #end
         </div>
 
         ## show entries
