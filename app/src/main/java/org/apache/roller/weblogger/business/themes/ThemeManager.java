@@ -19,8 +19,10 @@
 package org.apache.roller.weblogger.business.themes;
 
 import java.util.List;
+
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -65,7 +67,7 @@ public interface ThemeManager {
      *
      * @return List A list of Theme objects which are enabled.
      */
-    List getEnabledThemesList();
+    List<Theme> getEnabledThemesList();
 
     /**
      * Import all the contents for a Theme into a weblog.

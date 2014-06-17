@@ -53,10 +53,11 @@ public class ThemeMetadataParser {
         SAXBuilder builder = new SAXBuilder();
         Document doc = builder.build(instream);
         
-        // start at root and get theme id, name, and author
+        // start at root and get theme id, name, description and author
         Element root = doc.getRootElement();
         theme.setId(root.getChildText("id"));
         theme.setName(root.getChildText("name"));
+        theme.setDescription(root.getChildText("description"));
         theme.setAuthor(root.getChildText("author"));
         theme.setType(root.getChildText("type"));
         

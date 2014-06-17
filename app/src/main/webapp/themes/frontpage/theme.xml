@@ -3,6 +3,7 @@
     
     <id>frontpage</id>
     <name>Frontpage</name>
+    <description>Frontpage Theme by Dave Johnson</description>
     <author>Dave Johnson</author>
     <type>standard</type>
     
@@ -13,7 +14,7 @@
     <template action="weblog">
         <name>Weblog</name>
         <description>Weblog</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -27,7 +28,7 @@
     <template action="custom">
         <name>_blogdirectory</name>
         <description>_blogdirectory</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
          <templateCode>
@@ -41,7 +42,7 @@
     <template action="custom">
         <name>_blogprofile</name>
         <description>_blogprofile</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -55,7 +56,7 @@
     <template action="custom">
         <name>_blogs</name>
         <description>_blogs</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -69,7 +70,7 @@
     <template action="custom">
         <name>_css</name>
         <description>_css</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -83,7 +84,7 @@
     <template action="custom">
         <name>_day</name>
         <description>_day</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -97,7 +98,7 @@
     <template action="custom">
         <name>_decorator</name>
         <description>_decorator</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -111,7 +112,7 @@
     <template action="custom">
         <name>_entry</name>
         <description>_entry</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -125,7 +126,7 @@
     <template action="custom">
         <name>_footer</name>
         <description>_footer</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -139,7 +140,7 @@
     <template action="custom">
         <name>_header</name>
         <description>_header</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
          <templateCode>
@@ -153,7 +154,7 @@
     <template action="custom">
         <name>directory</name>
         <description>weblog directory</description>
-	<link>directory</link>
+    <link>directory</link>
         <navbar>false</navbar>
         <hidden>false</hidden>
          <templateCode>

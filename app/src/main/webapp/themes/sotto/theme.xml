@@ -3,6 +3,7 @@
     
     <id>sotto</id>
     <name>Sotto</name>
+    <description>Sotto Theme by Matt Raible</description>
     <author>Matt Raible</author>
     <type>standard</type>
     
@@ -13,7 +14,7 @@
     <stylesheet>
         <name>sotto-custom.css</name>
         <description>Stylesheet for Sotto theme</description>
-	<link>sotto-custom.css</link>
+    <link>sotto-custom.css</link>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
            <contentType>text/html</contentType>
@@ -26,7 +27,7 @@
     <template action="weblog">
         <name>Weblog</name>
         <description>weblog</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
          <templateCode>
@@ -40,7 +41,7 @@
     <template action="permalink">
         <name>permalink</name>
         <description>permalink</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
          <templateCode>
@@ -54,7 +55,7 @@
     <template action="search">
         <name>searchresults</name>
         <description>searchresults</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -68,7 +69,7 @@
     <template action="custom">
         <name>_day</name>
         <description>_day</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
          <templateCode>
@@ -82,7 +83,7 @@
     <template action="custom">
         <name>sidebar</name>
         <description>sidebar</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -96,7 +97,7 @@
     <template action="custom">
         <name>header</name>
         <description>header</description>
-	<link></link>
+    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>

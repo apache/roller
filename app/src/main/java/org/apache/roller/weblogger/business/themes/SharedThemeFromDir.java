@@ -184,7 +184,11 @@ public class SharedThemeFromDir extends SharedTheme {
         // use parsed theme descriptor to load Theme data
         setId(themeMetadata.getId());
         setName(themeMetadata.getName());
-        setDescription(themeMetadata.getName());
+        if (StringUtils.isNotEmpty(themeMetadata.getDescription())) {
+            setDescription(themeMetadata.getDescription());
+        } else {
+            setDescription(themeMetadata.getName());
+        }
         setType(themeMetadata.getType());
         setAuthor(themeMetadata.getAuthor());
         setLastModified(null);

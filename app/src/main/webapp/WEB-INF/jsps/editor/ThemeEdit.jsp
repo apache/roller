@@ -22,6 +22,8 @@
 <!--
 function previewImage(q, theme) {
     q.attr('src','<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme=' + theme);
+    var url = "<%= request.getContextPath() %>/roller-ui/authoring/themedata/";
+	$.ajax({ url: url, data: {theme:theme}, success: function(data) { $('#themedescription').html(data);} });
 }
 function fullPreview(selector) {
     selected = selector.selectedIndex;
@@ -108,6 +110,7 @@ function toggleImportThemeDisplay() {
                       listKey="id" listValue="name" size="1"
                       onchange="previewImage($('#sharedPreviewImg'), this[selectedIndex].value)"/>
         </p>
+        <p id="themedescription"></p>
         <p>
             <img id="sharedPreviewImg" src="" />
             <!-- initialize preview image at page load -->

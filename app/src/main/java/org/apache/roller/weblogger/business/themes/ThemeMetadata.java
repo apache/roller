@@ -21,34 +21,32 @@ package org.apache.roller.weblogger.business.themes;
 import java.util.HashSet;
 import java.util.Set;
 
-
 /**
  * Represents a parsed version of a theme xml metadata descriptor.
  */
 public class ThemeMetadata {
-    
+
     private String id = null;
     private String name = null;
+    private String description = null;
     private String author = null;
     private String type = null;
     private String previewImage = null;
     private ThemeMetadataTemplate stylesheet = null;
     private Set<ThemeMetadataTemplate> templates = new HashSet<ThemeMetadataTemplate>();
     private Set<String> resources = new HashSet<String>();
-    
-    
-    public ThemeMetadata() {}
 
-    
+    public ThemeMetadata() {
+    }
+
     public void addTemplate(ThemeMetadataTemplate template) {
         this.templates.add(template);
     }
-    
+
     public void addResource(String resource) {
         this.resources.add(resource);
     }
-    
-    
+
     public String getId() {
         return id;
     }
@@ -56,13 +54,21 @@ public class ThemeMetadata {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getPreviewImage() {

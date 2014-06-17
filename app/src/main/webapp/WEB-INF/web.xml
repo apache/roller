@@ -277,6 +277,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>ThemeDescriptionServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.ThemeDescriptionServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>TagDataServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.webservices.tagdata.TagDataServlet</servlet-class>
     </servlet>
@@ -407,6 +412,10 @@
         <url-pattern>/roller-ui/authoring/userdata/*</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>ThemeDescriptionServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/themedata/*</url-pattern>
+    </servlet-mapping>
 
     <!-- Web Service Servlets -->
     <servlet-mapping>

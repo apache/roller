@@ -5,6 +5,7 @@
     
     <id>fauxcoly</id>
     <name>Fauxcoly</name>
+    <description>Fauxcoly Theme by Dave Johnson</description>
     <author>Dave Johnson</author>
     <type>standard</type>
     
@@ -15,7 +16,7 @@
     <stylesheet>
         <name>custom.css</name>
         <description>Custom style sheet</description>
-	    <link>custom.css</link>
+        <link>custom.css</link>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
            <contentType>text/html</contentType>
@@ -28,7 +29,7 @@
     <template action="weblog">
         <name>Weblog</name>
         <description>Main page of weblog</description>
-	    <link></link>
+        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -42,7 +43,7 @@
     <template action="permalink">
         <name>Entry</name>
         <description>Page for one weblog entry</description>
-	    <link></link>
+        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -56,7 +57,7 @@
     <template action="tagsIndex">
         <name>TagsIndex</name>
         <description>Tag index page</description>
-	    <link></link>
+        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -70,7 +71,7 @@
     <template action="search">
         <name>Search</name>
         <description>Search results page</description>
-	    <link></link>
+        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -84,7 +85,7 @@
     <template action="custom">
         <name>_day</name>
         <description>One day's worth of entries</description>
-	    <link></link>
+        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -98,7 +99,7 @@
     <template action="custom">
         <name>Archives</name>
         <description>Calendar browser and links to latest entries</description>
-	    <link>archives</link>
+        <link>archives</link>
         <navbar>true</navbar>
         <hidden>false</hidden>
          <templateCode>
@@ -112,7 +113,7 @@
     <template action="custom">
         <name>standard_head</name>
         <description>Contents of HTML head</description>
-	    <link></link>
+        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
          <templateCode>
@@ -126,7 +127,7 @@
     <template action="custom">
         <name>standard_header</name>
         <description>Displayed in header of each page</description>
-	    <link></link>
+        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateCode>
@@ -140,7 +141,7 @@
     <template action="custom">
         <name>standard_footer</name>
         <description>For footer of each page</description>
-	    <link></link>
+        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
          <templateCode>
@@ -154,7 +155,7 @@
     <template action="custom">
         <name>style.css</name>
         <description>Base stylesheet for theme</description>
-	    <link>style.css</link>
+        <link>style.css</link>
         <navbar>false</navbar>
         <hidden>false</hidden>
          <templateCode>
@@ -168,7 +169,7 @@
     <template action="custom">
         <name>searchhi.js</name>
         <description>3rd party script for search term highlighting</description>
-	    <link>searchhi.js</link>
+        <link>searchhi.js</link>
         <navbar>false</navbar>
         <hidden>false</hidden>
         <templateCode>
