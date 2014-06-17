@@ -110,6 +110,11 @@
             document.mediaFileViewForm.submit();
         }
     }
+    
+    function onView() {
+        document.mediaFileViewForm.action = "<s:url action='mediaFileView!view' />";
+        document.mediaFileViewForm.submit();
+    }
 
     <%-- menu button for each image, launched from the plus sign image --%>
 
@@ -322,11 +327,11 @@
 
         <span style="float:right">
             <s:if test="!allDirectories.isEmpty">
-                <%-- View button --%>
-                <s:submit type="button" action="mediaFileView!view" key="mediaFileView.viewFolder" />
+                <%-- View button
+                <s:submit type="button" action="mediaFileView!view" key="mediaFileView.viewFolder" /> --%>
 
                 <%-- Folder to View combo-box --%>
-                <s:select name="viewDirectoryId" list="allDirectories" listKey="id" listValue="name" />
+                <s:select name="viewDirectoryId" list="allDirectories" listKey="id" listValue="name" onchange="onView()" />
 
             </s:if>
         </span>

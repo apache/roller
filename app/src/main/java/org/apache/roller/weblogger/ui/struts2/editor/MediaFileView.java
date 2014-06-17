@@ -51,10 +51,9 @@ public class MediaFileView extends MediaFileBase {
     private String directoryName;
     private String sortBy;
     private String newDirectoryName;
-    
-    private List<MediaFile>          childFiles;
-    private MediaFileDirectory       currentDirectory;
 
+    private List<MediaFile> childFiles;
+    private MediaFileDirectory currentDirectory;
 
     // Search criteria - drop-down for file type
     private static List<KeyValueObject> FILE_TYPES = null;
@@ -79,7 +78,6 @@ public class MediaFileView extends MediaFileBase {
 
     private MediaFileSearchBean bean = new MediaFileSearchBean();
 
-
     public MediaFileView() {
         this.actionName = "mediaFileView";
         this.desiredMenu = "editor";
@@ -90,39 +88,45 @@ public class MediaFileView extends MediaFileBase {
      * Prepares view action
      */
     public void myPrepare() {
-        
+
         if (SIZE_FILTER_TYPES == null) {
 
-            SIZE_FILTER_TYPES = Arrays.asList(
-                new KeyValueObject("mediaFileView.gt", getText("mediaFileView.gt")),
-                new KeyValueObject("mediaFileView.ge", getText("mediaFileView.ge")),
-                new KeyValueObject("mediaFileView.eq", getText("mediaFileView.eq")),
-                new KeyValueObject("mediaFileView.le", getText("mediaFileView.le")),
-                new KeyValueObject("mediaFileView.lt", getText("mediaFileView.lt")));
+            SIZE_FILTER_TYPES = Arrays.asList(new KeyValueObject(
+                    "mediaFileView.gt", getText("mediaFileView.gt")),
+                    new KeyValueObject("mediaFileView.ge",
+                            getText("mediaFileView.ge")), new KeyValueObject(
+                            "mediaFileView.eq", getText("mediaFileView.eq")),
+                    new KeyValueObject("mediaFileView.le",
+                            getText("mediaFileView.le")), new KeyValueObject(
+                            "mediaFileView.lt", getText("mediaFileView.lt")));
 
-            FILE_TYPES = Arrays.asList(
-                new KeyValueObject("mediaFileView.any",   getText("mediaFileView.any")),
-                new KeyValueObject("mediaFileView.others",   getText("mediaFileView.others")),
-                new KeyValueObject("mediaFileView.image", getText("mediaFileView.image")),
-                new KeyValueObject("mediaFileView.video", getText("mediaFileView.video")),
-                new KeyValueObject("mediaFileView.audio", getText("mediaFileView.audio")));
+            FILE_TYPES = Arrays.asList(new KeyValueObject("mediaFileView.any",
+                    getText("mediaFileView.any")), new KeyValueObject(
+                    "mediaFileView.others", getText("mediaFileView.others")),
+                    new KeyValueObject("mediaFileView.image",
+                            getText("mediaFileView.image")),
+                    new KeyValueObject("mediaFileView.video",
+                            getText("mediaFileView.video")),
+                    new KeyValueObject("mediaFileView.audio",
+                            getText("mediaFileView.audio")));
 
-            SIZE_UNITS = Arrays.asList(
-                new KeyValueObject("mediaFileView.bytes", getText("mediaFileView.bytes")),
-                new KeyValueObject("mediaFileView.kb",    getText("mediaFileView.kb")),
-                new KeyValueObject("mediaFileView.mb",    getText("mediaFileView.mb")));
+            SIZE_UNITS = Arrays.asList(new KeyValueObject(
+                    "mediaFileView.bytes", getText("mediaFileView.bytes")),
+                    new KeyValueObject("mediaFileView.kb",
+                            getText("mediaFileView.kb")), new KeyValueObject(
+                            "mediaFileView.mb", getText("mediaFileView.mb")));
 
-            SORT_OPTIONS = Arrays.asList(
-                new KeyValueObject("name", getText("mediaFileView.name")),
-                new KeyValueObject("date_uploaded", getText("mediaFileView.date")),
-                new KeyValueObject("type", getText("mediaFileView.type")));
+            SORT_OPTIONS = Arrays.asList(new KeyValueObject("name",
+                    getText("mediaFileView.name")), new KeyValueObject(
+                    "date_uploaded", getText("mediaFileView.date")),
+                    new KeyValueObject("type", getText("mediaFileView.type")));
         }
-        
+
         refreshAllDirectories();
     }
 
     /**
-     * Create a new directory by name.  All folders placed at the root.
+     * Create a new directory by name. All folders placed at the root.
      */
     public String createNewDirectory() {
         boolean dirCreated = false;
@@ -132,22 +136,40 @@ public class MediaFileView extends MediaFileBase {
             addError("mediaFile.error.view.dirNameInvalid");
         } else {
             try {
+
                 log.debug("Creating new directory - " + this.newDirectoryName);
-                MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-                manager.createMediaFileDirectory(getActionWeblog(), this.newDirectoryName);
-                // flush changes
-                WebloggerFactory.getWeblogger().flush();
-                addMessage("mediaFile.directoryCreate.success");
-                dirCreated = true;
+                MediaFileManager manager = WebloggerFactory.getWeblogger()
+                        .getMediaFileManager();
+
+                if (!getActionWeblog().hasMediaFileDirectory(
+                        this.newDirectoryName)) {
+                    // Create
+                    MediaFileDirectory dir = manager.createMediaFileDirectory(
+                            getActionWeblog(), this.newDirectoryName);
+                    // flush changes
+                    WebloggerFactory.getWeblogger().flush();
+                    addMessage("mediaFile.directoryCreate.success",
+                            this.newDirectoryName);
+
+                    // Switch to folder
+                    setDirectoryId(dir.getId());
+
+                    dirCreated = true;
+                } else {
+                    // already exists
+                    addMessage("mediaFile.directoryCreate.error.exists",
+                            this.newDirectoryName);
+                }
+
             } catch (WebloggerException e) {
                 log.error("Error creating new directory", e);
                 addError("Error creating new directory");
             }
         }
 
-
         if (dirCreated) {
-            // Refresh list of directories so the newly created directory is included.
+            // Refresh list of directories so the newly created directory is
+            // included.
             refreshAllDirectories();
         }
         return execute();
@@ -163,24 +185,27 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
-     * Fetches and displays list of media file for the given directory.
-     * The directory could be chosen by ID or path.
+     * Fetches and displays list of media file for the given directory. The
+     * directory could be chosen by ID or path.
      * 
      * @return String The result of the action.
      */
     @SkipValidation
     public String execute() {
-        MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+        MediaFileManager manager = WebloggerFactory.getWeblogger()
+                .getMediaFileManager();
         try {
             MediaFileDirectory directory;
             if (StringUtils.isNotEmpty(this.directoryId)) {
                 directory = manager.getMediaFileDirectory(this.directoryId);
 
             } else if (StringUtils.isNotEmpty(this.directoryName)) {
-                directory = manager.getMediaFileDirectoryByName(getActionWeblog(), this.directoryName);
+                directory = manager.getMediaFileDirectoryByName(
+                        getActionWeblog(), this.directoryName);
 
             } else {
-                directory = manager.getDefaultMediaFileDirectory(getActionWeblog());
+                directory = manager
+                        .getDefaultMediaFileDirectory(getActionWeblog());
             }
             this.directoryId = directory.getId();
             this.directoryName = directory.getName();
@@ -189,21 +214,26 @@ public class MediaFileView extends MediaFileBase {
             this.childFiles.addAll(directory.getMediaFiles());
 
             if ("type".equals(sortBy)) {
-                Collections.sort(this.childFiles,
-                    new MediaFileComparator(MediaFileComparatorType.TYPE));
+                Collections.sort(this.childFiles, new MediaFileComparator(
+                        MediaFileComparatorType.TYPE));
 
             } else if ("date_uploaded".equals(sortBy)) {
-                Collections.sort(this.childFiles,
-                    new MediaFileComparator(MediaFileComparatorType.DATE_UPLOADED));
+                Collections.sort(this.childFiles, new MediaFileComparator(
+                        MediaFileComparatorType.DATE_UPLOADED));
 
             } else {
                 // default to sort by name
                 sortBy = "name";
-                Collections.sort(this.childFiles,
-                    new MediaFileComparator(MediaFileComparatorType.NAME));
+                Collections.sort(this.childFiles, new MediaFileComparator(
+                        MediaFileComparatorType.NAME));
             }
 
             this.currentDirectory = directory;
+
+            // set current directory if valid
+            if (directory != null) {
+                setViewDirectoryId(directory.getId());
+            }
 
             return SUCCESS;
 
@@ -222,10 +252,12 @@ public class MediaFileView extends MediaFileBase {
      */
     public String view() {
         try {
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            MediaFileManager manager = WebloggerFactory.getWeblogger()
+                    .getMediaFileManager();
             if (!StringUtils.isEmpty(viewDirectoryId)) {
                 setDirectoryId(viewDirectoryId);
-                setCurrentDirectory(manager.getMediaFileDirectory(viewDirectoryId));
+                setCurrentDirectory(manager
+                        .getMediaFileDirectory(viewDirectoryId));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up directory", ex);
@@ -235,7 +267,7 @@ public class MediaFileView extends MediaFileBase {
 
     /**
      * Save a media file.
-     *
+     * 
      * @return String The result of the action.
      */
     public String search() {
@@ -245,9 +277,11 @@ public class MediaFileView extends MediaFileBase {
         if (valSuccess) {
             MediaFileFilter filter = new MediaFileFilter();
             bean.copyTo(filter);
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            MediaFileManager manager = WebloggerFactory.getWeblogger()
+                    .getMediaFileManager();
             try {
-                List<MediaFile> rawResults = manager.searchMediaFiles(getActionWeblog(), filter);
+                List<MediaFile> rawResults = manager.searchMediaFiles(
+                        getActionWeblog(), filter);
                 boolean hasMore = false;
                 List<MediaFile> results = new ArrayList<MediaFile>();
                 results.addAll(rawResults);
@@ -256,15 +290,16 @@ public class MediaFileView extends MediaFileBase {
                     hasMore = true;
                 }
 
-                this.pager = new MediaFilePager(bean.getPageNum(), results, hasMore);
-                
+                this.pager = new MediaFilePager(bean.getPageNum(), results,
+                        hasMore);
+
             } catch (Exception e) {
                 log.error("Error applying search criteria", e);
                 addError("Error applying search criteria - check Roller logs");
             }
 
         }
-        
+
         return SUCCESS;
     }
 
@@ -292,13 +327,17 @@ public class MediaFileView extends MediaFileBase {
     public String deleteFolder() {
 
         try {
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            MediaFileManager manager = WebloggerFactory.getWeblogger()
+                    .getMediaFileManager();
             if (directoryId != null) {
-                log.debug("Deleting media file folder - " + directoryId + " (" + directoryName + ")");
-                MediaFileDirectory mediaFileDir = manager.getMediaFileDirectory(directoryId);
+                log.debug("Deleting media file folder - " + directoryId + " ("
+                        + directoryName + ")");
+                MediaFileDirectory mediaFileDir = manager
+                        .getMediaFileDirectory(directoryId);
                 manager.removeMediaFileDirectory(mediaFileDir);
                 refreshAllDirectories();
-                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(this.getActionWeblog());
+                WebloggerFactory.getWeblogger().getWeblogManager()
+                        .saveWeblog(this.getActionWeblog());
 
                 // flush changes
                 WebloggerFactory.getWeblogger().flush();
@@ -309,7 +348,8 @@ public class MediaFileView extends MediaFileBase {
                 CacheManager.invalidate(getActionWeblog());
 
                 // re-route to default folder
-                mediaFileDir = manager.getDefaultMediaFileDirectory(getActionWeblog());
+                mediaFileDir = manager
+                        .getDefaultMediaFileDirectory(getActionWeblog());
                 setDirectoryId(mediaFileDir.getId());
                 setDirectoryName(mediaFileDir.getName());
             } else {
@@ -320,7 +360,6 @@ public class MediaFileView extends MediaFileBase {
         }
         return execute();
     }
-
 
     /**
      * Include selected media file in gallery
@@ -392,7 +431,9 @@ public class MediaFileView extends MediaFileBase {
      * Validates search input
      */
     public boolean myValidate() {
-        if (StringUtils.isEmpty(bean.getName()) && StringUtils.isEmpty(bean.getTags()) && StringUtils.isEmpty(bean.getType()) && bean.getSize() == 0) {
+        if (StringUtils.isEmpty(bean.getName())
+                && StringUtils.isEmpty(bean.getTags())
+                && StringUtils.isEmpty(bean.getType()) && bean.getSize() == 0) {
             addError("MediaFile.error.search.empty");
             return false;
         }
