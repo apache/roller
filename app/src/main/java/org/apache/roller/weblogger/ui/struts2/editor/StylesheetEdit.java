@@ -113,11 +113,13 @@ public class StylesheetEdit extends UIAction {
                     standardTemplateCode.setTemplateLanguage(stylesheetTmpl
                             .getTemplateLanguage());
 
+                    TemplateCode tCode = stylesheet
+                            .getTemplateCode(MOBILE_THEME_TYPE);
+
                     WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(
                             stylesheetTmpl.getId(), MOBILE_THEME_TYPE);
-                    mobileTemplateCode
-                            .setTemplate(stylesheetTmpl.getContents());
-                    mobileTemplateCode.setTemplateLanguage(stylesheetTmpl
+                    mobileTemplateCode.setTemplate(tCode.getTemplate());
+                    mobileTemplateCode.setTemplateLanguage(tCode
                             .getTemplateLanguage());
 
                     WebloggerFactory.getWeblogger().getWeblogManager()
