@@ -645,9 +645,8 @@ p.websiteDescription {
     color: gray;
     text-align: center;
 }
-.details {
-    font-size: small;
-    color: gray;
+span .details {
+    font-size: inherit;
 }
 div.helptext {
     background: #f0f0f0;
