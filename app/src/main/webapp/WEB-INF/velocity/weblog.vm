@@ -233,7 +233,7 @@ Shows weblog entries pager via default day template
       <ul>
         #if ($prevLink)
           <li>
-            <a href="$prevLink" data-transition="fade" data-theme="c" data-icon="arrow-l">
+            <a href="$prevLink" data-transition="fade" data-theme="a" data-icon="arrow-l">
               $prevName
             </a>
           </li>
@@ -241,14 +241,14 @@ Shows weblog entries pager via default day template
         ## If we do not want the home link on the first page remove >> || $nextLink
         #if ($prevLink || $nextLink)
           <li>
-            <a href="$pager.getHomeLink()" data-transition="fade" data-theme="c" data-icon="home">
+            <a href="$pager.getHomeLink()" data-transition="fade" data-theme="a" data-icon="home">
               $pager.getHomeName()
             </a>
           </li>
         #end
         #if ($nextLink)
           <li>
-            <a href="$nextLink" data-transition="fade" data-theme="c" data-icon="arrow-r">
+            <a href="$nextLink" data-transition="fade" data-theme="a" data-icon="arrow-r">
               $nextName
             </a>
           </li>
@@ -324,11 +324,11 @@ Show comments for weblog entry according to Roller configuration.
         </li>
         #foreach( $comment in $comments )
           #if($comment.approved || $model.commentForm.preview)
-            ##<li data-role="list-divider" data-theme="c">
+            ##<li data-role="list-divider" data-theme="a">
               ## TODO
             ##<a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
             ##</li>
-            <li data-theme="c">
+            <li data-theme="a">
               <p class="ui-li-desc content-textbox">
                  $comment.content
               </p>
@@ -545,7 +545,7 @@ Show weblog's categories in specified parent category.
 #macro(showMobileCategoryLinksList)
     <!-- showMobileCategoryLinksList -->
     <div data-role="popup" id="categories" data-theme="none">
-      <div data-role="collapsible-set" data-theme="b" data-content-theme="c" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" style="margin:0; width:250px;">
+      <div data-role="collapsible-set" data-theme="b" data-content-theme="a" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" style="margin:0; width:250px;">
         <div data-role="collapsible" data-collapsed="false" data-inset="false">
           <h2>Categories</h2>
           <ul data-role="listview">
@@ -774,7 +774,7 @@ Show search form for a weblog.
               </select>
             #end
           #end
-          <input type="submit" id="searchbutton" data-role="button" data-theme="e" value="$text.get( "macro.weblog.searchbutton" )" />
+          <input type="submit" id="searchbutton" data-role="button" data-theme="a" value="$text.get( "macro.weblog.searchbutton" )" />
         </p>
     </form>
     <script type="text/javascript">
@@ -836,7 +836,7 @@ Show search again form for a weblog.
             </select>
           #end
 
-          <input type="submit" data-role="button" data-theme="e" value="$text.get( "macro.weblog.searchagain" )" />
+          <input type="submit" data-role="button" data-theme="a" value="$text.get( "macro.weblog.searchagain" )" />
         </form>
 
     </div>
@@ -899,7 +899,7 @@ Show next/prev pager for search results.
         <ul>
           #if ($prevLink)
             <li>
-              <a href="$prevLink" data-transition="fade" data-theme="c" data-icon="arrow-l">
+              <a href="$prevLink" data-transition="fade" data-theme="a" data-icon="arrow-l">
                 $prevName
               </a>
             </li>
@@ -907,14 +907,14 @@ Show next/prev pager for search results.
           ## If we do not want the home link on the first page remove >> || $nextLink
           #if ($prevLink || $nextLink)
             <li>
-              <a href="$pager.getHomeLink()" data-transition="fade" data-theme="c" data-icon="home">
+              <a href="$pager.getHomeLink()" data-transition="fade" data-theme="a" data-icon="home">
                 $pager.getHomeName()
               </a>
             </li>
           #end
           #if ($nextLink)
             <li>
-              <a href="$nextLink" data-transition="fade" data-theme="c" data-icon="arrow-r">
+              <a href="$nextLink" data-transition="fade" data-theme="a" data-icon="arrow-r">
                 $nextName
               </a>
             </li>
@@ -933,9 +933,9 @@ Show mobile alert popup.
     <div data-role="footer" data-theme="b" class="ui-corner-top">
       <h1>$header</h1>
     </div>
-    <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
+    <div data-role="content" data-theme="a" class="ui-corner-bottom ui-content">
       <h3 class="wrap ui-title">$message</h3>
-      <a href="#" data-role="button" data-inline="true" data-rel="back" data-transition="fade" data-theme="c">OK</a>
+      <a href="#" data-role="button" data-inline="true" data-rel="back" data-transition="fade" data-theme="a">OK</a>
     </div>
   </div>
 #end

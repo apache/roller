@@ -6,8 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="stylesheet" type="text/css" href="$model.weblog.stylesheet">
-  <link rel="stylesheet" type="text/css" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
-  <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/default.min.css" />
+  <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/jquery.mobile.icons.min.css" />
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
   <script type="text/javascript">
 
@@ -17,19 +20,19 @@
 
   </script>
 
-  <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
 </head>
 <!-- searchresults-mobile -->
 <body>
 
   <div data-role="page">
-    <div data-role="header" data-theme="b">
+    <div data-role="header" data-theme="a">
       <h1> Search Results</h1>
-      ##<a data-rel="back" data-icon="back" data-theme = "a">back</a>
-      <a href=$url.home data-icon="home" data-theme = "a">Home</a>
+      ##<a data-rel="back" data-icon="back" data-theme="a">back</a>
+      <a href=$url.home data-icon="home" data-theme="a">Home</a>
     </div>
 
-    <div data-role="content" data-theme="d">
+    <div role="main" class="ui-content">
 
       #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
       #showMobileCategoryLinksList($rootCategory)
@@ -50,7 +53,7 @@
 
   </div>
 
-  <div data-role="footer" data-theme="b">
+  <div data-role="footer" data-theme="a">
     <h4>Apache Roller Mobile</h4>
   </div>
 

@@ -3,18 +3,19 @@
   <li data-role="list-divider">$utils.formatDate($day, "EEEE MMM dd, yyyy")</li>
   ## Loop entries
   #foreach( $entry in $entries )
-    <li data-role="list-divider" data-theme="c">
-       
-       $entry.title
-       #if ($utils.isUserAuthorizedToAuthor($entry.website))
-         <a href="$url.editEntry($entry.anchor)" data-role="button" data-inline="true" data-mini="true">$text.get("macro.weblog.entrypermalink.edit")</a>
-       #end
-       #set($commentCount = $entry.commentCount)
-       #if($entry.commentsStillAllowed || $commentCount > 0)
-         $text.get("macro.weblog.comments") [$commentCount]
-       #end
+    <li data-role="list-divider" data-theme="a">
+       <div>
+         $entry.title
+         #if ($utils.isUserAuthorizedToAuthor($entry.website))
+           <a href="$url.editEntry($entry.anchor)" data-role="button" data-inline="true" data-mini="true">$text.get("macro.weblog.entrypermalink.edit")</a>
+         #end
+         #set($commentCount = $entry.commentCount)
+         #if($entry.commentsStillAllowed || $commentCount > 0)
+           $text.get("macro.weblog.comments") [$commentCount]
+         #end
+       </div>
     </li>
-    <li data-theme="c">
+    <li data-theme="a">
       #if(!$model.permalink)
         <a href="$entry.permalink" data-transition="slide">
       #end

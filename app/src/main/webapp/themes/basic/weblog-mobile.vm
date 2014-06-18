@@ -7,9 +7,11 @@
   #showMetaDescription()
 
   <link rel="stylesheet" type="text/css" href="$model.weblog.stylesheet">
-  <link rel="stylesheet" type="text/css" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+  <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/default.min.css" />
+  <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/jquery.mobile.icons.min.css" />
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
 
-  <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
   <script type="text/javascript">
 
@@ -19,7 +21,7 @@
 
   </script>
 
-  <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
 </head>
 <!-- weblog-mobile -->
 <body>
@@ -44,15 +46,15 @@
 
   </script>
 
-  <div data-role="page" id ="home">
+  <div id ="home" data-role="page">
 
-    <div data-role="header" data-theme="b">
+    <div data-role="header" data-theme="a">
       <h1>$model.weblog.name</h1>
       <a href=$url.absoluteSite data-icon="home" data-theme="a">Home</a>
       <a href="#home" id="btnStandard" data-role="button">View Standard</a>
     </div>
 
-    <div data-role="content" data-theme="d">
+    <div role="main" class="ui-content">
 
       ## Search
       #showMobileSearchForm($model.weblog false)
@@ -73,7 +75,7 @@
         ## No entries.
         <ul data-role="listview" data-divider-theme="b" data-inset="true">
           <li data-role="list-divider">$utils.formatDate($utils.now, "EEEE MMM dd, yyyy")</li>
-          <li data-theme="c">
+          <li data-theme="a">
             <span class="ui-li-desc content-textbox">
               <h3>$text.get("macro.weblog.noEntriesForCategory")</h3>
             </span>
@@ -83,7 +85,7 @@
 
     </div>
 
-    <div data-role="footer" data-theme="b">
+    <div data-role="footer" data-theme="a">
       <h4>Apache Roller Mobile</h4>
     </div>
 
