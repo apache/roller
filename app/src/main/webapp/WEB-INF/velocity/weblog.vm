@@ -544,21 +544,21 @@ Show weblog's categories in specified parent category.
 ## Mobile version
 #macro(showMobileCategoryLinksList)
     <!-- showMobileCategoryLinksList -->
-    <div data-role="popup" id="categories" data-theme="none">
-      <div data-role="collapsible-set" data-theme="b" data-content-theme="a" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" style="margin:0; width:250px;">
+    <div data-role="popup" id="categories">
+      <div data-role="collapsible-set" data-theme="a" data-content-theme="a" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" style="margin:0; width:250px;">
         <div data-role="collapsible" data-collapsed="false" data-inset="false">
           <h2>Categories</h2>
           <ul data-role="listview">
             #if ($model.weblogCategory || $model.permalink)
               <li><a href="$url.home" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
             #else
-              <li class="ui-btn-active"><a href="$url.home" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
+              <li data-icon="gear" class="ui-btn-active"><a href="$url.home" data-transition="fade">$text.get("macro.weblog.allcategories")</a></li>
             #end
             #set($active = $text.get("macro.weblog.allcategories"))
             #set($cats = $model.weblog.getWeblogCategories())
             #foreach($cat in $cats)
               #if ($model.weblogCategory && $model.weblogCategory.name == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
-                <li class="ui-btn-active"><a href="$url.category($cat.name)" data-transition="fade">$cat.name</a></li>
+                <li data-icon="gear" class="ui-btn-active"><a href="$url.category($cat.name)" data-transition="fade">$cat.name</a></li>
                 #set($active = $cat.name)
               #else
                 <li><a href="$url.category($cat.name)" data-transition="fade">$cat.name</a></li>

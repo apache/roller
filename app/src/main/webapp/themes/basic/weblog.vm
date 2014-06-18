@@ -5,19 +5,26 @@
     <title>$model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
     #showMetaDescription()
+    <script type="text/javascript">
+      console.log("init");
+      $(document).ready(function () {
+        $('#btnMobile').on('click', function() {
+           setCookie("roller_user_request_type","mobile",30);
+           $("#btnMobile").attr('href', '?deviceType=mobile').click();
+        });
+      });
+      function setCookie(c_name, value, exdays) {
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString() + "; path=/");
+        document.cookie = c_name + "=" + c_value;
+      }
+    </script>
 </head>
 <body>
-<script type="text/javascript">
-function setCookie(c_name, value, exdays) {
-    var exdate = new Date();
-    exdate.setDate(exdate.getDate() + exdays);
-    var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString() + "; path=/");
-    document.cookie = c_name + "=" + c_value;
-}
-setCookie("roller_user_request_type","standard",30);
-</script>
 
 <div id="id_weblog" class="content_wrapper">
   <div class="content">

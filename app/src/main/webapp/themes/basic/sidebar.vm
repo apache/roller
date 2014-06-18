@@ -1,7 +1,7 @@
 ## sidebar contents
 
     <div class="mobile">
-    <a href="?deviceType=mobile" alt="View Mobile Weblog">View Mobile Weblog</a>
+    <a id="btnMobile" href="#" alt="View Mobile Weblog">View Mobile Weblog</a>
     </div>
 
     <h2>Calendar</h2>

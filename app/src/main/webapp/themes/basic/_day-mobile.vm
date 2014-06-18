@@ -1,3 +1,5 @@
+## $model here is a PageModel
+## $entry here is a WeblogEntryWrapper
 <!-- _day-mobile -->
 <ul data-role="listview" data-divider-theme="b" data-inset="true">
   <li data-role="list-divider">$utils.formatDate($day, "EEEE MMM dd, yyyy")</li>
@@ -6,12 +8,12 @@
     <li data-role="list-divider" data-theme="a">
        <div>
          $entry.title
-         #if ($utils.isUserAuthorizedToAuthor($entry.website))
-           <a href="$url.editEntry($entry.anchor)" data-role="button" data-inline="true" data-mini="true">$text.get("macro.weblog.entrypermalink.edit")</a>
-         #end
          #set($commentCount = $entry.commentCount)
+         #if($utils.isUserAuthorizedToAuthor($entry.website))
+           &nbsp;|&nbsp;&nbsp;<a href="$url.editEntry($entry.anchor)" data-role="button" data-inline="true" data-mini="true">$text.get("macro.weblog.entrypermalink.edit")</a>
+         #end
          #if($entry.commentsStillAllowed || $commentCount > 0)
-           $text.get("macro.weblog.comments") [$commentCount]
+           |&nbsp;&nbsp;$text.get("macro.weblog.comments") [$commentCount]
          #end
        </div>
     </li>

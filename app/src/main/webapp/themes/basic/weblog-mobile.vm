@@ -22,36 +22,31 @@
   </script>
 
   <script type="text/javascript" src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
-</head>
-<!-- weblog-mobile -->
-<body>
 
   <script type="text/javascript">
-
     $(document).bind("pageinit", function(){
       $('#btnStandard').on('click', function() {
-        window.location.href="?deviceType=standard";
+        setCookie("roller_user_request_type","standard",30);
+        $("#btnStandard").attr('href', '?deviceType=standard').click();
       });
-
-      setCookie("roller_user_request_type","mobile",30);
-
     });
-
     function setCookie(c_name, value, exdays) {
       var exdate = new Date();
       exdate.setDate(exdate.getDate() + exdays);
       var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString() + "; path=/");
       document.cookie = c_name + "=" + c_value;
     }
-
   </script>
+</head>
 
+<!-- weblog-mobile -->
+<body>
   <div id ="home" data-role="page">
 
     <div data-role="header" data-theme="a">
       <h1>$model.weblog.name</h1>
-      <a href=$url.absoluteSite data-icon="home" data-theme="a">Home</a>
-      <a href="#home" id="btnStandard" data-role="button">View Standard</a>
+      <a href="$url.absoluteSite" data-icon="home" data-theme="a">Home</a>
+      <a href="#" id="btnStandard" data-role="button">View Standard</a>
     </div>
 
     <div role="main" class="ui-content">
