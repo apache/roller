@@ -157,6 +157,8 @@
                 <br />		
             </div>
             
+            #* TODO does not work on frontpage as $url.tag($tag.name) returns the url 
+               of this weblog eg frontpage/tags/$tag.name and there is no page for this.
             <br />
             <div class="sidebarBodyHead">
                 <div class="menu-tr">
@@ -174,7 +176,7 @@
                             title="$tag.count">$tag.name</a>
                     #end
                 #end
-            </div>
+            </div>*#
             
 
         </div>
