@@ -735,14 +735,12 @@ Show search form for a weblog.
           <input type="text" id="q" name="q" size="10" class="text small" maxlength="255" value="#if($model.term)$model.term#end" />
           #if( $showCatChooser )
             #set( $cats = $model.weblog.getWeblogCategories())
-            #if(!$site)
-              <select name="cat">
-                <option value="">- $text.get("mainPage.category") -</option>
-                #foreach( $cat in $cats )
-                  <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
-                #end
-              </select>
-            #end
+            <select name="cat">
+              <option value="">- $text.get("mainPage.category") -</option>
+              #foreach( $cat in $cats )
+                <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
+              #end
+            </select>
           #end
           <input type="submit" class="button" value="$text.get( "macro.weblog.searchbutton" )" id="searchbutton" />
         </p>
@@ -765,14 +763,12 @@ Show search form for a weblog.
           <input type="search" id="q" name="q" placeholder="Search..." maxlength="255" value="#if($model.term)$model.term#end" />
           #if( $showCatChooser )
             #set( $cats = $model.weblog.getWeblogCategories())
-            #if(!$site)
-              <select name="cat">
-                <option value="">- $text.get("mainPage.category") -</option>
-                #foreach( $cat in $cats )
-                  <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
-                #end
-              </select>
-            #end
+            <select name="cat">
+              <option value="">- $text.get("mainPage.category") -</option>
+              #foreach( $cat in $cats )
+                <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
+              #end
+            </select>
           #end
           <input type="submit" id="searchbutton" data-role="button" data-theme="a" value="$text.get( "macro.weblog.searchbutton" )" />
         </p>
@@ -803,8 +799,8 @@ Show search again form for a weblog.
         $text.get( "macro.weblog.searchhits", [$model.hits])
         <form method="get" action="$url.search" style="margin: 5px">
           <input type="text" id="q" name="q" class="text medium" maxlength="255" value="$model.term" style="padding-left: 1px" /><br />
-          #set( $cats = $model.weblog.getWeblogCategories())
           #if(!$site && $model.hits > 0)
+            #set( $cats = $model.weblog.getWeblogCategories())
             <select name="cat" class="select">
               <option value="">$text.get( "macro.searchresults.incategory" )</option>
               #foreach( $cat in $cats )
@@ -812,7 +808,6 @@ Show search again form for a weblog.
               #end
             </select>
           #end
-
           <input type="submit" value="$text.get( "macro.weblog.searchagain" )" class="button" />
         </form>
 
@@ -826,8 +821,8 @@ Show search again form for a weblog.
         $text.get( "macro.weblog.searchhits", [$model.hits])
         <form method="get" action="$url.search" style="margin: 5px">
           <input type="search" id="q" name="q" placeholder="Search..." maxlength="255" value="$model.term" />
-          #set( $cats = $model.weblog.getWeblogCategories())
           #if(!$site && $model.hits > 0)
+            #set( $cats = $model.weblog.getWeblogCategories())
             <select name="cat" class="select">
               <option value="">$text.get( "macro.searchresults.incategory" )</option>
               #foreach( $cat in $cats )
@@ -835,7 +830,6 @@ Show search again form for a weblog.
               #end
             </select>
           #end
-
           <input type="submit" data-role="button" data-theme="a" value="$text.get( "macro.weblog.searchagain" )" />
         </form>
 
