@@ -114,8 +114,7 @@
 
                         <tr>
                             <td>
-                                <input id="searchButton" style="margin:5px 0px;" type="submit"
-                                       name="search" value='<s:text name="mediaFileView.search" />' />
+                                <s:submit id="searchButton" value="%{getText('mediaFileView.search')}" cssStyle="margin:5px 0px;"/>
                             </td>
                             <td>
                                 <s:if test="pager">
