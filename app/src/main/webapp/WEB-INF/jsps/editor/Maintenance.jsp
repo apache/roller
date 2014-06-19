@@ -32,4 +32,8 @@
         <s:submit value="%{getText('maintenance.button.index')}" action="maintenance!index" />	
     </s:if>
 
+    <br /><br />
+    <s:text name="maintenance.prompt.reset" /><br /><br />
+    <s:submit value="%{getText('maintenance.button.reset')}" action="maintenance!reset" />
+
 </s:form>

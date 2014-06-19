@@ -228,7 +228,8 @@ public class PageServlet extends HttpServlet {
 
         // cached content checking
         if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn())
-                && request.getAttribute("skipCache") == null) {
+                && request.getAttribute("skipCache") == null
+                && request.getParameter("skipCache") == null) {
 
             CachedContent cachedContent;
             if (isSiteWide) {
@@ -242,7 +243,9 @@ public class PageServlet extends HttpServlet {
                 log.debug("HIT " + cacheKey);
 
                 // allow for hit counting
-                if (!isSiteWide) {
+                if (!isSiteWide
+                        && (pageRequest.isWebsitePageHit() || pageRequest
+                                .isOtherPageHit())) {
                     this.processHit(weblog);
                 }
 
@@ -349,7 +352,8 @@ public class PageServlet extends HttpServlet {
             invalid = true;
         }
         // locale view allowed only if weblog has enabled it
-        if (pageRequest.getLocale() != null && !pageRequest.getWeblog().isEnableMultiLang()) {
+        if (pageRequest.getLocale() != null
+                && !pageRequest.getWeblog().isEnableMultiLang()) {
             invalid = true;
         }
         if (pageRequest.getWeblogAnchor() != null) {
@@ -403,7 +407,9 @@ public class PageServlet extends HttpServlet {
         }
 
         // allow for hit counting
-        if (!isSiteWide) {
+        if (!isSiteWide
+                && (pageRequest.isWebsitePageHit() || pageRequest
+                        .isOtherPageHit())) {
             this.processHit(weblog);
         }
 
@@ -426,8 +432,8 @@ public class PageServlet extends HttpServlet {
         HashMap<String, Object> model = new HashMap<String, Object>();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory()
-                    .getPageContext(this, request, response, "", false, RollerConstants.EIGHT_KB_IN_BYTES,
-                            true);
+                    .getPageContext(this, request, response, "", false,
+                            RollerConstants.EIGHT_KB_IN_BYTES, true);
 
             // special hack for menu tag
             request.setAttribute("pageRequest", pageRequest);
@@ -491,7 +497,8 @@ public class PageServlet extends HttpServlet {
         }
 
         // render content
-        CachedContent rendererOutput = new CachedContent(RollerConstants.TWENTYFOUR_KB_IN_BYTES, contentType);
+        CachedContent rendererOutput = new CachedContent(
+                RollerConstants.TWENTYFOUR_KB_IN_BYTES, contentType);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

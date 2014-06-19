@@ -21,22 +21,23 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
-
 /**
- * Allows user to perform maintenance operations such as flushing
- * the page cache or re-indexing the search index.
+ * Allows user to perform maintenance operations such as flushing the page cache
+ * or re-indexing the search index.
  */
 public class Maintenance extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(Maintenance.class);
 
     public Maintenance() {
@@ -44,59 +45,91 @@ public class Maintenance extends UIAction {
         this.desiredMenu = "editor";
         this.pageTitle = "maintenance.title";
     }
-    
-    
+
     // admin perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
     public String execute() {
         return SUCCESS;
     }
-    
-    
+
     /**
      * Rebuild search index for weblog.
      */
     public String index() {
-        
+
         try {
-            IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
+            IndexManager manager = WebloggerFactory.getWeblogger()
+                    .getIndexManager();
             manager.rebuildWebsiteIndex(getActionWeblog());
-            
+
             addMessage("maintenance.message.indexed");
         } catch (Exception ex) {
             log.error("Error doing index rebuild", ex);
             addError("maintenance.message.indexed.failure");
         }
-        
+
         return SUCCESS;
     }
 
-    
     /**
      * Flush page cache for weblog.
      */
     public String flushCache() {
-        
+
         try {
             Weblog weblog = getActionWeblog();
-            
+
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());
-            
-            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
+
+            WebloggerFactory.getWeblogger().getWeblogManager()
+                    .saveWeblog(weblog);
             WebloggerFactory.getWeblogger().flush();
-            
+
             // also notify cache manager
             CacheManager.invalidate(weblog);
 
             addMessage("maintenance.message.flushed");
-            
+
         } catch (Exception ex) {
-            log.error("Error saving weblog - "+getActionWeblog().getHandle(), ex);
+            log.error("Error saving weblog - " + getActionWeblog().getHandle(),
+                    ex);
+            addError("Error flushing page cache");
+        }
+
+        return SUCCESS;
+    }
+
+    /**
+     * Reset hit count for weblog.
+     */
+    public String reset() {
+
+        try {
+            Weblog weblog = getActionWeblog();
+
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
+                    .getWeblogEntryManager();
+            mgr.resetHitCount(weblog);
+
+            // some caches are based on weblog last-modified, so update it
+            weblog.setLastModified(new Date());
+
+            WebloggerFactory.getWeblogger().getWeblogManager()
+                    .saveWeblog(weblog);
+            WebloggerFactory.getWeblogger().flush();
+
+            // also notify cache manager
+            CacheManager.invalidate(weblog);
+
+            addMessage("maintenance.message.reset");
+
+        } catch (Exception ex) {
+            log.error("Error saving weblog - " + getActionWeblog().getHandle(),
+                    ex);
             addError("Error flushing page cache");
         }
 

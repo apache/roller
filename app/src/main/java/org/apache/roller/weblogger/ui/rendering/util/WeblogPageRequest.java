@@ -37,21 +37,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Represents a request for a Roller weblog page.
- *
+ * 
  * any url from ... /roller-ui/rendering/page/*
- *
+ * 
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
 public class WeblogPageRequest extends WeblogRequest {
-    
+
     private static Log log = LogFactory.getLog(WeblogPageRequest.class);
-    
+
     private static final String PAGE_SERVLET = "/roller-ui/rendering/page";
-    
+
     // lightweight attributes
     private String context = null;
     private String weblogAnchor = null;
@@ -61,160 +60,191 @@ public class WeblogPageRequest extends WeblogRequest {
     private List tags = null;
     private int pageNum = 0;
     private Map customParams = new HashMap();
-    
+
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
     private ThemeTemplate weblogPage = null;
     private WeblogCategory weblogCategory = null;
 
-    public WeblogPageRequest() {}
+    // Page hits
+    private boolean websitePageHit = false;
+    private boolean otherPageHit = false;
+
+    public WeblogPageRequest() {
+    }
 
     /**
      * Construct the WeblogPageRequest by parsing the incoming url
      */
-    public WeblogPageRequest(HttpServletRequest request) 
+    public WeblogPageRequest(HttpServletRequest request)
             throws InvalidRequestException {
-        
+
         // let our parent take care of their business first
         // parent determines weblog handle and locale if specified
         super(request);
-        
+
         String servlet = request.getServletPath();
-        
+
         // we only want the path info left over from after our parents parsing
         String pathInfo = this.getPathInfo();
-        
+
         // parse the request object and figure out what we've got
         log.debug("parsing path " + pathInfo);
-        
+
         // was this request bound for the right servlet?
-        if(!isValidDestination(servlet)) {
-            throw new InvalidRequestException("invalid destination for request, " +
-                    request.getRequestURL());
+        if (!isValidDestination(servlet)) {
+            throw new InvalidRequestException(
+                    "invalid destination for request, "
+                            + request.getRequestURL());
         }
-        
+
         /*
          * parse path info
-         *
+         * 
          * we expect one of the following forms of url ...
-         *
-         * /entry/<anchor> - permalink
-         * /date/<YYYYMMDD> - date collection view
-         * /category/<category> - category collection view
-         * /tags/<tag>+<tag> - tags
-         * /page/<pagelink> - custom page
-         *
+         * 
+         * /entry/<anchor> - permalink /date/<YYYYMMDD> - date collection view
+         * /category/<category> - category collection view /tags/<tag>+<tag> -
+         * tags /page/<pagelink> - custom page
+         * 
          * path info may be null, which indicates the weblog homepage
          */
-        if(pathInfo != null && pathInfo.trim().length() > 0) {
-            
+        if (pathInfo != null && pathInfo.trim().length() > 0) {
+
             // all views use 2 path elements
             String[] pathElements = pathInfo.split("/", 2);
-            
+
             // the first part of the path always represents the context
             this.context = pathElements[0];
-            
+
             // now check the rest of the path and extract other details
-            if(pathElements.length == 2) {
-                
-                if("entry".equals(this.context)) {
+            if (pathElements.length == 2) {
+
+                if ("entry".equals(this.context)) {
                     this.weblogAnchor = URLUtilities.decode(pathElements[1]);
-                    
-                } else if("date".equals(this.context)) {
-                    if(this.isValidDateString(pathElements[1])) {
+
+                    // Other page
+                    otherPageHit = true;
+
+                } else if ("date".equals(this.context)) {
+                    if (this.isValidDateString(pathElements[1])) {
                         this.weblogDate = pathElements[1];
                     } else {
-                        throw new InvalidRequestException("invalid date, "+
-                            request.getRequestURL());
+                        throw new InvalidRequestException("invalid date, "
+                                + request.getRequestURL());
                     }
-                    
-                } else if("category".equals(this.context)) {
-                    this.weblogCategoryName = URLUtilities.decode(pathElements[1]);
-                } else if("page".equals(this.context)) {
+
+                    // Other page
+                    otherPageHit = true;
+
+                } else if ("category".equals(this.context)) {
+                    this.weblogCategoryName = URLUtilities
+                            .decode(pathElements[1]);
+
+                    // Other page
+                    otherPageHit = true;
+
+                } else if ("page".equals(this.context)) {
                     this.weblogPageName = pathElements[1];
                     String tagsString = request.getParameter("tags");
                     if (tagsString != null) {
-                        this.tags = Utilities.splitStringAsTags(URLUtilities.decode(tagsString));
+                        this.tags = Utilities.splitStringAsTags(URLUtilities
+                                .decode(tagsString));
                     }
 
-                } else if("tags".equals(this.context)) {
-                    String tagsString = pathElements[1].replace('+', ' ');
-                    this.tags = Utilities.splitStringAsTags(URLUtilities.decode(tagsString));                  
-                    int maxSize = WebloggerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);                  
-                    if(this.tags.size() > maxSize) {
-                        throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
+                    // Other page, we do not want css etc stuff so filter out
+                    if (!pathElements[1].contains(".")) {
+                        otherPageHit = true;
                     }
+
+                } else if ("tags".equals(this.context)) {
+                    String tagsString = pathElements[1].replace('+', ' ');
+                    this.tags = Utilities.splitStringAsTags(URLUtilities
+                            .decode(tagsString));
+                    int maxSize = WebloggerConfig.getIntProperty(
+                            "tags.queries.maxIntersectionSize", 3);
+                    if (this.tags.size() > maxSize) {
+                        throw new InvalidRequestException(
+                                "max number of tags allowed is " + maxSize
+                                        + ", " + request.getRequestURL());
+                    }
+
+                    // Other page
+                    otherPageHit = true;
+
                 } else {
-                    throw new InvalidRequestException("context "+this.context+
-                            "not supported, "+request.getRequestURL());
+                    throw new InvalidRequestException("context " + this.context
+                            + "not supported, " + request.getRequestURL());
                 }
-                
+
             } else {
                 // empty data is only allowed for the tags section
-                if(!"tags".equals(this.context)) {
-                    throw new InvalidRequestException("invalid index page, "+
-                            request.getRequestURL());
+                if (!"tags".equals(this.context)) {
+                    throw new InvalidRequestException("invalid index page, "
+                            + request.getRequestURL());
                 }
             }
+        } else {
+            // default page
+            websitePageHit = true;
         }
-        
+
         /*
          * parse request parameters
-         *
-         * the only params we currently allow are:
-         *   date - specifies a weblog date string
-         *   cat - specifies a weblog category
-         *   anchor - specifies a weblog entry (old way)
-         *   entry - specifies a weblog entry
-         *
+         * 
+         * the only params we currently allow are: date - specifies a weblog
+         * date string cat - specifies a weblog category anchor - specifies a
+         * weblog entry (old way) entry - specifies a weblog entry
+         * 
          * we only allow request params if the path info is null or on user
-         * defined pages (for backwards compatability).  this way
-         * we prevent mixing of path based and query param style urls.
+         * defined pages (for backwards compatability). this way we prevent
+         * mixing of path based and query param style urls.
          */
-        if(pathInfo == null || this.weblogPageName != null) {
-            
+        if (pathInfo == null || this.weblogPageName != null) {
+
             // check for entry/anchor params which indicate permalink
-            if(request.getParameter("entry") != null) {
+            if (request.getParameter("entry") != null) {
                 String anchor = request.getParameter("entry");
-                if(StringUtils.isNotEmpty(anchor)) {
+                if (StringUtils.isNotEmpty(anchor)) {
                     this.weblogAnchor = anchor;
                 }
-            } else if(request.getParameter("anchor") != null) {
+            } else if (request.getParameter("anchor") != null) {
                 String anchor = request.getParameter("anchor");
-                if(StringUtils.isNotEmpty(anchor)) {
+                if (StringUtils.isNotEmpty(anchor)) {
                     this.weblogAnchor = anchor;
                 }
             }
-            
-            // only check for other params if we didn't find an anchor above or tags
-            if(this.weblogAnchor == null && this.tags == null) {
-                if(request.getParameter("date") != null) {
+
+            // only check for other params if we didn't find an anchor above or
+            // tags
+            if (this.weblogAnchor == null && this.tags == null) {
+                if (request.getParameter("date") != null) {
                     String date = request.getParameter("date");
-                    if(this.isValidDateString(date)) {
+                    if (this.isValidDateString(date)) {
                         this.weblogDate = date;
                     } else {
-                        throw new InvalidRequestException("invalid date, "+
-                                request.getRequestURL());
+                        throw new InvalidRequestException("invalid date, "
+                                + request.getRequestURL());
                     }
                 }
-                
-                if(request.getParameter("cat") != null) {
-                    this.weblogCategoryName =
-                            URLUtilities.decode(request.getParameter("cat"));
+
+                if (request.getParameter("cat") != null) {
+                    this.weblogCategoryName = URLUtilities.decode(request
+                            .getParameter("cat"));
                 }
             }
         }
-        
+
         // page request param is supported in all views
-        if(request.getParameter("page") != null) {
+        if (request.getParameter("page") != null) {
             String pageInt = request.getParameter("page");
             try {
                 this.pageNum = Integer.parseInt(pageInt);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 // ignored, bad input
             }
         }
-        
+
         // build customParams Map, we remove built-in params because we only
         // want this map to represent params defined by the template author
         customParams = new HashMap(request.getParameterMap());
@@ -224,29 +254,26 @@ public class WeblogPageRequest extends WeblogRequest {
         customParams.remove("cat");
         customParams.remove("page");
         customParams.remove("tags");
-            
-            
-        if(log.isDebugEnabled()) {
-            log.debug("context = "+this.context);
-            log.debug("weblogAnchor = "+this.weblogAnchor);
-            log.debug("weblogDate = "+this.weblogDate);
-            log.debug("weblogCategory = "+this.weblogCategoryName);
-            log.debug("tags = "+this.tags);
-            log.debug("weblogPage = "+this.weblogPageName);
-            log.debug("pageNum = "+this.pageNum);
+
+        if (log.isDebugEnabled()) {
+            log.debug("context = " + this.context);
+            log.debug("weblogAnchor = " + this.weblogAnchor);
+            log.debug("weblogDate = " + this.weblogDate);
+            log.debug("weblogCategory = " + this.weblogCategoryName);
+            log.debug("tags = " + this.tags);
+            log.debug("weblogPage = " + this.weblogPageName);
+            log.debug("pageNum = " + this.pageNum);
         }
     }
-    
-    
+
     boolean isValidDestination(String servlet) {
         return (servlet != null && PAGE_SERVLET.equals(servlet));
     }
-    
-    
+
     private boolean isValidDateString(String dateString) {
         // string must be all numeric and 6 or 8 characters
-        return (dateString != null && StringUtils.isNumeric(dateString) &&
-                (dateString.length() == 6 || dateString.length() == 8));
+        return (dateString != null && StringUtils.isNumeric(dateString) && (dateString
+                .length() == 6 || dateString.length() == 8));
     }
 
     public String getContext() {
@@ -304,26 +331,28 @@ public class WeblogPageRequest extends WeblogRequest {
     public void setCustomParams(Map customParams) {
         this.customParams = customParams;
     }
-    
+
     public List getTags() {
-      return tags;
+        return tags;
     }
-    
+
     public void setTags(List tags) {
-      this.tags = tags;
+        this.tags = tags;
     }
-    
+
     public WeblogEntry getWeblogEntry() {
-        
-        if(weblogEntry == null && weblogAnchor != null) {
+
+        if (weblogEntry == null && weblogAnchor != null) {
             try {
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), weblogAnchor);
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
+                        .getWeblogEntryManager();
+                weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(),
+                        weblogAnchor);
             } catch (WebloggerException ex) {
-                log.error("Error getting weblog entry "+weblogAnchor, ex);
+                log.error("Error getting weblog entry " + weblogAnchor, ex);
             }
         }
-        
+
         return weblogEntry;
     }
 
@@ -332,16 +361,16 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     public ThemeTemplate getWeblogPage() {
-        
 
-        if(weblogPage == null && weblogPageName != null) {
+        if (weblogPage == null && weblogPageName != null) {
             try {
-                weblogPage = getWeblog().getTheme().getTemplateByLink(weblogPageName);
+                weblogPage = getWeblog().getTheme().getTemplateByLink(
+                        weblogPageName);
             } catch (WebloggerException ex) {
-                log.error("Error getting weblog page "+weblogPageName, ex);
+                log.error("Error getting weblog page " + weblogPageName, ex);
             }
         }
-        
+
         return weblogPage;
     }
 
@@ -350,21 +379,63 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     public WeblogCategory getWeblogCategory() {
-        
-        if(weblogCategory == null && weblogCategoryName != null) {
+
+        if (weblogCategory == null && weblogCategoryName != null) {
             try {
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(), weblogCategoryName);
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
+                        .getWeblogEntryManager();
+                weblogCategory = wmgr.getWeblogCategoryByName(getWeblog(),
+                        weblogCategoryName);
             } catch (WebloggerException ex) {
-                log.error("Error getting weblog category "+weblogCategoryName, ex);
+                log.error(
+                        "Error getting weblog category " + weblogCategoryName,
+                        ex);
             }
         }
-        
+
         return weblogCategory;
     }
 
     public void setWeblogCategory(WeblogCategory weblogCategory) {
         this.weblogCategory = weblogCategory;
     }
-    
+
+    /**
+     * Checks if is website page hit.
+     * 
+     * @return true, if is website page hit
+     */
+    public boolean isWebsitePageHit() {
+        return websitePageHit;
+    }
+
+    /**
+     * Sets the website page hit.
+     * 
+     * @param websitePageHit
+     *            the new website page hit
+     */
+    public void setWebsitePageHit(boolean websitePageHit) {
+        this.websitePageHit = websitePageHit;
+    }
+
+    /**
+     * Checks if is other page hit.
+     * 
+     * @return true, if is other page hit
+     */
+    public boolean isOtherPageHit() {
+        return otherPageHit;
+    }
+
+    /**
+     * Sets the other page hit.
+     * 
+     * @param otherPageHit
+     *            the new other page hit
+     */
+    public void setOtherPageHit(boolean otherPageHit) {
+        this.otherPageHit = otherPageHit;
+    }
+
 }
