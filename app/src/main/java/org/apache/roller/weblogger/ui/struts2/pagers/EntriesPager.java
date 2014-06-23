@@ -65,7 +65,7 @@ public class EntriesPager {
     public String getPrevLink() {
         if (pageNum > 0) {
             int prevPage = pageNum - 1;
-            Map<String, String> params = new HashMap();
+            Map<String, String> params = new HashMap<String, String>();
             params.put("bean.page", ""+prevPage);
             return createURL(baseUrl, params);
         }

@@ -30,6 +30,7 @@ import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask;
 import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
@@ -75,7 +76,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry1.setWebsite(testWeblog);
             testEntry1.setCreatorUserName(testUser.getUserName());
             testEntry1.setCategory(testWeblog.getDefaultCategory());
-            testEntry1.setStatus(WeblogEntry.PUBLISHED);
+            testEntry1.setStatus(PubStatus.PUBLISHED);
             WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry1);
 
             WeblogEntry testEntry2 = new WeblogEntry();
@@ -88,7 +89,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry2.setWebsite(testWeblog);
             testEntry2.setCreatorUserName(testUser.getUserName());
             testEntry2.setCategory(testWeblog.getDefaultCategory());
-            testEntry2.setStatus(WeblogEntry.PUBLISHED);
+            testEntry2.setStatus(PubStatus.PUBLISHED);
             WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry2);
 
             WeblogEntry testEntry3 = new WeblogEntry();
@@ -101,7 +102,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry3.setWebsite(testWeblog);
             testEntry3.setCreatorUserName(testUser.getUserName());
             testEntry3.setCategory(testWeblog.getDefaultCategory());           
-            testEntry3.setStatus(WeblogEntry.PUBLISHED);
+            testEntry3.setStatus(PubStatus.PUBLISHED);
             WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry3);
 
             TestUtils.endSession(true);

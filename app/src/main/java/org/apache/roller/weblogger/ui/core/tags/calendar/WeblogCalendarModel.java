@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -110,7 +111,7 @@ public class WeblogCalendarModel implements CalendarModel {
             // since we need an entry.pubTime < startDate, but the method uses endDate
             wesc.setEndDate(new Date(startDate.getTime()-1));
             wesc.setCatName(cat);
-            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.DESCENDING);
             wesc.setLocale(locale);
             wesc.setMaxResults(1);
@@ -134,7 +135,7 @@ public class WeblogCalendarModel implements CalendarModel {
             // since we need an entry.pubTime > endDate, but the method uses startDate
             wesc.setStartDate(new Date(startDate.getTime()-1));
             wesc.setCatName(cat);
-            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.ASCENDING);
             wesc.setLocale(locale);
             wesc.setMaxResults(1);
@@ -165,7 +166,7 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setStartDate(startDate);
             wesc.setEndDate(endDate);
             wesc.setCatName(catName);
-            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setLocale(locale);
             monthMap = mgr.getWeblogEntryStringMap(wesc);
         } catch (WebloggerException e) {

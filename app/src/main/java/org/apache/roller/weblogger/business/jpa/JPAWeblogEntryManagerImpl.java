@@ -42,6 +42,7 @@ import org.apache.roller.weblogger.pojos.TagStatComparator;
 import org.apache.roller.weblogger.pojos.TagStatCountComparator;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -206,9 +207,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // if the entry was published to future, set status as SCHEDULED
         // we only consider an entry future published if it is scheduled
         // more than 1 minute into the future
-        if ("PUBLISHED".equals(entry.getStatus()) &&
+        if (PubStatus.PUBLISHED.equals(entry.getStatus()) &&
                 entry.getPubTime().after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
-            entry.setStatus(WeblogEntry.SCHEDULED);
+            entry.setStatus(PubStatus.SCHEDULED);
         }
         
         // Store value object (creates new or updates existing)
@@ -295,7 +296,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         params.add(size++, current.getWebsite());
         whereClause.append("e.website = ?").append(size);
         
-        params.add(size++, WeblogEntry.PUBLISHED);
+        params.add(size++, PubStatus.PUBLISHED);
         whereClause.append(" AND e.status = ?").append(size);
                 
         if (next) {
@@ -467,7 +468,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         Query query = strategy.getNamedQuery(
                 "WeblogEntry.getByPinnedToMain&statusOrderByPubTimeDesc");
         query.setParameter(1, Boolean.TRUE);
-        query.setParameter(2, WeblogEntry.PUBLISHED);
+        query.setParameter(2, PubStatus.PUBLISHED);
         if (max != null) {
             query.setMaxResults(max);
         }
@@ -1332,7 +1333,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public long getEntryCount() throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "WeblogEntry.getCountDistinctByStatus");
-        q.setParameter(1, "PUBLISHED");
+        q.setParameter(1, PubStatus.PUBLISHED);
         List results = q.getResultList();
         return ((Long)results.get(0));
     }
@@ -1343,7 +1344,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public long getEntryCount(Weblog website) throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "WeblogEntry.getCountDistinctByStatus&Website");
-        q.setParameter(1, "PUBLISHED");
+        q.setParameter(1, PubStatus.PUBLISHED);
         q.setParameter(2, website);
         List results = q.getResultList();
         return ((Long)results.get(0));

@@ -25,6 +25,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.util.UUIDGenerator;
 
 
@@ -193,7 +194,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         wesc.setWeblog(weblog);
         wesc.setCatName(this.getName());
         if (publishedOnly) {
-            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setStatus(PubStatus.PUBLISHED);
         }
         return wmgr.getWeblogEntries(wesc);
     }

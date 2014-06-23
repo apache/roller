@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.util.I18nUtils;
@@ -782,7 +783,7 @@ public class Weblog implements Serializable {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(this);
             wesc.setCatName(cat);
-            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setMaxResults(length);
             recentEntries = wmgr.getWeblogEntries(wesc);
         } catch (WebloggerException e) {
@@ -817,7 +818,7 @@ public class Weblog implements Serializable {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(this);
             wesc.setTags(tags);
-            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setMaxResults(length);
             recentEntries = wmgr.getWeblogEntries(wesc);
         } catch (WebloggerException e) {

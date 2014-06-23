@@ -119,7 +119,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                 wesc.setEndDate(endDate);
                 wesc.setCatName(catName);
                 wesc.setTags(tags);
-                wesc.setStatus(WeblogEntry.PUBLISHED);
+                wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setLocale(locale);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(length+1);

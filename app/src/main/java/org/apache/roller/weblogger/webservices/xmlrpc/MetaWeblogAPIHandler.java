@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
@@ -165,9 +166,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             entry.setText(description);
             entry.setUpdateTime(current);
             if (publish) {
-                entry.setStatus(WeblogEntry.PUBLISHED);
+                entry.setStatus(PubStatus.PUBLISHED);
             } else {
-                entry.setStatus(WeblogEntry.DRAFT);
+                entry.setStatus(PubStatus.DRAFT);
             }
             if (dateCreated != null) {
                 entry.setPubTime(new Timestamp(dateCreated.getTime()));
@@ -271,9 +272,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             }
             
             if (publish) {
-                entry.setStatus(WeblogEntry.PUBLISHED);
+                entry.setStatus(PubStatus.PUBLISHED);
             } else {
-                entry.setStatus(WeblogEntry.DRAFT);
+                entry.setStatus(PubStatus.DRAFT);
             }
             
             // MetaWeblog supports multiple cats, Weblogger supports one/entry

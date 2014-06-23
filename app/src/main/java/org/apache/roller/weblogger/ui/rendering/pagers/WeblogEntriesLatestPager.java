@@ -76,7 +76,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                 wesc.setEndDate(new Date());
                 wesc.setCatName(catName);
                 wesc.setTags(tags);
-                wesc.setStatus(WeblogEntry.PUBLISHED);
+                wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setLocale(locale);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(length+1);

@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
@@ -84,9 +85,9 @@ public final class EntryAdd extends EntryBase {
 
 		if (perm != null && perm.hasAction(WeblogPermission.ADMIN)
 				&& perm.hasAction(WeblogPermission.POST)) {
-			getBean().setStatus(WeblogEntry.PUBLISHED);
+			getBean().setStatus(PubStatus.PUBLISHED.name());
 		} else {
-			getBean().setStatus(WeblogEntry.PENDING);
+			getBean().setStatus(PubStatus.PENDING.name());
 		}
 
 		// set entry locale based on weblog locale
@@ -143,7 +144,7 @@ public final class EntryAdd extends EntryBase {
                     // status
                     if (!getActionWeblog().hasUserPermission(
                             getAuthenticatedUser(), WeblogPermission.POST)) {
-                        entry.setStatus(WeblogEntry.PENDING);
+                        entry.setStatus(PubStatus.PENDING);
                     }
                 }
 

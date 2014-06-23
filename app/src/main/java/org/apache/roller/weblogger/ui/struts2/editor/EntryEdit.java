@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.MailUtil;
@@ -151,7 +152,7 @@ public final class EntryEdit extends EntryBase {
                     // status
                     if (!getActionWeblog().hasUserPermission(
                             getAuthenticatedUser(), WeblogPermission.POST)) {
-                        weblogEntry.setStatus(WeblogEntry.PENDING);
+                        weblogEntry.setStatus(PubStatus.PENDING);
                     }
 
                     // If the entry was published to future, set status as
@@ -159,7 +160,7 @@ public final class EntryEdit extends EntryBase {
                     // it is scheduled more than 1 minute into the future
                     if (weblogEntry.getPubTime().after(
                             new Date(System.currentTimeMillis() + MINUTE_IN_MILLIS))) {
-                        getBean().setStatus(WeblogEntry.SCHEDULED);
+                        getBean().setStatus(PubStatus.SCHEDULED.name());
                     }
 
                 }

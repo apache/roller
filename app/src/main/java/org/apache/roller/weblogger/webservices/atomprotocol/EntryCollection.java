@@ -54,6 +54,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagComparator;
@@ -375,7 +376,7 @@ public class EntryCollection {
         
         List<Module> modules = new ArrayList<Module>();
         AppModule app = new AppModuleImpl();
-        app.setDraft(!WeblogEntry.PUBLISHED.equals(entry.getStatus()));
+        app.setDraft(!WeblogEntry.PubStatus.PUBLISHED.equals(entry.getStatus()));
         app.setEdited(entry.getUpdateTime());
         modules.add(app);
         atomEntry.setModules(modules);
@@ -399,7 +400,7 @@ public class EntryCollection {
         }
         rollerEntry.setTitle(entry.getTitle());
         if (entry.getContents() != null && entry.getContents().size() > 0) {
-            Content content = (Content)entry.getContents().get(0);
+            Content content = entry.getContents().get(0);
             rollerEntry.setText(content.getValue());
         }
         if (entry.getSummary() != null) {
@@ -411,9 +412,9 @@ public class EntryCollection {
         AppModule control =
                 (AppModule)entry.getModule(AppModule.URI);
         if (control!=null && control.getDraft()) {
-            rollerEntry.setStatus(WeblogEntry.DRAFT);
+            rollerEntry.setStatus(PubStatus.DRAFT);
         } else {
-            rollerEntry.setStatus(WeblogEntry.PUBLISHED);
+            rollerEntry.setStatus(PubStatus.PUBLISHED);
         }
                 
         // Process incoming categories:

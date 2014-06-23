@@ -64,11 +64,8 @@ public class WeblogEntry implements Serializable {
             LogFactory.getFactory().getInstance(WeblogEntry.class);
     
     public static final long serialVersionUID = 2341505386843044125L;
-    
-    public static final String DRAFT     = "DRAFT";
-    public static final String PUBLISHED = "PUBLISHED";
-    public static final String PENDING   = "PENDING";
-    public static final String SCHEDULED = "SCHEDULED";
+
+    public enum PubStatus {DRAFT, PUBLISHED, PENDING, SCHEDULED}
 
     private static final char TITLE_SEPARATOR =
         WebloggerConfig.getBooleanProperty("weblogentry.title.useUnderscoreSeparator") ? '_' : '-';
@@ -89,7 +86,7 @@ public class WeblogEntry implements Serializable {
     private Integer   commentDays   = 7;
     private Boolean   rightToLeft   = Boolean.FALSE;
     private Boolean   pinnedToMain  = Boolean.FALSE;
-    private String    status        = DRAFT;
+    private PubStatus status        = PubStatus.DRAFT;
     private String    locale        = null;
     private String    creatorUserName = null;      
     private String    searchDescription = null;      
@@ -121,7 +118,7 @@ public class WeblogEntry implements Serializable {
             String anchor,
             Timestamp pubTime,
             Timestamp updateTime,
-            String status) {
+            PubStatus status) {
         //this.id = id;
         this.category = category;
         this.website = website;
@@ -424,11 +421,11 @@ public class WeblogEntry implements Serializable {
         this.updateTime = updateTime;
     }
     
-    public String getStatus() {
+    public PubStatus getStatus() {
         return this.status;
     }
     
-    public void setStatus(String status) {
+    public void setStatus(PubStatus status) {
         this.status = status;
     }
     
@@ -895,17 +892,17 @@ public class WeblogEntry implements Serializable {
     
     /** Convenience method for checking status */
     public boolean isDraft() {
-        return getStatus().equals(DRAFT);
+        return getStatus().equals(PubStatus.DRAFT);
     }
 
     /** Convenience method for checking status */
     public boolean isPending() {
-        return getStatus().equals(PENDING);
+        return getStatus().equals(PubStatus.PENDING);
     }
 
     /** Convenience method for checking status */
     public boolean isPublished() {
-        return getStatus().equals(PUBLISHED);
+        return getStatus().equals(PubStatus.PUBLISHED);
     }
 
     /**

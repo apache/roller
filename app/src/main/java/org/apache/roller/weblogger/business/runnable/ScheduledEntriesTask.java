@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -135,17 +136,17 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             
             Date now = new Date();
             
-            log.debug("looking up scheduled entries older than "+now);
+            log.debug("looking up scheduled entries older than " + now);
             
             // get all published entries older than current time
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setEndDate(now);
-            wesc.setStatus(WeblogEntry.SCHEDULED);
+            wesc.setStatus(PubStatus.SCHEDULED);
             List<WeblogEntry> scheduledEntries = wMgr.getWeblogEntries(wesc);
             log.debug("promoting "+scheduledEntries.size()+" entries to PUBLISHED state");
             
             for (WeblogEntry entry : scheduledEntries) {
-                entry.setStatus(WeblogEntry.PUBLISHED);
+                entry.setStatus(PubStatus.PUBLISHED);
                 wMgr.saveWeblogEntry(entry);
             }
 

@@ -92,7 +92,7 @@ public class Entries extends UIAction {
             wesc.setEndDate(getBean().getEndDate());
             wesc.setCatName(getBean().getCategoryName());
             wesc.setTags(getBean().getTags());
-            wesc.setStatus("ALL".equals(status) ? null : status);
+            wesc.setStatus("ALL".equals(status) ? null : WeblogEntry.PubStatus.valueOf(status));
             wesc.setText(getBean().getText());
             wesc.setSortBy(getBean().getSortBy());
             wesc.setOffset(getBean().getPage() * COUNT);
@@ -173,7 +173,7 @@ public class Entries extends UIAction {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             weblogCats = wmgr.getWeblogCategories(getActionWeblog());
         } catch (WebloggerException ex) {
-            log.error("Error getting category list for weblog - "+getWeblog(), ex);
+            log.error("Error getting category list for weblog - " + getWeblog(), ex);
         }
         
         cats.addAll(weblogCats);
@@ -185,8 +185,8 @@ public class Entries extends UIAction {
     public List<KeyValueObject> getSortByOptions() {
         List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
-        opts.add(new KeyValueObject(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.toString(), getText("weblogEntryQuery.label.pubTime")));
-        opts.add(new KeyValueObject(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.toString(), getText("weblogEntryQuery.label.updateTime")));
+        opts.add(new KeyValueObject(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(), getText("weblogEntryQuery.label.pubTime")));
+        opts.add(new KeyValueObject(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(), getText("weblogEntryQuery.label.updateTime")));
         
         return opts;
     }

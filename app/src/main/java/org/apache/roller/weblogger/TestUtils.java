@@ -52,6 +52,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -353,7 +354,7 @@ public final class TestUtils {
     public static WeblogEntry setupWeblogEntry(String anchor,
             WeblogCategory cat, Weblog weblog, User user) throws Exception {
 
-        return TestUtils.setupWeblogEntry(anchor, cat, WeblogEntry.PUBLISHED,
+        return TestUtils.setupWeblogEntry(anchor, cat, PubStatus.PUBLISHED,
                 weblog, user);
     }
 
@@ -362,7 +363,7 @@ public final class TestUtils {
      */
     public static WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) throws Exception {
 
-        return TestUtils.setupWeblogEntry(anchor, weblog.getDefaultCategory(), WeblogEntry.PUBLISHED,
+        return TestUtils.setupWeblogEntry(anchor, weblog.getDefaultCategory(), PubStatus.PUBLISHED,
                 weblog, user);
     }
 
@@ -370,7 +371,7 @@ public final class TestUtils {
      * Convenience method for creating a weblog entry
      */
     public static WeblogEntry setupWeblogEntry(String anchor,
-            WeblogCategory cat, String status, Weblog weblog, User user)
+            WeblogCategory cat, PubStatus status, Weblog weblog, User user)
             throws Exception {
 
         WeblogEntry testEntry = new WeblogEntry();

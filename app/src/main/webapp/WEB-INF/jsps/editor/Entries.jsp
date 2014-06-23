@@ -123,13 +123,13 @@
 
 <s:iterator id="post" value="pager.items">
     <%-- <td> with style if comment is spam or pending --%>
-    <s:if test="#post.status == 'DRAFT'">
+    <s:if test="#post.status.name() == 'DRAFT'">
         <tr class="draftentry"> 
     </s:if>
-    <s:elseif test="#post.status == 'PENDING'">
+    <s:elseif test="#post.status.name() == 'PENDING'">
         <tr class="pendingentry"> 
     </s:elseif>
-    <s:elseif test="#post.status == 'SCHEDULED'">
+    <s:elseif test="#post.status.name() == 'SCHEDULED'">
         <tr class="scheduledentry"> 
     </s:elseif>
     <s:else>

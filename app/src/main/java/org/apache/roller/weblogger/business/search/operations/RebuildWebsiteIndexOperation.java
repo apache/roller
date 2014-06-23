@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.IndexUtil;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 
 /**
@@ -119,7 +120,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                         .getWeblogEntryManager();
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 wesc.setWeblog(website);
-                wesc.setStatus(WeblogEntry.PUBLISHED);
+                wesc.setStatus(PubStatus.PUBLISHED);
                 List<WeblogEntry> entries = weblogManager.getWeblogEntries(wesc);
 
                 mLogger.debug("Entries to index: " + entries.size());

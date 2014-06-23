@@ -19,6 +19,7 @@ package org.apache.roller.weblogger.pojos;
 
 import java.util.Date;
 import java.util.List;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 
 public class WeblogEntrySearchCriteria {
 
@@ -26,7 +27,6 @@ public class WeblogEntrySearchCriteria {
     public enum SortBy {PUBLICATION_TIME, UPDATE_TIME}
 
     // TODO: See if can switch from name of Category to Category object
-    // TODO: Change status to an enum (either here or in WeblogEntry)
 
     // Weblog or null to get for all weblogs.
     private Weblog weblog;
@@ -40,8 +40,8 @@ public class WeblogEntrySearchCriteria {
     private String catName;
     // If provided, array of tags to search blog entries for, just one needs to match to retrieve entry
     private List<String> tags;
-    // WeblogEntry constants of DRAFT, PENDING, PUBLISHED, SCHEDULED
-    private String status;
+    // Publication status of the weblog entry (DRAFT, PUBLISHED, etc.)
+    private PubStatus status;
     // Text appearing in the text or summary, or null for all
     private String text;
     // Date field to sort by
@@ -103,11 +103,11 @@ public class WeblogEntrySearchCriteria {
         this.tags = tags;
     }
 
-    public String getStatus() {
+    public PubStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(PubStatus status) {
         this.status = status;
     }
 

@@ -60,7 +60,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             wesc.setStartDate(startDate);
             wesc.setEndDate(endDate);
             wesc.setCatName(catName);
-            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
             wesc.setLocale(locale);
             monthMap = mgr.getWeblogEntryObjectMap(wesc);
         } catch (WebloggerException e) {

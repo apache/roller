@@ -18,9 +18,7 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +26,7 @@ import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 
@@ -194,7 +193,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             testUser = TestUtils.getManagedUser(testUser);
             e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
-            e2 = TestUtils.setupWeblogEntry("e2", c1, WeblogEntry.DRAFT, testWeblog, testUser);
+            e2 = TestUtils.setupWeblogEntry("e2", c1, PubStatus.DRAFT, testWeblog, testUser);
 
             TestUtils.endSession(true);
 

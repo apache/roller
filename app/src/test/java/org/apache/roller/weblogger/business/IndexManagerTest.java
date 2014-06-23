@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.commons.logging.Log;
@@ -96,7 +97,7 @@ public class IndexManagerTest extends TestCase {
         +"begin to lose power, and Spock reports strange sensor readings.");
         wd1.setAnchor("dummy1");
         wd1.setCreatorUserName(testUser.getUserName());
-        wd1.setStatus(WeblogEntry.PUBLISHED);
+        wd1.setStatus(PubStatus.PUBLISHED);
         wd1.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd1.setWebsite(TestUtils.getManagedWebsite(testWeblog));
@@ -119,7 +120,7 @@ public class IndexManagerTest extends TestCase {
           +"the inhabitants of planet Sigma Iotia II, and Uhura puts Kirk "
           +"in communication with Boss Oxmyx.");
         wd2.setAnchor("dummy2");
-        wd2.setStatus(WeblogEntry.PUBLISHED);
+        wd2.setStatus(PubStatus.PUBLISHED);
         wd2.setCreatorUserName(testUser.getUserName());
         wd2.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd2.setPubTime(new Timestamp(System.currentTimeMillis()));

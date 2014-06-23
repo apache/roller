@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerContext;
@@ -85,7 +86,7 @@ public abstract class EntryBase extends UIAction {
         try {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(getActionWeblog());
-            wesc.setStatus(WeblogEntry.PUBLISHED);
+            wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setMaxResults(20);
             entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
                     .getWeblogEntries(wesc);
@@ -106,7 +107,7 @@ public abstract class EntryBase extends UIAction {
         try {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(getActionWeblog());
-            wesc.setStatus(WeblogEntry.SCHEDULED);
+            wesc.setStatus(PubStatus.SCHEDULED);
             wesc.setMaxResults(20);
             entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
                     .getWeblogEntries(wesc);
@@ -127,7 +128,7 @@ public abstract class EntryBase extends UIAction {
         try {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(getActionWeblog());
-            wesc.setStatus(WeblogEntry.DRAFT);
+            wesc.setStatus(PubStatus.DRAFT);
             wesc.setSortBy(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
             wesc.setMaxResults(20);
             entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
@@ -149,7 +150,7 @@ public abstract class EntryBase extends UIAction {
         try {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(getActionWeblog());
-            wesc.setStatus(WeblogEntry.PENDING);
+            wesc.setStatus(PubStatus.PENDING);
             wesc.setSortBy(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
             wesc.setMaxResults(20);
             entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()

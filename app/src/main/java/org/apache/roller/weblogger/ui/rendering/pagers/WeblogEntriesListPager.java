@@ -111,7 +111,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                 wesc.setStartDate(startDate);
                 wesc.setCatName(queryCat);
                 wesc.setTags(queryTags);
-                wesc.setStatus(WeblogEntry.PUBLISHED);
+                wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
                 wesc.setLocale(locale);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(length+1);

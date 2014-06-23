@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -329,9 +330,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 entry.setText(content);
                 entry.setUpdateTime(current);
                 if (publish) {
-                    entry.setStatus(WeblogEntry.PUBLISHED);
+                    entry.setStatus(PubStatus.PUBLISHED);
                 } else {
-                    entry.setStatus(WeblogEntry.DRAFT);
+                    entry.setStatus(PubStatus.DRAFT);
                 }
                 
                 // save the entry
@@ -408,9 +409,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entry.setCategory(website.getBloggerCategory());
             entry.setCommentDays(website.getDefaultCommentDays());
             if (publish) {
-                entry.setStatus(WeblogEntry.PUBLISHED);
+                entry.setStatus(PubStatus.PUBLISHED);
             } else {
-                entry.setStatus(WeblogEntry.DRAFT);
+                entry.setStatus(PubStatus.DRAFT);
             }
             
             // save the entry

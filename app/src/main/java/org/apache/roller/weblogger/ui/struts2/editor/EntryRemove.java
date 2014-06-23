@@ -76,8 +76,8 @@ public class EntryRemove extends EntryBase {
 				try {
 					// remove the entry from the search index
 					// TODO: can we do this in a better way?
-					String originalStatus = entry.getStatus();
-					entry.setStatus(WeblogEntry.DRAFT);
+					WeblogEntry.PubStatus originalStatus = entry.getStatus();
+					entry.setStatus(WeblogEntry.PubStatus.DRAFT);
 					IndexManager manager = WebloggerFactory.getWeblogger()
 							.getIndexManager();
 					manager.addEntryReIndexOperation(entry);

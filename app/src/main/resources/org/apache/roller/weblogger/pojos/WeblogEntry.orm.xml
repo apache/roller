@@ -6,50 +6,11 @@
     <entity metadata-complete="true" name="WeblogEntry"
             class="org.apache.roller.weblogger.pojos.WeblogEntry" access="PROPERTY">
         <table name="weblogentry"/>
-        <named-query name="WeblogEntry.getByStatus&amp;Category">
-            <query>SELECT w FROM WeblogEntry w WHERE w.status = ?1 AND w.category = ?2</query>
-        </named-query>
         <named-query name="WeblogEntry.getByCategory">
             <query>SELECT w FROM WeblogEntry w WHERE w.category = ?1</query>
         </named-query>
         <named-query name="WeblogEntry.getByPinnedToMain&amp;statusOrderByPubTimeDesc">
             <query>SELECT w FROM WeblogEntry w WHERE w.pinnedToMain = ?1 AND w.status = ?2 ORDER BY w.pubTime DESC</query>
-        </named-query>
-        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreater&amp;CategoryOrderByPubTimeAsc">
-            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
-                                                   ORDER BY w.pubTime ASC</query>
-        </named-query>
-        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreater&amp;Category&amp;LocaleLikeOrderByPubTimeAsc">
-            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
-                                                     AND UPPER(w.locale) LIKE ?5
-                                                   ORDER BY w.pubTime ASC</query>
-        </named-query>
-        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreaterOrderByPubTimeAsc">
-            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
-                                                   ORDER BY w.pubTime ASC</query>
-        </named-query>
-        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreater&amp;LocaleLikeOrderByPubTimeAsc">
-            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
-                                                     AND UPPER(w.locale) LIKE ?4
-                                                   ORDER BY w.pubTime ASC</query>
-        </named-query>
-        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLessOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
-                                                   ORDER BY w.pubTime DESC</query>
-        </named-query>
-        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLess&amp;CategoryOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3 AND w.category = ?4
-                                                   ORDER BY w.pubTime DESC</query>
-        </named-query>
-        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLess&amp;Category&amp;LocaleLikeOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3  AND w.category = ?4
-                                                     AND UPPER(w.locale) LIKE ?5
-                                                   ORDER BY w.pubTime DESC</query>
-        </named-query>
-        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLess&amp;LocaleLikeOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
-                                                     AND UPPER(w.locale) LIKE ?4
-                                                   ORDER BY w.pubTime DESC</query>
         </named-query>
         <named-query name="WeblogEntry.getByWebsite&amp;AnchorOrderByPubTimeDesc">
             <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC</query>
@@ -104,6 +65,7 @@
             </basic>
             <basic name="status">
                 <column name="status" insertable="true" updatable="true" unique="false"/>
+                <enumerated>STRING</enumerated>
             </basic>
             <basic name="link">
                 <column name="link" insertable="true" updatable="true" unique="false"/>

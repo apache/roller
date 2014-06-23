@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 
 import java.sql.Timestamp;
@@ -269,25 +270,25 @@ public class EntryBean {
     }
     
     public boolean isDraft() {
-        return status.equals(WeblogEntry.DRAFT);
+        return status.equals(PubStatus.DRAFT.name());
     }
     
     public boolean isPending() {
-        return status.equals(WeblogEntry.PENDING);
+        return status.equals(PubStatus.PENDING.name());
     }
     
     public boolean isPublished() {
-        return status.equals(WeblogEntry.PUBLISHED);
+        return status.equals(PubStatus.PUBLISHED.name());
     }
     
     public boolean isScheduled() {
-        return status.equals(WeblogEntry.SCHEDULED);
+        return status.equals(PubStatus.SCHEDULED.name());
     }
     
     public void copyTo(WeblogEntry entry) throws WebloggerException {
         
         entry.setTitle(getTitle());
-        entry.setStatus(getStatus());
+        entry.setStatus(PubStatus.valueOf(getStatus()));
         entry.setLocale(getLocale());
         entry.setSummary(getSummary());
         entry.setText(getText());
@@ -335,7 +336,7 @@ public class EntryBean {
         setId(entry.getId());
         setTitle(entry.getTitle());
         setLocale(entry.getLocale());
-        setStatus(entry.getStatus());
+        setStatus(entry.getStatus().name());
         setSummary(entry.getSummary());
         setText(entry.getText());
         setCategoryId(entry.getCategory().getId());

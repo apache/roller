@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
@@ -166,7 +167,7 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public String getStatus() {
+    public PubStatus getStatus() {
         return this.pojo.getStatus();
     }
     

@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -174,17 +175,17 @@ public class WeblogEntryTest extends TestCase {
         
         // make a couple changes
         entry1.setLocale("en_US");
-        entry1.setStatus(WeblogEntry.PUBLISHED);
+        entry1.setStatus(PubStatus.PUBLISHED);
         entry1.setPinnedToMain(Boolean.TRUE);
         mgr.saveWeblogEntry(entry1);
         
         entry2.setLocale("ja_JP");
-        entry2.setStatus(WeblogEntry.PUBLISHED);
+        entry2.setStatus(PubStatus.PUBLISHED);
         entry2.setUpdateTime(new java.sql.Timestamp(entry2.getUpdateTime().getTime()+8822384));
         entry2.setPubTime(entry2.getUpdateTime());
         mgr.saveWeblogEntry(entry2);
-        
-        entry3.setStatus(WeblogEntry.DRAFT);
+
+        entry3.setStatus(PubStatus.DRAFT);
         entry3.setUpdateTime(new java.sql.Timestamp(entry3.getUpdateTime().getTime()+348829384));
         entry3.setPubTime(entry3.getUpdateTime());
         mgr.saveWeblogEntry(entry3);
@@ -229,7 +230,7 @@ public class WeblogEntryTest extends TestCase {
         WeblogEntrySearchCriteria wesc9 = new WeblogEntrySearchCriteria();
         wesc9.setWeblog(testWeblog);
         wesc9.setCatName(testWeblog.getDefaultCategory().getName());
-        wesc9.setStatus(WeblogEntry.PUBLISHED);
+        wesc9.setStatus(PubStatus.PUBLISHED);
         entries = mgr.getWeblogEntries(wesc9);
         assertNotNull(entries);
         assertEquals(3, entries.size());
@@ -237,7 +238,7 @@ public class WeblogEntryTest extends TestCase {
         // get all (non-future) PUBLISHED entries only 
         WeblogEntrySearchCriteria wesc2 = new WeblogEntrySearchCriteria();
         wesc2.setWeblog(testWeblog);
-        wesc2.setStatus(WeblogEntry.PUBLISHED);
+        wesc2.setStatus(PubStatus.PUBLISHED);
         entries = mgr.getWeblogEntries(wesc2);
         assertNotNull(entries);
         assertEquals(3, entries.size());

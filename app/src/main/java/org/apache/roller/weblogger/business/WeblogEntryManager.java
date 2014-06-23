@@ -258,7 +258,7 @@ public interface WeblogEntryManager {
      * @param website       Weblog or null to get for all weblogs.
      * @param startDate     Date or null of the most recent time a tag was used.
      * @param limit         Max TagStats to return (or -1 for no limit)
-     * @return
+     * @return List of most popular tags.
      * @throws WebloggerException
      */
     List<TagStat> getPopularTags(Weblog website, Date startDate, int offset, int limit)
@@ -270,7 +270,7 @@ public interface WeblogEntryManager {
      * @param sortBy        Sort by either 'name' or 'count' (null for name) 
      * @param startsWith    Prefix for tags to be returned (null or a string of length > 0)
      * @param limit         Max TagStats to return (or -1 for no limit)
-     * @return
+     * @return List of tags matching the criteria.
      * @throws WebloggerException
      */
     List<TagStat> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit)

@@ -551,7 +551,7 @@ public final class WeblogExport extends UIAction
 
             // Date
             result.append("DATE: ");
-            if (entry.getStatus().equals(WeblogEntry.PUBLISHED)) {
+            if (entry.getStatus().equals(WeblogEntry.PubStatus.PUBLISHED)) {
                 result.append(MT_DATE_FORMAT.format(entry.getPubTime()));
             } else {
                 result.append(MT_DATE_FORMAT.format(entry.getUpdateTime()));
@@ -565,7 +565,7 @@ public final class WeblogExport extends UIAction
 
             // Status
             result.append("STATUS: ");
-            if (entry.getStatus().equals(WeblogEntry.PUBLISHED)) {
+            if (entry.getStatus().equals(WeblogEntry.PubStatus.PUBLISHED)) {
                 result.append("publish");
             } else {
                 result.append("draft");

@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.util.Utilities;
@@ -74,7 +75,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
                 currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
-                if (currEntry != null && currEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
+                if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                     entries = new TreeMap();
                     entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry, urlStrategy)));
                 }
@@ -141,7 +142,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
                 nextEntry = wmgr.getNextEntry(currEntry, null, locale);
                 // make sure that entry is published and not to future
                 if (nextEntry != null && nextEntry.getPubTime().after(new Date())
-                        && nextEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
+                        && nextEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                     nextEntry = null;
                 }
             } catch (WebloggerException e) {
@@ -161,7 +162,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
                 prevEntry = wmgr.getPreviousEntry(currEntry, null, locale);
                 // make sure that entry is published and not to future
                 if (prevEntry != null && prevEntry.getPubTime().after(new Date())
-                        && prevEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
+                        && prevEntry.getStatus().equals(PubStatus.PUBLISHED)) {
                     prevEntry = null;
                 }
             } catch (WebloggerException e) {
