@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 
@@ -220,7 +221,7 @@ public interface WeblogEntryManager {
             String          searchString,
             Date            startDate,
             Date            endDate,
-            String          status
+            ApprovalStatus  status
             
             ) throws WebloggerException;
         

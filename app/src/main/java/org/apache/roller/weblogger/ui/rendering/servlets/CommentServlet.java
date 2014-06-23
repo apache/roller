@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentAuthenticator;
@@ -313,18 +314,18 @@ public class CommentServlet extends HttpServlet {
 
             if (validationScore == RollerConstants.PERCENT_100 && weblog.getCommentModerationRequired()) {
                 // Valid comments go into moderation if required
-                comment.setStatus(WeblogEntryComment.PENDING);
+                comment.setStatus(ApprovalStatus.PENDING);
                 message = messageUtils
                         .getString("commentServlet.submittedToModerator");
             } else if (validationScore == RollerConstants.PERCENT_100) {
                 // else they're approved
-                comment.setStatus(WeblogEntryComment.APPROVED);
+                comment.setStatus(ApprovalStatus.APPROVED);
                 message = messageUtils
                         .getString("commentServlet.commentAccepted");
             } else {
                 // Invalid comments are marked as spam
                 log.debug("Comment marked as spam");
-                comment.setStatus(WeblogEntryComment.SPAM);
+                comment.setStatus(ApprovalStatus.SPAM);
                 error = messageUtils
                         .getString("commentServlet.commentMarkedAsSpam");
 
@@ -355,7 +356,7 @@ public class CommentServlet extends HttpServlet {
             }
 
             try {
-                if (!WeblogEntryComment.SPAM.equals(comment.getStatus())
+                if (!ApprovalStatus.SPAM.equals(comment.getStatus())
                         || !WebloggerRuntimeConfig
                                 .getBooleanProperty("comments.ignoreSpam.enabled")) {
 

@@ -54,6 +54,7 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
@@ -438,7 +439,7 @@ public final class TestUtils {
         testComment.setPostTime(new java.sql.Timestamp(new java.util.Date()
                 .getTime()));
         testComment.setWeblogEntry(getManagedWeblogEntry(entry));
-        testComment.setStatus(WeblogEntryComment.APPROVED);
+        testComment.setStatus(ApprovalStatus.APPROVED);
 
         // store testComment
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger()

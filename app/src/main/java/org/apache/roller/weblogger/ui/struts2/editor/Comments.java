@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
@@ -157,9 +158,6 @@ public class Comments extends UIAction {
         }
         if (!StringUtils.isEmpty(getBean().getApprovedString())) {
             params.put("bean.approvedString", getBean().getApprovedString());
-        }
-        if (!StringUtils.isEmpty(getBean().getSpamString())) {
-            params.put("bean.spamString", getBean().getSpamString());
         }
 
         return WebloggerFactory
@@ -342,13 +340,13 @@ public class Comments extends UIAction {
                     if (approvedIds.contains(ids[i])) {
                         // if a comment was previously PENDING then this is
                         // its first approval, so track it for notification
-                        if (WeblogEntryComment.PENDING.equals(comment
+                        if (ApprovalStatus.PENDING.equals(comment
                                 .getStatus())) {
                             approvedComments.add(comment);
                         }
 
                         log.debug("Marking as approved - " + comment.getId());
-                        comment.setStatus(WeblogEntryComment.APPROVED);
+                        comment.setStatus(ApprovalStatus.APPROVED);
                         wmgr.saveComment(comment);
 
                         flushList.add(comment);
@@ -356,16 +354,16 @@ public class Comments extends UIAction {
 
                     } else if (spamIds.contains(ids[i])) {
                         log.debug("Marking as spam - " + comment.getId());
-                        comment.setStatus(WeblogEntryComment.SPAM);
+                        comment.setStatus(ApprovalStatus.SPAM);
                         wmgr.saveComment(comment);
 
                         flushList.add(comment);
                         reindexList.add(comment.getWeblogEntry());
 
-                    } else if (!WeblogEntryComment.DISAPPROVED.equals(comment
+                    } else if (!ApprovalStatus.DISAPPROVED.equals(comment
                             .getStatus())) {
                         log.debug("Marking as disapproved - " + comment.getId());
-                        comment.setStatus(WeblogEntryComment.DISAPPROVED);
+                        comment.setStatus(ApprovalStatus.DISAPPROVED);
                         wmgr.saveComment(comment);
 
                         flushList.add(comment);
@@ -408,7 +406,6 @@ public class Comments extends UIAction {
             freshBean.setEndDateString(getBean().getEndDateString());
             freshBean.setSearchString(getBean().getSearchString());
             freshBean.setApprovedString(getBean().getApprovedString());
-            freshBean.setSpamString(getBean().getSpamString());
 
             // but if we're editing an entry's comments stick with that entry
             if (bean.getEntryId() != null) {
@@ -437,17 +434,6 @@ public class Comments extends UIAction {
                 getText("commentManagement.onlyApproved")));
         opts.add(new KeyValueObject("ONLY_DISAPPROVED",
                 getText("commentManagement.onlyDisapproved")));
-
-        return opts;
-    }
-
-    public List<KeyValueObject> getSpamStatusOptions() {
-
-        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
-
-        opts.add(new KeyValueObject("ALL", getText("commentManagement.all")));
-        opts.add(new KeyValueObject("NO_SPAM",
-                getText("commentManagement.noSpam")));
         opts.add(new KeyValueObject("ONLY_SPAM",
                 getText("commentManagement.onlySpam")));
 

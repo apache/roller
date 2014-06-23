@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -37,7 +38,6 @@ public class GlobalCommentManagementBean {
     private String searchString = null;
     private String startDateString = null;
     private String endDateString = null;
-    private String spamString = "ALL";
     private String approvedString = "ALL";
     private int page = 0;
     
@@ -56,7 +56,7 @@ public class GlobalCommentManagementBean {
         for (WeblogEntryComment comment : comments) {
             allComments.add(comment.getId());
 
-            if (WeblogEntryComment.SPAM.equals(comment.getStatus())) {
+            if (ApprovalStatus.SPAM.equals(comment.getStatus())) {
                 spamList.add(comment.getId());
             }
         }
@@ -68,19 +68,15 @@ public class GlobalCommentManagementBean {
     }
     
     
-    public String getStatus() {
+    public ApprovalStatus getStatus() {
         if (approvedString.equals("ONLY_APPROVED")) {
-            return WeblogEntryComment.APPROVED;
+            return ApprovalStatus.APPROVED;
         } else if (approvedString.equals("ONLY_DISAPPROVED")) {
-            return WeblogEntryComment.DISAPPROVED;
+            return ApprovalStatus.DISAPPROVED;
         } else if (approvedString.equals("ONLY_PENDING")) {
-            return WeblogEntryComment.PENDING;
-        } else if (spamString.equals("ONLY_SPAM")) {
-            return WeblogEntryComment.SPAM;
-        } else if (spamString.equals("NO_SPAM")) {
-            // all status' except spam
-            // special situation, so this doesn't map to a persisted comment status
-            return "ALL_IGNORE_SPAM";
+            return ApprovalStatus.PENDING;
+        } else if (approvedString.equals("ONLY_SPAM")) {
+            return ApprovalStatus.SPAM;
         } else {
             // shows *all* comments, regardless of status
             return null;
@@ -107,16 +103,7 @@ public class GlobalCommentManagementBean {
         }
         return null;
     }
-    
-    
-    public String getSpamString() {
-        return spamString;
-    }
-    
-    public void setSpamString(String spamString) {
-        this.spamString = spamString;
-    }
-    
+
     public String getPendingString() {
         return approvedString;
     }

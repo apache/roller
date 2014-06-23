@@ -79,6 +79,7 @@
             </basic>
             <basic name="status">
                 <column name="status" insertable="true" updatable="true" unique="false"/>
+                <enumerated>STRING</enumerated>
             </basic>
             <basic name="notify">
                 <column name="notify" insertable="true" updatable="true" unique="false"/>

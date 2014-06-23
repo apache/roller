@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.StatCount;
@@ -656,18 +657,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         if (csc.getStatus() != null) {
-            String comparisonOperator;
-            if("ALL_IGNORE_SPAM".equals(csc.getStatus())) {
-                // we want all comments, except spam
-                // so that means where status != SPAM
-                csc.setStatus(WeblogEntryComment.SPAM);
-                comparisonOperator = " <> ";
-            } else {
-                comparisonOperator = " = ";
-            }
             params.add(size++, csc.getStatus());
-            appendConjuctionToWhereclause(whereClause, "c.status ")
-                .append(comparisonOperator).append('?').append(size);
+            appendConjuctionToWhereclause(whereClause, "c.status = ?").append(size);
         }
         
         if(whereClause.length() != 0) {
@@ -703,7 +694,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             String  searchString,
             Date    startDate,
             Date    endDate,
-            String status) throws WebloggerException {
+            ApprovalStatus status) throws WebloggerException {
         
         // TODO dynamic bulk delete query: I'd MUCH rather use a bulk delete,
         // but MySQL says "General error, message from server: "You can't
@@ -1310,7 +1301,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public long getCommentCount() throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "WeblogEntryComment.getCountAllDistinctByStatus");
-        q.setParameter(1, WeblogEntryComment.APPROVED);
+        q.setParameter(1, ApprovalStatus.APPROVED);
         List results = q.getResultList();
         return ((Long)results.get(0));
     }
@@ -1322,7 +1313,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         Query q = strategy.getNamedQuery(
                 "WeblogEntryComment.getCountDistinctByWebsite&Status");
         q.setParameter(1, website);
-        q.setParameter(2, WeblogEntryComment.APPROVED);
+        q.setParameter(2, ApprovalStatus.APPROVED);
         List results = q.getResultList();
         return ((Long)results.get(0));
     }

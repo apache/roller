@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -149,10 +150,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         if(!StringUtils.isEmpty(getBean().getApprovedString())) {
             params.put("bean.approvedString", getBean().getApprovedString());
         }
-        if(!StringUtils.isEmpty(getBean().getSpamString())) {
-            params.put("bean.spamString", getBean().getSpamString());
-        }
-        
+
         return WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("globalCommentManagement", "/roller-ui/admin", 
                 null, params, false);
     }
@@ -282,15 +280,18 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
                 
                 // mark/unmark spam
                 if (spamIds.contains(id) &&
-                        !WeblogEntryComment.SPAM.equals(comment.getStatus())) {
-                    log.debug("Marking as spam - "+comment.getId());
-                    comment.setStatus(WeblogEntryComment.SPAM);
+                        !ApprovalStatus.SPAM.equals(comment.getStatus())) {
+                    log.debug("Marking as spam - " + comment.getId());
+                    comment.setStatus(ApprovalStatus.SPAM);
                     wmgr.saveComment(comment);
                     
                     flushList.add(comment.getWeblogEntry().getWebsite());
-                } else if(WeblogEntryComment.SPAM.equals(comment.getStatus())) {
-                    log.debug("Marking as approved - "+comment.getId());
-                    comment.setStatus(WeblogEntryComment.APPROVED);
+                } else if(!spamIds.contains(id) &&
+                        ApprovalStatus.SPAM.equals(comment.getStatus())) {
+                    // Administrator unmarked as spam, so changing to DISAPPROVED
+                    // as blogger still needs to approve it.
+                    log.debug("Marking as disapproved - " + comment.getId());
+                    comment.setStatus(ApprovalStatus.DISAPPROVED);
                     wmgr.saveComment(comment);
                     
                     flushList.add(comment.getWeblogEntry().getWebsite());
@@ -328,22 +329,10 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         opts.add(new KeyValueObject("ONLY_PENDING", getText("commentManagement.onlyPending")));
         opts.add(new KeyValueObject("ONLY_APPROVED", getText("commentManagement.onlyApproved")));
         opts.add(new KeyValueObject("ONLY_DISAPPROVED", getText("commentManagement.onlyDisapproved")));
-        
-        return opts;
-    }
-    
-    public List<KeyValueObject> getSpamStatusOptions() {
-        
-        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
-        
-        opts.add(new KeyValueObject("ALL", getText("commentManagement.all")));
-        opts.add(new KeyValueObject("NO_SPAM", getText("commentManagement.noSpam")));
         opts.add(new KeyValueObject("ONLY_SPAM", getText("commentManagement.onlySpam")));
-        
         return opts;
     }
-    
-    
+
     public GlobalCommentManagementBean getBean() {
         return bean;
     }

@@ -92,20 +92,6 @@
     </div> 
     <br />
 
-    <div class="sideformrow">
-        <label for="spamString" class="sideformrow">
-            <s:text name="commentManagement.spamStatus" />   
-            <br />
-            <br />
-            <br />
-            <br />
-        </label>
-        <div>
-            <s:radio theme="roller" name="bean.spamString" list="spamStatusOptions" listKey="key" listValue="value" />
-        </div>
-    </div>
-    <br />
-    
     <s:submit value="%{getText('commentManagement.query')}" />
             
 </s:form>

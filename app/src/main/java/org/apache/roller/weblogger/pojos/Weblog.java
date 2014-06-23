@@ -844,7 +844,7 @@ public class Weblog implements Serializable {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             CommentSearchCriteria csc = new CommentSearchCriteria();
             csc.setWeblog(this);
-            csc.setStatus(WeblogEntryComment.APPROVED);
+            csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
             csc.setReverseChrono(true);
             csc.setMaxResults(length);
             recentComments = wmgr.getComments(csc);

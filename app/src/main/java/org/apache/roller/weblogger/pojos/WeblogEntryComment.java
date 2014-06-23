@@ -32,12 +32,9 @@ public class WeblogEntryComment implements Serializable {
     
     public static final long serialVersionUID = -6668122596726478462L;
     
-    // status options
-    public static final String APPROVED = "APPROVED";
-    public static final String DISAPPROVED = "DISAPPROVED";
-    public static final String SPAM = "SPAM";
-    public static final String PENDING = "PENDING";
-    
+    // approval status states
+    public enum ApprovalStatus {APPROVED, DISAPPROVED, SPAM, PENDING}
+
     // attributes
     private String    id = UUIDGenerator.generateUUID();
     private String    name = null;
@@ -45,7 +42,7 @@ public class WeblogEntryComment implements Serializable {
     private String    url = null;
     private String    content = null;
     private Timestamp postTime = null;
-    private String    status = APPROVED;
+    private ApprovalStatus status = ApprovalStatus.APPROVED;
     private Boolean   notify = Boolean.FALSE;
     private String    remoteHost = null;
     private String    referrer = null;
@@ -169,14 +166,14 @@ public class WeblogEntryComment implements Serializable {
     /**
      * Status of the comment, i.e. APPROVED, SPAM, PENDING, etc.
      */
-    public String getStatus() {
+    public ApprovalStatus getStatus() {
         return status;
     }
 
     /**
      * Status of the comment, i.e. APPROVED, SPAM, PENDING, etc.
      */
-    public void setStatus(String status) {
+    public void setStatus(ApprovalStatus status) {
         this.status = status;
     }
     
@@ -277,7 +274,7 @@ public class WeblogEntryComment implements Serializable {
      * Indicates that weblog owner considers this comment to be spam.
      */
     public Boolean getSpam() {
-        return SPAM.equals(getStatus());
+        return ApprovalStatus.SPAM.equals(getStatus());
     }
     
     
@@ -285,7 +282,7 @@ public class WeblogEntryComment implements Serializable {
      * True if comment has is pending moderator approval.
      */
     public Boolean getPending() {
-        return PENDING.equals(getStatus());
+        return ApprovalStatus.PENDING.equals(getStatus());
     }
     
     
@@ -293,7 +290,7 @@ public class WeblogEntryComment implements Serializable {
      * Indicates that comment has been approved for display on weblog.
      */
     public Boolean getApproved() {
-        return APPROVED.equals(getStatus());
+        return ApprovalStatus.APPROVED.equals(getStatus());
     }
     
     

@@ -18,10 +18,9 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.util.Date;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 
 public class CommentSearchCriteria {
-
-    // TODO: Change status to an enum (either here or in WeblogEntryComment)
 
     // Weblog or null to get comments on all blogs
     private Weblog weblog;
@@ -34,7 +33,7 @@ public class CommentSearchCriteria {
     // End date or null for no restriction
     private Date endDate;
     // Comment status as defined in WeblogEntryComment, or null for any
-    private String status;
+    private ApprovalStatus status;
     // True for results in reverse chrono order
     private boolean reverseChrono = false;
     // Offset into results for paging
@@ -82,11 +81,11 @@ public class CommentSearchCriteria {
         this.endDate = endDate;
     }
 
-    public String getStatus() {
+    public ApprovalStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ApprovalStatus status) {
         this.status = status;
     }
 

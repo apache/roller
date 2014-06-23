@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -107,7 +108,7 @@ public class CommentTest extends TestCase {
         comment.setContent("this is a test comment");
         comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         comment.setWeblogEntry(TestUtils.getManagedWeblogEntry(testEntry));
-        comment.setStatus(WeblogEntryComment.APPROVED);
+        comment.setStatus(ApprovalStatus.APPROVED);
         
         // create a comment
         mgr.saveComment(comment);
@@ -169,19 +170,19 @@ public class CommentTest extends TestCase {
         
         // make some changes
         comment3 = mgr.getComment(comment3.getId());
-        comment3.setStatus(WeblogEntryComment.PENDING);
+        comment3.setStatus(ApprovalStatus.PENDING);
         mgr.saveComment(comment3);
         TestUtils.endSession(true);
         
         // get pending comments
         csc.setEntry(null);
-        csc.setStatus(WeblogEntryComment.PENDING);
+        csc.setStatus(ApprovalStatus.PENDING);
         comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(1, comments.size());
         
         // get approved comments
-        csc.setStatus(WeblogEntryComment.APPROVED);
+        csc.setStatus(ApprovalStatus.APPROVED);
         comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(2, comments.size());

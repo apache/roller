@@ -738,7 +738,7 @@ public class WeblogEntry implements Serializable {
             CommentSearchCriteria csc = new CommentSearchCriteria();
             csc.setWeblog(getWebsite());
             csc.setEntry(this);
-            csc.setStatus(approvedOnly ? WeblogEntryComment.APPROVED : null);
+            csc.setStatus(approvedOnly ? WeblogEntryComment.ApprovalStatus.APPROVED : null);
             return wmgr.getComments(csc);
         } catch (WebloggerException alreadyLogged) {}
         return list;

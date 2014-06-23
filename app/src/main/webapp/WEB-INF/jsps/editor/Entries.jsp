@@ -153,7 +153,7 @@
     </td>
     
     <td>
-        <s:if test="#post.status == 'PUBLISHED'">
+        <s:if test="#post.status.name() == 'PUBLISHED'">
             <a href='<s:property value="#post.permalink" />'><s:text name="weblogEntryQuery.view" /></a>
         </s:if>
     </td>

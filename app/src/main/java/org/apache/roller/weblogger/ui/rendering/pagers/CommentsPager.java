@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
 
@@ -97,7 +98,7 @@ public class CommentsPager extends AbstractPager {
                 CommentSearchCriteria csc = new CommentSearchCriteria();
                 csc.setWeblog(weblog);
                 csc.setStartDate(startDate);
-                csc.setStatus(WeblogEntryComment.APPROVED);
+                csc.setStatus(ApprovalStatus.APPROVED);
                 csc.setReverseChrono(true);
                 csc.setOffset(offset);
                 csc.setMaxResults(length + 1);

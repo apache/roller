@@ -84,7 +84,6 @@
         <s:hidden name="bean.startDateString" />
         <s:hidden name="bean.endDateString" />
         <s:hidden name="bean.approvedString" />
-        <s:hidden name="bean.spamString" />
 
 <%-- ============================================================= --%>
 <%-- Number of comments and date message --%>
@@ -236,10 +235,10 @@
     <%-- Display comment details and text --%>
 
     <%-- <td> with style if comment is spam or pending --%>
-                    <s:if test="#comment.status == 'SPAM'">
+                    <s:if test="#comment.status.name() == 'SPAM'">
                         <td class="spamcomment">
                     </s:if>
-                    <s:elseif test="#comment.status == 'PENDING'">
+                    <s:elseif test="#comment.status.name() == 'PENDING'">
                         <td class="pendingcomment">
                     </s:elseif>
                     <s:else>

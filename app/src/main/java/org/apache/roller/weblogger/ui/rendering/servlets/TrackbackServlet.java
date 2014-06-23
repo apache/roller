@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidationManager;
@@ -165,17 +166,17 @@ public class TrackbackServlet extends HttpServlet {
                 
                 if (validationScore == RollerConstants.PERCENT_100 && weblog.getCommentModerationRequired()) {
                     // Valid comments go into moderation if required
-                    comment.setStatus(WeblogEntryComment.PENDING);
+                    comment.setStatus(ApprovalStatus.PENDING);
                 } else if (validationScore == RollerConstants.PERCENT_100) {
                     // else they're approved
-                    comment.setStatus(WeblogEntryComment.APPROVED);
+                    comment.setStatus(ApprovalStatus.APPROVED);
                 } else {
                     // Invalid comments are marked as spam
-                    comment.setStatus(WeblogEntryComment.SPAM);
+                    comment.setStatus(ApprovalStatus.SPAM);
                 }
                 
                 // save, commit, send response
-                if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
+                if (!ApprovalStatus.SPAM.equals(comment.getStatus()) ||
                         !WebloggerRuntimeConfig.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
                     
                     WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -193,7 +194,7 @@ public class TrackbackServlet extends HttpServlet {
                             I18nMessages.getMessages(trackbackRequest.getLocaleInstance()),
                             validationScore == RollerConstants.PERCENT_100);
                     
-                    if(WeblogEntryComment.PENDING.equals(comment.getStatus())) {
+                    if (ApprovalStatus.PENDING.equals(comment.getStatus())) {
                         pw.println(this.getSuccessResponse("Trackback submitted to moderator"));
                     } else {
                         pw.println(this.getSuccessResponse("Trackback accepted"));

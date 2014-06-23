@@ -24,6 +24,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -130,7 +131,7 @@ public final class WeblogEntryCommentWrapper {
     }
     
     
-    public String getStatus() {
+    public ApprovalStatus getStatus() {
         return this.pojo.getStatus();
     }
     
