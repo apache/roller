@@ -32,12 +32,12 @@ import org.apache.commons.codec.binary.Hex;
 public final class RegexUtil {
     
     public static final Pattern MAILTO_PATTERN =
-            Pattern.compile("mailto:([a-zA-Z0-9\\.]+@[a-zA-Z0-9\\.]+\\.[a-zA-Z0-9]+)");
-    
+            Pattern.compile("mailto:([a-zA-Z0-9\\.\\-]+@[a-zA-Z0-9\\.\\-]+\\.[a-zA-Z0-9]+)");
+
     public static final Pattern EMAIL_PATTERN =
-            Pattern.compile("\\b[a-zA-Z0-9\\.]+(@)([a-zA-Z0-9\\.]+)(\\.)([a-zA-Z0-9]+)\\b");
-    
-    
+            Pattern.compile("\\b[a-zA-Z0-9\\.\\-]+(@)([a-zA-Z0-9\\.\\-]+)(\\.)([a-zA-Z0-9]+)\\b");
+
+
     public static String encodeEmail(String str) {
         // obfuscate mailto's: turns them into hex encoded,
         // so that browsers can still understand the mailto link
