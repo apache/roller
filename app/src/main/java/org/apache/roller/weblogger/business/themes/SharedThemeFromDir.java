@@ -187,7 +187,7 @@ public class SharedThemeFromDir extends SharedTheme {
         if (StringUtils.isNotEmpty(themeMetadata.getDescription())) {
             setDescription(themeMetadata.getDescription());
         } else {
-            setDescription(themeMetadata.getName());
+            setDescription(" ");
         }
         setType(themeMetadata.getType());
         setAuthor(themeMetadata.getAuthor());

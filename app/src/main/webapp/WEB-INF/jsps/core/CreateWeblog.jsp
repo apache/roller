@@ -98,6 +98,7 @@ function handlePreview(handle) {
         <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name" onchange="previewImage(this[selectedIndex].value)"/>
        <br />
        <br />
+
        <img name="preview" src='' />
        <!-- initialize preview image at page load -->
        <script type="text/javascript">
