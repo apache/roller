@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -274,14 +275,14 @@ public class CommentServlet extends HttpServlet {
             error = messageUtils.getString("comments.disabled");
 
             // if there is an email it must be valid
-        } else if (commentRequest.getEmail() != null
+        } else if (StringUtils.isNotEmpty(commentRequest.getEmail())
                 && !Utilities.isValidEmailAddress(commentRequest.getEmail())) {
             error = messageUtils
                     .getString("error.commentPostFailedEmailAddress");
             log.debug("Email Adddress is invalid : "
                     + commentRequest.getEmail());
             // if there is an URL it must be valid
-        } else if (commentRequest.getUrl() != null) {
+        } else if (StringUtils.isNotEmpty(commentRequest.getUrl())) {
             String[] customSchemes = { "http", "https" };
             if (!new UrlValidator(customSchemes).isValid(commentRequest
                     .getUrl())) {
@@ -291,8 +292,7 @@ public class CommentServlet extends HttpServlet {
             // if this is a real comment post then authenticate request
         } else if (!preview && !this.authenticator.authenticate(request)) {
             String[] msg = { request.getParameter("answer") };
-            error = messageUtils.getString(
-                    "error.commentAuthFailed", msg);
+            error = messageUtils.getString("error.commentAuthFailed", msg);
             log.debug("Comment failed authentication");
         }
 
@@ -312,7 +312,8 @@ public class CommentServlet extends HttpServlet {
 
         if (!preview) {
 
-            if (validationScore == RollerConstants.PERCENT_100 && weblog.getCommentModerationRequired()) {
+            if (validationScore == RollerConstants.PERCENT_100
+                    && weblog.getCommentModerationRequired()) {
                 // Valid comments go into moderation if required
                 comment.setStatus(ApprovalStatus.PENDING);
                 message = messageUtils
