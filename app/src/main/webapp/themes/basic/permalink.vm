@@ -7,8 +7,8 @@
     <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
     #showMetaDescription()
 </head>
+<!-- permalink -->
 <body>
-
 <div id="id_permalink" class="content_wrapper">
   <div class="content">
     <h1 class="weblogName">$utils.escapeHTML($model.weblog.name)</h1>

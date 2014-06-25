@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
     #showMetaDescription()
     <script type="text/javascript">
-      console.log("init");
       $(document).ready(function () {
         $('#btnMobile').on('click', function() {
            setCookie("roller_user_request_type","mobile",30);
@@ -24,6 +23,7 @@
       }
     </script>
 </head>
+<!-- weblog -->
 <body>
 
 <div id="id_weblog" class="content_wrapper">
@@ -48,6 +48,9 @@
 
 <div class="rightbar_wrapper">
   <div class="rightbar">
+    <div class="mobile">
+        <a id="btnMobile" href="#" alt="View Mobile Weblog">View Mobile Weblog</a>
+    </div>
     #includeTemplate($model.weblog "sidebar")
   </div>
 </div>

@@ -38,7 +38,6 @@
     }
   </script>
 </head>
-
 <!-- weblog-mobile -->
 <body>
   <div id ="home" data-role="page">

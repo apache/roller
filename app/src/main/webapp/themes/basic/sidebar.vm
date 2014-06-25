@@ -1,9 +1,5 @@
 ## sidebar contents
-
-    <div class="mobile">
-    <a id="btnMobile" href="#" alt="View Mobile Weblog">View Mobile Weblog</a>
-    </div>
-
+    <!-- sidebar -->
     <h2>Calendar</h2>
     <div class="sidebar">
     #showWeblogEntryCalendar($model.weblog "nil")
