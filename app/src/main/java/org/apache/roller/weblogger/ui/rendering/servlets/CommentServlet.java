@@ -274,21 +274,20 @@ public class CommentServlet extends HttpServlet {
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             error = messageUtils.getString("comments.disabled");
 
-            // if there is an email it must be valid
-        } else if (StringUtils.isNotEmpty(commentRequest.getEmail())
+            // Must have an email and also must be valid
+        } else if (StringUtils.isEmpty(commentRequest.getEmail())
+                || StringUtils.isNotEmpty(commentRequest.getEmail())
                 && !Utilities.isValidEmailAddress(commentRequest.getEmail())) {
             error = messageUtils
                     .getString("error.commentPostFailedEmailAddress");
             log.debug("Email Adddress is invalid : "
                     + commentRequest.getEmail());
             // if there is an URL it must be valid
-        } else if (StringUtils.isNotEmpty(commentRequest.getUrl())) {
-            String[] customSchemes = { "http", "https" };
-            if (!new UrlValidator(customSchemes).isValid(commentRequest
-                    .getUrl())) {
+        } else if (StringUtils.isNotEmpty(commentRequest.getUrl())
+                && !new UrlValidator(new String[] { "http", "https" })
+                        .isValid(commentRequest.getUrl())) {
                 error = messageUtils.getString("error.commentPostFailedURL");
                 log.debug("URL is invalid : " + commentRequest.getUrl());
-            }
             // if this is a real comment post then authenticate request
         } else if (!preview && !this.authenticator.authenticate(request)) {
             String[] msg = { request.getParameter("answer") };
