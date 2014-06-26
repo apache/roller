@@ -251,7 +251,7 @@ public class CommentServlet extends HttpServlet {
             } else if (theUrl.startsWith("https://")) {
                 url.append(theUrl);
             } else {
-                url.append("http://").append(commentRequest.getUrl());
+                url.append("http://").append(theUrl);
             }
             comment.setUrl(url.toString());
         } else {
