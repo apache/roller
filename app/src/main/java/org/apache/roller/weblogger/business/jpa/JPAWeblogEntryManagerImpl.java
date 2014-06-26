@@ -24,7 +24,6 @@ import java.sql.Timestamp;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,9 +68,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = new HashMap<String, String>();
-    
-    /* inline creation of reverse comparator, anonymous inner class */
-    private static final Comparator REVERSE_COMPARATOR = new ReverseComparator();
     
     private static final Comparator TAG_STAT_NAME_COMPARATOR = new TagStatComparator();
     
@@ -775,7 +771,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     private Map getWeblogEntryMap(WeblogEntrySearchCriteria wesc, boolean stringsOnly) throws WebloggerException {
 
-        TreeMap map = new TreeMap(REVERSE_COMPARATOR);
+        TreeMap map = new TreeMap(Collections.reverseOrder());
 
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 

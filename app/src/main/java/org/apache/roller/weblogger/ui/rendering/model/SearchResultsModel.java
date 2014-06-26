@@ -20,13 +20,13 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
@@ -67,7 +67,7 @@ public class SearchResultsModel extends PageModel {
 
 	// the actual search results mapped by Day -> Set of entries
 	private Map<Date, TreeSet<WeblogEntryWrapper>> results
-            = new TreeMap<Date, TreeSet<WeblogEntryWrapper>>(new ReverseComparator());
+            = new TreeMap<Date, TreeSet<WeblogEntryWrapper>>(Collections.reverseOrder());
 
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsPager pager = null;
@@ -276,10 +276,6 @@ public class SearchResultsModel extends PageModel {
 
 	public Set getCategories() {
 		return categories;
-	}
-
-	public boolean isWebsiteSpecificSearch() {
-		return websiteSpecificSearch;
 	}
 
 	public String getErrorMessage() {

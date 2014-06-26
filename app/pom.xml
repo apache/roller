@@ -22,7 +22,7 @@
         <testThemesDir>${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
         <testIndexDir>${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
-        <lucene.version>4.8.1</lucene.version>
+        <lucene.version>4.9.0</lucene.version>
         <spring.version>4.0.5.RELEASE</spring.version>
         <spring.security.version>3.2.4.RELEASE</spring.security.version>
     </properties>

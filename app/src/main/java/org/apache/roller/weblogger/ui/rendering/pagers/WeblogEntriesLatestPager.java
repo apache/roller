@@ -19,11 +19,11 @@
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -69,7 +69,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         
         if (entries == null) {
-            entries = new TreeMap<Date, List<WeblogEntryWrapper>>(new ReverseComparator());
+            entries = new TreeMap<Date, List<WeblogEntryWrapper>>(Collections.reverseOrder());
             try {
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 wesc.setWeblog(weblog);

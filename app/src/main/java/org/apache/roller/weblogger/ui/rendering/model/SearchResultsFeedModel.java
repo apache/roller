@@ -267,10 +267,6 @@ public class SearchResultsFeedModel implements Model {
 		return categories;
 	}
 
-	public boolean isWebsiteSpecificSearch() {
-		return websiteSpecificSearch;
-	}
-
 	public String getCategoryName() {
 		return feedRequest.getWeblogCategoryName();
 	}

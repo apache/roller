@@ -21,11 +21,11 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -111,7 +111,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         endDate = DateUtil.getEndOfDay(endDate, cal);
         
         if (entries == null) {
-            entries = new TreeMap<Date, List<WeblogEntryWrapper>>(new ReverseComparator());
+            entries = new TreeMap<Date, List<WeblogEntryWrapper>>(Collections.reverseOrder());
             try {
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 wesc.setWeblog(weblog);
