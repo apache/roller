@@ -241,7 +241,23 @@ public class CommentServlet extends HttpServlet {
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setName(commentRequest.getName());
         comment.setEmail(commentRequest.getEmail());
-        comment.setUrl(commentRequest.getUrl());
+        
+        // Validate url
+        if (StringUtils.isNotEmpty(commentRequest.getUrl())) {
+            String theUrl = commentRequest.getUrl().trim().toLowerCase();
+            StringBuilder url = new StringBuilder();
+            if (theUrl.startsWith("http://")) {
+                url.append(theUrl);
+            } else if (theUrl.startsWith("https://")) {
+                url.append(theUrl);
+            } else {
+                url.append("http://").append(commentRequest.getUrl());
+            }
+            comment.setUrl(url.toString());
+        } else {
+            comment.setUrl("");
+        }
+        
         comment.setContent(commentRequest.getContent());
         comment.setNotify(commentRequest.isNotify());
         comment.setWeblogEntry(entry);
@@ -283,11 +299,11 @@ public class CommentServlet extends HttpServlet {
             log.debug("Email Adddress is invalid : "
                     + commentRequest.getEmail());
             // if there is an URL it must be valid
-        } else if (StringUtils.isNotEmpty(commentRequest.getUrl())
+        } else if (StringUtils.isNotEmpty(comment.getUrl())
                 && !new UrlValidator(new String[] { "http", "https" })
-                        .isValid(commentRequest.getUrl())) {
+                        .isValid(comment.getUrl())) {
                 error = messageUtils.getString("error.commentPostFailedURL");
-                log.debug("URL is invalid : " + commentRequest.getUrl());
+                log.debug("URL is invalid : " + comment.getUrl());
             // if this is a real comment post then authenticate request
         } else if (!preview && !this.authenticator.authenticate(request)) {
             String[] msg = { request.getParameter("answer") };
