@@ -6,6 +6,7 @@
     <id>fauxcoly</id>
     <name>Fauxcoly</name>
     <author>Dave Johnson</author>
+    <description>Theme built on the Yahoo! User Interface (YUI) library.</description>
     <type>standard</type>
     
     <!-- theme preview image -->
