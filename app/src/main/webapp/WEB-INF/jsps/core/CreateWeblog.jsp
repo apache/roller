@@ -16,11 +16,15 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />"></script>
 
 <script type="text/javascript">
 <!--
 function previewImage(theme) {
     document.preview.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
+    console.log(theme);
+    var url = "<%= request.getContextPath() %>/roller-ui/authoring/themedata/";
+	$.ajax({ url: url, data: {theme:theme}, success: function(data) { $('#themedescription').html(data);} });
 }
 
 
@@ -96,19 +100,21 @@ function handlePreview(handle) {
     <td class="label"><label for="theme" /><s:text name="createWebsite.theme" /></label></td>
     <td class="field">
         <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name" onchange="previewImage(this[selectedIndex].value)"/>
-       <br />
-       <br />
+        <br />
+        <br />
+        <p id="themedescription"></p>
+        <br />
 
-       <img name="preview" src='' />
-       <!-- initialize preview image at page load -->
-       <script type="text/javascript">
-           <s:if test="bean.theme == null">
-               previewImage('<s:property value="themes[0].id"/>');
-           </s:if>
-           <s:else>
-               previewImage('<s:property value="bean.theme"/>');
-           </s:else>
-       </script>
+        <img name="preview" src='' />
+        <!-- initialize preview image at page load -->
+        <script type="text/javascript">
+            <s:if test="bean.theme == null">
+                previewImage('<s:property value="themes[0].id"/>');
+            </s:if>
+            <s:else>
+                previewImage('<s:property value="bean.theme"/>');
+            </s:else>
+        </script>
     </td>
     <td class="description"><s:text name="createWebsite.tip.theme" /></td>
 </tr>
