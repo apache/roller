@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogtheme>
+    
+   <!-- Bootstrap based Roller theme -->
+    
+    <id>gaurav</id>
+    <name>Gaurav</name>
+    <description>Responsive Bootstrap-based theme using modern HTML5 and CSS3 design by Gaurav Saini.</description>
+    <author>Gaurav Saini</author>
+    <type>standard</type>
+
+
+    <!-- theme preview image -->
+    <preview-image path="images/theme-resposive.png" />
+
+    <!-- stylesheet -->
+    <stylesheet>
+        <name>custom.css</name>
+        <description>Custom style sheet</description>
+	    <link>custom.css</link>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>custom_css.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </stylesheet>
+    
+    <!-- templates -->
+    <template action="weblog">
+        <name>Weblog</name>
+        <description>Main page of weblog</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>weblog.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </template>
+
+    <template action="permalink">
+        <name>Entry</name>
+        <description>Page for one weblog entry</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>entry.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </template>
+
+    <template action="tagsIndex">
+        <name>TagsIndex</name>
+        <description>Tag index page</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>tags_index.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </template>
+
+    <template action="search">
+        <name>Search</name>
+        <description>Search results page</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>search.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </template>
+
+    <template action="custom">
+        <name>_day</name>
+        <description>One day's worth of entries</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>day.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </template>
+
+    <template action="custom">
+        <name>Archives</name>
+        <description>Calendar browser and links to latest entries</description>
+	    <link>archives</link>
+        <navbar>true</navbar>
+        <hidden>false</hidden>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>archives.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </template>
+
+    <template action="custom">
+        <name>standard_head</name>
+        <description>Contents of HTML head</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>std_head.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </template>
+
+    <template action="custom">
+        <name>standard_header</name>
+        <description>Displayed in header of each page</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>std_header.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </template>
+
+    <template action="custom">
+        <name>standard_footer</name>
+        <description>For footer of each page</description>
+	    <link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+         <templateCode>
+           <templateLanguage>velocity</templateLanguage>
+           <contentType>text/html</contentType>
+           <contentsFile>std_footer.vm</contentsFile>
+           <type>standard</type>
+       </templateCode>
+    </template>
+    
+    <resource path="css/font-awesome.min.css" />
+    <resource path="css/bootstrap.css" />
+    <resource path="css/style.css" />
+
+    <resource path="js/jquery.js" />
+    <resource path="js/bootstrap.js" />
+    <resource path="js/searchhi.js"/>
+	
+    <resource path="font/FontAwesome.otf" />	
+    <resource path="font/fontawesome-webfont.eot" />
+    <resource path="font/fontawesome-webfont.svg" />
+    <resource path="font/fontawesome-webfont.ttf" />
+    <resource path="font/fontawesome-webfont.woff" />
+
+    <resource path="icons/asf-logo.png" />
+    <resource path="icons/comment.gif" />
+    <resource path="icons/delicious.gif" />
+    <resource path="icons/digman.gif" />
+    <resource path="icons/facebook-logo.png" />
+    <resource path="icons/feed-icon-14x14.png" />
+    <resource path="icons/feed-icon-28x28.png" />
+    <resource path="icons/flickr-icon.png" />
+    <resource path="icons/icon_clock.gif" />
+    <resource path="icons/linkedin-logo.jpg" />
+    <resource path="icons/page_white.png" />
+    <resource path="icons/page_white_acrobat.png" />
+    <resource path="icons/slashdot-13x13.png" />
+    <resource path="icons/tag_blue.png" />
+    <resource path="icons/technorati-16x15.png" />
+    <resource path="icons/twitter-icon.png" />
+
+</weblogtheme>
+

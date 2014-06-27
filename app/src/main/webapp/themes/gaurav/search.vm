@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!-- XFN friendly -->
+<head profile="http://gmpg.org/xfn/11">
+	#includeTemplate($model.weblog "standard_head")
+	<title>$model.weblog.name: Search Results for '$model.term'</title>
+	#if ($model.hits > 0)
+		<style type="text/css">
+		span.searchword { background-color:yellow; }
+		</style>
+		<script type="text/javascript" >
+			//<![CDATA[
+				searchhi_config = {ignore_site : '$url.absoluteSite'};
+			//]]>
+		</script>
+		<script type="application/x-javascript" src="$url.resource('js/searchhi.js')"></script>
+		<script type="text/javascript" >
+			//<![CDATA[
+			function loadSearchHighlight() {
+				searchhi.highlightWord(document.getElementById("search_results"), '$model.term');
+			}
+			//]]>
+		</script>
+   	#end
+	<link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+</head>
+<body onload="loadSearchHighlight()">
+
+	<!-- HEADER -->
+	<header>
+		#includeTemplate($model.weblog "standard_header")
+	</header>
+
+	<!-- BODY -->
+	<div class="container">
+	
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">$model.weblog.name&nbsp;<small>$model.weblog.description</small></h1>
+			</div>
+	  </div>
+	  	
+	  <div class="row">
+	  	
+	  	<!-- BODY MAIN-->
+	   	<div id="main_content" class="col-lg-8">
+			<div class="alert alert-info">
+				<p>Search Results for '$model.term'</p>
+        		$text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
+		        $text.get( "macro.weblog.searchhits", [$model.hits])
+        	</div>
+        	#if ($model.hits > 0)
+				<div id="search_results">
+					 #showNextPrevSearchControl($pager)
+					 #set($pager = $model.getWeblogEntriesPager())
+					 #showWeblogEntriesPager($pager)
+					 <ul class="pager">
+		             	#if($utils.isNotEmpty($pager.prevLink))<li class="previous"><a href="$pager.prevLink">← $pager.prevName</a></li>
+	#end
+		                #if($utils.isNotEmpty($pager.nextLink))<li class="next"><a href="$pager.nextLink">$pager.nextName →</a></li>#end
+		            </ul>
+			    </div>
+			#else
+				 <br />
+				 <br />
+				 <h3>Sorry, your search returned no results</h3>
+				 <br />
+				 <br />
+			#end
+			</div>
+			
+			<!-- BODY - SIDEBAR -->
+			<div id="sidebar_content" class="col-lg-4">
+    			<div class="well">
+					<h3>Advance Search</h3>
+					<p>You can refine your search and/or search within one weblog category</p>
+						<form class="form-inline" role="form" method="get" action="$url.search">
+							<div class="form-group" role="form">
+								<input type="text" id="q" class="form-control" name="q" size="8" maxlength="255" value="$model.term" />
+							</div>
+							<div class="form-group" role="form">
+								#set( $cats = $model.weblog.getWeblogCategories() )
+								<select class="form-control" name="cat">
+									<option value="">$text.get( "macro.searchresults.incategory" )</option>
+									#foreach( $cat in $cats )
+									<option #if($cat.name == $model.weblogCategory.name)selected="selected"#end>$cat.name</option>
+									#end
+							   	</select>
+							</div>
+						   	<div class="form-group" role="form">
+	   							<button type="submit" class="btn btn-primary">Search</button>
+						   	</div>
+						</form>	
+						$text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${model.weblog.handle}] )
+			    </div>
+			</div> <!-- close sidebar_content -->
+		</div> <!-- /.row -->
+	</div> <!-- /.container -->
+
+	<!-- FOOTER -->
+	<footer>
+		#includeTemplate($model.weblog "standard_footer")
+	</footer>
+	
+</body>
+</html>

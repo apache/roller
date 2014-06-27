@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!-- XFN friendly -->
+<head profile="http://gmpg.org/xfn/11">
+	#includeTemplate($model.weblog "standard_head")
+	<title>$model.weblog.name: $model.weblogEntry.title</title>
+	<link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+</head>
+<body>
+
+	<!-- HEADER -->
+	<header>
+		#includeTemplate($model.weblog "standard_header")
+	</header>
+
+	<!-- BODY -->
+	<div class="container">
+	
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">$model.weblog.name&nbsp;<small>$model.weblog.description</small></h1>
+			</div>
+	  	</div>
+	  	<div class="row">
+	  	<!-- BODY MAIN-->
+			<div id="main_content" class="col-lg-8">
+				#set($pager = $model.getWeblogEntriesPager())
+				#showWeblogEntriesPager($pager)
+				<ul class="pager">
+                	#if($utils.isNotEmpty($pager.prevLink))<li class="previous"><a href="$pager.prevLink">← $pager.prevName</a></li>
+#end
+                	#if($utils.isNotEmpty($pager.nextLink))<li class="next"><a href="$pager.nextLink">$pager.nextName →</a></li>#end
+                </ul>
+				<hr>
+				#foreach( $entry in $entries )
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+					<a name="comments"></a>
+					#if($entry.commentCount > 0)				
+						#if($model.commentForm.preview)
+						#set($comments = [$model.commentForm.previewComment])
+						<div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
+						#else
+						<div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
+						#set($comments = $entry.getComments(true, true))
+						#end
+					#else
+						<div class="comments-head">No one has commented yet.</div>
+					#end
+					</div>
+					#if($entry.commentCount > 0)
+								<div class="panel-body">
+						#foreach( $comment in $comments )
+							#if($comment.approved || $model.commentForm.preview)
+								<a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
+								<div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
+									<p>$comment.content</p>
+									<p class="comment-details">
+									$text.get("macro.weblog.postedby")
+									#if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
+										<a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
+									#elseif (!$utils.isEmpty($comment.name))
+										<b>$comment.name</b>
+									#elseif ($comment.remoteHost)
+										<b>$comment.remoteHost</b>
+									#else
+										<b>$text.get("macro.weblog.comment.unknown")</b>
+									#end
+									$text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
+									<a href="$url.comment($entry.anchor, $comment.timestamp)"
+									   class="entrypermalink" title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
+									</p>
+								</div>
+							#end
+							<hr>
+						#end
+						</div>
+					#end
+				</div>
+
+				#if($utils.isNotEmpty($model.commentForm.preview))				
+					#showWeblogEntryComments($entry)
+					#end
+					#set($cform = $model.getCommentForm())
+					#if( $entry.commentsStillAllowed )
+					<div class="panel panel-default">
+							<div class="panel-heading">
+							<h3 class="panel-title">Leave a Comment</h3>
+						</div>
+					  	<div class="panel-body">
+							<a name="comment-form"></a>	
+						#if( $cform.error )
+							<div class="alert alert-danger">$cform.message</div>
+						#elseif( !$cform.error && !$utils.isEmpty($cform.message) )
+							<div class="alert alert-success">$cform.message</div>
+						#end
+		
+						<form method="post" action="$url.entry($entry.anchor)" focus="name" 
+							name="commentForm" onsubmit="fixURL(this); return validateComments(this)"> 
+							<div class="row">   
+								<input type="hidden" name="method" value="post" />
+								<div class="form-group col-lg-4">
+									<label for="input1">$text.get( "macro.weblog.name" )</label>
+									<input type="text" name="name" class="form-control" value="$cform.name" id="input1" required="">
+							  	</div>
+							  	<div class="form-group col-lg-4">
+									<label for="input2">$text.get( "macro.weblog.email" )</label>
+									<input type="text" name="email" class="form-control" value="$cform.email" id="input2" required="">
+							  	</div>
+							  	<div class="form-group col-lg-4">
+									<label for="input3">$text.get( "macro.weblog.url" )</label>
+									<input type="text" name="url" class="form-control" value="$cform.url" id="input3">
+							  	</div>
+							  	#if ($config.commentEmailNotify)
+							  	<div class="form-group col-lg-6">
+								  	<div class="checkbox">
+									  <label>
+										<input type="checkbox" class="checkbox" id="notify" name="notify" #if($cform.notify)CHECKED #end>
+										$text.get( "macro.weblog.notifyMeOfComments" )
+									  </label>
+									</div>
+								</div>
+								#end
+								<div class="form-group col-lg-6">
+								  	<div class="checkbox">
+									  <label>
+										<input type="checkbox" class="checkbox" id="rememberInfo" name="rememberInfo" />
+										$text.get( "macro.weblog.rememberinfo" )
+									  </label>
+									</div>
+								</div>
+							  	<div class="clearfix"></div>
+							  	<div class="form-group col-lg-12">
+									<label for="input4">$text.get( "macro.weblog.yourcomment" )</label>
+									<textarea name="content" class="form-control" rows="6" id="input4" required="">$cform.content</textarea>
+							  	</div>
+								
+								<div class="form-group col-lg-12">
+								    <span class="comments-syntax-indicator">
+								    $text.get( "macro.weblog.htmlsyntax" )
+								    #if($config.commentEscapeHtml)
+								        <span class="disabled">$text.get( "macro.weblog.htmldisabled" )</span>
+								    #else
+								        <span class="enabled">$text.get( "macro.weblog.htmlenabled" )</span>
+								    #end
+								    </span>
+								</div>
+								
+								<div class="form-group col-lg-12">
+								   <script type="text/javascript" src="$url.site/theme/scripts/clientSideInclude.js"></script>
+								   <div id="commentAuthenticator"></div>
+								   <input type="button" class="btn btn-primary" name="post" value="&nbsp;$text.get("macro.weblog.postpreview" )&nbsp;"
+								      onclick="this.form.method.value='preview';this.form.submit()" />
+								   <input type="submit" class="btn btn-success" name="post" value="&nbsp;$text.get( "macro.weblog.post" )&nbsp;" />
+								</div>
+							</div>
+						</form>
+		
+						<script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
+						<script type="text/javascript">
+						/* <![CDATA[ */
+						clientSideInclude('commentAuthenticator', '$url.commentAuthenticator');
+		
+						var author = getCookie("commentAuthor");
+						var email = getCookie("commentEmail");
+						var url = getCookie("commentUrl");
+						// check each field - IE will render "null"
+						if (author) {
+							document.forms['commentForm'].name.value = author;
+						}
+						if (email) {
+							document.forms['commentForm'].email.value = email;
+						}
+						if (url) {
+							document.forms['commentForm'].url.value = url;
+						}
+		
+						if (author || email || url) {
+							document.forms['commentForm'].rememberInfo.checked = true;
+						}
+		
+						function fixURL(theForm) {
+							if (theForm.url.value != "" &&
+								theForm.url.value.indexOf("http://") == -1) { //prepend http://
+								theForm.url.value = "http://"+theForm.url.value;
+							}
+							saveUserInformation(theForm);
+						}
+		
+						function saveUserInformation(theForm) {
+							if (theForm.rememberInfo.checked) {
+								rememberUser(theForm);
+							} else {
+								forgetUser(theForm);
+							}
+						}
+		
+						function validateComments(theForm) {
+							if (theForm.content.value == "") {
+								alert("$text.get( "macro.weblog.commentwarning" )");
+								theForm.content.focus();
+								return false;
+							}
+						}
+						/* ]]> */
+						</script>
+					</div>
+					</div>
+					#else
+						<span class="status">$text.get( "comments.disabled" )</span>
+					#end
+				#end
+			</div>
+			
+			<!-- BODY - SIDEBAR -->
+			<div id="sidebar_content" class="col-lg-4">
+				<div class="well">
+					<h3>Welcome</h3>
+
+					<p class="details">
+					You're viewing a weblog entry titled <b>$model.weblogEntry.title</b>.
+					If you like this entry you might want to:
+					</p>
+
+					<table><tbody>
+						<tr>
+						  <td><img src="$url.resource('icons/delicious.gif')"
+						         alt="del.icio.us" height="16" width="16" />
+						      <a href="http://del.icio.us/post?url=$url.absoluteSite$model.weblogEntry.permaLink"
+						         title="bookmark it in del.icio.us">Bookmark it</a></td>
+
+						  <td><img src="$url.resource('icons/digman.gif')"
+						          alt="submit to dig digg.com" height="14" width="16" />
+						      <a href="http://www.digg.com/submit?url=$url.absoluteSite$model.weblogEntry.permaLink&amp;phase=2" title="submit it to digg">
+						          Digg it</a></td>
+						</tr>
+						<tr>
+						  <td><img src="$url.resource('icons/slashdot-13x13.png')"
+						          alt="slashdot" border="0" />
+						      <a href="http://slashdot.org/bookmark.pl?url=$url.absoluteSite$model.weblogEntry.permaLink" title="submit it to slashdot">
+						          Slashdot it</a></td>
+
+						  <td><img src="$url.resource('icons/technorati-16x15.png')" title="See who links to it"
+						          border="0" alt="technorati" height="15" width="16" />
+						      <a href='http://technorati.com/search/$utils.encode("$url.absoluteSite$model.weblogEntry.permaLink")'>
+						          See who links to it</a>
+						  </td>
+						</tr>
+					</tbody></table>
+				</div>
+				<div class="well">
+					<p class="details">
+					This is just one entry in the weblog <b>$model.weblog.name</b>.
+					Why don't you <a href="$url.home">visit the main page</a> of the weblog?</p>
+				</div>
+				<div class="well">
+					<h3>Related entries</h3>
+					#set($recentInCat = $model.weblog.getRecentWeblogEntries($model.weblogEntry.category.name, 20))
+					<ul>#foreach($recentEntry in $recentInCat)
+						  <li class="entryLink"><a href="$recentEntry.permalink">$recentEntry.title</a></li>
+					#end</ul>
+				</div>
+			</div> <!-- close sidebar_content -->
+		</div> <!-- row -->
+	</div> <!-- container -->
+	
+	<!-- FOOTER -->
+	<footer>
+		#includeTemplate($model.weblog "standard_footer")
+	</footer>
+
+</body>
+</html>
+

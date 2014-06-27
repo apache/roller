@@ -1,0 +1,65 @@
+#if(!$model.permalink)
+<div class="daybox">
+#end
+
+    #foreach( $entry in $entries )
+		<div class="entryBox">
+			<a name="$utils.encode($entry.anchor)" id="$utils.encode($entry.anchor)"></a>
+
+		    #if($model.permalink)
+		    <h2 class="entryTitle">$entry.title</h2>
+		    #else
+		    <h2 class="entryTitle"><a href="$entry.permalink">$entry.title</a></h2>
+		    #end
+
+			<p class="lead">by <span style="text-transform: capitalize;">$entry.creator.screenName</span></p>
+		    
+			<hr>
+			<p><i class="icon-time"></i> Posted on $utils.formatDate($day, "EEEE MMM dd, yyyy") at $utils.formatDate($entry.pubTime, "hh:mma") in <span class="category">$entry.category.name</span> </p>
+			<hr>
+	
+		    <div class="entryContent">
+		        #if($model.permalink)
+		        		<p>$entry.displayContent</p>
+		        #else
+		        		<p>$entry.summary</p>
+		        		<a class="btn btn-primary" href="$url.entry($entry.anchor)">Read More <i class="icon-angle-right"></i></a>
+		        #end
+		    </div>
+
+		    <p class="entryInfo" style="clear: right">
+		        #set($commentCount = $entry.commentCount)
+		        #if($entry.commentsStillAllowed || $commentCount > 0)
+		            #set($link = "$url.comments($entry.anchor)" )
+		            <a href="$link" class="commentslink">$text.get("macro.weblog.comments") [$commentCount]</a>
+		        #end
+
+		        #if ($utils.isUserAuthorizedToAuthor($entry.website))
+		            &nbsp;|&nbsp;
+		            <a href="$url.editEntry($entry.anchor)">
+		                $text.get("macro.weblog.entrypermalink.edit")</a>
+		        #end
+		    </p>
+
+		    #if ($entry.tags && $entry.tags.size() > 0)
+				<p class="entryInfo" style="clear: right">
+				    Tags:
+				    #foreach($tag in $entry.tags)
+				        <a class="tagLink" href="$url.tag($tag.name)">$tag.name</a>
+				    #end
+				</p>
+		    #end
+
+		</div>
+		<hr>
+    #end
+
+#if(!$model.permalink)
+</div>
+#end
+
+
+
+
+
+

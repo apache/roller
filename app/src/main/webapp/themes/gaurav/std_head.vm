@@ -1,0 +1,11 @@
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+#if ($model.permalink == false)
+   <meta name="Description" content="$model.weblog.description">
+#else
+   <meta name="Description" content="$model.weblogEntry.searchDescription">
+#end
+
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet" type="text/css" href="$url.resource('css/bootstrap.css')" >
+<link rel="stylesheet" type="text/css" href="$url.resource('css/style.css')" />
+<link rel="stylesheet" type="text/css" href="$url.resource('css/font-awesome.min.css')" />

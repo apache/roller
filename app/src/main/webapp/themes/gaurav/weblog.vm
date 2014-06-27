@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- XFN friendly -->
+<head profile="http://gmpg.org/xfn/11">
+	#includeTemplate($model.weblog "standard_head")
+	<title>$model.weblog.name: $model.weblog.description</title>
+	#showAutodiscoveryLinks($model.weblog)
+	<link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+</head>
+<body>
+
+	<!-- HEADER -->
+	<header>
+		#includeTemplate($model.weblog "standard_header")
+	</header>
+
+	<!-- BODY -->
+	<div class="container">
+		
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">$model.weblog.name&nbsp;<small>$model.weblog.description</small></h1>
+			</div>
+	  	</div>
+	  	
+	  	<div class="row">
+	  	
+		  	<!-- BODY MAIN-->
+		   	<div id="main_content" class="col-lg-8">
+				#set($pager = $model.getWeblogEntriesPager())
+				#showWeblogEntriesPager($pager)
+				#if ($model.permalink)
+					#showWeblogEntryComments($entry)
+					#showWeblogEntryCommentForm($entry)
+				#end
+				<ul class="pager">
+	        		#if($utils.isNotEmpty($pager.prevLink))<li class="previous"><a href="$pager.prevLink">← $pager.prevName</a></li>
+#end
+				    #if($utils.isNotEmpty($pager.nextLink))<li class="next"><a href="$pager.nextLink">$pager.nextName →</a></li>#end
+				</ul>
+			</div>
+		
+			<!-- BODY - SIDEBAR -->
+			<div id="sidebar_content" class="col-lg-4">
+				<div class="well">
+					<h3>Welcome</h3>
+					<p class="details">
+					#set($blurb = $model.weblog.about)
+					#if ($blurb)
+					$model.weblog.about
+					#else
+					<span class="setup">Add an about message on your Weblog Settings page and it will appear here</span>
+					#end
+					Click the link below to subscribe via your favorite feed reader:</p>
+
+					<div id="subscribe">
+						<a href="$url.feed.entries.atom">
+							<img src='$url.resource("icons/feed-icon-28x28.png")' title="RSS/Atom feed icon" alt="RSS/Atom feed icon" /></a>&nbsp;
+						<a href="$url.feed.entries.atom">Subscribe to this blog</a>
+					</div>
+				</div>
+				<div class="well">
+					<h3>Hot tags</h3>
+					<p class="details">Below are the thirty most often used tags in the blog. Hover over a tag to see a count of entries, click a tag to see the most recent posts with the tag.</p>
+					<div id="tagcloud">
+						#set($mytags = $model.weblog.getPopularTags(-1, 30))
+						#foreach ($tag in $mytags)
+							#if ($tag.count > 5)
+								<a class="tag s${tag.intensity}" href="$url.tag($tag.name)" title="$tag.count">$tag.name</a>
+							#end
+						#end
+					</div>	
+				</div>
+			</div> <!-- close sidebar_content -->
+		</div> <!-- /.row -->
+	</div> <!-- /.container -->
+
+	<!-- FOOTER -->
+	<footer>
+		#includeTemplate($model.weblog "standard_footer")
+	</footer>
+	
+</body>
+</html>
+

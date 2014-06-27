@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- XFN friendly -->
+<head profile="http://gmpg.org/xfn/11">
+	#includeTemplate($model.weblog "standard_head")
+	<title>$model.weblog.name: Archives</title>
+	<link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+</head>
+<body>
+
+	<!-- HEADER -->
+	<header>
+		#includeTemplate($model.weblog "standard_header")
+	</header>
+
+	<!-- BODY -->
+	<div class="container">
+	
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">$model.weblog.name&nbsp;<small>archives</small></h1>
+			</div>
+	  	</div>
+	  
+	  	<div class="row">
+	  
+	  		<!-- BODY MAIN-->
+		   	<div id="main_content" class="col-lg-8">
+				<h3>Browse the $model.weblog.name archives</h3>
+				<p>Browse the <b>$model.weblog.name</b> archive in month view, search for specific keywords
+					 or jump to the most recent posts listed in the right sidebar.</p>
+				<br />
+				#showWeblogEntryCalendarBig($model.weblog "nil")
+			</div>
+			
+			<!-- BODY SIDEBAR-->
+			<div id="sidebar_content" class="col-lg-4">
+				<div class="well">
+					<h3>Welcome</h3>
+
+					<p class="details">
+					You're on the Archives page of the weblog <b>$model.weblog.name</b>.</p>
+
+					<p class="details">
+					From here you can browse via the calendar, follow the links below or
+					<a href="$url.home">visit the main page</a> of the weblog.</p>
+				</div>
+				<div class="well">
+				  <h3>Most recent posts</h3>
+				  #set($recentEntries = $model.weblog.getRecentWeblogEntries("nil", 30))
+				  <ul>#foreach($recentEntry in $recentEntries)
+				      <li class="entryLink"><a href="$recentEntry.permalink">$recentEntry.title</a></li>
+				  #end</ul>
+				</div>	
+			</div> <!-- close sidebar_content -->
+		</div> <!-- /.row -->
+	</div> <!-- /.container -->
+
+	<!-- FOOTER -->
+	<footer>
+		#includeTemplate($model.weblog "standard_footer")
+	</footer>
+
+</body>
+</html>
+

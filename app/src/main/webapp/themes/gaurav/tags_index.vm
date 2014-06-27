@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!-- XFN friendly -->
+<head profile="http://gmpg.org/xfn/11">
+	#includeTemplate($model.weblog "standard_head")
+	<title>$model.weblog.name: $model.weblog.description</title>
+</head>
+<body>
+
+	<!-- HEADER -->
+	<header>
+		#includeTemplate($model.weblog "standard_header")
+	</header>
+
+	<!-- BODY -->
+	<div class="container">
+	
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">$model.weblog.name&nbsp;<small>$model.weblog.description</small></h1>
+			</div>
+	  	</div>
+	  	
+	  	<div class="row">
+	  		<!-- BODY MAIN-->
+			<div id="main_content" class="col-lg-8">
+		   	  	<div class="alert alert-info"><p>Entries tagged $model.tags</p></div>
+				#set($pager = $model.getWeblogEntriesPager())
+				#showWeblogEntriesPager($pager)
+				#if ($model.permalink)
+					#showWeblogEntryComments($entry)
+					#showWeblogEntryCommentForm($entry)
+				#end
+				<ul class="pager">
+			        #if($utils.isNotEmpty($pager.prevLink))<li class="previous"><a href="$pager.prevLink">← $pager.prevName</a></li>
+	#end
+			        #if($utils.isNotEmpty($pager.nextLink))<li class="next"><a href="$pager.nextLink">$pager.nextName →</a></li>#end
+		        </ul>
+			</div>
+			
+			<!-- BODY - SIDEBAR -->
+			<div id="sidebar_content" class="col-lg-4">
+				<div class="well">
+                    <h3>Hot tags</h3>
+                    <div id="tagcloud">
+                            #set($mytags = $model.weblog.getPopularTags(-1, 30))
+                            #foreach ($tag in $mytags)
+                                    #if ($tag.count > 5)
+                                            <a class="tag s${tag.intensity}" href="$url.tag($tag.name)" title="$tag.count">$tag.name</a>
+                                    #end
+                            #end
+                    </div>
+                
+                </div>
+			</div> <!-- close sidebar_content -->
+		</div>
+	</div>
+
+	<!-- FOOTER -->
+	<footer>
+		#includeTemplate($model.weblog "standard_footer")
+	</footer>
+	
+</body>
+</html>
+
