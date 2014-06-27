@@ -29,20 +29,13 @@
             #showAtomFeedsList($model.weblog)
         </p>
 
-        <p class="sidebarBox">
-            Valid
-            <a title="Valid XHTML?"
-                href="http://validator.w3.org/check?uri=$model.weblog.absoluteURL">XHTML</a>
-            or <a title="Valid CSS?"
-                href="http://jigsaw.w3.org/css-validator/validator?uri=$model.weblog.absoluteURL">CSS</a>?
-        </p>
-
         <div class="sidebarBox">
-            <a title="This is a Roller site."
+            <a title="Blog powered by Apache Roller."
                 href="http://roller.apache.org"><img class="noBorder"
-                width="80" height="15" alt="[This is a Roller site]"
+                width="80" height="15" alt="[Blog powered by Apache Roller.]"
                 src="$url.resource("images/roller-logo.gif")" /></a>
         </div>
+
         <div class="sidebarBox">
-            Theme by <a href="http://sotto.org">Rowell Sotto</a>.
+            Theme by Rowell Sotto.
         </div>
