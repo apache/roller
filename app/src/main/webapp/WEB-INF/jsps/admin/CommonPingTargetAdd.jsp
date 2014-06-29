@@ -31,7 +31,7 @@
 
     <div class="formrow">
        <label for="pingUrl" class="formrow"><s:text name="pingTarget.pingUrl" /></label>
-       <s:textfield name="bean.pingUrl" size="100" maxlength="255" />
+       <s:textfield name="bean.pingUrl" size="70" maxlength="255" />
     </div>
 
     <p/>

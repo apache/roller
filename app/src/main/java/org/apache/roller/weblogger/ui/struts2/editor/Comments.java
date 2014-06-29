@@ -313,10 +313,6 @@ public class Comments extends UIAction {
             List<String> spamIds = Arrays.asList(getBean().getSpamComments());
             log.debug(spamIds.size() + " comments marked as spam");
 
-            // Determine whether we want approval emails
-            boolean approvalNotification = WebloggerConfig.getBooleanProperty(
-                    "comment.notification.onapproval", false);
-
             // track comments approved via moderation
             List<WeblogEntryComment> approvedComments = new ArrayList<WeblogEntryComment>();
 
@@ -379,7 +375,7 @@ public class Comments extends UIAction {
             CacheManager.invalidate(getActionWeblog());
 
             // if required, send notification for all comments changed
-            if (approvalNotification && MailUtil.isMailConfigured()) {
+            if (MailUtil.isMailConfigured()) {
                 I18nMessages resources = I18nMessages
                         .getMessages(getActionWeblog().getLocaleInstance());
                 MailUtil.sendEmailApprovalNotifications(approvedComments,
