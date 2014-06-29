@@ -61,8 +61,8 @@ public class LinkbackExtractorTest extends TestCase {
                         "http://rollerweblogger.org/roller/entry/composite_keys_in_cassandra"
             },
             {
-                "http://rollermobile.blogspot.com/",
-                        "http://rollerweblogger.org/project/date/20110523"
+                "http://roller.apache.org/downloads/downloads.html",
+                        "http://rollerweblogger.org/project/date/20140627"
             }
         };
 
@@ -70,7 +70,7 @@ public class LinkbackExtractorTest extends TestCase {
         assertEquals("The Apache Cassandra Project", le.getTitle());
         
         le = new LinkbackExtractor(testrefs[1][0],testrefs[1][1]);
-        assertEquals("Apache Roller Mobile Platform", le.getTitle());
+        assertEquals("Downloads", le.getTitle());
 
         // todo: le.getPermalink() and le.getExcerpt() working
     }
