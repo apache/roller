@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
 import net.oauth.OAuthException;
@@ -81,15 +81,14 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             OAuthMessage requestMessage)
             throws IOException, OAuthProblemException {
 
-        OAuthConsumer consumer = null;
+        OAuthConsumer consumer;
         // try to load from local cache if not throw exception
         String consumer_key = requestMessage.getConsumerKey();
 
         consumer = getConsumerByKey(consumer_key);
 
         if(consumer == null) {
-            OAuthProblemException problem = new OAuthProblemException("token_rejected");
-            throw problem;
+            throw new OAuthProblemException("token_rejected");
         }
 
         return consumer;
@@ -106,9 +105,8 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         if (StringUtils.isNotEmpty(consumerToken)) {
             // caller provided a token, it better be good or else
             accessor = getAccessorByToken(consumerToken);
-            if (accessor == null){
-                OAuthProblemException problem = new OAuthProblemException("token_expired");
-                throw problem;
+            if (accessor == null) {
+                throw new OAuthProblemException("token_expired");
             }
         }
 
@@ -146,7 +144,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             throws OAuthException {
 
         // generate oauth_token and oauth_secret
-        String consumer_key = (String) accessor.consumer.consumerKey;
+        String consumer_key = accessor.consumer.consumerKey;
         // generate token and secret based on consumer_key
 
         // for now use md5 of name + current time as token
@@ -174,7 +172,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         try {
             // generate oauth_token and oauth_secret
             // generate token and secret based on consumer_key
-            String consumer_key = (String) accessor.consumer.consumerKey;
+            String consumer_key = accessor.consumer.consumerKey;
 
             OAuthAccessorRecord record = (OAuthAccessorRecord) strategy.load(
                 OAuthAccessorRecord.class, accessor.consumer.consumerKey);
@@ -205,13 +203,10 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             throw new OAuthException("ERROR storing accessor", ex);
         }
         
-        OAuthConsumer consumer = new OAuthConsumer(
-            null,
+        return new OAuthConsumer(null,
             record.getConsumerKey(),
             record.getConsumerSecret(),
             getServiceProvider());
-
-        return consumer;
     }
 
     public OAuthConsumer addConsumer(String consumerKey) 
@@ -226,19 +221,19 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     public OAuthConsumer getConsumer() throws WebloggerException {
         OAuthConsumerRecord record = null;
         try {
-            Query q = strategy.getNamedQuery("OAuthConsumerRecord.getSiteWideConsumer");
-            record = (OAuthConsumerRecord)q.getSingleResult();
+            TypedQuery<OAuthConsumerRecord> q = strategy.getNamedQuery("OAuthConsumerRecord.getSiteWideConsumer",
+                    OAuthConsumerRecord.class);
+            record = q.getSingleResult();
 
         } catch (Exception ex) {
             log.debug("ERROR fetching site-wide consumer", ex);
         }
         if (record != null) {
-            OAuthConsumer consumer = new OAuthConsumer(
+            return new OAuthConsumer(
                 null,
                 record.getConsumerKey(),
                 record.getConsumerSecret(),
                 getServiceProvider());
-            return consumer;
         }
         return null;
     }
@@ -246,9 +241,10 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     public OAuthConsumer getConsumerByUsername(String username) throws WebloggerException {
         OAuthConsumerRecord record = null;
         try {
-            Query q = strategy.getNamedQuery("OAuthConsumerRecord.getByUsername");
+            TypedQuery<OAuthConsumerRecord> q = strategy.getNamedQuery("OAuthConsumerRecord.getByUsername",
+                    OAuthConsumerRecord.class);
             q.setParameter(1, username);
-            record = (OAuthConsumerRecord)q.getSingleResult();
+            record = q.getSingleResult();
 
         } catch (Exception ex) {
             log.debug("ERROR fetching consumer", ex);
@@ -304,9 +300,10 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     OAuthConsumer getConsumerByKey(String consumerKey) {
         OAuthConsumerRecord record = null;
         try {
-            Query q = strategy.getNamedQuery("OAuthConsumerRecord.getByConsumerKey");
+            TypedQuery<OAuthConsumerRecord> q = strategy.getNamedQuery("OAuthConsumerRecord.getByConsumerKey",
+                    OAuthConsumerRecord.class);
             q.setParameter(1, consumerKey);
-            record = (OAuthConsumerRecord)q.getSingleResult();
+            record = q.getSingleResult();
 
         } catch (Exception ex) {
             log.debug("ERROR fetching consumer", ex);
@@ -350,9 +347,10 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     OAuthAccessor getAccessorByKey(String consumerKey) {
         OAuthAccessorRecord record = null;
         try {
-            Query q = strategy.getNamedQuery("OAuthAccessorRecord.getByKey");
+            TypedQuery<OAuthAccessorRecord> q = strategy.getNamedQuery("OAuthAccessorRecord.getByKey",
+                    OAuthAccessorRecord.class);
             q.setParameter(1, consumerKey);
-            record = (OAuthAccessorRecord)q.getSingleResult();
+            record = q.getSingleResult();
 
         } catch (Exception ex) {
             log.debug("ERROR fetching accessor", ex);
@@ -363,9 +361,10 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     OAuthAccessor getAccessorByToken(String token) {
         OAuthAccessorRecord record = null;
         try {
-            Query q = strategy.getNamedQuery("OAuthAccessorRecord.getByToken");
+            TypedQuery<OAuthAccessorRecord> q = strategy.getNamedQuery("OAuthAccessorRecord.getByToken",
+                    OAuthAccessorRecord.class);
             q.setParameter(1, token);
-            record = (OAuthAccessorRecord)q.getSingleResult();
+            record = q.getSingleResult();
 
         } catch (Exception ex) {
             log.debug("ERROR fetching accessor", ex);

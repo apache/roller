@@ -21,10 +21,6 @@ package org.apache.roller.weblogger.business.jpa;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.io.InputStream;
-import java.io.IOException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -37,6 +33,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.TypedQuery;
 
 import org.apache.roller.weblogger.business.DatabaseProvider;
 
@@ -53,7 +50,7 @@ public class JPAPersistenceStrategy {
     /**
      * The thread local EntityManager.
      */
-    private final ThreadLocal threadLocalEntityManager = new ThreadLocal();
+    private final ThreadLocal<EntityManager> threadLocalEntityManager = new ThreadLocal<EntityManager>();
     
     /**
      * The EntityManagerFactory for this Roller instance.
@@ -222,10 +219,7 @@ public class JPAPersistenceStrategy {
      *         transaction
      */
     private boolean isTransactionActive(EntityManager em) {
-        if (em == null) {
-            return false;
-        }
-        return em.getTransaction().isActive();
+        return em != null && em.getTransaction().isActive();
     }
     
     /**
@@ -246,7 +240,7 @@ public class JPAPersistenceStrategy {
      * Get the current ThreadLocal EntityManager
      */
     private EntityManager getThreadLocalEntityManager() {
-        EntityManager em = (EntityManager) threadLocalEntityManager.get();
+        EntityManager em = threadLocalEntityManager.get();
         if (em == null) {
             em = emf.createEntityManager();
             threadLocalEntityManager.set(em);
@@ -257,12 +251,12 @@ public class JPAPersistenceStrategy {
     /**
      * Set the current ThreadLocal EntityManager
      */
-    private void setThreadLocalEntityManager(Object em) {
+    private void setThreadLocalEntityManager(EntityManager em) {
         threadLocalEntityManager.set(em);
     }
     
     /**
-     * Get named query with FlushModeType.COMMIT
+     * Get named query that won't commit changes to DB first (FlushModeType.COMMIT)
      * @param queryName the name of the query
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
@@ -270,27 +264,78 @@ public class JPAPersistenceStrategy {
     throws WebloggerException {
         EntityManager em = getEntityManager(false);
         Query q = em.createNamedQuery(queryName);
-        // Never flush for queries. Roller code assumes this behavior
+        // For performance, never flush/commit prior to running queries.
+        // Roller code assumes this behavior
         q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
-    
+
     /**
-     * Create query from queryString with FlushModeType.COMMIT
-     * @param queryString the quuery
+     * Get named TypedQuery that won't commit changes to DB first (FlushModeType.COMMIT)
+     * Preferred over getNamedQuery(String) due to it being typesafe.
+     * @param queryName the name of the query
+     * @param resultClass return type of query
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
+     */
+    public <T> TypedQuery<T> getNamedQuery(String queryName, Class<T> resultClass)
+            throws WebloggerException {
+        EntityManager em = getEntityManager(false);
+        TypedQuery<T> q = em.createNamedQuery(queryName, resultClass);
+        // For performance, never flush/commit prior to running queries.
+        // Roller code assumes this behavior
+        q.setFlushMode(FlushModeType.COMMIT);
+        return q;
+    }
+
+    /**
+     * Get named query with default flush mode (usually FlushModeType.AUTO)
+     * FlushModeType.AUTO commits changes to DB prior to running statement
+     *
+     * @param queryName the name of the query
+     * @param resultClass return type of query
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
+     */
+    public <T> TypedQuery<T> getNamedQueryCommitFirst(String queryName, Class<T> resultClass)
+            throws WebloggerException {
+        EntityManager em = getEntityManager(true);
+        return em.createNamedQuery(queryName, resultClass);
+    }
+
+    /**
+     * Create query from queryString that won't commit changes to DB first (FlushModeType.COMMIT)
+     * @param queryString the query
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     public Query getDynamicQuery(String queryString)
     throws WebloggerException {
         EntityManager em = getEntityManager(false);
         Query q = em.createQuery(queryString);
-        // Never flush for queries. Roller code assumes this behavior
+        // For performance, never flush/commit prior to running queries.
+        // Roller code assumes this behavior
         q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
-    
+
     /**
-     * Get named update query with default flush mode
+     * Create TypedQuery from queryString that won't commit changes to DB first (FlushModeType.COMMIT)
+     * Preferred over getDynamicQuery(String) due to it being typesafe.
+     * @param queryString the query
+     * @param resultClass return type of query
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
+     */
+    public <T> TypedQuery<T> getDynamicQuery(String queryString, Class<T> resultClass)
+            throws WebloggerException {
+        EntityManager em = getEntityManager(false);
+        TypedQuery<T> q = em.createQuery(queryString, resultClass);
+        // For performance, never flush/commit prior to running queries.
+        // Roller code assumes this behavior
+        q.setFlushMode(FlushModeType.COMMIT);
+        return q;
+    }
+
+    /**
+     * Get named update query with default flush mode (usually FlushModeType.AUTO)
+     * FlushModeType.AUTO commits changes to DB prior to running statement
      * @param queryName the name of the query
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
@@ -299,49 +344,5 @@ public class JPAPersistenceStrategy {
         EntityManager em = getEntityManager(true);
         return em.createNamedQuery(queryName);
     }
-    
-    /**
-     * Loads properties from given resourceName using given class loader
-     * @param resourceName The name of the resource containing properties
-     * @param cl Classloeder to be used to locate the resouce
-     * @return A properties object
-     * @throws WebloggerException
-     */
-    private static Properties loadPropertiesFromResourceName(
-            String resourceName, ClassLoader cl) throws WebloggerException {
-        Properties props = new Properties();
-        InputStream in;
-        in = cl.getResourceAsStream(resourceName);
-        if (in == null) {
-            throw new WebloggerException(
-                    "Could not locate properties to load " + resourceName);
-        }
-        try {
-            props.load(in);
-        } catch (IOException ioe) {
-            throw new WebloggerException(
-                    "Could not load properties from " + resourceName);
-        } finally {
-            try {
-                in.close();
-            } catch (IOException ioe) {
-            }
-        }
-        
-        return props;
-    }
-    
-    /**
-     * Get the context class loader associated with the current thread. This is
-     * done in a doPrivileged block because it is a secure method.
-     * @return the current thread's context class loader.
-     */
-    private static ClassLoader getContextClassLoader() {
-        return (ClassLoader) AccessController.doPrivileged(
-                new PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
-    }  
+
 }

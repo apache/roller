@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import org.apache.roller.weblogger.business.Weblogger;
 
 /*
@@ -76,12 +77,12 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         q.executeUpdate();
     }
 
-    public void removeAutoPings(Collection autopings) throws WebloggerException {
+    public void removeAutoPings(Collection<AutoPing> autopings) throws WebloggerException {
         strategy.removeAll(autopings);
     }
 
     public void removeAllAutoPings() throws WebloggerException {
-        Query q = strategy.getNamedUpdate("AutoPing.getAll");
+        TypedQuery<AutoPing> q = strategy.getNamedQueryCommitFirst("AutoPing.getAll", AutoPing.class);
         removeAutoPings(q.getResultList());
     }
 
@@ -101,13 +102,13 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     }
 
     public List<AutoPing> getAutoPingsByWebsite(Weblog website) throws WebloggerException {
-        Query q = strategy.getNamedQuery("AutoPing.getByWebsite");
+        TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByWebsite", AutoPing.class);
         q.setParameter(1, website);
         return q.getResultList();
     }
 
     public List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException {
-        Query q = strategy.getNamedQuery("AutoPing.getByPingTarget");
+        TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByPingTarget", AutoPing.class);
         q.setParameter(1, pingTarget);
         return q.getResultList();
     }

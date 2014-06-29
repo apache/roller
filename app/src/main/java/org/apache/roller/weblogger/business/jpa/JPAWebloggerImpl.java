@@ -45,8 +45,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 @com.google.inject.Singleton
 public class JPAWebloggerImpl extends WebloggerImpl {
 
-    static final long serialVersionUID = 5256135928578074652L;
-
     // a persistence utility class
     private final JPAPersistenceStrategy strategy;
     

@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RollerPermission;
@@ -97,7 +97,6 @@ public class JPAUserManagerImpl implements UserManager {
             throw new WebloggerException("cannot add null user");
         }
         
-        // TODO BACKEND: we must do this in a better fashion, like getUserCnt()?
         boolean adminUser = false;
         List existingUsers = this.getUsers(Boolean.TRUE, null, null, 0, 1);
         boolean firstUserAdmin = WebloggerConfig.getBooleanProperty("users.firstUserAdmin");
@@ -149,7 +148,7 @@ public class JPAUserManagerImpl implements UserManager {
         if(this.userNameToIdMap.containsKey(userName)) {
 
             User user = this.getUser(
-                    (String) this.userNameToIdMap.get(userName));
+                    this.userNameToIdMap.get(userName));
             if(user != null) {
                 // only return the user if the enabled status matches
                 if(enabled == null || enabled.equals(user.getEnabled())) {
@@ -163,15 +162,15 @@ public class JPAUserManagerImpl implements UserManager {
         }
 
         // cache failed, do lookup
-        Query query;
+        TypedQuery<User> query;
         Object[] params;
         if (enabled != null) {
             query = strategy.getNamedQuery(
-                    "User.getByUserName&Enabled");
+                    "User.getByUserName&Enabled", User.class);
             params = new Object[] {userName, enabled};
         } else {
             query = strategy.getNamedQuery(
-                    "User.getByUserName");
+                    "User.getByUserName", User.class);
             params = new Object[] {userName};
         }
         for (int i=0; i<params.length; i++) {
@@ -179,89 +178,24 @@ public class JPAUserManagerImpl implements UserManager {
         }
         User user;
         try {
-            user = (User)query.getSingleResult();
+            user = query.getSingleResult();
         } catch (NoResultException e) {
             user = null;
         }
 
         // add mapping to cache
         if(user != null) {
-            log.debug("userNameToIdMap CACHE MISS - "+userName);
+            log.debug("userNameToIdMap CACHE MISS - " + userName);
             this.userNameToIdMap.put(user.getUserName(), user.getId());
         }
 
         return user;
     }
 
-    public List<User> getUsers(Weblog weblog, Boolean enabled, Date startDate,
-            Date endDate, int offset, int length)
-            throws WebloggerException {
-        Query query;
-
-        List<Object> params = new ArrayList<Object>();
-        int size = 0;
-        StringBuilder queryString = new StringBuilder();
-        StringBuilder whereClause = new StringBuilder();
-
-        if (weblog != null) {
-            queryString.append("SELECT u FROM User u JOIN u.permissions p ");
-            params.add(size++, weblog);
-            whereClause.append(" WHERE p.website = ?").append(size);
-        } else {
-            queryString.append("SELECT u FROM User u ");
-        }
-
-        if (enabled != null) {
-            if (whereClause.length() == 0) {
-                whereClause.append(" WHERE ");
-            } else {
-                whereClause.append(" AND ");
-            }
-            params.add(size++, enabled);
-            whereClause.append("u.enabled = ?").append(size);
-        }
-
-        if (startDate != null) {
-            if (whereClause.length() == 0) {
-                whereClause.append(" WHERE ");
-            } else {
-                whereClause.append(" AND ");
-            }
-
-            Timestamp start = new Timestamp(startDate.getTime());
-            // if we are doing date range then we must have an end date
-            // TODO: why? confirm end date needed
-            Timestamp end = new Timestamp(endDate != null ? endDate.getTime() : new Date().getTime());
-            params.add(size++, start);
-            whereClause.append("u.dateCreated > ?").append(size);
-            params.add(size++, end);
-            whereClause.append(" AND u.dateCreated < ?").append(size);
-        }
-        whereClause.append(" ORDER BY u.dateCreated DESC");
-        query = strategy.getDynamicQuery(queryString.toString() + whereClause.toString());
-
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
-        for (int i=0; i<params.size(); i++) {
-           query.setParameter(i+1, params.get(i));
-        }
-        return query.getResultList();
-    }
-
-    
-    public List<User> getUsers(int offset, int length) throws WebloggerException {
-        return getUsers(Boolean.TRUE, null, null, offset, length);
-    }
-
-    
     public List<User> getUsers(Boolean enabled, Date startDate, Date endDate,
             int offset, int length)
             throws WebloggerException {
-        Query query;
+        TypedQuery<User> query;
 
         Timestamp end = new Timestamp(endDate != null ? endDate.getTime() : new Date().getTime());
 
@@ -269,13 +203,13 @@ public class JPAUserManagerImpl implements UserManager {
             if (startDate != null) {
                 Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
-                        "User.getByEnabled&EndDate&StartDateOrderByStartDateDesc");
+                        "User.getByEnabled&EndDate&StartDateOrderByStartDateDesc", User.class);
                 query.setParameter(1, enabled);
                 query.setParameter(2, end);
                 query.setParameter(3, start);
             } else {
                 query = strategy.getNamedQuery(
-                        "User.getByEnabled&EndDateOrderByStartDateDesc");
+                        "User.getByEnabled&EndDateOrderByStartDateDesc", User.class);
                 query.setParameter(1, enabled);
                 query.setParameter(2, end);
             }
@@ -283,12 +217,12 @@ public class JPAUserManagerImpl implements UserManager {
             if (startDate != null) {
                 Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
-                        "User.getByEndDate&StartDateOrderByStartDateDesc");
+                        "User.getByEndDate&StartDateOrderByStartDateDesc", User.class);
                 query.setParameter(1, end);
                 query.setParameter(2, start);
             } else {
                 query = strategy.getNamedQuery(
-                        "User.getByEndDateOrderByStartDateDesc");
+                        "User.getByEndDateOrderByStartDateDesc", User.class);
                 query.setParameter(1, end);
             }
         }
@@ -301,63 +235,29 @@ public class JPAUserManagerImpl implements UserManager {
         return query.getResultList();
     }
 
-    
-    /**
-     * Get users of a website
-     */
-    public List<User> getUsers(Weblog website, Boolean enabled, int offset, int length) throws WebloggerException {
-        Query query;
-
-        if (enabled != null) {
-            if (website != null) {
-                query = strategy.getNamedQuery("User.getByEnabled&Permissions.website");
-                query.setParameter(1, enabled);
-                query.setParameter(2, website);
-            } else {
-                query = strategy.getNamedQuery("User.getByEnabled");
-                query.setParameter(1, enabled);
-            }
-        } else {
-            if (website != null) {
-                query = strategy.getNamedQuery("User.getByPermissions.website");
-                query.setParameter(1, website);
-            } else {
-                query = strategy.getNamedQuery("User.getAll");
-            }
-        }
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
-        return query.getResultList();
-    }
-
-    
     public List<User> getUsersStartingWith(String startsWith, Boolean enabled,
             int offset, int length) throws WebloggerException {
-        Query query;
+        TypedQuery<User> query;
 
         if (enabled != null) {
             if (startsWith != null) {
                 query = strategy.getNamedQuery(
-                        "User.getByEnabled&UserNameOrEmailAddressStartsWith");
+                        "User.getByEnabled&UserNameOrEmailAddressStartsWith", User.class);
                 query.setParameter(1, enabled);
                 query.setParameter(2, startsWith + '%');
                 query.setParameter(3, startsWith + '%');
             } else {
                 query = strategy.getNamedQuery(
-                        "User.getByEnabled");
+                        "User.getByEnabled", User.class);
                 query.setParameter(1, enabled);
             }
         } else {
             if (startsWith != null) {
                 query = strategy.getNamedQuery(
-                        "User.getByUserNameOrEmailAddressStartsWith");
+                        "User.getByUserNameOrEmailAddressStartsWith", User.class);
                 query.setParameter(1, startsWith +  '%');
             } else {
-                query = strategy.getNamedQuery("User.getAll");
+                query = strategy.getNamedQuery("User.getAll", User.class);
             }
         }
         if (offset != 0) {
@@ -370,11 +270,11 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public Map getUserNameLetterMap() throws WebloggerException {
+    public Map<String, Long> getUserNameLetterMap() throws WebloggerException {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Map results = new TreeMap();
-        Query query = strategy.getNamedQuery(
-                "User.getCountByUserNameLike");
+        Map<String, Long> results = new TreeMap<String, Long>();
+        TypedQuery<Long> query = strategy.getNamedQuery(
+                "User.getCountByUserNameLike", Long.class);
         for (int i=0; i<26; i++) {
             char currentChar = lc.charAt(i);
             query.setParameter(1, currentChar + "%");
@@ -386,10 +286,10 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public List getUsersByLetter(char letter, int offset, int length)
+    public List<User> getUsersByLetter(char letter, int offset, int length)
             throws WebloggerException {
-        Query query = strategy.getNamedQuery(
-                "User.getByUserNameOrderByUserName");
+        TypedQuery<User> query = strategy.getNamedQuery(
+                "User.getByUserNameOrderByUserName", User.class);
         query.setParameter(1, letter + "%");
         if (offset != 0) {
             query.setFirstResult(offset);
@@ -405,13 +305,10 @@ public class JPAUserManagerImpl implements UserManager {
      * Get count of users, enabled only
      */
     public long getUserCount() throws WebloggerException {
-        long ret = 0;
-        Query q = strategy.getNamedQuery("User.getCountEnabledDistinct");
+        TypedQuery<Long> q = strategy.getNamedQuery("User.getCountEnabledDistinct", Long.class);
         q.setParameter(1, Boolean.TRUE);
-        List results = q.getResultList();
-        ret =((Long)results.get(0));
-
-        return ret;
+        List<Long> results = q.getResultList();
+        return results.get(0);
     }
 
     
@@ -429,32 +326,33 @@ public class JPAUserManagerImpl implements UserManager {
         String[] parts = value.split("&");
         value = parts[0];
 
-        Query query;
-        query = strategy.getNamedQuery("UserAttribute.getByAttrNameAndAttrValue");
-        query.setParameter(1, name);
-        query.setParameter(2, value);
-        UserAttribute attribute = null;
+        TypedQuery<UserAttribute> attrQuery = strategy.getNamedQuery("UserAttribute.getByAttrNameAndAttrValue",
+                UserAttribute.class);
+        attrQuery.setParameter(1, name);
+        attrQuery.setParameter(2, value);
+        UserAttribute attribute;
 
         try {
-            attribute = (UserAttribute) query.getSingleResult();
+            attribute = attrQuery.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
 
         Object[] params;
+        TypedQuery<User> userQuery;
         if (enabled != null) {
-            query = strategy.getNamedQuery("User.getByUserName&Enabled");
+            userQuery = strategy.getNamedQuery("User.getByUserName&Enabled", User.class);
             params = new Object[]{attribute.getUserName(), enabled};
         } else {
-            query = strategy.getNamedQuery("User.getByUserName");
+            userQuery = strategy.getNamedQuery("User.getByUserName", User.class);
             params = new Object[]{attribute.getUserName()};
         }
         for (int i = 0; i < params.length; i++) {
-            query.setParameter(i + 1, params[i]);
+            userQuery.setParameter(i + 1, params[i]);
         }
         User user;
         try {
-            user = (User) query.getSingleResult();
+            user = userQuery.getSingleResult();
         } catch (NoResultException e) {
             user = null;
         }
@@ -464,11 +362,11 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     public UserAttribute getUserAttribute(String userName, String attribute) throws WebloggerException {
-        Query q = strategy.getNamedQuery("UserAttribute.getByUserNameAndAttrName");
+        TypedQuery<UserAttribute> q = strategy.getNamedQuery("UserAttribute.getByUserNameAndAttrName", UserAttribute.class);
         q.setParameter(1, userName);
         q.setParameter(2, attribute);
         try {
-            return (UserAttribute) q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {            
             return null;
         }
@@ -476,10 +374,10 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     public List<UserAttribute> getUserAttributes(String userName) throws WebloggerException {
-        Query q = strategy.getNamedQuery("UserAttribute.getByUserName");
+        TypedQuery<UserAttribute> q = strategy.getNamedQuery("UserAttribute.getByUserName", UserAttribute.class);
         q.setParameter(1, userName);
         try {
-            return (List<UserAttribute>)q.getResultList();
+            return q.getResultList();
         } catch (NoResultException e) {            
             return null;
         }
@@ -488,11 +386,12 @@ public class JPAUserManagerImpl implements UserManager {
     
     public void setUserAttribute(String userName, String attribute, String value) throws WebloggerException {
         UserAttribute userAttribute = null;
-        Query q = strategy.getNamedQuery("UserAttribute.getByUserNameAndAttrName");
+        TypedQuery<UserAttribute> q = strategy.getNamedQuery("UserAttribute.getByUserNameAndAttrName",
+                UserAttribute.class);
         q.setParameter(1, userName);
         q.setParameter(2, attribute);
         try {
-            userAttribute = (UserAttribute) q.getSingleResult();
+            userAttribute = q.getSingleResult();
         } catch (NoResultException ignored) {
         }
         if (userAttribute != null) {
@@ -513,10 +412,10 @@ public class JPAUserManagerImpl implements UserManager {
         if (activationCode == null) {
             throw new WebloggerException("activationcode is null");
         }
-        Query q = strategy.getNamedQuery("User.getUserByActivationCode");
+        TypedQuery<User> q = strategy.getNamedQuery("User.getUserByActivationCode", User.class);
         q.setParameter(1, activationCode);
         try {
-            return (User)q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -554,22 +453,24 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     public WeblogPermission getWeblogPermission(Weblog weblog, User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId"
+                , WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         try {
-            return (WeblogPermission)q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException ignored) {
             return null;
         }
     }
 
     public WeblogPermission getWeblogPermissionIncludingPending(Weblog weblog, User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+                WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         try {
-            return (WeblogPermission)q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException ignored) {
             return null;
         }
@@ -578,12 +479,13 @@ public class JPAUserManagerImpl implements UserManager {
     public void grantWeblogPermission(Weblog weblog, User user, List<String> actions) throws WebloggerException {
 
         // first, see if user already has a permission for the specified object
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+                WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm = null;
         try {
-            existingPerm = (WeblogPermission)q.getSingleResult();
+            existingPerm = q.getSingleResult();
         } catch (NoResultException ignored) {}
 
         // permission already exists, so add any actions specified in perm argument
@@ -601,12 +503,13 @@ public class JPAUserManagerImpl implements UserManager {
     public void grantWeblogPermissionPending(Weblog weblog, User user, List<String> actions) throws WebloggerException {
 
         // first, see if user already has a permission for the specified object
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+                WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm = null;
         try {
-            existingPerm = (WeblogPermission)q.getSingleResult();
+            existingPerm = q.getSingleResult();
         } catch (NoResultException ignored) {}
 
         // permission already exists, so complain 
@@ -625,12 +528,13 @@ public class JPAUserManagerImpl implements UserManager {
     public void confirmWeblogPermission(Weblog weblog, User user) throws WebloggerException {
 
         // get specified permission
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+                WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm;
         try {
-            existingPerm = (WeblogPermission)q.getSingleResult();
+            existingPerm = q.getSingleResult();
 
         } catch (NoResultException ignored) {
             throw new WebloggerException("ERROR: permission not found");
@@ -644,12 +548,13 @@ public class JPAUserManagerImpl implements UserManager {
     public void declineWeblogPermission(Weblog weblog, User user) throws WebloggerException {
 
         // get specified permission
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+                WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm;
         try {
-            existingPerm = (WeblogPermission)q.getSingleResult();
+            existingPerm = q.getSingleResult();
         } catch (NoResultException ignored) {
             throw new WebloggerException("ERROR: permission not found");
         }
@@ -661,12 +566,13 @@ public class JPAUserManagerImpl implements UserManager {
     public void revokeWeblogPermission(Weblog weblog, User user, List<String> actions) throws WebloggerException {
 
         // get specified permission
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+                WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         WeblogPermission oldperm;
         try {
-            oldperm = (WeblogPermission)q.getSingleResult();
+            oldperm = q.getSingleResult();
         } catch (NoResultException ignored) {
             throw new WebloggerException("ERROR: permission not found");
         }
@@ -685,33 +591,38 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     public List<WeblogPermission> getWeblogPermissions(User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName",
+                WeblogPermission.class);
         q.setParameter(1, user.getUserName());
-        return (List<WeblogPermission>)q.getResultList();
+        return q.getResultList();
     }
 
     public List<WeblogPermission> getWeblogPermissions(Weblog weblog) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByWeblogId");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogId",
+                WeblogPermission.class);
         q.setParameter(1, weblog.getHandle());
-        return (List<WeblogPermission>)q.getResultList();
+        return q.getResultList();
     }
 
     public List<WeblogPermission> getWeblogPermissionsIncludingPending(Weblog weblog) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByWeblogIdIncludingPending");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogIdIncludingPending",
+                WeblogPermission.class);
         q.setParameter(1, weblog.getHandle());
-        return (List<WeblogPermission>)q.getResultList();
+        return q.getResultList();
     }
 
     public List<WeblogPermission> getPendingWeblogPermissions(User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&Pending");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&Pending",
+                WeblogPermission.class);
         q.setParameter(1, user.getUserName());
-        return (List<WeblogPermission>)q.getResultList();
+        return q.getResultList();
     }
 
     public List<WeblogPermission> getPendingWeblogPermissions(Weblog weblog) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByWeblogId&Pending");
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogId&Pending",
+                WeblogPermission.class);
         q.setParameter(1, weblog.getHandle());
-        return (List<WeblogPermission>)q.getResultList();
+        return q.getResultList();
     }
 
 //-------------------------------------------------------------- role CRUD
@@ -721,7 +632,7 @@ public class JPAUserManagerImpl implements UserManager {
      * Returns true if user has role specified.
      */
     public boolean hasRole(String roleName, User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("UserRole.getByUserNameAndRole");
+        TypedQuery<UserRole> q = strategy.getNamedQuery("UserRole.getByUserNameAndRole", UserRole.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, roleName);
         try {
@@ -737,7 +648,7 @@ public class JPAUserManagerImpl implements UserManager {
      * Get all of user's roles.
      */
     public List<String> getRoles(User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("UserRole.getByUserName");
+        TypedQuery<UserRole> q = strategy.getNamedQuery("UserRole.getByUserName", UserRole.class);
         q.setParameter(1, user.getUserName());
         List<UserRole> roles = q.getResultList();
         List<String> roleNames = new ArrayList<String>();
@@ -761,11 +672,11 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     public void revokeRole(String roleName, User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("UserRole.getByUserNameAndRole");
+        TypedQuery<UserRole> q = strategy.getNamedQuery("UserRole.getByUserNameAndRole", UserRole.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, roleName);
         try {
-            UserRole role = (UserRole)q.getSingleResult();
+            UserRole role = q.getSingleResult();
             this.strategy.remove(role);
 
         } catch (NoResultException e) {

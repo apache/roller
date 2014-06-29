@@ -147,10 +147,10 @@ public interface UserManager {
     
     /**
      * Get map with 26 entries, one for each letter A-Z and
-     * containing integers reflecting the number of users whose
+     * containing Longs reflecting the number of users whose
      * names start with each letter.
      */
-    Map getUserNameLetterMap() throws WebloggerException;
+    Map<String, Long> getUserNameLetterMap() throws WebloggerException;
     
     
     /** 

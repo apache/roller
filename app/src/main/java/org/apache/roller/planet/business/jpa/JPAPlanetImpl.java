@@ -107,7 +107,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     
     
     /**
-     * @see org.apache.roller.business.Roller#getBookmarkManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getBookmarkManager()
      */
     public PlanetManager getWebloggerManager() {
         return planetManager;
@@ -115,7 +115,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
 
      
     /**
-     * @see org.apache.roller.business.Roller#getBookmarkManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getBookmarkManager()
      */
     public PropertiesManager getPropertiesManager() {
         return propertiesManager;

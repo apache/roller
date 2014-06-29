@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.business.jpa;
 import java.io.StringReader;
 import java.util.List;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -172,7 +172,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         url =     null!=htmlUrl ? htmlUrl : url;
         
         // better to truncate imported OPML fields than to fail import or drop whole bookmark
-        // TODO: add way to notify user that fields were truncated
         int maxLength = RollerConstants.TEXTWIDTH_255;
 
         if (title != null && title.length() > maxLength) {
@@ -219,10 +218,10 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
      */
     public List<WeblogBookmark> getBookmarks(WeblogBookmarkFolder folder)
             throws WebloggerException {
-        Query query;
+        TypedQuery<WeblogBookmark> query;
         List<WeblogBookmark> results;
 
-        query = strategy.getNamedQuery("BookmarkData.getByFolder");
+        query = strategy.getNamedQuery("BookmarkData.getByFolder", WeblogBookmark.class);
         query.setParameter(1, folder);
         results = query.getResultList();
 
@@ -233,11 +232,12 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             throws WebloggerException {
 
         // Do simple lookup by name
-        Query query = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name");
+        TypedQuery<WeblogBookmarkFolder> query = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name",
+                WeblogBookmarkFolder.class);
         query.setParameter(1, website);
         query.setParameter(2, name);
         try {
-            return (WeblogBookmarkFolder) query.getSingleResult();
+            return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -250,11 +250,12 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             throw new WebloggerException("weblog is null");
         }
         
-        Query q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name");
+        TypedQuery<WeblogBookmarkFolder> q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name",
+                WeblogBookmarkFolder.class);
         q.setParameter(1, weblog);
         q.setParameter(2, "default");
         try {
-            return (WeblogBookmarkFolder)q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -266,7 +267,8 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             throw new WebloggerException("Website is null");
         }
         
-        Query q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite");
+        TypedQuery<WeblogBookmarkFolder> q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite",
+                WeblogBookmarkFolder.class);
         q.setParameter(1, website);
         return q.getResultList();
     }

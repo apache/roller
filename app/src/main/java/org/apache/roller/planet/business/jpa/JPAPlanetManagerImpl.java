@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -94,10 +95,10 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     
     public Subscription getSubscription(String feedUrl)
     throws RollerException {
-        Query q = strategy.getNamedQuery("Subscription.getByFeedURL");
+        TypedQuery<Subscription> q = strategy.getNamedQuery("Subscription.getByFeedURL", Subscription.class);
         q.setParameter(1, feedUrl);
         try {
-            return (Subscription)q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -112,7 +113,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     public Iterator getAllSubscriptions() {
         try {
             return (strategy.getNamedQuery(
-                    "Subscription.getAll").getResultList()).iterator();
+                    "Subscription.getAll", Subscription.class).getResultList()).iterator();
         } catch (Exception e) {
             throw new RuntimeException(
                     "ERROR fetching subscription collection", e);
@@ -120,7 +121,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public int getSubscriptionCount() throws RollerException {
-        Query q = strategy.getNamedQuery("Subscription.getAll");
+        Query q = strategy.getNamedQuery("Subscription.getAll", Subscription.class);
         return q.getResultList().size();
     }
     
@@ -136,8 +137,8 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             PlanetGroup group, int offset, int len) throws RollerException {
         List<Subscription> result;
         if (group != null) {
-            Query q = strategy.getNamedQuery(
-                    "Subscription.getByGroupOrderByInboundBlogsDesc");
+            TypedQuery<Subscription> q = strategy.getNamedQuery(
+                    "Subscription.getByGroupOrderByInboundBlogsDesc", Subscription.class);
             q.setParameter(1, group);
             if (offset != 0) {
                 q.setFirstResult(offset);
@@ -147,8 +148,8 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             }
             result = q.getResultList();
         } else {
-            Query q = strategy.getNamedQuery(
-                    "Subscription.getAllOrderByInboundBlogsDesc");
+            TypedQuery<Subscription> q = strategy.getNamedQuery(
+                    "Subscription.getAllOrderByInboundBlogsDesc", Subscription.class);
             if (offset != 0) {
                 q.setFirstResult(offset);
             }
@@ -161,10 +162,10 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public PlanetGroup getGroup(String handle) throws RollerException {
-        Query q = strategy.getNamedQuery("PlanetGroup.getByHandle");
+        TypedQuery<PlanetGroup> q = strategy.getNamedQuery("PlanetGroup.getByHandle", PlanetGroup.class);
         q.setParameter(1, handle);
         try {
-            return (PlanetGroup)q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -182,10 +183,10 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public Planet getWeblogger(String handle) throws RollerException {
-        Query q = strategy.getNamedQuery("Planet.getByHandle");
+        TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getByHandle", Planet.class);
         q.setParameter(1, handle);
         try {
-            return (Planet)q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -196,7 +197,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public List<Planet> getWebloggers() throws RollerException {
-        return strategy.getNamedQuery("Planet.getAll").getResultList();
+        return strategy.getNamedQuery("Planet.getAll", Planet.class).getResultList();
     }
     
     public List<String> getGroupHandles(Planet planet) throws RollerException {
@@ -208,17 +209,17 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public List<PlanetGroup> getGroups(Planet planet) throws RollerException {
-        Query q = strategy.getNamedQuery("PlanetGroup.getByPlanet");
+        TypedQuery<PlanetGroup> q = strategy.getNamedQuery("PlanetGroup.getByPlanet", PlanetGroup.class);
         q.setParameter(1, planet.getHandle());
         return q.getResultList();
     }
     
     public PlanetGroup getGroup(Planet planet, String handle) throws RollerException {
-        Query q = strategy.getNamedQuery("PlanetGroup.getByPlanetAndHandle");
+        TypedQuery<PlanetGroup> q = strategy.getNamedQuery("PlanetGroup.getByPlanetAndHandle", PlanetGroup.class);
         q.setParameter(1, planet.getHandle());
         q.setParameter(2, handle);
         try {
-            return (PlanetGroup)q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -238,7 +239,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public List<Subscription> getSubscriptions() throws RollerException {
-        Query q = strategy.getNamedQuery("Subscription.getAllOrderByFeedURL");
+        TypedQuery<Subscription> q = strategy.getNamedQuery("Subscription.getAllOrderByFeedURL", Subscription.class);
         return q.getResultList();
     }
 
@@ -250,7 +251,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         if (sub == null) {
             throw new WebloggerException("subscription cannot be null");
         }
-        Query q = strategy.getNamedQuery("SubscriptionEntry.getBySubscription");
+        TypedQuery<SubscriptionEntry> q = strategy.getNamedQuery("SubscriptionEntry.getBySubscription", SubscriptionEntry.class);
         q.setParameter(1, sub);
         if (offset != 0) {
             q.setFirstResult(offset);
@@ -271,7 +272,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             throw new WebloggerException("group cannot be null or empty");
         }
         
-        List<SubscriptionEntry> ret = null;
+        List<SubscriptionEntry> ret;
         try {
             long startTime = System.currentTimeMillis();
             
@@ -294,7 +295,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             }
             sb.append(" ORDER BY e.pubTime DESC");
             
-            Query query = strategy.getDynamicQuery(sb.toString());
+            TypedQuery<SubscriptionEntry> query = strategy.getDynamicQuery(sb.toString(), SubscriptionEntry.class);
             for (int i=0; i<params.size(); i++) {
                 query.setParameter(i+1, params.get(i));
             }

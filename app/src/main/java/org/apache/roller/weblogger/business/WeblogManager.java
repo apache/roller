@@ -142,7 +142,7 @@ public interface WeblogManager {
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.
      */
-    Map getWeblogHandleLetterMap() throws WebloggerException;
+    Map<String, Long> getWeblogHandleLetterMap() throws WebloggerException;
     
     
     /** 
@@ -196,7 +196,7 @@ public interface WeblogManager {
     /**
      * Save template code
      */
-     void saveTemplateCode(WeblogThemeTemplateCode templateCode) throws WebloggerException;
+    void saveTemplateCode(WeblogThemeTemplateCode templateCode) throws WebloggerException;
 
     /**
      * Get website's pages

@@ -105,7 +105,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     public Map<String, RuntimeConfigProperty> getProperties() throws WebloggerException {
 
         HashMap<String, RuntimeConfigProperty> props = new HashMap<String, RuntimeConfigProperty>();
-        List<RuntimeConfigProperty> list = strategy.getNamedQuery("RuntimeConfigProperty.getAll").getResultList();
+        List<RuntimeConfigProperty> list = strategy.getNamedQuery("RuntimeConfigProperty.getAll",
+                RuntimeConfigProperty.class).getResultList();
         /*
          * for convenience sake we are going to put the list of props
          * into a map for users to access it.  The value element of the

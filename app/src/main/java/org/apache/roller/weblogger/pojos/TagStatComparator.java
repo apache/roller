@@ -24,7 +24,7 @@ import java.util.Comparator;
  * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
  *
  */
-public class TagStatComparator implements Comparator, Serializable {
+public class TagStatComparator implements Comparator<TagStat>, Serializable {
 
     private static final long serialVersionUID = -3272396777374523757L;
 
@@ -39,10 +39,8 @@ public class TagStatComparator implements Comparator, Serializable {
      * @throws ClassCastException if arguments are not instances of <em>TagStat</em>
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare(Object obj1, Object obj2) {
-        TagStat st1 = (TagStat) obj1;
-        TagStat st2 = (TagStat) obj2;
-        return st1.getName().compareToIgnoreCase(st2.getName());
+    public int compare(TagStat ts1, TagStat ts2) {
+        return ts1.getName().compareToIgnoreCase(ts2.getName());
     }
 
 }

@@ -68,7 +68,7 @@ public interface AutoPingManager {
      * @param autopings a <code>Collection</code> of <code>AAutoPing/code> objects
      * @throws WebloggerException
      */
-    void removeAutoPings(Collection autopings) throws WebloggerException;
+    void removeAutoPings(Collection<AutoPing> autopings) throws WebloggerException;
     
     
     /**

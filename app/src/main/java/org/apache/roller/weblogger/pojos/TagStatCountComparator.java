@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * @author Markus Fuchs
  */
-public class TagStatCountComparator implements Comparator, Serializable {
+public class TagStatCountComparator implements Comparator<TagStat>, Serializable {
 
     private static final long serialVersionUID = 1155112837815739929L;
 
@@ -43,9 +43,7 @@ public class TagStatCountComparator implements Comparator, Serializable {
      * @throws ClassCastException if arguments are not instances of <em>TagStat</em>
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare(Object obj1, Object obj2) {
-        TagStat st1 = (TagStat) obj1;
-        TagStat st2 = (TagStat) obj2;
+    public int compare(TagStat st1, TagStat st2) {
         int compVal = st1.getCount() < st2.getCount() ? -1 :
                 (st1.getCount() == st2.getCount() ? 0 : 1);
         

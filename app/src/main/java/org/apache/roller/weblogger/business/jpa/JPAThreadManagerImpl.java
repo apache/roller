@@ -22,11 +22,11 @@ import java.sql.Timestamp;
 import java.util.Date;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
 import org.apache.roller.weblogger.business.runnable.RollerTask;
 import org.apache.roller.weblogger.pojos.TaskLock;
@@ -47,7 +47,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
 
     @com.google.inject.Inject
-    protected JPAThreadManagerImpl(Weblogger roller, JPAPersistenceStrategy strat) {
+    protected JPAThreadManagerImpl(JPAPersistenceStrategy strat) {
         super();
 
         LOG.debug("Instantiating JPA Thread Manager");
@@ -68,7 +68,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         Date currentTime = new Date();
         
         // query for existing lease record first
-        TaskLock taskLock = null;
+        TaskLock taskLock;
         try {
             taskLock = getTaskLockByName(task.getName());
             if(taskLock == null) {
@@ -88,7 +88,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
                 // calculate run time for task, this is expected time, not actual time
                 // i.e. if a task is meant to run daily at midnight this should
                 // reflect 00:00:00 on the current day
-                Date runTime = currentTime;
+                Date runTime;
                 if("startOfDay".equals(task.getStartTimeDesc())) {
                     // start of today
                     runTime = DateUtil.getStartOfDay(currentTime);
@@ -111,7 +111,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
                 Query q = strategy.getNamedUpdate(
                         "TaskLock.updateClient&Timeacquired&Timeleased&LastRunByName&Timeacquired");
                 q.setParameter(1, task.getClientId());
-                q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
+                q.setParameter(2, task.getLeaseTime());
                 q.setParameter(3, new Timestamp(runTime.getTime()));
                 q.setParameter(4, task.getName());
                 q.setParameter(5, taskLock.getTimeAcquired());
@@ -140,7 +140,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     public boolean unregisterLease(RollerTask task) {
 
         // query for existing lease record first
-        TaskLock taskLock = null;
+        TaskLock taskLock;
         try {
             taskLock = this.getTaskLockByName(task.getName());
 
@@ -161,7 +161,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         try {
             Query q = strategy.getNamedUpdate(
                     "TaskLock.updateTimeLeasedByName&Client");
-            q.setParameter(1, Integer.valueOf(0));
+            q.setParameter(1, 0);
             q.setParameter(2, task.getName());
             q.setParameter(3, task.getClientId());
             int result = q.executeUpdate();
@@ -190,10 +190,10 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
      */
     public TaskLock getTaskLockByName(String name) throws WebloggerException {
         // do lookup
-        Query q = strategy.getNamedQuery("TaskLock.getByName");
+        TypedQuery<TaskLock> q = strategy.getNamedQuery("TaskLock.getByName", TaskLock.class);
         q.setParameter(1, name);
         try {
-            return (TaskLock)q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

@@ -201,7 +201,7 @@ public class PlanetModel implements Model {
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
             Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);
-            Set<PlanetGroup> groups = (Set<PlanetGroup>)defaultPlanet.getGroups();
+            Set<PlanetGroup> groups = defaultPlanet.getGroups();
             for (PlanetGroup group : groups) {
                 // TODO needs pojo wrapping from planet
                 list.add(group); 

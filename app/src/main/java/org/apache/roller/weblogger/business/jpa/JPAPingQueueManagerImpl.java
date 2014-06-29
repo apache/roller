@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.jpa;
 
 import java.sql.Timestamp;
 import java.util.List;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -95,8 +95,8 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
 
     public List<PingQueueEntry> getAllQueueEntries()
             throws WebloggerException {
-        return (List<PingQueueEntry>) strategy.getNamedQuery(
-                "PingQueueEntry.getAllOrderByEntryTime").getResultList();
+        return strategy.getNamedQuery("PingQueueEntry.getAllOrderByEntryTime",
+                PingQueueEntry.class).getResultList();
     }
 
     // private helper to determine if an has already been queued 
@@ -104,7 +104,8 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
     private boolean isAlreadyQueued(AutoPing autoPing) 
         throws WebloggerException {
         // first, determine if an entry already exists
-        Query q = strategy.getNamedQuery("PingQueueEntry.getByPingTarget&Website");
+        TypedQuery<PingQueueEntry> q = strategy.getNamedQuery("PingQueueEntry.getByPingTarget&Website",
+                PingQueueEntry.class);
         q.setParameter(1, autoPing.getPingTarget());
         q.setParameter(2, autoPing.getWebsite());
         return q.getResultList().size() > 0;

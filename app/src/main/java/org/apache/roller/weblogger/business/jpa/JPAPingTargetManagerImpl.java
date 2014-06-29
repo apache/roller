@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
@@ -151,8 +152,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     public List<PingTarget> getCommonPingTargets()
             throws WebloggerException {
-        Query q = strategy.getNamedQuery(
-                "PingTarget.getPingTargetsOrderByName");
+        TypedQuery<PingTarget> q = strategy.getNamedQuery(
+                "PingTarget.getPingTargetsOrderByName", PingTarget.class);
         return q.getResultList();
     }
 
