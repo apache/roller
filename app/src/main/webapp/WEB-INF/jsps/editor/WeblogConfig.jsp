@@ -26,6 +26,7 @@
 <s:form action="weblogConfig!save">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
+    <s:hidden name="bean.pageModels" />
 
 <table class="formtableNoDesc">
 
@@ -146,13 +147,7 @@
     <s:if test="getBooleanProp('users.comments.emailnotify')">
         <tr>
             <td class="label"><s:text name="websiteSettings.emailComments" /></td>
-            <td class="field"><s:checkbox name="bean.emailComments" onclick="toggleNextRow(this)" /></td>
-            <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-        </tr>
-
-        <tr <s:if test="emailComments">style="display: none"</s:if>>
-            <td class="label"><s:text name="websiteSettings.emailFromAddress" /></td>
-            <td class="field"><s:textfield name="bean.emailFromAddress" size="50"/></td>
+            <td class="field"><s:checkbox name="bean.emailComments"/></td>
             <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
         </tr>
     </s:if>
@@ -248,21 +243,6 @@
             <td class="field"><s:textarea name="bean.analyticsCode" rows="10" cols="70"/></td>
         </tr>
     </s:if>
-
-    <%-- ***** Global admin only settings ***** --%>
-    <s:if test="authenticatedUser.hasGlobalPermission('admin')">
-        <tr>
-            <td colspan="3"><h2><s:text name="websiteSettings.adminSettings" /></h2></td>
-        </tr>
-        <tr>
-            <td class="label"><s:text name="websiteSettings.pageModels" /></td>
-            <td class="field"><s:textarea name="bean.pageModels" rows="7" cols="40"/></td>
-            <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-        </tr>
-    </s:if>
-    <s:else>
-        <s:hidden name="bean.pageModels" />
-    </s:else>
 
 </table>
 
