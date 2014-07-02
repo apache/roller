@@ -88,7 +88,7 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileAdd.description" /></label>
+                <label for="status"><s:text name="generic.description" /></label>
             </td>
             <td>
                 <s:textarea name="bean.description" cols="50" rows="5" />

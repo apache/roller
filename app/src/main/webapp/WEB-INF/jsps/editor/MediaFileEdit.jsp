@@ -134,7 +134,7 @@ $("#d_clip_button").ready(function() {
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileEdit.description" /></label>
+                <label for="status"><s:text name="generic.description" /></label>
             </td>
             <td>
                 <s:textarea name="bean.description" cols="50" rows="2" tabindex="2"/>

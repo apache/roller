@@ -84,7 +84,7 @@
         </s:if>
         <tr>
             <td class="label" valign="top" style="padding-top: 4px">
-                <s:text name="pageForm.description" />&nbsp;</td>
+                <s:text name="generic.description" />&nbsp;</td>
             <td class="field">
                 <s:if test="template.required">
                     <s:textarea name="bean.description" cols="50" rows="2" 

@@ -57,7 +57,7 @@ function handlePreview(handle) {
 </tr>
 
 <tr>
-    <td class="label"><label for="description" /><s:text name="createWebsite.description" /></td>
+    <td class="label"><label for="description" /><s:text name="generic.description" /></td>
     <td class="field"><s:textfield name="bean.description" size="40" maxlength="255" /></td>
     <td class="description"><s:text name="createWebsite.tip.description" /></td>
 </tr>
