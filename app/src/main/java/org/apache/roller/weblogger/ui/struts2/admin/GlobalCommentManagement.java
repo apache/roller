@@ -325,7 +325,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         
         List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
-        opts.add(new KeyValueObject("ALL", getText("commentManagement.all")));
+        opts.add(new KeyValueObject("ALL", getText("generic.all")));
         opts.add(new KeyValueObject("ONLY_PENDING", getText("commentManagement.onlyPending")));
         opts.add(new KeyValueObject("ONLY_APPROVED", getText("commentManagement.onlyApproved")));
         opts.add(new KeyValueObject("ONLY_DISAPPROVED", getText("commentManagement.onlyDisapproved")));

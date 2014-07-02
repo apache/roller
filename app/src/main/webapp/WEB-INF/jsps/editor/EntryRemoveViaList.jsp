@@ -36,14 +36,14 @@
         <s:hidden name="salt" />
         <s:hidden name="weblog" />
         <s:hidden name="removeId" />
-        <s:submit value="%{getText('weblogEntryRemove.yes')}" />
+        <s:submit value="%{getText('application.yes')}" />
     </s:form>
 </td>
 <td>
     <s:form action="entries">
 		<s:hidden name="salt" />
         <s:hidden name="weblog" />
-        <s:submit value="%{getText('weblogEntryRemove.no')}" action="entryRemove!cancel" />
+        <s:submit value="%{getText('application.no')}" action="entryRemove!cancel" />
     </s:form>
 </td>
 </tr>

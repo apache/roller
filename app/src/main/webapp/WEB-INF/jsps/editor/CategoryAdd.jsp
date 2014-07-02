@@ -46,7 +46,7 @@
     
     <p>
         <s:submit value="%{getText('categoryForm.save')}" />
-        <s:submit value="%{getText('categoryForm.cancel')}" action="categoryAdd!cancel" />
+        <s:submit value="%{getText('application.cancel')}" action="categoryAdd!cancel" />
     </p>
     
 </s:form>

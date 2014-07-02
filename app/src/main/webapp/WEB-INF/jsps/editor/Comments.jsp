@@ -184,20 +184,20 @@
                 <td align="center">
                     <s:text name="commentManagement.select" /><br/>
 
-                    <span id="checkallapproved"><a href="#"><s:text name="commentManagement.all" /></a></span><br />
-                    <span id="clearallapproved"><a href="#"><s:text name="commentManagement.none" /></a></span>
+                    <span id="checkallapproved"><a href="#"><s:text name="generic.all" /></a></span><br />
+                    <span id="clearallapproved"><a href="#"><s:text name="generic.none" /></a></span>
                 </td>
                 <td align="center">
                     <s:text name="commentManagement.select" /><br/>
 
-                    <span id="checkallspam"><a href="#"><s:text name="commentManagement.all" /></a></span><br />
-                    <span id="clearallspam"><a href="#"><s:text name="commentManagement.none" /></a></span>
+                    <span id="checkallspam"><a href="#"><s:text name="generic.all" /></a></span><br />
+                    <span id="clearallspam"><a href="#"><s:text name="generic.none" /></a></span>
                 </td>
                 <td align="center">
                     <s:text name="commentManagement.select" /><br/>
 
-                    <span id="checkalldelete"><a href="#"><s:text name="commentManagement.all" /></a></span><br />
-                    <span id="clearalldelete"><a href="#"><s:text name="commentManagement.none" /></a></span>
+                    <span id="checkalldelete"><a href="#"><s:text name="generic.all" /></a></span><br />
+                    <span id="clearalldelete"><a href="#"><s:text name="generic.none" /></a></span>
                 </td>
                 <td align="right">
                     <br />
@@ -315,7 +315,7 @@
                                                <a onclick='saveComment("<s:property value="#comment.id"/>")'><s:text name="commentManagement.saveComment" /></a> &nbsp;|&nbsp;
                                           </span>
                                           <span id="cancellink-<s:property value="#comment.id"/>" style="display: none">
-                                               <a onclick='editCommentCancel("<s:property value="#comment.id"/>")'><s:text name="commentManagement.cancelComment" /></a>
+                                               <a onclick='editCommentCancel("<s:property value="#comment.id"/>")'><s:text name="application.cancel" /></a>
                                           </span>
                                       </div>
                                 </div>

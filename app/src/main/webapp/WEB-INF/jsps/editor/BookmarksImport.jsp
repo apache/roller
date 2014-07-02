@@ -34,5 +34,5 @@
     <br />
     <br />
     <s:submit value="%{getText('bookmarksImport.import')}" />
-    <s:submit value="%{getText('bookmarksImport.cancel')}" action="bookmarks" />
+    <s:submit value="%{getText('application.cancel')}" action="bookmarks" />
 </s:form>

@@ -69,4 +69,4 @@
 
 <br />
 
-<input type="button" value="<s:text name="userSettings.button.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
+<input type="button" value="<s:text name="application.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />

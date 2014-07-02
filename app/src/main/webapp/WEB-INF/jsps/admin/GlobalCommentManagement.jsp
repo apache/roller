@@ -197,19 +197,19 @@ function handleCommentResponse() {
             <s:text name="commentManagement.select" /><br/>
             
             <a href="#" onclick='setChecked(1,"bean.spamComments")'>
-            <s:text name="commentManagement.all" /></a><br />  
+            <s:text name="generic.all" /></a><br />
             
             <a href="#" onclick='setChecked(0,"bean.spamComments")'>
-            <s:text name="commentManagement.none" /></a>
+            <s:text name="generic.none" /></a>
         </td>
         <td align="center">
             <s:text name="commentManagement.select" /><br/>
             
             <a href="#" onclick='setChecked(1,"bean.deleteComments")'>
-            <s:text name="commentManagement.all" /></a><br /> 
+            <s:text name="generic.all" /></a><br />
             
             <a href="#" onclick='setChecked(0,"bean.deleteComments")'>
-            <s:text name="commentManagement.none" /></a>
+            <s:text name="generic.none" /></a>
         </td>
         <td align="right">
             <br />

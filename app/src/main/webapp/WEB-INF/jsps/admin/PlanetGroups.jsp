@@ -51,7 +51,7 @@
         <s:submit value="%{getText('planetGroups.button.save')}" />
         &nbsp;
         <input type="button" 
-               value='<s:text name="planetGroups.button.cancel" />' 
+               value='<s:text name="application.cancel" />'
                onclick="window.location='<s:url action="planetGroups"/>'"/>
         
         <s:if test="group != null" >

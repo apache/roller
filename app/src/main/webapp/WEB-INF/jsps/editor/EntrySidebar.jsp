@@ -36,7 +36,7 @@
                     </s:text>
                 </s:if>
                 <s:else>
-                    <span><s:text name="application.none" /></span>
+                    <span><s:text name="generic.none" /></span>
                 </s:else>
                 
                 <hr size="1" noshade="noshade" />  
@@ -44,7 +44,7 @@
                 
                 <s:set name="pendingEntries" value="recentPendingEntries" />
                 <s:if test="#pendingEntries.isEmpty">
-                    <span><s:text name="application.none" /></span>
+                    <span><s:text name="generic.none" /></span>
                 </s:if>
                 <s:iterator id="post" value="#pendingEntries">
                     <span class="entryEditSidebarLink">
@@ -64,7 +64,7 @@
                 
                 <s:set name="draftEntries" value="recentDraftEntries" />
                 <s:if test="#draftEntries.isEmpty">
-                    <span><s:text name="application.none" /></span>
+                    <span><s:text name="generic.none" /></span>
                 </s:if>
                 <s:iterator id="post" value="#draftEntries">
                     <span class="entryEditSidebarLink">
@@ -86,7 +86,7 @@
                     
                     <s:set name="pubEntries" value="recentPublishedEntries" />
                     <s:if test="#pubEntries.isEmpty">
-                        <span><s:text name="application.none" /></span>
+                        <span><s:text name="generic.none" /></span>
                     </s:if>
                     <s:iterator id="post" value="#pubEntries">
                         <span class="entryEditSidebarLink">
@@ -106,7 +106,7 @@
                     
                     <s:set name="schedEntries" value="recentScheduledEntries" />
                     <s:if test="#schedEntries.isEmpty">
-                        <span><s:text name="application.none" /></span>
+                        <span><s:text name="generic.none" /></span>
                     </s:if>
                     <s:iterator id="post" value="#schedEntries">
                         <span class="entryEditSidebarLink">

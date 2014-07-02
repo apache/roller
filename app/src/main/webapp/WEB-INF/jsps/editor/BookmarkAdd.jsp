@@ -60,7 +60,7 @@
     
     <p>
         <s:submit value="%{getText('bookmarkForm.save')}" />
-        <s:submit value="%{getText('bookmarkForm.cancel')}" action="bookmarkAdd!cancel" />
+        <s:submit value="%{getText('application.cancel')}" action="bookmarkAdd!cancel" />
     </p>
     
 </s:form>
