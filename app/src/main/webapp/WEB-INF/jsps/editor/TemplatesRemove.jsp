@@ -45,8 +45,8 @@
 	<table>
 		<tr>
 			<td>
-				<s:submit value="%{getText('application.yes')}" action="templatesRemove!remove" />&nbsp;
-				<s:submit value="%{getText('application.no')}" action="templatesRemove!cancel" />
+				<s:submit value="%{getText('generic.yes')}" action="templatesRemove!remove" />&nbsp;
+				<s:submit value="%{getText('generic.no')}" action="templatesRemove!cancel" />
 			</td>
 		</tr>
 	</table>

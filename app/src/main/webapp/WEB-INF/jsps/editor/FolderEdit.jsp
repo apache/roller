@@ -34,14 +34,14 @@
     
     <table>
         <tr>
-            <td><s:text name="folderForm.name" /></td>
+            <td><s:text name="generic.name" /></td>
             <td><s:textfield name="bean.name" size="70" maxlength="255" /></td>
         </tr>
     </table>
     
     <p>
         <s:submit value="%{getText('folderForm.save')}" />
-        <s:submit value="%{getText('application.cancel')}" action="folderEdit!cancel" />
+        <s:submit value="%{getText('generic.cancel')}" action="folderEdit!cancel" />
     </p>
     
 </s:form>

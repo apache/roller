@@ -32,7 +32,7 @@
     <table>
         
         <tr>
-            <td><s:text name="bookmarkForm.name" /></td>
+            <td><s:text name="generic.name" /></td>
             <td><s:textfield name="bean.name" maxlength="255" size="70" /></td>
         </tr>
         
@@ -60,7 +60,7 @@
     
     <p>
         <s:submit value="%{getText('bookmarkForm.save')}" />
-        <s:submit value="%{getText('application.cancel')}" action="bookmarkAdd!cancel" />
+        <s:submit value="%{getText('generic.cancel')}" action="bookmarkAdd!cancel" />
     </p>
     
 </s:form>

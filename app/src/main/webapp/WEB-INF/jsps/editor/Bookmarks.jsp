@@ -90,7 +90,7 @@ function onMove()
         <tr class="rHeaderTr">
             <th class="rollertable" width="5%"><input name="control" type="checkbox" onclick="toggleFunctionAll(this.checked);"
                 title="<s:text name="bookmarksForm.selectAllLabel"/>"/></th>
-            <th class="rollertable" width="25%"><s:text name="bookmarksForm.name" /></th>
+            <th class="rollertable" width="25%"><s:text name="generic.name" /></th>
             <th class="rollertable" width="25%"><s:text name="bookmarksForm.url" /></th>
             <th class="rollertable" width="35%"><s:text name="bookmarksForm.feedurl" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.edit" /></th>

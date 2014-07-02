@@ -34,14 +34,14 @@
 		<s:hidden name="salt" />
         <s:hidden name="weblog" />
         <s:hidden name="removeId" />
-        <s:submit value="%{getText('application.yes')}" />
+        <s:submit value="%{getText('generic.yes')}" />
     </s:form>
 </td>
 <td>
     <s:form action="entryEdit">
 		<s:hidden name="salt" />
         <s:hidden name="weblog" />
-        <s:submit value="%{getText('application.no')}" action="entryRemove!cancel" />
+        <s:submit value="%{getText('generic.no')}" action="entryRemove!cancel" />
     </s:form>
 </td>
 </tr>

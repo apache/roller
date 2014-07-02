@@ -26,7 +26,7 @@
     <s:hidden name="bean.id" />
     
     <div class="formrow">
-       <label for="name" class="formrow"><s:text name="pingTarget.name" /></label>
+       <label for="name" class="formrow"><s:text name="generic.name" /></label>
        <s:textfield name="bean.name" size="30" maxlength="30" />
     </div>
 

@@ -117,7 +117,7 @@ public class MediaFileView extends MediaFileBase {
                             "mediaFileView.mb", getText("mediaFileView.mb")));
 
             SORT_OPTIONS = Arrays.asList(new KeyValueObject("name",
-                    getText("mediaFileView.name")), new KeyValueObject(
+                    getText("generic.name")), new KeyValueObject(
                     "date_uploaded", getText("mediaFileView.date")),
                     new KeyValueObject("type", getText("mediaFileView.type")));
         }

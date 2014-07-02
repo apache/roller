@@ -45,7 +45,7 @@
         <strong><s:text name="categoryDeleteOK.areYouSure" /></strong>
     </p>
     
-    <s:submit value="%{getText('application.yes')}" />&nbsp;
-    <s:submit value="%{getText('application.no')}" action="categoryRemove!cancel" />
+    <s:submit value="%{getText('generic.yes')}" />&nbsp;
+    <s:submit value="%{getText('generic.no')}" action="categoryRemove!cancel" />
     
 </s:form>

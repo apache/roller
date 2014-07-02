@@ -47,8 +47,8 @@
                 <s:hidden name="removeId" />
                 <s:hidden name="weblog" value="%{actionWeblog.handle}" />
                 
-                <s:submit value="%{getText('application.yes')}" />&nbsp;
-                <s:submit value="%{getText('application.no')}" action="templateRemove!cancel" />
+                <s:submit value="%{getText('generic.yes')}" />&nbsp;
+                <s:submit value="%{getText('generic.no')}" action="templateRemove!cancel" />
             </s:form>
         </td>
     </tr>

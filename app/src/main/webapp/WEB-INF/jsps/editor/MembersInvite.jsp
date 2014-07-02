@@ -59,7 +59,7 @@
          
     <br />      
     <s:submit value="%{getText('inviteMember.button.save')}" />
-    <s:submit value="%{getText('application.cancel')}" action="invite!cancel" />
+    <s:submit value="%{getText('generic.cancel')}" action="invite!cancel" />
 
 </s:form>
 

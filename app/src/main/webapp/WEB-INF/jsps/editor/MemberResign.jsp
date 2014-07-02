@@ -29,8 +29,8 @@
     <s:form action="memberResign!resign">
 		<s:hidden name="salt" />
         <s:hidden name="weblog" />
-        <s:submit value="%{getText('application.yes')}" />&nbsp;
-        <s:submit value="%{getText('application.no')}" action="menu"/>
+        <s:submit value="%{getText('generic.yes')}" />&nbsp;
+        <s:submit value="%{getText('generic.no')}" action="menu"/>
     </s:form>
 </td>
 </tr>

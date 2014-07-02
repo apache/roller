@@ -40,7 +40,7 @@
 <s:if test="!templates.isEmpty">
 
     <tr>
-        <th width="30%"><s:text name="pagesForm.name" /></th>
+        <th width="30%"><s:text name="generic.name" /></th>
         <th width="10"><s:text name="pagesForm.action" /></th>
         <th width="55%"><s:text name="pagesForm.description" /></th>
         <th width="10"><s:text name="pagesForm.remove" /></th>

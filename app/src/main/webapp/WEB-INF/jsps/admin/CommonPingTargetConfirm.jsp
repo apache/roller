@@ -25,7 +25,7 @@
 <p/>
 
 <table>
-    <tr><td><s:text name="pingTarget.name" />&nbsp;&nbsp;</td><td><b><s:property value="pingTarget.name" /></b></td></tr>
+    <tr><td><s:text name="generic.name" />&nbsp;&nbsp;</td><td><b><s:property value="pingTarget.name" /></b></td></tr>
     <tr><td><s:text name="pingTarget.pingUrl" />&nbsp;&nbsp;</td><td><b><s:property value="pingTarget.pingUrl" /></b></td></tr>
 </table>
 

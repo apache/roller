@@ -71,7 +71,7 @@
 
                         <tr>
                             <td>
-                                <label for="name"><s:text name="mediaFileView.name" /></label>
+                                <label for="name"><s:text name="generic.name" /></label>
                             </td>
                             <td>
                                 <s:textfield id="beanName" name="bean.name" size="20" maxlength="255" />

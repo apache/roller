@@ -27,7 +27,7 @@
 
 <%-- Headings --%>
 <tr class="rollertable">
-    <th class="rollertable" width="20%%"><s:text name="pingTarget.name" /></th>
+    <th class="rollertable" width="20%%"><s:text name="generic.name" /></th>
     <th class="rollertable" width="55%"><s:text name="pingTarget.pingUrl" /></th>
     <th class="rollertable" width="15%" colspan="2"><s:text name="pingTarget.autoEnabled" /></th>
     <th class="rollertable" width="5%"><s:text name="pingTarget.edit" /></th>

@@ -87,7 +87,7 @@ $("#d_clip_button").ready(function() {
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileEdit.name" /></label>
+                <label for="status"><s:text name="generic.name" /></label>
             </td>
             <td>
                 <s:textfield name="bean.name" size="40" maxlength="100" tabindex="1" />
@@ -212,7 +212,7 @@ $("#d_clip_button").ready(function() {
        <input type="submit" tabindex="7"
               value="<s:text name="mediaFileEdit.save" />" name="submit" />
        <input type="button" tabindex="8"
-              value="<s:text name="application.cancel" />" onClick="javascript:window.parent.onEditCancelled();" />
+              value="<s:text name="generic.cancel" />" onClick="javascript:window.parent.onEditCancelled();" />
     </div>
 
 </s:form>

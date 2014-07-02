@@ -315,7 +315,7 @@
                                                <a onclick='saveComment("<s:property value="#comment.id"/>")'><s:text name="commentManagement.saveComment" /></a> &nbsp;|&nbsp;
                                           </span>
                                           <span id="cancellink-<s:property value="#comment.id"/>" style="display: none">
-                                               <a onclick='editCommentCancel("<s:property value="#comment.id"/>")'><s:text name="application.cancel" /></a>
+                                               <a onclick='editCommentCancel("<s:property value="#comment.id"/>")'><s:text name="generic.cancel" /></a>
                                           </span>
                                       </div>
                                 </div>

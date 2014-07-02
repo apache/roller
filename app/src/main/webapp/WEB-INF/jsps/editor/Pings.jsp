@@ -37,7 +37,7 @@
 <table class="rollertable">
 <%-- Headings --%>
 <tr class="rollertable">
-    <th class="rollertable" width="20%"><s:text name="pingTarget.name" /></th>
+    <th class="rollertable" width="20%"><s:text name="generic.name" /></th>
     <th class="rollertable" width="40%"><s:text name="pingTarget.pingUrl" /></th>
     <th class="rollertable" width="20%" colspan=2><s:text name="pingTarget.auto" /></th>
     <th class="rollertable" width="20%"><s:text name="pingTarget.manual" /></th>

@@ -79,7 +79,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileAdd.name" /></label>
+                <label for="status"><s:text name="generic.name" /></label>
             </td>
             <td>
                 <s:textfield name="bean.name" size="50" maxlength="255" />
@@ -179,7 +179,7 @@
     <br />
     <div class="control">
        <input type="submit" value='<s:text name="mediaFileAdd.upload" />' name="upload" />
-       <s:submit value="%{getText('application.cancel')}" action="mediaFileView" />
+       <s:submit value="%{getText('generic.cancel')}" action="mediaFileView" />
     </div>
 
 </s:form>

@@ -44,14 +44,14 @@
             <s:form action="weblogRemove!remove">
 				<s:hidden name="salt" />
                 <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-                <s:submit value="%{getText('application.yes')}" />
+                <s:submit value="%{getText('generic.yes')}" />
             </s:form>
         </td>
         <td>
             <s:form action="weblogConfig" method="post">
 				<s:hidden name="salt" />
                 <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-                <s:submit value="%{getText('application.no')}" />
+                <s:submit value="%{getText('generic.no')}" />
             </s:form>
         </td>
     </tr>

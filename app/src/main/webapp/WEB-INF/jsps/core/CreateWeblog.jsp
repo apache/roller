@@ -51,7 +51,7 @@ function handlePreview(handle) {
 <table class="formtable">
 
 <tr>
-    <td class="label"><label for="name" /><s:text name="createWebsite.name" /></label></td>
+    <td class="label"><label for="name" /><s:text name="generic.name" /></label></td>
     <td class="field"><s:textfield name="bean.name" size="30" maxlength="30" /></td>
     <td class="description"><s:text name="createWebsite.tip.name" /></td>
 </tr>
@@ -124,7 +124,7 @@ function handlePreview(handle) {
 <br />
    
 <s:submit value="%{getText('createWebsite.button.save')}" />
-<input type="button" value="<s:text name="application.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
+<input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
     
 </s:form>
 

@@ -48,7 +48,7 @@
     
     <table cellspacing="5">
         <tr>
-            <td class="label"><s:text name="pageForm.name" />&nbsp;</td>
+            <td class="label"><s:text name="generic.name" />&nbsp;</td>
             <td class="field">
                 <s:if test="template.required || bean.mobile">
                     <s:textfield name="bean.name" size="50" readonly="true" cssStyle="background: #e5e5e5" />
@@ -137,7 +137,7 @@
         <tr>
             <td>
                 <s:submit value="%{getText('pageForm.save')}" />
-                <input type="button" value='<s:text name="application.done"/>' 
+                <input type="button" value='<s:text name="generic.done"/>'
                     onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'" />
             </td>
             <td align="right">

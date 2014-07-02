@@ -31,7 +31,7 @@
                     
                     <table cellpadding="0" cellspacing="6">
                         <tr>
-                            <td><s:text name="pagesForm.name"/></td>
+                            <td><s:text name="generic.name"/></td>
                             <td><s:textfield name="newTmplName" /></td>
                         </tr>
                         

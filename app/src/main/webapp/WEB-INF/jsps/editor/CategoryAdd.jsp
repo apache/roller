@@ -28,7 +28,7 @@
     <table>
         
         <tr>
-            <td><s:text name="categoryForm.name" /></td>
+            <td><s:text name="generic.name" /></td>
             <td><s:textfield name="bean.name" size="70" maxlength="255" /></td>
         </tr>
         
@@ -46,7 +46,7 @@
     
     <p>
         <s:submit value="%{getText('categoryForm.save')}" />
-        <s:submit value="%{getText('application.cancel')}" action="categoryAdd!cancel" />
+        <s:submit value="%{getText('generic.cancel')}" action="categoryAdd!cancel" />
     </p>
     
 </s:form>
