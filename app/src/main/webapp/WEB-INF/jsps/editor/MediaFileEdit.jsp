@@ -210,7 +210,7 @@ $("#d_clip_button").ready(function() {
 
     <div class="control">
        <input type="submit" tabindex="7"
-              value="<s:text name="mediaFileEdit.save" />" name="submit" />
+              value="<s:text name="generic.save" />" name="submit" />
        <input type="button" tabindex="8"
               value="<s:text name="generic.cancel" />" onClick="javascript:window.parent.onEditCancelled();" />
     </div>

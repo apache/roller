@@ -48,7 +48,7 @@
     
     <div class="formrow">
         <label class="formrow" />&nbsp;</label>
-        <s:submit value="%{getText('planetGroups.button.save')}" />
+        <s:submit value="%{getText('generic.save')}" />
         &nbsp;
         <input type="button" 
                value='<s:text name="generic.cancel" />'
@@ -60,7 +60,7 @@
                 <s:param name="bean.id" value="%{bean.id}" />
             </s:url>
             <input type="button" 
-                   value='<s:text name="planetGroups.button.delete" />' 
+                   value='<s:text name="generic.delete" />'
                    onclick="window.location='<s:property value="%{deleteUrl}"/>'" />
         </s:if>
     </div>
@@ -81,7 +81,7 @@
         <s:text name="planetGroups.column.handle" />
     </th>
     <th class="rollertable" width="10%">
-        <s:text name="planetGroups.column.edit" />
+        <s:text name="generic.edit" />
     </th>
     <th class="rollertable" width="10%">
         <s:text name="planetGroups.column.subscriptions" />

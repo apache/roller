@@ -163,7 +163,7 @@
             <s:param name="weblog" value="%{actionWeblog.handle}" />
             <s:param name="bean.id" value="#post.id" />
         </s:url>
-        <s:a href="%{editUrl}"><s:text name="weblogEntryQuery.edit" /></s:a>
+        <s:a href="%{editUrl}"><s:text name="generic.edit" /></s:a>
     </td>
 
     <td>
@@ -171,7 +171,7 @@
             <s:param name="weblog" value="%{actionWeblog.handle}" />
             <s:param name="removeId" value="#post.id" />
         </s:url>
-        <s:a href="%{deleteUrl}"><s:text name="weblogEntryQuery.delete" /></s:a>
+        <s:a href="%{deleteUrl}"><s:text name="generic.delete" /></s:a>
     </td>
 
     </tr>

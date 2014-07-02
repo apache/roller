@@ -59,7 +59,7 @@
     </table>
     
     <p>
-        <s:submit value="%{getText('bookmarkForm.save')}" />
+        <s:submit value="%{getText('generic.save')}" />
         <s:submit value="%{getText('generic.cancel')}" action="bookmarkAdd!cancel" />
     </p>
     

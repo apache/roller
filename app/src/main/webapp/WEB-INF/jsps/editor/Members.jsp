@@ -108,7 +108,7 @@ function save() {
     <br />
      
     <div class="control">
-       <s:submit value="%{getText('memberPermissions.button.save')}" />
+       <s:submit value="%{getText('generic.save')}" />
     </div>
     
 </s:form>

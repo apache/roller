@@ -79,7 +79,7 @@
     </table>
     
     <div class="control">
-        <input class="buttonBox" type="submit" value="<s:text name="configForm.save"/>"/>
+        <input class="buttonBox" type="submit" value="<s:text name="generic.save"/>"/>
     </div>
     
 </s:form>

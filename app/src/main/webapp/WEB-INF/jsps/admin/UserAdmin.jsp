@@ -33,7 +33,7 @@
     <input name="userName" id="userName" size="30" maxlength="30" 
            onfocus="onUserNameFocus(null)" onkeyup="onUserNameChange(null)" 
            style="margin:4px" />
-    <input type="submit" value='<s:text name="userAdmin.edit" />' 
+    <input type="submit" value='<s:text name="generic.edit" />'
            style="margin:4px" />
     <br />
     <select id="userList" size="10" onchange="onUserSelected()" 

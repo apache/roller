@@ -52,7 +52,7 @@ function onMove()
         <tr class="rollertable">
             <th class="rollertable" width="35%"><s:text name="generic.name" /></th>
             <th class="rollertable" width="45%"><s:text name="generic.description" /></th>
-            <th class="rollertable" width="10%"><s:text name="categoriesForm.edit" /></th>
+            <th class="rollertable" width="10%"><s:text name="generic.edit" /></th>
             <th class="rollertable" width="10%"><s:text name="categoriesForm.remove" /></th>
         </tr>
         

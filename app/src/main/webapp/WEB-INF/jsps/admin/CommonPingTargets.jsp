@@ -30,7 +30,7 @@
     <th class="rollertable" width="20%%"><s:text name="generic.name" /></th>
     <th class="rollertable" width="55%"><s:text name="pingTarget.pingUrl" /></th>
     <th class="rollertable" width="15%" colspan="2"><s:text name="pingTarget.autoEnabled" /></th>
-    <th class="rollertable" width="5%"><s:text name="pingTarget.edit" /></th>
+    <th class="rollertable" width="5%"><s:text name="generic.edit" /></th>
     <th class="rollertable" width="5%"><s:text name="pingTarget.remove" /></th>
 </tr>
 
@@ -79,7 +79,7 @@
             <s:param name="bean.id" value="#pingTarget.id" />
         </s:url>
         <s:a href="%{editPing}">
-            <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="<s:text name="pingTarget.edit" />" />
+            <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="<s:text name="generic.edit" />" />
         </s:a>
     </td>
     

@@ -37,7 +37,7 @@
     <p/>
     <div class="formrow">
        <label for="" class="formrow">&nbsp;</label>
-       <s:submit value="%{getText('pingTarget.save')}" />
+       <s:submit value="%{getText('generic.save')}" />
     </div>
 
 </s:form>

@@ -91,7 +91,7 @@
     <br />
     
     <div class="control">
-        <s:submit value="%{getText('userAdmin.save')}" />
+        <s:submit value="%{getText('generic.save')}" />
         <input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="userAdmin"/>'" />
     </div>
     

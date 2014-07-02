@@ -35,7 +35,7 @@
     </table>
     
     <p>
-        <s:submit value="%{getText('folderForm.save')}" />
+        <s:submit value="%{getText('generic.save')}" />
         <s:submit value="%{getText('generic.cancel')}" action="folderAdd!cancel" />
     </p>
     

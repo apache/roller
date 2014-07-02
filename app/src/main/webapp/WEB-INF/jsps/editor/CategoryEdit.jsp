@@ -46,7 +46,7 @@
     </table>
     
     <p>
-        <s:submit value="%{getText('categoryForm.save')}" />
+        <s:submit value="%{getText('generic.save')}" />
         <s:submit value="%{getText('generic.cancel')}" action="categoryEdit!cancel" />
     </p>
     

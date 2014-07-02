@@ -96,7 +96,7 @@
                     <tr>
                         <td colspan="2" class="label">
                             <div class="control">
-                                <s:submit value="%{getText('frontpageConfig.save')}" />
+                                <s:submit value="%{getText('generic.save')}" />
                             </div>
                         </td>
                     </tr>

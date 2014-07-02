@@ -170,7 +170,7 @@
                     <s:text name="commentManagement.columnSpam" />
                 </th>
                 <th class="rollertable" width="5%" >
-                    <s:text name="commentManagement.columnDelete" />
+                    <s:text name="generic.columnDelete" />
                 </th>
                 <th class="rollertable">
                     <s:text name="commentManagement.columnComment" />

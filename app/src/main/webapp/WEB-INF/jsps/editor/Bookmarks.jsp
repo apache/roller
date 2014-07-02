@@ -93,7 +93,7 @@ function onMove()
             <th class="rollertable" width="25%"><s:text name="generic.name" /></th>
             <th class="rollertable" width="25%"><s:text name="bookmarksForm.url" /></th>
             <th class="rollertable" width="35%"><s:text name="bookmarksForm.feedurl" /></th>
-            <th class="rollertable" width="5%"><s:text name="bookmarksForm.edit" /></th>
+            <th class="rollertable" width="5%"><s:text name="generic.edit" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.visitLink" /></th>
         </tr>
         

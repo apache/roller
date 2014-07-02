@@ -47,7 +47,7 @@ function confirmSubDelete(subUrl) {
     <div class="formrow">
         <label for="feedURL" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
         <s:textfield name="subUrl" size="40" maxlength="255" />
-        &nbsp;<s:submit value="%{getText('planetSubscriptions.button.save')}" />
+        &nbsp;<s:submit value="%{getText('generic.save')}" />
     </div>
 </s:form>
 
@@ -69,7 +69,7 @@ function confirmSubDelete(subUrl) {
             <s:text name="planetSubscriptions.column.feedUrl" />
         </th>
         <th class="rollertable" width="10%">
-            <s:text name="planetSubscriptions.column.delete" />
+            <s:text name="generic.delete" />
         </th>
     </tr>
     <s:iterator id="sub" value="subscriptions" status="rowstatus">
@@ -92,7 +92,7 @@ function confirmSubDelete(subUrl) {
         <td class="rollertable">
             <img src='<s:url value="/images/delete.png"/>' />
             <a href="javascript: void(0);" onclick="confirmSubDelete('<s:property value="feedURL"/>')">
-                <s:text name="planetSubscriptions.button.delete"/>
+                <s:text name="generic.delete"/>
             </a>
         </td>       
         

@@ -92,7 +92,7 @@
     <table style="width:100%">
         <tr>
             <td>
-                <s:submit value="%{getText('stylesheetEdit.save')}" />&nbsp;&nbsp;
+                <s:submit value="%{getText('generic.save')}" />&nbsp;&nbsp;
                 <s:if test="!customTheme">
                     <s:submit value="%{getText('stylesheetEdit.revert')}" onclick="revertStylesheet();return false;" />
                 </s:if>
