@@ -36,7 +36,7 @@
             #if ($utils.isUserAuthorizedToAuthor($entry.website))
                 &nbsp;|&nbsp;
                 <a href="$url.editEntry($entry.anchor)">
-                    $text.get("macro.weblog.entrypermalink.edit")</a>
+                    $text.get("generic.edit")</a>
             #end
         </p>
 
