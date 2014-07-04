@@ -1,10 +1,5 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl"?>
-<rdf:RDF xml:lang="en"
-         xmlns="http://usefulinc.com/ns/doap#" 
-         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-         xmlns:asfext="http://projects.apache.org/ns/asfext#"
-         xmlns:foaf="http://xmlns.com/foaf/0.1/">
 <!--
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
@@ -21,46 +16,52 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-  <Project rdf:about="http://roller.apache.org/">
-    <created>2012-04-03</created>
-    <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
-    <name>Apache Roller</name>
-    <homepage rdf:resource="http://roller.apache.org/" />
-    <asfext:pmc rdf:resource="http://roller.apache.org" />
-    <shortdesc>Apache Roller is a full-featured, multi-user and group blog server suitable for blog sites large and small.</shortdesc>
-    <description>Apache Roller is a full-featured, multi-user and group-blog server suitable for blog sites large and small. It runs as a Java web application that should be able to run on most any Java EE server and relational database. Roller's installation guide covers deployment on Tomcat, GlassFish, and JBoss application servers using a MySQL, Derby, or PostgreSQL database. Users however have reported success running Roller on other app servers and databases.
+<rdf:RDF xml:lang="en"
+         xmlns="http://usefulinc.com/ns/doap#" 
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+         xmlns:asfext="http://projects.apache.org/ns/asfext#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
 
--    Multi-user blogging: can support tens of thousands of users and blogs
--    Group blogging with three permisson levels (editor, author and limited)
--    Support for comment moderation and comment spam prevention measures
--    Bloggers have complete control over blog layout/style via Apache Velocity-driven templates
--    Built-in search engine indexes weblog entry content
--    Pluggable cache and rendering system
--    Support for blog clients that support MetaWeblog API
--    All blogs have entry and comment feeds in both RSS 2.0 and Atom 1.0 formats</description>
-    <bug-database rdf:resource="https://issues.apache.org/jira/browse/ROL" />
-    <mailing-list rdf:resource="https://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists" />
-    <download-page rdf:resource="http://roller.apache.org/downloads.html" />
-    <programming-language>Java</programming-language>
-    <category rdf:resource="http://projects.apache.org/category/content" />
-    <release>
-      <Version>
-        <name>Current - 5.x</name>
-        <created>2012-06-24</created>
-        <revision>5.0.1</revision>
-      </Version>
-    </release>
-    <repository>
-      <SVNRepository>
-        <location rdf:resource="https://svn.apache.org/repos/asf/roller/"/>
-        <browse rdf:resource="https://svn.apache.org/repos/asf/roller/"/>
-      </SVNRepository>
-    </repository>
-    <maintainer>
-      <foaf:Person>
-        <foaf:name>Apache Roller PMC</foaf:name>
-          <foaf:mbox rdf:resource="mailto:dev@roller.apache.org"/>
-      </foaf:Person>
-    </maintainer>
-  </Project>
+    <Project rdf:about="http://roller.apache.org/">
+        <created>2012-04-03</created>
+        <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
+        <name>Apache Roller</name>
+        <homepage rdf:resource="http://roller.apache.org/" />
+        <asfext:pmc rdf:resource="http://roller.apache.org" />
+        <shortdesc>Apache Roller is a full-featured, multi-user and group blog server suitable for blog sites large and small.</shortdesc>
+        <description>Apache Roller is a full-featured, multi-user and group-blog server suitable for blog sites large and small. It runs as a Java web application that should be able to run on most any Java EE server and relational database. Roller's installation guide covers deployment on Tomcat, GlassFish, and JBoss application servers using a MySQL, Derby, or PostgreSQL database. Users however have reported success running Roller on other app servers and databases.
+
+            -    Multi-user blogging: can support tens of thousands of users and blogs
+            -    Group blogging with three permisson levels (editor, author and limited)
+            -    Support for comment moderation and comment spam prevention measures
+            -    Bloggers have complete control over blog layout/style via Apache Velocity-driven templates
+            -    Built-in search engine indexes weblog entry content
+            -    Pluggable cache and rendering system
+            -    Support for blog clients that support MetaWeblog API
+            -    All blogs have entry and comment feeds in both RSS 2.0 and Atom 1.0 formats</description>
+        <bug-database rdf:resource="https://issues.apache.org/jira/browse/ROL" />
+        <mailing-list rdf:resource="https://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists" />
+        <download-page rdf:resource="http://roller.apache.org/downloads.html" />
+        <programming-language>Java</programming-language>
+        <category rdf:resource="http://projects.apache.org/category/content" />
+        <release>
+            <Version>
+                <name>Current</name>
+                <created>2014-06-27</created>
+                <revision>5.0.4</revision>
+            </Version>
+        </release>
+        <repository>
+            <SVNRepository>
+                <location rdf:resource="https://svn.apache.org/repos/asf/roller/"/>
+                <browse rdf:resource="https://svn.apache.org/repos/asf/roller/"/>
+            </SVNRepository>
+        </repository>
+        <maintainer>
+            <foaf:Person>
+                <foaf:name>Apache Roller PMC</foaf:name>
+                <foaf:mbox rdf:resource="mailto:dev@roller.apache.org"/>
+            </foaf:Person>
+        </maintainer>
+    </Project>
 </rdf:RDF>
