@@ -1,6 +1,6 @@
 <!-- 
 Defines the Roller Global Admin UI menu and roles allowed to use each menu. 
-Each menu or menu item is governed by four attrbibutes:
+Each menu or menu item is governed by four attributes
 
 See comments in editor-menu.xml for info about attributes.
 -->

@@ -60,7 +60,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
             this.themeName = request.getParameter("theme");
         }
 
-        //we may need to know the type of page we are going to previiew
+        //we may need to know the type of page we are going to preview
          if(request.getParameter("type") != null) {
              this.setType(request.getParameter("type"));
          }
