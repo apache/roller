@@ -25,7 +25,7 @@
                 
                 <s:if test="authenticatedUser != null">
                     <s:text name="mainPage.loggedInAs" />
-                    <a href="<s:url action="profile" namespace="/roller-ui" />"><s:property value="authenticatedUser.userName"/></a>
+                    <a href="<s:url action="menu" namespace="/roller-ui" />"><s:property value="authenticatedUser.userName"/></a>
                 </s:if>
                 
                 

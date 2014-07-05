@@ -1,0 +1,847 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+*  contributor license agreements.  The ASF licenses this file to You
+* under the Apache License, Version 2.0 (the "License"); you may not
+* use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.  For additional information regarding
+* copyright in this work, please see the NOTICE file in the top level
+* directory of this distribution.
+*/
+/**
+  * STANDARD ELEMENTS
+  */
+
+body
+{
+
+  background: #faf0e6;
+  /*background: #f88506;*/
+  color: #000;
+  font-weight: 400;
+  font-size: 85%;
+  font-family: Verdana, sans-serif;
+  text-align: center;
+  /*padding: 25px;
+  voice-family: "\"}\"";
+  voice-family: inherit;*/
+}
+
+a:link
+{
+  color: #314E6C;
+  /*cursor: hand;*/
+  voice-family: "\"}\"";
+  voice-family: inherit;
+  cursor: pointer;
+}
+
+a:visited
+{
+  color: #314E6C;
+}
+
+a:hover
+{
+  /*cursor: hand;*/
+  voice-family: "\"}\"";
+  voice-family: inherit;
+  cursor: pointer;
+}
+
+ul, dl
+{
+  padding: 0px 0px 0px 5px;
+  margin: 0px;
+}
+
+li, dt, dd, div.links a
+{
+  list-style-type: none;
+  margin: 0px 0px 3px 0px;
+  padding: 0px;
+  font-weight: 400;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+}
+
+li a, dd a, a.copyright, div.sidebarBox a, div.links a
+{
+  text-decoration: none !important;
+}
+
+li a:hover, dd a:hover, a.copyright:hover, div.links a:hover
+{
+  text-decoration: underline !important;
+}
+
+div.links
+{ 
+  line-height: 18px;
+}
+
+div.links div.rFolder {
+    margin-left: -5px;
+    margin-bottom: 10px;
+}
+
+dd
+{
+  margin-bottom: 10px;
+}
+
+img
+{
+  border: 1px solid #BAB5AB;
+}
+
+select
+{
+  font-family: Georgia, serif;
+}
+
+input.styled, textarea.styled, 
+div#searchAgain input /* added searchAgain for roller */,
+div.comments-form input
+{
+  border: 1px solid #999;
+  font-family: Georgia, serif;
+  font-size: 1em;
+}
+
+label.styled, div.styled
+{
+  font: 800 oblique .85em Georgia, serif;
+  color: #000;
+}
+
+/**
+ * PAGE SectionS
+ */
+
+#mainContainer
+{
+  border: 1px solid #999;
+  margin: auto;
+  margin-top: 25px;
+  /*overflow: hidden;*/
+  width: 720px;
+  text-align: left;
+  background: #fff;
+}
+
+#smallContainer
+{
+  border: 2px solid #ccc;
+  margin: auto;
+  overflow: hidden;
+  width: 450px;
+  text-align: left;
+  background: #fff;
+}
+
+#leftColumn
+{
+  padding: 0px 5px 0px 5px;
+  width: 186px;
+  float: left;
+  /*margin: auto;*/
+  font-family: Georgia, serif;
+  /*overflow: hidden;*/
+  /* IE 5+ Box Model Hack*/
+  voice-family: "\"}\"";
+  voice-family: inherit;
+  width: 176px;
+}
+
+#midColumn
+{
+  padding: 10px;
+  width: 530px;
+  /*margin: auto;
+  overflow: hidden;*/
+  float: left;
+  voice-family: "\"}\"";
+  voice-family: inherit;
+  width: 509px;
+}
+
+
+#mainColumn
+{
+  padding: 10px;
+  width: 720px;
+  /*overflow: hidden;*/
+  float: left;
+  voice-family: "\"}\"";
+  voice-family: inherit;
+  width: 700px;
+}
+
+#smallColumn
+{
+  padding: 10px;
+  width: 450px;
+  /*overflow: hidden;*/
+  float: left;
+  voice-family: "\"}\"";
+  voice-family: inherit;
+  width: 430px;
+}
+
+/**
+ * PAGEBANNER
+ */
+
+#pageBanner
+{
+  height: 70px;
+}
+
+#pageBanner h1 {
+  font-family: Futura, Arial, Helvetica, sans-serif;
+  margin: 0px 0px -10px 10px;
+  padding-top: 10px;
+  font-weight: lighter;
+  font-size: 44px;
+  font-stretch: narrower;
+}
+
+#pageBanner h1 a 
+{
+  background: transparent;
+  color: #6F89A1;
+  text-decoration: none;
+  font-style: normal;
+}
+
+#gutter
+{
+  border-top: 0.1em solid #ddd;
+  border-bottom: 0.1em solid #ddd;
+  /*background: #eee;*/
+  height: 52px;
+  background: #eee url(../images/bannerBackground.gif) repeat-x;
+}
+
+#gutterimage1
+{
+  float: left;
+  margin: 0px;
+  width: 75px;
+  height: 50px;
+  border: 1px solid #ccc;
+  background: url(../images/daisy.jpg) no-repeat;
+}
+
+#gutterimage2
+{
+  float: left;
+  margin: 0px;
+  width: 75px;
+  height: 50px;
+  border: 1px solid #ccc;
+  background: url(../images/clouds.jpg) no-repeat;
+}
+
+#gutterimage3
+{
+  float: left;
+  margin: 0px;
+  width: 75px;
+  height: 50px;
+  border: 1px solid #ccc;
+  border-right: 2px solid #ccc;
+  background: url(../images/prairie.jpg) no-repeat;
+}
+
+/**
+ * ADMINBAR
+ */
+
+ul.rNavigationBar
+{
+  border-bottom: 1px dotted #ddd;
+  padding: 0px;
+  height: 23px;
+}
+
+ul.rNavigationBar li
+{
+  display: inline;
+  text-align: center;
+}
+
+ul.rNavigationBar li a, ul.rNavigationBar a
+{
+  color: #999;
+  padding: 5px;
+  width: 120px;
+  float: left;
+  text-align: center;
+  text-decoration: none;
+}
+
+ul.rNavigationBar li a:hover
+{
+  background: #ddd url(../images/buttonBackground.gif) repeat-x;
+  border-right: 1px dashed #ccc;
+  border-left: 1px dashed #ccc;
+}
+
+/**
+ * MENU
+ */
+ 
+#menu
+{
+    padding: 5px;
+    background: #fff;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    border-bottom: 1px dashed #ddd;
+}	
+
+#menu a
+{
+    color: #999;
+    padding:0px 2px 0px 2px;
+}
+
+#menu a:link
+{
+    text-decoration: none;
+    font-size: 1em;
+}	
+
+#menu a:visited
+{
+    text-decoration: none;
+    font-size: 1em;
+}	
+
+#menu a:hover	
+{
+    text-decoration: underline;
+}	
+
+/**
+ * SEARCH
+ */
+
+.searchEntryTitle
+{
+    font: 400 .5em Georgia, serif;
+} 
+
+.searchResultBox
+{
+  border-bottom: 1px solid #ddd;
+}
+
+.searchResultTitle
+{
+    border-bottom: 1px solid #ddd;
+    font: 800 1.6em Georgia, serif;
+}
+
+/**
+ * STORYLIST
+ */
+
+.storyBox
+{
+  border-bottom: 1px solid #BAB5AB;
+}
+
+.storyBox h2
+{
+  /*color: #333;*/
+}
+
+.storyDateBox
+{
+  font-family: Georgia, serif;
+  float: left;
+  padding:0px 5px 5px 0px;
+  margin: 0px 10px 4px 0px;
+  border-right: 1px solid #B39169;
+  width: 70px;
+  position: relative;
+  /*background: #f7f7f7;*/
+}
+
+.storyDateBox h2
+{
+  font-weight: 400;
+  margin: 0px;
+  padding: 0px;
+}
+
+.storyDateBox h2 a
+{
+  text-decoration: none;
+  font-size: 36px;
+}
+
+.storyDate
+{
+  text-decoration: none;
+  font-size: 32px;
+}
+
+.storyDateBox span
+{
+  font-size: 11px;
+}
+
+/**
+ * STORY
+ */
+
+.storyTitle
+{
+    font: 400 oblique 1.7em Georgia, serif;
+    color: #111;
+}
+
+.story
+{
+  font-family: Verdana, sans-serif;
+  font-size: 12px;
+  line-height: 2em;
+  text-align: justify;
+  /*color: #222;*/
+  /*margin-bottom: 25px;*/
+}
+
+.story>a
+{
+}
+
+/**
+ * COMMENTS
+ */
+
+div.trackbackUrl {
+    background: transparent;
+    color: #006633;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted silver;
+}
+
+#commentBox
+{
+  font-family: Arial;
+  color: #555
+}
+
+.comment
+{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  line-height: 16px;
+}
+
+#commentBoxPreview
+{
+  font-family: Arial;
+  color: #555;
+  padding: 5px;
+  background: #eee;
+  border: 1px solid #aaa;
+}
+
+#commentBoxPreview h3
+{
+  margin: 0px;
+}
+
+.comments-head {
+    font-weight: 900;
+}
+
+.comment, .comments-form table {
+    font-family: Verdana, sans-serif;
+    font-size: 1em;
+}
+
+.commentFormInput,
+.commentFormTextarea {
+    font-family: Verdana, serif;
+    font-size: 1em;
+}
+
+div.comments-head {
+    padding-top: 10px;
+    background: transparent;
+    color: #990000;
+}
+
+span.enabled {
+    color: green;
+    font-style: italic;
+}
+
+span.disabled {
+    color: red;
+}
+/**
+ * FORM ROWS
+ */
+
+.formRow
+{
+  width: auto;
+}
+
+.formRowTitle
+{
+  text-align: left;
+  font: 800 oblique 11px Georgia, serif;
+}
+
+.formRowControl
+{
+  padding-top: 5px;
+}
+
+.formRowControl input, .formRowControl textarea
+{
+  border: 1px solid #999;
+  font-family: Georgia, serif;
+}
+
+/**
+ * SIDE COLUMN
+ */
+
+#quoteBox
+{
+  font-style: oblique;
+  font-family: Arial, sans-serif;
+}
+
+.sidebarHeading, div.rFolder
+{
+  border-bottom: 1px solid #999;
+  color: #990000;
+  padding: 0px 0px 3px 5px;
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 12px;
+  font-variant: small-caps;
+}
+
+div.sidebarBox, form.sidebarBox
+{
+  margin-bottom: 25px;
+}
+
+#aboutBox
+{
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+}
+
+#aboutBox a
+{
+  text-decoration: none;
+  border-bottom: 1px dotted #314E6C;
+}
+
+#blogChalk
+{
+  width: 35px;
+  height: 30px;
+  border:1px dashed #ddd;
+}
+
+/**
+ * CLASSES
+ */
+
+.noBorder
+{
+  border: 0em;
+}
+
+.standardSpacer
+{
+  overflow: hidden;
+}
+
+.floatSpacer
+{
+  clear: both;
+  overflow: hidden;
+}
+
+.noDisplay
+{
+  display: none;
+}
+
+.blockDisplay
+{
+  display: block;
+}
+
+.smallText
+{
+  font-size: 9px;
+  font-family: Verdana, sans-serif;
+}
+
+.storyLink
+{
+  font-family: Georgia, serif;
+  font-size: 1.0em;
+  margin-left: 1.0em;
+}
+
+.new
+{
+  color: blue;
+  font-size: 9px;
+}
+
+.draft
+{
+  font: 800 oblique 14px Georgia;
+  color: #aaa
+}
+
+.border
+{
+  border-bottom: 1px solid #ccc;
+}
+
+
+.sectionTitle
+{
+    font-family: Georgia, serif;
+    font-weight: 800;
+    font-style: oblique;
+    font-size: 1.2em;
+    color: #555;    
+}
+
+.heading
+{
+    font-family: Georgia, serif;
+    font-weight: 400;
+    font-style: oblique;
+    font-size: 1.0em;
+    color: #555;    
+}
+
+.blockquote
+{
+    margin-left: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-right: 15px;
+    line-height: 1.7em;
+    color: #444;
+    clear: both;
+    /*font: 400 oblique 12px Helvetica, sans-serif;*/
+    font-style: oblique;
+    font-family: "Courier New", "Andale Mono", "MS Sans Serif";
+}
+
+img.smiley 
+{
+    vertical-align: top;
+}
+
+/**
+ * CALENDAR
+ */
+
+#calendar
+{
+    border: 1px solid #999;
+}
+
+#sideCalendar, table.hCalendarTable
+{
+    width: 160px;
+}
+
+table.hCalendarTable {
+    font-size: 1em;
+}
+
+.thead, .hCalendarDayNameRow
+{
+    border-bottom: 1px solid #ffbf74;
+    text-align: center;
+    font-size: .9em;
+    font-weight: 400;
+    /*font-variant: small-caps;*/
+    color: #444;
+}
+
+.calLink, .hCalendarDayTitle
+{
+    font-size: .9em;
+    color: #555;
+    text-align: center;
+}
+
+.calLink a:link, div.hCalendarDayTitle a
+{
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 800;
+}
+
+.calLink a:hover, div.hCalendarDayTitle a:hover
+{
+    text-decoration: underline !important;
+    font-size: 1.1em;
+    font-weight: 800;
+}
+
+.calendar
+{
+	font-family:verdana, arial, sans-serif;
+	color:#666;
+	font-size:x-small;
+	font-weight:normal;
+	background:#FFF;
+	line-height:140%;
+	padding:2px;
+    text-align:left;
+}
+
+.calendarCaption, .hCalendarMonthYearRow
+{	
+	font-family: Georgia, serif;
+	color: #111;
+	font-size: .9em;
+	font-weight: 400;
+	padding: 2px;
+	letter-spacing: .3em;
+	background: #fff;
+	/*font-variant: small-caps;*/
+    text-transform: uppercase;
+	text-align: center;			
+}
+
+#calendar>caption 
+{
+    margin: 5px;
+}
+
+/*
+ * Yeah, this is a mess. Too lazy to code, easier to do the calendar through
+ * styles.
+ */
+#cell1, #cell3, #cell5, #cell7, #cell8, #cell10, #cell12, #cell14, #cell15,
+#cell17, #cell19, #cell21, #cell22, #cell24, #cell26, #cell28, #cell29, #cell31,
+#cell33, #cell35, #cell36, #cell38, #cell40, #cell42
+{
+    background: #f7f7f7;
+}
+
+#c1, #c3, #c5, #c7, #c8, #c10, #c12, #c14, #c15,
+#c17, #c19, #c21, #c22, #c24, #c26, #c28, #c29, #c31,
+#c33, #c35, #c36, #c38, #c40, #c42
+{
+    background: #f0f0f0;
+}
+
+
+/**
+ * Easier to use attr=[], but not well supported
+ */
+#cell1, #cell2, #cell3, #cell4, #cell5, #cell6, #cell7, #cell8, #cell9, #cell10,
+#cell11, #cell12, #cell13, #cell14, #cell15, #cell16, #cell17, #cell18, #cell19, #cell20,
+#cell21, #cell22, #cell23, #cell24, #cell25, #cell26, #cell27, #cell28, #cell29, #cell30,
+#cell31, #cell32, #cell33, #cell34, #cell35, #cell36, #cell37, #cell38, #cell39, #cell40,
+#cell41, #cell42
+{
+    border-top: 1px solid #999;
+    height: 120px;
+    width: 90px;
+    text-align: left;
+}
+
+#c1, #c2, #c3, #c4, #c5, #c6, #c7, #c8, #c9, #c10,
+#c11, #c12, #c13, #c14, #c15, #c16, #c17, #c18, #c19, #c20,
+#c21, #c22, #c23, #c24, #c25, #c26, #c27, #c28, #c29, #c30,
+#c31, #c32, #c33, #c34, #c35, #c36, #c37, #c38, #c39, #c40,
+#c41, #c42, td.hCalendarDay
+{
+    /*border-top: 1px solid #999;
+    height: 120px;
+    width: 90px;*/
+    font: 400 1em Arial, sans-serif;
+    text-align: center;
+}
+
+.hCalendarDayCurrent 
+{
+    border: 1px solid #ffbf74;
+}
+
+.day
+{
+    font: 800 1.1em Georgia, serif;
+    font-variant: small-caps;
+}
+
+.calendarMonth
+{
+    display: inline;
+    font-family: Georgia, serif;
+    font-weight: 400;
+    font-variant: small-caps;
+    /*font-style: oblique;*/
+    font-size: 1.6em;
+    color: #000;    
+}
+
+a.calendarLink
+{
+    font-family: Georgia, serif;
+    font-weight: 800;
+    font-size: 1.1em;
+}
+
+a.calendarLink:link, a.calendarLink:visited
+{
+    text-decoration: none;
+}
+
+a.calendarLink:hover
+{
+    text-decoration: underline;
+}
+
+/**
+ * INDEX
+ */
+
+.indexBox
+{
+  color: #999;
+  margin-top: 10%;
+  border: 4px solid #ccc;
+  height: 250px;
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: auto;
+  background: #fff;    
+}
