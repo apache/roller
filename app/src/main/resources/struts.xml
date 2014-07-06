@@ -261,11 +261,6 @@
             <result name="success.json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileViewLight.jsp</result>
         </action>
 
-	<action name="mediaFileHierarchicalView!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
-            <result name="success" type="tiles">.MediaFileHierarchicalView</result>
-        </action>
-
 <!--
 	<action name="mediaFileSearch!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileSearch">

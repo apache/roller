@@ -271,13 +271,6 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
-    <definition name=".MediaFileHierarchicalView" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileHierarchicalView.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
-    </definition>
-
     <definition name=".MediaFileAddSuccess" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp" />

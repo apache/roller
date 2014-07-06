@@ -61,7 +61,7 @@ Each menu or menu item is governed by four attributes:
         <menu-item action="mediaFileView"
                    name="tabbedmenu.weblog.mediaFiles"
                    weblogPerms="post"
-                   subactions="mediaFileAdd,mediaFileHierarchicalView,mediaFileSearch" />
+                   subactions="mediaFileAdd,mediaFileSearch" />
 
         <!-- globalPerms="login" -->
         <menu-item action="weblogExport"
