@@ -24,8 +24,6 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container_core-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/menu/menu-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/dragdrop/dragdrop-min.js' />"></script>
-
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />"></script>
 
 
