@@ -6,7 +6,6 @@
     #showAutodiscoveryLinks($model.weblog)
     <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
 </head>
-<!-- searchresults-mobile -->
 <body>
 
 <div class="content_wrapper">
