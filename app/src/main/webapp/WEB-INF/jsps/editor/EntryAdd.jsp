@@ -24,17 +24,19 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container_core-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/menu/menu-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/dragdrop/dragdrop-min.js' />"></script>
 
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />"></script>
+
 <%-- Below two needed only if using popup date picker --%>
 <link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/styles/jquery.ui.all.css"/>' />
 <script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-ui.custom.min.js"/>'></script>
 
-<!-- Combo-handled YUI JS files: TODO add to roller-ui/yui or remove??
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0r4/build/autocomplete/assets/skins/sam/autocomplete.css">
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.8.0r4/build/animation/animation-min.js&2.8.0r4/build/connection/connection-min.js&2.8.0r4/build/datasource/datasource-min.js&2.8.0r4/build/autocomplete/autocomplete-min.js"></script>
--->
+<link rel="stylesheet" type="text/css" href="/roller-ui/yui/autocomplete/assets/skins/sam/autocomplete.css">
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/animation/animation-min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/connection/connection-min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/datasource/datasource-min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/autocomplete/autocomplete.js' />"></script>
+
 <style>
 #tagAutoCompleteWrapper {
     width:40em; /* set width here or else widget will expand to fit its container */
