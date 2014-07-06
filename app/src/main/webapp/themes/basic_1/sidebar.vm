@@ -1,0 +1,28 @@
+## sidebar contents
+    <!-- sidebar -->
+    <h2>Calendar</h2>
+    <div class="sidebar">
+    #showWeblogEntryCalendar($model.weblog "nil")
+    </div>
+
+    <h2>Feeds</h2>
+    <div class="sidebar">
+    #showAtomFeedsList($model.weblog)
+    </div>
+
+    <h2>Search</h2>
+    <div class="sidebar">
+    #showWeblogSearchForm($model.weblog false)
+    </div>
+
+    <h2>Links</h2>
+    <div class="sidebar">
+    #set($defaultFolder = $model.weblog.getBookmarkFolder("/"))
+    #showBookmarkLinksList($defaultFolder)
+    </div>
+
+    <h2>Navigation</h2>
+    <div class="sidebar">
+    #showPageMenu($model.weblog)
+    #showAuthorMenu(true)
+    </div>

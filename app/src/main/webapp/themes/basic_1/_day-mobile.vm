@@ -1,0 +1,45 @@
+## $model here is a PageModel
+## $entry here is a WeblogEntryWrapper
+<!-- _day-mobile -->
+<ul data-role="listview" data-divider-theme="b" data-inset="true">
+  <li data-role="list-divider">$utils.formatDate($day, "EEEE MMM dd, yyyy")</li>
+  ## Loop entries
+  #foreach( $entry in $entries )
+    <li data-role="list-divider" data-theme="a">
+       <div>
+         $entry.title
+         #set($commentCount = $entry.commentCount)
+         #if($utils.isUserAuthorizedToAuthor($entry.website))
+           &nbsp;|&nbsp;&nbsp;<a href="$url.editEntry($entry.anchor)" data-role="button" data-inline="true" data-mini="true">$text.get("generic.edit")</a>
+         #end
+         #if($entry.commentsStillAllowed || $commentCount > 0)
+           |&nbsp;&nbsp;$text.get("macro.weblog.comments") [$commentCount]
+         #end
+       </div>
+    </li>
+    <li data-theme="a">
+      #if(!$model.permalink)
+        <a href="$entry.permalink" data-transition="slide">
+      #end
+        <h3>
+          #if($utils.isEmpty($entry.text))
+            $entry.transformedText
+          #else
+            $entry.transformedSummary
+          #end
+        </h3>
+        #if($model.permalink)
+          <p class="ui-li-desc content-textbox">
+            $entry.displayContent
+          </p>
+        #end
+        <p class="ui-li-desc content-textbox">
+          Posted at $utils.formatDate($entry.pubTime, "hh:mma MMM dd, yyyy")
+          by $entry.creator.screenName in <span class="category">$entry.category.name</span>
+        </p>
+      #if(!$model.permalink)
+        </a>
+      #end
+    </li>
+  #end ## End for #foreach
+</ul>

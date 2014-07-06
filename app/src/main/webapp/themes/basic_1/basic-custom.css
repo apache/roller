@@ -1,0 +1,272 @@
+/*-------------------------------------------------------------
+Base styles - default
+--------------------------------------------------------------*/
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline overline;
+}
+
+body {
+    background: white;
+    font-family:"Lucida Grande", lucida, Geneva, Arial, sans-serif;
+}
+
+.img {
+    border: 0px;
+    margin: 0px; 
+}
+
+/* entries ----------------------------------------------- */
+
+.entryBox {
+    font-size: 90%;
+}
+.entryTitle {
+    font-weight: bold;
+}
+
+.entryInfo {
+    font-size: 90%;
+    color: #999;
+}
+div.dayTitle {
+    font-size: 120%;
+    font-weight:bold;	
+    padding: .5em 0 0 0;
+}
+div.next-previous {
+    font-size: 80%;
+    text-align: center;
+    padding: .5em 0 .5em 0;
+
+}
+
+/* category chooser ----------------------------------------------- */
+
+.category-chooser {
+    margin: -50%;
+    width:100%;
+}
+.rCategory li {
+    font-size: 80%;
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+}
+li.selected {
+    font-weight: bold;
+}
+
+/* other lists ----------------------------------------------- */
+
+ul.rNavigationBar, ul.rMenu, ul.rFolder, ul.rFeeds, ul.rEntriesList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-size: 80%;
+}
+ul.rFeeds li {
+    background-image: url($url.absoluteSite/images/feed-icon-12x12.gif);
+    background-repeat: no-repeat;
+    background-position: 0 .2em; 
+    padding-left: 1.4em;
+    line-height: 1.5em;
+}
+
+/* calendar ----------------------------------------------- */
+
+.hCalendarDay{
+    text-align : center;
+    font-size: small;
+}
+th.hCalendarDayNameRow {
+    text-align : center;
+    font-size : small;
+    font-weight : bold;
+}
+td.hCalendarDayCurrent {
+    text-align : center;
+    font-size  : small;
+    font-weight: bold;
+}
+td.hCalendarDayLinked {
+    text-align : center;
+    font-size  : small;
+    font-weight: bold;
+}
+
+/* comments ----------------------------------------------- */
+
+div.comments-form span.status {
+    display: block;
+    background: white;
+    color: green;
+    border: 1px solid green;
+    margin: 10px 0px;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+span.error {
+    display: block;
+    background: white;
+    color: #c00;
+    border: 1px solid #c00;
+    margin: 10px 0px;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+p.comment-details {
+    font-size: 80%;
+    color: #999;
+}
+.comments-syntax-indicator {
+    font-weight: bold;
+}
+.comments-syntax-indicator span.enabled {
+    background: transparent;
+    color: green;
+    font-style: italic;
+}
+.comments-syntax-indicator span.disabled {
+    background: transparent;
+    color: red;
+    font-style: italic;
+}
+
+form ul{ position: relative; list-style: none; width: 100%; }
+form li{ line-height: 2em; margin: 0; padding: 1px 1px 6px 9px; }
+form li.focused{ background-color: #fff7c0 !important; }
+form li p{ font-size: 9px; line-height: 13px; color: #444; }
+form li{ display: inline-block; }
+form[id] li{ display: block; }
+form li div{ display: inline-block; }
+form[id] li div{ display: inline; }
+form .left{ float: left !important; margin: 0; }
+form .right{ float: right !important; margin: 0; }
+form .clear{ clear: both; } 
+form li div p{ margin: 0 0 5px 0; }
+form div.left{ margin-right: 2px !important; }
+form div.left[class]{ margin-right: 4px !important; }
+form div.left img{ margin: 0 0 -2px 0; }
+form h2{ font-size: 1.8em; clear: left; } 
+form .info{ display: inline-block; margin: 0 0 10px 0; padding: 0 0 4px 0; border-bottom: 1px dotted #ccc !important;}
+form .info[class]{ display: block; }
+form .info p{ font-size: 1em; line-height: 1.3em; margin: 0 0 8px 0; }
+textarea.textarea{margin-bottom: 1px;}
+textarea.textarea[class]{font-family: "Lucida Grande", Tahoma, "Trebuchet MS", Verdana, sans-serif;}
+select.select{ padding: 1px 0 0 0; margin: 1px 0 3px 0; }
+select.select[class]{ margin: 0; padding: 1px 0 1px 0; }
+form .small{ width: 70px; }
+form .medium{ width: 170px; }
+form .large, form textarea.textarea{ width: 340px; }
+form .tags{ width: 320px; }
+form textarea.small{ height: 5.5em; }
+form textarea.medium{ height: 10em; }
+form textarea.large{ height: 20em; }
+.choices input{ width: 200px; margin-right: 3px; }
+.choices ol{ margin: 10px 0 0 0; }
+.choices[class] ol{ margin: 0 !important; }
+.choices img{ margin: 0 0 1px 0; }
+fieldset ol li{ display: list-item !important; margin: 0 5px 2px 3px !important; padding: 0 !important; list-style: inside decimal; }
+input.button, button { width: 6em; padding: 2px 2px 0 0; /* fix for IE */ }
+/* revert to normal for Firefox */
+li>input.button, li>button, input.button>input.button, button>button { padding: 2px; }
+label.desc{
+    margin: 4px 0 3px 0;
+    border: 0;
+    color: #444;
+    font-size: 1em;
+    line-height: 1.3em;
+    display: block;
+    font-weight: bold;
+}
+input.text, input.number, input.url, input.email, input.password, input.file, 
+textarea.textarea, select.select{
+    font-size: 1.2em;
+    border-top: 1px solid #7c7c7c;
+    border-left: 1px solid #c3c3c3;
+    border-right: 1px solid #c3c3c3;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+}
+input.text, input.number, input.url, input.email, input.password, input.file{ padding: 2px; }
+input.currency{ text-align: right; }
+input.checkbox, input.radio{
+    display: block;
+    line-height: 1.4em;
+    margin: 8px 0 0 3px;
+    width: 13px;
+    height: 13px;
+}
+input.focus, textarea.focus { background: #ffd; color: #000; }
+label.choice{
+    display: block;
+    line-height: 1.4em;
+    margin: -19px 0 0 25px;
+    padding: 4px 0 5px 0;
+    color: #444;
+    width: 80%;
+}
+
+div.comments-form form ul {
+   width:40em;
+}
+
+/*-------------------------------------------------------------
+Basic theme styles
+--------------------------------------------------------------*/
+
+h1 {
+  font-size:200%;
+  color:#CC9933;
+}
+h2, .comments-head {
+    color:#CC9933;
+    font-size:90%;
+    font-weight:bold;
+    border-bottom:1px dotted #666;
+    text-transform:uppercase;
+    letter-spacing: .2em;  	
+    margin-top: .5em;			
+}
+h1.weblogName {
+    text-align:center;
+}
+p.weblogDescription {
+    text-align: center;
+}
+div.dayTitle {
+    color:#CC9933;
+    font-size:90%;
+    text-transform:uppercase;
+    border-bottom:1px dotted #666;		
+}
+
+/* layout ----------------------------------------------- */
+
+.content_wrapper {
+    width: 80%;
+    float: left;
+}
+.content {
+    padding: 0em 2em 2em 2em;
+}
+.rightbar_wrapper { 
+    width: 20%;
+    float: right;
+}
+.mobile{
+	width:250px;
+	height: 51px;
+	background: url($url.resource("images/forward_mobile.png")) top left no-repeat;
+	padding-top:17px;
+	padding-left:60px;
+}

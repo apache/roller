@@ -1,0 +1,100 @@
+/*-------------------------------------------------------------
+Base styles - mobile
+--------------------------------------------------------------*/
+
+a {
+  text-decoration: none;
+}
+
+body {
+    background: white;
+    font-family:"Lucida Grande", lucida, Geneva, Arial, sans-serif;
+}
+
+.img {
+    border: 0px;
+    margin: 0px; 
+}
+
+div.next-previous {
+    font-size: 80%;
+    text-align: center;
+    padding: .5em 0 .5em 0;
+}
+
+/* category chooser ----------------------------------------------- */
+
+.category-chooser {
+    margin: -50%;
+    width:100%;
+}
+.rCategory li {
+    font-size: 80%;
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+}
+li.selected {
+    font-weight: bold;
+}
+
+/* other lists ----------------------------------------------- */
+
+/* #* wrap text *# */
+.ui-page .ui-content .ui-listview .ui-li-desc, .box .ui-li-desc, .ui-popup .ui-title {
+    white-space: normal;
+    font-size: 16px;
+    margin: 0.5em 0 0.5em 0;
+}
+
+
+/* comments ----------------------------------------------- */
+
+div.comments-form span.status {
+    display: block;
+    background: white;
+    color: green;
+    border: 1px solid green;
+    margin: 10px 0px;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+span.error {
+    display: block;
+    background: white;
+    color: #c00;
+    border: 1px solid #c00;
+    margin: 10px 0px;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+form ul{ position: relative; list-style: none; }
+form li{ line-height: 2em; margin: 0; padding: 1px 1px 6px 9px; }
+
+/*-------------------------------------------------------------
+Basic theme styles
+--------------------------------------------------------------*/
+
+.mobile{
+	width:250px;
+	height: 51px;
+	background: url($url.resource("images/forward_mobile.png")) top left no-repeat;
+	padding-top:17px;
+	padding-left:60px;
+}
+
+.content-textbox {
+    background: none repeat scroll 0 0 #F9F9F9;
+    box-shadow: 0 0 3px #CCCCCC;
+    line-height: 1.2em;
+    margin-bottom: 15px;
+    margin-top: 10px;
+    padding: 8px;
+}
+.content-textbox p {
+    margin: 0 0 8px;
+}
