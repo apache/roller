@@ -19,7 +19,7 @@
 
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />"></script>
 <%-- Below two needed only if using popup date picker --%>
-<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/theme/sunny/jquery.ui.all.css"/>' />
+<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/styles/jquery.ui.all.css"/>' />
 <script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-ui.custom.min.js"/>'></script>
 
 <div class="sidebarFade">
@@ -79,7 +79,7 @@
                         $(function() {
                             $( "#entries_bean_startDateString" ).datepicker({
                                 showOn: "button",
-                                buttonImage: "/roller/images/calendar.png",
+                                buttonImage: "/images/calendar.png",
                                 buttonImageOnly: true,
                                 changeMonth: true,
                                 changeYear: true
@@ -95,7 +95,7 @@
                         $(function() {
                             $( "#entries_bean_endDateString" ).datepicker({
                                 showOn: "button",
-                                buttonImage: "/roller/images/calendar.png",
+                                buttonImage: "/images/calendar.png",
                                 buttonImageOnly: true,
                                 changeMonth: true,
                                 changeYear: true
