@@ -182,7 +182,7 @@ function handleCommentResponse() {
         <s:text name="commentManagement.columnSpam" />
     </th>
     <th class="rollertable" width="5%" >
-        <s:text name="generic.columnDelete" />
+        <s:text name="generic.delete" />
     </th>
     <th class="rollertable">
         <s:text name="commentManagement.columnComment" />
