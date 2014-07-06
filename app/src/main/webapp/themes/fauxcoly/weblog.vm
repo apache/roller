@@ -11,32 +11,24 @@
 </head>
 <body>
 
-<!-- use layout yui-t6: 300px sidebar on right -->
-<div id="doc2" class="yui-t6">
-
-
 <!-- *************************************************** -->
 <!-- HEADER -->
 <!-- *************************************************** -->
-<div id="hd">
 <div id="header_content">
 #includeTemplate($model.weblog "standard_header")
-</div>
 </div>
 
 
 <!-- *************************************************** -->
 <!-- BODY -->
 <!-- *************************************************** -->
-<div id="bd">
+<div class="yui3-g">
 
 
 <!-- *************************************************** -->
 <!-- BODY - MAIN -->
 <!-- *************************************************** -->
-<div id="yui-main">
-<div class="yui-b">
-
+<div class="yui3-u-2-3">
 <div id="main_content">
 
 <!--
@@ -58,15 +50,12 @@
 </div>
 
 </div>
-
-</div>
 </div>
 
 <!-- *************************************************** -->
 <!-- BODY - SIDEBAR -->
 <!-- *************************************************** -->
-<div class="yui-b">
-
+<div class="yui3-u-1-3">
 <div id="sidebar_content">
 
     <form id="searchForm" method="get" action="$url.search"
@@ -117,20 +106,15 @@ Click the link below to subscribe via your favorite feed reader:</p>
 </div>
 
 </div> <!-- close sidebar_content -->
-</div>
-</div>
+</div> <!-- close yui3-u-1-3 -->
+</div> <!-- close yui3-g -->
 
 <!-- *************************************************** -->
 <!-- FOOTER -->
 <!-- *************************************************** -->
-<div id="ft">
 <div id="footer_content">
 #includeTemplate($model.weblog "standard_footer")
 </div>
-</div>
-
-</div>
-
 </body>
 </html>
 

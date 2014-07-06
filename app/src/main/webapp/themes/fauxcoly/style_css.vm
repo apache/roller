@@ -1,7 +1,8 @@
 body, html {
     background: url($url.resource("images/faux-columns-950.png")) repeat-y scroll 0 0;
     background-position: center;
-    margin: 0;
+    margin: auto;
+    width: 950px;
     height: 100%;
 }
 
@@ -82,13 +83,9 @@ span.setup {
 /* HEADER */
 /* ------------------------------------------------------------ */
 
-#hd {
+#header_content {
     background-image: url($url.resource("images/background-950x250.png"));
     height: 200px;
-}
-
-#header_content {
-    height: 100%;
     width: 100%;
     position: relative;
 }
