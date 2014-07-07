@@ -90,7 +90,7 @@ $("#d_clip_button").ready(function() {
                 <label for="status"><s:text name="generic.name" /></label>
             </td>
             <td>
-                <s:textfield name="bean.name" size="40" maxlength="100" tabindex="1" />
+                <s:textfield name="bean.name" size="35" maxlength="100" tabindex="1" />
             </td>
        </tr>
 

@@ -18,11 +18,9 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/assets/skins/sam/container.css'/>" />
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/menu/assets/skins/sam/menu.css'/>" />
 
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/menu/menu-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/element/element-min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/button/button-min.js' />"></script>
 

@@ -17,25 +17,19 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<%-- container* files needed for yui-overlay in editor-text.jsp --%>
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/assets/skins/sam/container.css'/>" />
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/menu/assets/menu.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/autocomplete/assets/skins/sam/autocomplete.css'/>">
+<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/styles/jquery.ui.all.css"/>' />
 
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container_core-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js' />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/menu/menu-min.js'/>"></script>
-
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />"></script>
-
-<%-- Below two needed only if using popup date picker --%>
-<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/styles/jquery.ui.all.css"/>' />
-<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-ui.custom.min.js"/>'></script>
-
-<link rel="stylesheet" type="text/css" href="/roller-ui/yui/autocomplete/assets/skins/sam/autocomplete.css">
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/animation/animation-min.js' />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/connection/connection-min.js' />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/datasource/datasource-min.js' />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/autocomplete/autocomplete.js' />"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/datasource/datasource-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/animation/animation-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/connection/connection-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/autocomplete/autocomplete-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-1.11.0.min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-ui.custom.min.js'/>"></script>
 
 <style>
 #tagAutoCompleteWrapper {
