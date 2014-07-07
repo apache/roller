@@ -27,6 +27,7 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/button/button-min.js' />"></script>
 
 <script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />'></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
 
 
 <style>
@@ -342,13 +343,17 @@
     <%-- Media file folder contents --%>
 
     <script type="text/javascript">
-    function highlight(el, flag) {
-        if (flag) {
-            YAHOO.util.Dom.addClass(el, "highlight");
-        } else {
-            YAHOO.util.Dom.removeClass(el, "highlight");
+        function highlight(el, flag) {
+            if (flag) {
+                YUI().use('node', function (Y) {
+                    Y.one(el).addClass("highlight");
+                });
+            } else {
+                YUI().use('node', function (Y) {
+                    Y.one(el).removeClass("highlight");
+                });
+            }
         }
-    }
     </script>
 
     <div  width="720px" height="500px">

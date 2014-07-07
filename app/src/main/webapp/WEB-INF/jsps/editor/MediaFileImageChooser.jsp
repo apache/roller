@@ -17,10 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/assets/skins/sam/container.css'/>" />
-
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />"></script>
 
 
@@ -106,9 +103,13 @@
     <script type="text/javascript">
         function highlight(el, flag) {
             if (flag) {
-                YAHOO.util.Dom.addClass(el, "highlight");
+                YUI().use('node', function (Y) {
+                    Y.one(el).addClass("highlight");
+                });
             } else {
-                YAHOO.util.Dom.removeClass(el, "highlight");
+                YUI().use('node', function (Y) {
+                    Y.one(el).removeClass("highlight");
+                });
             }
         }
     </script>
