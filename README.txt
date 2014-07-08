@@ -6,6 +6,8 @@ Roller is made up of the following Maven projects:
 
   roller-project:         Top level project
   app:                    Roller Weblogger webapp, JSP pages, Velocity templates
+  assembly-release:       Used to create official distributions of Roller
+  docs:                   Roller documentation in ODT (OpenOffice/LibreOffice) format
   it-selenium             Integrated browser tests for Roller using Selenium
 
 To pull the latest trunk sources you need a Subversion client:

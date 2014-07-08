@@ -43,18 +43,18 @@
             <source>../LICENSE.txt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}</outputDirectory>
         </file> 
-        <!--file>
-            <source>../weblogger-docs/installguide/generated/roller-install-guide.pdf</source>
+        <file>
+            <source>../docs/roller-install-guide.odt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
         </file> 
         <file> 
-            <source>../weblogger-docs/userguide/generated/roller-user-guide.pdf</source>
+            <source>../docs/roller-template-guide.odt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
         </file> 
         <file> 
-            <source>../weblogger-docs/templateguide/generated/roller-template-guide.pdf</source>
+            <source>../docs/roller-user-guide.odt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
-        </file-->
+        </file>
     </files>
 
 </assembly>
