@@ -104,6 +104,10 @@ public class RollerContext extends ContextLoaderListener
         
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");
+        if (ctxPath == null) {
+            log.fatal("Roller requires an exploded WAR file to run.");
+            return;
+        }
         if (!ctxPath.endsWith(File.separator)) {
             ctxPath += File.separator + "resources";
         } else {
