@@ -28,7 +28,7 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/animation/animation-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/connection/connection-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/autocomplete/autocomplete-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-1.11.0.min.js'/>"></script>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-ui.custom.min.js'/>"></script>
 
 <style>

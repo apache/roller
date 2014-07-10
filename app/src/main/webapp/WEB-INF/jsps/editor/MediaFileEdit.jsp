@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
 
-<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.11.0.min.js" />'></script>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
 <%-- 
 <script type="text/javascript" src='<s:url value="/custom-ui/ZeroClipboard.js" />'></script>
