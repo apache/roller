@@ -70,14 +70,14 @@
                    <table cellpadding="0" cellspacing="0">
                        
                        <tr>
-                           <td class="mm_subtable_label"><s:text name='yourWebsites.weblog' /></td>
+                           <td class="mm_subtable_label"><s:text name='yourWebsites.weblog'/></td>
                            <td><a href='<s:property value="#perms.weblog.absoluteURL" />'>
                                <s:property value="#perms.weblog.absoluteURL" />
                            </a></td>                          
                        </tr>
                        
                        <tr>
-                           <td class="mm_subtable_label"><s:text name='yourWebsites.permission' /></td>
+                           <td class="mm_subtable_label"><s:text name='yourWebsites.permission'/></td>
                            <td><s:if test='#perms.hasAction("admin")'  >ADMIN</s:if>
                            <s:if test='#perms.hasAction("post")'       >AUTHOR</s:if>
                            <s:if test='#perms.hasAction("edit_draft")' >LIMITED</s:if></td>

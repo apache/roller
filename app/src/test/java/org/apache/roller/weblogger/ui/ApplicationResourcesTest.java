@@ -42,7 +42,7 @@ import junit.framework.TestSuite;
  * Note: we need to make sure that new property files are added to this
  * test.
  *
- * Note: commented out for Roller 5.0 - all translations need update
+ * Note: commented out - all translations need update
  * 
  * @author <a href="mailto:molen@mail.com">Jaap van der Molen</a>
  * @version $Revision: 1.7 $
@@ -64,13 +64,7 @@ public class ApplicationResourcesTest extends TestCase
 		TestSuite suite = new TestSuite();
 //		suite.addTest(new ApplicationResourcesTest("testSystemProperties"));
 //		suite.addTest(
-//			new ApplicationResourcesTest("testApplicationResources_nl"));
-//		suite.addTest(
 //			new ApplicationResourcesTest("testApplicationResources_zh_cn"));
-//		suite.addTest(
-//			new ApplicationResourcesTest("testApplicationResources_zh_tw"));
-//		suite.addTest(
-//			new ApplicationResourcesTest("testApplicationResources_vi"));
 		return suite;
 	}
 	
@@ -89,16 +83,6 @@ public class ApplicationResourcesTest extends TestCase
 	}
 
 	/**
-	 * Test Dutch stuff.
-	 * 
-	 * @throws Exception
-	 */
-	public void _testApplicationResources_nl() throws Exception
-	{
-		verifyResourceBundle("ApplicationResources_nl");
-	}
-
-	/**
 	 * Test Simple Chinese stuff.
 	 * 
 	 * @throws Exception
@@ -106,26 +90,6 @@ public class ApplicationResourcesTest extends TestCase
 	public void _testApplicationResources_zh_cn() throws Exception
 	{
 		verifyResourceBundle("ApplicationResources_zh_cn");
-	}
-
-	/**
-	 * Test Traditional Chinese stuff.
-	 * 
-	 * @throws Exception
-	 */
-	public void _testApplicationResources_zh_tw() throws Exception
-	{
-		verifyResourceBundle("ApplicationResources_zh_tw");
-	}
-
-	/**
-	 * Test Vietnamese stuff.
-	 * 
-	 * @throws Exception
-	 */
-	public void _testApplicationResources_vi() throws Exception
-	{
-		verifyResourceBundle("ApplicationResources_vi");
 	}
 
     public void testSystemProperties()
@@ -161,7 +125,7 @@ public class ApplicationResourcesTest extends TestCase
 		boolean missingMessage = false;
 
 		// check Chinese
-		System.out.println("Veriyfing " + bundle + "...");
+		System.out.println("Verifying " + bundle + "...");
         for (Object key : baseProps.keySet()) {
             if (props.getProperty((String) key) == null)
             {

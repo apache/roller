@@ -170,7 +170,7 @@
                     <s:text name="commentManagement.columnSpam" />
                 </th>
                 <th class="rollertable" width="5%" >
-                    <s:text name="generic.columnDelete" />
+                    <s:text name="generic.delete" />
                 </th>
                 <th class="rollertable">
                     <s:text name="commentManagement.columnComment" />
@@ -307,7 +307,7 @@
                                      </div>
                                      <div class="details">
                                           <a id="editlink-<s:property value="#comment.id"/>" onclick='editComment("<s:property value="#comment.id"/>")'>
-                                               <s:text name="commentManagement.editComment" />
+                                               <s:text name="generic.edit" />
                                           </a>
                                      </div>
                                      <div class="details">
