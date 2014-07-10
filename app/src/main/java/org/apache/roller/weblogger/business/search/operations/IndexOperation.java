@@ -137,7 +137,7 @@ public abstract class IndexOperation implements Runnable {
         doc.add(new StringField(FieldConstants.PUBLISHED, data.getPubTime()
                 .toString(), Field.Store.YES));
 
-        // index Category, needs to be in lower case as we are used in a term
+        // index Category, needs to be in lower case as it is used in a term
         WeblogCategory categorydata = data.getCategory();
         if (categorydata != null) {
             doc.add(new StringField(FieldConstants.CATEGORY, categorydata

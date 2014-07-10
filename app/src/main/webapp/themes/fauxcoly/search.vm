@@ -47,8 +47,7 @@
 <div id="main_content">
 
 <h2>Search Results for '$model.term'</h2>
-        $text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
-        $text.get( "macro.weblog.searchhits", [$model.hits])
+        $text.get( "macro.weblog.searchhits", [$model.term, $model.hits])
         <br />
         <br />
         <p>You can refine your search and/or search within one weblog category</p>
@@ -65,7 +64,7 @@
                 #end
              </select>
            #end
-           <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
+           <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
         </form>
         $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${model.weblog.handle}] )
 

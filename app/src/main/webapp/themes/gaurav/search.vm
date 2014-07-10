@@ -46,8 +46,7 @@
 	   	<div id="main_content" class="col-lg-8">
 			<div class="alert alert-info">
 				<p>Search Results for '$model.term'</p>
-        		$text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
-		        $text.get( "macro.weblog.searchhits", [$model.hits])
+		        $text.get( "macro.weblog.searchhits", [$model.term, $model.hits])
         	</div>
         	#if ($model.hits > 0)
 				<div id="search_results">

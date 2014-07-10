@@ -222,12 +222,6 @@ public class SearchServlet extends HttpServlet {
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
 
-            // TODO This causes another search, remove.
-            // manually add search model again to support pre-3.0 weblogs
-            Model searchModel = new SearchResultsModel();
-            searchModel.init(initData);
-            model.put("searchResults", searchModel);
-
         } catch (WebloggerException ex) {
             log.error("Error loading model objects for page", ex);
 

@@ -54,12 +54,7 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     private static String[] SEARCH_FIELDS = new String[] {
             FieldConstants.CONTENT, FieldConstants.TITLE,
-            FieldConstants.C_CONTENT, FieldConstants.CATEGORY, FieldConstants.LOCALE };
-
-    // private static BooleanClause.Occur[] SEARCH_FLAGS = new
-    // BooleanClause.Occur[] {
-    // BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD,
-    // BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD };
+            FieldConstants.C_CONTENT };
 
     private static Sort SORTER = new Sort(new SortField(
             FieldConstants.PUBLISHED, SortField.Type.STRING, true));
@@ -109,10 +104,6 @@ public class SearchOperation extends ReadFromIndexOperation {
             IndexReader reader = manager.getSharedIndexReader();
             searcher = new IndexSearcher(reader);
 
-            // Query query = MultiFieldQueryParser.parse(
-            // FieldConstants.LUCENE_VERSION, term, SEARCH_FIELDS,
-            // SEARCH_FLAGS, IndexManagerImpl.getAnalyzer());
-
             MultiFieldQueryParser multiParser = new MultiFieldQueryParser(
                     FieldConstants.LUCENE_VERSION, SEARCH_FIELDS,
                     IndexManagerImpl.getAnalyzer());
@@ -133,10 +124,8 @@ public class SearchOperation extends ReadFromIndexOperation {
                 query = bQuery;
             }
 
-            Term tCategory = IndexUtil.getTerm(FieldConstants.CATEGORY,
-                    category);
-
-            if (tCategory != null) {
+            if (category != null) {
+                Term tCategory = new Term(FieldConstants.CATEGORY, category.toLowerCase());
                 BooleanQuery bQuery = new BooleanQuery();
                 bQuery.add(query, BooleanClause.Occur.MUST);
                 bQuery.add(new TermQuery(tCategory), BooleanClause.Occur.MUST);

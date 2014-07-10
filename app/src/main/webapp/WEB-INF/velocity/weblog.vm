@@ -795,12 +795,11 @@ Show search again form for a weblog.
 *#
 #macro(showWeblogSearchAgainForm $weblog)
     <div id="searchAgain">
-        $text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
-        $text.get( "macro.weblog.searchhits", [$model.hits])
+        $text.get( "macro.weblog.searchhits", [$model.term, $model.hits])
         <form method="get" action="$url.search" style="margin: 5px">
           <input type="text" id="q" name="q" class="text medium" maxlength="255" value="$model.term" style="padding-left: 1px" /><br />
-          #if(!$site && $model.hits > 0)
-            #set( $cats = $model.weblog.getWeblogCategories())
+          #set( $cats = $model.weblog.getWeblogCategories())
+          #if(!$site && $cats && $cats.size() > 1)
             <select name="cat" class="select">
               <option value="">$text.get( "macro.searchresults.incategory" )</option>
               #foreach( $cat in $cats )
@@ -808,7 +807,7 @@ Show search again form for a weblog.
               #end
             </select>
           #end
-          <input type="submit" value="$text.get( "macro.weblog.searchagain" )" class="button" />
+          <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" class="button" />
         </form>
 
         $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${weblog.handle}] )
@@ -817,12 +816,11 @@ Show search again form for a weblog.
 ## Mobile Version
 #macro(showMobileSearchAgainForm $weblog)
     <div id="searchAgain">
-        $text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
-        $text.get( "macro.weblog.searchhits", [$model.hits])
+        $text.get( "macro.weblog.searchhits", [$model.term, $model.hits])
         <form method="get" action="$url.search" style="margin: 5px">
           <input type="search" id="q" name="q" placeholder="Search..." maxlength="255" value="$model.term" />
-          #if(!$site && $model.hits > 0)
-            #set( $cats = $model.weblog.getWeblogCategories())
+          #set($cats = $model.weblog.getWeblogCategories())
+          #if(!$site && $cats && $cats.size() > 1)
             <select name="cat" class="select">
               <option value="">$text.get( "macro.searchresults.incategory" )</option>
               #foreach( $cat in $cats )
@@ -830,7 +828,7 @@ Show search again form for a weblog.
               #end
             </select>
           #end
-          <input type="submit" data-role="button" data-theme="a" value="$text.get( "macro.weblog.searchagain" )" />
+          <input type="submit" data-role="button" data-theme="a" value="$text.get( "macro.weblog.searchbutton" )" />
         </form>
 
     </div>
