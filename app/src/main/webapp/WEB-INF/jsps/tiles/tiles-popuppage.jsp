@@ -23,7 +23,7 @@
         <tiles:insertAttribute name="head" />    
     </head>
 
-    <body class=" yui-skin-sam">
+    <body class="yui-skin-sam yui3-skin-sam">
 
         <div id="wrapper"> 
             <div id="leftcontent_wrap">

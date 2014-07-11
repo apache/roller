@@ -16,12 +16,18 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'></s:url>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/element/element-min.js'></s:url>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/tabview/tabview-min.js'></s:url>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui3/tabview/tabview-min.js'></s:url>"></script>
 
 <script type="text/javascript">
-// <!--
+    // Create a new YUI instance and populate it with the required modules.
+    YUI().use('tabview', function (Y) {
+        var tabview = new Y.TabView({
+            srcNode: '#template-code-tabs'
+        });
+        tabview.render();
+    });
+
 	function revertStylesheet() {
 		if (window.confirm('<s:text name="stylesheetEdit.confirmRevert"/>')) {
 			document.stylesheetEdit.action = "<s:url action='stylesheetEdit!revert' />";
@@ -36,8 +42,6 @@
 			}
 		};
 	</s:if>
-	
-// -->
 </script>
 
 <p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
@@ -59,18 +63,16 @@
     <%-- ================================================================== --%>
     <%-- Tabs for each of the two content areas: Standard and Mobile --%>
 
-    <div id="template-code-tabs" class="yui-navset">
-    <ul class="yui-nav">
+    <div id="template-code-tabs">
+    <ul>
         <li class="selected"><a href="#tabStandard"><em>Standard</em></a></li>
         <li><a href="#tabMobile"><em>Mobile</em></a></li>
     </ul>            
-    <div class="yui-content">
+    <div>
         <div id="tabStandard">
-            <%-- Standard Tab --%> 
             <s:textarea name="contentsStandard" cols="80" rows="30" cssStyle="width:100%" />
         </div>
         <div id="tabMobile">
-            <%-- Standard Tab --%> 
             <s:textarea name="contentsMobile" cols="80" rows="30" cssStyle="width:100%" />
         </div>
     </div>
@@ -80,7 +82,6 @@
     <%-- Save, Close and Resize text area buttons--%>
 
     <script type="text/javascript">
-    //<!--
         if (getCookie("templateEditorRows") != null) {
             document.getElementById('stylesheetEdit_contentsMobile').rows = getCookie("templateEditorRows");
             document.getElementById('stylesheetEdit_contentsStandard').rows = getCookie("templateEditorRows");
@@ -88,7 +89,7 @@
             document.getElementById('stylesheetEdit_contentsMobile').rows = 20;
             document.getElementById('stylesheetEdit_contentsStandard').rows = 20;
         }
-    //--></script>
+    </script>
     <table style="width:100%">
         <tr>
             <td>
@@ -112,9 +113,6 @@
 </s:form>
 
 <script>
-//<!--
-var tabView = new YAHOO.widget.TabView('template-code-tabs');
-
 function changeSize1(num) {
     var standardElem = document.getElementById('stylesheetEdit_contentsStandard');
     var mobileElem = document.getElementById('stylesheetEdit_contentsMobile');
@@ -127,5 +125,4 @@ function changeSize1(num) {
     expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
     setCookie("templateEditorRows", standardElem.rows, expires);
 }
-//-->
 </script>

@@ -41,11 +41,9 @@
 </style>
 
 <script type="text/javascript">
-<!--
     function onSelectDirectory(id) {
         window.location = "?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
     }
--->
 </script>
 
 

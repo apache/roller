@@ -56,14 +56,14 @@
                 maxlength="255" value="$model.term"
                 style="padding-left: 1px" />
             #set( $cats = $model.weblog.getWeblogCategories() )
-            #if($model.hits > 0 && !$cats.empty)
+            #if(!$site && $cats && $cats.size() > 1)
               <select name="cat">
                 <option value="">$text.get( "macro.searchresults.incategory" )</option>
                 #foreach( $cat in $cats )
                   <option #if($cat.name == $model.weblogCategory.name)selected="selected"#end>$cat.name</option>
                 #end
              </select>
-           #end
+            #end
            <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
         </form>
         $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${model.weblog.handle}] )

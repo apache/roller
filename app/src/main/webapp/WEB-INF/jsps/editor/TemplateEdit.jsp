@@ -16,12 +16,8 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" 
-    src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'></s:url>"></script>
-<script type="text/javascript" 
-    src="<s:url value='/roller-ui/yui/element/element-min.js'></s:url>"></script>
-<script type="text/javascript" 
-    src="<s:url value='/roller-ui/yui/tabview/tabview-min.js'></s:url>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui3/tabview/tabview-min.js'></s:url>"></script>
 
 <p class="subtitle">
    <s:text name="pageForm.subtitle" >
@@ -44,7 +40,7 @@
     <s:hidden name ="bean.type"/>
     
     <%-- ================================================================== --%>
-    <%-- Name, link and desription: disabled when page is a required page --%>
+    <%-- Name, link and description: disabled when page is a required page --%>
     
     <table cellspacing="5">
         <tr>
@@ -102,28 +98,37 @@
     <%-- ================================================================== --%>
     <%-- Tabs for each of the two content areas: Standard and Mobile --%>
 
-    <div id="template-code-tabs" class="yui-navset">
-    <ul class="yui-nav">
+    <div id="template-code-tabs">
+    <ul>
         <li class="selected"><a href="#tabStandard"><em>Standard</em></a></li>
         <li><a href="#tabMobile"><em>Mobile</em></a></li>
     </ul>            
-    <div class="yui-content">
+    <div>
         <div id="tabStandard">
-            <%-- Standard Tab --%> 
             <s:textarea name="bean.contentsStandard" cols="80" rows="30" cssStyle="width:100%" />
 
         </div>
         <div id="tabMobile">
-            <%-- Standard Tab --%> 
             <s:textarea name="bean.contentsMobile" cols="80" rows="30" cssStyle="width:100%" />
         </div>
     </div>
     </div>
 
+    <script type="text/javascript">
+        // Create a new YUI instance and populate it with the required modules.
+        YUI().use('tabview', function (Y) {
+            var tabview = new Y.TabView({
+                srcNode: '#template-code-tabs'
+            });
+            tabview.render();
+        });
+    </script>
+
+
     <%-- ================================================================== --%>
     <%-- Save, Close and Resize text area buttons--%>
 
-    <script type="text/javascript"><!--
+    <script type="text/javascript">
         if (getCookie("templateEditorRows") != null) {
             document.getElementById('template_bean_contentsMobile').rows = getCookie("templateEditorRows");
             document.getElementById('template_bean_contentsStandard').rows = getCookie("templateEditorRows");
@@ -132,7 +137,8 @@
             document.getElementById('template_bean_contentsStandard').rows = 20;
         }
 
-    // --></script>
+    </script>
+
     <table style="width:100%">
         <tr>
             <td>
@@ -251,8 +257,6 @@
 
 
 <script>
-var tabView = new YAHOO.widget.TabView('template-code-tabs');
-
 var weblogURL = '<s:property value="actionWeblog.absoluteURL" />';
 var originalLink = '<s:property value="bean.link" />';
 var type = '<s:property value="bean.type" /> ' ;

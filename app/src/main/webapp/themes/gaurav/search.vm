@@ -78,13 +78,15 @@
 								<input type="text" id="q" class="form-control" name="q" size="8" maxlength="255" value="$model.term" />
 							</div>
 							<div class="form-group" role="form">
-								#set( $cats = $model.weblog.getWeblogCategories() )
-								<select class="form-control" name="cat">
-									<option value="">$text.get( "macro.searchresults.incategory" )</option>
-									#foreach( $cat in $cats )
-									<option #if($cat.name == $model.weblogCategory.name)selected="selected"#end>$cat.name</option>
-									#end
-							   	</select>
+                                #set( $cats = $model.weblog.getWeblogCategories() )
+                                #if(!$site && $cats && $cats.size() > 1)
+                                    <select class="form-control" name="cat">
+                                        <option value="">$text.get( "macro.searchresults.incategory" )</option>
+                                        #foreach( $cat in $cats )
+                                        <option #if($cat.name == $model.weblogCategory.name)selected="selected"#end>$cat.name</option>
+                                        #end
+                                    </select>
+                                #end
 							</div>
 						   	<div class="form-group" role="form">
 	   							<button type="submit" class="btn btn-primary">Search</button>
