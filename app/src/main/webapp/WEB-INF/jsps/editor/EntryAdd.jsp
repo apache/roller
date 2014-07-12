@@ -19,15 +19,12 @@
 
 <%-- container* files needed for yui-overlay in editor-text.jsp --%>
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/assets/skins/sam/container.css'/>" />
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/autocomplete/assets/skins/sam/autocomplete.css'/>">
+<link rel="stylesheet" type="text/css" media="all" href='/roller/roller-ui/yui3/assets/skins/sam/autocomplete-list.css'/>
 <link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/styles/jquery.ui.all.css"/>' />
 
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js' />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/datasource/datasource-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/animation/animation-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/connection/connection-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/autocomplete/autocomplete-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-ui.custom.min.js'/>"></script>
 
@@ -86,13 +83,7 @@
                 <label for="title"><s:text name="weblogEdit.tags" /></label>
             </td>
             <td>
-
-                <div id="tagAutoCompleteWrapper">
-                    <s:textfield id="tagAutoComplete" cssClass="entryEditTags"
-                        name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
-                    <div id="tagAutoCompleteContainer"></div>
-                </div>
-
+                <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
             </td>
         </tr>
 
@@ -235,31 +226,26 @@ if (getCookie('control_pluginControl') != null) {
         togglePlusMinus('ipluginControl');
     }
 }
-YAHOO.example.RemoteCustomRequest = function() {
-    // Use an XHRDataSource
-    var oDS = new YAHOO.util.XHRDataSource('<s:property value="jsonAutocompleteUrl" />');
-    // Set the responseType
-    oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
-    // Define the schema of the JSON results
-    oDS.responseSchema = {
-        resultsList : "tagcounts",
-        fields : ["tag"]
-    };
+YUI().use(['autocomplete', 'autocomplete-filters', "datasource-io", "datasource-jsonschema"], function (Y) {
 
-    // Instantiate the AutoComplete
-    var oAC = new YAHOO.widget.AutoComplete("tagAutoComplete", "tagAutoCompleteContainer", oDS);
-    // Delimiter character, allow multiple tags to be chosen
-    oAC.delimChar = [","," "];
-    // Throttle requests sent
-    oAC.queryDelay = .5;
-    // The webservice needs additional parameters
-    oAC.generateRequest = function(sQuery) {
-        return "?format=json&prefix=" + sQuery ;
-    };
+    var ds2 = new Y.DataSource.Local({source:['chicago', 'colonial', 'countrymen', 'Romans', 'boston', 'baltimore', 'baseball']});
 
-    return {
-        oDS: oDS,
-        oAC: oAC
-    };
-}();
+    var ds = new Y.DataSource.IO({
+        source: "<s:property value="jsonAutocompleteUrl" />"
+    });
+
+    ds.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
+        schema: {
+            resultListLocator: 'tagcounts',
+            resultFields: ['tag']
+        }
+    }});
+
+    Y.one('#tagAutoComplete').plug(Y.Plugin.AutoComplete, {
+      queryDelimiter: ' ',
+      requestTemplate: '?format=json&prefix={query}',
+      resultTextLocator: 'tag',
+      source: ds
+    });
+});
 </script>
