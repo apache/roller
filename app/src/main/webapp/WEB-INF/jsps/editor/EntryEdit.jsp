@@ -315,8 +315,6 @@ if (getCookie('control_pluginControl') != null) {
 }
 YUI().use(['autocomplete', 'autocomplete-filters', "datasource-io", "datasource-jsonschema"], function (Y) {
 
-    var ds2 = new Y.DataSource.Local({source:['chicago', 'colonial', 'countrymen', 'Romans', 'boston', 'baltimore', 'baseball']});
-
     var ds = new Y.DataSource.IO({
         source: "<s:property value="jsonAutocompleteUrl" />"
     });
