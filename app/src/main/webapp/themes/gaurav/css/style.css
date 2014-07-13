@@ -198,3 +198,8 @@ span.setup {
   #searchForm #search-btn {left:118px;}
 }
 
+.dropdown-menu > li.selected {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #428bca;
+}
