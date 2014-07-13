@@ -189,7 +189,6 @@ public class SharedThemeFromDir extends SharedTheme {
         } else {
             setDescription(" ");
         }
-        setType(themeMetadata.getType());
         setAuthor(themeMetadata.getAuthor());
         setLastModified(null);
         setEnabled(true);

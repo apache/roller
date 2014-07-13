@@ -5,7 +5,7 @@
     <name>Basic Mobile</name>
     <description>Offers wide margins for blogging programming language source code and a separate button for mobile viewing.</description>
     <author>Roller Weblogger</author>
-    <type>standard</type>
+    <multiLayout>true</multiLayout>
     
     <!-- theme preview image -->
     <preview-image path="basic-preview.png" />

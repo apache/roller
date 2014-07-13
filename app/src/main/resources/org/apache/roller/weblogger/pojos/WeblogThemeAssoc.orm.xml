@@ -7,9 +7,6 @@
     <entity metadata-complete="true" name="WeblogThemeAssoc"
             class="org.apache.roller.weblogger.pojos.WeblogThemeAssoc" access="PROPERTY">
         <table name="roller_weblogtheme"/>
-        <named-query name="WeblogThemeAssoc.getThemeAssocByType">
-            <query>SELECT a FROM WeblogThemeAssoc a WHERE a.weblog = ?1 AND a.type =?2</query>
-        </named-query>
         <named-query name="WeblogThemeAssoc.getThemeAssocsByWeblog">
             <query>SELECT a FROM WeblogThemeAssoc a WHERE a.weblog = ?1</query>
         </named-query>
@@ -22,9 +19,6 @@
             </basic>
             <basic name="custom">
                 <column name="custom" insertable="true" updatable="true" nullable="false"/>
-            </basic>
-            <basic name="type">
-                <column name="type" insertable="true" updatable="true" nullable="false"/>
             </basic>
             <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="weblogid" insertable="true" updatable="true" nullable="false"/>

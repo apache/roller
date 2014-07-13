@@ -35,16 +35,14 @@ public class WeblogThemeAssoc implements Serializable{
     private Weblog weblog = null;
     private String name = null;
     private boolean isCustom = false;
-    private String type = null;
 
     public WeblogThemeAssoc() {
     }
 
-    public WeblogThemeAssoc(Weblog weblog ,String themeId, boolean isCustom , String type ){
+    public WeblogThemeAssoc(Weblog weblog ,String themeId, boolean isCustom) {
        this.weblog = weblog;
        this.name = themeId;
        this.isCustom = isCustom;
-       this.type = type;
     }
 
     public static long getSerialVersionUID() {
@@ -83,20 +81,8 @@ public class WeblogThemeAssoc implements Serializable{
         isCustom = custom;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append("}");
-        return buf.toString();
+        return "{" + getId() + "}";
     }
 
     public boolean equals(Object other) {
@@ -111,7 +97,6 @@ public class WeblogThemeAssoc implements Serializable{
             .append(getId(), o.getId())
             .append(getWeblog(), o.getWeblog())
             .append(getName(), o.getName())
-            .append(getType(), o.getType())
             .isEquals();
     }
 

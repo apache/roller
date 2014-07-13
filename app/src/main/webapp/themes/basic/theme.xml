@@ -5,8 +5,7 @@
     <name>Basic</name>
     <description>Offers wide margins for blogging programming language source code.</description>
     <author>Roller Weblogger</author>
-    <type>standard</type>
-    
+
     <!-- theme preview image -->
     <preview-image path="basic-preview.png" />
     

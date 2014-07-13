@@ -469,22 +469,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return query.getResultList();
     }
 
-    public WeblogThemeAssoc getThemeAssoc(Weblog weblog , String type) throws WebloggerException {
-
-        if (weblog == null) {
-            throw new WebloggerException("Weblog is null");
-        }
-        if (type == null) {
-            throw new WebloggerException("Type is null");
-        }
-        TypedQuery<WeblogThemeAssoc> query = strategy.getNamedQuery("WeblogThemeAssoc.getThemeAssocByType",
-                WeblogThemeAssoc.class);
-        query.setParameter(1,weblog);
-        query.setParameter(2,type);
-
-        return query.getSingleResult();
-    }
-
     public void saveThemeAssoc(WeblogThemeAssoc themeAssoc) throws WebloggerException {
         this.strategy.store(themeAssoc);
 

@@ -5,8 +5,7 @@
     <name>Frontpage</name>
     <description>Not a standard blog template; meant only as a front page accumulator of all blogs hosted by this server.</description>
     <author>Dave Johnson</author>
-    <type>standard</type>
-    
+
     <!-- theme preview image -->
     <preview-image path="sm-theme-frontpage.png" />
     

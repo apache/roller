@@ -35,7 +35,6 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable<Sha
     protected String id = null;
     protected String name = null;
     protected String description = null;
-    private   String type = null;
     protected String author = null;
     protected Date lastModified = null;
     protected boolean enabled = false;
@@ -99,13 +98,5 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable<Sha
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 }

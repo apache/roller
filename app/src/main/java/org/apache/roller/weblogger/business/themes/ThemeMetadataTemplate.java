@@ -35,7 +35,7 @@ public class ThemeMetadataTemplate {
     private String templateLanguage = null;
     private String contentType = null;
     private String contentsFile = null;
-    private String type = null;
+
     // Hash table to keep metadata about parsed template code files
     private Map<String, ThemeMetadataTemplateCode> templateCodeTable
             = new HashMap<String, ThemeMetadataTemplateCode>();
@@ -110,14 +110,6 @@ public class ThemeMetadataTemplate {
 
     public void setContentsFile(String contentsFile) {
         this.contentsFile = contentsFile;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public void addTemplateCode(String type, ThemeMetadataTemplateCode templateCode) {

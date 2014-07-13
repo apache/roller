@@ -8,8 +8,7 @@ create table roller_weblogtheme (
     id              varchar(48)  not null primary key,
     weblogid varchar(48) not null,
     name            varchar(255)  not null,
-    custom          $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
+    custom          $db.BOOLEAN_SQL_TYPE_FALSE not null
 );
 
 create table roller_templatecode (

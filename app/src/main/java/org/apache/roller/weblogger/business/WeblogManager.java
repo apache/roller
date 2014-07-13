@@ -215,8 +215,4 @@ public interface WeblogManager {
      */
     void release();
 
-    /**
-     *   get Theme Associativity object for type
-     */
-    WeblogThemeAssoc getThemeAssoc(Weblog weblog , String type) throws WebloggerException;
 }

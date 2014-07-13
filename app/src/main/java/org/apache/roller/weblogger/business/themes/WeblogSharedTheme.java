@@ -56,10 +56,6 @@ public class WeblogSharedTheme extends WeblogTheme {
         return this.theme.getName();
     }
 
-    public String getType() {
-        return this.theme.getType();
-    }
-
     public String getDescription() {
         return this.theme.getDescription();
     }

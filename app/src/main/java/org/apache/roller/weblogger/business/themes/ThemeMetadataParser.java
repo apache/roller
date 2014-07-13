@@ -59,8 +59,7 @@ public class ThemeMetadataParser {
         theme.setName(root.getChildText("name"));
         theme.setDescription(root.getChildText("description"));
         theme.setAuthor(root.getChildText("author"));
-        theme.setType(root.getChildText("type"));
-        
+
         // if either id or name is null then throw a parsing exception
         if(StringUtils.isEmpty(theme.getId()) || StringUtils.isEmpty(theme.getName())) {
             throw new ThemeParsingException("'id' and 'name' are required theme elements");
