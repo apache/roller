@@ -53,7 +53,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogThemeAssoc;
 import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 
 
@@ -117,15 +116,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         UserManager        umgr = roller.getUserManager();
         WeblogEntryManager emgr = roller.getWeblogEntryManager();
 
-        //remove theme Assocs
-        TypedQuery<WeblogThemeAssoc> themeAssocQuery = strategy.getNamedQuery("WeblogThemeAssoc.getThemeAssocsByWeblog",
-                WeblogThemeAssoc.class);
-        themeAssocQuery.setParameter(1,website);
-        List<WeblogThemeAssoc> assocResults = themeAssocQuery.getResultList();
-        for (WeblogThemeAssoc themeAssoc : assocResults) {
-            this.strategy.remove(themeAssoc);
-        }
-        
         // remove tags
         TypedQuery<WeblogEntryTag> tagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblog",
                 WeblogEntryTag.class);
@@ -469,13 +459,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return query.getResultList();
     }
 
-    public void saveThemeAssoc(WeblogThemeAssoc themeAssoc) throws WebloggerException {
-        this.strategy.store(themeAssoc);
-
-        // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(themeAssoc.getWeblog());
-    }
-        
     public List<Weblog> getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException {
         List<Weblog> weblogs = new ArrayList<Weblog>();
         if (user == null) {

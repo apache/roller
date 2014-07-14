@@ -26,7 +26,6 @@ import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogThemeAssoc;
 import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 
 
@@ -49,18 +48,9 @@ public interface WeblogManager {
     void saveWeblog(Weblog data) throws WebloggerException;
 
     /**
-     * Save new theme associativity for Weblog
-     * @param themeAssoc
-     * @throws WebloggerException
-     */
-    void saveThemeAssoc(WeblogThemeAssoc themeAssoc) throws WebloggerException;
-    
-    
-    /**
      * Remove website object.
      */
     void removeWeblog(Weblog website) throws WebloggerException;
-    
     
     /**
      * Get website object by name.
