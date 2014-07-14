@@ -31,6 +31,7 @@ public class ThemeMetadata {
     private String description = null;
     private String author = null;
     private String previewImage = null;
+    private Boolean dualTheme = false;
     private ThemeMetadataTemplate stylesheet = null;
     private Set<ThemeMetadataTemplate> templates = new HashSet<ThemeMetadataTemplate>();
     private Set<String> resources = new HashSet<String>();
@@ -110,4 +111,11 @@ public class ThemeMetadata {
         this.stylesheet = stylesheet;
     }
 
+    public Boolean getDualTheme() {
+        return dualTheme;
+    }
+
+    public void setDualTheme(Boolean dualTheme) {
+        this.dualTheme = dualTheme;
+    }
 }

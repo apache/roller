@@ -205,10 +205,12 @@ public class SharedThemeFromDir extends SharedTheme {
                     themeMetadata.getPreviewImage(), previewFile);
         }
 
-        // avaialble types in the Roller
+        // available types with Roller
         List<String> availableTypesList = new ArrayList<String>();
         availableTypesList.add("standard");
-        availableTypesList.add("mobile");
+        if (themeMetadata.getDualTheme()) {
+            availableTypesList.add("mobile");
+        }
 
         // load stylesheet if possible
         if (themeMetadata.getStylesheet() != null) {
@@ -225,8 +227,8 @@ public class SharedThemeFromDir extends SharedTheme {
             if (standardTemplateCode == null && mobileTemplateCode == null) {
                 throw new ThemeInitializationException(
                         "Error in getting template codes for template");
-            } else if (mobileTemplateCode == null) {
-                // cloning the standard template code if no mobile is present
+            } else if (mobileTemplateCode == null && themeMetadata.getDualTheme()) {
+                // clone the standard template code if no mobile is present
                 mobileTemplateCode = new ThemeMetadataTemplateCode();
                 mobileTemplateCode.setContentsFile(standardTemplateCode
                         .getContentsFile());
@@ -330,7 +332,7 @@ public class SharedThemeFromDir extends SharedTheme {
             if (standardTemplateCode == null && mobileTemplateCode == null) {
                 throw new ThemeInitializationException(
                         "Error in getting template codes for template");
-            } else if (mobileTemplateCode == null) {
+            } else if (mobileTemplateCode == null && themeMetadata.getDualTheme()) {
                 // cloning the standard template code if no mobile is present
                 mobileTemplateCode = new ThemeMetadataTemplateCode();
                 mobileTemplateCode.setContentsFile(standardTemplateCode

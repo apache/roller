@@ -175,19 +175,19 @@ public class Templates extends UIAction {
                 // Create weblog template codes for available types.
                 WeblogThemeTemplateCode standardTemplCode = new WeblogThemeTemplateCode(
                         newTemplate.getId(), "standard");
-                WeblogThemeTemplateCode mobileTemplCode = new WeblogThemeTemplateCode(
-                        newTemplate.getId(), "mobile");
-
                 standardTemplCode.setTemplate(newTemplate.getContents());
                 standardTemplCode.setTemplateLanguage("velocity");
-
-                mobileTemplCode.setTemplate(newTemplate.getContents());
-                mobileTemplCode.setTemplateLanguage("velocity");
-
                 WebloggerFactory.getWeblogger().getWeblogManager()
                         .saveTemplateCode(standardTemplCode);
+
+                /* TBI -- need a way for user to specify dual or single template
+                WeblogThemeTemplateCode mobileTemplCode = new WeblogThemeTemplateCode(
+                        newTemplate.getId(), "mobile");
+                mobileTemplCode.setTemplate(newTemplate.getContents());
+                mobileTemplCode.setTemplateLanguage("velocity");
                 WebloggerFactory.getWeblogger().getWeblogManager()
                         .saveTemplateCode(mobileTemplCode);
+                */
 
                 // if this person happened to create a Weblog template from
                 // scratch then make sure and set the defaultPageId. What does

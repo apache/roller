@@ -72,7 +72,7 @@ public class WeblogCustomTheme extends WeblogTheme {
     /**
      * Get the collection of all templates associated with this Theme.
      */
-    public List getTemplates() throws WebloggerException {
+    public List<? extends ThemeTemplate> getTemplates() throws WebloggerException {
         return WebloggerFactory.getWeblogger().getWeblogManager().getPages(this.weblog);
     }
     

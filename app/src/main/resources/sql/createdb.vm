@@ -531,13 +531,6 @@ alter table autoping add constraint ap_websiteid_fk
 alter table autoping add constraint ap_pingtargetid_fk
     foreign key (pingtargetid) references pingtarget(id) $!db.ADDL_FK_PARAMS ;
 
-
--- THE FOLLOWING CONSTRAINTS CAN NOT BE SUPPORTED FOR IMPORTING new-user.xml
--- alter table website add constraint website_defaultpageid_fk foreign key ( defaultpageid ) references webpage ( id );
--- alter table website add constraint website_weblogdayid_fk foreign key ( weblogdayid ) references webpage ( id );
--- alter table webpage add constraint webpage_websiteid_fk foreign key ( websiteid ) references website( id );
-
-
 -- oauth indexes
 
 create index oc_username_idx  on roller_oauthconsumer( username$!db.INDEXSIZE );

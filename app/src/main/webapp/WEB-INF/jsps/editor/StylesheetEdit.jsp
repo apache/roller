@@ -66,15 +66,19 @@
     <div id="template-code-tabs">
     <ul>
         <li class="selected"><a href="#tabStandard"><em>Standard</em></a></li>
-        <li><a href="#tabMobile"><em>Mobile</em></a></li>
-    </ul>            
+        <s:if test="contentsMobile != null">
+            <li><a href="#tabMobile"><em>Mobile</em></a></li>
+        </s:if>
+    </ul>
     <div>
         <div id="tabStandard">
             <s:textarea name="contentsStandard" cols="80" rows="30" cssStyle="width:100%" />
         </div>
-        <div id="tabMobile">
-            <s:textarea name="contentsMobile" cols="80" rows="30" cssStyle="width:100%" />
-        </div>
+        <s:if test="contentsMobile != null">
+            <div id="tabMobile">
+                <s:textarea name="contentsMobile" cols="80" rows="30" cssStyle="width:100%" />
+            </div>
+        </s:if>
     </div>
     </div>
     

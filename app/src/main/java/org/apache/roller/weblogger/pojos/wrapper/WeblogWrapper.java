@@ -80,7 +80,7 @@ public final class WeblogWrapper {
     
     
     public List<ThemeTemplateWrapper> getPages() throws WebloggerException {
-        List<ThemeTemplate> unwrapped = this.pojo.getTheme().getTemplates();
+        List<? extends ThemeTemplate> unwrapped = this.pojo.getTheme().getTemplates();
         List<ThemeTemplateWrapper> wrapped = new ArrayList<ThemeTemplateWrapper>(unwrapped.size());
 
         int i = 0;

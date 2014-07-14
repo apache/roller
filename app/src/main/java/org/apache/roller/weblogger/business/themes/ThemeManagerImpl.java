@@ -58,7 +58,7 @@ import org.apache.roller.weblogger.util.RollerMessages;
  * Base implementation of a ThemeManager.
  * 
  * This particular implementation reads theme data off the filesystem and
- * assumes that those themes are not changable at runtime.
+ * assumes that those themes are not changeable at runtime.
  */
 @com.google.inject.Singleton
 public class ThemeManagerImpl implements ThemeManager {

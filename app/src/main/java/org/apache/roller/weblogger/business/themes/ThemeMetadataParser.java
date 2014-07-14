@@ -60,6 +60,9 @@ public class ThemeMetadataParser {
         theme.setDescription(root.getChildText("description"));
         theme.setAuthor(root.getChildText("author"));
 
+        // dual-theme (standard & mobile) or one-theme-fits-all?
+        theme.setDualTheme("true".equalsIgnoreCase(root.getChildText("dualTheme")));
+
         // if either id or name is null then throw a parsing exception
         if(StringUtils.isEmpty(theme.getId()) || StringUtils.isEmpty(theme.getName())) {
             throw new ThemeParsingException("'id' and 'name' are required theme elements");

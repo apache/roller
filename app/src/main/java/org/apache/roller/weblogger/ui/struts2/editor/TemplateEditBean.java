@@ -167,11 +167,6 @@ public class TemplateEditBean {
         if (dataHolder.getTemplateCode("mobile") != null) {
             WeblogThemeTemplateCode tc = dataHolder.getTemplateCode("mobile");
             tc.setTemplate(contentsMobile);
-        } else {
-            WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(dataHolder.getId(), "mobile");
-            // empty, we've got no default mobile template
-            tc.setTemplate("");
-            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
         }
 
         // the rest of the template properties can only be modified when

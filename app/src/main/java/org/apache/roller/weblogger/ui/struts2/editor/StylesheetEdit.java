@@ -112,26 +112,25 @@ public class StylesheetEdit extends UIAction {
                             .getContents());
                     standardTemplateCode.setTemplateLanguage(stylesheetTmpl
                             .getTemplateLanguage());
-
-                    TemplateCode tCode = stylesheet
-                            .getTemplateCode(MOBILE_THEME_TYPE);
-
-                    WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(
-                            stylesheetTmpl.getId(), MOBILE_THEME_TYPE);
-                    mobileTemplateCode.setTemplate(tCode.getTemplate());
-                    mobileTemplateCode.setTemplateLanguage(tCode
-                            .getTemplateLanguage());
-
                     WebloggerFactory.getWeblogger().getWeblogManager()
                             .saveTemplateCode(standardTemplateCode);
-                    WebloggerFactory.getWeblogger().getWeblogManager()
-                            .saveTemplateCode(mobileTemplateCode);
+
+                    TemplateCode tCode = stylesheet.getTemplateCode(MOBILE_THEME_TYPE);
+                    if (tCode != null) {
+                        WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(
+                                stylesheetTmpl.getId(), MOBILE_THEME_TYPE);
+                        mobileTemplateCode.setTemplate(tCode.getTemplate());
+                        mobileTemplateCode.setTemplateLanguage(tCode
+                                .getTemplateLanguage());
+                        WebloggerFactory.getWeblogger().getWeblogManager()
+                                .saveTemplateCode(mobileTemplateCode);
+                    }
 
                     WebloggerFactory.getWeblogger().getWeblogManager()
                             .savePage(stylesheetTmpl);
+                    setTemplate(stylesheetTmpl);
                     WebloggerFactory.getWeblogger().flush();
 
-                    setTemplate(stylesheetTmpl);
 
                     // success message
                     addMessage("stylesheetEdit.create.success");
@@ -234,11 +233,6 @@ public class StylesheetEdit extends UIAction {
                     WeblogThemeTemplateCode tc = stylesheet
                             .getTemplateCode(MOBILE_THEME_TYPE);
                     tc.setTemplate(getContentsMobile());
-                } else {
-                    WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(
-                            stylesheet.getId(), MOBILE_THEME_TYPE);
-                    // empty, we've got no default mobile template
-                    tc.setTemplate("");
                     WebloggerFactory.getWeblogger().getWeblogManager()
                             .saveTemplateCode(tc);
                 }

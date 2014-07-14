@@ -82,6 +82,20 @@ Define non-null column with default value
 #end
 #end
 
+#**
+Rename a table.
+For Derby, will not work if there is a view or foreign key that references the table.
+MySQL requires sp_rename command; unsure if works.
+**#
+#macro(renameTable $oldTableName $newTableName)
+#if ($db.DBTYPE == 'POSTGRESQL' || $db.DBTYPE == 'HSQLDB')
+alter table $oldTableName rename to $newTableName;
+#elseif ($db.DBTYPE == 'MYSQL')
+sp_rename '$oldTableName', '$newTableName';
+#else
+rename table $oldTableName TO $newTableName;
+#end
+#end
 
 #**
 Macro to account for lack of comparable long varchar in MySQL
