@@ -70,7 +70,7 @@ public class LinkbackExtractorTest extends TestCase {
         assertEquals("The Apache Cassandra Project", le.getTitle());
         
         le = new LinkbackExtractor(testrefs[1][0],testrefs[1][1]);
-        assertEquals("Downloads", le.getTitle());
+        assertEquals("Apache Roller", le.getTitle());
 
         // todo: le.getPermalink() and le.getExcerpt() working
     }
