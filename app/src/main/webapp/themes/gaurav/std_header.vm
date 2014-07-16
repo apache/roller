@@ -19,24 +19,26 @@
 		<div class="collapse navbar-collapse navbar-ex1-collapse">
 			<ul class="nav navbar-nav">
 				<li><a href="$url.home">Home</a></li>
-				<li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        #if ($model.weblogCategory || $model.permalink)
-                            <li><a href="$url.home">$text.get("generic.all")</a></li>
-                        #else
-                            <li class="selected"><a href="$url.home">$text.get("generic.all")</a></li>
-                        #end
-                        #set($cats = $model.weblog.getWeblogCategories())
-                        #foreach($cat in $cats)
-                            #if ($model.weblogCategory && $model.weblogCategory.name == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
-                                <li class="selected"><a href="$url.category($cat.name)">$cat.name</a></li>
+				#set($cats = $model.weblog.getWeblogCategories())
+				#if ($cats.size() > 1)
+				    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            #if ($model.weblogCategory || $model.permalink)
+                                <li><a href="$url.home">$text.get("generic.all")</a></li>
                             #else
-                                <li><a href="$url.category($cat.name)">$cat.name</a></li>
+                                <li class="selected"><a href="$url.home">$text.get("generic.all")</a></li>
                             #end
-                        #end
-                    </ul>
-                </li>
+                            #foreach($cat in $cats)
+                                #if ($model.weblogCategory && $model.weblogCategory.name == $cat.name || ($model.permalink && $model.weblogEntry.category.name == $cat.name))
+                                    <li class="selected"><a href="$url.category($cat.name)">$cat.name</a></li>
+                                #else
+                                    <li><a href="$url.category($cat.name)">$cat.name</a></li>
+                                #end
+                            #end
+                        </ul>
+                    </li>
+                #end
 				#foreach($iPage in $weblog.pages)
 				    #if (!$iPage.hidden && $iPage.navbar && $iPage.link != "Weblog")
 				        #set($isSelected = false)
