@@ -899,8 +899,8 @@ public class Weblog implements Serializable {
      * @param length    Max number of tags to return.
      * @return          Collection of WeblogEntryTag objects
      */
-    public List getPopularTags(int sinceDays, int length) {
-        List results = new ArrayList();
+    public List<TagStat> getPopularTags(int sinceDays, int length) {
+        List<TagStat> results = new ArrayList();
         Date startDate = null;
         if(sinceDays > 0) {
             Calendar cal = Calendar.getInstance();

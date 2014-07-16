@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.pojos.wrapper;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 import java.util.*;
@@ -376,8 +377,7 @@ public final class WeblogWrapper {
         return this.pojo.getTodaysHits();
     }
     
-    // TODO: needs wrapping
-    public List getPopularTags(int sinceDays,int length) {
+    public List<TagStat> getPopularTags(int sinceDays,int length) {
         return this.pojo.getPopularTags(sinceDays,length);
     }
     

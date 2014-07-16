@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -529,7 +530,7 @@ public class SiteModel implements Model {
      * @param length
      * @return
      */
-    public List getPopularTags(int sinceDays, int length) {
+    public List<TagStat> getPopularTags(int sinceDays, int length) {
         List results = new ArrayList();
         Date startDate = null;
         if(sinceDays > 0) {
