@@ -24,7 +24,7 @@
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon" />
         <tiles:insertAttribute name="head" />
     </head>
-    <body class="yui-skin-sam yui3-skin-sam">
+    <body class="yui3-skin-sam">
         
         <div id="banner">
             <tiles:insertAttribute name="banner" />

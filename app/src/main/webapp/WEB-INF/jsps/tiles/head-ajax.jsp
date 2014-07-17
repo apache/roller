@@ -4,9 +4,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" media="all" href="<s:url value='/roller-ui/yui/reset-fonts-grids/reset-fonts-grids.css'/>" />
 <link rel="stylesheet" type="text/css" media="all" href="<s:url value='/roller-ui/yui/base/base-min.css'/>" />
-<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/yui3/assets/skins/sam/tabview.css"></s:url>'/>
 
 <link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/styles/layout.css"/>' />
 <link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/styles/roller.css"/>' />

@@ -17,13 +17,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/menu/assets/skins/sam/menu.css'/>" />
-
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/menu/menu-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/element/element-min.js' />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/button/button-min.js' />"></script>
-
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
 
@@ -50,18 +43,6 @@
         height:15px;
         width:15px;
         float:right;
-    }
-    .yui-button button {
-        border-style: none;
-        background-color:transparent;
-        *overflow:visible;
-        cursor:pointer;
-    }
-    .yui-menu-button button {
-        width:15px; height: 15px;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-image: url(<s:url value="/images/add.png"/>);
     }
 </style>
 
@@ -113,35 +94,6 @@
     function onView() {
         document.mediaFileViewForm.action = "<s:url action='mediaFileView!view' />";
         document.mediaFileViewForm.submit();
-    }
-
-    <%-- menu button for each image, launched from the plus sign image --%>
-
-    var menuButtons = {};
-
-    function setupMenuButton(id) {
-        if (!menuButtons[id]) {
-            var mediaFileMenu = [
-                { text: "<s:text name='mediaFile.createWeblogPost' />", value: 1, onclick: { fn: onCreateWeblogPost, obj:id } },
-                { text: "<s:text name='mediaFile.createPodcastPost' />", value: 2, onclick: { fn: onCreatePodcastPost, obj:id } }
-            ];
-            menuButtons[id] = new YAHOO.widget.Button({
-                type: "menu", label: "", name: id,
-                menu: mediaFileMenu, container: 'addbutton-' + id });
-            $('#addbutton-img' + id).hide();
-        }
-    }
-
-    function onCreateWeblogPost(p_sType, p_aArgs, id) {
-        $("#selectedImage").get(0).value = id;
-        $("#type").get(0).value = 'weblog';
-        $("#createPostForm").get(0).submit();
-    }
-
-    function onCreatePodcastPost(p_sType, p_aArgs, id) {
-        $("#selectedImage").get(0).value = id;
-        $("#type").get(0).value = 'podcast';
-        $("#createPostForm").get(0).submit();
     }
 
     <%-- code to toggle buttons on/off as media file/directory selections change --%>
@@ -359,14 +311,9 @@
                             <input type="hidden" id="mediafileidentity"
                                    value="<s:property value='#mediaFile.id'/>" />
 
-                            <str:truncateNicely lower="47" upper="47">
+                            <str:truncateNicely lower="70" upper="18">
                                 <s:property value="#mediaFile.name" />
                             </str:truncateNicely>
-
-                            <span class="button" id="addbutton-<s:property value='#mediaFile.id' />">
-                                <img id="addbutton-img<s:property value='#mediaFile.id' />"
-                                     src="<s:url value="/images/add.png"/>"  alt="logo" />
-                            </span>
 
                        </div>
 
