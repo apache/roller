@@ -17,13 +17,8 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<%-- container* files needed for yui-overlay in editor-text.jsp --%>
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/assets/skins/sam/container.css'/>" />
-<link rel="stylesheet" type="text/css" media="all" href='/roller/roller-ui/yui3/assets/skins/sam/autocomplete-list.css'/>
 <link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/styles/jquery.ui.all.css"/>' />
 
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-ui.custom.min.js'/>"></script>

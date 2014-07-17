@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%-- This page is designed to be included in edit-weblog.jsp --%>
+<%-- This page is designed to be included in Entry[Edit|Add].jsp --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <style>
@@ -29,24 +29,12 @@
         font-size:20px;
         font-weight:bold;
     }
-    .yui-overlay {
-        position:fixed;
-        background: #ffffff;
-        z-index: 112;
-        color:#000000;
-        border: 4px solid #525252;
-        text-align:left;
-        top: 50%;
-        left: 50%;
-    }
 </style>
 
 <script type="text/javascript">
-<!--
-    YAHOO.namespace("mediaFileEditor");
-
-    function init() {
-
+var mediapanel;
+YUI().use(['panel'], function (Y) {
+    Y.on("domready", function () {
         if (getCookie("editorSize1") != null) {
             document.getElementById('entry_bean_text').rows = getCookie("editorSize1");
         }
@@ -54,19 +42,38 @@
             document.getElementById('entry_bean_summary').rows = getCookie("editorSize");
         }
 
-        YAHOO.mediaFileEditor.lightbox = new YAHOO.widget.Panel(
-            "mediafile_edit_lightbox", {
-                modal:    true,
-                width:   "600px",
-                height:  "600px",
-                visible: false,
-                fixedcenter: true,
-                constraintoviewport: true
-            }
-        );
-        YAHOO.mediaFileEditor.lightbox.render(document.body);
+        mediapanel = new Y.Panel({
+            srcNode: '#mediafile_edit_lightbox',
+            modal  : true,
+            width  : 600,
+            height : 600,
+            visible: false,
+            centered: true,
+            constrain: true
+        });
+        mediapanel.render();
+    });
+});
+
+    function onClickAddImage(){
+        <s:url id="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
+        $("#mediaFileEditor").attr('src','<s:property value="%{mediaFileImageChooser}" />');
+        mediapanel.show();
     }
-    YAHOO.util.Event.addListener(window, "load", init);
+
+    function onClose() {
+        $("#mediaFileEditor").attr('src','about:blank');
+        mediapanel.hide();
+    }
+
+    function onSelectImage(name, url) {
+        $("#mediaFileEditor").attr('src','about:blank');
+        mediapanel.hide();
+        insertAtCursor(document.getElementById('entry_bean_text'),
+            '<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
+    }
 
     function onClose(textForInsertion)
     {
@@ -105,26 +112,6 @@
         }
     }
 
-    function onClickAddImage(){
-        <s:url id="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-        </s:url>
-        $("#mediaFileEditor").attr('src','<s:property value="%{mediaFileImageChooser}" />');
-        YAHOO.mediaFileEditor.lightbox.show();
-    }
-
-    function onClose() {
-        $("#mediaFileEditor").attr('src','about:blank');
-        YAHOO.mediaFileEditor.lightbox.hide();
-    }
-
-    function onSelectImage(name, url) {
-        $("#mediaFileEditor").attr('src','about:blank');
-        YAHOO.mediaFileEditor.lightbox.hide();
-        insertAtCursor(document.getElementById('entry_bean_text'),
-            '<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
-    }
--->
 </script>
 
 <script type="text/javascript">
@@ -183,10 +170,9 @@
            onclick="changeSize(document.getElementById('entry_bean_summary'), -5)" />
 </td></tr></table>
 
-
-<div id="mediafile_edit_lightbox" style="visibility:hidden">
-    <div class="hd"><s:text name="mediaFileChooser.popupTitle" /></div>
-    <div class="bd">
+<div id="mediafile_edit_lightbox">
+    <div class="yui3-widget-hd"><s:text name="mediaFileChooser.popupTitle"/></div>
+    <div class="yui3-widget-bd">
         <iframe id="mediaFileEditor"
                 style="visibility:inherit"
                 height="100%"
@@ -195,5 +181,5 @@
                 scrolling="auto">
         </iframe>
     </div>
-    <div class="ft"></div>
+    <div class="yui3-widget-ft"></div>
 </div>

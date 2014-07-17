@@ -89,38 +89,38 @@
 <%-- Editor event handling, on close, on add image, etc. --%>
 
 <script type="text/javascript">
-
-    YAHOO.namespace("mediaFileEditor");
-
-    function init() {
-
-        YAHOO.mediaFileEditor.lightbox = new YAHOO.widget.Panel(
-        "mediafile_edit_lightbox", {
-            modal:    true,
-            width:   "600px",
-            height:  "600px",
+var mediapanel;
+YUI().use(['panel'], function (Y) {
+    Y.on("domready", function () {
+        mediapanel = new Y.Panel({
+            srcNode: '#mediafile_edit_lightbox',
+            modal  : true,
+            width  : 600,
+            height : 600,
             visible: false,
-            fixedcenter: true,
-            constraintoviewport: true
-        }
-    );
-        YAHOO.mediaFileEditor.lightbox.render(document.body);
-    }
-    YAHOO.util.Event.addListener(window, "load", init);
+            centered: true,
+            constrain: true
+        });
+        mediapanel.render();
+    });
+});
 
     function onClickAddImage(){
+        <s:url id="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
         $("#mediaFileEditor").attr('src','<s:property value="%{mediaFileImageChooser}" />');
-        YAHOO.mediaFileEditor.lightbox.show();
+        mediapanel.show();
     }
 
     function onClose() {
         $("#mediaFileEditor").attr('src','about:blank');
-        YAHOO.mediaFileEditor.lightbox.hide();
+        mediapanel.hide();
     }
 
     function onSelectImage(name, url) {
         $("#mediaFileEditor").attr('src','about:blank');
-        YAHOO.mediaFileEditor.lightbox.hide();
+        mediapanel.hide();
 
         xinha_editors.xe_content.insertHTML(
         '<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
@@ -155,9 +155,9 @@
 <%-- ********************************************************************* --%>
 <%-- Lightbox for popping up image chooser --%>
 
-<div id="mediafile_edit_lightbox" style="visibility:hidden">
-    <div class="hd"><s:text name="mediaFileChooser.popupTitle" /></div>
-    <div class="bd">
+<div id="mediafile_edit_lightbox">
+    <div class="yui3-widget-hd"><s:text name="mediaFileChooser.popupTitle" /></div>
+    <div class="yui3-widget-bd">
         <iframe id="mediaFileEditor"
                 style="visibility:inherit"
                 height="100%"
@@ -166,5 +166,5 @@
                 scrolling="auto">
         </iframe>
     </div>
-    <div class="ft"></div>
+    <div class="yui3-widget-ft"></div>
 </div>

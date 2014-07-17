@@ -17,11 +17,9 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/assets/skins/sam/container.css'/>" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/menu/assets/skins/sam/menu.css'/>" />
 
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/menu/menu-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/element/element-min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/button/button-min.js' />"></script>
@@ -145,48 +143,6 @@
         $("#type").get(0).value = 'podcast';
         $("#createPostForm").get(0).submit();
     }
-
-
-    <%-- launch modal "lightbox" Media File Edit page --%>
-
-    function onClickEdit(mediaFileId) {
-        <s:url id="mediaFileEditURL" action="mediaFileEdit">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-        </s:url>
-        $("#mediaFileEditor").attr('src',
-            '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
-        YAHOO.mediaFileEditor.lightbox.show();
-    }
-
-    function onEditSuccess() {
-        $("#mediaFileEditor").attr('src','about:blank');
-        YAHOO.mediaFileEditor.lightbox.hide();
-        <%--
-        // window.location.reload(true); // Endless refresh loops in FF
-        // window.parent.location = window.parent.location.href + "?weblog="+<s:property value="%{actionWeblog.handle}" />;
-        --%>
-        $("#mediaFileSearchForm").submit();
-    }
-
-    function onEditCancelled() {
-        $("#mediaFileEditor").attr('src','about:blank');
-        YAHOO.mediaFileEditor.lightbox.hide();
-    }
-
-    YAHOO.namespace("mediaFileEditor");
-    $(document).ready(function() {
-        YAHOO.mediaFileEditor.lightbox = new YAHOO.widget.Panel(
-            "mediafile_edit_lightbox", {
-                modal:    true,
-                width:   "600px",
-                height:  "700px",
-                visible: false,
-                fixedcenter: true,
-                constraintoviewport: true
-            }
-        );
-        YAHOO.mediaFileEditor.lightbox.render(document.body);
-    });
 
     <%-- code to toggle buttons on/off as media file/directory selections change --%>
 
@@ -514,9 +470,9 @@
 
 <%-- ***************************************************************** --%>
 
-<div id="mediafile_edit_lightbox" style="visibility:hidden">
-    <div class="hd">Media File Editor</div>
-    <div class="bd">
+<div id="mediafile_edit_lightbox">
+    <div id="panelHeader" class="yui3-widget-hd"></div>
+    <div class="yui3-widget-bd">
         <iframe id="mediaFileEditor"
                 style="visibility:inherit"
                 height="100%"
@@ -525,8 +481,51 @@
                 scrolling="auto">
         </iframe>
     </div>
-    <div class="ft"></div>
+    <div class="yui3-widget-ft"></div>
 </div>
+
+<script>
+    <%-- launch modal "lightbox" Media File Edit page --%>
+    var mediapanel;
+    YUI().use('panel', function (Y) {
+        mediapanel = new Y.Panel({
+            srcNode: '#mediafile_edit_lightbox',
+            modal  : true,
+            width  : 600,
+            height : 700,
+            visible: false,
+            centered: true,
+            constrain: true
+        });
+        mediapanel.render();
+        <%-- Adding title bar text after it is made invisible above to avoid its
+             brief appearance on the screen after saves within the panel.
+        --%>
+        document.getElementById('panelHeader').innerHTML = '<s:text name="mediaFileEdit.popupTitle"/>';
+    });
+
+
+    function onClickEdit(mediaFileId) {
+        <s:url id="mediaFileEditURL" action="mediaFileEdit">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
+        $("#mediaFileEditor").attr('src',
+            '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
+        mediapanel.show();
+    }
+
+    function onEditSuccess() {
+        $("#mediaFileEditor").attr('src','about:blank');
+        mediapanel.hide();
+        document.getElementById('panelHeader').style.visibility = 'hidden';
+        document.mediaFileViewForm.submit();
+    }
+
+    function onEditCancelled() {
+        $("#mediaFileEditor").attr('src','about:blank');
+        mediapanel.hide();
+    }
+</script>
 
 <br/>
 <br/>
