@@ -32,12 +32,12 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 
 	private String templateId = null;
 	private String template = null;
-	private String type = null;
+	private RenditionType type = null;
 	private String contentType = null;
 	private String templateLanguage = null;
 	private Date lastModified = null;
 
-	public SharedThemeTemplateRendition(String templateId, String type) {
+	public SharedThemeTemplateRendition(String templateId, RenditionType type) {
 		this.templateId = templateId;
 		this.type = type;
 	}
@@ -66,12 +66,12 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 	}
 
 	// @Override
-	public String getType() {
+	public RenditionType getType() {
 		return type;
 	}
 
 	// @Override
-	public void setType(String type) {
+	public void setType(RenditionType type) {
 		this.type = type;
 	}
 	

@@ -25,6 +25,7 @@ import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -174,7 +175,7 @@ public class Templates extends UIAction {
 
                 // Create weblog template codes for available types.
                 CustomTemplateRendition standardRendition = new CustomTemplateRendition(
-                        newTemplate.getId(), "standard");
+                        newTemplate.getId(), RenditionType.STANDARD);
                 standardRendition.setTemplate(newTemplate.getContents());
                 standardRendition.setTemplateLanguage("velocity");
                 WebloggerFactory.getWeblogger().getWeblogManager()
@@ -182,7 +183,7 @@ public class Templates extends UIAction {
 
                 /* TBI -- need a way for user to specify dual or single template
                 CustomTemplateRendition mobileRendition = new CustomTemplateRendition(
-                        newTemplate.getId(), "mobile");
+                        newTemplate.getId(), RenditionType.MOBILE);
                 mobileRendition.setTemplate(newTemplate.getContents());
                 mobileRendition.setTemplateLanguage("velocity");
                 WebloggerFactory.getWeblogger().getWeblogManager()

@@ -34,11 +34,11 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	private String templateId = null;
 	// template contents
 	private String template = null;
-	private String type = null;
+	private RenditionType type = null;
 	private String contentType = null;
 	private String templateLanguage = null;
 
-	public CustomTemplateRendition(String templateId, String type) {
+	public CustomTemplateRendition(String templateId, RenditionType type) {
 		this.templateId = templateId;
 		this.type = type;
 	}
@@ -75,12 +75,12 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	}
 
 	// @Override
-	public String getType() {
+	public RenditionType getType() {
 		return type;
 	}
 
 	// @Override
-	public void setType(String type) {
+	public void setType(RenditionType type) {
 		this.type = type;
 	}
 

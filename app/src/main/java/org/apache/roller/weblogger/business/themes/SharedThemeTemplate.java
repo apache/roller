@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business.themes;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -48,7 +49,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private String type = null;
 
     //hash map to cache template Code objects parsed
-    private Map<String, TemplateRendition> templateRenditionHashMap = new HashMap<String, TemplateRendition>();
+    private Map<RenditionType, TemplateRendition> templateRenditionHashMap = new HashMap<RenditionType, TemplateRendition>();
     
     
     public SharedThemeTemplate() {}
@@ -181,7 +182,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         return type;
     }
 
-    public TemplateRendition getTemplateRendition(String type) throws WebloggerException {
+    public TemplateRendition getTemplateRendition(RenditionType type) throws WebloggerException {
         return templateRenditionHashMap.get(type);
     }
 
@@ -189,7 +190,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.type = type;
     }
 
-    public void addTemplateRendition(String type, TemplateRendition templateCode){
+    public void addTemplateRendition(RenditionType type, TemplateRendition templateCode){
         this.templateRenditionHashMap.put(type, templateCode);
     }
 }

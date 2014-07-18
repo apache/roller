@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -40,7 +41,7 @@ public class StaticTemplate implements Template, Serializable {
     private Date lastModified = new Date();
     private String templateLanguage = null;
     private String  outputContentType = null;
-    private String type = "standard";
+    private RenditionType type = RenditionType.STANDARD;
     
     
     public StaticTemplate(String id, String lang) {
@@ -95,16 +96,16 @@ public class StaticTemplate implements Template, Serializable {
         return outputContentType;
     }
 
-    public String getType() {
+    public RenditionType getType() {
         return type;
     }
 
-    public TemplateRendition getTemplateRendition(String type) throws WebloggerException {
+    public TemplateRendition getTemplateRendition(RenditionType type) throws WebloggerException {
         return WebloggerFactory.getWeblogger()
 			.getWeblogManager().getTemplateRenditionByType(this.getId(),type);
     }
 
-    public void setType(String type){
+    public void setType(RenditionType type){
          this.type = type;
     }
 

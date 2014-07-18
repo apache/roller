@@ -25,6 +25,7 @@
             </basic>
             <basic name="type">
                 <column name="type" insertable="true" updatable="true" nullable="false"/>
+                <enumerated>STRING</enumerated>
             </basic>
             <basic name="templateLanguage">
                 <column name="templatelang" insertable="true" updatable="true" unique="false"/>

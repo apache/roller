@@ -19,28 +19,30 @@
 package org.apache.roller.weblogger.pojos;
 
 /**
- * Template code for one type of device.
+ * A single template of a given RenditionType.
  */
 public interface TemplateRendition {
 
-	String getContentType();
+    public enum RenditionType {STANDARD, MOBILE}
 
-	String getTemplate();
+    String getContentType();
 
-	String getTemplateId();
+    String getTemplate();
 
-	String getTemplateLanguage();
+    String getTemplateId();
 
-	String getType();
+    String getTemplateLanguage();
 
-	void setContentType(String contentType);
+    RenditionType getType();
 
-	void setTemplate(String template);
+    void setContentType(String contentType);
 
-	void setTemplateId(String templateId);
+    void setTemplate(String template);
 
-	void setTemplateLanguage(String templateLanguage);
+    void setTemplateId(String templateId);
 
-	void setType(String type);
-	
+    void setTemplateLanguage(String templateLanguage);
+
+    void setType(RenditionType type);
+
 }

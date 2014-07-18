@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
@@ -152,20 +153,20 @@ public class TemplateEditBean {
     
     public void copyTo(WeblogTemplate dataHolder) throws WebloggerException {
 
-        if (dataHolder.getTemplateRendition("standard") != null) {
+        if (dataHolder.getTemplateRendition(RenditionType.STANDARD) != null) {
             // if we have a template, then set it
-            CustomTemplateRendition tc = dataHolder.getTemplateRendition("standard");
+            CustomTemplateRendition tc = dataHolder.getTemplateRendition(RenditionType.STANDARD);
             tc.setTemplate(contentsStandard);
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         } else { 
             // otherwise create it, then set it
-            CustomTemplateRendition tc = new CustomTemplateRendition(dataHolder.getId(), "standard");
+            CustomTemplateRendition tc = new CustomTemplateRendition(dataHolder.getId(), RenditionType.STANDARD);
 			tc.setTemplate(dataHolder.getContents());
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         }
 
-        if (dataHolder.getTemplateRendition("mobile") != null) {
-            CustomTemplateRendition tc = dataHolder.getTemplateRendition("mobile");
+        if (dataHolder.getTemplateRendition(RenditionType.MOBILE) != null) {
+            CustomTemplateRendition tc = dataHolder.getTemplateRendition(RenditionType.MOBILE);
             tc.setTemplate(contentsMobile);
         }
 
@@ -190,13 +191,13 @@ public class TemplateEditBean {
         this.description = dataHolder.getDescription();
         this.link = dataHolder.getLink();
 
-        if (dataHolder.getTemplateRendition("standard") != null) {
-            this.contentsStandard = dataHolder.getTemplateRendition("standard").getTemplate();
+        if (dataHolder.getTemplateRendition(RenditionType.STANDARD) != null) {
+            this.contentsStandard = dataHolder.getTemplateRendition(RenditionType.STANDARD).getTemplate();
         } else {
             this.contentsStandard = dataHolder.getContents();
         }
-        if (dataHolder.getTemplateRendition("mobile") != null) {
-            this.contentsMobile = dataHolder.getTemplateRendition("mobile").getTemplate();
+        if (dataHolder.getTemplateRendition(RenditionType.MOBILE) != null) {
+            this.contentsMobile = dataHolder.getTemplateRendition(RenditionType.MOBILE).getTemplate();
         }
 		log.debug("Standard: " + this.contentsStandard + " Mobile: " + this.contentsMobile); 
 

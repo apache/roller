@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
@@ -573,7 +574,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
     }
 
-    public CustomTemplateRendition getTemplateRenditionByType(String templateId, String type) throws WebloggerException{
+    public CustomTemplateRendition getTemplateRenditionByType(String templateId, RenditionType type) throws WebloggerException{
         if(templateId == null) {
             throw new WebloggerException("Template Name is null");
         }

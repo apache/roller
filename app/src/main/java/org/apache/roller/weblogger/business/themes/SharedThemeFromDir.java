@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -206,10 +207,10 @@ public class SharedThemeFromDir extends SharedTheme {
         }
 
         // available types with Roller
-        List<String> availableTypesList = new ArrayList<String>();
-        availableTypesList.add("standard");
+        List<RenditionType> availableTypesList = new ArrayList<RenditionType>();
+        availableTypesList.add(RenditionType.STANDARD);
         if (themeMetadata.getDualTheme()) {
-            availableTypesList.add("mobile");
+            availableTypesList.add(RenditionType.MOBILE);
         }
 
         // load stylesheet if possible
@@ -218,27 +219,27 @@ public class SharedThemeFromDir extends SharedTheme {
             ThemeMetadataTemplate stylesheetTmpl = themeMetadata
                     .getStylesheet();
             // getting the template codes for available types
-            ThemeMetadataTemplateCode standardTemplateCode = stylesheetTmpl
-                    .getTemplateCodeTable().get("standard");
-            ThemeMetadataTemplateCode mobileTemplateCode = stylesheetTmpl
-                    .getTemplateCodeTable().get("mobile");
+            ThemeMetadataTemplateRendition standardTemplateCode = stylesheetTmpl
+                    .getTemplateCodeTable().get(RenditionType.STANDARD);
+            ThemeMetadataTemplateRendition mobileTemplateCode = stylesheetTmpl
+                    .getTemplateCodeTable().get(RenditionType.MOBILE);
 
-            // If no template code present for any type
-            if (standardTemplateCode == null && mobileTemplateCode == null) {
+            // standardTemplateCode required
+            if (standardTemplateCode == null) {
                 throw new ThemeInitializationException(
                         "Error in getting template codes for template");
             } else if (mobileTemplateCode == null && themeMetadata.getDualTheme()) {
                 // clone the standard template code if no mobile is present
-                mobileTemplateCode = new ThemeMetadataTemplateCode();
+                mobileTemplateCode = new ThemeMetadataTemplateRendition();
                 mobileTemplateCode.setContentsFile(standardTemplateCode
                         .getContentsFile());
                 mobileTemplateCode.setContentType(standardTemplateCode
                         .getContentType());
                 mobileTemplateCode.setTemplateLang(standardTemplateCode
                         .getTemplateLang());
-                mobileTemplateCode.setType("mobile");
+                mobileTemplateCode.setType(RenditionType.MOBILE);
 
-                stylesheetTmpl.addTemplateCode("mobile", mobileTemplateCode);
+                stylesheetTmpl.addTemplateCode(RenditionType.MOBILE, mobileTemplateCode);
             }
 
             // construct File object from path
@@ -258,7 +259,7 @@ public class SharedThemeFromDir extends SharedTheme {
                 // construct ThemeTemplate representing this file
                 // here we set content and template language from standard
                 // template code assuming it is the default
-                SharedThemeTemplate theme_template = new SharedThemeTemplate(
+                SharedThemeTemplate themeTemplate = new SharedThemeTemplate(
                         themeMetadata.getId() + ":"
                                 + stylesheetTmpl.getName(),
                         WeblogTemplate.ACTION_CUSTOM, stylesheetTmpl.getName(),
@@ -267,12 +268,12 @@ public class SharedThemeFromDir extends SharedTheme {
                                 templateFile.lastModified()),
                         standardTemplateCode.getTemplateLang(), false, false);
 
-                for (String type : availableTypesList) {
+                for (RenditionType type : availableTypesList) {
                     SharedThemeTemplateRendition rendition = createTemplateCode(
-                            theme_template.getId(),
-                            stylesheetTmpl.getTemplateCode(type));
+                            themeTemplate.getId(),
+                            stylesheetTmpl.getTemplateRendition(type));
 
-                    theme_template.addTemplateRendition(type, rendition);
+                    themeTemplate.addTemplateRendition(type, rendition);
 
                     // Set Last Modified
                     Date lstModified = rendition.getLastModified();
@@ -282,12 +283,12 @@ public class SharedThemeFromDir extends SharedTheme {
                     }
                 }
                 // store it
-                this.stylesheet = theme_template;
+                this.stylesheet = themeTemplate;
 
                 // Update last modified
-                theme_template.setLastModified(getLastModified());
+                themeTemplate.setLastModified(getLastModified());
 
-                addTemplate(theme_template);
+                addTemplate(themeTemplate);
             }
 
         }
@@ -319,31 +320,31 @@ public class SharedThemeFromDir extends SharedTheme {
         }
 
         // go through templates and read in contents to a ThemeTemplate
-        SharedThemeTemplate theme_template;
+        SharedThemeTemplate themeTemplate;
         for (ThemeMetadataTemplate templateMetadata : themeMetadata.getTemplates()) {
 
             // getting the template codes for available types
-            ThemeMetadataTemplateCode standardTemplateCode = templateMetadata
-                    .getTemplateCodeTable().get("standard");
-            ThemeMetadataTemplateCode mobileTemplateCode = templateMetadata
-                    .getTemplateCodeTable().get("mobile");
+            ThemeMetadataTemplateRendition standardTemplateCode = templateMetadata
+                    .getTemplateCodeTable().get(RenditionType.STANDARD);
+            ThemeMetadataTemplateRendition mobileTemplateCode = templateMetadata
+                    .getTemplateCodeTable().get(RenditionType.MOBILE);
 
             // If no template code present for any type
-            if (standardTemplateCode == null && mobileTemplateCode == null) {
+            if (standardTemplateCode == null) {
                 throw new ThemeInitializationException(
                         "Error in getting template codes for template");
             } else if (mobileTemplateCode == null && themeMetadata.getDualTheme()) {
                 // cloning the standard template code if no mobile is present
-                mobileTemplateCode = new ThemeMetadataTemplateCode();
+                mobileTemplateCode = new ThemeMetadataTemplateRendition();
                 mobileTemplateCode.setContentsFile(standardTemplateCode
                         .getContentsFile());
                 mobileTemplateCode.setContentType(standardTemplateCode
                         .getContentType());
                 mobileTemplateCode.setTemplateLang(standardTemplateCode
                         .getTemplateLang());
-                mobileTemplateCode.setType("mobile");
+                mobileTemplateCode.setType(RenditionType.MOBILE);
 
-                templateMetadata.addTemplateCode("mobile", mobileTemplateCode);
+                templateMetadata.addTemplateCode(RenditionType.MOBILE, mobileTemplateCode);
             }
 
             // construct File object from path
@@ -359,7 +360,7 @@ public class SharedThemeFromDir extends SharedTheme {
             }
 
             // construct ThemeTemplate representing this file
-            theme_template = new SharedThemeTemplate(
+            themeTemplate = new SharedThemeTemplate(
                     themeMetadata.getId() + ":" + templateMetadata.getName(),
                     templateMetadata.getAction(), templateMetadata.getName(),
                     templateMetadata.getDescription(), contents,
@@ -368,12 +369,12 @@ public class SharedThemeFromDir extends SharedTheme {
                     standardTemplateCode.getTemplateLang(),
                     templateMetadata.isHidden(), templateMetadata.isNavbar());
 
-            for (String type : availableTypesList) {
+            for (RenditionType type : availableTypesList) {
                 SharedThemeTemplateRendition templateCode = createTemplateCode(
-                        theme_template.getId(),
-                        templateMetadata.getTemplateCode(type));
+                        themeTemplate.getId(),
+                        templateMetadata.getTemplateRendition(type));
 
-                theme_template.addTemplateRendition(type, templateCode);
+                themeTemplate.addTemplateRendition(type, templateCode);
 
                 // Set Last Modified
                 Date lstModified = templateCode.getLastModified();
@@ -383,10 +384,10 @@ public class SharedThemeFromDir extends SharedTheme {
                 }
             }
 
-            theme_template.setLastModified(getLastModified());
+            themeTemplate.setLastModified(getLastModified());
 
             // add it to the theme
-            addTemplate(theme_template);
+            addTemplate(themeTemplate);
 
         }
     }
@@ -440,7 +441,7 @@ public class SharedThemeFromDir extends SharedTheme {
     }
 
     private SharedThemeTemplateRendition createTemplateCode(String templateId,
-            ThemeMetadataTemplateCode templateCodeMetadata) {
+            ThemeMetadataTemplateRendition templateCodeMetadata) {
         SharedThemeTemplateRendition templateCode = new SharedThemeTemplateRendition();
 
         // construct File object from path

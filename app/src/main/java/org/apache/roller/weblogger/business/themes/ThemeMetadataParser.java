@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -130,22 +131,25 @@ public class ThemeMetadataParser {
 
 		boolean roller50format = false;
 		for (Element templateCodeElement : templateCodeList) {
-			ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
+			ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
 			templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
+            if (StringUtils.isEmpty(templateCode.getTemplateLang())) {
+                throw new ThemeParsingException("templateCode must contain a 'templateLanguage' element");
+            }
 			templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
-			templateCode.setContentType(templateCodeElement.getChildText("contentType"));
-			templateCode.setType(templateCodeElement.getChildText("type"));
-
-			// validating template code
-			if (StringUtils.isEmpty(templateCode.getContentsFile())) {
-				throw new ThemeParsingException("templateCode must contain a 'contentsFile' element");
-			}
-			if (StringUtils.isEmpty(templateCode.getTemplateLang())) {
-				throw new ThemeParsingException("templateCode must contain a 'templateLanguage' element");
-			}
-			if (StringUtils.isEmpty(templateCode.getType())) {
-				throw new ThemeParsingException("templateCode must contain a 'type' element");
-			}
+            if (StringUtils.isEmpty(templateCode.getContentsFile())) {
+                throw new ThemeParsingException("templateCode must contain a 'contentsFile' element");
+            }
+			String renditionValue = templateCodeElement.getChildText("type");
+            if (renditionValue != null) {
+                templateCode.setType(RenditionType.valueOf(renditionValue.toUpperCase()));
+                if (templateCode.getType() == null) {
+                    throw new ThemeParsingException("Invalid rendition type " + renditionValue + " found.");
+                }
+            } else {
+                throw new ThemeParsingException("templateCode must contain a 'type' element");
+            }
+            templateCode.setContentType(templateCodeElement.getChildText("contentType"));
 			template.addTemplateCode(templateCode.getType(), templateCode);
 
 			// if theme has type, then it's roller50format
@@ -154,12 +158,12 @@ public class ThemeMetadataParser {
 
 		// hack to ensure old format themes still work
 		if (!roller50format) {
-			ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
+			ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
 			templateCode.setTemplateLang(template.getTemplateLanguage());
 			templateCode.setContentsFile(template.getContentsFile());
 			templateCode.setContentType(template.getContentType());
-			templateCode.setType("standard");
-			template.addTemplateCode("standard", templateCode);
+			templateCode.setType(RenditionType.STANDARD);
+			template.addTemplateCode(RenditionType.STANDARD, templateCode);
 		}
 
 		String navbar = element.getChildText("navbar");
@@ -199,22 +203,25 @@ public class ThemeMetadataParser {
         List<Element> templateCodeList = element.getChildren("templateCode");
 		boolean roller50format = false;
         for (Element templateCodeElement : templateCodeList) {
-            ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
+            ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
             templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
-            templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
-            templateCode.setContentType(templateCodeElement.getChildText("contentType"));
-            templateCode.setType(templateCodeElement.getChildText("type"));
-
-            //validating stylesheet template code.
-            if (StringUtils.isEmpty(templateCode.getContentsFile())) {
-                throw new ThemeParsingException("stylesheet must contain a 'contentsFile' element");
-            }
             if (StringUtils.isEmpty(templateCode.getTemplateLang())) {
                 throw new ThemeParsingException("stylesheet must contain a 'templateLanguage' element");
             }
-            if (StringUtils.isEmpty(templateCode.getType())) {
-				throw new ThemeParsingException("templateCode must contain a 'type' element");
+            templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
+            if (StringUtils.isEmpty(templateCode.getContentsFile())) {
+                throw new ThemeParsingException("stylesheet must contain a 'contentsFile' element");
             }
+            String renditionValue = templateCodeElement.getChildText("type");
+            if (renditionValue != null) {
+                templateCode.setType(RenditionType.valueOf(renditionValue.toUpperCase()));
+                if (templateCode.getType() == null) {
+                    throw new ThemeParsingException("Invalid rendition type " + renditionValue + " found.");
+                }
+            } else {
+                throw new ThemeParsingException("templateCode must contain a 'type' element");
+            }
+            templateCode.setContentType(templateCodeElement.getChildText("contentType"));
             template.addTemplateCode(templateCode.getType(), templateCode);
 
 			// if theme has type, then it's roller50format
@@ -223,12 +230,12 @@ public class ThemeMetadataParser {
         
 		// hack to ensure old format themes still work
    		if (!roller50format) {
-			ThemeMetadataTemplateCode templateCode = new ThemeMetadataTemplateCode();
+			ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
 			templateCode.setTemplateLang(template.getTemplateLanguage());
 			templateCode.setContentsFile(template.getContentsFile());
 			templateCode.setContentType(template.getContentType());
-			templateCode.setType("standard");
-			template.addTemplateCode("standard", templateCode);
+			templateCode.setType(RenditionType.STANDARD);
+			template.addTemplateCode(RenditionType.STANDARD, templateCode);
 		}
 
         // validate template

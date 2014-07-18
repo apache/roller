@@ -75,18 +75,8 @@ public interface Template {
 
     /**
      *
-     * type of the template , eg: standard , mobile etc.
-     */
-    //TODO need to remove this type from weblog template as one template acts in different types
-
-    @Deprecated
-    //Moved to templateCode
-    String getType();
-
-    /**
-     *
      * get the Template rendition object for the given type.
      */
-    TemplateRendition getTemplateRendition(String type) throws WebloggerException;
+    TemplateRendition getTemplateRendition(CustomTemplateRendition.RenditionType type) throws WebloggerException;
     
 }

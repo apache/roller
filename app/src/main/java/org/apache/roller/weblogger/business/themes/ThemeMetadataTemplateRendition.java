@@ -19,11 +19,13 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-public class ThemeMetadataTemplateCode {
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+
+public class ThemeMetadataTemplateRendition {
     private String templateLang = null;
     private String contentType = null;
     private String contentsFile = null;
-    private String type = null;
+    private RenditionType type = null;
 
     public String getTemplateLang() {
         return templateLang;
@@ -49,11 +51,11 @@ public class ThemeMetadataTemplateCode {
         this.contentsFile = contentsFile;
     }
 
-    public String getType() {
+    public RenditionType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(RenditionType type) {
         this.type = type;
     }
 }

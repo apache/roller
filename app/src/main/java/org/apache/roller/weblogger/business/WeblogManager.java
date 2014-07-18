@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.StatCount;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -180,7 +181,7 @@ public interface WeblogManager {
     /**
      * Get template code by Type.
      */
-    CustomTemplateRendition getTemplateRenditionByType(String templateName, String type)
+    CustomTemplateRendition getTemplateRenditionByType(String templateName, RenditionType type)
             throws WebloggerException ;
 
     /**

@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
@@ -69,11 +70,11 @@ public class RollerResourceLoader extends ResourceLoader {
 		}
 
 		// theme templates name are <template>|<deviceType>
-		String deviceType = "standard";
+		RenditionType renditionType = RenditionType.STANDARD;
 		if (name.contains("|")) {
 			String[] pair = name.split("\\|");
 			name = pair[0];
-			deviceType = pair[1];
+			renditionType = RenditionType.valueOf(pair[1].toUpperCase());
 		}
 
 		logger.debug("   Actually, it's " + name);
@@ -87,7 +88,7 @@ public class RollerResourceLoader extends ResourceLoader {
 						"RollerResourceLoader: page \"" + name + "\" not found");
 			}
 			String contents;
-			TemplateRendition templateCode = page.getTemplateRendition(deviceType);
+			TemplateRendition templateCode = page.getTemplateRendition(renditionType);
 			if (templateCode != null) {
 				contents = templateCode.getTemplate();
 			} else {

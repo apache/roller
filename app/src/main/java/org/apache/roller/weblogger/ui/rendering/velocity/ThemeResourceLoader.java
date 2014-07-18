@@ -29,6 +29,7 @@ import java.io.UnsupportedEncodingException;
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
@@ -68,11 +69,11 @@ public class ThemeResourceLoader extends ResourceLoader {
                     "Need to specify a template name!");
         }
 
-        String deviceType = "standard";
+        TemplateRendition.RenditionType renditionType = TemplateRendition.RenditionType.STANDARD;
         if (name.contains("|")) {
             String[] pair = name.split("\\|");
             name = pair[0];
-            deviceType = pair[1];
+            renditionType = TemplateRendition.RenditionType.valueOf(pair[1].toUpperCase());
         }
 
         try {
@@ -97,8 +98,8 @@ public class ThemeResourceLoader extends ResourceLoader {
             }
 
             final String contents;
-            if (template.getTemplateRendition(deviceType) != null) {
-                contents = template.getTemplateRendition(deviceType).getTemplate();
+            if (template.getTemplateRendition(renditionType) != null) {
+                contents = template.getTemplateRendition(renditionType).getTemplate();
             } else {
                 contents = template.getContents();
             }

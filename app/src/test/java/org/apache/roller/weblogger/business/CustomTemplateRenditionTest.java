@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -76,10 +77,6 @@ public class CustomTemplateRenditionTest extends TestCase{
            testPage.setWebsite(TestUtils.getManagedWebsite(testWeblog));
            testPage.setTemplateLanguage("velocity");
            testPage.setType("standard");
-
-
-
-
        }
 
        public void tearDown() throws Exception {
@@ -110,13 +107,13 @@ public class CustomTemplateRenditionTest extends TestCase{
 
 
            //create standard template coce
-           CustomTemplateRendition standardTemplateCode = new CustomTemplateRendition(testPage.getId(), "standard");
+           CustomTemplateRendition standardTemplateCode = new CustomTemplateRendition(testPage.getId(), RenditionType.STANDARD);
            standardTemplateCode.setTemplate("standard.template.code");
            standardTemplateCode.setTemplateLanguage("velocity");
            mgr.saveTemplateRendition(standardTemplateCode);
             //TestUtils.endSession(true);
            //create mobile code
-           CustomTemplateRendition mobileTemplateCode = new CustomTemplateRendition(testPage.getId(), "mobile");
+           CustomTemplateRendition mobileTemplateCode = new CustomTemplateRendition(testPage.getId(), RenditionType.MOBILE);
            mobileTemplateCode.setTemplate("mobile.template.code");
            mobileTemplateCode.setTemplateLanguage("velocity");
            mgr.saveTemplateRendition(mobileTemplateCode);
@@ -124,22 +121,22 @@ public class CustomTemplateRenditionTest extends TestCase{
 
 
            // check that create was successful
-            standardCode = mgr.getTemplateRenditionByType(testPage.getId(), "standard");
+            standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
            assertNotNull(standardCode);
            assertEquals(standardTemplateCode.getTemplate() ,standardCode.getTemplate());
 
-            mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), "mobile");
+            mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
            assertNotNull(mobileCode);
            assertEquals(mobileTemplateCode.getTemplate() ,mobileCode.getTemplate());
 
            // update template Code
            standardCode = null;
-           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), "standard");
+           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
            standardCode.setTemplate("update.standard.template");
            mgr.saveTemplateRendition(standardCode);
 
            mobileCode = null;
-           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), "mobile");
+           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
            mobileCode.setTemplate("update.mobile.template");
            mgr.saveTemplateRendition(mobileCode);
 
@@ -147,11 +144,11 @@ public class CustomTemplateRenditionTest extends TestCase{
 
            // check that update was successful
            standardCode =null;
-           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), "standard");
+           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
            assertEquals("update.standard.template",standardCode.getTemplate());
 
            mobileCode =null;
-           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), "mobile");
+           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
            assertEquals("update.mobile.template",mobileCode.getTemplate());
 
            WeblogTemplate page = mgr.getPage(testPage.getId());
@@ -160,11 +157,11 @@ public class CustomTemplateRenditionTest extends TestCase{
 
            // check that update was successful
            standardCode =null;
-           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), "standard");
+           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
            assertNull(standardCode);
 
            mobileCode =null;
-           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), "mobile");
+           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
            assertNull(mobileCode);
 
        }

@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.business.themes;
 
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,8 +39,8 @@ public class ThemeMetadataTemplate {
     private String contentsFile = null;
 
     // Hash table to keep metadata about parsed template code files
-    private Map<String, ThemeMetadataTemplateCode> templateCodeTable
-            = new HashMap<String, ThemeMetadataTemplateCode>();
+    private Map<RenditionType, ThemeMetadataTemplateRendition> templateCodeTable
+            = new HashMap<RenditionType, ThemeMetadataTemplateRendition>();
 
     public String getAction() {
         return action;
@@ -112,15 +114,15 @@ public class ThemeMetadataTemplate {
         this.contentsFile = contentsFile;
     }
 
-    public void addTemplateCode(String type, ThemeMetadataTemplateCode templateCode) {
+    public void addTemplateCode(RenditionType type, ThemeMetadataTemplateRendition templateCode) {
         this.getTemplateCodeTable().put(type, templateCode);
     }
 
-    public ThemeMetadataTemplateCode getTemplateCode(String type){
+    public ThemeMetadataTemplateRendition getTemplateRendition(RenditionType type){
         return this.getTemplateCodeTable().get(type);
     }
 
-    public Map<String, ThemeMetadataTemplateCode> getTemplateCodeTable() {
+    public Map<RenditionType, ThemeMetadataTemplateRendition> getTemplateCodeTable() {
         return templateCodeTable;
     }
 

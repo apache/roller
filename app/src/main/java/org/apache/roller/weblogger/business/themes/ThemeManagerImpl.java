@@ -46,6 +46,7 @@ import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -83,15 +84,12 @@ public class ThemeManagerImpl implements ThemeManager {
 	private Map<String, Theme> themes = null;
 
 	// list of available types for templates
-	private static List<String> typeList = new ArrayList<String>();
+	private static List<RenditionType> typeList = new ArrayList<RenditionType>();
 
 	@com.google.inject.Inject
 	protected ThemeManagerImpl(Weblogger roller) {
 
 		this.roller = roller;
-
-		// set the available types that can be used for templates
-		this.addAvailableTypes();
 
 		// get theme directory from config and verify it
 		this.themeDir = WebloggerConfig.getProperty("themes.dir");
@@ -262,7 +260,7 @@ public class ThemeManagerImpl implements ThemeManager {
 			}
 
 			// create weblog template code objects and save them
-			for (String type : ThemeManagerImpl.getTypesList()) {
+			for (RenditionType type : RenditionType.values()) {
 
 				// See if we already have some code for this template already (eg previous theme)
 				CustomTemplateRendition weblogTemplateCode = template.getTemplateRendition(type);
@@ -465,14 +463,4 @@ public class ThemeManagerImpl implements ThemeManager {
 		return reloaded;
 
 	}
-
-	private void addAvailableTypes() {
-        ThemeManagerImpl.getTypesList().add("standard");
-        ThemeManagerImpl.getTypesList().add("mobile");
-	}
-
-	public static List<String> getTypesList() {
-		return typeList;
-	}
-
 }

@@ -61,7 +61,7 @@ public class MobileDeviceRepository {
      * 
      * ToCheck if a request is mobile.
      * 
-     * @param request
+     * @param request HTTP request to parse
      * @return boolean
      */
     public static boolean isMobileDevice(HttpServletRequest request) {
@@ -107,13 +107,12 @@ public class MobileDeviceRepository {
     private static String getCookieValue(Cookie[] cookies, String cookieName,
             String defaultValue) {
         if (cookies != null) {
-            for (int i = 0; i < cookies.length; i++) {
-                Cookie cookie = cookies[i];
+            for (Cookie cookie : cookies) {
                 if (cookieName.equals(cookie.getName())) {
-                    return (cookie.getValue());
+                    return cookie.getValue();
                 }
             }
         }
-        return (defaultValue);
+        return defaultValue;
     }
 }
