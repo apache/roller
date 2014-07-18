@@ -43,14 +43,14 @@
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
 
-    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">
+    <table class="entryEditTable" cellpadding="0" cellspacing="0" style="width:100%">
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="title"><s:text name="weblogEdit.title" /></label>
+                <label for="title" style="width:20%"><s:text name="weblogEdit.title" /></label>
             </td>
             <td>
-                <s:textfield name="bean.title" size="70" maxlength="255" tabindex="1" />
+                <s:textfield name="bean.title" size="70" maxlength="255" tabindex="1" style="width:60%"/>
             </td>
         </tr>
 
@@ -78,7 +78,7 @@
                 <label for="title"><s:text name="weblogEdit.tags" /></label>
             </td>
             <td>
-                <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
+                <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" style="width:30%"/>
             </td>
         </tr>
 
