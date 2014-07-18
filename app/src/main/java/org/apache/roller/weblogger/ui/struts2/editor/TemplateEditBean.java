@@ -22,8 +22,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 
 
 /**
@@ -152,20 +152,20 @@ public class TemplateEditBean {
     
     public void copyTo(WeblogTemplate dataHolder) throws WebloggerException {
 
-        if (dataHolder.getTemplateCode("standard") != null) {
+        if (dataHolder.getTemplateRendition("standard") != null) {
             // if we have a template, then set it
-            WeblogThemeTemplateCode tc = dataHolder.getTemplateCode("standard");
+            CustomTemplateRendition tc = dataHolder.getTemplateRendition("standard");
             tc.setTemplate(contentsStandard);
-            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         } else { 
             // otherwise create it, then set it
-            WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(dataHolder.getId(), "standard");
+            CustomTemplateRendition tc = new CustomTemplateRendition(dataHolder.getId(), "standard");
 			tc.setTemplate(dataHolder.getContents());
-            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateCode(tc);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         }
 
-        if (dataHolder.getTemplateCode("mobile") != null) {
-            WeblogThemeTemplateCode tc = dataHolder.getTemplateCode("mobile");
+        if (dataHolder.getTemplateRendition("mobile") != null) {
+            CustomTemplateRendition tc = dataHolder.getTemplateRendition("mobile");
             tc.setTemplate(contentsMobile);
         }
 
@@ -190,13 +190,13 @@ public class TemplateEditBean {
         this.description = dataHolder.getDescription();
         this.link = dataHolder.getLink();
 
-        if (dataHolder.getTemplateCode("standard") != null) {
-            this.contentsStandard = dataHolder.getTemplateCode("standard").getTemplate();
+        if (dataHolder.getTemplateRendition("standard") != null) {
+            this.contentsStandard = dataHolder.getTemplateRendition("standard").getTemplate();
         } else {
             this.contentsStandard = dataHolder.getContents();
         }
-        if (dataHolder.getTemplateCode("mobile") != null) {
-            this.contentsMobile = dataHolder.getTemplateCode("mobile").getTemplate();
+        if (dataHolder.getTemplateRendition("mobile") != null) {
+            this.contentsMobile = dataHolder.getTemplateRendition("mobile").getTemplate();
         }
 		log.debug("Standard: " + this.contentsStandard + " Mobile: " + this.contentsMobile); 
 

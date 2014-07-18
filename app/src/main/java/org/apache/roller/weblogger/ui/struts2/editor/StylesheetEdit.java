@@ -28,14 +28,14 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.TemplateCode;
+import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -106,24 +106,24 @@ public class StylesheetEdit extends UIAction {
                             .getTemplateLanguage());
 
                     // create template codes for available template code Types
-                    WeblogThemeTemplateCode standardTemplateCode = new WeblogThemeTemplateCode(
+                    CustomTemplateRendition standardRendition = new CustomTemplateRendition(
                             stylesheetTmpl.getId(), STANDARD_THEME_TYPE);
-                    standardTemplateCode.setTemplate(stylesheetTmpl
+                    standardRendition.setTemplate(stylesheetTmpl
                             .getContents());
-                    standardTemplateCode.setTemplateLanguage(stylesheetTmpl
+                    standardRendition.setTemplateLanguage(stylesheetTmpl
                             .getTemplateLanguage());
                     WebloggerFactory.getWeblogger().getWeblogManager()
-                            .saveTemplateCode(standardTemplateCode);
+                            .saveTemplateRendition(standardRendition);
 
-                    TemplateCode tCode = stylesheet.getTemplateCode(MOBILE_THEME_TYPE);
+                    TemplateRendition tCode = stylesheet.getTemplateRendition(MOBILE_THEME_TYPE);
                     if (tCode != null) {
-                        WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(
+                        CustomTemplateRendition mobileRendition = new CustomTemplateRendition(
                                 stylesheetTmpl.getId(), MOBILE_THEME_TYPE);
-                        mobileTemplateCode.setTemplate(tCode.getTemplate());
-                        mobileTemplateCode.setTemplateLanguage(tCode
+                        mobileRendition.setTemplate(tCode.getTemplate());
+                        mobileRendition.setTemplateLanguage(tCode
                                 .getTemplateLanguage());
                         WebloggerFactory.getWeblogger().getWeblogManager()
-                                .saveTemplateCode(mobileTemplateCode);
+                                .saveTemplateRendition(mobileRendition);
                     }
 
                     WebloggerFactory.getWeblogger().getWeblogManager()
@@ -173,14 +173,14 @@ public class StylesheetEdit extends UIAction {
 
         try {
 
-            if (getTemplate().getTemplateCode(STANDARD_THEME_TYPE) != null) {
-                setContentsStandard(getTemplate().getTemplateCode(
+            if (getTemplate().getTemplateRendition(STANDARD_THEME_TYPE) != null) {
+                setContentsStandard(getTemplate().getTemplateRendition(
                         STANDARD_THEME_TYPE).getTemplate());
             } else {
                 setContentsStandard(getTemplate().getContents());
             }
-            if (getTemplate().getTemplateCode(MOBILE_THEME_TYPE) != null) {
-                setContentsMobile(getTemplate().getTemplateCode(
+            if (getTemplate().getTemplateRendition(MOBILE_THEME_TYPE) != null) {
+                setContentsMobile(getTemplate().getTemplateRendition(
                         MOBILE_THEME_TYPE).getTemplate());
             }
 
@@ -213,28 +213,28 @@ public class StylesheetEdit extends UIAction {
 
                 stylesheet.setLastModified(new Date());
 
-                if (stylesheet.getTemplateCode(STANDARD_THEME_TYPE) != null) {
+                if (stylesheet.getTemplateRendition(STANDARD_THEME_TYPE) != null) {
                     // if we have a template, then set it
-                    WeblogThemeTemplateCode tc = stylesheet
-                            .getTemplateCode(STANDARD_THEME_TYPE);
+                    CustomTemplateRendition tc = stylesheet
+                            .getTemplateRendition(STANDARD_THEME_TYPE);
                     tc.setTemplate(getContentsStandard());
                     WebloggerFactory.getWeblogger().getWeblogManager()
-                            .saveTemplateCode(tc);
+                            .saveTemplateRendition(tc);
                 } else {
                     // otherwise create it, then set it
-                    WeblogThemeTemplateCode tc = new WeblogThemeTemplateCode(
+                    CustomTemplateRendition tc = new CustomTemplateRendition(
                             stylesheet.getId(), STANDARD_THEME_TYPE);
                     tc.setTemplate(stylesheet.getContents());
                     WebloggerFactory.getWeblogger().getWeblogManager()
-                            .saveTemplateCode(tc);
+                            .saveTemplateRendition(tc);
                 }
 
-                if (stylesheet.getTemplateCode(MOBILE_THEME_TYPE) != null) {
-                    WeblogThemeTemplateCode tc = stylesheet
-                            .getTemplateCode(MOBILE_THEME_TYPE);
+                if (stylesheet.getTemplateRendition(MOBILE_THEME_TYPE) != null) {
+                    CustomTemplateRendition tc = stylesheet
+                            .getTemplateRendition(MOBILE_THEME_TYPE);
                     tc.setTemplate(getContentsMobile());
                     WebloggerFactory.getWeblogger().getWeblogManager()
-                            .saveTemplateCode(tc);
+                            .saveTemplateRendition(tc);
                 }
 
                 // TODO do we still want to set the contents here?
@@ -290,25 +290,25 @@ public class StylesheetEdit extends UIAction {
 
                 stylesheet.setLastModified(new Date());
 
-                if (stylesheet.getTemplateCode(STANDARD_THEME_TYPE) != null) {
-                    TemplateCode templateCode = theme.getStylesheet()
-                            .getTemplateCode(STANDARD_THEME_TYPE);
+                if (stylesheet.getTemplateRendition(STANDARD_THEME_TYPE) != null) {
+                    TemplateRendition templateCode = theme.getStylesheet()
+                            .getTemplateRendition(STANDARD_THEME_TYPE);
                     // if we have a template, then set it
-                    WeblogThemeTemplateCode existingTemplateCode = stylesheet
-                            .getTemplateCode(STANDARD_THEME_TYPE);
+                    CustomTemplateRendition existingTemplateCode = stylesheet
+                            .getTemplateRendition(STANDARD_THEME_TYPE);
                     existingTemplateCode
                             .setTemplate(templateCode.getTemplate());
                     WebloggerFactory.getWeblogger().getWeblogManager()
-                            .saveTemplateCode(existingTemplateCode);
+                            .saveTemplateRendition(existingTemplateCode);
 
                     // TODO do we still want to set the contents here?
                     stylesheet.setContents(templateCode.getTemplate());
                 }
-                if (stylesheet.getTemplateCode(MOBILE_THEME_TYPE) != null) {
-                    TemplateCode templateCode = theme.getStylesheet()
-                            .getTemplateCode(MOBILE_THEME_TYPE);
-                    WeblogThemeTemplateCode existingTemplateCode = stylesheet
-                            .getTemplateCode(MOBILE_THEME_TYPE);
+                if (stylesheet.getTemplateRendition(MOBILE_THEME_TYPE) != null) {
+                    TemplateRendition templateCode = theme.getStylesheet()
+                            .getTemplateRendition(MOBILE_THEME_TYPE);
+                    CustomTemplateRendition existingTemplateCode = stylesheet
+                            .getTemplateRendition(MOBILE_THEME_TYPE);
                     existingTemplateCode
                             .setTemplate(templateCode.getTemplate());
                 }

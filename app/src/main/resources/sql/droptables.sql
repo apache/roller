@@ -50,7 +50,7 @@ drop table entryattribute;
 drop table weblogentry;
 drop table weblogcategory;
 drop table webpage;
-drop table roller_templatecode;
+drop table custom_template_rendition;
 
 -- core platform tables
 drop table roller_permission;

@@ -233,11 +233,11 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         return ACTION_CUSTOM.equals(getAction()) && !isRequired();
     }
 
-    public WeblogThemeTemplateCode getTemplateCode(String type) throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateCodeByType(getId(), type);
+    public CustomTemplateRendition getTemplateRendition(String type) throws WebloggerException {
+        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateRenditionByType(getId(), type);
     }
 
-      public String getType() {
+    public String getType() {
         return type;
     }
 

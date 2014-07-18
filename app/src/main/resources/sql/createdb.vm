@@ -142,8 +142,8 @@ alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
 -- This index is not necessary because of handle is already a primary key.
 -- create index ws_handle_idx    on website(handle);
 
-create table roller_templatecode (
-    id                 varchar(48)  not null primary key,
+create table custom_template_rendition (
+    id           varchar(48)  not null primary key,
     templateid varchar(48) not null,
     template     $db.TEXT_SQL_TYPE not null,
     templatelang varchar(48),

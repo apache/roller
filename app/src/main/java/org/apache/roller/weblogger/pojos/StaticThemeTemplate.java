@@ -107,8 +107,8 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         return type;
     }
 
-    public TemplateCode getTemplateCode(String type) throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateCodeByType(this.id, type);
+    public TemplateRendition getTemplateRendition(String type) throws WebloggerException {
+        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateRenditionByType(this.id, type);
     }
 
     public void setType(String type){

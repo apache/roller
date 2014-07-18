@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.pojos;
 /**
  * Template code for one type of device.
  */
-public interface TemplateCode {
+public interface TemplateRendition {
 
 	String getContentType();
 

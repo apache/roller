@@ -22,11 +22,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 
 
 /**
@@ -180,13 +180,13 @@ public interface WeblogManager {
     /**
      * Get template code by Type.
      */
-    WeblogThemeTemplateCode getTemplateCodeByType(String templateName, String type)
+    CustomTemplateRendition getTemplateRenditionByType(String templateName, String type)
             throws WebloggerException ;
 
     /**
      * Save template code
      */
-    void saveTemplateCode(WeblogThemeTemplateCode templateCode) throws WebloggerException;
+    void saveTemplateRendition(CustomTemplateRendition templateCode) throws WebloggerException;
 
     /**
      * Get website's pages

@@ -16,42 +16,33 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.pojos;
+package org.apache.roller.weblogger.business.themes;
 
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.util.UUIDGenerator;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
- * A pojo that will maintain different template codes for one template
+ * A pojo that maintains device-specific renditions of a single template
  */
-public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
+public class SharedThemeTemplateRendition implements Serializable, TemplateRendition {
 
-	private static final long serialVersionUID = -1497618963802805151L;
-	private String id = UUIDGenerator.generateUUID();
 	private String templateId = null;
-	// template contents
 	private String template = null;
 	private String type = null;
 	private String contentType = null;
 	private String templateLanguage = null;
+	private Date lastModified = null;
 
-	public WeblogThemeTemplateCode(String templateId, String type) {
+	public SharedThemeTemplateRendition(String templateId, String type) {
 		this.templateId = templateId;
 		this.type = type;
 	}
 
-	public WeblogThemeTemplateCode() {
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+	public SharedThemeTemplateRendition() {
 	}
 
 	// @Override
@@ -83,16 +74,34 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	/**
+	 * Gets the last modified. File system date.
+	 * 
+	 * @return the last modified
+	 */
+	public Date getLastModified() {
+		return lastModified;
+	}
+
+	/**
+	 * Sets the last modified. File system date.
+	 * 
+	 * @param lastModified
+	 *            the new last modified
+	 */
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
+	}
 
 	// ------------------------------------------------------- Good citizenship
 
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
 		buf.append("{");
-		buf.append(getId());
-		buf.append(", ").append(getTemplateId());
-		buf.append(", [ ").append(getTemplate());
-		buf.append("] , ").append(getType());
+		buf.append(this.templateId);
+		buf.append(", [ ").append(this.template);
+		buf.append("] , ").append(this.type);
 		buf.append("}");
 		return buf.toString();
 	}
@@ -101,12 +110,12 @@ public class WeblogThemeTemplateCode implements Serializable, TemplateCode {
 		if (other == this) {
             return true;
         }
-		if (!(other instanceof WeblogThemeTemplateCode)) {
+		if (!(other instanceof SharedThemeTemplateRendition)) {
             return false;
         }
-		WeblogThemeTemplateCode o = (WeblogThemeTemplateCode) other;
-		return new EqualsBuilder().append(getTemplateId(), o.getTemplateId())
-				.append(getTemplate(), o.getTemplate()).isEquals();
+		SharedThemeTemplateRendition o = (SharedThemeTemplateRendition) other;
+		return new EqualsBuilder().append(templateId, o.getTemplateId())
+				.append(template, o.getTemplate()).isEquals();
 	}
 
 	public int hashCode() {

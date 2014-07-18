@@ -85,8 +85,8 @@ public interface Template {
 
     /**
      *
-     * get the Template code object for the given type.
+     * get the Template rendition object for the given type.
      */
-    TemplateCode getTemplateCode(String type) throws WebloggerException;
+    TemplateRendition getTemplateRendition(String type) throws WebloggerException;
     
 }

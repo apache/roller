@@ -97,8 +97,8 @@ public class ThemeResourceLoader extends ResourceLoader {
             }
 
             final String contents;
-            if (template.getTemplateCode(deviceType) != null) {
-                contents = template.getTemplateCode(deviceType).getTemplate();
+            if (template.getTemplateRendition(deviceType) != null) {
+                contents = template.getTemplateRendition(deviceType).getTemplate();
             } else {
                 contents = template.getContents();
             }

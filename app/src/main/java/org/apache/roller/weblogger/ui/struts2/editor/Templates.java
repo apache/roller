@@ -24,9 +24,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -173,20 +173,20 @@ public class Templates extends UIAction {
                         .savePage(newTemplate);
 
                 // Create weblog template codes for available types.
-                WeblogThemeTemplateCode standardTemplCode = new WeblogThemeTemplateCode(
+                CustomTemplateRendition standardRendition = new CustomTemplateRendition(
                         newTemplate.getId(), "standard");
-                standardTemplCode.setTemplate(newTemplate.getContents());
-                standardTemplCode.setTemplateLanguage("velocity");
+                standardRendition.setTemplate(newTemplate.getContents());
+                standardRendition.setTemplateLanguage("velocity");
                 WebloggerFactory.getWeblogger().getWeblogManager()
-                        .saveTemplateCode(standardTemplCode);
+                        .saveTemplateRendition(standardRendition);
 
                 /* TBI -- need a way for user to specify dual or single template
-                WeblogThemeTemplateCode mobileTemplCode = new WeblogThemeTemplateCode(
+                CustomTemplateRendition mobileRendition = new CustomTemplateRendition(
                         newTemplate.getId(), "mobile");
-                mobileTemplCode.setTemplate(newTemplate.getContents());
-                mobileTemplCode.setTemplateLanguage("velocity");
+                mobileRendition.setTemplate(newTemplate.getContents());
+                mobileRendition.setTemplateLanguage("velocity");
                 WebloggerFactory.getWeblogger().getWeblogManager()
-                        .saveTemplateCode(mobileTemplCode);
+                        .saveTemplateRendition(mobileRendition);
                 */
 
                 // if this person happened to create a Weblog template from

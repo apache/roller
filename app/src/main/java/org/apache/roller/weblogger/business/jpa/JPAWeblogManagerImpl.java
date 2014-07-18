@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
+import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
@@ -53,8 +54,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
-
 
 
 /*
@@ -239,8 +238,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         roller.getWeblogManager().saveWeblog(page.getWebsite());
     }
 
-    public void saveTemplateCode(WeblogThemeTemplateCode templateCode) throws WebloggerException {
-        this.strategy.store(templateCode);
+    public void saveTemplateRendition(CustomTemplateRendition rendition) throws WebloggerException {
+        this.strategy.store(rendition);
         // update of the template should happen by saving template page.
     }
     
@@ -574,7 +573,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
     }
 
-    public WeblogThemeTemplateCode getTemplateCodeByType(String templateId, String type) throws WebloggerException{
+    public CustomTemplateRendition getTemplateRenditionByType(String templateId, String type) throws WebloggerException{
         if(templateId == null) {
             throw new WebloggerException("Template Name is null");
         }
@@ -583,8 +582,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             throw new WebloggerException("Type is null");
         }
 
-        TypedQuery<WeblogThemeTemplateCode> query = strategy.getNamedQuery("WeblogThemeTemplateCode.getTemplateCodeByType",
-                WeblogThemeTemplateCode.class);
+        TypedQuery<CustomTemplateRendition> query = strategy.getNamedQuery("CustomTemplateRendition.getRenditionByType",
+                CustomTemplateRendition.class);
         query.setParameter(1, templateId);
         query.setParameter(2, type);
         try {
@@ -699,12 +698,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     private void removeTemplateCodeObjs(WeblogTemplate page) throws WebloggerException {
-        TypedQuery<WeblogThemeTemplateCode> codeQuery = strategy.getNamedQuery(
-                "WeblogThemeTemplateCode.getTemplateCodesByTemplateId", WeblogThemeTemplateCode.class);
+        TypedQuery<CustomTemplateRendition> codeQuery = strategy.getNamedQuery(
+                "CustomTemplateRendition.getRenditionsByTemplateId", CustomTemplateRendition.class);
         codeQuery.setParameter(1, page.getId());
-        List<WeblogThemeTemplateCode> codeList = codeQuery.getResultList();
+        List<CustomTemplateRendition> codeList = codeQuery.getResultList();
 
-        for (WeblogThemeTemplateCode code : codeList) {
+        for (CustomTemplateRendition code : codeList) {
             this.strategy.remove(code);
         }
     }

@@ -25,7 +25,7 @@ import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.TemplateCode;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
@@ -87,7 +87,7 @@ public class RollerResourceLoader extends ResourceLoader {
 						"RollerResourceLoader: page \"" + name + "\" not found");
 			}
 			String contents;
-			TemplateCode templateCode = page.getTemplateCode(deviceType);
+			TemplateRendition templateCode = page.getTemplateRendition(deviceType);
 			if (templateCode != null) {
 				contents = templateCode.getTemplate();
 			} else {

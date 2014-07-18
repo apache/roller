@@ -42,16 +42,16 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.TemplateCode;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
@@ -265,16 +265,16 @@ public class ThemeManagerImpl implements ThemeManager {
 			for (String type : ThemeManagerImpl.getTypesList()) {
 
 				// See if we already have some code for this template already (eg previous theme)
-				WeblogThemeTemplateCode weblogTemplateCode = template.getTemplateCode(type);
+				CustomTemplateRendition weblogTemplateCode = template.getTemplateRendition(type);
 
 				// Get the template for the new theme
-				TemplateCode templateCode = themeTemplate.getTemplateCode(type);
+				TemplateRendition templateCode = themeTemplate.getTemplateRendition(type);
 				if (templateCode != null) {
 					
 					// Check for existing template
 					if (weblogTemplateCode == null) {
 						// Does not exist so create a new one
-						weblogTemplateCode = new WeblogThemeTemplateCode(
+						weblogTemplateCode = new CustomTemplateRendition(
 								template.getId(), type);
 					}
 					weblogTemplateCode.setType(type);
@@ -284,7 +284,7 @@ public class ThemeManagerImpl implements ThemeManager {
 					weblogTemplateCode.setContentType(templateCode
 							.getContentType());
 					WebloggerFactory.getWeblogger().getWeblogManager()
-							.saveTemplateCode(weblogTemplateCode);
+							.saveTemplateRendition(weblogTemplateCode);
 				}
 
 			}

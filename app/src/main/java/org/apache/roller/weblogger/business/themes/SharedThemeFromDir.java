@@ -268,14 +268,14 @@ public class SharedThemeFromDir extends SharedTheme {
                         standardTemplateCode.getTemplateLang(), false, false);
 
                 for (String type : availableTypesList) {
-                    SharedThemeTemplateCode templateCode = createTemplateCode(
+                    SharedThemeTemplateRendition rendition = createTemplateCode(
                             theme_template.getId(),
                             stylesheetTmpl.getTemplateCode(type));
 
-                    theme_template.addTemplateCode(type, templateCode);
+                    theme_template.addTemplateRendition(type, rendition);
 
                     // Set Last Modified
-                    Date lstModified = templateCode.getLastModified();
+                    Date lstModified = rendition.getLastModified();
                     if (getLastModified() == null
                             || lstModified.after(getLastModified())) {
                         setLastModified(lstModified);
@@ -369,11 +369,11 @@ public class SharedThemeFromDir extends SharedTheme {
                     templateMetadata.isHidden(), templateMetadata.isNavbar());
 
             for (String type : availableTypesList) {
-                SharedThemeTemplateCode templateCode = createTemplateCode(
+                SharedThemeTemplateRendition templateCode = createTemplateCode(
                         theme_template.getId(),
                         templateMetadata.getTemplateCode(type));
 
-                theme_template.addTemplateCode(type, templateCode);
+                theme_template.addTemplateRendition(type, templateCode);
 
                 // Set Last Modified
                 Date lstModified = templateCode.getLastModified();
@@ -439,9 +439,9 @@ public class SharedThemeFromDir extends SharedTheme {
         this.resources.put(normalizedPath, resource);
     }
 
-    private SharedThemeTemplateCode createTemplateCode(String templateId,
+    private SharedThemeTemplateRendition createTemplateCode(String templateId,
             ThemeMetadataTemplateCode templateCodeMetadata) {
-        SharedThemeTemplateCode templateCode = new SharedThemeTemplateCode();
+        SharedThemeTemplateRendition templateCode = new SharedThemeTemplateRendition();
 
         // construct File object from path
         File templateFile = new File(this.themeDir + File.separator

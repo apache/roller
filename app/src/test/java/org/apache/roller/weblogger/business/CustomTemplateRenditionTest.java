@@ -24,28 +24,28 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogThemeTemplateCode;
 
-public class WeblogTemplateCodeTest extends TestCase{
+public class CustomTemplateRenditionTest extends TestCase{
     public static Log log = LogFactory.getLog(WeblogPageTest.class);
 
        User testUser = null;
        Weblog testWeblog = null;
        WeblogTemplate testPage = null;
-       WeblogThemeTemplateCode standardCode = null;
-       WeblogThemeTemplateCode mobileCode = null;
+       CustomTemplateRendition standardCode = null;
+       CustomTemplateRendition mobileCode = null;
 
 
-       public WeblogTemplateCodeTest(String name) {
+       public CustomTemplateRenditionTest(String name) {
            super(name);
        }
 
 
        public static Test suite() {
-           return new TestSuite(WeblogTemplateCodeTest.class);
+           return new TestSuite(CustomTemplateRenditionTest.class);
        }
 
 
@@ -110,48 +110,48 @@ public class WeblogTemplateCodeTest extends TestCase{
 
 
            //create standard template coce
-           WeblogThemeTemplateCode standardTemplateCode = new WeblogThemeTemplateCode(testPage.getId(),"standard");
+           CustomTemplateRendition standardTemplateCode = new CustomTemplateRendition(testPage.getId(), "standard");
            standardTemplateCode.setTemplate("standard.template.code");
            standardTemplateCode.setTemplateLanguage("velocity");
-           mgr.saveTemplateCode(standardTemplateCode);
+           mgr.saveTemplateRendition(standardTemplateCode);
             //TestUtils.endSession(true);
            //create mobile code
-           WeblogThemeTemplateCode mobileTemplateCode = new WeblogThemeTemplateCode(testPage.getId(),"mobile");
+           CustomTemplateRendition mobileTemplateCode = new CustomTemplateRendition(testPage.getId(), "mobile");
            mobileTemplateCode.setTemplate("mobile.template.code");
            mobileTemplateCode.setTemplateLanguage("velocity");
-           mgr.saveTemplateCode(mobileTemplateCode);
+           mgr.saveTemplateRendition(mobileTemplateCode);
              TestUtils.endSession(true);
 
 
            // check that create was successful
-            standardCode = mgr.getTemplateCodeByType(testPage.getId(), "standard");
+            standardCode = mgr.getTemplateRenditionByType(testPage.getId(), "standard");
            assertNotNull(standardCode);
            assertEquals(standardTemplateCode.getTemplate() ,standardCode.getTemplate());
 
-            mobileCode = mgr.getTemplateCodeByType(testPage.getId(), "mobile");
+            mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), "mobile");
            assertNotNull(mobileCode);
            assertEquals(mobileTemplateCode.getTemplate() ,mobileCode.getTemplate());
 
            // update template Code
            standardCode = null;
-           standardCode = mgr.getTemplateCodeByType(testPage.getId(), "standard");
+           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), "standard");
            standardCode.setTemplate("update.standard.template");
-           mgr.saveTemplateCode(standardCode);
+           mgr.saveTemplateRendition(standardCode);
 
            mobileCode = null;
-           mobileCode = mgr.getTemplateCodeByType(testPage.getId(), "mobile");
+           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), "mobile");
            mobileCode.setTemplate("update.mobile.template");
-           mgr.saveTemplateCode(mobileCode);
+           mgr.saveTemplateRendition(mobileCode);
 
            TestUtils.endSession(true);
 
            // check that update was successful
            standardCode =null;
-            standardCode = mgr.getTemplateCodeByType(testPage.getId(), "standard");
-            assertEquals("update.standard.template",standardCode.getTemplate());
+           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), "standard");
+           assertEquals("update.standard.template",standardCode.getTemplate());
 
            mobileCode =null;
-           mobileCode = mgr.getTemplateCodeByType(testPage.getId(), "mobile");
+           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), "mobile");
            assertEquals("update.mobile.template",mobileCode.getTemplate());
 
            WeblogTemplate page = mgr.getPage(testPage.getId());
@@ -160,11 +160,11 @@ public class WeblogTemplateCodeTest extends TestCase{
 
            // check that update was successful
            standardCode =null;
-            standardCode = mgr.getTemplateCodeByType(testPage.getId(), "standard");
-            assertNull(standardCode);
+           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), "standard");
+           assertNull(standardCode);
 
            mobileCode =null;
-           mobileCode = mgr.getTemplateCodeByType(testPage.getId(), "mobile");
+           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), "mobile");
            assertNull(mobileCode);
 
        }

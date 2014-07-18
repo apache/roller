@@ -99,9 +99,9 @@ public class StaticTemplate implements Template, Serializable {
         return type;
     }
 
-    public TemplateCode getTemplateCode(String type) throws WebloggerException {
-        return (TemplateCode)WebloggerFactory.getWeblogger()
-			.getWeblogManager().getTemplateCodeByType(this.getId(),type);
+    public TemplateRendition getTemplateRendition(String type) throws WebloggerException {
+        return WebloggerFactory.getWeblogger()
+			.getWeblogManager().getTemplateRenditionByType(this.getId(),type);
     }
 
     public void setType(String type){
