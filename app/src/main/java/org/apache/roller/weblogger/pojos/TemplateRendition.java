@@ -25,8 +25,6 @@ public interface TemplateRendition {
 
     public enum RenditionType {STANDARD, MOBILE}
 
-    String getContentType();
-
     String getTemplate();
 
     String getTemplateId();
@@ -35,8 +33,6 @@ public interface TemplateRendition {
 
     RenditionType getType();
 
-    void setContentType(String contentType);
-
     void setTemplate(String template);
 
     void setTemplateId(String templateId);
@@ -44,5 +40,4 @@ public interface TemplateRendition {
     void setTemplateLanguage(String templateLanguage);
 
     void setType(RenditionType type);
-
 }

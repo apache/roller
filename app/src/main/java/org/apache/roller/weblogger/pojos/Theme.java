@@ -28,7 +28,7 @@ import java.util.List;
  * A Theme represents the set of components which are used to generate the
  * web design for a weblog along with some metadata like a name, etc.
  */
-public interface Theme {
+public interface Theme extends Comparable<Theme> {
     
     /**
      * A unique identifier for this Theme.
@@ -103,5 +103,5 @@ public interface Theme {
      * Returns null if the resource cannot be found.
      */
     ThemeResource getResource(String path);
-    
+
 }

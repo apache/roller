@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import java.util.*;
 import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -40,8 +41,7 @@ public class WeblogSharedTheme extends WeblogTheme {
     private static Log log = LogFactory.getLog(WeblogSharedTheme.class);
     
     private SharedTheme theme = null;
-    
-    
+
     public WeblogSharedTheme(Weblog weblog, SharedTheme theme) {
         super(weblog);
         this.theme = theme;
@@ -67,8 +67,11 @@ public class WeblogSharedTheme extends WeblogTheme {
     public boolean isEnabled() {
         return this.theme.isEnabled();
     }
-    
-    
+
+    public int compareTo(Theme other) {
+        return theme.compareTo(other);
+    }
+
     /**
      * Get the collection of all templates associated with this Theme.
      */

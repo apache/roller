@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
@@ -68,17 +67,6 @@ public class VelocityRenderer implements Renderer {
             // if we can't then this will throw an exception
             velocityTemplate = RollerVelocity.getTemplate(template.getId(),
                     deviceType, "UTF-8");
-
-            // if this is a ThemeTemplate than look for a decorator too
-            if (template instanceof ThemeTemplate) {
-                ThemeTemplate templ = (ThemeTemplate) template;
-
-                Template decorator = templ.getDecorator();
-                if (decorator != null) {
-                    velocityDecorator = RollerVelocity.getTemplate(
-                            decorator.getId(), "UTF-8");
-                }
-            }
 
         } catch (ResourceNotFoundException ex) {
             // velocity couldn't find the resource so lets log a warning

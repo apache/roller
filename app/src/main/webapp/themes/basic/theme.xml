@@ -14,9 +14,9 @@
         <name>basic-custom.css</name>
         <description>Stylesheet for Basic theme</description>
         <link>basic-custom.css</link>
+        <contentType>text/html</contentType>
         <templateCode>
             <templateLanguage>velocity</templateLanguage>
-            <contentType>text/html</contentType>
             <contentsFile>basic-custom.css</contentsFile>
             <type>standard</type>
         </templateCode>
@@ -29,9 +29,9 @@
         <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
             <templateLanguage>velocity</templateLanguage>
-            <contentType>text/html</contentType>
             <contentsFile>weblog.vm</contentsFile>
             <type>standard</type>
         </templateCode>
@@ -43,9 +43,9 @@
         <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
             <templateLanguage>velocity</templateLanguage>
-            <contentType>text/html</contentType>
             <contentsFile>permalink.vm</contentsFile>
             <type>standard</type>
         </templateCode>
@@ -57,9 +57,9 @@
         <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
             <templateLanguage>velocity</templateLanguage>
-            <contentType>text/html</contentType>
             <contentsFile>searchresults.vm</contentsFile>
             <type>standard</type>
         </templateCode>
@@ -71,9 +71,9 @@
         <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
             <templateLanguage>velocity</templateLanguage>
-            <contentType>text/html</contentType>
             <contentsFile>_day.vm</contentsFile>
             <type>standard</type>
         </templateCode>
@@ -85,9 +85,9 @@
         <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
             <templateLanguage>velocity</templateLanguage>
-            <contentType>text/html</contentType>
             <contentsFile>sidebar.vm</contentsFile>
             <type>standard</type>
         </templateCode>

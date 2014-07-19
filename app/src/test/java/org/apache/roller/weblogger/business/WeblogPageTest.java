@@ -74,11 +74,8 @@ public class WeblogPageTest extends TestCase {
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
         testPage.setLink("testTemp");
-        testPage.setContents("a test weblog template.");
         testPage.setLastModified(new java.util.Date());
         testPage.setWebsite(TestUtils.getManagedWebsite(testWeblog));
-        testPage.setTemplateLanguage("velocity");
-        testPage.setType("standard");
     }
     
     public void tearDown() throws Exception {
@@ -113,8 +110,7 @@ public class WeblogPageTest extends TestCase {
         template = null;
         template = mgr.getPageByName(testWeblog, testPage.getName());
         assertNotNull(template);
-        assertEquals(testPage.getContents(), template.getContents());
-        
+
         // update template
         template.setName("testtesttest");
         mgr.savePage(template);
@@ -125,8 +121,7 @@ public class WeblogPageTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         template = mgr.getPageByName(testWeblog, "testtesttest");
         assertNotNull(template);
-        assertEquals(testPage.getContents(), template.getContents());
-        
+
         // delete template
         mgr.removePage(template);
         TestUtils.endSession(true);
@@ -155,27 +150,23 @@ public class WeblogPageTest extends TestCase {
         // lookup by id
         page = mgr.getPage(id);
         assertNotNull(page);
-        assertEquals(testPage.getContents(), page.getContents());
-        
+
         // lookup by action
         page = null;
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         page = mgr.getPageByAction(testWeblog, testPage.getAction());
         assertNotNull(page);
-        assertEquals(testPage.getContents(), page.getContents());
-        
+
         // lookup by name
         page = null;
         page = mgr.getPageByName(testWeblog, testPage.getName());
         assertNotNull(page);
-        assertEquals(testPage.getContents(), page.getContents());
-        
+
         // lookup by link
         page = null;
         page = mgr.getPageByLink(testWeblog, testPage.getLink());
         assertNotNull(page);
-        assertEquals(testPage.getContents(), page.getContents());
-        
+
         // lookup all pages for weblog
         List pages = mgr.getPages(testWeblog);
         assertNotNull(pages);

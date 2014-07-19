@@ -20,7 +20,10 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererFactory;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
@@ -35,14 +38,24 @@ public class VelocityRendererFactory implements RendererFactory {
     public Renderer getRenderer(Template template, 
 			MobileDeviceRepository.DeviceType deviceType) {
         Renderer renderer = null;
-        
+        TemplateRendition tr;
+
+        if (template == null || template.getId() == null) {
+            return null;
+        }
+
         // nothing we can do with null values
-        if (template.getTemplateLanguage() == null || template.getId() == null) {
+        try {
+            tr = template.getTemplateRendition(RenditionType.STANDARD);
+        } catch (WebloggerException e) {
+            return null;
+        }
+
+        if (tr == null) {
             return null;
         }
         
-        if ("velocity".equals(template.getTemplateLanguage())) { 
-            
+        if ("velocity".equals(tr.getTemplateLanguage())) {
             // standard velocity template
             try {
                renderer = new VelocityRenderer(template, deviceType);
@@ -55,5 +68,4 @@ public class VelocityRendererFactory implements RendererFactory {
         }
         return renderer;
     }
-    
 }

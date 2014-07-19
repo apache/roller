@@ -122,11 +122,10 @@ public class ThemeMetadataParser {
 		template.setName(element.getChildText("name"));
 		template.setDescription(element.getChildText("description"));
 		template.setLink(element.getChildText("link"));
-		template.setTemplateLanguage(element.getChildText("templateLanguage"));
 		template.setContentType(element.getChildText("contentType"));
-		template.setContentsFile(element.getChildText("contentsFile"));
+        template.setContentType(element.getChildText("contentType"));
 
-		//parsing tempaltecode segment
+		//parsing template code segment
 		List<Element> templateCodeList = element.getChildren("templateCode");
 
 		boolean roller50format = false;
@@ -149,21 +148,22 @@ public class ThemeMetadataParser {
             } else {
                 throw new ThemeParsingException("templateCode must contain a 'type' element");
             }
-            templateCode.setContentType(templateCodeElement.getChildText("contentType"));
 			template.addTemplateCode(templateCode.getType(), templateCode);
 
 			// if theme has type, then it's roller50format
 			roller50format = true;
 		}
 
-		// hack to ensure old format themes still work
+		// hack to ensure old format themes still work (presently deactivated)
 		if (!roller50format) {
+            throw new ThemeParsingException("Incompatible (pre- Roller 5.0) theme.xml found, cannot process.");
+/*
 			ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
 			templateCode.setTemplateLang(template.getTemplateLanguage());
 			templateCode.setContentsFile(template.getContentsFile());
 			templateCode.setContentType(template.getContentType());
 			templateCode.setType(RenditionType.STANDARD);
-			template.addTemplateCode(RenditionType.STANDARD, templateCode);
+			template.addTemplateCode(RenditionType.STANDARD, templateCode); */
 		}
 
 		String navbar = element.getChildText("navbar");
@@ -184,8 +184,6 @@ public class ThemeMetadataParser {
 			throw new ThemeParsingException("templates must contain a 'name' element");
 		}
 
-
-
 		return template;
 	}
     
@@ -198,6 +196,7 @@ public class ThemeMetadataParser {
         template.setName(element.getChildText("name"));
         template.setDescription(element.getChildText("description"));
         template.setLink(element.getChildText("link"));
+        template.setContentType(element.getChildText("contentType"));
 
         // parsing templatecode segment
         List<Element> templateCodeList = element.getChildren("templateCode");
@@ -221,21 +220,22 @@ public class ThemeMetadataParser {
             } else {
                 throw new ThemeParsingException("templateCode must contain a 'type' element");
             }
-            templateCode.setContentType(templateCodeElement.getChildText("contentType"));
             template.addTemplateCode(templateCode.getType(), templateCode);
 
 			// if theme has type, then it's roller50format
 			roller50format = true;
         }
         
-		// hack to ensure old format themes still work
+		// hack to ensure old format themes still work (presently deactivated)
    		if (!roller50format) {
+            throw new ThemeParsingException("Incompatible (pre- Roller 5.0) theme.xml found, cannot process.");
+/*
 			ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
 			templateCode.setTemplateLang(template.getTemplateLanguage());
 			templateCode.setContentsFile(template.getContentsFile());
 			templateCode.setContentType(template.getContentType());
 			templateCode.setType(RenditionType.STANDARD);
-			template.addTemplateCode(RenditionType.STANDARD, templateCode);
+			template.addTemplateCode(RenditionType.STANDARD, templateCode); */
 		}
 
         // validate template

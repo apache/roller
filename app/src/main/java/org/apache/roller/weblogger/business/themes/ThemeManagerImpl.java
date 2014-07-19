@@ -83,9 +83,6 @@ public class ThemeManagerImpl implements ThemeManager {
 	// the Map contains ... (theme id, Theme)
 	private Map<String, Theme> themes = null;
 
-	// list of available types for templates
-	private static List<RenditionType> typeList = new ArrayList<RenditionType>();
-
 	@com.google.inject.Inject
 	protected ThemeManagerImpl(Weblogger roller) {
 
@@ -180,8 +177,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	 *      TODO: reimplement enabled vs. disabled logic once we support it
 	 */
 	public List<Theme> getEnabledThemesList() {
-
-		List allThemes = new ArrayList<Theme>(this.themes.values());
+		List<Theme> allThemes = new ArrayList<Theme>(this.themes.values());
 
 		// sort 'em ... default ordering for themes is by name
 		Collections.sort(allThemes);
@@ -246,13 +242,9 @@ public class ThemeManagerImpl implements ThemeManager {
 				template.setName(themeTemplate.getName());
 				template.setDescription(themeTemplate.getDescription());
 				template.setLink(themeTemplate.getLink());
-				template.setContents(themeTemplate.getContents());
 				template.setHidden(themeTemplate.isHidden());
 				template.setNavbar(themeTemplate.isNavbar());
-				template.setTemplateLanguage(themeTemplate
-						.getTemplateLanguage());
-				// NOTE: decorators are deprecated starting in 4.0
-				template.setDecoratorName(null);
+                template.setOutputContentType(themeTemplate.getOutputContentType());
 				template.setLastModified(new Date());
 
 				// save it
@@ -278,9 +270,7 @@ public class ThemeManagerImpl implements ThemeManager {
 					weblogTemplateCode.setType(type);
 					weblogTemplateCode.setTemplate(templateCode.getTemplate());
 					weblogTemplateCode.setTemplateLanguage(templateCode
-							.getTemplateLanguage());
-					weblogTemplateCode.setContentType(templateCode
-							.getContentType());
+                            .getTemplateLanguage());
 					WebloggerFactory.getWeblogger().getWeblogManager()
 							.saveTemplateRendition(weblogTemplateCode);
 				}
@@ -290,9 +280,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		// now, see if the weblog has left over action templates that
 		// need to be deleted because they aren't in their new theme
-		for (int i = 0; i < WeblogTemplate.ACTIONS.length; i++) {
-			String action = WeblogTemplate.ACTIONS[i];
-
+        for (String action : WeblogTemplate.ACTIONS) {
 			// if we didn't import this action then see if it should be deleted
 			if (!importedActionTemplates.contains(action)) {
 				WeblogTemplate toDelete = wmgr.getPageByAction(website, action);
@@ -321,8 +309,7 @@ public class ThemeManagerImpl implements ThemeManager {
 						website, resource.getPath());
 				if (mdir == null) {
 					log.debug("    Creating directory: " + resource.getPath());
-					mdir = fileMgr.createMediaFileDirectory(website,
-							resource.getPath());
+					fileMgr.createMediaFileDirectory(website, resource.getPath());
 					roller.flush();
 				} else {
 					log.debug("    No action: directory already exists");

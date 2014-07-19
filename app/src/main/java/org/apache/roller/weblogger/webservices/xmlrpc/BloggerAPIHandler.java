@@ -35,6 +35,8 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -138,20 +140,25 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         
         validate(blogid, userid, password);
         
-        if (! templateType.equals("main")) {
+        if (!templateType.equals("main")) {
             throw new XmlRpcException(
-                    UNKNOWN_EXCEPTION, "Roller only supports main template");
+                    UNKNOWN_EXCEPTION, "Roller supports only main template");
         }
         
         try {
             WeblogTemplate page = WebloggerFactory.getWeblogger().getWeblogManager().getPage(templateType);
-            page.setContents(templateData);
-            WebloggerFactory.getWeblogger().getWeblogManager().savePage(page);
-            flushPageCache(page.getWebsite());
-            
-            return true;
+            CustomTemplateRendition ctr = page.getTemplateRendition(RenditionType.STANDARD);
+            if (ctr != null) {
+                ctr.setTemplate(templateData);
+                WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(ctr);
+                flushPageCache(page.getWebsite());
+                return true;
+            } else {
+                mLogger.error("Cannot find standard rendering for template.");
+                return false;
+            }
         } catch (WebloggerException e) {
-            String msg = "ERROR in BlooggerAPIHander.setTemplate";
+            String msg = "ERROR in BloggerAPIHander.setTemplate";
             mLogger.error(msg,e);
             throw new XmlRpcException(UNKNOWN_EXCEPTION,msg);
         }
@@ -182,12 +189,15 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         validate(blogid, userid,password);
         
         try {
+            CustomTemplateRendition ctr = null;
             WeblogTemplate page = WebloggerFactory.getWeblogger().getWeblogManager().getPage(templateType);
-            
-            if ( null == page ) {
-                throw new XmlRpcException(UNKNOWN_EXCEPTION,"Template not found");
+            if (page != null) {
+                ctr = page.getTemplateRendition(RenditionType.STANDARD);
+            }
+            if (null == ctr) {
+                throw new XmlRpcException(UNKNOWN_EXCEPTION,"Standard rendering of template not found");
             } else {
-                return page.getContents();
+                return ctr.getTemplate();
             }
         } catch (Exception e) {
             String msg = "ERROR in BlooggerAPIHander.getTemplate";

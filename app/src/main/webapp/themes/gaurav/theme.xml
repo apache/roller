@@ -16,9 +16,9 @@
         <name>custom.css</name>
         <description>Custom style sheet</description>
 	    <link>custom.css</link>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>custom_css.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -31,9 +31,9 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>weblog.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -45,9 +45,9 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>entry.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -59,9 +59,9 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>tags_index.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -73,9 +73,9 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>search.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -87,9 +87,9 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>day.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -101,9 +101,9 @@
 	    <link>archives</link>
         <navbar>true</navbar>
         <hidden>false</hidden>
-         <templateCode>
+        <contentType>text/html</contentType>
+        <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>archives.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -115,9 +115,9 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-         <templateCode>
+        <contentType>text/html</contentType>
+        <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>std_head.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -129,9 +129,9 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>std_header.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -143,9 +143,9 @@
 	    <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-         <templateCode>
+        <contentType>text/html</contentType>
+        <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>std_footer.vm</contentsFile>
            <type>standard</type>
        </templateCode>

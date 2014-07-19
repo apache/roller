@@ -23,7 +23,6 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 
 public class ThemeMetadataTemplateRendition {
     private String templateLang = null;
-    private String contentType = null;
     private String contentsFile = null;
     private RenditionType type = null;
 
@@ -33,14 +32,6 @@ public class ThemeMetadataTemplateRendition {
 
     public void setTemplateLang(String templateLang) {
         this.templateLang = templateLang;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
     }
 
     public String getContentsFile() {

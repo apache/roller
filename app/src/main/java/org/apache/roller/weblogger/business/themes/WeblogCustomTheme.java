@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import java.util.Date;
 import java.util.List;
 import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -67,8 +68,11 @@ public class WeblogCustomTheme extends WeblogTheme {
     public boolean isEnabled() {
         return true;
     }
-    
-    
+
+    public int compareTo(Theme other) {
+        return getName().compareTo(other.getName());
+    }
+
     /**
      * Get the collection of all templates associated with this Theme.
      */

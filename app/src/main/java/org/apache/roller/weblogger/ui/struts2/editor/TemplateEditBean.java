@@ -161,25 +161,25 @@ public class TemplateEditBean {
         } else { 
             // otherwise create it, then set it
             CustomTemplateRendition tc = new CustomTemplateRendition(dataHolder.getId(), RenditionType.STANDARD);
-			tc.setTemplate(dataHolder.getContents());
+			tc.setTemplate("");
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         }
 
         if (dataHolder.getTemplateRendition(RenditionType.MOBILE) != null) {
             CustomTemplateRendition tc = dataHolder.getTemplateRendition(RenditionType.MOBILE);
             tc.setTemplate(contentsMobile);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         }
 
-        // the rest of the template properties can only be modified when
+        // the rest of the template properties can be modified only when
         // dealing with a CUSTOM weblog template
-        if(dataHolder.isCustom()) {
+        if (dataHolder.isCustom()) {
             dataHolder.setName(getName());
             dataHolder.setAction(getAction());
             dataHolder.setDescription(getDescription());
             dataHolder.setLink(getLink());
             dataHolder.setNavbar(isNavbar());
             dataHolder.setHidden(isHidden());
-            dataHolder.setTemplateLanguage(getTemplateLanguage());
         }
     }
     
@@ -194,7 +194,7 @@ public class TemplateEditBean {
         if (dataHolder.getTemplateRendition(RenditionType.STANDARD) != null) {
             this.contentsStandard = dataHolder.getTemplateRendition(RenditionType.STANDARD).getTemplate();
         } else {
-            this.contentsStandard = dataHolder.getContents();
+            this.contentsStandard = "";
         }
         if (dataHolder.getTemplateRendition(RenditionType.MOBILE) != null) {
             this.contentsMobile = dataHolder.getTemplateRendition(RenditionType.MOBILE).getTemplate();
@@ -203,7 +203,6 @@ public class TemplateEditBean {
 
         this.navbar = dataHolder.isNavbar();
         this.hidden = dataHolder.isHidden();
-        this.templateLanguage = dataHolder.getTemplateLanguage();
         setManualContentType(dataHolder.getOutputContentType());
         if(getManualContentType() != null) {
             setAutoContentType(Boolean.FALSE);

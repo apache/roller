@@ -101,7 +101,8 @@ public class ThemeResourceLoader extends ResourceLoader {
             if (template.getTemplateRendition(renditionType) != null) {
                 contents = template.getTemplateRendition(renditionType).getTemplate();
             } else {
-                contents = template.getContents();
+                throw new ResourceNotFoundException("Rendering [" + renditionType.name()
+                        + "] of Template [" + split[1] + "] not found.");
             }
 
             if (log.isDebugEnabled()) {

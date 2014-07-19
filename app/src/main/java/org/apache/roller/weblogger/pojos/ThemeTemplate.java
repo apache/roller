@@ -49,17 +49,6 @@ public interface ThemeTemplate extends Template {
     
     
     /**
-     * The contents or body of the Template.
-     */
-    String getContents();
-
-    /**
-     * set content. This will be used by template code objects to store different
-     * types of template contents
-     */
-    void setContents(String contents);
-
-    /**
      * The url link value for this Template.  If this template is not
      * private this is the url that it can be accessed at.
      */
@@ -76,18 +65,5 @@ public interface ThemeTemplate extends Template {
      * Is the Template to be included in the navbar?
      */
     boolean isNavbar();
-    
-    
-    /**
-     * The name of the decorator template to apply.
-     */
-    String getDecoratorName();
-    
-    
-    /**
-     * The decorator Template to apply.  This returns null if no decorator
-     * should be applied.
-     */
-    ThemeTemplate getDecorator();
 
 }

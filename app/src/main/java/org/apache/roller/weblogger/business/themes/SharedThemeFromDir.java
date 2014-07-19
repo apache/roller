@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -233,8 +234,6 @@ public class SharedThemeFromDir extends SharedTheme {
                 mobileTemplateCode = new ThemeMetadataTemplateRendition();
                 mobileTemplateCode.setContentsFile(standardTemplateCode
                         .getContentsFile());
-                mobileTemplateCode.setContentType(standardTemplateCode
-                        .getContentType());
                 mobileTemplateCode.setTemplateLang(standardTemplateCode
                         .getTemplateLang());
                 mobileTemplateCode.setType(RenditionType.MOBILE);
@@ -338,8 +337,6 @@ public class SharedThemeFromDir extends SharedTheme {
                 mobileTemplateCode = new ThemeMetadataTemplateRendition();
                 mobileTemplateCode.setContentsFile(standardTemplateCode
                         .getContentsFile());
-                mobileTemplateCode.setContentType(standardTemplateCode
-                        .getContentType());
                 mobileTemplateCode.setTemplateLang(standardTemplateCode
                         .getTemplateLang());
                 mobileTemplateCode.setType(RenditionType.MOBILE);
@@ -462,7 +459,6 @@ public class SharedThemeFromDir extends SharedTheme {
         templateCode
                 .setTemplateLanguage(templateCodeMetadata.getTemplateLang());
         templateCode.setType(templateCodeMetadata.getType());
-        templateCode.setContentType(templateCodeMetadata.getContentType());
         templateCode.setLastModified(new Date(templateFile.lastModified()));
 
         return templateCode;

@@ -146,7 +146,6 @@ public class Templates extends UIAction {
                 newTemplate.setAction(getNewTmplAction());
                 newTemplate.setName(getNewTmplName());
                 newTemplate.setDescription(newTemplate.getName());
-                newTemplate.setContents(getText("pageForm.newTemplateContent"));
                 newTemplate.setHidden(false);
                 newTemplate.setNavbar(false);
                 newTemplate.setLastModified(new Date());
@@ -161,14 +160,6 @@ public class Templates extends UIAction {
                     newTemplate.setName(WeblogTemplate.DEFAULT_PAGE);
                 }
 
-                // all templates start out as velocity templates
-                newTemplate.setTemplateLanguage("velocity");
-
-                // for now, all templates just use _decorator
-                if (!"_decorator".equals(newTemplate.getName())) {
-                    newTemplate.setDecoratorName("_decorator");
-                }
-
                 // save the new Template
                 WebloggerFactory.getWeblogger().getWeblogManager()
                         .savePage(newTemplate);
@@ -176,7 +167,7 @@ public class Templates extends UIAction {
                 // Create weblog template codes for available types.
                 CustomTemplateRendition standardRendition = new CustomTemplateRendition(
                         newTemplate.getId(), RenditionType.STANDARD);
-                standardRendition.setTemplate(newTemplate.getContents());
+                standardRendition.setTemplate(getText("pageForm.newTemplateContent"));
                 standardRendition.setTemplateLanguage("velocity");
                 WebloggerFactory.getWeblogger().getWeblogManager()
                         .saveTemplateRendition(standardRendition);

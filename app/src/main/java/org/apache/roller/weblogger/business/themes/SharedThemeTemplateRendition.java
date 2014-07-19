@@ -33,7 +33,6 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 	private String templateId = null;
 	private String template = null;
 	private RenditionType type = null;
-	private String contentType = null;
 	private String templateLanguage = null;
 	private Date lastModified = null;
 
@@ -97,13 +96,7 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 	// ------------------------------------------------------- Good citizenship
 
 	public String toString() {
-		StringBuilder buf = new StringBuilder();
-		buf.append("{");
-		buf.append(this.templateId);
-		buf.append(", [ ").append(this.template);
-		buf.append("] , ").append(this.type);
-		buf.append("}");
-		return buf.toString();
+        return "{" + this.templateId + ", [ " + this.template +"] , " + this.type + "}";
 	}
 
 	public boolean equals(Object other) {
@@ -133,13 +126,4 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 		this.templateLanguage = templateLanguage;
 	}
 
-	// @Override
-	public String getContentType() {
-		return contentType;
-	}
-
-	// @Override
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
 }

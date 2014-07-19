@@ -34,9 +34,7 @@ public class ThemeMetadataTemplate {
     private String link = null;
     private boolean navbar = false;
     private boolean hidden = false;
-    private String templateLanguage = null;
     private String contentType = null;
-    private String contentsFile = null;
 
     // Hash table to keep metadata about parsed template code files
     private Map<RenditionType, ThemeMetadataTemplateRendition> templateCodeTable
@@ -90,28 +88,12 @@ public class ThemeMetadataTemplate {
         this.hidden = hidden;
     }
 
-    public String getTemplateLanguage() {
-        return templateLanguage;
-    }
-
-    public void setTemplateLanguage(String templateLanguage) {
-        this.templateLanguage = templateLanguage;
-    }
-
     public String getContentType() {
         return contentType;
     }
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
-    }
-
-    public String getContentsFile() {
-        return contentsFile;
-    }
-
-    public void setContentsFile(String contentsFile) {
-        this.contentsFile = contentsFile;
     }
 
     public void addTemplateCode(RenditionType type, ThemeMetadataTemplateRendition templateCode) {

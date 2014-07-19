@@ -78,26 +78,6 @@ create table usercookie (
 create index uc_username_idx on usercookie( username$!db.INDEXSIZE );
 create index uc_cookieid_idx on usercookie( cookieid$!db.INDEXSIZE );
 
-create table webpage (
-    id              varchar(48)  not null primary key,
-    name            varchar(255)  not null,
-    description     varchar(255),
-    link            varchar(255),
-    websiteid       varchar(48) not null,
-    template        $db.TEXT_SQL_TYPE not null,
-    updatetime      $db.TIMESTAMP_SQL_TYPE not null,
-    hidden          $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    navbar          $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    templatelang    varchar(20) not null,
-    decorator       varchar(255) default null,
-    outputtype      varchar(48) default null,
-    type            varchar(16) default null,
-    #columnNotNullWithDefault('action' 'varchar(16)' 'custom')
-);
-create index wp_name_idx on webpage( name$!db.INDEXSIZE );
-create index wp_link_idx on webpage( link$!db.INDEXSIZE );
-create index wp_id_idx on webpage( websiteid );
-
 create table website (
     id                varchar(48) not null primary key,
     name              varchar(255) not null,
@@ -139,16 +119,28 @@ create table website (
 create index ws_isenabled_idx on website(isenabled);
 alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
 
--- This index is not necessary because of handle is already a primary key.
--- create index ws_handle_idx    on website(handle);
+create table weblog_custom_template (
+    id              varchar(48)  not null primary key,
+    name            varchar(255)  not null,
+    description     varchar(255),
+    link            varchar(255),
+    websiteid       varchar(48) not null,
+    updatetime      $db.TIMESTAMP_SQL_TYPE not null,
+    hidden          $db.BOOLEAN_SQL_TYPE_FALSE not null,
+    navbar          $db.BOOLEAN_SQL_TYPE_FALSE not null,
+    outputtype      varchar(48) default null,
+    #columnNotNullWithDefault('action' 'varchar(16)' 'custom')
+);
+create index wp_name_idx on weblog_custom_template(name$!db.INDEXSIZE);
+create index wp_link_idx on weblog_custom_template(link$!db.INDEXSIZE);
+create index wp_id_idx on weblog_custom_template(websiteid);
 
 create table custom_template_rendition (
     id           varchar(48)  not null primary key,
-    templateid varchar(48) not null,
+    templateid   varchar(48) not null,
     template     $db.TEXT_SQL_TYPE not null,
     templatelang varchar(48),
-    contenttype  varchar(48),
-    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
+    #columnNotNullWithDefault('type' 'varchar(16)' 'STANDARD')
 );
 
 create table folder (
@@ -481,7 +473,7 @@ create table roller_mediafiledir (
 
 -- page, entry, category, comment
 
-alter table webpage add constraint wp_websiteid_fk
+alter table weblog_custom_template add constraint wp_websiteid_fk
     foreign key ( websiteid ) references website( id ) $!db.ADDL_FK_PARAMS ;
 
 alter table weblogentry add constraint we_websiteid_fk

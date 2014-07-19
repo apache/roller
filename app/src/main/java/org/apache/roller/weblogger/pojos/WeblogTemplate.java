@@ -20,8 +20,6 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -30,7 +28,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
 
 /**
  * POJO that represents a single user defined template page.
@@ -43,8 +40,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public static final long serialVersionUID = -613737191638263428L;
     public static final String DEFAULT_PAGE = "Weblog";
     
-    private static Log log = LogFactory.getLog(WeblogTemplate.class);
-    private static Set requiredTemplates = null;
+    private static Set<String> requiredTemplates = null;
     
     // attributes
     private String id = UUIDGenerator.generateUUID();
@@ -52,40 +48,21 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private String  name = null;
     private String  description = null;
     private String  link = null;
-    private String  contents = null;
     private Date    lastModified = null;
-    private String  templateLanguage = null;
     private boolean hidden = false;
     private boolean navbar = false;
-    private String  decoratorName = null;
     private String  outputContentType = null;
-    private String  type = null;
-    
+
     // associations
     private Weblog weblog = null;
 
     static {
-        requiredTemplates = new HashSet();
+        requiredTemplates = new HashSet<String>();
         requiredTemplates.add("Weblog");
         requiredTemplates.add("_day");
     }
-    
-    
+
     public WeblogTemplate() {}
-    
-    
-    public ThemeTemplate getDecorator() {
-        if(getDecoratorName() != null && !getId().equals(getDecoratorName())) {
-            try {
-                return weblog.getTheme().getTemplateByName(getDecoratorName());
-            } catch (WebloggerException ex) {
-                log.error("Error getting decorator["+getDecoratorName()+"] "+
-                        "for template "+getId());
-            }
-        }
-        return null;
-    }
-    
     
     public String getId() {
         return this.id;
@@ -94,8 +71,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setId( String id ) {
         this.id = id;
     }
-    
-    
+
     public Weblog getWebsite() {
         return this.weblog;
     }
@@ -111,8 +87,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setAction(String action) {
         this.action = action;
     }
-    
-    
+
     public String getName() {
         return this.name;
     }
@@ -120,8 +95,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setName( String name ) {
         this.name = name;
     }
-    
-    
+
     public String getDescription() {
         return this.description;
     }
@@ -129,8 +103,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setDescription( String description ) {
         this.description = description;
     }
-    
-    
+
     public String getLink() {
         return this.link;
     }
@@ -138,17 +111,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setLink( String link ) {
         this.link = link;
     }
-    
-    
-    public String getContents() {
-        return this.contents;
-    }
-    
-    public void setContents( String template ) {
-        this.contents = template;
-    }
-    
-    
+
     public Date getLastModified() {
         return lastModified;
     }
@@ -156,17 +119,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setLastModified(final Date newtime ) {
         lastModified = newtime;
     }
-    
-    
-    public String getTemplateLanguage() {
-        return templateLanguage;
-    }
 
-    public void setTemplateLanguage(String templateLanguage) {
-        this.templateLanguage = templateLanguage;
-    }
-    
-    
     public boolean isNavbar() {
         return navbar;
     }
@@ -174,8 +127,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setNavbar(boolean navbar) {
         this.navbar = navbar;
     }
-    
-    
+
     public boolean isHidden() {
         return hidden;
     }
@@ -183,18 +135,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setHidden(boolean isHidden) {
         this.hidden = isHidden;
     }
-        
-    
-    public String getDecoratorName() {
-        return decoratorName;
-    }
 
-    public void setDecoratorName(String decorator) {
-        this.decoratorName = decorator;
-    }
-    
-    
-    /** 
+    /**
      * Content-type rendered by template or null for auto-detection by link extension.
      */
     public String getOutputContentType() {
@@ -223,8 +165,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         */
         return (requiredTemplates.contains(getName()) || "Weblog".equals(getLink()));
     }
-    
-    
+
     /**
      * A convenience method for testing if this template represents a 'custom'
      * template, meaning a template with action = ACTION_CUSTOM.
@@ -237,27 +178,10 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateRenditionByType(getId(), type);
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getName());
-        buf.append(", ").append(getLink());
-        buf.append(", ").append(getDecoratorName());
-        buf.append(", ").append(getTemplateLanguage());
-        buf.append("}");
-        return buf.toString();
+        return "{" + getId() + ", " + getName() + ", " + getLink() + "}";
     }
 
     public boolean equals(Object other) {

@@ -16,9 +16,9 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>weblog.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -30,9 +30,9 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-         <templateCode>
+        <contentType>text/html</contentType>
+        <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>_blogdirectory.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -44,9 +44,9 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>_blogprofile.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -58,9 +58,9 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>_blogs.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -72,9 +72,9 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>_css.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -86,9 +86,9 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>_day.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -100,9 +100,9 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>_decorator.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -114,9 +114,9 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>_entry.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -128,9 +128,9 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
+        <contentType>text/html</contentType>
         <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>_footer.vm</contentsFile>
            <type>standard</type>
        </templateCode>
@@ -142,12 +142,12 @@
     <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
-         <templateCode>
+        <contentType>text/html</contentType>
+        <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>_header.vm</contentsFile>
            <type>standard</type>
-       </templateCode>
+        </templateCode>
     </template>
     
     <template action="custom">
@@ -156,12 +156,12 @@
     <link>directory</link>
         <navbar>false</navbar>
         <hidden>false</hidden>
-         <templateCode>
+        <contentType>text/html</contentType>
+        <templateCode>
            <templateLanguage>velocity</templateLanguage>
-           <contentType>text/html</contentType>
            <contentsFile>directory.vm</contentsFile>
            <type>standard</type>
-       </templateCode>
+        </templateCode>
     </template>
     
     <!-- resources -->

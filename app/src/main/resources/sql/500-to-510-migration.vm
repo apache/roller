@@ -9,11 +9,18 @@ create table custom_template_rendition (
     templateid varchar(48) not null,
     template     $db.TEXT_SQL_TYPE not null,
     templatelang varchar(48),
-    contenttype  varchar(48),
-    #columnNotNullWithDefault('type' 'varchar(16)' 'standard')
+    #columnNotNullWithDefault('type' 'varchar(16)' 'STANDARD')
 );
 
-#addColumnNull("webpage" "type"  "varchar(16)")
+insert into custom_template_rendition(id, templateid, template, templatelang, contenttype, type)
+select id, id, template, templatelang, outputtype, 'STANDARD' from webpage;
+
+#renameTable('webpage', 'weblog_custom_template')
+#dropColumn('weblog_custom_template', 'template')
+#dropColumn('weblog_custom_template', 'templatelang')
+#dropColumn('weblog_custom_template', 'decorator')
+
+
 #addColumnNull("weblogentry" "search_description"  "varchar(255)")
 
 -- Removal of subcategories means no more path and parentid columns

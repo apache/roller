@@ -30,7 +30,7 @@ import java.util.List;
  * A SharedTheme is a theme implementation which is designed to be shared by
  * multiple weblogs using a common set of resources.
  */
-public abstract class SharedTheme implements Theme, Serializable, Comparable<SharedTheme> {
+public abstract class SharedTheme implements Theme, Serializable {
     
     protected String id = null;
     protected String name = null;
@@ -42,16 +42,11 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable<Sha
     public abstract List<ThemeResource> getResources();
     
     public abstract ThemeResource getPreviewImage();
-    
-    
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(SharedTheme other) {
+
+    public int compareTo(Theme other) {
         return getName().compareTo(other.getName());
     }
-    
-    
+
     public String getId() {
         return id;
     }

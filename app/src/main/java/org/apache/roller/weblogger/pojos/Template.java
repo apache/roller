@@ -56,19 +56,6 @@ public interface Template {
     
     
     /**
-     * The templating language used by this template.
-     */
-
-    String getTemplateLanguage();
-
-    /**
-     * Set the template language.This is used by template code object to assign
-     * correct template language for different template content types
-     */
-    void setTemplateLanguage(String templateLanguage);
-    
-    
-    /**
      * Content-type of output or null if none defined.
      */
     String getOutputContentType();

@@ -27,6 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -117,8 +119,8 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     
     /**
      * Look for any _acronyms Page and parse it into Properties.
-     * @param website
-     * @return
+     * @param website blog whose acronyms page to look for
+     * @return properties list of acronyms
      */
     private Properties loadAcronyms(Weblog website) {
         Properties acronyms = new Properties();
@@ -127,7 +129,10 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
             WeblogTemplate acronymsPage = wmgr.getPageByName(
                     website, "_acronyms");
             if (acronymsPage != null) {
-                acronyms = parseAcronymPage(acronymsPage, acronyms);
+                CustomTemplateRendition ctr = acronymsPage.getTemplateRendition(TemplateRendition.RenditionType.STANDARD);
+                if (ctr != null) {
+                    acronyms = parseAcronymPage(ctr, acronyms);
+                }
             }
         } catch (WebloggerException e) {
             // not much we can do about it
@@ -143,7 +148,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
      *
      * @param text entry text
      * @param acronymPatterns user provided set of acronyms
-     * @param acronymTags
+     * @param acronymTags replacement HTML acronym tag.
      * @return entry text with acronym explanations
      */
     private String matchAcronyms(String text, Pattern[] acronymPatterns, String[] acronymTags) {
@@ -163,12 +168,12 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
      * Parse the Template of the provided WeblogTemplate and turns it
      * into a <code>Properties</code> collection.
      *
-     * @param acronymPage
+     * @param acronymPage Rendition holding the list of acronyms.
      * @return acronym properties (key = acronym, value= full text), empty if Template is empty
      */
-    private Properties parseAcronymPage(WeblogTemplate acronymPage, Properties acronyms) {
-        String rawAcronyms = acronymPage.getContents();
-        
+    private Properties parseAcronymPage(CustomTemplateRendition acronymPage, Properties acronyms) {
+        String rawAcronyms = acronymPage.getTemplate();
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("parsing _acronyms template: \n'"+rawAcronyms+"'");
         }
@@ -177,18 +182,15 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         String regex = "\n";
         String[] lines = rawAcronyms.split(regex);
         
-        if (lines != null) {
-            for (int i = 0; i < lines.length; i++) {
-                int index = lines[i].indexOf('=');
-                if (index > 0) {
-                    String key = lines[i].substring(0, index).trim();
-                    String value =
-                            lines[i].substring(index + 1, lines[i].length()).trim();
-                    acronyms.setProperty(key, value);
-                }
+        for (String line : lines) {
+            int index = line.indexOf('=');
+            if (index > 0) {
+                String key = line.substring(0, index).trim();
+                String value = line.substring(index + 1, line.length()).trim();
+                acronyms.setProperty(key, value);
             }
         }
-        
+
         return acronyms;
     }
     

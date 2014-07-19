@@ -72,11 +72,8 @@ public class CustomTemplateRenditionTest extends TestCase{
            testPage.setName("testTemplate");
            testPage.setDescription("Test Weblog Template");
            testPage.setLink("testTemp");
-           testPage.setContents("a test weblog template.");
            testPage.setLastModified(new java.util.Date());
            testPage.setWebsite(TestUtils.getManagedWebsite(testWeblog));
-           testPage.setTemplateLanguage("velocity");
-           testPage.setType("standard");
        }
 
        public void tearDown() throws Exception {

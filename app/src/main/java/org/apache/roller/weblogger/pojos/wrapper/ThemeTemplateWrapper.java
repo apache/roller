@@ -52,14 +52,9 @@ public final class ThemeTemplateWrapper {
         return this.pojo.getName();
     }
     
-    
+
     public String getDescription() {
         return this.pojo.getDescription();
-    }
-    
-    
-    public String getContents() {
-        return this.pojo.getContents();
     }
     
     
@@ -71,8 +66,8 @@ public final class ThemeTemplateWrapper {
     public Date getLastModified() {
         return this.pojo.getLastModified();
     }
-    
-    
+
+
     public boolean isHidden() {
         return this.pojo.isHidden();
     }

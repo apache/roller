@@ -35,7 +35,6 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	// template contents
 	private String template = null;
 	private RenditionType type = null;
-	private String contentType = null;
 	private String templateLanguage = null;
 
 	public CustomTemplateRendition(String templateId, RenditionType type) {
@@ -87,14 +86,10 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	// ------------------------------------------------------- Good citizenship
 
 	public String toString() {
-		StringBuilder buf = new StringBuilder();
-		buf.append("{");
-		buf.append(getId());
-		buf.append(", ").append(getTemplateId());
-		buf.append(", [ ").append(getTemplate());
-		buf.append("] , ").append(getType());
-		buf.append("}");
-		return buf.toString();
+        return "{" + getId()
+                + ", " + getTemplateId()
+                + ", [ " + getTemplate()
+                + "] , " + getType() + "}";
 	}
 
 	public boolean equals(Object other) {
@@ -124,13 +119,4 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 		this.templateLanguage = templateLanguage;
 	}
 
-	// @Override
-	public String getContentType() {
-		return contentType;
-	}
-
-	// @Override
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
 }

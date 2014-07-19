@@ -87,12 +87,10 @@ public class RollerResourceLoader extends ResourceLoader {
 				throw new ResourceNotFoundException(
 						"RollerResourceLoader: page \"" + name + "\" not found");
 			}
-			String contents;
+			String contents = "";
 			TemplateRendition templateCode = page.getTemplateRendition(renditionType);
 			if (templateCode != null) {
 				contents = templateCode.getTemplate();
-			} else {
-				contents = page.getContents();
 			}
 			return new ByteArrayInputStream(contents.getBytes("UTF-8"));
 
