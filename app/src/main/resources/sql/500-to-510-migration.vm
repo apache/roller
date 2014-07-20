@@ -36,8 +36,12 @@ delete from weblogcategory where name = 'root' and parentid is null;
 
 -- Removal of custom ping targets
 delete from pingtarget where websiteid is not null;
-#dropIndex("pingtarget" "pt_websiteid_fk")
+(this index does not exist on all Roller databases)
+-- #dropIndex("pingtarget" "pt_websiteid_fk")
 #dropColumn("pingtarget" "websiteid")
+
+-- NOTE: you might need to drop this index on some Roller databases
+-- drop index folder_namefolderid_uq on folder;
 
 -- Removal of bookmark subfolders and renaming of former root folder to 'default'
 -- If a folder with name 'default' already exists, rename it by adding its id to it.
@@ -61,5 +65,6 @@ update roller_mediafiledir set name = 'default' where name = 'root' and parentid
 
 -- Referer table no longer populated, retaining for older DB's in case legacy data
 -- is desired to keep; but removing its FK relationships to other tables
-#dropIndex("referer" "ref_entryid_fk")
-#dropIndex("referer" "ref_websiteid_fk")
+-- (these indexes do not exist on all Roller databases for some reason)
+-- #dropIndex("referer" "ref_entryid_fk")
+-- #dropIndex("referer" "ref_websiteid_fk")
