@@ -20,10 +20,14 @@
 	
 		    <div class="entryContent">
 		        #if($model.permalink)
-		        		<p>$entry.displayContent</p>
+		            <p>$entry.displayContent</p>
 		        #else
-		        		<p>$entry.summary</p>
-		        		<a class="btn btn-primary" href="$url.entry($entry.anchor)">Read More <i class="icon-angle-right"></i></a>
+		            #if($entry.summary != "")
+		                <p>$entry.summary</p>
+                        <a class="btn btn-primary" href="$url.entry($entry.anchor)">Read More <i class="icon-angle-right"></i></a>
+                    #else
+                        <p>$entry.displayContent</p>
+                    #end
 		        #end
 		    </div>
 
