@@ -115,11 +115,7 @@ drop index $indexName on $tableName;
 
 
 #macro(dropColumn $tableName $columnName)
-#if ($db.DBTYPE == "DERBY")
--- You should alter table $tableName drop column $columnName;
-#else
 alter table $tableName drop column $columnName;
-#end
 #end
 
 

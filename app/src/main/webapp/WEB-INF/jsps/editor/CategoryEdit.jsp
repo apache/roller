@@ -34,7 +34,7 @@
         </tr>
         
         <tr>
-            <td><s:text name="categoryForm.description" /></td>
+            <td><s:text name="generic.description" /></td>
             <td><s:textarea name="bean.description" rows="5" cols="50" /></td>
         </tr>
         

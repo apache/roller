@@ -12,13 +12,13 @@ create table custom_template_rendition (
     #columnNotNullWithDefault('type' 'varchar(16)' 'STANDARD')
 );
 
-insert into custom_template_rendition(id, templateid, template, templatelang, contenttype, type)
-select id, id, template, templatelang, outputtype, 'STANDARD' from webpage;
+insert into custom_template_rendition(id, templateid, template, templatelang, type)
+select id, id, template, templatelang, 'STANDARD' from webpage;
 
-#renameTable('webpage', 'weblog_custom_template')
-#dropColumn('weblog_custom_template', 'template')
-#dropColumn('weblog_custom_template', 'templatelang')
-#dropColumn('weblog_custom_template', 'decorator')
+#renameTable('webpage' 'weblog_custom_template')
+#dropColumn('weblog_custom_template' 'template')
+#dropColumn('weblog_custom_template' 'templatelang')
+#dropColumn('weblog_custom_template' 'decorator')
 
 
 #addColumnNull("weblogentry" "search_description"  "varchar(255)")
@@ -34,7 +34,7 @@ delete from weblogcategory where name = 'root' and parentid is null;
 -- Removal of custom ping targets
 delete from pingtarget where websiteid is not null;
 #dropIndex("pingtarget" "pt_websiteid_fk")
-#dropColumn("pingtarget", "websiteid")
+#dropColumn("pingtarget" "websiteid")
 
 -- Removal of bookmark subfolders and renaming of former root folder to 'default'
 -- If a folder with name 'default' already exists, rename it by adding its id to it.
