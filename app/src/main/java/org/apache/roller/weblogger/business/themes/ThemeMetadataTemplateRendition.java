@@ -20,17 +20,18 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 
 public class ThemeMetadataTemplateRendition {
-    private String templateLang = null;
+    private TemplateLanguage templateLang = null;
     private String contentsFile = null;
     private RenditionType type = null;
 
-    public String getTemplateLang() {
+    public TemplateLanguage getTemplateLang() {
         return templateLang;
     }
 
-    public void setTemplateLang(String templateLang) {
+    public void setTemplateLang(TemplateLanguage templateLang) {
         this.templateLang = templateLang;
     }
 

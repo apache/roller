@@ -19,7 +19,9 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -131,39 +133,31 @@ public class ThemeMetadataParser {
 		boolean roller50format = false;
 		for (Element templateCodeElement : templateCodeList) {
 			ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
-			templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
-            if (StringUtils.isEmpty(templateCode.getTemplateLang())) {
+            String templateString = templateCodeElement.getChildText("templateLanguage");
+            if (StringUtils.isEmpty(templateString)) {
                 throw new ThemeParsingException("templateCode must contain a 'templateLanguage' element");
+            } else {
+                try {
+                    templateCode.setTemplateLang(TemplateLanguage.valueOf(templateString.toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    throw new ThemeParsingException("Unknown templateLanguage value '" + templateString + "'");
+                }
             }
 			templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
             if (StringUtils.isEmpty(templateCode.getContentsFile())) {
                 throw new ThemeParsingException("templateCode must contain a 'contentsFile' element");
             }
-			String renditionValue = templateCodeElement.getChildText("type");
+            String renditionValue = templateCodeElement.getChildText("type");
             if (renditionValue != null) {
-                templateCode.setType(RenditionType.valueOf(renditionValue.toUpperCase()));
-                if (templateCode.getType() == null) {
+                try {
+                    templateCode.setType(RenditionType.valueOf(renditionValue.toUpperCase()));
+                } catch (IllegalArgumentException e) {
                     throw new ThemeParsingException("Invalid rendition type " + renditionValue + " found.");
                 }
             } else {
                 throw new ThemeParsingException("templateCode must contain a 'type' element");
             }
-			template.addTemplateCode(templateCode.getType(), templateCode);
-
-			// if theme has type, then it's roller50format
-			roller50format = true;
-		}
-
-		// hack to ensure old format themes still work (presently deactivated)
-		if (!roller50format) {
-            throw new ThemeParsingException("Incompatible (pre- Roller 5.0) theme.xml found, cannot process.");
-/*
-			ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
-			templateCode.setTemplateLang(template.getTemplateLanguage());
-			templateCode.setContentsFile(template.getContentsFile());
-			templateCode.setContentType(template.getContentType());
-			templateCode.setType(RenditionType.STANDARD);
-			template.addTemplateCode(RenditionType.STANDARD, templateCode); */
+			template.addTemplateRendition(templateCode);
 		}
 
 		String navbar = element.getChildText("navbar");
@@ -200,12 +194,17 @@ public class ThemeMetadataParser {
 
         // parsing templatecode segment
         List<Element> templateCodeList = element.getChildren("templateCode");
-		boolean roller50format = false;
         for (Element templateCodeElement : templateCodeList) {
             ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
-            templateCode.setTemplateLang(templateCodeElement.getChildText("templateLanguage"));
-            if (StringUtils.isEmpty(templateCode.getTemplateLang())) {
-                throw new ThemeParsingException("stylesheet must contain a 'templateLanguage' element");
+            String templateString = templateCodeElement.getChildText("templateLanguage");
+            if (StringUtils.isEmpty(templateString)) {
+                throw new ThemeParsingException("templateCode must contain a 'templateLanguage' element");
+            } else {
+                try {
+                    templateCode.setTemplateLang(TemplateLanguage.valueOf(templateString.toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    throw new ThemeParsingException("Unknown templateLanguage value '" + templateString + "'");
+                }
             }
             templateCode.setContentsFile(templateCodeElement.getChildText("contentsFile"));
             if (StringUtils.isEmpty(templateCode.getContentsFile())) {
@@ -213,30 +212,16 @@ public class ThemeMetadataParser {
             }
             String renditionValue = templateCodeElement.getChildText("type");
             if (renditionValue != null) {
-                templateCode.setType(RenditionType.valueOf(renditionValue.toUpperCase()));
-                if (templateCode.getType() == null) {
+                try {
+                    templateCode.setType(RenditionType.valueOf(renditionValue.toUpperCase()));
+                } catch (IllegalArgumentException e) {
                     throw new ThemeParsingException("Invalid rendition type " + renditionValue + " found.");
                 }
             } else {
                 throw new ThemeParsingException("templateCode must contain a 'type' element");
             }
-            template.addTemplateCode(templateCode.getType(), templateCode);
-
-			// if theme has type, then it's roller50format
-			roller50format = true;
+            template.addTemplateRendition(templateCode);
         }
-        
-		// hack to ensure old format themes still work (presently deactivated)
-   		if (!roller50format) {
-            throw new ThemeParsingException("Incompatible (pre- Roller 5.0) theme.xml found, cannot process.");
-/*
-			ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
-			templateCode.setTemplateLang(template.getTemplateLanguage());
-			templateCode.setContentsFile(template.getContentsFile());
-			templateCode.setContentType(template.getContentType());
-			templateCode.setType(RenditionType.STANDARD);
-			template.addTemplateCode(RenditionType.STANDARD, templateCode); */
-		}
 
         // validate template
         if(StringUtils.isEmpty(template.getName())) {

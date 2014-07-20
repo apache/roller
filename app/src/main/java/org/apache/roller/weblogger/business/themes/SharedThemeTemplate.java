@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -42,7 +43,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private String contents = null;
     private String link = null;
     private Date lastModified = null;
-    private String templateLanguage = null;
+    private TemplateLanguage templateLanguage = null;
     private boolean hidden = false;
     private boolean navbar = false;
     private String  outputContentType = null;
@@ -56,7 +57,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     
     public SharedThemeTemplate(String id, String action, String name,
             String desc, String contents, String link, Date date, 
-            String tempLang, boolean hid, boolean navbar) {
+            TemplateLanguage tempLang, boolean hid, boolean navbar) {
         
         this.id = id;
         this.action = action;
@@ -69,14 +70,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.hidden = hid;
         this.navbar = navbar;
     }
-    
-    
-    // NOTE: decorators are deprecated as of 4.0 but we leave this here because
-    //       they need to be left in place for backwards compatability
-    public ThemeTemplate getDecorator() {
-        return null;
-    }
-    
+
     public String getId() {
         return id;
     }
@@ -125,11 +119,11 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.link = link;
     }
 
-    public String getTemplateLanguage() {
+    public TemplateLanguage getTemplateLanguage() {
         return templateLanguage;
     }
 
-    public void setTemplateLanguage(String templateLanguage) {
+    public void setTemplateLanguage(TemplateLanguage templateLanguage) {
         this.templateLanguage = templateLanguage;
     }
 
@@ -147,14 +141,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
 
     public void setNavbar(boolean navbar) {
         this.navbar = navbar;
-    }
-
-    public String getDecoratorName() {
-        return null;
-    }
-
-    public void setDecoratorName(String decorator) {
-        // no-op
     }
 
     public String getOutputContentType() {

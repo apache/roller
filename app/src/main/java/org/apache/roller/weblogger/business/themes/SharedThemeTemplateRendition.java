@@ -33,7 +33,7 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 	private String templateId = null;
 	private String template = null;
 	private RenditionType type = null;
-	private String templateLanguage = null;
+	private TemplateLanguage templateLanguage = null;
 	private Date lastModified = null;
 
 	public SharedThemeTemplateRendition(String templateId, RenditionType type) {
@@ -117,12 +117,12 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 	}
 
 	// @Override
-	public String getTemplateLanguage() {
+	public TemplateLanguage getTemplateLanguage() {
 		return templateLanguage;
 	}
 
 	// @Override
-	public void setTemplateLanguage(String templateLanguage) {
+	public void setTemplateLanguage(TemplateLanguage templateLanguage) {
 		this.templateLanguage = templateLanguage;
 	}
 

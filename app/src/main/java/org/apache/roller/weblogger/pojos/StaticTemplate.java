@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.pojos;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -39,12 +40,12 @@ public class StaticTemplate implements Template, Serializable {
     private String name = null;
     private String description = null;
     private Date lastModified = new Date();
-    private String templateLanguage = null;
+    private TemplateLanguage templateLanguage = null;
     private String  outputContentType = null;
     private RenditionType type = RenditionType.STANDARD;
     
     
-    public StaticTemplate(String id, String lang) {
+    public StaticTemplate(String id, TemplateLanguage lang) {
         this.id = id;
         this.name = id;
         this.description = id;
@@ -84,11 +85,11 @@ public class StaticTemplate implements Template, Serializable {
         this.lastModified = lastModified;
     }
 
-    public String getTemplateLanguage() {
+    public TemplateLanguage getTemplateLanguage() {
         return templateLanguage;
     }
 
-    public void setTemplateLanguage(String templateLanguage) {
+    public void setTemplateLanguage(TemplateLanguage templateLanguage) {
         this.templateLanguage = templateLanguage;
     }
     

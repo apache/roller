@@ -23,15 +23,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -181,10 +180,12 @@ public class TemplateEdit extends UIAction {
         }
     }
 
-    public List getTemplateLanguages() {
-        String langs = WebloggerConfig.getProperty("rendering.templateLanguages", "velocity");
-        String[] langsArray = Utilities.stringToStringArray(langs, ",");
-        return Arrays.asList(langsArray);
+    public List<String> getTemplateLanguages() {
+        List<String> langList = new ArrayList<String>();
+        for (TemplateLanguage lang : TemplateLanguage.values()) {
+            langList.add(lang.name());
+        }
+        return langList;
     }
 
 

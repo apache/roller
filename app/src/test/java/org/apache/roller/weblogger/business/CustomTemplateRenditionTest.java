@@ -25,7 +25,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -106,13 +108,13 @@ public class CustomTemplateRenditionTest extends TestCase{
            //create standard template coce
            CustomTemplateRendition standardTemplateCode = new CustomTemplateRendition(testPage.getId(), RenditionType.STANDARD);
            standardTemplateCode.setTemplate("standard.template.code");
-           standardTemplateCode.setTemplateLanguage("velocity");
+           standardTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
            mgr.saveTemplateRendition(standardTemplateCode);
             //TestUtils.endSession(true);
            //create mobile code
            CustomTemplateRendition mobileTemplateCode = new CustomTemplateRendition(testPage.getId(), RenditionType.MOBILE);
            mobileTemplateCode.setTemplate("mobile.template.code");
-           mobileTemplateCode.setTemplateLanguage("velocity");
+           mobileTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
            mgr.saveTemplateRendition(mobileTemplateCode);
              TestUtils.endSession(true);
 

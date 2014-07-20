@@ -221,9 +221,9 @@ public class SharedThemeFromDir extends SharedTheme {
                     .getStylesheet();
             // getting the template codes for available types
             ThemeMetadataTemplateRendition standardTemplateCode = stylesheetTmpl
-                    .getTemplateCodeTable().get(RenditionType.STANDARD);
+                    .getTemplateRenditionTable().get(RenditionType.STANDARD);
             ThemeMetadataTemplateRendition mobileTemplateCode = stylesheetTmpl
-                    .getTemplateCodeTable().get(RenditionType.MOBILE);
+                    .getTemplateRenditionTable().get(RenditionType.MOBILE);
 
             // standardTemplateCode required
             if (standardTemplateCode == null) {
@@ -238,7 +238,7 @@ public class SharedThemeFromDir extends SharedTheme {
                         .getTemplateLang());
                 mobileTemplateCode.setType(RenditionType.MOBILE);
 
-                stylesheetTmpl.addTemplateCode(RenditionType.MOBILE, mobileTemplateCode);
+                stylesheetTmpl.addTemplateRendition(mobileTemplateCode);
             }
 
             // construct File object from path
@@ -324,9 +324,9 @@ public class SharedThemeFromDir extends SharedTheme {
 
             // getting the template codes for available types
             ThemeMetadataTemplateRendition standardTemplateCode = templateMetadata
-                    .getTemplateCodeTable().get(RenditionType.STANDARD);
+                    .getTemplateRenditionTable().get(RenditionType.STANDARD);
             ThemeMetadataTemplateRendition mobileTemplateCode = templateMetadata
-                    .getTemplateCodeTable().get(RenditionType.MOBILE);
+                    .getTemplateRenditionTable().get(RenditionType.MOBILE);
 
             // If no template code present for any type
             if (standardTemplateCode == null) {
@@ -341,7 +341,7 @@ public class SharedThemeFromDir extends SharedTheme {
                         .getTemplateLang());
                 mobileTemplateCode.setType(RenditionType.MOBILE);
 
-                templateMetadata.addTemplateCode(RenditionType.MOBILE, mobileTemplateCode);
+                templateMetadata.addTemplateRendition(mobileTemplateCode);
             }
 
             // construct File object from path
@@ -456,8 +456,7 @@ public class SharedThemeFromDir extends SharedTheme {
 
         templateCode.setTemplateId(templateId);
         templateCode.setTemplate(contents);
-        templateCode
-                .setTemplateLanguage(templateCodeMetadata.getTemplateLang());
+        templateCode.setTemplateLanguage(templateCodeMetadata.getTemplateLang());
         templateCode.setType(templateCodeMetadata.getType());
         templateCode.setLastModified(new Date(templateFile.lastModified()));
 

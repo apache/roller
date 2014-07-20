@@ -12,10 +12,13 @@ create table custom_template_rendition (
     #columnNotNullWithDefault('type' 'varchar(16)' 'STANDARD')
 );
 
-insert into custom_template_rendition(id, templateid, template, templatelang, type)
-select id, id, template, templatelang, 'STANDARD' from webpage;
-
 #renameTable('webpage' 'weblog_custom_template')
+
+update weblog_custom_template set templatelang = 'VELOCITY' where templatelang = 'velocity';
+
+insert into custom_template_rendition(id, templateid, template, templatelang, type)
+select id, id, template, templatelang, 'STANDARD' from weblog_custom_template;
+
 #dropColumn('weblog_custom_template' 'template')
 #dropColumn('weblog_custom_template' 'templatelang')
 #dropColumn('weblog_custom_template' 'decorator')

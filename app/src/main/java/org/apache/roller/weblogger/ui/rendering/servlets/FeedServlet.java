@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
@@ -283,7 +284,7 @@ public class FeedServlet extends HttpServlet {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate(pageId, "velocity");
+            Template template = new StaticTemplate(pageId, TemplateLanguage.VELOCITY);
             renderer = RendererManager.getRenderer(template,
                     MobileDeviceRepository.DeviceType.standard);
         } catch (Exception e) {

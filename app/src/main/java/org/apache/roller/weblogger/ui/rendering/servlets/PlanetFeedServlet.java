@@ -39,6 +39,7 @@ import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
@@ -197,7 +198,7 @@ public class PlanetFeedServlet extends HttpServlet {
         try {
             log.debug("Looking up renderer");
             Template template = new StaticTemplate(
-                    "templates/planet/planetrss.vm", "velocity");
+                    "templates/planet/planetrss.vm", TemplateLanguage.VELOCITY);
             renderer = RendererManager.getRenderer(template, DeviceType.mobile);
         } catch (Exception e) {
             // nobody wants to render my content :(

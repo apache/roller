@@ -29,6 +29,7 @@
             </basic>
             <basic name="templateLanguage">
                 <column name="templatelang" insertable="true" updatable="true" unique="false"/>
+                <enumerated>STRING</enumerated>
             </basic>
             <!--many-to-one name="weblogTemplate" target-entity="org.apache.roller.weblogger.pojos.WeblogTemplate">
                 <join-column name="templateId" insertable="true" updatable="true" nullable="false"/>

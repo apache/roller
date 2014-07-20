@@ -37,7 +37,7 @@ public class ThemeMetadataTemplate {
     private String contentType = null;
 
     // Hash table to keep metadata about parsed template code files
-    private Map<RenditionType, ThemeMetadataTemplateRendition> templateCodeTable
+    private Map<RenditionType, ThemeMetadataTemplateRendition> templateRenditionTable
             = new HashMap<RenditionType, ThemeMetadataTemplateRendition>();
 
     public String getAction() {
@@ -96,16 +96,16 @@ public class ThemeMetadataTemplate {
         this.contentType = contentType;
     }
 
-    public void addTemplateCode(RenditionType type, ThemeMetadataTemplateRendition templateCode) {
-        this.getTemplateCodeTable().put(type, templateCode);
+    public void addTemplateRendition(ThemeMetadataTemplateRendition templateCode) {
+        this.getTemplateRenditionTable().put(templateCode.getType(), templateCode);
     }
 
     public ThemeMetadataTemplateRendition getTemplateRendition(RenditionType type){
-        return this.getTemplateCodeTable().get(type);
+        return this.getTemplateRenditionTable().get(type);
     }
 
-    public Map<RenditionType, ThemeMetadataTemplateRendition> getTemplateCodeTable() {
-        return templateCodeTable;
+    public Map<RenditionType, ThemeMetadataTemplateRendition> getTemplateRenditionTable() {
+        return templateRenditionTable;
     }
 
 }

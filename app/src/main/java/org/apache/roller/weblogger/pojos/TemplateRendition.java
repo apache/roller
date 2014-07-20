@@ -25,11 +25,13 @@ public interface TemplateRendition {
 
     public enum RenditionType {STANDARD, MOBILE}
 
+    public enum TemplateLanguage {VELOCITY}
+
     String getTemplate();
 
     String getTemplateId();
 
-    String getTemplateLanguage();
+    TemplateLanguage getTemplateLanguage();
 
     RenditionType getType();
 
@@ -37,7 +39,7 @@ public interface TemplateRendition {
 
     void setTemplateId(String templateId);
 
-    void setTemplateLanguage(String templateLanguage);
+    void setTemplateLanguage(TemplateLanguage templateLanguage);
 
     void setType(RenditionType type);
 }

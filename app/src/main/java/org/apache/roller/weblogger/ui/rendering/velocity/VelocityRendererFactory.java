@@ -24,6 +24,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererFactory;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
@@ -55,7 +56,7 @@ public class VelocityRendererFactory implements RendererFactory {
             return null;
         }
         
-        if ("velocity".equals(tr.getTemplateLanguage())) {
+        if (TemplateLanguage.VELOCITY.equals(tr.getTemplateLanguage())) {
             // standard velocity template
             try {
                renderer = new VelocityRenderer(template, deviceType);

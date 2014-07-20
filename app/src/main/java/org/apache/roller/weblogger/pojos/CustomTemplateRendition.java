@@ -35,7 +35,7 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	// template contents
 	private String template = null;
 	private RenditionType type = null;
-	private String templateLanguage = null;
+	private TemplateLanguage templateLanguage = null;
 
 	public CustomTemplateRendition(String templateId, RenditionType type) {
 		this.templateId = templateId;
@@ -110,12 +110,12 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	}
 
 	// @Override
-	public String getTemplateLanguage() {
+	public TemplateLanguage getTemplateLanguage() {
 		return templateLanguage;
 	}
 
 	// @Override
-	public void setTemplateLanguage(String templateLanguage) {
+	public void setTemplateLanguage(TemplateLanguage templateLanguage) {
 		this.templateLanguage = templateLanguage;
 	}
 

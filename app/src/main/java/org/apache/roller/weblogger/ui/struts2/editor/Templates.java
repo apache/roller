@@ -25,7 +25,9 @@ import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -168,7 +170,7 @@ public class Templates extends UIAction {
                 CustomTemplateRendition standardRendition = new CustomTemplateRendition(
                         newTemplate.getId(), RenditionType.STANDARD);
                 standardRendition.setTemplate(getText("pageForm.newTemplateContent"));
-                standardRendition.setTemplateLanguage("velocity");
+                standardRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
                 WebloggerFactory.getWeblogger().getWeblogManager()
                         .saveTemplateRendition(standardRendition);
 
@@ -176,7 +178,7 @@ public class Templates extends UIAction {
                 CustomTemplateRendition mobileRendition = new CustomTemplateRendition(
                         newTemplate.getId(), RenditionType.MOBILE);
                 mobileRendition.setTemplate(newTemplate.getContents());
-                mobileRendition.setTemplateLanguage("velocity");
+                mobileRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
                 WebloggerFactory.getWeblogger().getWeblogManager()
                         .saveTemplateRendition(mobileRendition);
                 */

@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
@@ -117,7 +118,7 @@ public class RSDServlet extends HttpServlet {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate("weblog/rsd.vm", "velocity");
+            Template template = new StaticTemplate("weblog/rsd.vm", TemplateLanguage.VELOCITY);
             renderer = RendererManager.getRenderer(template,
                     DeviceType.standard);
         } catch (Exception e) {

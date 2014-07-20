@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.runnable.Job;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
@@ -131,7 +132,7 @@ public class WeblogCacheWarmupJob implements Job {
                 // lookup Renderer we are going to use
                 Renderer renderer;
                 Template template = new StaticTemplate(
-					"weblog-"+type+"-"+format+".vm", "velocity");
+					"weblog-"+type+"-"+format+".vm", TemplateLanguage.VELOCITY);
                 renderer = RendererManager.getRenderer(template, DeviceType.standard);
                 
                 

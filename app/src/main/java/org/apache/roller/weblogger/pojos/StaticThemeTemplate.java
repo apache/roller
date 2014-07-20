@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.pojos;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -44,14 +45,12 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     private boolean hidden = false;
     private boolean navbar = false;
     private Date lastModified = new Date();
-    private String templateLanguage = null;
+    private TemplateLanguage templateLanguage = null;
     private String outputContentType = null;
-    private String decoratorName = null;
-    private ThemeTemplate decorator = null;
     private RenditionType type = RenditionType.STANDARD;
     
     
-    public StaticThemeTemplate(String id, String lang) {
+    public StaticThemeTemplate(String id, TemplateLanguage lang) {
         this.id = id;
         this.name = id;
         this.description = id;
@@ -92,11 +91,11 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.lastModified = lastModified;
     }
 
-    public String getTemplateLanguage() {
+    public TemplateLanguage getTemplateLanguage() {
         return templateLanguage;
     }
 
-    public void setTemplateLanguage(String templateLanguage) {
+    public void setTemplateLanguage(TemplateLanguage templateLanguage) {
         this.templateLanguage = templateLanguage;
     }
     
@@ -152,14 +151,6 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.navbar = navbar;
     }
 
-    public ThemeTemplate getDecorator() {
-        return decorator;
-    }
-
-    public void setDecorator(ThemeTemplate decorator) {
-        this.decorator = decorator;
-    }
-
     public String getContents() {
         return contents;
     }
@@ -168,12 +159,4 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.contents = contents;
     }
 
-    public String getDecoratorName() {
-        return decoratorName;
-    }
-
-    public void setDecoratorName(String decoratorName) {
-        this.decoratorName = decoratorName;
-    }
-    
 }

@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticThemeTemplate;
+import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -276,7 +277,7 @@ public class PageServlet extends HttpServlet {
             // User doesn't have one so return the default
             if (page == null) {
                 page = new StaticThemeTemplate(
-                        "templates/weblog/popupcomments.vm", "velocity");
+                        "templates/weblog/popupcomments.vm", TemplateLanguage.VELOCITY);
             }
 
             // If request specified the page, then go with that
