@@ -36,7 +36,7 @@ delete from weblogcategory where name = 'root' and parentid is null;
 
 -- Removal of custom ping targets
 delete from pingtarget where websiteid is not null;
-(this index does not exist on all Roller databases)
+-- (this indexes do not exist on all Roller databases for some reason)
 -- #dropIndex("pingtarget" "pt_websiteid_fk")
 #dropColumn("pingtarget" "websiteid")
 
