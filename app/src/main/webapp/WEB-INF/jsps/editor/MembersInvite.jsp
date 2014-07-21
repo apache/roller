@@ -42,7 +42,7 @@
     <div class="formrow">
        <label class="formrow" />&nbsp;</label>
        <div>
-           <select id="userList" size="10" onchange="onUserSelected()" style="width:300px"></select>
+           <select id="userList" size="10" onchange="onUserSelected()" style="width:400px"></select>
        </div>
     </div>    
     

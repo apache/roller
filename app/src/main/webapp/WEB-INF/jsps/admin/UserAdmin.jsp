@@ -37,7 +37,7 @@
            style="margin:4px" />
     <br />
     <select id="userList" size="10" onchange="onUserSelected()" 
-            style="width:300px; margin:4px" ></select>
+            style="width:400px; margin:4px" ></select>
     
 </s:form>
 
