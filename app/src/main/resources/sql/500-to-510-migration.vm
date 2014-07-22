@@ -4,6 +4,9 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
+#renameTable('website' 'weblog')
+#renameTable('folder' 'bookmark_folder')
+
 create table custom_template_rendition (
     id varchar(48)  not null primary key,
     templateid varchar(48) not null,
@@ -41,18 +44,18 @@ delete from pingtarget where websiteid is not null;
 #dropColumn("pingtarget" "websiteid")
 
 -- NOTE: you might need to drop this index on some Roller databases
--- drop index folder_namefolderid_uq on folder;
+-- drop index folder_namefolderid_uq on bookmark_folder;
 
 -- Removal of bookmark subfolders and renaming of former root folder to 'default'
--- If a folder with name 'default' already exists, rename it by adding its id to it.
-update folder set name = #concat("name" "id") where name = 'default';
-update folder set name = 'default' where name = 'root' and parentid is null;
-#dropColumn("folder" 'parentid')
-#dropColumn("folder" 'path')
-#dropColumn("folder" "description")
+-- If a bookmark folder with name 'default' already exists, rename it by adding its id to it.
+update bookmark_folder set name = #concat("name" "id") where name = 'default';
+update bookmark_folder set name = 'default' where name = 'root' and parentid is null;
+#dropColumn("bookmark_folder" 'parentid')
+#dropColumn("bookmark_folder" 'path')
+#dropColumn("bookmark_folder" "description")
 #dropColumn("bookmark" "weight")
 
--- Removal of bookmark subfolders and renaming of former root folder to 'default'
+-- Removal of media file subfolders and renaming of former root folder to 'default'
 -- If a folder with name 'default' already exists, rename it by adding its id to it.
 update roller_mediafiledir set name = #concat("name" "id") where name = 'default';
 update roller_mediafiledir set name = 'default' where name = 'root' and parentid is null;
@@ -61,7 +64,7 @@ update roller_mediafiledir set name = 'default' where name = 'root' and parentid
 #dropColumn("roller_mediafiledir" "parentid")
 
 -- Adding blog-specific web analytics (e.g. Google Analytics) tracking code
-#addColumnNull("website" "analyticscode" $db.TEXT_SQL_TYPE)
+#addColumnNull("weblog" "analyticscode" $db.TEXT_SQL_TYPE)
 
 -- Referer table no longer populated, retaining for older DB's in case legacy data
 -- is desired to keep; but removing its FK relationships to other tables

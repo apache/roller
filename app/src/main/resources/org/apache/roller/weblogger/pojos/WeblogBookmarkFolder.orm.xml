@@ -5,7 +5,7 @@
     <package>org.apache.roller.weblogger.pojos</package>
     <entity metadata-complete="true" name="WeblogBookmarkFolder" class="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"
             access="PROPERTY">
-        <table name="folder"/>
+        <table name="bookmark_folder"/>
         <named-query name="WeblogBookmarkFolder.getByWebsite">
             <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.weblog = ?1</query>
         </named-query>

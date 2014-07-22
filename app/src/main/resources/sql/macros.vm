@@ -84,7 +84,7 @@ Define non-null column with default value
 
 #**
 Rename a table.
-For Derby, will not work if there is a view or foreign key that references the table.
+For Derby, will not work if there is a view or foreign key that references the table. (DERBY-6672)
 **#
 #macro(renameTable $oldTableName $newTableName)
 #if ($db.DBTYPE == 'POSTGRESQL' || $db.DBTYPE == 'HSQLDB')

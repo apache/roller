@@ -5,7 +5,7 @@
 	<package>org.apache.roller.weblogger.pojos</package>
 	<entity metadata-complete="true" name="Weblog" class="org.apache.roller.weblogger.pojos.Weblog"
             access="PROPERTY">
-		<table name="website"/>
+		<table name="weblog"/>
 		<named-query name="Weblog.getByHandle">
 			<query>SELECT w FROM Weblog w WHERE w.handle = ?1</query>
 		</named-query>
