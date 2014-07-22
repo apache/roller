@@ -18,6 +18,7 @@ create table custom_template_rendition (
 #renameTable('webpage' 'weblog_custom_template')
 
 update weblog_custom_template set templatelang = 'VELOCITY' where templatelang = 'velocity';
+update weblog set editorpage = 'editor-xinha.jsp' where editorpage = 'editor-rte.jsp';
 
 insert into custom_template_rendition(id, templateid, template, templatelang, type)
 select id, id, template, templatelang, 'STANDARD' from weblog_custom_template;

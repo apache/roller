@@ -20,7 +20,7 @@
 
 <%-- URLs used by this page --%>
 
-<s:url var="xinhaHome" value="/roller-ui/authoring/editors/xinha-0.95"></s:url>
+<s:url var="xinhaHome" value="/roller-ui/authoring/editors/xinha-0.96.1"></s:url>
 
 <s:url var="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
     <s:param name="weblog" value="%{actionWeblog.handle}" />
