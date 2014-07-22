@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.themes.SharedThemeTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 
@@ -40,16 +41,16 @@ public class StaticTemplate implements Template, Serializable {
     private String name = null;
     private String description = null;
     private Date lastModified = new Date();
-    private TemplateLanguage templateLanguage = null;
     private String  outputContentType = null;
-    private RenditionType type = RenditionType.STANDARD;
-    
-    
+    private TemplateRendition templateRendition;
+
     public StaticTemplate(String id, TemplateLanguage lang) {
         this.id = id;
         this.name = id;
         this.description = id;
-        this.templateLanguage = lang;
+        templateRendition = new SharedThemeTemplateRendition();
+        templateRendition.setTemplateLanguage(lang);
+        templateRendition.setType(RenditionType.STANDARD);
     }
     
     
@@ -85,29 +86,13 @@ public class StaticTemplate implements Template, Serializable {
         this.lastModified = lastModified;
     }
 
-    public TemplateLanguage getTemplateLanguage() {
-        return templateLanguage;
-    }
-
-    public void setTemplateLanguage(TemplateLanguage templateLanguage) {
-        this.templateLanguage = templateLanguage;
-    }
-    
     public String getOutputContentType() {
         return outputContentType;
     }
 
-    public RenditionType getType() {
-        return type;
-    }
-
     public TemplateRendition getTemplateRendition(RenditionType type) throws WebloggerException {
-        return WebloggerFactory.getWeblogger()
-			.getWeblogManager().getTemplateRenditionByType(this.getId(),type);
-    }
-
-    public void setType(RenditionType type){
-         this.type = type;
+        // only one rendition for now
+        return templateRendition;
     }
 
     public void setOutputContentType(String outputContentType) {

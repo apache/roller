@@ -264,15 +264,14 @@ public class SharedThemeFromDir extends SharedTheme {
                         WeblogTemplate.ACTION_CUSTOM, stylesheetTmpl.getName(),
                         stylesheetTmpl.getDescription(), contents,
                         stylesheetTmpl.getLink(), new Date(
-                                templateFile.lastModified()),
-                        standardTemplateCode.getTemplateLang(), false, false);
+                                templateFile.lastModified()), false, false);
 
                 for (RenditionType type : availableTypesList) {
                     SharedThemeTemplateRendition rendition = createTemplateCode(
                             themeTemplate.getId(),
                             stylesheetTmpl.getTemplateRendition(type));
 
-                    themeTemplate.addTemplateRendition(type, rendition);
+                    themeTemplate.addTemplateRendition(rendition);
 
                     // Set Last Modified
                     Date lstModified = rendition.getLastModified();
@@ -363,7 +362,6 @@ public class SharedThemeFromDir extends SharedTheme {
                     templateMetadata.getDescription(), contents,
                     templateMetadata.getLink(), new Date(
                             templateFile.lastModified()),
-                    standardTemplateCode.getTemplateLang(),
                     templateMetadata.isHidden(), templateMetadata.isNavbar());
 
             for (RenditionType type : availableTypesList) {
@@ -371,7 +369,7 @@ public class SharedThemeFromDir extends SharedTheme {
                         themeTemplate.getId(),
                         templateMetadata.getTemplateRendition(type));
 
-                themeTemplate.addTemplateRendition(type, templateCode);
+                themeTemplate.addTemplateRendition(templateCode);
 
                 // Set Last Modified
                 Date lstModified = templateCode.getLastModified();
@@ -439,7 +437,7 @@ public class SharedThemeFromDir extends SharedTheme {
 
     private SharedThemeTemplateRendition createTemplateCode(String templateId,
             ThemeMetadataTemplateRendition templateCodeMetadata) {
-        SharedThemeTemplateRendition templateCode = new SharedThemeTemplateRendition();
+        SharedThemeTemplateRendition templateRendition = new SharedThemeTemplateRendition();
 
         // construct File object from path
         File templateFile = new File(this.themeDir + File.separator
@@ -454,13 +452,13 @@ public class SharedThemeFromDir extends SharedTheme {
                     + "] template file [" + templateFile + "]");
         }
 
-        templateCode.setTemplateId(templateId);
-        templateCode.setTemplate(contents);
-        templateCode.setTemplateLanguage(templateCodeMetadata.getTemplateLang());
-        templateCode.setType(templateCodeMetadata.getType());
-        templateCode.setLastModified(new Date(templateFile.lastModified()));
+        templateRendition.setTemplateId(templateId);
+        templateRendition.setTemplate(contents);
+        templateRendition.setTemplateLanguage(templateCodeMetadata.getTemplateLang());
+        templateRendition.setType(templateCodeMetadata.getType());
+        templateRendition.setLastModified(new Date(templateFile.lastModified()));
 
-        return templateCode;
+        return templateRendition;
     }
 
 }

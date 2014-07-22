@@ -43,7 +43,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private String contents = null;
     private String link = null;
     private Date lastModified = null;
-    private TemplateLanguage templateLanguage = null;
     private boolean hidden = false;
     private boolean navbar = false;
     private String  outputContentType = null;
@@ -52,12 +51,11 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     //hash map to cache template Code objects parsed
     private Map<RenditionType, TemplateRendition> templateRenditionHashMap = new HashMap<RenditionType, TemplateRendition>();
     
-    
     public SharedThemeTemplate() {}
     
     public SharedThemeTemplate(String id, String action, String name,
             String desc, String contents, String link, Date date, 
-            TemplateLanguage tempLang, boolean hid, boolean navbar) {
+            boolean hidden, boolean navbar) {
         
         this.id = id;
         this.action = action;
@@ -66,8 +64,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.contents = contents;
         this.link = link;
         this.lastModified = date;
-        this.templateLanguage = tempLang;
-        this.hidden = hid;
+        this.hidden = hidden;
         this.navbar = navbar;
     }
 
@@ -119,14 +116,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.link = link;
     }
 
-    public TemplateLanguage getTemplateLanguage() {
-        return templateLanguage;
-    }
-
-    public void setTemplateLanguage(TemplateLanguage templateLanguage) {
-        this.templateLanguage = templateLanguage;
-    }
-
     public boolean isHidden() {
         return hidden;
     }
@@ -176,7 +165,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.type = type;
     }
 
-    public void addTemplateRendition(RenditionType type, TemplateRendition templateCode){
-        this.templateRenditionHashMap.put(type, templateCode);
+    public void addTemplateRendition(TemplateRendition rendition){
+        this.templateRenditionHashMap.put(rendition.getType(), rendition);
     }
 }
