@@ -238,11 +238,11 @@ function fullPreviewMode() {
 		<table>
 			<tr>
 				<td><s:text name="weblogEdit.searchDescription" />:</td>
-				<td><s:textfield name="bean.searchDescription" size="60" maxlength="255" /> </td>
+				<td><s:textfield name="bean.searchDescription" size="60" maxlength="255" style="width:100%"/> </td>
 			</tr>
 			<tr>
 				<td><s:text name="weblogEdit.enclosureURL" />: </td>
-				<td><s:textfield name="bean.enclosureURL" size="40" maxlength="255" /></td>
+				<td><s:textfield name="bean.enclosureURL" size="40" maxlength="255" style="width:80%"/></td>
 			</tr>
 			<tr>
 				<td></td>

@@ -82,7 +82,7 @@
                 <label for="status"><s:text name="generic.name" /></label>
             </td>
             <td>
-                <s:textfield name="bean.name" size="50" maxlength="255" />
+                <s:textfield name="bean.name" size="50" maxlength="255" style="width:30%"/>
             </td>
        </tr>
 
@@ -91,7 +91,7 @@
                 <label for="status"><s:text name="generic.description" /></label>
             </td>
             <td>
-                <s:textarea name="bean.description" cols="50" rows="5" />
+                <s:textarea name="bean.description" cols="50" rows="5" style="width:30%"/>
             </td>
        </tr>
 
@@ -100,7 +100,7 @@
                 <label for="status"><s:text name="mediaFileAdd.copyright" /></label>
             </td>
             <td>
-                <s:textarea name="bean.copyrightText" cols="50" rows="3" />
+                <s:textarea name="bean.copyrightText" cols="50" rows="3" style="width:30%"/>
             </td>
        </tr>
 
@@ -109,7 +109,7 @@
                 <label for="status"><s:text name="mediaFileAdd.tags" /></label>
             </td>
             <td>
-                <s:textfield name="bean.tagsAsString" size="50" maxlength="255" />
+                <s:textfield name="bean.tagsAsString" size="50" maxlength="255" style="width:30%"/>
             </td>
        </tr>
 
