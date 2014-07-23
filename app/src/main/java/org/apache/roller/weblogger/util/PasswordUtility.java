@@ -145,7 +145,7 @@ public class PasswordUtility
     {
         Properties newprops = new Properties();
         PreparedStatement userquery = con.prepareStatement(
-           "select username,passphrase from rolleruser");
+           "select username,passphrase from roller_user");
         ResultSet users = userquery.executeQuery();
         while (users.next()) 
         {
@@ -165,9 +165,9 @@ public class PasswordUtility
                     Connection con, String algorithm) throws Exception
     {
         PreparedStatement userQuery = con
-        	.prepareStatement("select username,passphrase from rolleruser");
+        	.prepareStatement("select username,passphrase from roller_user");
         PreparedStatement userUpdate = con
-        	.prepareStatement("update rolleruser set passphrase=? where username=?");
+        	.prepareStatement("update roller_user set passphrase=? where username=?");
 
         Properties props = new Properties();
         ResultSet users = userQuery.executeQuery();
@@ -191,13 +191,13 @@ public class PasswordUtility
     }
 
     /** 
-     * Restore passwords in rolleruser and turn OFF encryption flag in rollerconfig
+     * Restore passwords in roller_user and turn OFF encryption flag in rollerconfig
      */
     private static void encryptionOff(
                     Connection con, String fileName) throws Exception
     {
         PreparedStatement userUpdate = con
-			.prepareStatement("update rolleruser set passphrase=? where username=?");
+			.prepareStatement("update roller_user set passphrase=? where username=?");
 
         Properties props = new Properties();
         props.load(new FileInputStream(fileName));
@@ -221,7 +221,7 @@ public class PasswordUtility
     	    throws Exception
     {
 		PreparedStatement userUpdate =
-            con.prepareStatement("update rolleruser set passphrase=? where username=?");
+            con.prepareStatement("update roller_user set passphrase=? where username=?");
 		
 		String newPassword = Utilities.encodePassword(password, algorithm);
 		userUpdate.setString(1, newPassword);
@@ -237,7 +237,7 @@ public class PasswordUtility
         // Find userid of specified user
         String userid;
         PreparedStatement userQuery = con.prepareStatement(
-           "select id from rolleruser where username=?");    
+           "select id from roller_user where username=?");
         userQuery.setString(1, userName);
         ResultSet userRS = userQuery.executeQuery();
         if (!userRS.next()) {
@@ -275,7 +275,7 @@ public class PasswordUtility
         // Find userid of specified user
         String userid;
         PreparedStatement userQuery = con.prepareStatement(
-           "select id from rolleruser where username=?");    
+           "select id from roller_user where username=?");
         userQuery.setString(1, userName);
         ResultSet userRS = userQuery.executeQuery();
         if (!userRS.next()) 

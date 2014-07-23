@@ -73,7 +73,8 @@ public class DatabaseInstaller {
             con = db.getConnection();
             
             // just check for a couple key Roller tables
-            if (tableExists(con, "rolleruser") && tableExists(con, "userrole")) {
+            // roller_user table called rolleruser before Roller 5.1
+            if (tableExists(con, "userrole") && (tableExists(con, "roller_user") || tableExists(con, "rolleruser"))) {
                 return false;
             }
             

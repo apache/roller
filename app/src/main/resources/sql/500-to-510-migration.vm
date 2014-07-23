@@ -6,6 +6,7 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 
 #renameTable('website' 'weblog')
 #renameTable('folder' 'bookmark_folder')
+#renameTable('rolleruser' 'roller_user')
 
 create table custom_template_rendition (
     id varchar(48)  not null primary key,

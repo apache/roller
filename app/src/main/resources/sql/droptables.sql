@@ -34,7 +34,7 @@ drop table pingqueueentry;
 drop table autoping;
 drop table pingtarget;
 drop table bookmark;
-drop table folder;
+drop table bookmark_folder;
 drop table roller_userattribute;
 drop table roller_mediafiletag;
 drop table roller_mediafile;
@@ -49,14 +49,14 @@ drop table roller_weblogentrytagagg;
 drop table entryattribute;
 drop table weblogentry;
 drop table weblogcategory;
-drop table webpage;
+drop table weblog_custom_template;
 drop table custom_template_rendition;
 
 -- core platform tables
 drop table roller_permission;
-drop table website;
+drop table weblog;
 drop table userrole;
-drop table rolleruser;
+drop table roller_user;
 
 -- oauth tables
 drop table roller_oauthconsumer;

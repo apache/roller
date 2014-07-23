@@ -5,7 +5,7 @@
     <package>org.apache.roller.weblogger.pojos</package>
     <entity metadata-complete="true" name="User" class="org.apache.roller.weblogger.pojos.User"
             access="PROPERTY">
-        <table name="rolleruser"/>
+        <table name="roller_user"/>
         <named-query name="User.getAll">
             <query>SELECT u FROM User u</query>
         </named-query>
@@ -17,9 +17,6 @@
         </named-query>
         <named-query name="User.getByEnabled&amp;EndDateOrderByStartDateDesc">
             <query>SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated &lt; ?2 ORDER BY u.dateCreated DESC</query>
-        </named-query>
-        <named-query name="User.getByEnabled&amp;EndDate&amp;StartDate">
-            <query>SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3</query>
         </named-query>
         <named-query name="User.getByEnabled&amp;EndDate&amp;StartDateOrderByStartDateDesc">
             <query>SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3 ORDER BY u.dateCreated DESC</query>

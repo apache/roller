@@ -9,7 +9,7 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 -- *****************************************************
 -- Create the tables and indices
 
-create table rolleruser (
+create table roller_user (
     id              varchar(48) not null primary key,
     username        varchar(255) not null,
     passphrase      varchar(255) not null,
@@ -22,7 +22,7 @@ create table rolleruser (
     timezone        varchar(50),    
     isenabled       $db.BOOLEAN_SQL_TYPE_TRUE not null
 );
-alter table rolleruser add constraint ru_username_uq unique ( username$!db.INDEXSIZE );
+alter table roller_user add constraint ru_username_uq unique ( username$!db.INDEXSIZE );
 
 create table userrole (
     id               varchar(48) not null primary key,
