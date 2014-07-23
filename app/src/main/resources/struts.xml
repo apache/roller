@@ -431,12 +431,6 @@
         </action>
         -->
 
-        <action name="weblogExport!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.WeblogExport">
-            <result name="input" type="tiles">.WeblogExport</result>
-            <!--<result name="success" type="chain">weblogExport</result>-->
-        </action>
-
         <action name="weblogConfig!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.WeblogConfig">
             <result name="input" type="tiles">.WeblogConfig</result>

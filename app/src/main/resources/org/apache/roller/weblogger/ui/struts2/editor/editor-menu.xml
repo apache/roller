@@ -63,13 +63,6 @@ Each menu or menu item is governed by four attributes:
                    weblogPerms="post"
                    subactions="mediaFileAdd,mediaFileSearch" />
 
-        <!-- globalPerms="login" -->
-        <menu-item action="weblogExport"
-                   enabledProperty="weblog.export.enabled"
-                   name="tabbedmenu.weblog.export"
-                   weblogPerms="admin"
-                   subactions="exportEntries,exportResources"/>
-
     </menu>
     
     <!--  if we already have checked weblogPerms="admin" globalPerms="login" we should -->
