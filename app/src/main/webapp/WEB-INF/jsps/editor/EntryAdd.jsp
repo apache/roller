@@ -148,7 +148,7 @@
             $(function() {
                 $( "#entry_bean_dateString" ).datepicker({
                     showOn: "button",
-                    buttonImage: "/images/calendar.png",
+                    buttonImage: "../../images/calendar.png",
                     buttonImageOnly: true,
                     changeMonth: true,
                     changeYear: true

@@ -51,7 +51,7 @@
             $(function() {
                 $( "#commentsQuery_bean_startDateString" ).datepicker({
                     showOn: "button",
-                    buttonImage: "/images/calendar.png",
+                    buttonImage: "../../images/calendar.png",
                     buttonImageOnly: true,
                     changeMonth: true,
                     changeYear: true
@@ -67,7 +67,7 @@
             $(function() {
                 $( "#commentsQuery_bean_endDateString" ).datepicker({
                     showOn: "button",
-                    buttonImage: "/images/calendar.png",
+                    buttonImage: "../../images/calendar.png",
                     buttonImageOnly: true,
                     changeMonth: true,
                     changeYear: true

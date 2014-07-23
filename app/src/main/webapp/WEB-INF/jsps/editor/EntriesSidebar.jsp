@@ -79,7 +79,7 @@
                         $(function() {
                             $( "#entries_bean_startDateString" ).datepicker({
                                 showOn: "button",
-                                buttonImage: "/images/calendar.png",
+                                buttonImage: "../../images/calendar.png",
                                 buttonImageOnly: true,
                                 changeMonth: true,
                                 changeYear: true
@@ -95,7 +95,7 @@
                         $(function() {
                             $( "#entries_bean_endDateString" ).datepicker({
                                 showOn: "button",
-                                buttonImage: "/images/calendar.png",
+                                buttonImage: "../../images/calendar.png",
                                 buttonImageOnly: true,
                                 changeMonth: true,
                                 changeYear: true

@@ -291,7 +291,7 @@
         <servlet-class>org.apache.xmlrpc.webserver.XmlRpcServlet</servlet-class>
         <init-param>
             <description>
-                Sets, whether the servlet supports vendor extensions for XML-RPC.
+                Sets whether the servlet supports vendor extensions for XML-RPC.
             </description>
             <param-name>enabledForExtensions</param-name>
             <param-value>true</param-value>
