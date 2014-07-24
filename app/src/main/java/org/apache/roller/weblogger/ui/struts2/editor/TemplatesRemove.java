@@ -169,10 +169,6 @@ public class TemplatesRemove extends UIAction {
                                             mgr.removeTemplate(css);
                                         }
                                     }
-
-                                    // Clear for next custom theme
-                                    weblog.setCustomStylesheetPath(null);
-
                                 }
                                 mgr.removeTemplate(template);
                             }

@@ -359,9 +359,6 @@ public class StylesheetEdit extends UIAction {
 
                 Weblog weblog = getActionWeblog();
 
-                // Clear for next custom theme
-                weblog.setCustomStylesheetPath(null);
-
                 // save updated weblog and flush
                 mgr.saveWeblog(weblog);
 

@@ -103,9 +103,6 @@
 			<basic name="showAllLangs">
 				<column name="showalllangs" insertable="true" updatable="true" unique="false"/>
 			</basic>
-			<basic name="customStylesheetPath">
-				<column name="customstylesheet" insertable="true" updatable="true" unique="false"/>
-			</basic>
 			<many-to-one name="bloggerCategory" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory">
 				<join-column name="bloggercatid" insertable="true" updatable="true"/>
 			</many-to-one>

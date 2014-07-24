@@ -118,15 +118,14 @@ public class WeblogSharedTheme extends WeblogTheme {
 
         // load from theme first to see if we even support a stylesheet
         ThemeTemplate stylesheet = this.theme.getStylesheet();
-        if(stylesheet != null) {
+        if (stylesheet != null) {
             // now try getting custom version from weblog
             ThemeTemplate override = WebloggerFactory.getWeblogger()
-                    .getWeblogManager().getTemplateByLink(this.weblog, stylesheet.getLink());
-            if(override != null) {
+                    .getWeblogManager().getTemplateByAction(this.weblog, ComponentType.STYLESHEET);
+            if (override != null) {
                 stylesheet = override;
             }
         }
-        
         return stylesheet;
     }
     

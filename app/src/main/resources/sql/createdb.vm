@@ -104,7 +104,6 @@ create table weblog (
     lastmodified         $db.TIMESTAMP_SQL_TYPE,
     enablemultilang   $db.BOOLEAN_SQL_TYPE_FALSE not null,
     showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null,
-    customstylesheet  varchar(128),
     about             varchar(255),
     icon              varchar(255),
     analyticscode      $db.TEXT_SQL_TYPE

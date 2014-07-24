@@ -79,7 +79,6 @@ public class Weblog implements Serializable {
     private Date    lastModified     = new Date();
     private boolean enableMultiLang  = false;
     private boolean showAllLangs     = true;
-    private String  customStylesheetPath = null;
     private String  iconPath         = null;
     private String  about            = null;
     private String  creator          = null;
@@ -529,17 +528,6 @@ public class Weblog implements Serializable {
 
     public String getAbsoluteURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, true);
-    }
-
-    /**
-     * The path under the weblog's resources to a stylesheet override.
-     */
-    public String getCustomStylesheetPath() {
-        return customStylesheetPath;
-    }
-
-    public void setCustomStylesheetPath(String customStylesheetPath) {
-        this.customStylesheetPath = customStylesheetPath;
     }
 
     /**

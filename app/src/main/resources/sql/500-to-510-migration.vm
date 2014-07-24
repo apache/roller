@@ -34,11 +34,14 @@ create table custom_template_rendition (
 
 #renameTable('webpage' 'weblog_custom_template')
 
-#capitalizing column constants as these are now stored as enums in Java.
+-- capitalizing column constants as these are now stored as enums in Java.
 update weblog_custom_template set templatelang = upper(templatelang);
 update weblog_custom_template wct set action = upper(action);
-#The main stylesheet for a theme has a new action, STYLESHEET.
+
+-- The main stylesheet for a theme has a new action, STYLESHEET.
 update weblog_custom_template wct set action='STYLESHEET' where link is not null and link = (select customstylesheet from weblog w where w.id = wct.websiteid);
+
+#dropColumn('weblog' 'customstylesheet')
 
 update weblog set editorpage = 'editor-xinha.jsp' where editorpage = 'editor-rte.jsp';
 

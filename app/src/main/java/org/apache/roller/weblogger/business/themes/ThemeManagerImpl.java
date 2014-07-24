@@ -295,11 +295,8 @@ public class ThemeManagerImpl implements ThemeManager {
 			}
 		}
 
-		// always update this weblog's theme and customStylesheet, then save
+		// set weblog's theme to custom, then save
 		weblog.setEditorTheme(WeblogTheme.CUSTOM);
-		if (theme.getStylesheet() != null) {
-			weblog.setCustomStylesheetPath(theme.getStylesheet().getLink());
-		}
 		wmgr.saveWeblog(weblog);
 
 		// now lets import all the theme resources

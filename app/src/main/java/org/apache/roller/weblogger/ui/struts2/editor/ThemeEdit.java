@@ -147,12 +147,6 @@ public class ThemeEdit extends UIAction {
                     if (isImportTheme()
                             && !StringUtils.isEmpty(getImportThemeId())) {
                         themeMgr.importTheme(getActionWeblog(), t);
-                    } else {
-                        // Reset our custom from base
-                        if (t.getStylesheet() != null) {
-                            weblog.setCustomStylesheetPath(t.getStylesheet()
-                                    .getLink());
-                        }
                     }
                 } catch (Exception re) {
                     log.error("Error customizing theme for weblog - "
@@ -236,10 +230,8 @@ public class ThemeEdit extends UIAction {
                                         .getStylesheet().getLink());
 
                         if (stylesheet != null) {
-                            // Remove template and page codes
+                            // Remove template and its renditions
                             mgr.removeTemplate(stylesheet);
-                            // Reset
-                            weblog.setCustomStylesheetPath(null);
                         }
                     }
 
