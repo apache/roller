@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -163,7 +164,7 @@ public interface WeblogManager {
     /**
      * Get a custom template by the action it supports.
      */
-    WeblogTemplate getTemplateByAction(Weblog w, String a) throws WebloggerException;
+    WeblogTemplate getTemplateByAction(Weblog w, ComponentType a) throws WebloggerException;
     
     
     /**

@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -288,7 +289,7 @@ public class ThemeEdit extends UIAction {
                     .getWeblogger()
                     .getWeblogManager()
                     .getTemplateByAction(getActionWeblog(),
-                            WeblogTemplate.ACTION_WEBLOG) == null);
+                            ComponentType.WEBLOG) == null);
         } catch (WebloggerException ex) {
             log.error("Error looking up weblog template", ex);
         }

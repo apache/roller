@@ -25,27 +25,13 @@ package org.apache.roller.weblogger.pojos;
  * A ThemeTemplate represents a template which is part of a Theme.
  */
 public interface ThemeTemplate extends Template {
-    
-    String ACTION_WEBLOG = "weblog";
-    String ACTION_PERMALINK = "permalink";
-    String ACTION_SEARCH = "search";
-    String ACTION_TAGSINDEX = "tagsIndex";
-    String ACTION_CUSTOM = "custom";
-    
-    // the full list of supported special actions, which purposely does not
-    // contain an entry for the 'custom' action
-    String[] ACTIONS = {
-        ACTION_WEBLOG, 
-        ACTION_PERMALINK, 
-        ACTION_SEARCH, 
-        ACTION_TAGSINDEX
-    };
-    
-    
+
+    public enum ComponentType {WEBLOG, PERMALINK, SEARCH, TAGSINDEX, STYLESHEET, CUSTOM}
+
     /**
      * The action this template is defined for.
      */
-    String getAction();
+    ComponentType getAction();
     
     
     /**

@@ -23,7 +23,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Template;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -149,7 +149,7 @@ public class PreviewServlet extends HttpServlet {
         } else if("tags".equals(previewRequest.getContext()) &&
                 previewRequest.getTags() == null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ACTION_TAGSINDEX);
+                page = weblog.getTheme().getTemplateByAction(ComponentType.TAGSINDEX);
             } catch(Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
@@ -167,7 +167,7 @@ public class PreviewServlet extends HttpServlet {
         // If this is a permalink then look for a permalink template
         } else if(previewRequest.getWeblogAnchor() != null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ACTION_PERMALINK);
+                page = weblog.getTheme().getTemplateByAction(ComponentType.PERMALINK);
             } catch(Exception e) {
                 log.error("Error getting weblog page for action 'permalink'", e);
             }

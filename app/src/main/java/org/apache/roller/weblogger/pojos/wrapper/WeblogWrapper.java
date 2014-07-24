@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 import java.util.*;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -59,28 +60,28 @@ public final class WeblogWrapper {
     }
 
 
-    public ThemeTemplateWrapper getPageByAction(String action)
+    public ThemeTemplateWrapper getTemplateByAction(ComponentType action)
             throws WebloggerException {
         ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByAction(action);
         return ThemeTemplateWrapper.wrap(templateToWrap);
     }
     
     
-    public ThemeTemplateWrapper getPageByName(String name)
+    public ThemeTemplateWrapper getTemplateByName(String name)
             throws WebloggerException {
        ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByName(name);
         return ThemeTemplateWrapper.wrap(templateToWrap);
     }
     
     
-    public ThemeTemplateWrapper getPageByLink(String link)
+    public ThemeTemplateWrapper getTemplateByLink(String link)
             throws WebloggerException {
         ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByLink(link);
         return ThemeTemplateWrapper.wrap(templateToWrap);
     }
     
     
-    public List<ThemeTemplateWrapper> getPages() throws WebloggerException {
+    public List<ThemeTemplateWrapper> getTemplates() throws WebloggerException {
         List<? extends ThemeTemplate> unwrapped = this.pojo.getTheme().getTemplates();
         List<ThemeTemplateWrapper> wrapped = new ArrayList<ThemeTemplateWrapper>(unwrapped.size());
 

@@ -45,6 +45,7 @@ import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.StatCountCountComparator;
 import org.apache.roller.weblogger.pojos.TagStat;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -524,9 +525,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     /**
-     * @see org.apache.roller.weblogger.business.WeblogManager#getTemplateByAction(Weblog, String)
+     * @see org.apache.roller.weblogger.business.WeblogManager#getTemplateByAction(Weblog, ComponentType)
      */
-    public WeblogTemplate getTemplateByAction(Weblog weblog, String action)
+    public WeblogTemplate getTemplateByAction(Weblog weblog, ComponentType action)
             throws WebloggerException {
         
         if (weblog == null) {

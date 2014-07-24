@@ -39,7 +39,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     private String id = null;
     private String name = null;
     private String description = null;
-    private String action = null;
+    private ComponentType action = null;
     private String link = null;
     private String contents = null;
     private boolean hidden = false;
@@ -119,11 +119,11 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.outputContentType = outputContentType;
     }
 
-    public String getAction() {
+    public ComponentType getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(ComponentType action) {
         this.action = action;
     }
 

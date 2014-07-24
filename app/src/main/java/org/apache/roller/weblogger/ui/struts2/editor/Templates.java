@@ -25,9 +25,9 @@ import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
-import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -49,11 +49,11 @@ public class Templates extends UIAction {
 	private List<WeblogTemplate> templates = Collections.emptyList();
 
 	// list of template action types user is allowed to create
-	private List availableActions = Collections.emptyList();
+	private List<ComponentType> availableActions = Collections.emptyList();
 
 	// name and action of new template if we are adding a template
 	private String newTmplName = null;
-	private String newTmplAction = null;
+	private ComponentType newTmplAction = null;
 
 	public Templates() {
 		this.actionName = "templates";
@@ -89,33 +89,32 @@ public class Templates extends UIAction {
 			setTemplates(pages);
 
 			// build list of action types that may be added
-			List<String> actionsList = new ArrayList<String>();
-			actionsList.add(WeblogTemplate.ACTION_CUSTOM);
+			List<ComponentType> actionsList = new ArrayList<ComponentType>();
+			actionsList.add(ComponentType.CUSTOM);
 
 			if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
 				// if the weblog is using a custom theme then determine which
 				// action templates are still available to be created
-				actionsList.add(WeblogTemplate.ACTION_PERMALINK);
-				actionsList.add(WeblogTemplate.ACTION_SEARCH);
-				actionsList.add(WeblogTemplate.ACTION_WEBLOG);
-				actionsList.add(WeblogTemplate.ACTION_TAGSINDEX);
+				actionsList.add(ComponentType.PERMALINK);
+				actionsList.add(ComponentType.SEARCH);
+				actionsList.add(ComponentType.WEBLOG);
+				actionsList.add(ComponentType.TAGSINDEX);
 
 				for (WeblogTemplate tmpPage : getTemplates()) {
-					if (!WeblogTemplate.ACTION_CUSTOM.equals(tmpPage
+					if (!ComponentType.CUSTOM.equals(tmpPage
 							.getAction())) {
 						actionsList.remove(tmpPage.getAction());
 					}
 				}
 			} else {
 				// Make sure we have an option for the default web page
-				actionsList.add(WeblogTemplate.ACTION_WEBLOG);
-				if (StringUtils.isEmpty(getNewTmplAction())) {
-					setNewTmplAction(WeblogTemplate.ACTION_WEBLOG);
+				actionsList.add(ComponentType.WEBLOG);
+				if (getNewTmplAction() == null) {
+					setNewTmplAction(ComponentType.WEBLOG);
 				}
 				for (WeblogTemplate tmpPage : getTemplates()) {
-					if (WeblogTemplate.ACTION_WEBLOG
-							.equals(tmpPage.getAction())) {
-						actionsList.remove(WeblogTemplate.ACTION_WEBLOG);
+					if (ComponentType.WEBLOG.equals(tmpPage.getAction())) {
+						actionsList.remove(ComponentType.WEBLOG);
 						setNewTmplAction(null);
 						break;
 					}
@@ -152,13 +151,13 @@ public class Templates extends UIAction {
                 newTemplate.setNavbar(false);
                 newTemplate.setLastModified(new Date());
 
-                if (WeblogTemplate.ACTION_CUSTOM.equals(getNewTmplAction())) {
+                if (ComponentType.CUSTOM.equals(getNewTmplAction())) {
                     newTemplate.setLink(getNewTmplName());
                 }
 
                 // Make sure we have always have a Weblog main page. Stops
                 // deleting main page in custom theme mode also.
-                if (WeblogTemplate.ACTION_WEBLOG.equals(getNewTmplAction())) {
+                if (ComponentType.WEBLOG.equals(getNewTmplAction())) {
                     newTemplate.setName(WeblogTemplate.DEFAULT_PAGE);
                 }
 
@@ -219,7 +218,7 @@ public class Templates extends UIAction {
 		}
 
 		// make sure action is a valid
-		if (StringUtils.isEmpty(getNewTmplAction())) {
+		if (getNewTmplAction() == null) {
 			addError("Template.error.actionNull");
 		}
 
@@ -254,11 +253,11 @@ public class Templates extends UIAction {
 		this.templates = templates;
 	}
 
-	public List getAvailableActions() {
+	public List<ComponentType> getAvailableActions() {
 		return availableActions;
 	}
 
-	public void setAvailableActions(List availableActions) {
+	public void setAvailableActions(List<ComponentType> availableActions) {
 		this.availableActions = availableActions;
 	}
 
@@ -270,11 +269,11 @@ public class Templates extends UIAction {
 		this.newTmplName = newTmplName;
 	}
 
-	public String getNewTmplAction() {
+	public ComponentType getNewTmplAction() {
 		return newTmplAction;
 	}
 
-	public void setNewTmplAction(String newTmplAction) {
+	public void setNewTmplAction(ComponentType newTmplAction) {
 		this.newTmplAction = newTmplAction;
 	}
 

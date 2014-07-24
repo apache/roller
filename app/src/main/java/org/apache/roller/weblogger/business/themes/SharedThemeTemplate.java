@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition;
-import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -37,7 +36,7 @@ import java.util.Map;
 public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     
     private String id = null;
-    private String action = null;
+    private ComponentType action = null;
     private String name = null;
     private String description = null;
     private String contents = null;
@@ -53,7 +52,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     
     public SharedThemeTemplate() {}
     
-    public SharedThemeTemplate(String id, String action, String name,
+    public SharedThemeTemplate(String id, ComponentType action, String name,
             String desc, String contents, String link, Date date, 
             boolean hidden, boolean navbar) {
         
@@ -145,11 +144,11 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
                 lastModified + "\n\n" + contents + "\n");
     }
 
-    public String getAction() {
+    public ComponentType getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(ComponentType action) {
         this.action = action;
     }
 

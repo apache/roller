@@ -44,7 +44,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     
     // attributes
     private String id = UUIDGenerator.generateUUID();
-    private String  action = null;
+    private ComponentType action = null;
     private String  name = null;
     private String  description = null;
     private String  link = null;
@@ -80,11 +80,11 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.weblog = website;
     }
     
-    public String getAction() {
+    public ComponentType getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(ComponentType action) {
         this.action = action;
     }
 
@@ -171,7 +171,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
      * template, meaning a template with action = ACTION_CUSTOM.
      */
     public boolean isCustom() {
-        return ACTION_CUSTOM.equals(getAction()) && !isRequired();
+        return ComponentType.CUSTOM.equals(getAction()) && !isRequired();
     }
 
     public CustomTemplateRendition getTemplateRendition(CustomTemplateRendition.RenditionType type) throws WebloggerException {

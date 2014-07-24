@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -70,7 +71,7 @@ public class WeblogPageTest extends TestCase {
         }
         
         testPage = new WeblogTemplate();
-        testPage.setAction(WeblogTemplate.ACTION_WEBLOG);
+        testPage.setAction(ComponentType.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
         testPage.setLink("testTemp");

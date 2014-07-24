@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 
@@ -142,7 +143,7 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByAction(String action) throws WebloggerException {
+    public ThemeTemplate getTemplateByAction(ComponentType action) throws WebloggerException {
         
         if (action == null) {
             return null;

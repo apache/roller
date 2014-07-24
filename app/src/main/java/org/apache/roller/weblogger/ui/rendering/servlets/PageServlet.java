@@ -32,9 +32,10 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticThemeTemplate;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
@@ -203,8 +204,7 @@ public class PageServlet extends HttpServlet {
 
         // Development only. Reload if theme has been modified
         if (themeReload
-                && !weblog.getEditorTheme()
-                        .equals(WeblogTemplate.ACTION_CUSTOM)
+                && !weblog.getEditorTheme().equals(WeblogTheme.CUSTOM)
                 && (pageRequest.getPathInfo() == null || pageRequest
                         .getPathInfo() != null
                         && !pageRequest.getPathInfo().endsWith(".css"))) {
@@ -300,7 +300,7 @@ public class PageServlet extends HttpServlet {
                 && pageRequest.getTags() != null) {
             try {
                 page = weblog.getTheme().getTemplateByAction(
-                        ThemeTemplate.ACTION_TAGSINDEX);
+                        ComponentType.TAGSINDEX);
             } catch (Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
@@ -319,7 +319,7 @@ public class PageServlet extends HttpServlet {
         } else if (pageRequest.getWeblogAnchor() != null) {
             try {
                 page = weblog.getTheme().getTemplateByAction(
-                        ThemeTemplate.ACTION_PERMALINK);
+                        ComponentType.PERMALINK);
             } catch (Exception e) {
                 log.error("Error getting weblog page for action 'permalink'", e);
             }
@@ -649,10 +649,8 @@ public class PageServlet extends HttpServlet {
                     }
                     String requestSite = requestUrl.substring(0, lastSlash);
 
-                    if (referrerUrl.matches(requestSite + ".*\\.rol.*")) {
-                        referrerUrl = null;
-                    } else if (BlacklistChecker.checkReferrer(
-                            pageRequest.getWeblog(), referrerUrl)) {
+                    if (!referrerUrl.matches(requestSite + ".*\\.rol.*") &&
+                            BlacklistChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
                         return true;
                     }
                 }

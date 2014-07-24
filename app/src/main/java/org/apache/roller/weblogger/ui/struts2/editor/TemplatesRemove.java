@@ -141,9 +141,7 @@ public class TemplatesRemove extends UIAction {
                         if (!id.equals("")) {
                             template = mgr.getTemplate(id);
                             if (!template.isRequired()
-                                    || !WeblogTemplate.ACTION_CUSTOM
-                                            .equals(getActionWeblog()
-                                                    .getEditorTheme())) {
+                                    || !"custom".equals(getActionWeblog().getEditorTheme())) {
 
                                 // if weblog template remove custom style sheet
                                 // also

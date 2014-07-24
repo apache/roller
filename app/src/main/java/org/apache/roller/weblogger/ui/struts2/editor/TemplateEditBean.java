@@ -24,6 +24,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
@@ -35,7 +36,7 @@ public class TemplateEditBean {
  
     private String id = null;
     private String name = null;
-    private String action = null;
+    private ComponentType action = null;
     private String description = null;
     private String link = null;
     private String contentsStandard = null;
@@ -70,11 +71,11 @@ public class TemplateEditBean {
         this.name = name;
     }
     
-	public void setAction(String action) {
+	public void setAction(ComponentType action) {
 		this.action = action;
 	}
 
-	public String getAction() {
+	public ComponentType getAction() {
 		return action;
 	}
     

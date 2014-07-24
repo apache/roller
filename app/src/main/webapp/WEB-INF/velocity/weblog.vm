@@ -66,7 +66,7 @@ Parse and include page template from weblog.
 *#
 #macro(includeTemplate $weblog $pageName)
     #set($pageArg = false)## This is required for such constructs; see Velocity docs and ROL-689
-    #set($pageArg = $weblog.getPageByName($pageName))
+    #set($pageArg = $weblog.getTemplateByName($pageName))
     #if ($pageArg)
        #set($pageId = $pageArg.id+'|'+$model.deviceType)
        #parse($pageId)
@@ -172,7 +172,7 @@ code if defined will be used.
 Shows weblog entries pager via default day template 
 *#
 #macro(showWeblogEntriesPager $pager)
-    #set($dayPage = $model.weblog.getPageByName("_day"))
+    #set($dayPage = $model.weblog.getTemplateByName("_day"))
     #set($map = $pager.getEntries())
     #foreach($day in $map.keySet())
         #set($entries = $map.get($day))

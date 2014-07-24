@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 
@@ -96,7 +97,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      */
     public ThemeTemplate getDefaultTemplate() throws WebloggerException {
         return WebloggerFactory.getWeblogger().getWeblogManager()
-                .getTemplateByAction(this.weblog, ThemeTemplate.ACTION_WEBLOG);
+                .getTemplateByAction(this.weblog, ComponentType.WEBLOG);
     }
     
     
@@ -104,7 +105,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByAction(String action) throws WebloggerException {
+    public ThemeTemplate getTemplateByAction(ComponentType action) throws WebloggerException {
         if (action == null) {
             return null;
         }
@@ -132,7 +133,6 @@ public class WeblogCustomTheme extends WeblogTheme {
         if (link == null) {
             return null;
         }
-
         return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateByLink(this.weblog, link);
     }
     
@@ -142,9 +142,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if the resource cannot be found.
      */
     public ThemeResource getResource(String path) {
-        
         ThemeResource resource = null;
-        
         try {
             MediaFileManager mmgr =
                 WebloggerFactory.getWeblogger().getMediaFileManager();
@@ -153,7 +151,6 @@ public class WeblogCustomTheme extends WeblogTheme {
         } catch (WebloggerException ex) {
             // ignored, resource considered not found
         }
-        
         return resource;
     }
     

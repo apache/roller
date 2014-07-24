@@ -35,6 +35,7 @@
             </basic>
             <basic name="action">
                 <column name="action" insertable="true" updatable="true" unique="false"/>
+                <enumerated>STRING</enumerated>
             </basic>
             <basic name="link">
                 <column name="link" insertable="true" updatable="true" unique="false"/>

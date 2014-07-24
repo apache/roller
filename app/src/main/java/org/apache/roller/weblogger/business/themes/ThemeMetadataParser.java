@@ -19,10 +19,9 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -100,7 +99,7 @@ public class ThemeMetadataParser {
             ThemeMetadataTemplate tmpl = elementToTemplateMetadata(template);
             theme.addTemplate(tmpl);
 
-            if(WeblogTemplate.ACTION_WEBLOG.equals(tmpl.getAction())) {
+            if(ComponentType.WEBLOG.equals(tmpl.getAction())) {
                 weblogActionTemplate = true;
             }
         }
@@ -120,17 +119,24 @@ public class ThemeMetadataParser {
 
 		ThemeMetadataTemplate template = new ThemeMetadataTemplate();
 
-		template.setAction(element.getAttributeValue("action"));
 		template.setName(element.getChildText("name"));
 		template.setDescription(element.getChildText("description"));
 		template.setLink(element.getChildText("link"));
 		template.setContentType(element.getChildText("contentType"));
-        template.setContentType(element.getChildText("contentType"));
+        String actionString = element.getAttributeValue("action");
+        if (StringUtils.isEmpty(actionString)) {
+            throw new ThemeParsingException("Template must contain an 'action' element");
+        } else {
+            try {
+                template.setAction(ComponentType.valueOf(actionString.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new ThemeParsingException("Unknown template action value '" + actionString + "'");
+            }
+        }
 
 		//parsing template code segment
 		List<Element> templateCodeList = element.getChildren("templateCode");
 
-		boolean roller50format = false;
 		for (Element templateCodeElement : templateCodeList) {
 			ThemeMetadataTemplateRendition templateCode = new ThemeMetadataTemplateRendition();
             String templateString = templateCodeElement.getChildText("templateLanguage");
@@ -171,9 +177,6 @@ public class ThemeMetadataParser {
 		}
 
 		// validate template
-		if (StringUtils.isEmpty(template.getAction())) {
-			throw new ThemeParsingException("templates must contain an 'action' attribute");
-		}
 		if (StringUtils.isEmpty(template.getName())) {
 			throw new ThemeParsingException("templates must contain a 'name' element");
 		}
@@ -191,6 +194,7 @@ public class ThemeMetadataParser {
         template.setDescription(element.getChildText("description"));
         template.setLink(element.getChildText("link"));
         template.setContentType(element.getChildText("contentType"));
+        template.setAction(ComponentType.STYLESHEET);
 
         // parsing templatecode segment
         List<Element> templateCodeList = element.getChildren("templateCode");

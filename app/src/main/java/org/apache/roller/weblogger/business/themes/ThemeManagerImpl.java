@@ -50,6 +50,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -204,18 +205,17 @@ public class ThemeManagerImpl implements ThemeManager {
                     + " does not have a root MediaFile directory");
         }
 
-		Set<String> importedActionTemplates = new HashSet<String>();
+		Set<ComponentType> importedActionTemplates = new HashSet<ComponentType>();
 		ThemeTemplate stylesheetTemplate = theme.getStylesheet();
 		for (ThemeTemplate themeTemplate : theme.getTemplates()) {
 			WeblogTemplate template;
 
 			// if template is an action, lookup by action
 			if (themeTemplate.getAction() != null
-					&& !themeTemplate.getAction().equals(
-							WeblogTemplate.ACTION_CUSTOM)) {
+					&& !themeTemplate.getAction().equals(ComponentType.CUSTOM)) {
 				importedActionTemplates.add(themeTemplate.getAction());
 				template = wmgr.getTemplateByAction(weblog,
-						themeTemplate.getAction());
+                        themeTemplate.getAction());
 
 				// otherwise, lookup by name
 			} else {
@@ -278,9 +278,12 @@ public class ThemeManagerImpl implements ThemeManager {
 			}
 		}
 
-		// now, see if the weblog has left over action templates that
+		// now, see if the weblog has left over non-custom action templates that
 		// need to be deleted because they aren't in their new theme
-        for (String action : WeblogTemplate.ACTIONS) {
+        for (ComponentType action : ComponentType.values()) {
+            if (action == ComponentType.CUSTOM) {
+                continue;
+            }
 			// if we didn't import this action then see if it should be deleted
 			if (!importedActionTemplates.contains(action)) {
 				WeblogTemplate toDelete = wmgr.getTemplateByAction(weblog, action);
@@ -363,7 +366,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				mf.setLength(resource.getLength());
 
 				log.debug("    Saving file: " + justName);
-				log.debug("    Saviving in directory = " + mf.getDirectory());
+				log.debug("    Saving in directory = " + mf.getDirectory());
 				RollerMessages errors = new RollerMessages();
 				fileMgr.createMediaFile(weblog, mf, errors);
 				try {

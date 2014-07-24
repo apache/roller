@@ -28,10 +28,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
-import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 
 /**
  * The Theme object encapsulates all elements of a single weblog theme. It is
@@ -58,7 +57,7 @@ public class SharedThemeFromDir extends SharedTheme {
     private Map<String, ThemeTemplate> templatesByLink = new HashMap<String, ThemeTemplate>();
 
     // we keep templates in a Map for faster lookups by action
-    private Map<String, ThemeTemplate> templatesByAction = new HashMap<String, ThemeTemplate>();
+    private Map<ComponentType, ThemeTemplate> templatesByAction = new HashMap<ComponentType, ThemeTemplate>();
 
     // we keep resources in a Map for faster lookups by path
     // the Map contains ... (resource path, ThemeResource)
@@ -99,7 +98,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * cannot be found.
      */
     public ThemeTemplate getDefaultTemplate() {
-        return this.templatesByAction.get(ThemeTemplate.ACTION_WEBLOG);
+        return this.templatesByAction.get(ComponentType.WEBLOG);
     }
 
     /**
@@ -122,7 +121,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * Lookup the specified template by action. Returns null if the template
      * cannot be found.
      */
-    public ThemeTemplate getTemplateByAction(String action) {
+    public ThemeTemplate getTemplateByAction(ComponentType action) {
         return this.templatesByAction.get(action);
     }
 
@@ -261,7 +260,7 @@ public class SharedThemeFromDir extends SharedTheme {
                 SharedThemeTemplate themeTemplate = new SharedThemeTemplate(
                         themeMetadata.getId() + ":"
                                 + stylesheetTmpl.getName(),
-                        WeblogTemplate.ACTION_CUSTOM, stylesheetTmpl.getName(),
+                        stylesheetTmpl.getAction(), stylesheetTmpl.getName(),
                         stylesheetTmpl.getDescription(), contents,
                         stylesheetTmpl.getLink(), new Date(
                                 templateFile.lastModified()), false, false);
@@ -421,7 +420,7 @@ public class SharedThemeFromDir extends SharedTheme {
     private void addTemplate(ThemeTemplate template) {
         this.templatesByName.put(template.getName(), template);
         this.templatesByLink.put(template.getLink(), template);
-        if (!ThemeTemplate.ACTION_CUSTOM.equals(template.getAction())) {
+        if (!ComponentType.CUSTOM.equals(template.getAction())) {
             this.templatesByAction.put(template.getAction(), template);
         }
     }

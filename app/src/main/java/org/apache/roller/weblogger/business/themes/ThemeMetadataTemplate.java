@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.Map;
  */
 public class ThemeMetadataTemplate {
     
-    private String action = null;
+    private ComponentType action = null;
     private String name = null;
     private String description = null;
     private String link = null;
@@ -40,11 +41,11 @@ public class ThemeMetadataTemplate {
     private Map<RenditionType, ThemeMetadataTemplateRendition> templateRenditionTable
             = new HashMap<RenditionType, ThemeMetadataTemplateRendition>();
 
-    public String getAction() {
+    public ComponentType getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(ComponentType action) {
         this.action = action;
     }
 

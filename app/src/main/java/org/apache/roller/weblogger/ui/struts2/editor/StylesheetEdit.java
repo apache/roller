@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -93,7 +94,7 @@ public class StylesheetEdit extends UIAction {
                     // template doesn't exist yet, so create it
                     WeblogTemplate stylesheetTmpl = new WeblogTemplate();
                     stylesheetTmpl.setWeblog(getActionWeblog());
-                    stylesheetTmpl.setAction(ThemeTemplate.ACTION_CUSTOM);
+                    stylesheetTmpl.setAction(ThemeTemplate.ComponentType.CUSTOM);
                     stylesheetTmpl.setName(stylesheet.getName());
                     stylesheetTmpl.setDescription(stylesheet.getDescription());
                     stylesheetTmpl.setLink(stylesheet.getLink());
@@ -209,6 +210,7 @@ public class StylesheetEdit extends UIAction {
                 WeblogTemplate stylesheet = getTemplate();
 
                 stylesheet.setLastModified(new Date());
+                stylesheet.setAction(ComponentType.STYLESHEET);
 
                 if (stylesheet.getTemplateRendition(RenditionType.STANDARD) != null) {
                     // if we have a template, then set it

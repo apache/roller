@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.pojos;
 
 import org.apache.roller.weblogger.WebloggerException;
-
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import java.util.Date;
 import java.util.List;
 
@@ -81,7 +81,7 @@ public interface Theme extends Comparable<Theme> {
      * Lookup a template by action.
      * Returns null if the template cannot be found.
      */
-    ThemeTemplate getTemplateByAction(String action) throws WebloggerException;
+    ThemeTemplate getTemplateByAction(ComponentType action) throws WebloggerException;
     
     
     /**

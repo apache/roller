@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
@@ -110,8 +111,7 @@ public class SearchServlet extends HttpServlet {
 
         // Development only. Reload if theme has been modified
         if (themeReload
-                && !weblog.getEditorTheme()
-                        .equals(WeblogTemplate.ACTION_CUSTOM)) {
+                && !weblog.getEditorTheme().equals(WeblogTheme.CUSTOM)) {
 
             try {
                 ThemeManager manager = WebloggerFactory.getWeblogger()
@@ -154,7 +154,7 @@ public class SearchServlet extends HttpServlet {
 
             // try looking for a specific search page
             page = weblog.getTheme().getTemplateByAction(
-                    ThemeTemplate.ACTION_SEARCH);
+                    ThemeTemplate.ComponentType.SEARCH);
 
             // if not found then fall back on default page
             if (page == null) {
