@@ -7,20 +7,20 @@
     <entity metadata-complete="true" name="WeblogTemplate"
             class="org.apache.roller.weblogger.pojos.WeblogTemplate"  access="PROPERTY">
         <table name="weblog_custom_template"/>
-        <named-query name="WeblogTemplate.getByWebsite">
-            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1</query>
+        <named-query name="WeblogTemplate.getByWeblog">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1</query>
         </named-query>
-        <named-query name="WeblogTemplate.getByWebsiteOrderByName">
-            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 ORDER BY w.name</query>
+        <named-query name="WeblogTemplate.getByWeblogOrderByName">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 ORDER BY w.name</query>
         </named-query>
-        <named-query name="WeblogTemplate.getByWebsite&amp;Link">
-            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 AND w.link = ?2</query>
+        <named-query name="WeblogTemplate.getByWeblog&amp;Link">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.link = ?2</query>
         </named-query>
         <named-query name="WeblogTemplate.getByAction">
-            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 AND w.action = ?2</query>
+            <query>SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.action = ?2</query>
         </named-query>
-        <named-query name="WeblogTemplate.getByWebsite&amp;Name">
-            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 AND w.name= ?2</query>
+        <named-query name="WeblogTemplate.getByWeblog&amp;Name">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.name= ?2</query>
         </named-query>
 
         <attributes>
@@ -52,7 +52,7 @@
             <basic name="outputContentType">
                 <column name="outputtype" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+            <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <transient name="custom"/>

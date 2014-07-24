@@ -189,18 +189,18 @@ public class ThemeManagerImpl implements ThemeManager {
 	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#importTheme(Weblog,
 	 *      SharedTheme)
 	 */
-	public void importTheme(Weblog website, SharedTheme theme)
+	public void importTheme(Weblog weblog, SharedTheme theme)
 			throws WebloggerException {
 
 		log.debug("Importing theme [" + theme.getName() + "] to weblog ["
-				+ website.getName() + "]");
+				+ weblog.getName() + "]");
 
 		WeblogManager wmgr = roller.getWeblogManager();
 		MediaFileManager fileMgr = roller.getMediaFileManager();
 
-		MediaFileDirectory root = fileMgr.getDefaultMediaFileDirectory(website);
+		MediaFileDirectory root = fileMgr.getDefaultMediaFileDirectory(weblog);
         if (root == null) {
-            log.warn("Weblog " + website.getHandle()
+            log.warn("Weblog " + weblog.getHandle()
                     + " does not have a root MediaFile directory");
         }
 
@@ -214,19 +214,19 @@ public class ThemeManagerImpl implements ThemeManager {
 					&& !themeTemplate.getAction().equals(
 							WeblogTemplate.ACTION_CUSTOM)) {
 				importedActionTemplates.add(themeTemplate.getAction());
-				template = wmgr.getPageByAction(website,
+				template = wmgr.getTemplateByAction(weblog,
 						themeTemplate.getAction());
 
 				// otherwise, lookup by name
 			} else {
-				template = wmgr.getPageByName(website, themeTemplate.getName());
+				template = wmgr.getTemplateByName(weblog, themeTemplate.getName());
 			}
 
 			// Weblog does not have this template, so create it.
 			boolean newTmpl = false;
 			if (template == null) {
 				template = new WeblogTemplate();
-				template.setWebsite(website);
+				template.setWeblog(weblog);
 				newTmpl = true;
 			}
 
@@ -248,7 +248,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				template.setLastModified(new Date());
 
 				// save it
-				wmgr.savePage(template);
+				wmgr.saveTemplate(template);
 			}
 
 			// create weblog template code objects and save them
@@ -283,21 +283,21 @@ public class ThemeManagerImpl implements ThemeManager {
         for (String action : WeblogTemplate.ACTIONS) {
 			// if we didn't import this action then see if it should be deleted
 			if (!importedActionTemplates.contains(action)) {
-				WeblogTemplate toDelete = wmgr.getPageByAction(website, action);
+				WeblogTemplate toDelete = wmgr.getTemplateByAction(weblog, action);
 				if (toDelete != null) {
 					log.debug("Removing stale action template "
 							+ toDelete.getId());
-					wmgr.removePage(toDelete);
+					wmgr.removeTemplate(toDelete);
 				}
 			}
 		}
 
 		// always update this weblog's theme and customStylesheet, then save
-		website.setEditorTheme(WeblogTheme.CUSTOM);
+		weblog.setEditorTheme(WeblogTheme.CUSTOM);
 		if (theme.getStylesheet() != null) {
-			website.setCustomStylesheetPath(theme.getStylesheet().getLink());
+			weblog.setCustomStylesheetPath(theme.getStylesheet().getLink());
 		}
-		wmgr.saveWeblog(website);
+		wmgr.saveWeblog(weblog);
 
 		// now lets import all the theme resources
         for (ThemeResource resource : theme.getResources()) {
@@ -306,10 +306,10 @@ public class ThemeManagerImpl implements ThemeManager {
 
 			if (resource.isDirectory()) {
 				MediaFileDirectory mdir = fileMgr.getMediaFileDirectoryByName(
-						website, resource.getPath());
+						weblog, resource.getPath());
 				if (mdir == null) {
 					log.debug("    Creating directory: " + resource.getPath());
-					fileMgr.createMediaFileDirectory(website, resource.getPath());
+					fileMgr.createMediaFileDirectory(weblog, resource.getPath());
 					roller.flush();
 				} else {
 					log.debug("    No action: directory already exists");
@@ -323,7 +323,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				String justPath;
 
 				if (resourcePath.indexOf('/') == -1) {
-					mdir = fileMgr.getDefaultMediaFileDirectory(website);
+					mdir = fileMgr.getDefaultMediaFileDirectory(weblog);
 					justPath = "";
 					justName = resourcePath;
 
@@ -335,27 +335,27 @@ public class ThemeManagerImpl implements ThemeManager {
                     }
 					justName = resourcePath.substring(resourcePath
 							.lastIndexOf('/') + 1);
-					mdir = fileMgr.getMediaFileDirectoryByName(website,
+					mdir = fileMgr.getMediaFileDirectoryByName(weblog,
 							justPath);
 					if (mdir == null) {
 						log.debug("    Creating directory: " + justPath);
-						mdir = fileMgr.createMediaFileDirectory(website,
+						mdir = fileMgr.createMediaFileDirectory(weblog,
 								justPath);
 						roller.flush();
 					}
 				}
 
-				MediaFile oldmf = fileMgr.getMediaFileByOriginalPath(website,
+				MediaFile oldmf = fileMgr.getMediaFileByOriginalPath(weblog,
 						justPath + "/" + justName);
 				if (oldmf != null) {
-					fileMgr.removeMediaFile(website, oldmf);
+					fileMgr.removeMediaFile(weblog, oldmf);
 				}
 
 				// save file without file-type, quota checks, etc.
 				InputStream is = resource.getInputStream();
 				MediaFile mf = new MediaFile();
 				mf.setDirectory(mdir);
-				mf.setWeblog(website);
+				mf.setWeblog(weblog);
 				mf.setName(justName);
 				mf.setOriginalPath(justPath + "/" + justName);
 				mf.setContentType(map.getContentType(justName));
@@ -365,7 +365,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				log.debug("    Saving file: " + justName);
 				log.debug("    Saviving in directory = " + mf.getDirectory());
 				RollerMessages errors = new RollerMessages();
-				fileMgr.createMediaFile(website, mf, errors);
+				fileMgr.createMediaFile(weblog, mf, errors);
 				try {
 					resource.getInputStream().close();
 				} catch (IOException ex) {

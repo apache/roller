@@ -101,7 +101,7 @@ public class ThemeEdit extends UIAction {
                 ThemeTemplate override = WebloggerFactory
                         .getWeblogger()
                         .getWeblogManager()
-                        .getPageByLink(
+                        .getTemplateByLink(
                                 getActionWeblog(),
                                 getActionWeblog().getTheme().getStylesheet()
                                         .getLink());
@@ -230,13 +230,13 @@ public class ThemeEdit extends UIAction {
                             && !originalTheme.equals(getThemeId())
                             && getActionWeblog().getTheme().getStylesheet() != null) {
 
-                        WeblogTemplate stylesheet = mgr.getPageByLink(
+                        WeblogTemplate stylesheet = mgr.getTemplateByLink(
                                 getActionWeblog(), getActionWeblog().getTheme()
                                         .getStylesheet().getLink());
 
                         if (stylesheet != null) {
                             // Remove template and page codes
-                            mgr.removePage(stylesheet);
+                            mgr.removeTemplate(stylesheet);
                             // Reset
                             weblog.setCustomStylesheetPath(null);
                         }
@@ -287,7 +287,7 @@ public class ThemeEdit extends UIAction {
             return (WebloggerFactory
                     .getWeblogger()
                     .getWeblogManager()
-                    .getPageByAction(getActionWeblog(),
+                    .getTemplateByAction(getActionWeblog(),
                             WeblogTemplate.ACTION_WEBLOG) == null);
         } catch (WebloggerException ex) {
             log.error("Error looking up weblog template", ex);

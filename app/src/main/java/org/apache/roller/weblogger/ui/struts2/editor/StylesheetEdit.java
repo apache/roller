@@ -85,14 +85,14 @@ public class StylesheetEdit extends UIAction {
             log.debug("custom stylesheet path is - " + stylesheet.getLink());
             try {
                 setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getPageByLink(getActionWeblog(), stylesheet.getLink()));
+                        .getTemplateByLink(getActionWeblog(), stylesheet.getLink()));
 
                 if (getTemplate() == null) {
                     log.debug("custom stylesheet not found, creating it");
 
                     // template doesn't exist yet, so create it
                     WeblogTemplate stylesheetTmpl = new WeblogTemplate();
-                    stylesheetTmpl.setWebsite(getActionWeblog());
+                    stylesheetTmpl.setWeblog(getActionWeblog());
                     stylesheetTmpl.setAction(ThemeTemplate.ACTION_CUSTOM);
                     stylesheetTmpl.setName(stylesheet.getName());
                     stylesheetTmpl.setDescription(stylesheet.getDescription());
@@ -124,7 +124,7 @@ public class StylesheetEdit extends UIAction {
                     }
 
                     WebloggerFactory.getWeblogger().getWeblogManager()
-                            .savePage(stylesheetTmpl);
+                            .saveTemplate(stylesheetTmpl);
                     setTemplate(stylesheetTmpl);
                     WebloggerFactory.getWeblogger().flush();
 
@@ -141,7 +141,7 @@ public class StylesheetEdit extends UIAction {
                     ThemeTemplate override = WebloggerFactory
                             .getWeblogger()
                             .getWeblogManager()
-                            .getPageByLink(
+                            .getTemplateByLink(
                                     getActionWeblog(),
                                     getActionWeblog().getTheme()
                                             .getStylesheet().getLink());
@@ -235,7 +235,7 @@ public class StylesheetEdit extends UIAction {
                 }
 
                 // save template and flush
-                WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheet);
+                WebloggerFactory.getWeblogger().getWeblogManager().saveTemplate(stylesheet);
 
                 WebloggerFactory.getWeblogger().flush();
 
@@ -305,7 +305,7 @@ public class StylesheetEdit extends UIAction {
 
                 // save template and flush
                 WebloggerFactory.getWeblogger().getWeblogManager()
-                        .savePage(stylesheet);
+                        .saveTemplate(stylesheet);
                 WebloggerFactory.getWeblogger().flush();
 
                 // notify caches
@@ -353,7 +353,7 @@ public class StylesheetEdit extends UIAction {
                         .getWeblogManager();
 
                 // Remove template and page codes
-                mgr.removePage(stylesheet);
+                mgr.removeTemplate(stylesheet);
 
                 Weblog weblog = getActionWeblog();
 

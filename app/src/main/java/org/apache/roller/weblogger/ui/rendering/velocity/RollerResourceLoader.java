@@ -81,7 +81,7 @@ public class RollerResourceLoader extends ResourceLoader {
 
 		try {
 			WeblogTemplate page = WebloggerFactory.getWeblogger()
-					.getWeblogManager().getPage(name);
+					.getWeblogManager().getTemplate(name);
 
 			if (page == null) {
 				throw new ResourceNotFoundException(

@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
 /**
- * Interface to weblog and page template management.
+ * Interface to weblog and weblog custom template management.
  */
 public interface WeblogManager {
     
@@ -143,56 +143,56 @@ public interface WeblogManager {
         throws WebloggerException;
     
     /**
-     * Store page.
+     * Store a custom weblog template.
      */
-    void savePage(WeblogTemplate data) throws WebloggerException;
+    void saveTemplate(WeblogTemplate data) throws WebloggerException;
     
     
     /**
-     * Remove page.
+     * Remove a custom template.
      */
-    void removePage(WeblogTemplate page) throws WebloggerException;
+    void removeTemplate(WeblogTemplate template) throws WebloggerException;
     
     
     /**
-     * Get page by id.
+     * Get a custom template by its id.
      */
-    WeblogTemplate getPage(String id) throws WebloggerException;
+    WeblogTemplate getTemplate(String id) throws WebloggerException;
     
     
     /**
-     * Get user's page by action.
+     * Get a custom template by the action it supports.
      */
-    WeblogTemplate getPageByAction(Weblog w, String a) throws WebloggerException;
+    WeblogTemplate getTemplateByAction(Weblog w, String a) throws WebloggerException;
     
     
     /**
-     * Get user's page by name.
+     * Get a custom template by its name.
      */
-    WeblogTemplate getPageByName(Weblog w, String p) throws WebloggerException;
+    WeblogTemplate getTemplateByName(Weblog w, String p) throws WebloggerException;
     
     
     /**
-     * Get website's page by link.
+     * Get a custom template by its link.
      */
-    WeblogTemplate getPageByLink(Weblog w, String p)
+    WeblogTemplate getTemplateByLink(Weblog w, String p)
         throws WebloggerException;
 
     /**
-     * Get template code by Type.
+     * Get a custom template rendition by parent template ID and rendition type.
      */
-    CustomTemplateRendition getTemplateRenditionByType(String templateName, RenditionType type)
+    CustomTemplateRendition getTemplateRenditionByType(String templateId, RenditionType type)
             throws WebloggerException ;
 
     /**
-     * Save template code
+     * Save a custom template rendition
      */
     void saveTemplateRendition(CustomTemplateRendition templateCode) throws WebloggerException;
 
     /**
-     * Get website's pages
+     * Get all custom templates for a weblog
      */
-    List<WeblogTemplate> getPages(Weblog w) throws WebloggerException;
+    List<WeblogTemplate> getTemplates(Weblog w) throws WebloggerException;
    
     
     /**

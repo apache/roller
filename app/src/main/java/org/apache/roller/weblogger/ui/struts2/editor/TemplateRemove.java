@@ -62,7 +62,7 @@ public class TemplateRemove extends UIAction {
 		if (getRemoveId() != null) {
             try {
                 setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getPage(getRemoveId()));
+                        .getTemplate(getRemoveId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up template by id - " + getRemoveId(),
                         ex);
@@ -108,11 +108,11 @@ public class TemplateRemove extends UIAction {
                                 getActionWeblog().getTheme()
                                         .getStylesheet().getLink())) {
                             // Same so OK to delete
-                            WeblogTemplate css = mgr.getPageByLink(
+                            WeblogTemplate css = mgr.getTemplateByLink(
                                     getActionWeblog(), stylesheet.getLink());
 
                             if (css != null) {
-                                mgr.removePage(css);
+                                mgr.removeTemplate(css);
                             }
                         }
 
@@ -123,7 +123,7 @@ public class TemplateRemove extends UIAction {
 
                     // notify cache
                     CacheManager.invalidate(getTemplate());
-                    mgr.removePage(getTemplate());
+                    mgr.removeTemplate(getTemplate());
                     WebloggerFactory.getWeblogger().flush();
 
                     return SUCCESS;

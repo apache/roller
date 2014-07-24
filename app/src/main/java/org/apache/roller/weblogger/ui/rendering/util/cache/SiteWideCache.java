@@ -405,8 +405,8 @@ public final class SiteWideCache implements CacheHandler {
      * A weblog template has changed.
      */
     public void invalidate(WeblogTemplate template) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(template.getWebsite().getHandle())) {
-            invalidate(template.getWebsite());
+        if(WebloggerRuntimeConfig.isSiteWideWeblog(template.getWeblog().getHandle())) {
+            invalidate(template.getWeblog());
         }
     }
     

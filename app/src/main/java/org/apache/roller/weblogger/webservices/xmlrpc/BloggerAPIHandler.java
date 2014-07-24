@@ -146,12 +146,12 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         }
         
         try {
-            WeblogTemplate page = WebloggerFactory.getWeblogger().getWeblogManager().getPage(templateType);
-            CustomTemplateRendition ctr = page.getTemplateRendition(RenditionType.STANDARD);
+            WeblogTemplate template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(templateType);
+            CustomTemplateRendition ctr = template.getTemplateRendition(RenditionType.STANDARD);
             if (ctr != null) {
                 ctr.setTemplate(templateData);
                 WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(ctr);
-                flushPageCache(page.getWebsite());
+                flushPageCache(template.getWeblog());
                 return true;
             } else {
                 mLogger.error("Cannot find standard rendering for template.");
@@ -190,9 +190,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         
         try {
             CustomTemplateRendition ctr = null;
-            WeblogTemplate page = WebloggerFactory.getWeblogger().getWeblogManager().getPage(templateType);
-            if (page != null) {
-                ctr = page.getTemplateRendition(RenditionType.STANDARD);
+            WeblogTemplate template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(templateType);
+            if (template != null) {
+                ctr = template.getTemplateRendition(RenditionType.STANDARD);
             }
             if (null == ctr) {
                 throw new XmlRpcException(UNKNOWN_EXCEPTION,"Standard rendering of template not found");

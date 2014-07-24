@@ -126,7 +126,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
         Properties acronyms = new Properties();
         try {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            WeblogTemplate acronymsPage = wmgr.getPageByName(
+            WeblogTemplate acronymsPage = wmgr.getTemplateByName(
                     website, "_acronyms");
             if (acronymsPage != null) {
                 CustomTemplateRendition ctr = acronymsPage.getTemplateRendition(TemplateRendition.RenditionType.STANDARD);

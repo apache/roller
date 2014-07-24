@@ -80,7 +80,7 @@ public class TemplatesRemove extends UIAction {
 
                     for (String id : idsToDelete) {
                         if (!id.equals("")) {
-                            template = mgr.getPage(id);
+                            template = mgr.getTemplate(id);
                             if (template != null) {
                                 pages.add(template);
                             }
@@ -139,7 +139,7 @@ public class TemplatesRemove extends UIAction {
 
                     for (String id : idsToDelete) {
                         if (!id.equals("")) {
-                            template = mgr.getPage(id);
+                            template = mgr.getTemplate(id);
                             if (!template.isRequired()
                                     || !WeblogTemplate.ACTION_CUSTOM
                                             .equals(getActionWeblog()
@@ -163,12 +163,12 @@ public class TemplatesRemove extends UIAction {
                                                             .getStylesheet()
                                                             .getLink())) {
                                         // Same so OK to delete
-                                        WeblogTemplate css = mgr.getPageByLink(
+                                        WeblogTemplate css = mgr.getTemplateByLink(
                                                 getActionWeblog(),
                                                 stylesheet.getLink());
 
                                         if (css != null) {
-                                            mgr.removePage(css);
+                                            mgr.removeTemplate(css);
                                         }
                                     }
 
@@ -176,7 +176,7 @@ public class TemplatesRemove extends UIAction {
                                     weblog.setCustomStylesheetPath(null);
 
                                 }
-                                mgr.removePage(template);
+                                mgr.removeTemplate(template);
                             }
                         }
                     }

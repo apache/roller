@@ -72,11 +72,11 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.id = id;
     }
 
-    public Weblog getWebsite() {
+    public Weblog getWeblog() {
         return this.weblog;
     }
     
-    public void setWebsite( Weblog website ) {
+    public void setWeblog( Weblog website ) {
         this.weblog = website;
     }
     
@@ -194,14 +194,14 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         WeblogTemplate o = (WeblogTemplate)other;
         return new EqualsBuilder()
             .append(getName(), o.getName())
-            .append(getWebsite(), o.getWebsite()) 
+            .append(getWeblog(), o.getWeblog())
             .isEquals();
     }
     
     public int hashCode() { 
         return new HashCodeBuilder()
             .append(getName())
-            .append(getWebsite())
+            .append(getWeblog())
             .toHashCode();
     }
 

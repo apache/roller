@@ -75,7 +75,7 @@ public class CustomTemplateRenditionTest extends TestCase{
            testPage.setDescription("Test Weblog Template");
            testPage.setLink("testTemp");
            testPage.setLastModified(new java.util.Date());
-           testPage.setWebsite(TestUtils.getManagedWebsite(testWeblog));
+           testPage.setWeblog(TestUtils.getManagedWebsite(testWeblog));
        }
 
        public void tearDown() throws Exception {
@@ -102,7 +102,7 @@ public class CustomTemplateRenditionTest extends TestCase{
 
 
            // create template
-           mgr.savePage(testPage);
+           mgr.saveTemplate(testPage);
 
 
            //create standard template coce
@@ -150,8 +150,8 @@ public class CustomTemplateRenditionTest extends TestCase{
            mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
            assertEquals("update.mobile.template",mobileCode.getTemplate());
 
-           WeblogTemplate page = mgr.getPage(testPage.getId());
-           mgr.removePage(page);
+           WeblogTemplate page = mgr.getTemplate(testPage.getId());
+           mgr.removeTemplate(page);
            TestUtils.endSession(true);
 
            // check that update was successful

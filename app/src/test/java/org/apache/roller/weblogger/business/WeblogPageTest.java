@@ -75,7 +75,7 @@ public class WeblogPageTest extends TestCase {
         testPage.setDescription("Test Weblog Template");
         testPage.setLink("testTemp");
         testPage.setLastModified(new java.util.Date());
-        testPage.setWebsite(TestUtils.getManagedWebsite(testWeblog));
+        testPage.setWeblog(TestUtils.getManagedWebsite(testWeblog));
     }
     
     public void tearDown() throws Exception {
@@ -99,37 +99,34 @@ public class WeblogPageTest extends TestCase {
     public void testTemplateCRUD() throws Exception {
         
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        WeblogTemplate template = null;
+        WeblogTemplate template;
         
         // create template
-        mgr.savePage(testPage);
+        mgr.saveTemplate(testPage);
         TestUtils.endSession(true);
         
         // check that create was successful
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        template = null;
-        template = mgr.getPageByName(testWeblog, testPage.getName());
+        template = mgr.getTemplateByName(testWeblog, testPage.getName());
         assertNotNull(template);
 
         // update template
         template.setName("testtesttest");
-        mgr.savePage(template);
+        mgr.saveTemplate(template);
         TestUtils.endSession(true);
         
         // check that update was successful
-        template = null;
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        template = mgr.getPageByName(testWeblog, "testtesttest");
+        template = mgr.getTemplateByName(testWeblog, "testtesttest");
         assertNotNull(template);
 
         // delete template
-        mgr.removePage(template);
+        mgr.removeTemplate(template);
         TestUtils.endSession(true);
         
         // check that delete was successful
-        template = null;
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        template = mgr.getPageByName(testWeblog, testPage.getName());
+        template = mgr.getTemplateByName(testWeblog, testPage.getName());
         assertNull(template);
     }
     
@@ -140,40 +137,37 @@ public class WeblogPageTest extends TestCase {
     public void testPermissionsLookups() throws Exception {
         
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        WeblogTemplate page = null;
+        WeblogTemplate page;
         
         // create page
-        mgr.savePage(testPage);
+        mgr.saveTemplate(testPage);
         String id = testPage.getId();
         TestUtils.endSession(true);
         
         // lookup by id
-        page = mgr.getPage(id);
+        page = mgr.getTemplate(id);
         assertNotNull(page);
 
         // lookup by action
-        page = null;
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        page = mgr.getPageByAction(testWeblog, testPage.getAction());
+        page = mgr.getTemplateByAction(testWeblog, testPage.getAction());
         assertNotNull(page);
 
         // lookup by name
-        page = null;
-        page = mgr.getPageByName(testWeblog, testPage.getName());
+        page = mgr.getTemplateByName(testWeblog, testPage.getName());
         assertNotNull(page);
 
         // lookup by link
-        page = null;
-        page = mgr.getPageByLink(testWeblog, testPage.getLink());
+        page = mgr.getTemplateByLink(testWeblog, testPage.getLink());
         assertNotNull(page);
 
         // lookup all pages for weblog
-        List pages = mgr.getPages(testWeblog);
+        List pages = mgr.getTemplates(testWeblog);
         assertNotNull(pages);
         assertEquals(1, pages.size());
         
         // delete page
-        mgr.removePage(page);
+        mgr.removeTemplate(page);
         TestUtils.endSession(true);
     }
     

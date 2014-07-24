@@ -72,7 +72,7 @@ public class Templates extends UIAction {
 
 			// get current list of templates, minus custom stylesheet
 			List<WeblogTemplate> raw = WebloggerFactory.getWeblogger()
-					.getWeblogManager().getPages(getActionWeblog());
+					.getWeblogManager().getTemplates(getActionWeblog());
 			List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
 			pages.addAll(raw);
 			// Remove style sheet from list so not to show when theme is
@@ -81,7 +81,7 @@ public class Templates extends UIAction {
 				pages.remove(WebloggerFactory
 						.getWeblogger()
 						.getWeblogManager()
-						.getPageByLink(
+						.getTemplateByLink(
 								getActionWeblog(),
 								getActionWeblog().getTheme().getStylesheet()
 										.getLink()));
@@ -144,7 +144,7 @@ public class Templates extends UIAction {
             try {
 
                 WeblogTemplate newTemplate = new WeblogTemplate();
-                newTemplate.setWebsite(getActionWeblog());
+                newTemplate.setWeblog(getActionWeblog());
                 newTemplate.setAction(getNewTmplAction());
                 newTemplate.setName(getNewTmplName());
                 newTemplate.setDescription(newTemplate.getName());
@@ -164,7 +164,7 @@ public class Templates extends UIAction {
 
                 // save the new Template
                 WebloggerFactory.getWeblogger().getWeblogManager()
-                        .savePage(newTemplate);
+                        .saveTemplate(newTemplate);
 
                 // Create weblog template codes for available types.
                 CustomTemplateRendition standardRendition = new CustomTemplateRendition(
@@ -227,7 +227,7 @@ public class Templates extends UIAction {
 		try {
 			WeblogTemplate existingPage = WebloggerFactory.getWeblogger()
 					.getWeblogManager()
-					.getPageByName(getActionWeblog(), getNewTmplName());
+					.getTemplateByName(getActionWeblog(), getNewTmplName());
 			if (existingPage != null) {
 				addError("pagesForm.error.alreadyExists", getNewTmplName());
 			}
