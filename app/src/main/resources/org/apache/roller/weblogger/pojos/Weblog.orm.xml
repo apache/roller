@@ -9,50 +9,8 @@
 		<named-query name="Weblog.getByHandle">
 			<query>SELECT w FROM Weblog w WHERE w.handle = ?1</query>
 		</named-query>
-		<named-query name="Weblog.getByHandleOrderByHandle">
-			<query>SELECT w FROM Weblog w WHERE w.handle = ?1 ORDER BY w.handle</query>
-		</named-query>
 		<named-query name="Weblog.getByLetterOrderByHandle">
 			<query>SELECT w FROM Weblog w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle</query>
-		</named-query>
-		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
-			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                                  AND w.visible = ?3 AND w.active = ?4
-                                                ORDER BY w.dateCreated DESC</query>
-		</named-query>
-		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;EnabledOrderByDateCreatedDesc">
-			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                                 AND w.visible = ?3
-                                               ORDER BY w.dateCreated DESC</query>
-		</named-query>
-		<named-query name="Weblog.getByEndDate&amp;StartDateOrderByDateCreatedDesc">
-			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                               ORDER BY w.dateCreated DESC</query>
-		</named-query>
-		<named-query name="Weblog.getByEndDateOrderByDateCreatedDesc">
-			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
-                                               ORDER BY w.dateCreated DESC</query>
-		</named-query>
-		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;ActiveOrderByDateCreatedDesc">
-			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                                 AND w.active = ?3
-                                               ORDER BY w.dateCreated DESC</query>
-		</named-query>
-		<named-query name="Weblog.getByEndDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
-			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
-                                                 AND w.visible = ?2 AND w.active = ?3
-                                               ORDER BY w.dateCreated DESC</query>
-		</named-query>
-		<named-query name="Weblog.getByEndDate&amp;EnabledOrderByDateCreatedDesc">
-			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
-                                                 AND w.visible = ?2
-                                               ORDER BY w.dateCreated DESC</query>
-		</named-query>
-
-		<named-query name="Weblog.getByEndDate&amp;ActiveOrderByDateCreatedDesc">
-			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
-                                                 AND w.active = ?2
-                                               ORDER BY w.dateCreated DESC</query>
 		</named-query>
 		<named-query name="Weblog.getCountAllDistinct">
 			<!-- DISTINCT is not required here -->
@@ -171,14 +129,11 @@
             </one-to-many>
 			<transient name="theme"/>
 			<transient name="creator"/>
-			<transient name="defaultPage"/>
 			<transient name="absoluteURL"/>
-			<transient name="adminUserCount"/>
 			<transient name="commentCount"/>
 			<transient name="commentModerationRequired"/>
 			<transient name="todaysHits"/>
 			<transient name="URL"/>
-			<transient name="userCount"/>
 			<transient name="entryCount"/>
             <transient name="initializedPlugins"/>
             <transient name="localeInstance"/>

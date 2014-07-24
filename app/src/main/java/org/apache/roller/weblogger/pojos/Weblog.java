@@ -122,16 +122,9 @@ public class Weblog implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getHandle());
-        buf.append(", ").append(getName());
-        buf.append(", ").append(getEmailAddress());
-        buf.append(", ").append(getLocale());
-        buf.append(", ").append(getTimeZone());
-        buf.append("}");
-        return buf.toString();
+        return  "{" + getId() + ", " + getHandle()
+        + ", " + getName() + ", " + getEmailAddress()
+        + ", " + getLocale() + ", " + getTimeZone() + "}";
     }
 
     public boolean equals(Object other) {
@@ -166,20 +159,6 @@ public class Weblog implements Serializable {
         }
         
         // TODO: maybe we should return a default theme in this case?
-        return null;
-    }
-
-    /**
-     * Lookup the default page for this website.
-     */
-    public ThemeTemplate getDefaultPage() throws WebloggerException {
-        
-        // look for the page in our Theme
-        Theme weblogTheme = getTheme();
-        if(weblogTheme != null) {
-            return weblogTheme.getDefaultTemplate();
-        }
-        
         return null;
     }
 
@@ -455,38 +434,6 @@ public class Weblog implements Serializable {
         return false;
     }
     
-    /** Get number of users associated with website */
-    public int getUserCount() {
-        int count = 0;
-        try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            for (WeblogPermission perm : umgr.getWeblogPermissions(this)) {
-                count++;
-            }
-        } catch (WebloggerException ex) {
-            // something is seriously wrong, not me we can do here
-            log.error("ERROR error getting admin user count", ex);
-        }
-        return count;
-    }
-    
-    public int getAdminUserCount() {
-        int count = 0;
-        try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            for (WeblogPermission perm : umgr.getWeblogPermissions(this)) {
-                if (perm.hasAction(WeblogPermission.ADMIN)) {
-                    count++;
-                }
-            }
-            
-        } catch (WebloggerException ex) {
-            // something is seriously wrong, not me we can do here
-            log.error("ERROR error getting admin user count", ex);
-        }
-        return count;
-    }
-    
     public int getEntryDisplayCount() {
         return entryDisplayCount;
     }
@@ -496,7 +443,7 @@ public class Weblog implements Serializable {
     }
     
     /**
-     * Set to FALSE to completely disable and hide this weblog from public view.
+     * Set to FALSE to disable and hide this weblog from public view.
      */
     public Boolean getVisible() {
         return this.visible;

@@ -142,7 +142,7 @@ public interface WeblogManager {
     List<Weblog> getWeblogsByLetter(char letter, int offset, int length)
         throws WebloggerException;
     
-        /**
+    /**
      * Store page.
      */
     void savePage(WeblogTemplate data) throws WebloggerException;

@@ -86,7 +86,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if no stylesheet can be found.
      */
     public ThemeTemplate getStylesheet() throws WebloggerException {
-       return getTemplateByLink(this.weblog.getCustomStylesheetPath());
+        return getTemplateByLink(this.weblog.getCustomStylesheetPath());
     }
 
     
