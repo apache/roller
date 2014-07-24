@@ -121,7 +121,7 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setWebsite(testWeblog);
         testEntry.setCreatorUserName(testUser.getUserName());
 
-        WeblogCategory cat = testWeblog.getDefaultCategory();
+        WeblogCategory cat = testWeblog.getWeblogCategory("General");
         testEntry.setCategory(cat);
         
         // create a weblog entry
@@ -167,11 +167,11 @@ public class WeblogEntryTest extends TestCase {
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
-        WeblogEntry entry2 = TestUtils.setupWeblogEntry("entry2", testWeblog.getDefaultCategory(), testWeblog, testUser);
-        WeblogEntry entry3 = TestUtils.setupWeblogEntry("entry3", testWeblog.getDefaultCategory(), testWeblog, testUser);
-        WeblogEntry entry4 = TestUtils.setupWeblogEntry("entry4", testWeblog.getDefaultCategory(), testWeblog, testUser);
-        WeblogEntry entry5 = TestUtils.setupWeblogEntry("entry5", testWeblog.getDefaultCategory(), testWeblog, testUser);
+        WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
+        WeblogEntry entry2 = TestUtils.setupWeblogEntry("entry2", testWeblog, testUser);
+        WeblogEntry entry3 = TestUtils.setupWeblogEntry("entry3", testWeblog, testUser);
+        WeblogEntry entry4 = TestUtils.setupWeblogEntry("entry4", testWeblog, testUser);
+        WeblogEntry entry5 = TestUtils.setupWeblogEntry("entry5", testWeblog, testUser);
         
         // make a couple changes
         entry1.setLocale("en_US");
@@ -229,7 +229,7 @@ public class WeblogEntryTest extends TestCase {
         // get all (non-future) PUBLISHED entries in category 
         WeblogEntrySearchCriteria wesc9 = new WeblogEntrySearchCriteria();
         wesc9.setWeblog(testWeblog);
-        wesc9.setCatName(testWeblog.getDefaultCategory().getName());
+        wesc9.setCatName("General");
         wesc9.setStatus(PubStatus.PUBLISHED);
         entries = mgr.getWeblogEntries(wesc9);
         assertNotNull(entries);
@@ -264,7 +264,7 @@ public class WeblogEntryTest extends TestCase {
         // get all entries in category
         WeblogEntrySearchCriteria wesc5 = new WeblogEntrySearchCriteria();
         wesc5.setWeblog(testWeblog);
-        wesc5.setCatName(testWeblog.getDefaultCategory().getName());
+        wesc5.setCatName("General");
         entries = mgr.getWeblogEntries(wesc5);
         assertNotNull(entries);
         assertEquals(5, entries.size());
@@ -373,7 +373,7 @@ public class WeblogEntryTest extends TestCase {
                     new java.sql.Timestamp(new java.util.Date().getTime()));
             testEntry.setWebsite(testWeblog);
             testEntry.setCreatorUserName(testUser.getUserName());
-            testEntry.setCategory(testWeblog.getDefaultCategory());
+            testEntry.setCategory(testWeblog.getWeblogCategory("General"));
 
             // shortcut
             testEntry.addTag("testTag");
@@ -966,7 +966,7 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setWebsite(testWeblog);
         testEntry.setCreatorUserName(testUser.getUserName());
 
-        WeblogCategory cat = testWeblog.getDefaultCategory();
+        WeblogCategory cat = testWeblog.getWeblogCategory("General");
         testEntry.setCategory(cat);
         
         // create a weblog entry
@@ -1027,7 +1027,7 @@ public class WeblogEntryTest extends TestCase {
         Weblog blog2 = TestUtils.setupWeblog("statblog2", user1);
 
         Weblog blog3 = TestUtils.setupWeblog("statblog3", user1);
-        blog3.setEnabled(Boolean. FALSE);
+        blog3.setVisible(Boolean.FALSE);
         wmgr.saveWeblog(blog3);
 
         WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", blog1, user1);

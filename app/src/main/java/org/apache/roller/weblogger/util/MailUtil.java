@@ -434,7 +434,7 @@ public class MailUtil {
         // send message to email recipients
         try {
             // use either the weblog configured from address or the site configured from address
-            String from = weblog.getEmailFromAddress();
+            String from = weblog.getEmailAddress();
             if(StringUtils.isEmpty(from)) {
                 from = user.getEmailAddress();
             }
@@ -523,7 +523,7 @@ public class MailUtil {
         User user = entry.getCreator();
         
         // use either the weblog configured from address or the site configured from address
-        String from = weblog.getEmailFromAddress();
+        String from = weblog.getEmailAddress();
         if(StringUtils.isEmpty(from)) {
             from = user.getEmailAddress();
         }

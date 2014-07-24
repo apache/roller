@@ -5,6 +5,22 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
 #renameTable('website' 'weblog')
+#dropColumn('weblog' 'emailfromaddress')
+#dropColumn('weblog' 'pagemodels')
+#dropColumn('weblog' 'defaultcatid')
+#dropColumn('weblog' 'ignorewords')
+#dropColumn('weblog' 'defaultpageid')
+#dropColumn('weblog' 'weblogdayid')
+#dropColumn('weblog' 'defaultplugins')
+#addColumnNotNull('weblog' 'visible' $db.BOOLEAN_SQL_TYPE_TRUE)
+#addColumnNull('weblog' 'tagline'  "varchar(255)")
+
+update weblog set visible = isenabled;
+update weblog set tagline = description;
+
+#dropColumn('weblog' 'isenabled')
+#dropColumn('weblog' 'description')
+
 #renameTable('folder' 'bookmark_folder')
 #renameTable('rolleruser' 'roller_user')
 

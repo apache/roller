@@ -102,7 +102,7 @@ public class IndexManagerTest extends TestCase {
         wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd1.setWebsite(TestUtils.getManagedWebsite(testWeblog));
 
-        WeblogCategory cat = wem.getWeblogCategory(testWeblog.getDefaultCategory().getId());
+        WeblogCategory cat = wem.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
         wd1.setCategory(cat);
 
         wem.saveWeblogEntry(wd1);
@@ -126,7 +126,7 @@ public class IndexManagerTest extends TestCase {
         wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd2.setWebsite(TestUtils.getManagedWebsite(testWeblog));
 
-        cat = wem.getWeblogCategory(testWeblog.getDefaultCategory().getId());
+        cat = wem.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
         wd2.setCategory(cat);
 
         wem.saveWeblogEntry(wd2);

@@ -118,7 +118,6 @@ public class TemplateRemove extends UIAction {
 
                         // Clear for next custom theme
                         weblog.setCustomStylesheetPath(null);
-                        weblog.setDefaultPageId(null);
 
                     }
 

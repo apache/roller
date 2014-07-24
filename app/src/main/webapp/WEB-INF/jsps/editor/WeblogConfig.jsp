@@ -43,8 +43,8 @@
     </tr>
 
     <tr>
-        <td class="label"><s:text name="websiteSettings.websiteDescription" /></td>
-        <td class="field"><s:textfield name="bean.description" size="40" maxlength="255"/></td>
+        <td class="label"><s:text name="generic.tagline" /></td>
+        <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255"/></td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
@@ -192,7 +192,7 @@
     <tr>
         <td class="label"><s:text name="websiteSettings.bloggerApiCategory" /></td>
         <td class="field">
-            <s:select name="bean.bloggerCategoryId" list="weblogCategories" size="1" listKey="id" listValue="path" />
+            <s:select name="bean.bloggerCategoryId" list="weblogCategories" size="1" listKey="id" listValue="name" />
         </td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>

@@ -11,7 +11,7 @@
             <query>SELECT h FROM WeblogHitCount h WHERE h.weblog = ?1</query>
         </named-query>
         <named-query name="WeblogHitCount.getByWeblogEnabledTrueAndActiveTrue&amp;DailyHitsGreaterThenZero&amp;WeblogLastModifiedGreaterOrderByDailyHitsDesc">
-            <query>SELECT h FROM WeblogHitCount h WHERE h.weblog.enabled = true AND h.weblog.active = true AND h.weblog.lastModified > ?1 AND h.dailyHits > 0 ORDER BY h.dailyHits DESC</query>
+            <query>SELECT h FROM WeblogHitCount h WHERE h.weblog.visible = true AND h.weblog.active = true AND h.weblog.lastModified > ?1 AND h.dailyHits > 0 ORDER BY h.dailyHits DESC</query>
         </named-query>
         <named-query name="WeblogHitCount.updateDailyHitCountZero">
             <query>UPDATE WeblogHitCount h SET h.dailyHits = 0</query>

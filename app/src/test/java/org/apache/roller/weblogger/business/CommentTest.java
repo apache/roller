@@ -71,7 +71,7 @@ public class CommentTest extends TestCase {
         try {
             testUser = TestUtils.setupUser("commentTestUser");
             testWeblog = TestUtils.setupWeblog("commentTestWeblog", testUser);
-            testEntry = TestUtils.setupWeblogEntry("commentTestEntry", testWeblog.getDefaultCategory(), testWeblog, testUser);
+            testEntry = TestUtils.setupWeblogEntry("commentTestEntry", testWeblog, testUser);
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
@@ -220,8 +220,7 @@ public class CommentTest extends TestCase {
             // first make sure we can delete an entry with comments
             User user = TestUtils.setupUser("commentParentDeleteUser");
             Weblog weblog = TestUtils.setupWeblog("commentParentDelete", user);
-            WeblogEntry entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", 
-                    weblog.getDefaultCategory(), weblog, user);
+            WeblogEntry entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", weblog, user);
             TestUtils.endSession(true);
 
             entry = TestUtils.getManagedWeblogEntry(entry);
@@ -243,8 +242,7 @@ public class CommentTest extends TestCase {
             // now make sure we can delete a weblog with comments
             weblog = TestUtils.getManagedWebsite(weblog);
             user = TestUtils.getManagedUser(user);
-            entry = TestUtils.setupWeblogEntry("CommentParentDeletes2", 
-                    weblog.getDefaultCategory(), weblog, user);
+            entry = TestUtils.setupWeblogEntry("CommentParentDeletes2", weblog, user);
             TestUtils.endSession(true);
 
             entry = TestUtils.getManagedWeblogEntry(entry);

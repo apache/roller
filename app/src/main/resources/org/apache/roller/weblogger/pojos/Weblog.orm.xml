@@ -17,12 +17,12 @@
 		</named-query>
 		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                                  AND w.enabled = ?3 AND w.active = ?4
+                                                  AND w.visible = ?3 AND w.active = ?4
                                                 ORDER BY w.dateCreated DESC</query>
 		</named-query>
 		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;EnabledOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                                 AND w.enabled = ?3
+                                                 AND w.visible = ?3
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
 		<named-query name="Weblog.getByEndDate&amp;StartDateOrderByDateCreatedDesc">
@@ -40,12 +40,12 @@
 		</named-query>
 		<named-query name="Weblog.getByEndDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
-                                                 AND w.enabled = ?2 AND w.active = ?3
+                                                 AND w.visible = ?2 AND w.active = ?3
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
 		<named-query name="Weblog.getByEndDate&amp;EnabledOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
-                                                 AND w.enabled = ?2
+                                                 AND w.visible = ?2
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
 
@@ -77,14 +77,8 @@
 			<basic name="name">
 				<column name="name" insertable="true" updatable="true" unique="false"/>
 			</basic>
-			<basic name="description">
-				<column name="description" insertable="true" updatable="true" unique="false"/>
-			</basic>
-			<basic name="defaultPageId">
-				<column name="defaultpageid" insertable="true" updatable="true" unique="false"/>
-			</basic>
-			<basic name="weblogDayPageId">
-				<column name="weblogdayid" insertable="true" updatable="true" unique="false"/>
+			<basic name="tagline">
+				<column name="tagline" insertable="true" updatable="true" unique="false"/>
 			</basic>
 			<basic name="enableBloggerApi">
 				<column name="enablebloggerapi" insertable="true" updatable="true" unique="false"/>
@@ -113,9 +107,6 @@
 			<basic name="emailComments">
 				<column name="emailcomments" insertable="true" updatable="true" unique="false"/>
 			</basic>
-			<basic name="emailFromAddress">
-				<column name="emailfromaddress" insertable="true" updatable="true" unique="false"/>
-			</basic>
 			<basic name="emailAddress">
 				<column name="emailaddress" insertable="true" updatable="true" unique="false"/>
 			</basic>
@@ -132,14 +123,11 @@
 				<column name="datecreated" insertable="true" updatable="true" unique="false"/>
 				<temporal>TIMESTAMP</temporal>
 			</basic>
-			<basic name="defaultPlugins">
-				<column name="defaultplugins" insertable="true" updatable="true" unique="false"/>
-			</basic>
 			<basic name="entryDisplayCount">
 				<column name="displaycnt" insertable="true" updatable="true" unique="false"/>
 			</basic>
-			<basic name="enabled">
-				<column name="isenabled" insertable="true" updatable="true" unique="false"/>
+			<basic name="visible">
+				<column name="visible" insertable="true" updatable="true" unique="false"/>
 			</basic>
 			<basic name="active">
 				<column name="isactive" insertable="true" updatable="true" unique="false"/>
@@ -156,9 +144,6 @@
 			</basic>
 			<basic name="showAllLangs">
 				<column name="showalllangs" insertable="true" updatable="true" unique="false"/>
-			</basic>
-			<basic name="pageModels">
-				<column name="pagemodels" insertable="true" updatable="true" unique="false"/>
 			</basic>
 			<basic name="customStylesheetPath">
 				<column name="customstylesheet" insertable="true" updatable="true" unique="false"/>
@@ -196,7 +181,6 @@
 			<transient name="userCount"/>
 			<transient name="entryCount"/>
             <transient name="initializedPlugins"/>
-            <transient name="defaultCategory"/>
             <transient name="localeInstance"/>
             <transient name="timeZoneInstance" />
 		</attributes>

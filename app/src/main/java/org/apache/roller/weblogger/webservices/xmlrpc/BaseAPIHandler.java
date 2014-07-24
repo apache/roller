@@ -126,7 +126,7 @@ public class BaseAPIHandler implements Serializable {
             website = weblogMgr.getWeblogByHandle(blogid);
             if (website != null) {
                 weblogFound = true;
-                weblogEnabled = website.getEnabled();
+                weblogEnabled = website.getVisible();
                 apiEnabled = website.getEnableBloggerApi()
                 	&& WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc");
             }

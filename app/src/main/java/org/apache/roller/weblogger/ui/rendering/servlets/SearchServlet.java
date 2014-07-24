@@ -219,9 +219,6 @@ public class SearchServlet extends HttpServlet {
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
 
-            // Load weblog custom models
-            ModelLoader.loadCustomModels(weblog, model, initData);
-
         } catch (WebloggerException ex) {
             log.error("Error loading model objects for page", ex);
 

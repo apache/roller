@@ -94,7 +94,7 @@ public class OpenSearchServlet extends HttpServlet {
                     
         } else {
             shortName = StringEscapeUtils.escapeXml(weblog.getName());
-            description = StringEscapeUtils.escapeXml(weblog.getDescription());
+            description = StringEscapeUtils.escapeXml(weblog.getTagline());
             contact = StringEscapeUtils.escapeXml(weblog.getEmailAddress());
         }
 

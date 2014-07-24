@@ -107,26 +107,19 @@ public final class WeblogWrapper {
         return StringEscapeUtils.escapeHtml4(this.pojo.getName());
     }
     
-    
+    /* Deprecated in Roller 5.1 */
     public String getDescription() {
-        return HTMLSanitizer.conditionallySanitize(this.pojo.getDescription());
+        return getTagline();
     }
-    
-    
+
+    public String getTagline() {
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getTagline());
+    }
+
+
     public UserWrapper getCreator() {
         return UserWrapper.wrap(this.pojo.getCreator());
     }
-    
-    
-    public String getDefaultPageId() {
-        return this.pojo.getDefaultPageId();
-    }
-    
-    
-    public String getWeblogDayPageId() {
-        return this.pojo.getWeblogDayPageId();
-    }
-    
     
     public Boolean getEnableBloggerApi() {
         return this.pojo.getEnableBloggerApi();
@@ -137,17 +130,10 @@ public final class WeblogWrapper {
         return WeblogCategoryWrapper.wrap(this.pojo.getBloggerCategory(), urlStrategy);
     }
     
-    
-    public WeblogCategoryWrapper getDefaultCategory() {
-        return WeblogCategoryWrapper.wrap(this.pojo.getDefaultCategory(), urlStrategy);
-    }
-    
-    
     public String getEditorPage() {
         return this.pojo.getEditorPage();
     }
-    
-    
+
     public String getBlacklist() {
         return this.pojo.getBlacklist();
     }
@@ -180,13 +166,7 @@ public final class WeblogWrapper {
     public Boolean getEmailComments() {
         return this.pojo.getEmailComments();
     }
-    
-    
-    public String getEmailFromAddress() {
-        return this.pojo.getEmailFromAddress();
-    }
-    
-    
+
     public String getEmailAddress() {
         return this.pojo.getEmailAddress();
     }
@@ -212,11 +192,6 @@ public final class WeblogWrapper {
     }
     
     
-    public String getDefaultPlugins() {
-        return this.pojo.getDefaultPlugins();
-    }
-    
-    
     public Locale getLocaleInstance() {
         return this.pojo.getLocaleInstance();
     }
@@ -232,11 +207,15 @@ public final class WeblogWrapper {
     }
     
     
-    public Boolean getEnabled() {
-        return this.pojo.getEnabled();
+    public Boolean getVisible() {
+        return this.pojo.getVisible();
     }
-    
-    
+
+    /* deprecated in Roller 5.1 */
+    public Boolean getEnabled() {
+        return getVisible();
+    }
+
     public Boolean getActive() {
         return this.pojo.getActive();
     }

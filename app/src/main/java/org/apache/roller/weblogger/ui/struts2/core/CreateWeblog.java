@@ -116,7 +116,6 @@ public class CreateWeblog extends UIAction {
                     getBean().getName(),
                     getBean().getDescription(),
                     getBean().getEmailAddress(),
-                    getBean().getEmailAddress(),
                     getBean().getTheme(),
                     getBean().getLocale(),
                     getBean().getTimeZone());

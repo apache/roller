@@ -82,24 +82,18 @@ create table weblog (
     id                varchar(48) not null primary key,
     name              varchar(255) not null,
     handle            varchar(255) not null,
-    description       varchar(255) not null,
+    tagline           varchar(255),
     creator           varchar(255),
-    defaultpageid     varchar(48) default '',
-    weblogdayid       varchar(48) not null,
-    ignorewords       $db.TEXT_SQL_TYPE,
     enablebloggerapi  $db.BOOLEAN_SQL_TYPE_FALSE not null,
     editorpage        varchar(255),
     bloggercatid      varchar(48),
-    defaultcatid      varchar(48),
     allowcomments     $db.BOOLEAN_SQL_TYPE_TRUE not null,
     emailcomments     $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    emailfromaddress  varchar(255),
     emailaddress      varchar(255) not null,
     editortheme       varchar(255),
     locale            varchar(20),
     timezone          varchar(50),
-    defaultplugins    varchar(255),
-    isenabled         $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    visible           $db.BOOLEAN_SQL_TYPE_TRUE not null,
     isactive          $db.BOOLEAN_SQL_TYPE_TRUE not null,
     datecreated          $db.TIMESTAMP_SQL_TYPE not null,
     blacklist            $db.TEXT_SQL_TYPE,
@@ -108,7 +102,6 @@ create table weblog (
     commentmod           $db.BOOLEAN_SQL_TYPE_FALSE not null,
     displaycnt           integer default 15 not null,
     lastmodified         $db.TIMESTAMP_SQL_TYPE,
-    pagemodels           varchar(255) default null,
     enablemultilang   $db.BOOLEAN_SQL_TYPE_FALSE not null,
     showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null,
     customstylesheet  varchar(128),
@@ -116,7 +109,7 @@ create table weblog (
     icon              varchar(255),
     analyticscode      $db.TEXT_SQL_TYPE
 );
-create index ws_isenabled_idx on weblog(isenabled);
+create index ws_visible_idx on weblog(visible);
 alter table weblog add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
 
 create table weblog_custom_template (

@@ -187,7 +187,6 @@ public class Templates extends UIAction {
                 // scratch then make sure and set the defaultPageId. What does
                 // this do????
                 if (WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
-                    getActionWeblog().setDefaultPageId(newTemplate.getId());
                     WebloggerFactory.getWeblogger().getWeblogManager()
                             .saveWeblog(getActionWeblog());
                 }

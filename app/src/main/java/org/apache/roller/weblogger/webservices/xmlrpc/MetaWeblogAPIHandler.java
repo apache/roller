@@ -266,11 +266,6 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             entry.setCommentDays(website.getDefaultCommentDays());
             entry.setAllowComments(website.getDefaultAllowComments());
         
-            // apply weblog default plugins
-            if (website.getDefaultPlugins() != null) {
-                entry.setPlugins(website.getDefaultPlugins());
-            }
-            
             if (publish) {
                 entry.setStatus(PubStatus.PUBLISHED);
             } else {

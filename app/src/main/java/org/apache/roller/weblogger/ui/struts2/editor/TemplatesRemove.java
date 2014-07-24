@@ -78,9 +78,9 @@ public class TemplatesRemove extends UIAction {
                 String[] idsToDelete = getIdSelections();
                 if (idsToDelete != null && idsToDelete.length > 0) {
 
-                    for (int i = 0; i < idsToDelete.length; i++) {
-                        if (!idsToDelete[i].equals("")) {
-                            template = mgr.getPage(idsToDelete[i]);
+                    for (String id : idsToDelete) {
+                        if (!id.equals("")) {
+                            template = mgr.getPage(id);
                             if (template != null) {
                                 pages.add(template);
                             }
@@ -135,12 +135,11 @@ public class TemplatesRemove extends UIAction {
                             .getWeblogManager();
 
                     Weblog weblog = getActionWeblog();
-                    WeblogTemplate template = null;
+                    WeblogTemplate template;
 
-                    for (int i = 0; i < idsToDelete.length; i++) {
-                        if (!idsToDelete[i].equals("")) {
-
-                            template = mgr.getPage(idsToDelete[i]);
+                    for (String id : idsToDelete) {
+                        if (!id.equals("")) {
+                            template = mgr.getPage(id);
                             if (!template.isRequired()
                                     || !WeblogTemplate.ACTION_CUSTOM
                                             .equals(getActionWeblog()
@@ -175,12 +174,9 @@ public class TemplatesRemove extends UIAction {
 
                                     // Clear for next custom theme
                                     weblog.setCustomStylesheetPath(null);
-                                    weblog.setDefaultPageId(null);
 
                                 }
-
                                 mgr.removePage(template);
-
                             }
                         }
                     }

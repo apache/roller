@@ -81,9 +81,9 @@ public class PreviewServlet extends HttpServlet {
         
         log.debug("Entering");
         
-        Weblog weblog = null;
+        Weblog weblog;
         
-        WeblogPreviewRequest previewRequest = null;
+        WeblogPreviewRequest previewRequest;
 
         try {
             previewRequest = new WeblogPreviewRequest(request);
@@ -232,9 +232,6 @@ public class PreviewServlet extends HttpServlet {
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
 
-            // Load weblog custom models
-            ModelLoader.loadCustomModels(weblog, model, initData);
-            
         } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
             
@@ -247,7 +244,7 @@ public class PreviewServlet extends HttpServlet {
         
         
         // lookup Renderer we are going to use
-        Renderer renderer = null;
+        Renderer renderer;
         try {
             log.debug("Looking up renderer");
             renderer = RendererManager.getRenderer(page, deviceType);

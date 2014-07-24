@@ -88,7 +88,7 @@ public class WeblogCustomTheme extends WeblogTheme {
     public ThemeTemplate getStylesheet() throws WebloggerException {
        return getTemplateByLink(this.weblog.getCustomStylesheetPath());
     }
-    
+
     
     /**
      * Lookup the default template.
@@ -108,7 +108,6 @@ public class WeblogCustomTheme extends WeblogTheme {
         if (action == null) {
             return null;
         }
-        
         return WebloggerFactory.getWeblogger().getWeblogManager().getPageByAction(this.weblog, action);
     }
     
@@ -121,7 +120,6 @@ public class WeblogCustomTheme extends WeblogTheme {
         if (name == null) {
             return null;
         }
-        
         return WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(this.weblog, name);
     }
     

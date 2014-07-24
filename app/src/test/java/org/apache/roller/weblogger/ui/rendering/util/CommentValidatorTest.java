@@ -53,7 +53,7 @@ public class CommentValidatorTest extends TestCase {
         weblog = TestUtils.setupWeblog("doeblog", user);
         //TestUtils.endSession(true)
         
-        entry = TestUtils.setupWeblogEntry("anchor1", weblog.getDefaultCategory(), weblog, user);
+        entry = TestUtils.setupWeblogEntry("anchor1", weblog, user);
 
         TestUtils.endSession(true);
     }

@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -32,25 +31,6 @@ import org.apache.roller.weblogger.util.Utilities;
 public class ModelLoader {
     
     private static Log log = LogFactory.getLog(ModelLoader.class);
-    
-
-    /**
-     * Load set of custom models set for the given weblog.
-     *
-     * Does not fail if there is a problem with one of the models.
-     */
-    public static void loadCustomModels(Weblog weblog, Map<String, Object> modelMap, Map initData) {
-        
-        if (weblog.getPageModels() != null) {
-            try {
-                loadModels(weblog.getPageModels(), modelMap, initData, false);
-            } catch(WebloggerException ex) {
-                // shouldn't happen, but log it just in case
-                log.error("Error loading weblog custom models", ex);
-            }
-        }     
-    }
-    
     
     /**
      * Convenience method to load a comma-separated list of page models.
@@ -84,7 +64,7 @@ public class ModelLoader {
                     }
                 } catch (InstantiationException ie) {
                     if(fail) {
-                        throw new WebloggerException("Error insantiating model: " + model, ie);
+                        throw new WebloggerException("Error instantiating model: " + model, ie);
                     } else {
                         log.warn("Error instantiating model: " + model);
                     }

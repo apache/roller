@@ -115,7 +115,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         this.strategy.remove(cat);
 
         if(cat.equals(cat.getWeblog().getBloggerCategory())) {
-            cat.getWeblog().setBloggerCategory(cat.getWeblog().getDefaultCategory());
+            cat.getWeblog().setBloggerCategory(null);
             this.strategy.store(cat.getWeblog());
         }
 
@@ -385,7 +385,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append("e.website.id = ?").append(size);
         } else {
             params.add(size++, Boolean.TRUE);
-            queryString.append("e.website.enabled = ?").append(size);
+            queryString.append("e.website.visible = ?").append(size);
         }
         
         if (wesc.getUser() != null) {

@@ -97,13 +97,6 @@ public final class EntryAdd extends EntryBase {
 		getBean().setAllowComments(getActionWeblog().getDefaultAllowComments());
 		getBean().setCommentDays(getActionWeblog().getDefaultCommentDays());
 
-		// apply weblog default plugins
-		if (getActionWeblog().getDefaultPlugins() != null) {
-			getBean().setPlugins(
-					StringUtils.split(getActionWeblog().getDefaultPlugins(),
-							","));
-		}
-
 		return INPUT;
 	}
 

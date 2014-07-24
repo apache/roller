@@ -59,21 +59,17 @@ public class Weblog implements Serializable {
     private String  id               = UUIDGenerator.generateUUID();
     private String  handle           = null;
     private String  name             = null;
-    private String  description      = null;
-    private String  defaultPageId    = "dummy";
-    private String  weblogDayPageId  = "dummy";
+    private String  tagline          = null;
     private Boolean enableBloggerApi = Boolean.TRUE;
     private String  editorPage       = null;
     private String  blacklist        = null;
     private Boolean allowComments    = Boolean.TRUE;
     private Boolean emailComments    = Boolean.FALSE;
-    private String  emailFromAddress = null;
     private String  emailAddress     = null;
     private String  editorTheme      = null;
     private String  locale           = null;
     private String  timeZone         = null;
-    private String  defaultPlugins   = null;
-    private Boolean enabled          = Boolean.TRUE;
+    private Boolean visible          = Boolean.TRUE;
     private Boolean active           = Boolean.TRUE;
     private Date    dateCreated      = new java.util.Date();
     private Boolean defaultAllowComments = Boolean.TRUE;
@@ -81,14 +77,12 @@ public class Weblog implements Serializable {
     private Boolean moderateComments = Boolean.FALSE;
     private int     entryDisplayCount = 15;
     private Date    lastModified     = new Date();
-    private String  pageModels;
     private boolean enableMultiLang  = false;
     private boolean showAllLangs     = true;
     private String  customStylesheetPath = null;
     private String  iconPath         = null;
     private String  about            = null;
     private String  creator          = null;
-
     private String  analyticsCode    = null;
 
     // Associated objects
@@ -111,7 +105,6 @@ public class Weblog implements Serializable {
             String name,
             String desc,
             String email,
-            String emailFrom,
             String editorTheme,
             String locale,
             String timeZone) {
@@ -119,9 +112,8 @@ public class Weblog implements Serializable {
         this.handle = handle;
         this.creator = creator;
         this.name = name;
-        this.description = desc;
+        this.tagline = desc;
         this.emailAddress = email;
-        this.emailFromAddress = emailFrom;
         this.editorTheme = editorTheme;
         this.locale = locale;
         this.timeZone = timeZone;
@@ -228,12 +220,12 @@ public class Weblog implements Serializable {
      * Description
      *
      */
-    public String getDescription() {
-        return this.description;
+    public String getTagline() {
+        return this.tagline;
     }
     
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTagline(String tagline) {
+        this.tagline = tagline;
     }
     
     /**
@@ -258,29 +250,7 @@ public class Weblog implements Serializable {
     public void setCreatorUserName(String creatorUserName) {
         creator = creatorUserName;
     }
-    
-    public String getDefaultPageId() {
-        return this.defaultPageId;
-    }
-    
-    public void setDefaultPageId(String defaultPageId) {
-        this.defaultPageId = defaultPageId;
-    }
-    
-    /**
-     * @deprecated
-     */
-    public String getWeblogDayPageId() {
-        return this.weblogDayPageId;
-    }
-    
-    /**
-     * @deprecated
-     */
-    public void setWeblogDayPageId(String weblogDayPageId) {
-        this.weblogDayPageId = weblogDayPageId;
-    }
-    
+
     public Boolean getEnableBloggerApi() {
         return this.enableBloggerApi;
     }
@@ -289,24 +259,12 @@ public class Weblog implements Serializable {
         this.enableBloggerApi = enableBloggerApi;
     }
     
-    public WeblogCategory getBloggerCategory() {
-        if (bloggerCategory == null) {
-            bloggerCategory = getDefaultCategory();
-        }
-        return bloggerCategory;
-    }
+    public WeblogCategory getBloggerCategory() { return bloggerCategory; }
     
     public void setBloggerCategory(WeblogCategory bloggerCategory) {
         this.bloggerCategory = bloggerCategory;
     }
     
-    public WeblogCategory getDefaultCategory() {
-        if (weblogCategories.size() == 0) {
-            return null;
-        }
-        return weblogCategories.iterator().next();
-    }
-
     public String getEditorPage() {
         return this.editorPage;
     }
@@ -361,14 +319,6 @@ public class Weblog implements Serializable {
     
     public void setEmailComments(Boolean emailComments) {
         this.emailComments = emailComments;
-    }
-    
-    public String getEmailFromAddress() {
-        return this.emailFromAddress;
-    }
-    
-    public void setEmailFromAddress(String emailFromAddress) {
-        this.emailFromAddress = emailFromAddress;
     }
     
     public String getEmailAddress() {
@@ -429,17 +379,6 @@ public class Weblog implements Serializable {
     }
     
     /**
-     * Comma-delimited list of user's default Plugins.
-     */
-    public String getDefaultPlugins() {
-        return defaultPlugins;
-    }
-    
-    public void setDefaultPlugins(String string) {
-        defaultPlugins = string;
-    }
-
-    /**
      * Set bean properties based on other bean.
      */
     public void setData(Weblog other) {
@@ -447,10 +386,8 @@ public class Weblog implements Serializable {
         this.setId(other.getId());
         this.setName(other.getName());
         this.setHandle(other.getHandle());
-        this.setDescription(other.getDescription());
+        this.setTagline(other.getTagline());
         this.setCreatorUserName(other.getCreatorUserName());
-        this.setDefaultPageId(other.getDefaultPageId());
-        this.setWeblogDayPageId(other.getWeblogDayPageId());
         this.setEnableBloggerApi(other.getEnableBloggerApi());
         this.setBloggerCategory(other.getBloggerCategory());
         this.setEditorPage(other.getEditorPage());
@@ -458,12 +395,10 @@ public class Weblog implements Serializable {
         this.setAllowComments(other.getAllowComments());
         this.setEmailComments(other.getEmailComments());
         this.setEmailAddress(other.getEmailAddress());
-        this.setEmailFromAddress(other.getEmailFromAddress());
         this.setEditorTheme(other.getEditorTheme());
         this.setLocale(other.getLocale());
         this.setTimeZone(other.getTimeZone());
-        this.setDefaultPlugins(other.getDefaultPlugins());
-        this.setEnabled(other.getEnabled());
+        this.setVisible(other.getVisible());
         this.setDateCreated(other.getDateCreated());
         this.setEntryDisplayCount(other.getEntryDisplayCount());
         this.setActive(other.getActive());
@@ -563,12 +498,12 @@ public class Weblog implements Serializable {
     /**
      * Set to FALSE to completely disable and hide this weblog from public view.
      */
-    public Boolean getEnabled() {
-        return this.enabled;
+    public Boolean getVisible() {
+        return this.visible;
     }
     
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
     }
     
     /**
@@ -650,18 +585,6 @@ public class Weblog implements Serializable {
     }
 
     /**
-     * Comma-separated list of additional page models to be created when this
-     * weblog is rendered.
-     */
-    public String getPageModels() {
-        return pageModels;
-    }
-    public void setPageModels(String pageModels) {
-        this.pageModels = pageModels;
-    }
-
-    
-    /**
      * The path under the weblog's resources to a stylesheet override.
      */
     public String getCustomStylesheetPath() {
@@ -671,8 +594,7 @@ public class Weblog implements Serializable {
     public void setCustomStylesheetPath(String customStylesheetPath) {
         this.customStylesheetPath = customStylesheetPath;
     }
-    
-    
+
     /**
      * The path under the weblog's resources to an icon image.
      */
@@ -859,7 +781,6 @@ public class Weblog implements Serializable {
      * @return Folder object requested.
      */
     public WeblogBookmarkFolder getBookmarkFolder(String folderName) {
-        WeblogBookmarkFolder ret = null;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             BookmarkManager bmgr = roller.getBookmarkManager();
@@ -871,7 +792,7 @@ public class Weblog implements Serializable {
         } catch (WebloggerException re) {
             log.error("ERROR: fetching folder for weblog", re);
         }
-        return ret;
+        return null;
     }
 
 
@@ -900,7 +821,7 @@ public class Weblog implements Serializable {
      * @return          Collection of WeblogEntryTag objects
      */
     public List<TagStat> getPopularTags(int sinceDays, int length) {
-        List<TagStat> results = new ArrayList();
+        List<TagStat> results = new ArrayList<TagStat>();
         Date startDate = null;
         if(sinceDays > 0) {
             Calendar cal = Calendar.getInstance();

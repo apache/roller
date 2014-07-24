@@ -260,9 +260,6 @@ public class FeedServlet extends HttpServlet {
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
 
-            // Load weblog custom models
-            ModelLoader.loadCustomModels(weblog, model, initData);
-
             // Load search models if search feed
             if ("entries".equals(feedRequest.getType())
                     && feedRequest.getTerm() != null) {

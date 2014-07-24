@@ -246,12 +246,11 @@ public final class TestUtils {
 
         Weblog testWeblog = new Weblog();
         testWeblog.setName("Test Weblog");
-        testWeblog.setDescription("Test Weblog");
+        testWeblog.setTagline("Test Weblog");
         testWeblog.setHandle(handle);
         testWeblog.setEmailAddress("testweblog@dev.null");
         testWeblog.setEditorPage("editor-text.jsp");
         testWeblog.setBlacklist("");
-        testWeblog.setEmailFromAddress("");
         testWeblog.setEditorTheme("basic");
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
@@ -364,7 +363,7 @@ public final class TestUtils {
      */
     public static WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) throws Exception {
 
-        return TestUtils.setupWeblogEntry(anchor, weblog.getDefaultCategory(), PubStatus.PUBLISHED,
+        return TestUtils.setupWeblogEntry(anchor, weblog.getWeblogCategories().iterator().next(), PubStatus.PUBLISHED,
                 weblog, user);
     }
 

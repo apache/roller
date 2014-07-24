@@ -348,7 +348,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Return website specified by handle.
      */
-    public Weblog getWeblogByHandle(String handle, Boolean enabled)
+    public Weblog getWeblogByHandle(String handle, Boolean visible)
     throws WebloggerException {
         
         if (handle==null) {
@@ -359,11 +359,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // NOTE: if we ever allow changing handles then this needs updating
         if(this.weblogHandleToIdMap.containsKey(handle)) {
             
-            Weblog weblog = this.getWeblog(
-                    this.weblogHandleToIdMap.get(handle));
-            if(weblog != null) {
+            Weblog weblog = this.getWeblog(this.weblogHandleToIdMap.get(handle));
+            if (weblog != null) {
                 // only return weblog if enabled status matches
-                if(enabled == null || enabled.equals(weblog.getEnabled())) {
+                if(visible == null || visible.equals(weblog.getVisible())) {
                     log.debug("weblogHandleToId CACHE HIT - "+handle);
                     return weblog;
                 }
@@ -389,7 +388,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         if(website != null &&
-                (enabled == null || enabled.equals(website.getEnabled()))) {
+                (visible == null || visible.equals(website.getVisible()))) {
             return website;
         } else {
             return null;
@@ -433,7 +432,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 whereClause.append(" AND ");
             }
             params.add(size++, enabled);
-            whereClause.append(" w.enabled = ?").append(size);
+            whereClause.append(" w.visible = ?").append(size);
         }
         if (active != null) {
             if (whereClause.length() > 0) {
@@ -467,7 +466,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(user);
         for (WeblogPermission perm : perms) {
             Weblog weblog = perm.getWeblog();
-            if ((!enabledOnly || weblog.getEnabled()) && BooleanUtils.isTrue(weblog.getActive())) {
+            if ((!enabledOnly || weblog.getVisible()) && BooleanUtils.isTrue(weblog.getActive())) {
                 weblogs.add(weblog);
             }
         }

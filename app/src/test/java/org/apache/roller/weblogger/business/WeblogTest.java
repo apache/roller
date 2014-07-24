@@ -102,12 +102,11 @@ public class WeblogTest extends TestCase {
             Weblog testWeblog = new Weblog();
             testUser = TestUtils.getManagedUser(testUser);
             testWeblog.setName("Test Weblog");
-            testWeblog.setDescription("Test Weblog");
+            testWeblog.setTagline("Test Weblog");
             testWeblog.setHandle("testweblog");
             testWeblog.setEmailAddress("testweblog@dev.null");
             testWeblog.setEditorPage("editor-text.jsp");
             testWeblog.setBlacklist("");
-            testWeblog.setEmailFromAddress("");
             testWeblog.setEditorTheme("basic");
             testWeblog.setLocale("en_US");
             testWeblog.setTimeZone("America/Los_Angeles");
@@ -186,17 +185,17 @@ public class WeblogTest extends TestCase {
             assertNotNull(weblog);
             assertEquals(testWeblog1.getHandle(), weblog.getHandle());
             
-            // make sure disable weblogs are not returned
-            weblog.setEnabled(Boolean.FALSE);
+            // make sure disabled weblogs are not returned
+            weblog.setVisible(Boolean.FALSE);
             mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
             weblog = null;
             weblog = mgr.getWeblogByHandle(testWeblog1.getHandle());
             assertNull(weblog);
             
-            // restore enabled state
+            // restore visible state
             weblog = mgr.getWeblogByHandle(testWeblog1.getHandle(), Boolean.FALSE);
-            weblog.setEnabled(Boolean.TRUE);
+            weblog.setVisible(Boolean.TRUE);
             mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
             weblog = null;
@@ -211,7 +210,7 @@ public class WeblogTest extends TestCase {
             assertNotNull(weblog);           
             
             // make sure disabled weblogs are not returned
-            weblog.setEnabled(Boolean.FALSE);
+            weblog.setVisible(Boolean.FALSE);
             mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
             List weblogs2 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);

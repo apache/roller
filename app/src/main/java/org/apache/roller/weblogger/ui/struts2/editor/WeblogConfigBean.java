@@ -29,7 +29,7 @@ public class WeblogConfigBean {
     
     private String handle = null;
     private String name = null;
-    private String description = null;
+    private String tagline = null;
     private boolean enableBloggerApi = false;
     private String editorPage = null;
     private String blacklist = null;
@@ -38,24 +38,20 @@ public class WeblogConfigBean {
     private String defaultCommentDays = "0";
     private boolean moderateComments = false;
     private boolean emailComments = false;
-    private String emailFromAddress = null;
     private String emailAddress = null;
     private String locale = null;
     private String timeZone = null;
-    private String defaultPlugins = null;
     private int entryDisplayCount = 15;
     private boolean active = true;
     private boolean commentModerationRequired = false;
     private boolean enableMultiLang = false;
     private boolean showAllLangs = true;
-    private String pageModels = null;
     private String icon = null;
     private String about = null;
 
     private String analyticsCode = null;
     
     private String bloggerCategoryId = null;
-    private String[] defaultPluginsArray = null;
     private boolean applyCommentDefaults = false;
     
     
@@ -75,12 +71,12 @@ public class WeblogConfigBean {
         this.name = name;
     }
     
-    public String getDescription() {
-        return this.description;
+    public String getTagline() {
+        return this.tagline;
     }
     
-    public void setDescription( String description ) {
-        this.description = description;
+    public void setTagline( String tagline ) {
+        this.tagline = tagline;
     }
     
     public boolean getEnableBloggerApi() {
@@ -147,14 +143,6 @@ public class WeblogConfigBean {
         this.emailComments = emailComments;
     }
     
-    public String getEmailFromAddress() {
-        return this.emailFromAddress;
-    }
-    
-    public void setEmailFromAddress( String emailFromAddress ) {
-        this.emailFromAddress = emailFromAddress;
-    }
-    
     public String getEmailAddress() {
         return this.emailAddress;
     }
@@ -211,14 +199,6 @@ public class WeblogConfigBean {
         this.showAllLangs = showAllLangs;
     }
     
-    public String getPageModels() {
-        return this.pageModels;
-    }
-    
-    public void setPageModels( String pageModels ) {
-        this.pageModels = pageModels;
-    }
-    
     public String getIcon() {
         return icon;
     }
@@ -243,14 +223,6 @@ public class WeblogConfigBean {
         this.bloggerCategoryId = bloggerCategoryId;
     }
 
-    public String[] getDefaultPluginsArray() {
-        return defaultPluginsArray;
-    }
-    
-    public void setDefaultPluginsArray(String[] strings) {
-        defaultPluginsArray = strings;
-    }
-    
     public boolean getApplyCommentDefaults() {
         return applyCommentDefaults;
     }
@@ -279,7 +251,7 @@ public class WeblogConfigBean {
         
         this.handle = dataHolder.getHandle();
         this.name = dataHolder.getName();
-        this.description = dataHolder.getDescription();
+        this.tagline = dataHolder.getTagline();
         this.enableBloggerApi = dataHolder.getEnableBloggerApi();
         this.editorPage = dataHolder.getEditorPage();
         this.blacklist = dataHolder.getBlacklist();
@@ -288,33 +260,26 @@ public class WeblogConfigBean {
         this.defaultCommentDays = ""+dataHolder.getDefaultCommentDays();
         this.moderateComments = dataHolder.getModerateComments();
         this.emailComments = dataHolder.getEmailComments();
-        this.emailFromAddress = dataHolder.getEmailFromAddress();
         this.emailAddress = dataHolder.getEmailAddress();
         this.locale = dataHolder.getLocale();
         this.timeZone = dataHolder.getTimeZone();
-        this.defaultPlugins = dataHolder.getDefaultPlugins();
         this.entryDisplayCount = dataHolder.getEntryDisplayCount();
         setActive(dataHolder.getActive());
         this.commentModerationRequired = dataHolder.getCommentModerationRequired();
         this.enableMultiLang = dataHolder.isEnableMultiLang();
         this.showAllLangs = dataHolder.isShowAllLangs();
-        this.pageModels = dataHolder.getPageModels();
         this.analyticsCode = dataHolder.getAnalyticsCode();
         setIcon(dataHolder.getIconPath());
         setAbout(dataHolder.getAbout());
         if (dataHolder.getBloggerCategory() != null) {
             bloggerCategoryId = dataHolder.getBloggerCategory().getId();
         }
-        if (dataHolder.getDefaultPlugins() != null) {
-            defaultPluginsArray = StringUtils.split(dataHolder.getDefaultPlugins(), ",");
-        }
     }
     
     
     public void copyTo(Weblog dataHolder) {
-        
         dataHolder.setName(this.name);
-        dataHolder.setDescription(this.description);
+        dataHolder.setTagline(this.tagline);
         dataHolder.setEnableBloggerApi(this.enableBloggerApi);
         dataHolder.setEditorPage(this.editorPage);
         dataHolder.setBlacklist(this.blacklist);
@@ -322,26 +287,18 @@ public class WeblogConfigBean {
         dataHolder.setDefaultAllowComments(this.defaultAllowComments);
         dataHolder.setModerateComments(this.moderateComments);
         dataHolder.setEmailComments(this.emailComments);
-        dataHolder.setEmailFromAddress(this.emailFromAddress);
         dataHolder.setEmailAddress(this.emailAddress);
         dataHolder.setLocale(this.locale);
         dataHolder.setTimeZone(this.timeZone);
-        dataHolder.setDefaultPlugins(this.defaultPlugins);
         dataHolder.setEntryDisplayCount(this.entryDisplayCount);
         dataHolder.setActive(this.getActive());
         dataHolder.setCommentModerationRequired(this.commentModerationRequired);
         dataHolder.setEnableMultiLang(this.enableMultiLang);
         dataHolder.setShowAllLangs(this.showAllLangs);
-        dataHolder.setPageModels(this.pageModels);
         dataHolder.setIconPath(getIcon());
         dataHolder.setAbout(getAbout());
         dataHolder.setAnalyticsCode(this.analyticsCode);
-        
-        dataHolder.setDefaultPlugins( StringUtils.join(this.defaultPluginsArray,",") );
-        
         dataHolder.setDefaultCommentDays(Integer.parseInt(this.defaultCommentDays));
-        
-        dataHolder.setDefaultPlugins(StringUtils.join(this.defaultPluginsArray, ","));
     }
     
 

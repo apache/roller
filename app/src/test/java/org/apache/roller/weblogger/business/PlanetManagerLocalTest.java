@@ -75,7 +75,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry1.setUpdateTime(new Timestamp(new Date().getTime()));
             testEntry1.setWebsite(testWeblog);
             testEntry1.setCreatorUserName(testUser.getUserName());
-            testEntry1.setCategory(testWeblog.getDefaultCategory());
+            testEntry1.setCategory(testWeblog.getWeblogCategory("General"));
             testEntry1.setStatus(PubStatus.PUBLISHED);
             WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry1);
 
@@ -88,7 +88,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry2.setUpdateTime(new Timestamp(new Date().getTime()));
             testEntry2.setWebsite(testWeblog);
             testEntry2.setCreatorUserName(testUser.getUserName());
-            testEntry2.setCategory(testWeblog.getDefaultCategory());
+            testEntry2.setCategory(testWeblog.getWeblogCategory("General"));
             testEntry2.setStatus(PubStatus.PUBLISHED);
             WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry2);
 
@@ -101,7 +101,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry3.setUpdateTime(new Timestamp(new Date().getTime()));
             testEntry3.setWebsite(testWeblog);
             testEntry3.setCreatorUserName(testUser.getUserName());
-            testEntry3.setCategory(testWeblog.getDefaultCategory());           
+            testEntry3.setCategory(testWeblog.getWeblogCategory("General"));
             testEntry3.setStatus(PubStatus.PUBLISHED);
             WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(testEntry3);
 
