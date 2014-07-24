@@ -12,7 +12,7 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 #dropColumn('weblog' 'defaultpageid')
 #dropColumn('weblog' 'weblogdayid')
 #dropColumn('weblog' 'defaultplugins')
-#addColumnNotNull('weblog' 'visible' $db.BOOLEAN_SQL_TYPE_TRUE)
+#addColumnNotNull('weblog' 'visible' $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_TRUE)
 #addColumnNull('weblog' 'tagline'  "varchar(255)")
 
 update weblog set visible = isenabled;
@@ -57,12 +57,10 @@ delete from weblogcategory where name = 'root' and parentid is null;
 
 -- Removal of custom ping targets
 delete from pingtarget where websiteid is not null;
--- (this indexes do not exist on all Roller databases for some reason)
--- #dropIndex("pingtarget" "pt_websiteid_fk")
+#dropIndex("pingtarget" "pt_websiteid_fk")
 #dropColumn("pingtarget" "websiteid")
 
--- NOTE: you might need to drop this index on some Roller databases
--- drop index folder_namefolderid_uq on bookmark_folder;
+#dropIndex("bookmark_folder" "folder_namefolderid_uq")
 
 -- Removal of bookmark subfolders and renaming of former root folder to 'default'
 -- If a bookmark folder with name 'default' already exists, rename it by adding its id to it.
@@ -86,6 +84,5 @@ update roller_mediafiledir set name = 'default' where name = 'root' and parentid
 
 -- Referer table no longer populated, retaining for older DB's in case legacy data
 -- is desired to keep; but removing its FK relationships to other tables
--- (these indexes do not exist on all Roller databases for some reason)
--- #dropIndex("referer" "ref_entryid_fk")
--- #dropIndex("referer" "ref_websiteid_fk")
+#dropIndex("referer" "ref_entryid_fk")
+#dropIndex("referer" "ref_websiteid_fk")

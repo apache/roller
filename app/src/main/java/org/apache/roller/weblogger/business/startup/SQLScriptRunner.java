@@ -126,6 +126,10 @@ public class SQLScriptRunner {
                 successMessage(command);
                 
             } catch (SQLException ex) {
+                if (command.contains("drop foreign key") || command.contains("drop index")) {
+                    errorMessage("INFO: SQL command [" + command + "] failed, ignored.");
+                    continue;
+                }
                 // add error message with text of SQL command to messages
                 errorMessage("ERROR: SQLException executing SQL [" + command 
                         + "] : " + ex.getLocalizedMessage());
