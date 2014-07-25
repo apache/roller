@@ -48,24 +48,24 @@
             <td class="description"><s:text name="userRegister.tip.email" /></td>
         </tr>
         
-        <s:if test="openIdConfiguration != 'only'">
-        <tr>
-            <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-            <td class="field">
-                <s:password name="bean.passwordText" size="20" maxlength="20" />
-            </td>
-            <td class="description"><s:text name="userRegister.tip.password" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
-            <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
-            <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
-        </tr>
+        <s:if test="openIdConfiguration != 'only' && !usingSso">
+            <tr>
+                <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
+                <td class="field">
+                    <s:password name="bean.passwordText" size="20" maxlength="20" />
+                </td>
+                <td class="description"><s:text name="userRegister.tip.password" /></td>
+            </tr>
+
+            <tr>
+                <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
+                <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
+                <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
+            </tr>
         </s:if>
+
         <s:else>
             <s:hidden name="bean.password" />
-            <s:hidden name="bean.passwordConfirm" />
         </s:else>
         
         <s:if test="openIdConfiguration != 'disabled'">

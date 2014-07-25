@@ -51,7 +51,7 @@
                 <s:else>
                     | <a href="<s:url action="login-redirect" namespace="/roller-ui" />"><s:text name="navigationBar.login"/></a>
                     
-                    <s:if test="getBooleanProp('users.registration.enabled')">
+                    <s:if test="getBooleanProp('users.registration.enabled') && !getBooleanProp('users.sso.enabled')">
                         | <a href="<s:url action="register" namespace="/roller-ui" />"><s:text name="navigationBar.register"/></a>
                     </s:if>
                     <s:elseif test="getProp('users.registration.url') != null && getProp('users.registration.url') > 0">

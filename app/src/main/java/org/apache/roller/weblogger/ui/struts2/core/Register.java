@@ -322,7 +322,7 @@ public class Register extends UIAction implements ServletRequestAware {
         setFromSSO(false);
         boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
         if (usingSSO) {
-            boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
+            boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.save");
             String password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
             
             // Preserve username and password, Spring Security case
