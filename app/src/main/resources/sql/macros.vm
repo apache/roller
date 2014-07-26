@@ -102,11 +102,21 @@ Macro to account for lack of comparable long varchar in MySQL
 #macro(longtext $size) #if($db.DBTYPE == "MYSQL") text #else varchar($size) #end #end
 
 
-#macro(dropIndex $tableName $indexName)
+#macro(dropForeignKey $tableName $indexName)
 #if ($db.DBTYPE == 'POSTGRESQL')
 drop index $indexName;
 #elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "MYSQL")
 alter table $tableName drop foreign key $indexName;
+#else
+drop index $indexName on $tableName;
+#end
+#end
+
+#macro(dropIndex $tableName $indexName)
+#if ($db.DBTYPE == 'POSTGRESQL')
+drop index $indexName;
+#elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "MYSQL")
+alter table $tableName drop index $indexName;
 #else
 drop index $indexName on $tableName;
 #end
