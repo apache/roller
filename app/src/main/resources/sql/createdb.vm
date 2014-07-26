@@ -468,6 +468,9 @@ create table roller_mediafiledir (
 alter table weblog_custom_template add constraint wct_weblogid_fk
     foreign key ( websiteid ) references weblog( id ) $!db.ADDL_FK_PARAMS ;
 
+alter table custom_template_rendition add constraint ctr_templateid_fk
+    foreign key ( templateid ) references weblog_custom_template( id ) $!db.ADDL_FK_PARAMS ;
+
 alter table weblogentry add constraint we_weblogid_fk
     foreign key ( websiteid ) references weblog( id ) $!db.ADDL_FK_PARAMS ;
 

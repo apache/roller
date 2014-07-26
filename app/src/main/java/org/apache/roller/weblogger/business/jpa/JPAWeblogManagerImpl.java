@@ -247,8 +247,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     public void removeTemplate(WeblogTemplate template) throws WebloggerException {
         //remove template code objects
-       this.removeTemplateRenditions(template);
-
+        this.removeTemplateRenditions(template);
+        this.strategy.flush();
         this.strategy.remove(template);
         // update weblog last modified date.  date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(template.getWeblog());

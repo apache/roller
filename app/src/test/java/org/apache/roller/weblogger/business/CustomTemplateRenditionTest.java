@@ -97,34 +97,31 @@ public class CustomTemplateRenditionTest extends TestCase{
         * Test basic persistence operations ... Create, Update, Delete
         */
        public void testTemplateCRUD() throws Exception {
-
            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
 
            // create template
            mgr.saveTemplate(testPage);
+           TestUtils.endSession(true);
 
-
-           //create standard template coce
+           //create standard template rendition
            CustomTemplateRendition standardTemplateCode = new CustomTemplateRendition(testPage.getId(), RenditionType.STANDARD);
            standardTemplateCode.setTemplate("standard.template.code");
            standardTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
            mgr.saveTemplateRendition(standardTemplateCode);
-            //TestUtils.endSession(true);
+
            //create mobile code
            CustomTemplateRendition mobileTemplateCode = new CustomTemplateRendition(testPage.getId(), RenditionType.MOBILE);
            mobileTemplateCode.setTemplate("mobile.template.code");
            mobileTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
            mgr.saveTemplateRendition(mobileTemplateCode);
-             TestUtils.endSession(true);
-
+           TestUtils.endSession(true);
 
            // check that create was successful
-            standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
+           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
            assertNotNull(standardCode);
            assertEquals(standardTemplateCode.getTemplate() ,standardCode.getTemplate());
 
-            mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
+           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
            assertNotNull(mobileCode);
            assertEquals(mobileTemplateCode.getTemplate() ,mobileCode.getTemplate());
 

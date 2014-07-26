@@ -116,11 +116,9 @@ public final class TestUtils {
      *            true if you want to flush changes to db before releasing
      */
     public static void endSession(boolean flush) throws Exception {
-
         if (flush) {
             WebloggerFactory.getWeblogger().flush();
         }
-
         WebloggerFactory.getWeblogger().release();
     }
 
