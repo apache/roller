@@ -89,39 +89,27 @@
 <%-- Editor event handling, on close, on add image, etc. --%>
 
 <script type="text/javascript">
-var mediapanel;
-YUI().use(['panel'], function (Y) {
-    Y.on("domready", function () {
-        mediapanel = new Y.Panel({
-            srcNode: '#mediafile_edit_lightbox',
-            modal  : true,
-            width  : 600,
-            height : 600,
-            visible: false,
-            centered: true,
-            constrain: true
-        });
-        mediapanel.render();
-    });
-});
-
     function onClickAddImage(){
         <s:url id="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
         $("#mediaFileEditor").attr('src','<s:property value="%{mediaFileImageChooser}" />');
-        mediapanel.show();
+        $(function() {
+            $("#mediafile_edit_lightbox").dialog({
+                modal  : true,
+                width  : 600,
+                height : 600
+            });
+        });
     }
 
     function onClose() {
         $("#mediaFileEditor").attr('src','about:blank');
-        mediapanel.hide();
     }
 
     function onSelectImage(name, url) {
+        $("#mediafile_edit_lightbox").dialog("close");
         $("#mediaFileEditor").attr('src','about:blank');
-        mediapanel.hide();
-
         xinha_editors.xe_content.insertHTML(
         '<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
     }
@@ -155,16 +143,12 @@ YUI().use(['panel'], function (Y) {
 <%-- ********************************************************************* --%>
 <%-- Lightbox for popping up image chooser --%>
 
-<div id="mediafile_edit_lightbox">
-    <div class="yui3-widget-hd"><s:text name="mediaFileChooser.popupTitle" /></div>
-    <div class="yui3-widget-bd">
-        <iframe id="mediaFileEditor"
-                style="visibility:inherit"
-                height="100%"
-                width="100%"
-                frameborder="no"
-                scrolling="auto">
-        </iframe>
-    </div>
-    <div class="yui3-widget-ft"></div>
+<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileChooser.popupTitle'/>">
+    <iframe id="mediaFileEditor"
+            style="visibility:inherit"
+            height="100%"
+            width="100%"
+            frameborder="no"
+            scrolling="auto">
+    </iframe>
 </div>

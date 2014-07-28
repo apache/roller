@@ -17,11 +17,10 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/styles/jquery.ui.all.css"/>' />
+<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
-<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-ui.custom.min.js'/>"></script>
+<script type="text/javascript" src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
 <style>
 #tagAutoCompleteWrapper {
@@ -308,24 +307,47 @@ if (getCookie('control_pluginControl') != null) {
         togglePlusMinus('ipluginControl');
     }
 }
-YUI().use(['autocomplete', 'autocomplete-filters', "datasource-io", "datasource-jsonschema"], function (Y) {
-
-    var ds = new Y.DataSource.IO({
-        source: "<s:property value="jsonAutocompleteUrl" />"
-    });
-
-    ds.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
-        schema: {
-            resultListLocator: 'tagcounts',
-            resultFields: ['tag']
+$(function() {
+function split( val ) {
+    return val.split( / \s*/ );
+}
+function extractLast( term ) {
+    return split( term ).pop();
+}
+$( "#tagAutoComplete" )
+    // don't navigate away from the field on tab when selecting an item
+    .bind( "keydown", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB && $( this ).autocomplete( "instance" ).menu.active ) {
+            event.preventDefault();
         }
-    }});
-
-    Y.one('#tagAutoComplete').plug(Y.Plugin.AutoComplete, {
-      queryDelimiter: ' ',
-      requestTemplate: '?format=json&prefix={query}',
-      resultTextLocator: 'tag',
-      source: ds
+    })
+    .autocomplete({
+        delay: 500,
+        source: function(request, response) {
+            $.getJSON("<s:property value="jsonAutocompleteUrl" />", { format: 'json', prefix: extractLast( request.term ) },
+            function(data) {
+                response($.map(data.tagcounts, function (dataValue) {
+                    return {
+                        value: dataValue.tag
+                    };
+                }))
+            })
+        },
+        focus: function() {
+            // prevent value inserted on focus
+            return false;
+        },
+        select: function( event, ui ) {
+            var terms = split( this.value );
+            // remove the current input
+            terms.pop();
+            // add the selected item
+            terms.push( ui.item.value );
+            // add placeholder to get the space at the end
+            terms.push( "" );
+            this.value = terms.join( " " );
+            return false;
+        }
     });
 });
 </script>

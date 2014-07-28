@@ -16,8 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui3/tabview/tabview-min.js'></s:url>"></script>
+<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
 <p class="subtitle">
    <s:text name="pageForm.subtitle" >
@@ -116,17 +115,6 @@
         </s:if>
     </div>
     </div>
-
-    <script type="text/javascript">
-        // Create a new YUI instance and populate it with the required modules.
-        YUI().use('tabview', function (Y) {
-            var tabview = new Y.TabView({
-                srcNode: '#template-code-tabs'
-            });
-            tabview.render();
-        });
-    </script>
-
 
     <%-- ================================================================== --%>
     <%-- Save, Close and Resize text area buttons--%>
@@ -304,4 +292,11 @@ if (getCookie('control_advancedControl') != null) {
 }
 </script>
 
- 
+ <script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
+ <script type="text/javascript" src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
+
+ <script>
+     $(function() {
+         $( "#template-code-tabs" ).tabs();
+     });
+ </script>

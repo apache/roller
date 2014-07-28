@@ -32,45 +32,27 @@
 </style>
 
 <script type="text/javascript">
-var mediapanel;
-YUI().use(['panel'], function (Y) {
-    Y.on("domready", function () {
-        if (getCookie("editorSize1") != null) {
-            document.getElementById('entry_bean_text').rows = getCookie("editorSize1");
-        }
-        if (getCookie("editorSize") != null) {
-            document.getElementById('entry_bean_summary').rows = getCookie("editorSize");
-        }
-
-        mediapanel = new Y.Panel({
-            srcNode: '#mediafile_edit_lightbox',
-            modal  : true,
-            width  : 600,
-            height : 600,
-            visible: false,
-            centered: true,
-            constrain: true
-        });
-        mediapanel.render();
-    });
-});
-
     function onClickAddImage(){
         <s:url id="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
         $("#mediaFileEditor").attr('src','<s:property value="%{mediaFileImageChooser}" />');
-        mediapanel.show();
+        $(function() {
+            $("#mediafile_edit_lightbox").dialog({
+                modal  : true,
+                width  : 600,
+                height : 600
+            });
+        });
     }
 
     function onClose() {
         $("#mediaFileEditor").attr('src','about:blank');
-        mediapanel.hide();
     }
 
     function onSelectImage(name, url) {
+        $("#mediafile_edit_lightbox").dialog("close");
         $("#mediaFileEditor").attr('src','about:blank');
-        mediapanel.hide();
         insertAtCursor(document.getElementById('entry_bean_text'),
             '<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
     }
@@ -91,7 +73,6 @@ YUI().use(['panel'], function (Y) {
             range.text = valueForInsertion;
         }
         else if (textAreaElement.selectionStart || textAreaElement.selectionStart == '0') {
-
             var preText;
             var postText;
             if (textAreaElement.selectionStart == 0) {
@@ -170,16 +151,12 @@ YUI().use(['panel'], function (Y) {
            onclick="changeSize(document.getElementById('entry_bean_summary'), -5)" />
 </td></tr></table>
 
-<div id="mediafile_edit_lightbox">
-    <div class="yui3-widget-hd"><s:text name="mediaFileChooser.popupTitle"/></div>
-    <div class="yui3-widget-bd">
-        <iframe id="mediaFileEditor"
-                style="visibility:inherit"
-                height="100%"
-                width="100%"
-                frameborder="no"
-                scrolling="auto">
-        </iframe>
-    </div>
-    <div class="yui3-widget-ft"></div>
+<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileChooser.popupTitle'/>">
+    <iframe id="mediaFileEditor"
+            style="visibility:inherit"
+            height="100%"
+            width="100%"
+            frameborder="no"
+            scrolling="auto">
+    </iframe>
 </div>

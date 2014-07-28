@@ -17,9 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-
 
 <style>
     .mediaObject {
@@ -101,17 +99,12 @@
     <script type="text/javascript">
         function highlight(el, flag) {
             if (flag) {
-                YUI().use('node', function (Y) {
-                    Y.one(el).addClass("highlight");
-                });
+                $(el).addClass("highlight");
             } else {
-                YUI().use('node', function (Y) {
-                    Y.one(el).removeClass("highlight");
-                });
+                $(el).removeClass("highlight");
             }
         }
     </script>
-
 
     <div  width="720px" height="500px">
         <ul id = "myMenu">

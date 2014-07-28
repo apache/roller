@@ -16,9 +16,10 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
+<script type="text/javascript" src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
 
 <style>
@@ -253,13 +254,9 @@
     <script type="text/javascript">
         function highlight(el, flag) {
             if (flag) {
-                YUI().use('node', function (Y) {
-                    Y.one(el).addClass("highlight");
-                });
+                $(el).addClass("highlight");
             } else {
-                YUI().use('node', function (Y) {
-                    Y.one(el).removeClass("highlight");
-                });
+                $(el).removeClass("highlight");
             }
         }
     </script>
@@ -417,60 +414,39 @@
 
 <%-- ***************************************************************** --%>
 
-<div id="mediafile_edit_lightbox">
-    <div id="panelHeader" class="yui3-widget-hd"></div>
-    <div class="yui3-widget-bd">
-        <iframe id="mediaFileEditor"
-                style="visibility:inherit"
-                height="100%"
-                width="100%"
-                frameborder="no"
-                scrolling="auto">
-        </iframe>
-    </div>
-    <div class="yui3-widget-ft"></div>
+<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileEdit.popupTitle'/>">
+    <iframe id="mediaFileEditor"
+            style="visibility:inherit"
+            height="100%"
+            width="100%"
+            frameborder="no"
+            scrolling="auto">
+    </iframe>
 </div>
 
 <script>
-    <%-- launch modal "lightbox" Media File Edit page --%>
-    var mediapanel;
-    YUI().use('panel', function (Y) {
-        mediapanel = new Y.Panel({
-            srcNode: '#mediafile_edit_lightbox',
-            modal  : true,
-            width  : 600,
-            height : 700,
-            visible: false,
-            centered: true,
-            constrain: true
-        });
-        mediapanel.render();
-        <%-- Adding title bar text after it is made invisible above to avoid its
-             brief appearance on the screen after saves within the panel.
-        --%>
-        document.getElementById('panelHeader').innerHTML = '<s:text name="mediaFileEdit.popupTitle"/>';
-    });
-
-
     function onClickEdit(mediaFileId) {
         <s:url id="mediaFileEditURL" action="mediaFileEdit">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $("#mediaFileEditor").attr('src',
-            '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
-        mediapanel.show();
+        $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
+        $(function() {
+            $("#mediafile_edit_lightbox").dialog({
+                modal  : true,
+                width  : 600,
+                height : 630
+            });
+        });
     }
 
     function onEditSuccess() {
-        $("#mediaFileEditor").attr('src','about:blank');
-        mediapanel.hide();
-        document.getElementById('panelHeader').style.visibility = 'hidden';
+        onEditCancelled();
         document.mediaFileViewForm.submit();
     }
 
     function onEditCancelled() {
+        $("#mediafile_edit_lightbox").dialog("close");
         $("#mediaFileEditor").attr('src','about:blank');
-        mediapanel.hide();
     }
 </script>
 

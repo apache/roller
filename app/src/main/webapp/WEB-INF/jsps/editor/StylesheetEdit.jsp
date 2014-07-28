@@ -16,18 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui3/yui/yui-min.js' />"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/yui3/tabview/tabview-min.js'></s:url>"></script>
+<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
 <script type="text/javascript">
-    // Create a new YUI instance and populate it with the required modules.
-    YUI().use('tabview', function (Y) {
-        var tabview = new Y.TabView({
-            srcNode: '#template-code-tabs'
-        });
-        tabview.render();
-    });
-
 	function revertStylesheet() {
 		if (window.confirm('<s:text name="stylesheetEdit.confirmRevert"/>')) {
 			document.stylesheetEdit.action = "<s:url action='stylesheetEdit!revert' />";
@@ -129,4 +120,13 @@ function changeSize1(num) {
     expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
     setCookie("templateEditorRows", standardElem.rows, expires);
 }
+</script>
+
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
+
+<script>
+    $(function() {
+        $( "#template-code-tabs" ).tabs();
+    });
 </script>

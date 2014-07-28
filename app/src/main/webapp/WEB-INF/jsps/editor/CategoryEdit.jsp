@@ -30,19 +30,19 @@
         
         <tr>
             <td><s:text name="generic.name" /></td>
-            <td><s:textfield name="bean.name" size="70" maxlength="255" /></td>
-        </tr>
-        
-        <tr>
-            <td><s:text name="generic.description" /></td>
-            <td><s:textarea name="bean.description" rows="5" cols="50" /></td>
+            <td><s:textfield name="bean.name" size="70" maxlength="255" style="width:50%"/></td>
         </tr>
         
         <tr>
             <td><s:text name="categoryForm.image" /></td>
-            <td><s:textarea name="bean.image" rows="5" cols="50" /></td>
+            <td><s:textfield name="bean.image" size="120" style="width:80%"/></td>
         </tr>
-        
+
+        <tr>
+            <td><s:text name="generic.description" /></td>
+            <td><s:textarea name="bean.description" rows="5" cols="50" style="width:50%"/></td>
+        </tr>
+
     </table>
     
     <p>
