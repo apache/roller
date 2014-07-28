@@ -44,7 +44,8 @@ import java.util.List;
 public class CreateWeblog extends UIAction {
     
     private static Log log = LogFactory.getLog(CreateWeblog.class);
-    
+    private static final String DISABLED_RETURN_CODE = "disabled";
+
     private CreateWeblogBean bean = new CreateWeblogBean();
     
 
@@ -61,9 +62,15 @@ public class CreateWeblog extends UIAction {
     
     @SkipValidation
     public String execute() {
-        
+
+        // check if blog administrator has enabled creation of new blogs
+        if(!WebloggerRuntimeConfig.getBooleanProperty("site.allowUserWeblogCreation")) {
+            addError("createWebsite.disabled");
+            return DISABLED_RETURN_CODE;
+        }
+
         User user = getAuthenticatedUser();
-        
+
         try {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -72,11 +79,13 @@ public class CreateWeblog extends UIAction {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled
                     addError("createWebsite.oneBlogLimit");
-                    return "menu";
+                    return DISABLED_RETURN_CODE;
                 }
             }
         } catch (WebloggerException ex) {
             log.error("error checking for existing weblogs count", ex);
+            addError("generic.system.error");
+            return DISABLED_RETURN_CODE;
         }
         
         // pre-populate with some logical defaults

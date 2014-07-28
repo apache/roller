@@ -94,10 +94,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/core/Register.jsp" />
     </definition>
     
-    <definition name=".RegisterDisabled" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/RegisterDisabled.jsp" />
-    </definition>
-    
     <definition name=".Welcome" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Welcome.jsp" />
     </definition>
@@ -117,7 +113,11 @@
     <definition name=".CreateWeblog" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/CreateWeblog.jsp" />
     </definition>
-    
+
+    <definition name=".GenericError" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/GenericError.jsp" />
+    </definition>
+
     <definition name=".MainMenu" extends=".tiles-mainmenupage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/MainMenu.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/core/MainMenuSidebar.jsp" />

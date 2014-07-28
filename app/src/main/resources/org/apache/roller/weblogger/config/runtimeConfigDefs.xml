@@ -86,7 +86,6 @@
       </property-def>
    </display-group >
 
-   
    <!-- User Settings Group -->
    <display-group name="userSettings" key="configForm.userSettings" >
    

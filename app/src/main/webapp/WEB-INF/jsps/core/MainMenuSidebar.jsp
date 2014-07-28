@@ -34,7 +34,7 @@
                     <p><s:text name="yourWebsites.oauthKeys.desc" /></p>
                 </s:if>
 
-                <s:if test="getBooleanProp('groupblogging.enabled') || (existingPermissions.isEmpty && pendingPermissions.isEmpty)">
+                <s:if test="getBooleanProp('site.allowUserWeblogCreation') && (getBooleanProp('groupblogging.enabled') || (existingPermissions.isEmpty && pendingPermissions.isEmpty))">
                     <h3><a href="<s:url action="createWeblog" />"><s:text name="yourWebsites.createWeblog" /></a></h3>
                     <p><s:text name="yourWebsites.createWeblog.desc" /></p>
                 </s:if>

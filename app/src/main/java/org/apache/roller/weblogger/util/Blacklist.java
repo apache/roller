@@ -50,7 +50,7 @@ import org.apache.roller.util.DateUtil;
  * strings against the blacklist and (optionally) addition blacklists.
  * <br />
  * First looks for blacklist.txt in uploads directory, than in classpath 
- * as /blacklist.txt. Download from web feature disabed.
+ * as /blacklist.txt. Download from web feature disabled.
  * <br />
  * Blacklist is formatted one entry per line. 
  * Any line that begins with # is considered to be a comment. 

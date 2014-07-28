@@ -15,6 +15,9 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
+<%--
+This JSP is intended for cannot proceed error messages, perhaps due to lack of system permissions.
+To use: addError() messages and they will appear here, also configure in struts.xml.
+See CreateWeblog.java and Register.java for examples of this JSP.
+--%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-
-<div class="notification"><s:text name="Register.disabled" /></div>

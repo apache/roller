@@ -86,10 +86,12 @@ public class Register extends UIAction implements ServletRequestAware {
             if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
                 // unless there are 0 users (need to allow creation of first user)
                 && WebloggerFactory.getWeblogger().getUserManager().getUserCount() != 0) {
+                addError("Register.disabled");
                 return DISABLED_RETURN_CODE;
             }
         } catch (Exception e) {
             log.error("Error checking user count", e);
+            addError("generic.system.error");
             return DISABLED_RETURN_CODE;
         }
                 

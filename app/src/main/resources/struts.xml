@@ -105,7 +105,7 @@
         <action name="register!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.core.Register">
             <result name="input" type="tiles">.Register</result>
-            <result name="disabled" type="tiles">.RegisterDisabled</result>
+            <result name="disabled" type="tiles">.GenericError</result>
             <result name="success" type="tiles">.Welcome</result>
         </action>
         
@@ -129,6 +129,7 @@
         <action name="createWeblog!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.core.CreateWeblog">
             <result name="input" type="tiles">.CreateWeblog</result>
+            <result name="disabled" type="tiles">.GenericError</result>
             <result name="success" type="chain">menu</result>
         </action>
         
