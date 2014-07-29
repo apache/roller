@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.MediaFileComparator.MediaFileComparator
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -57,6 +58,10 @@ public class MediaFileImageChooser extends MediaFileBase {
      * Prepares view action
      */
     public void myPrepare() {
+    }
+
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }
 
     /**

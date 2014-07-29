@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 /**
@@ -46,6 +47,10 @@ public class MediaFileBase extends UIAction {
     private String mediaFileId;
     private List<MediaFileDirectory> allDirectories;
     private boolean overlayMode;
+
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
+    }
 
     /**
      * Deletes media file

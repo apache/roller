@@ -39,7 +39,7 @@
                 <interceptor-ref name="fileUpload"/>
                 <interceptor-ref name="checkbox"/>
                 <interceptor-ref name="multiselect"/>
-                <!-- <interceptor-ref name="staticParams"/> -->
+                <interceptor-ref name="staticParams"/>
                 <interceptor-ref name="actionMappingParams"/>
                 <interceptor-ref name="params">
                     <param name="excludeParams">^action:.*,^method:.*</param>
@@ -290,18 +290,21 @@
         
         <action name="entryRemove!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryRemove">
+            <param name="actionName">entryRemove</param>
             <result name="input" type="tiles">.EntryRemove</result>
             <result name="error" type="chain">menu</result>
-            <result name="cancel" type="redirectAction">
-                <param name="actionName">entries</param>
-                <param name="weblog">${weblog}</param>
-            </result>
             <result name="success" type="chain">entryAdd</result>
         </action>
 
         <!-- Below activated by entries.jsp, kept separate from entryRemove!* above
         as return page is different (the list of entries in this case, new blog
         entry in the other.
+
+        Also defining an actionName parameter here different from that defined above.
+        This actionName, used to determine which menu item to highlight, is configured
+        in editor-menu.xml.  This value is read by class EntryRemove and used by
+        class MenuHelper to highlight the correct menu item.  See Struts2
+        StaticParametersInterceptor javadoc for more info.
 
         Process flow:
         1. Delete item on entries.jsp activates this action.
@@ -314,9 +317,14 @@
         -->
         <action name="entryRemoveViaList!*" method="{1}"
               class="org.apache.roller.weblogger.ui.struts2.editor.EntryRemove">
+          <param name="actionName">entryRemoveViaList</param>
           <result name="input" type="tiles">.EntryRemoveViaList</result>
           <result name="error" type="chain">menu</result>
           <result name="success" type="chain">entries</result>
+          <result name="cancel" type="redirectAction">
+              <param name="actionName">entries</param>
+              <param name="weblog">${weblog}</param>
+          </result>
         </action>
 
         <action name="entries"

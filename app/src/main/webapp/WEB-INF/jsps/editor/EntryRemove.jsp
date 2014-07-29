@@ -41,7 +41,8 @@
     <s:form action="entryEdit">
 		<s:hidden name="salt" />
         <s:hidden name="weblog" />
-        <s:submit value="%{getText('generic.no')}" action="entryRemove!cancel" />
+        <s:hidden name="bean.id" value="%{removeEntry.id}"/>
+        <s:submit value="%{getText('generic.no')}"/>
     </s:form>
 </td>
 </tr>

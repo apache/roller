@@ -113,12 +113,11 @@ public abstract class UIAction extends ActionSupport
         return true;
     }
     
-    
+    // Default is ADMIN for safety, if a subclasser forgets to override this only admins can use.
     public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.POST);
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
-    
-    
+
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.LOGIN);
     }

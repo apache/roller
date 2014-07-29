@@ -45,9 +45,9 @@ public class EntryRemove extends EntryBase {
 	private WeblogEntry removeEntry = null;
 
 	public EntryRemove() {
-		this.actionName = "entryRemove";
+        // actionName defined in struts.xml as it's different based on the caller
 		this.desiredMenu = "editor";
-		this.pageTitle = "weblogEdit.title.newEntry";
+		this.pageTitle = "weblogEdit.deleteEntry";
 	}
 
 	public void myPrepare() {

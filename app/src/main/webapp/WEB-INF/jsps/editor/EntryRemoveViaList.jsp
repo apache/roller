@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<%-- Page same as EntryRemove.jsp except has different action values to accomodate returning
+<%-- Page same as EntryRemove.jsp except has different action values to accommodate returning
      to the entries list instead of the new entry page.  See struts.xml for action flow.  --%>
 <h2>
     <s:text name="weblogEntryRemove.removeWeblogEntry" /> [<s:property value="removeEntry.title"/>]
@@ -43,7 +43,7 @@
     <s:form action="entries">
 		<s:hidden name="salt" />
         <s:hidden name="weblog" />
-        <s:submit value="%{getText('generic.no')}" action="entryRemove!cancel" />
+        <s:submit value="%{getText('generic.no')}" action="entryRemoveViaList!cancel" />
     </s:form>
 </td>
 </tr>
