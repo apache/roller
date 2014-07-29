@@ -95,18 +95,12 @@ public class Members extends UIAction implements ParameterAware {
                     boolean error = false;
                     User user = getAuthenticatedUser();
                     if (perms.getUser().getUserName().equals(user.getUserName())) {
-                        // if modifying self
-                        if (sval.equals(WeblogPermission.EDIT_DRAFT) 
-                            && (perms.hasAction(WeblogPermission.POST) || perms.hasAction(WeblogPermission.ADMIN))) {
+                        // can't modify self
+                        if (!sval.equals(WeblogPermission.ADMIN)) {
                             error = true;
-                            addError("memberPermissions.noSelfDemotions");
+                            addError("memberPermissions.noSelfModifications");
                         }
-                        if (sval.equals(WeblogPermission.POST) && perms.hasAction(WeblogPermission.ADMIN)) {
-                            error = true;
-                            addError("memberPermissions.noSelfDemotions");
-                        }
-                        
-                    } 
+                    }
                     if (!error && !perms.hasAction(sval)) {
                         if ("-1".equals(sval)) {
                              userMgr.revokeWeblogPermission(

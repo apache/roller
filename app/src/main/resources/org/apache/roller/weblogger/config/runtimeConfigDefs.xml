@@ -23,12 +23,14 @@
   listed here should instead be changed on the Roller Admin Settings page.
   
   This file defines what properties are made available to get/set
-  during the running of the Roller application.  These properties
-  are stored in the database (roller_properties table) and the code *must* be
-  able to make use of changed values during runtime.
+  during the running of the Roller application (in contrast to the settings
+  in roller-custom.properties which are read once before Roller startup).
+  These runtime properties are stored in the database (roller_properties
+  table) and the code *must* be able to make use of changed values during
+  runtime.
   
   Also included in this file is meta-data which defines what class
-  of property we are dealing with, it's default value, and information
+  of property we are dealing with, its default value, and information
   on how to populate the display that allows for changing the value.
   
   NOTE: order does matter!!  the display is populated in a linear fashion

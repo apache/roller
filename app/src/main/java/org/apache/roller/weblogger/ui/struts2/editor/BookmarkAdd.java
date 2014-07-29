@@ -52,20 +52,17 @@ public class BookmarkAdd extends UIAction {
     
     // bean for managing form data
     private BookmarkBean bean = new BookmarkBean();
-    
-    
+
     public BookmarkAdd() {
         this.actionName = "bookmarkAdd";
         this.desiredMenu = "editor";
         this.pageTitle = "bookmarkForm.add.title";
     }
-    
-    
+
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }
-    
-    
+
     public void myPrepare() {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();

@@ -48,7 +48,7 @@ public class CategoryAdd extends UIAction {
         this.pageTitle = "categoryForm.add.title";
     }
 
-    // author perms required
+    // admin perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
