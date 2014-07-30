@@ -21,9 +21,16 @@ package org.apache.roller.weblogger.ui.struts2.core;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
-
 /**
  * Handle user logins.
+ *
+ * The standard blog login buttons route to login-redirect.rol, which is
+ * intercepted by the Spring security.xml to first require a standard login (this class).
+ * After successful authentication, login-redirect will either route the user to
+ * registration (if the user logged in via an external method such as LDAP and doesn't
+ * yet have a Roller account), or directly to the user's blog.
+ *
+ * @see org.apache.roller.weblogger.ui.struts2.core.Register
  */
 public class Login extends UIAction {
     

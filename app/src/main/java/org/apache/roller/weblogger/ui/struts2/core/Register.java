@@ -43,7 +43,12 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
- * Actions for registering a new user.
+ * Actions for registering a new user.  This page is activated in Roller in two ways,
+ * by explicitly selecting the "Register" button on the Main Menu, or if
+ * upon a non-Roller DB login (say, LDAP) if the user does not exist in the
+ * Roller DB.  In the latter case, this page is activated from login-redirect.jsp file.
+ *
+ * @see org.apache.roller.weblogger.ui.struts2.core.Login
  */
 public class Register extends UIAction implements ServletRequestAware {
     
