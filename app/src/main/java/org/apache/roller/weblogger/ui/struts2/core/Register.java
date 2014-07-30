@@ -203,7 +203,7 @@ public class Register extends UIAction implements ServletRequestAware {
 
                 // are we using email activation?
                 boolean activationEnabled = WebloggerRuntimeConfig.getBooleanProperty(
-                        "user.account.activation.enabled");
+                        "user.account.email.activation");
                 if (activationEnabled) {
                     // User account will be enabled after the activation process
                     ud.setEnabled(Boolean.FALSE);
