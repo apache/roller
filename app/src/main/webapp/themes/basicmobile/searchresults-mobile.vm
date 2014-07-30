@@ -1,7 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <title>Search Results for '$model.term' : $model.weblog.name</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 

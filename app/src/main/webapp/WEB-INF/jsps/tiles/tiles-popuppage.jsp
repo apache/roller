@@ -16,14 +16,15 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <tiles:insertAttribute name="head" />    
+        <meta charset="utf-8">
+        <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
+        <tiles:insertAttribute name="head" />
     </head>
 
-    <body class="yui3-skin-sam">
+    <body>
 
         <div id="wrapper"> 
             <div id="leftcontent_wrap">
