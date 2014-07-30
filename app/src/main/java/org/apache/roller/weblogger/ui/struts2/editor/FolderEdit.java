@@ -57,14 +57,7 @@ public class FolderEdit extends UIAction {
         this.desiredMenu = "editor";
         this.pageTitle = "folderForm.edit.title";
     }
-    
-    
-    // author perms required
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.POST);
-    }
-    
-    
+
     // load folder to edit
     public void myPrepare() {
         try {

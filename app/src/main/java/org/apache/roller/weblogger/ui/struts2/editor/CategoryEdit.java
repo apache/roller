@@ -54,7 +54,6 @@ public class CategoryEdit extends UIAction {
     }
     
     
-    // author perms required
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }

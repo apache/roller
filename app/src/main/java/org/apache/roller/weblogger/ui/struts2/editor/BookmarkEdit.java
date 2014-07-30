@@ -58,13 +58,7 @@ public class BookmarkEdit extends UIAction {
         this.desiredMenu = "editor";
         this.pageTitle = "bookmarkForm.edit.title";
     }
-    
-    
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
-    }
-    
-    
+
     public void myPrepare() {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();

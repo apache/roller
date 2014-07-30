@@ -59,10 +59,6 @@ public class BookmarkAdd extends UIAction {
         this.pageTitle = "bookmarkForm.add.title";
     }
 
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.POST);
-    }
-
     public void myPrepare() {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();

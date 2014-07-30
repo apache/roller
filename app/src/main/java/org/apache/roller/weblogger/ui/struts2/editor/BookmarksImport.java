@@ -62,22 +62,14 @@ public final class BookmarksImport extends UIAction {
         this.desiredMenu = "editor";
         this.pageTitle = "bookmarksImport.title";
     }
-    
-    
-    // author perms required
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.POST);
-    }
-    
-    
+
     /**
      * Request to import bookmarks
      */
     public String execute() {
         return INPUT;
     }
-    
-    
+
     /**
      * Save imported bookmarks.
      */

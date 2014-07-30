@@ -51,13 +51,7 @@ public class FolderAdd extends UIAction {
         this.desiredMenu = "editor";
         this.pageTitle = "folderForm.add.title";
     }
-    
-    
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
-    }
-    
-    
+
     @SkipValidation
     public String execute() {
         return INPUT;
