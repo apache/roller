@@ -154,7 +154,7 @@
 
 </s:form>
 
-<script type="text/javascript">
+<script>
 function onChange() {
     var disabled = true;
     var openIdConfig    = '<s:property value="openIdConfiguration" />';

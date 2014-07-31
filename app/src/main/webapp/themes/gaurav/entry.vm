@@ -1,10 +1,11 @@
 <!doctype html>
 <html>
-  <head profile="http://gmpg.org/xfn/11">
+  <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   #includeTemplate($model.weblog "standard_head")
   <title>$model.weblog.name: $model.weblogEntry.title</title>
-  <link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+  <link rel="stylesheet" href='$url.page("custom.css")' />
 </head>
 <body>
 
@@ -147,7 +148,7 @@
 								</div>
 								
 								<div class="form-group col-lg-12">
-								   <script type="text/javascript" src="$url.site/theme/scripts/clientSideInclude.js"></script>
+								   <script src="$url.site/theme/scripts/clientSideInclude.js"></script>
 								   <div id="commentAuthenticator"></div>
 								   <input type="button" class="btn btn-primary" name="post" value="&nbsp;$text.get("macro.weblog.postpreview" )&nbsp;"
 								      onclick="this.form.method.value='preview';this.form.submit()" />
@@ -156,8 +157,8 @@
 							</div>
 						</form>
 		
-						<script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
-						<script type="text/javascript">
+						<script src="$url.site/theme/scripts/roller.js"></script>
+						<script>
 						/* <![CDATA[ */
 						clientSideInclude('commentAuthenticator', '$url.commentAuthenticator');
 		

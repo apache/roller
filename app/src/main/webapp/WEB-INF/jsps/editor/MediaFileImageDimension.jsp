@@ -19,7 +19,7 @@
 
 <s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{bean.id}" />
 
-<script type="text/javascript">
+<script>
 function addImage() {
     var filePointer = "<img src='<s:property value="%{mediaFileURL}" />' alt='<s:property value="bean.name" />' width='<width>' height='<height>' style='<style>' />";
     filePointer = filePointer.replace('<width>', document.imageDimForm.imageWidth.value);

@@ -17,10 +17,10 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script type="text/javascript" src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
 
 <style>
 #tagAutoCompleteWrapper {
@@ -143,7 +143,7 @@
             :
             <s:select name="bean.seconds" list="secondsList" />
             &nbsp;&nbsp;
-            <script type="text/javascript" >
+            <script>
             $(function() {
                 $( "#entry_bean_dateString" ).datepicker({
                     showOn: "button",
@@ -206,7 +206,7 @@
 
 </s:form>
 
-<script type="text/javascript">
+<script>
 //Get cookie to determine state of control
 if (getCookie('control_miscControl') != null) {
     if(getCookie('control_miscControl') == 'true'){

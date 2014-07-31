@@ -25,7 +25,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><xsl:value-of select="rss/channel/title"/></title>
-<style type="text/css">
+<style>
 body {
     background: white;
     margin: 0px;

@@ -6,6 +6,6 @@
 #end
 
 <!-- Bootstrap core CSS -->
-<link rel="stylesheet" type="text/css" href="$url.resource('css/bootstrap.css')" >
-<link rel="stylesheet" type="text/css" href="$url.resource('css/style.css')" />
-<link rel="stylesheet" type="text/css" href="$url.resource('css/font-awesome.min.css')" />
+<link rel="stylesheet" href="$url.resource('css/bootstrap.css')" >
+<link rel="stylesheet" href="$url.resource('css/style.css')" />
+<link rel="stylesheet" href="$url.resource('css/font-awesome.min.css')" />

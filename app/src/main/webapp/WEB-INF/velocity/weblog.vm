@@ -414,7 +414,7 @@ Show comments form for weblog entry.
                 </span>
             </li>
             <li class="info">
-               <script type="text/javascript" src="$url.site/theme/scripts/clientSideInclude.js"></script>
+               <script src="$url.site/theme/scripts/clientSideInclude.js"></script>
                <div id="commentAuthenticator"></div>
             </li>
             <li>
@@ -426,8 +426,8 @@ Show comments form for weblog entry.
 
     </form>
 
-    <script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
-    <script type="text/javascript">
+    <script src="$url.site/theme/scripts/roller.js"></script>
+    <script>
     /* <![CDATA[ */
     clientSideInclude('commentAuthenticator', '$url.commentAuthenticator');
 
@@ -745,7 +745,7 @@ Show search form for a weblog.
           <input type="submit" class="button" value="$text.get( "macro.weblog.searchbutton" )" id="searchbutton" />
         </p>
     </form>
-    <script type="text/javascript">
+    <script>
         function validateSearch(form) {
             if (form.q.value == "") {
                 alert("$text.get("macro.weblog.searchalert")");
@@ -773,7 +773,7 @@ Show search form for a weblog.
           <input type="submit" id="searchbutton" data-role="button" data-theme="a" value="$text.get( "macro.weblog.searchbutton" )" />
         </p>
     </form>
-    <script type="text/javascript">
+    <script>
         function validateSearch(form) {
             if (form.q.value == "") {
                 $("#searchDialog").popup('open').focus();
@@ -937,7 +937,7 @@ Include Javascript code needed for expanding folder macros (undocumented).
 *#
 #macro(_showCommonJavascript)
 #if (!$zzz__incudedCommonJavaScript__zzz)
-    <script type="text/javascript">
+    <script>
     function setCookie(name,value,expires,path,domain,secure) {
       document.cookie = name + "=" + escape (value) +
         ((expires) ? "; expires=" + expires.toGMTString() : "") +
@@ -1029,7 +1029,7 @@ Include Javascript code needed for expanding folder macros (undocumented).
 
 
 #macro(_Jave $type)
-<script type="text/javascript">
+<script>
      var type = '$type';
     function setCookie(c_name, value, exdays) {
         var exdate = new Date();

@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- XFN friendly -->
-<head profile="http://gmpg.org/xfn/11">
+<head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	#includeTemplate($model.weblog "standard_head")
 	<title>$model.weblog.name: Search Results for '$model.term'</title>
 	#if ($model.hits > 0)
-		<style type="text/css">
+		<style>
 		span.searchword { background-color:yellow; }
 		</style>
-		<script type="text/javascript" >
+		<script>
 			//<![CDATA[
 				searchhi_config = {ignore_site : '$url.absoluteSite'};
 			//]]>
 		</script>
 		<script type="application/x-javascript" src="$url.resource('js/searchhi.js')"></script>
-		<script type="text/javascript" >
+		<script>
 			//<![CDATA[
 			function loadSearchHighlight() {
 				searchhi.highlightWord(document.getElementById("search_results"), '$model.term');
@@ -23,7 +23,7 @@
 			//]]>
 		</script>
    	#end
-	<link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+	<link rel="stylesheet" href='$url.page("custom.css")' />
 </head>
 <body onload="loadSearchHighlight()">
 

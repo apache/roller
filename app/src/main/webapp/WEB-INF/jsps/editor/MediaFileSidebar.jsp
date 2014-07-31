@@ -137,7 +137,7 @@
 
 
 
-<script type="text/javascript">
+<script>
 
 function onCreateDirectory() {
     document.mediaFileViewForm.newDirectoryName.value = $("#newDirectoryName").get(0).value;

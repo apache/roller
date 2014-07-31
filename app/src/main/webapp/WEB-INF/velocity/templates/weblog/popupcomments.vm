@@ -4,11 +4,11 @@
     <title>#showWebsiteTitle() :: $text.get("comments.title") ::
         $utilities.removeHTML($entry.title)
     </title>
-    <script type="text/javascript"
+    <script
         src="$ctxPath/theme/scripts/roller.js"></script>
-    <link rel="stylesheet" type="text/css" media="all"
+    <link rel="stylesheet" media="all"
          href="$ctxPath/themes/base.css" />
-    <style type="text/css">
+    <style>
     body {
         background-color: #FFFFFF;
         background-image: none;
@@ -32,7 +32,7 @@
     }
     </style>
     <!-- Edit your _css Page Template -->
-    <link rel="stylesheet" type="text/css"
+    <link rel="stylesheet"
          href="${ctxPath}/page/${website.handle}/_css" />
 </head>
 <body>

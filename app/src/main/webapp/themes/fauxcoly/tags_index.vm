@@ -1,10 +1,10 @@
 <!doctype html>
 <html>
-    <!-- XFN friendly -->
-<head profile="http://gmpg.org/xfn/11">
-    <meta charset="utf-8">
-    <title>$model.weblog.name: Entries tagged $model.tags</title>
-    #includeTemplate($model.weblog "standard_head")
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>$model.weblog.name: Entries tagged $model.tags</title>
+  #includeTemplate($model.weblog "standard_head")
 </head>
 <body>
 

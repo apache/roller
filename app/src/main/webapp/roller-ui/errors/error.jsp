@@ -22,9 +22,10 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title><fmt:message key="errorPage.title" /></title>
 
-        <link rel="stylesheet" type="text/css" media="all" href='<c:url value="/roller-ui/styles/roller.css"/>' />
+        <link rel="stylesheet" media="all" href='<c:url value="/roller-ui/styles/roller.css"/>' />
     </head>
     <body>
         <div style="padding: 15px 25px 25px 25px">

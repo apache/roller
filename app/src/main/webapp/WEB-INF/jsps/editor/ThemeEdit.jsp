@@ -16,9 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
-<script type="text/javascript">
+<script>
 <!--
 function previewImage(q, theme) {
     q.attr('src','<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme=' + theme);
@@ -114,7 +114,7 @@ function toggleImportThemeDisplay() {
         <p>
             <img id="sharedPreviewImg" src="" />
             <!-- initialize preview image at page load -->
-            <script type="text/javascript">
+            <script>
                 <s:if test="customTheme">
                     previewImage($('#sharedPreviewImg'), '<s:property value="themes[0].id"/>');
                 </s:if>
@@ -181,7 +181,7 @@ function toggleImportThemeDisplay() {
             <p>
                 <img id="customPreviewImg" src="" />
                 <!-- initialize preview image at page load -->
-                <script type="text/javascript">
+                <script>
                 <s:if test="customTheme">
                     previewImage($('#customPreviewImg'), '<s:property value="themes[0].id"/>');
                 </s:if>
@@ -203,7 +203,7 @@ function toggleImportThemeDisplay() {
 </s:form>
 
 <%-- initializes the chooser/optioner/themeImport display at page load time --%>
-<script type="text/javascript">
+<script>
     <s:if test="customTheme">
         updateThemeChooser($('#customRadio'));
     </s:if>

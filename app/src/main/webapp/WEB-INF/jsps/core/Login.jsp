@@ -114,7 +114,7 @@ if (cmaEnabled) {
     </form>
 </s:if>
 
-<script type="text/javascript">
+<script>
 <!--
 <s:if test="openIdConfiguration != 'disabled'">
 function focusToOpenidForm() {

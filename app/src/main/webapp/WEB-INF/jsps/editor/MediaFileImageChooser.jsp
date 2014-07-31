@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
 <style>
     .mediaObject {
@@ -38,7 +38,7 @@
     }
 </style>
 
-<script type="text/javascript">
+<script>
     function onSelectDirectory(id) {
         window.location = "?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
     }
@@ -96,7 +96,7 @@
 
     <%-- Media file folder contents --%>
 
-    <script type="text/javascript">
+    <script>
         function highlight(el, flag) {
             if (flag) {
                 $(el).addClass("highlight");
@@ -184,7 +184,7 @@
 
 
 
-<script type="text/javascript">
+<script>
 <!--
     function onSelectImage(name, url) {
         window.parent.onSelectImage(name, url);

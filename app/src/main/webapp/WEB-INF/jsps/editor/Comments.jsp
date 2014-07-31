@@ -17,9 +17,9 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
-<script type="text/javascript">
+<script>
 //<!--
 <s:if test="pager.items != null">
     $(document).ready(function(){
@@ -328,7 +328,7 @@
         <br />
 
 
-    <script type="text/javascript">
+    <script>
     <!--
     var comments = {};
 

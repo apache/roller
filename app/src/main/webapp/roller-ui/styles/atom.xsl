@@ -25,7 +25,7 @@
 <head>
 <title><xsl:value-of select="atom:feed/atom:title"/></title>
 
-<style type="text/css">
+<style>
 body {
     background: white;
     margin: 0px;

@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<script type="text/javascript">
+<script>
 <!-- 
 function setChecked(val, name) {
     form = document.getElementById('globalCommentManagement');

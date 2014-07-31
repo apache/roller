@@ -21,7 +21,7 @@
     <s:text name="mediaFile.add.title"  />
 </p>
 
-<script type="text/javascript">
+<script>
 function submitPage(frm) {
     var filePointer = "<a href='" + frm.url.value + "'>" + frm.title.value + "</a>";
     parent.onClose(filePointer);

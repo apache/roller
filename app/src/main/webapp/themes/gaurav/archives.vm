@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- XFN friendly -->
-<head profile="http://gmpg.org/xfn/11">
+<head>
 	#includeTemplate($model.weblog "standard_head")
 	<title>$model.weblog.name: Archives</title>
-	<link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+	<link rel="stylesheet" href='$url.page("custom.css")' />
 </head>
 <body>
 

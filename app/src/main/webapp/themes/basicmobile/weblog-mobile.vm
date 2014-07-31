@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>$model.weblog.name</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   #showMetaDescription()
 
-  <link rel="stylesheet" type="text/css" href="$model.weblog.stylesheet">
+  <link rel="stylesheet" href="$model.weblog.stylesheet">
   <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/default.min.css" />
   <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/jquery.mobile.icons.min.css" />
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
 
-  <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 
-  <script type="text/javascript">
+  <script>
 
     $(document).bind("mobileinit", function(){
       $.mobile.ajaxEnabled = false;
@@ -21,9 +22,9 @@
 
   </script>
 
-  <script type="text/javascript" src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
 
-  <script type="text/javascript">
+  <script>
     $(document).bind("pageinit", function(){
       $('#btnStandard').on('click', function() {
         setCookie("roller_user_request_type","standard",30);

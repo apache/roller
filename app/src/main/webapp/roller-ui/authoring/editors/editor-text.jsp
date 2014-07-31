@@ -31,7 +31,7 @@
     }
 </style>
 
-<script type="text/javascript">
+<script>
     function onClickAddImage(){
         <s:url id="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
@@ -95,7 +95,7 @@
 
 </script>
 
-<script type="text/javascript">
+<script>
     <!--
     function editorCleanup() {
         // no-op

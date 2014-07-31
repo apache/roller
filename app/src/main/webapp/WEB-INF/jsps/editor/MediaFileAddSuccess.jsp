@@ -16,9 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
-<style type="text/css">
+<style>
     table.mediaFileTable {
         margin-left: 2em;
         width: 90%;
@@ -31,7 +31,7 @@
     }
 </style>
 
-<script type="text/javascript">
+<script>
     $(document).ready(function() {
 
         $("#submit").attr("disabled", true);

@@ -2,13 +2,14 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>$model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
-    <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <link rel="stylesheet" media="all" href="$model.weblog.stylesheet">
     #showMetaDescription()
-    <script type="text/javascript">
+    <script>
       $(document).ready(function () {
         $('#btnMobile').on('click', function() {
            setCookie("roller_user_request_type","mobile",30);

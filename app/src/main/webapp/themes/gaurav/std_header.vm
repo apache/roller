@@ -79,7 +79,7 @@
 					<form id="searchForm" method="get" action="$url.search" class="form-inline" onsubmit="return validateSearch(this)">
 						<input type="text" class="form-control input-sm" id="q" name="q" maxlength="255" placeholder="Search..." value="">	  		   <button type="submit" id="search-btn" class="btn"><i class="icon-search"></i></button>
 					</form>
-					<script type="text/javascript">
+					<script>
 				    	function validateSearch(form) {
 				            if (form.q.value == "") {
 				                alert("$text.get("macro.weblog.searchalert")");

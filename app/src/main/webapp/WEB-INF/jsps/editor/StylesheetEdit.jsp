@@ -16,9 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
-<script type="text/javascript">
+<script>
 	function revertStylesheet() {
 		if (window.confirm('<s:text name="stylesheetEdit.confirmRevert"/>')) {
 			document.stylesheetEdit.action = "<s:url action='stylesheetEdit!revert' />";
@@ -76,7 +76,7 @@
     <%-- ================================================================== --%>
     <%-- Save, Close and Resize text area buttons--%>
 
-    <script type="text/javascript">
+    <script>
         if (getCookie("templateEditorRows") != null) {
             document.getElementById('stylesheetEdit_contentsMobile').rows = getCookie("templateEditorRows");
             document.getElementById('stylesheetEdit_contentsStandard').rows = getCookie("templateEditorRows");
@@ -122,8 +122,8 @@ function changeSize1(num) {
 }
 </script>
 
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
+<script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
+<script src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
 
 <script>
     $(function() {

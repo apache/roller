@@ -16,10 +16,10 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
 
-<script type="text/javascript">
+<script>
     $(document).ready(function() {
         $("input[type='file']").change(function() {
             var name = '';

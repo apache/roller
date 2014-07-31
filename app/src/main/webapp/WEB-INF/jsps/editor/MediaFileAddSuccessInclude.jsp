@@ -21,7 +21,7 @@
    <s:include value="/WEB-INF/jsps/editor/MediaFileImageDimension.jsp" />
 </s:if>
 <s:else>
-<script type="text/javascript">
+<script>
     <s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{bean.id}" />
     var filePointer = "<a href='<s:property value="%{mediaFileURL}" />'><s:property value="bean.name" /></a>";
     parent.onClose(filePointer);

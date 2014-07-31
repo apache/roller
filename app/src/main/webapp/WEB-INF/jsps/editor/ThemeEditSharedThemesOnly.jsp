@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script type="text/javascript">
+<script>
 <!--
 function previewImage(element, theme) {
     element.src="<s:property value="siteURL" />/themes/" + theme + "/sm-theme-" + theme + ".png";
@@ -55,7 +55,7 @@ function previewMobileImage(element, theme) {
         <p>
             <img id="previewImg" src="" />
             <!-- initialize preview image at page load -->
-            <script type="text/javascript">
+            <script>
             previewImage(document.getElementById('previewImg'), '<s:property value="themeId"/>');
             </script>
         </p>

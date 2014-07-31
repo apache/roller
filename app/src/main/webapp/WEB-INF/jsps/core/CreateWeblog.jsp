@@ -16,9 +16,9 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
-<script type="text/javascript">
+<script>
 <!--
 function previewImage(theme) {
     document.preview.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
@@ -107,7 +107,7 @@ function handlePreview(handle) {
 
         <img name="preview" src='' />
         <!-- initialize preview image at page load -->
-        <script type="text/javascript">
+        <script>
             <s:if test="bean.theme == null">
                 previewImage('<s:property value="themes[0].id"/>');
             </s:if>
@@ -128,7 +128,7 @@ function handlePreview(handle) {
     
 </s:form>
 
-<script type="text/javascript">
+<script>
     document.forms[0].elements[0].focus();
 </script>
     

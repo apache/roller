@@ -16,7 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" type="text/css" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
+<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
 <p class="subtitle">
    <s:text name="pageForm.subtitle" >
@@ -119,7 +119,7 @@
     <%-- ================================================================== --%>
     <%-- Save, Close and Resize text area buttons--%>
 
-    <script type="text/javascript">
+    <script>
         if (getCookie("templateEditorRows") != null) {
             document.getElementById('template_bean_contentsMobile').rows = getCookie("templateEditorRows");
             document.getElementById('template_bean_contentsStandard').rows = getCookie("templateEditorRows");
@@ -163,7 +163,7 @@
                 <tr>
                     <td class="label" valign="top"><s:text name="pageForm.outputContentType" />&nbsp;</td>
                     <td class="field">
-                        <script type="text/javascript"><!--
+                        <script><!--
                         function showContentTypeField() {
                             if (document.getElementById('template_bean_autoContentType1').checked) {
                                 document.getElementById('template_bean_manualContentType').readOnly = true;
@@ -207,7 +207,7 @@
                         <br />
                         <br />
                         
-                        <script type="text/javascript"><!--
+                        <script><!--
                             showContentTypeField();
                         // --></script> 
                         
@@ -292,8 +292,8 @@ if (getCookie('control_advancedControl') != null) {
 }
 </script>
 
- <script type="text/javascript" src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
- <script type="text/javascript" src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
+ <script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
+ <script src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
 
  <script>
      $(function() {

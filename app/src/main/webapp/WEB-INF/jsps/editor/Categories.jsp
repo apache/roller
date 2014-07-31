@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <%-- JavaScript for categories table --%> 
-<script type="text/javascript">
+<script>
 // <!-- 
 function onMove()
 {

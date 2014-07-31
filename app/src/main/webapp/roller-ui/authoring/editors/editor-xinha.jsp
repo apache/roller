@@ -27,19 +27,19 @@
 </s:url>
 
 
-<script type="text/javascript">
+<script>
     // (preferably absolute) URL (including trailing slash) where Xinha is installed
     _editor_url  = '<s:property value="xinhaHome" />';
     _editor_lang = "en";        // And the language we need to use in the editor.
     _editor_skin = "blue-look"; // If you want use a skin, add the name (of the folder) here
 </script>
-<script type="text/javascript" src="<s:property value="xinhaHome" />/XinhaCore.js"></script>
+<script src="<s:property value="xinhaHome" />/XinhaCore.js"></script>
 
 
 <%-- ********************************************************************* --%>
 <%-- Xinha config (see also: http://trac.xinha.org/wiki/NewbieGuide) --%>
 
-<script type="text/javascript">
+<script>
     xinha_editors = null;
     xinha_init    = null;
     xinha_config  = null;
@@ -88,7 +88,7 @@
 <%-- ********************************************************************* --%>
 <%-- Editor event handling, on close, on add image, etc. --%>
 
-<script type="text/javascript">
+<script>
     function onClickAddImage(){
         <s:url id="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
@@ -115,7 +115,7 @@
     }
 </script>
 
-<script type="text/javascript">
+<script>
     function editorCleanup() {
         document.getElementById('xe_content').value = xinha_editors.xe_content.getHTML().trim();
         document.getElementById('xe_summary').value = xinha_editors.xe_summary.getHTML().trim();

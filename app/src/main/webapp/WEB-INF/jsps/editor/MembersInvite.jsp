@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script type="text/javascript">
+<script>
 // <!--
 <%@ include file="/roller-ui/scripts/ajax-user.js" %>
 // -->
@@ -64,7 +64,7 @@
 </s:form>
 
 <%-- this forces focus to the userName field --%>
-<script type="text/javascript">
+<script>
 <!--
 document.getElementById('userName').focus();
 // -->

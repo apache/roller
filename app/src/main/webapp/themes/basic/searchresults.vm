@@ -2,9 +2,10 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Search Results for '$model.term' : $model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
-    <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
+    <link rel="stylesheet" media="all" href="$model.weblog.stylesheet">
 </head>
 <body>
 

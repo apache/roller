@@ -1,12 +1,12 @@
 <!doctype html>
 <html>
-    <!-- XFN friendly -->
-    <head profile="http://gmpg.org/xfn/11">
+    <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>$model.weblog.name: Archives</title>
     #includeTemplate($model.weblog "standard_head")
 
-    <style type="text/css">
+    <style>
 
     /* style the big calendar */
 
@@ -62,7 +62,7 @@
         margin: 0 0 0 0;
     }
     </style>
-    <link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+    <link rel="stylesheet" href='$url.page("custom.css")' />
 </head>
 <body>
 
@@ -110,7 +110,7 @@
               maxlength="255" value="#if($model.term)$model.term#end" />
           <input type="submit" class="button" value="Search" />
     </form>
-    <script type="text/javascript">
+    <script>
         function validateSearch(form) {
             if (form.q.value == "") {
                 alert("$text.get("macro.weblog.searchalert")");
