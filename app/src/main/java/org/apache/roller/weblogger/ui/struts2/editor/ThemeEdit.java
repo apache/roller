@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -71,10 +70,6 @@ public class ThemeEdit extends UIAction {
         this.actionName = "themeEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "themeEditor.title";
-    }
-
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
     }
 
     public void myPrepare() {
@@ -115,12 +110,7 @@ public class ThemeEdit extends UIAction {
                     + getActionWeblog().getHandle(), ex);
         }
 
-        if (!WebloggerRuntimeConfig
-                .getBooleanProperty("themes.customtheme.allowed")) {
-            return "input-sharedonly";
-        } else {
-            return INPUT;
-        }
+        return INPUT;
     }
 
     /**

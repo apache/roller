@@ -52,8 +52,9 @@ public class CategoryEdit extends UIAction {
         this.desiredMenu = "editor";
         this.pageTitle = "categoryForm.edit.title";
     }
-    
-    
+
+
+    @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }

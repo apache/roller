@@ -48,6 +48,7 @@ public class CategoryAdd extends UIAction {
         this.pageTitle = "categoryForm.add.title";
     }
 
+    @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }

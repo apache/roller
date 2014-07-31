@@ -30,7 +30,6 @@ import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -63,11 +62,6 @@ public class Bookmarks extends UIAction {
         this.actionName = "bookmarks";
         this.desiredMenu = "editor";
         this.pageTitle = "bookmarksForm.rootTitle";
-    }
-
-    // admin perms required
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
     }
 
     public void myPrepare() {

@@ -229,7 +229,7 @@
 
     <div class="control">
         <span style="padding-left:7px">
-            <s:text name="mediaFileView.sortby" />
+            <s:text name="mediaFileView.sortBy" />:
             <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key"
                   listValue="value"
                   onchange="document.mediaFileViewForm.submit();" />
@@ -237,12 +237,9 @@
 
         <span style="float:right">
             <s:if test="!allDirectories.isEmpty">
-                <%-- View button
-                <s:submit type="button" action="mediaFileView!view" key="mediaFileView.viewFolder" /> --%>
-
                 <%-- Folder to View combo-box --%>
+                <s:text name="mediaFileView.viewFolder" />:
                 <s:select name="viewDirectoryId" list="allDirectories" listKey="id" listValue="name" onchange="onView()" />
-
             </s:if>
         </span>
     </div>

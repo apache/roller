@@ -31,7 +31,7 @@
 
 <script>
 function fullPreviewMode() {
-    window.open('<s:property value="previewURL" />', '_preview', '');
+    window.open('<s:property value="previewURL" />');
 }
 </script>
 
@@ -258,24 +258,29 @@ function fullPreviewMode() {
     
     <br>
     <div class="control">
-        <s:submit value="%{getText('weblogEdit.save')}" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
+        <span style="padding-left:7px">
+            <s:submit value="%{getText('weblogEdit.save')}" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
 
-        <s:if test="userAnAuthor">
-            <s:submit value="%{getText('weblogEdit.post')}" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
-        </s:if>
-        <s:else>
-            <s:submit value="%{getText('weblogEdit.submitForReview')}" onclick="document.getElementById('entry_bean_status').value='PENDING';"/>
-        </s:else>        
-        
-        <s:url id="removeUrl" action="entryRemove">
-            <s:param name="weblog" value="actionWeblog.handle" />
-            <s:param name="removeId" value="%{entry.id}" />
-        </s:url>
-        <input type="button" value="<s:text name="weblogEdit.deleteEntry"/>" onclick="window.location='<s:property value="removeUrl" escape="false" />'" />
-        
-        <input type="button" name="fullPreview"
-                            value='<s:text name="weblogEdit.fullPreviewMode" />'
-                            onclick="fullPreviewMode()" />
+            <input type="button" name="fullPreview"
+                                value="<s:text name='weblogEdit.fullPreviewMode' />"
+                                onclick="fullPreviewMode()" />
+
+            <s:if test="userAnAuthor">
+                <s:submit value="%{getText('weblogEdit.post')}" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
+            </s:if>
+            <s:else>
+                <s:submit value="%{getText('weblogEdit.submitForReview')}" onclick="document.getElementById('entry_bean_status').value='PENDING';"/>
+            </s:else>
+        </span>
+
+        <span style="float:right">
+            <s:url id="removeUrl" action="entryRemove">
+                <s:param name="weblog" value="actionWeblog.handle" />
+                <s:param name="removeId" value="%{entry.id}" />
+            </s:url>
+            <input type="button" value="<s:text name='weblogEdit.deleteEntry'/>" onclick="window.location='<s:property value="removeUrl" escape="false" />'" />
+        </span>
+
     </div>
     
     
@@ -286,7 +291,7 @@ function fullPreviewMode() {
         <h2><s:text name="weblogEdit.trackback" /></h2>
         <s:text name="weblogEdit.trackbackUrl" />
         <br />
-        <s:textfield name="trackbackUrl" size="80" maxlength="255" />
+        <s:textfield name="trackbackUrl" size="80" maxlength="255" style="width:35%"/>
 
         <s:submit value="%{getText('weblogEdit.sendTrackback')}" action="entryEdit!trackback" />
     </s:if>

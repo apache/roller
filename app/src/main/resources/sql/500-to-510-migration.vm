@@ -4,6 +4,9 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
+-- roller_permission constant updated to be more clear
+update roller_properties set name = 'user.account.email.activation' where name = 'user.account.activation.enabled';
+
 -- website table was renamed to weblog and several unused columns dropped
 #renameTable('website' 'weblog')
 #dropColumn('weblog' 'emailfromaddress')

@@ -143,6 +143,7 @@ public class EntryRemove extends EntryBase {
 	}
 
     // allow LIMITED users to delete their own draft/pending blog entries
+    @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }

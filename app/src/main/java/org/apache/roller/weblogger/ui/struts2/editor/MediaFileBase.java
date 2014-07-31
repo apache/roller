@@ -48,6 +48,7 @@ public class MediaFileBase extends UIAction {
     private List<MediaFileDirectory> allDirectories;
     private boolean overlayMode;
 
+    @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }

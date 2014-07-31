@@ -27,7 +27,7 @@ function previewImage(q, theme) {
 }
 function fullPreview(selector) {
     selected = selector.selectedIndex;
-    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+selector.options[selected].value, '_preview', '');
+    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+selector.options[selected].value);
 }
 function updateThemeChooser(selected) {
     if (selected[0].value == 'shared') {
@@ -124,21 +124,19 @@ function toggleImportThemeDisplay() {
             </script>
         </p>
         <p>
-            &raquo; <a href="#" onclick="fullPreview($('#sharedSelector').get(0))">
-            <s:text name="themeEditor.previewLink" /></a><br/>
             <s:text name="themeEditor.previewDescription" />
         </p>
 
-        <s:if test="!customTheme && actionWeblog.theme.customStylesheet != null">
-            <p>
-                <s:url action="stylesheetEdit" id="stylesheetEdit" >
-                    <s:param name="weblog" value="%{actionWeblog.handle}" />
-                </s:url>
-                &raquo; <s:a href="%{stylesheetEdit}"><s:text name="themeEditor.customStylesheetLink" /></s:a><br/>
-                <s:text name="themeEditor.customStylesheetDescription" />
-            </p>
-        </s:if>
-        <p><s:submit value="%{getText('themeEditor.save')}" /></p>
+        <div class="control">
+            <span style="padding-left:7px">
+                <input type="button" name="themePreview"
+                                value="<s:text name='themeEditor.preview' />"
+                                onclick="fullPreview($('#sharedSelector').get(0))" />
+
+                <s:submit value="%{getText('themeEditor.save')}" />
+            </span>
+        </div>
+
     </div>
 
     <div id="customOptioner" class="optioner" style="display:none;">
@@ -191,13 +189,20 @@ function toggleImportThemeDisplay() {
                 </script>
             </p>
             <p>
-                &raquo; <a href="#" onclick="fullPreview($('#customSelector').get(0))">
-                <s:text name="themeEditor.previewLink" /></a><br/>
                 <s:text name="themeEditor.previewDescription" />
             </p>
         </div>
 
-        <p><s:submit value="%{getText('themeEditor.save')}" /></p>
+        <div class="control">
+            <span style="padding-left:7px">
+                <input type="button" name="themePreview"
+                                value="<s:text name='themeEditor.preview' />"
+                                onclick="fullPreview($('#customSelector').get(0))" />
+
+                <s:submit value="%{getText('themeEditor.save')}" />
+            </span>
+        </div>
+
     </div>
 
 </s:form>

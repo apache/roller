@@ -45,7 +45,7 @@ public class Categories extends UIAction {
 		this.pageTitle = "categoriesForm.rootTitle";
 	}
 
-	// author perms required
+	@Override
 	public List<String> requiredWeblogPermissionActions() {
 		return Collections.singletonList(WeblogPermission.POST);
 	}

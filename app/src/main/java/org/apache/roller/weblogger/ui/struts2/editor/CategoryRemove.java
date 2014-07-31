@@ -59,8 +59,8 @@ public class CategoryRemove extends UIAction {
         this.desiredMenu = "editor";
         this.pageTitle = "categoriesForm.rootTitle";
     }
-    
-    
+
+    @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.POST);
     }

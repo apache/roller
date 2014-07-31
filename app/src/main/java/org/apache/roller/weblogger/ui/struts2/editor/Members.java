@@ -56,17 +56,8 @@ public class Members extends UIAction implements ParameterAware {
         this.pageTitle = "memberPermissions.title";
     }
     
-    
-    // admin perms required
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
-    }
-    
-    
     public String execute() {
-        
         log.debug("Showing weblog members page");
-        
         return LIST;
     }
     

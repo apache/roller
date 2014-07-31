@@ -68,7 +68,7 @@
                 <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
             </td>
             
-            <td style="vertical-align:middle"><s:property value="#p.action" /></td>
+            <td style="vertical-align:middle"><s:property value="#p.action.readableName" /></td>
 
             <td style="vertical-align:middle"><s:property value="#p.description" /></td>
 

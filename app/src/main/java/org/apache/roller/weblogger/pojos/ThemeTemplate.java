@@ -26,7 +26,24 @@ package org.apache.roller.weblogger.pojos;
  */
 public interface ThemeTemplate extends Template {
 
-    public enum ComponentType {WEBLOG, PERMALINK, SEARCH, TAGSINDEX, STYLESHEET, CUSTOM}
+    public enum ComponentType {
+        WEBLOG("Weblog"),
+        PERMALINK("Permalink"),
+        SEARCH("Search"),
+        TAGSINDEX("Tag Index"),
+        STYLESHEET("Stylesheet"),
+        CUSTOM("Custom");
+
+        private final String readableName;
+
+        ComponentType(String readableName) {
+            this.readableName = readableName;
+        }
+
+        public String getReadableName() {
+            return readableName;
+        }
+    }
 
     /**
      * The action this template is defined for.

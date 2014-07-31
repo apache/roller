@@ -17,7 +17,6 @@
 package org.apache.roller.weblogger.planet.ui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -25,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
@@ -48,11 +46,6 @@ public class PlanetGroups extends PlanetUIAction {
         this.pageTitle = "planetGroups.pagetitle";
     }
     
-    
-    @Override
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
-    }
     
     @Override
     public boolean isWeblogRequired() {

@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
@@ -55,11 +54,6 @@ public class TemplatesRemove extends UIAction {
         this.actionName = "templatesRemove";
         this.desiredMenu = "editor";
         this.pageTitle = "editPages.title.removeOK";
-    }
-
-    @Override
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
     }
 
     public void myPrepare() {

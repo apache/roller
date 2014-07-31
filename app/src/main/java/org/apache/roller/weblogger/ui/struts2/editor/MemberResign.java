@@ -41,6 +41,7 @@ public class MemberResign extends UIAction {
         this.pageTitle = "yourWebsites.resign";
     }
 
+    @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }

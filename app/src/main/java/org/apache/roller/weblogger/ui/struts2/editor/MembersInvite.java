@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,14 +53,7 @@ public class MembersInvite extends UIAction {
         this.desiredMenu = "editor";
         this.pageTitle = "inviteMember.title";
     }
-    
-    
-    // admin perms required
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
-    }
-    
-    
+
     public String execute() {
         
         // if group blogging is disabled then you can't change permissions

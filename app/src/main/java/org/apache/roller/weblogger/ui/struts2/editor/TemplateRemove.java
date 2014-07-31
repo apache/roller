@@ -18,9 +18,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -28,7 +25,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -51,11 +47,6 @@ public class TemplateRemove extends UIAction {
 		this.actionName = "templateRemove";
 		this.desiredMenu = "editor";
 		this.pageTitle = "editPages.title.removeOK";
-	}
-
-	// must be a weblog admin to use this action
-	public List<String> requiredWeblogPermissionActions() {
-		return Collections.singletonList(WeblogPermission.ADMIN);
 	}
 
 	public void myPrepare() {

@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -36,7 +35,9 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Templates listing page.
@@ -49,7 +50,7 @@ public class Templates extends UIAction {
 	private List<WeblogTemplate> templates = Collections.emptyList();
 
 	// list of template action types user is allowed to create
-	private List<ComponentType> availableActions = Collections.emptyList();
+	private Map<ComponentType, String> availableActions = Collections.emptyMap();
 
 	// name and action of new template if we are adding a template
 	private String newTmplName = null;
@@ -59,10 +60,6 @@ public class Templates extends UIAction {
 		this.actionName = "templates";
 		this.desiredMenu = "editor";
 		this.pageTitle = "pagesForm.title";
-	}
-
-	public List<String> requiredWeblogPermissionActions() {
-		return Collections.singletonList(WeblogPermission.ADMIN);
 	}
 
 	public String execute() {
@@ -89,38 +86,38 @@ public class Templates extends UIAction {
 			setTemplates(pages);
 
 			// build list of action types that may be added
-			List<ComponentType> actionsList = new ArrayList<ComponentType>();
-			actionsList.add(ComponentType.CUSTOM);
+			Map<ComponentType, String> actionsMap = new EnumMap<ComponentType, String>(ComponentType.class);
+			addComponentTypeToMap(actionsMap, ComponentType.CUSTOM);
 
 			if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
 				// if the weblog is using a custom theme then determine which
 				// action templates are still available to be created
-				actionsList.add(ComponentType.PERMALINK);
-				actionsList.add(ComponentType.SEARCH);
-				actionsList.add(ComponentType.WEBLOG);
-				actionsList.add(ComponentType.TAGSINDEX);
+				addComponentTypeToMap(actionsMap, ComponentType.PERMALINK);
+				addComponentTypeToMap(actionsMap, ComponentType.SEARCH);
+				addComponentTypeToMap(actionsMap, ComponentType.WEBLOG);
+				addComponentTypeToMap(actionsMap, ComponentType.TAGSINDEX);
 
 				for (WeblogTemplate tmpPage : getTemplates()) {
 					if (!ComponentType.CUSTOM.equals(tmpPage
 							.getAction())) {
-						actionsList.remove(tmpPage.getAction());
+						actionsMap.remove(tmpPage.getAction());
 					}
 				}
 			} else {
 				// Make sure we have an option for the default web page
-				actionsList.add(ComponentType.WEBLOG);
+				addComponentTypeToMap(actionsMap, ComponentType.WEBLOG);
 				if (getNewTmplAction() == null) {
 					setNewTmplAction(ComponentType.WEBLOG);
 				}
 				for (WeblogTemplate tmpPage : getTemplates()) {
 					if (ComponentType.WEBLOG.equals(tmpPage.getAction())) {
-						actionsList.remove(ComponentType.WEBLOG);
+						actionsMap.remove(ComponentType.WEBLOG);
 						setNewTmplAction(null);
 						break;
 					}
 				}
 			}
-			setAvailableActions(actionsList);
+			setAvailableActions(actionsMap);
 
 		} catch (WebloggerException ex) {
 			log.error("Error getting templates for weblog - "
@@ -130,6 +127,10 @@ public class Templates extends UIAction {
 
 		return LIST;
 	}
+
+    private void addComponentTypeToMap(Map<ComponentType, String> map, ComponentType component) {
+        map.put(component, component.getReadableName());
+    }
 
 	/**
 	 * Save a new template.
@@ -146,7 +147,6 @@ public class Templates extends UIAction {
                 newTemplate.setWeblog(getActionWeblog());
                 newTemplate.setAction(getNewTmplAction());
                 newTemplate.setName(getNewTmplName());
-                newTemplate.setDescription(newTemplate.getName());
                 newTemplate.setHidden(false);
                 newTemplate.setNavbar(false);
                 newTemplate.setLastModified(new Date());
@@ -253,11 +253,11 @@ public class Templates extends UIAction {
 		this.templates = templates;
 	}
 
-	public List<ComponentType> getAvailableActions() {
+	public Map<ComponentType, String> getAvailableActions() {
 		return availableActions;
 	}
 
-	public void setAvailableActions(List<ComponentType> availableActions) {
+	public void setAvailableActions(Map<ComponentType, String> availableActions) {
 		this.availableActions = availableActions;
 	}
 

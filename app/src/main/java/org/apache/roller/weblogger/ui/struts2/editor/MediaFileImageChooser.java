@@ -60,6 +60,7 @@ public class MediaFileImageChooser extends MediaFileBase {
     public void myPrepare() {
     }
 
+    @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }
