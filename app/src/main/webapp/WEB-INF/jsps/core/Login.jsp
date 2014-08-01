@@ -18,11 +18,12 @@
 
 <%-- Body of the login page, invoked from login.jsp --%>
 <%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
+<%@ page import="org.apache.roller.weblogger.config.AuthMethod" %>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <%!
 String securityCheckUrl = null;
-boolean cmaEnabled = WebloggerConfig.getBooleanProperty("authentication.cma.enabled");
+boolean cmaEnabled = "CMA".equals(WebloggerConfig.getAuthMethod());
 %>
 
 <%
@@ -33,8 +34,7 @@ if (cmaEnabled) {
 }
 %>
 
-
-<s:if test="openIdConfiguration != 'disabled'">
+<s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
     
     <p><s:text name="loginPage.openIdPrompt" /></p>
     
@@ -52,22 +52,22 @@ if (cmaEnabled) {
             <tr>
                 <td width="20%"></td>
                 <td width="80%">
-                    <input type="submit" name="submit" id="submit" value="<s:text name="loginPage.loginOpenID" />" />
+                    <input type="submit" name="submit" id="submit" value="<s:text name='loginPage.loginOpenID'/>" />
                 </td>
             </tr>
         </table> 
     </form>
 </s:if>
 
-<s:if test="openIdConfiguration != 'only'">
+<s:if test="authMethod != 'OPENID'">
 
-    <s:if test="openIdConfiguration == 'hybrid'">
+    <s:if test="authMethod == 'DB_OPENID'">
         <p><s:text name="loginPage.openIdHybridPrompt" /></p>
     </s:if>
     
-    <s:if test="openIdConfiguration == 'disabled'">
+    <s:else>
         <p><s:text name="loginPage.prompt" /></p>
-    </s:if>
+    </s:else>
     
     <form method="post" id="loginForm" 
           action="<c:url value="<%= securityCheckUrl %>"/>"
@@ -104,8 +104,8 @@ if (cmaEnabled) {
             <tr>
                 <td width="20%"></td>
                 <td width="80%">
-                    <input type="submit" name="login" id="login" value="<s:text name="loginPage.login" />" />
-                    <input type="reset" name="reset" id="reset" value="<s:text name="loginPage.reset" />" 
+                    <input type="submit" name="login" id="login" value="<s:text name='loginPage.login' />" />
+                    <input type="reset" name="reset" id="reset" value="<s:text name='loginPage.reset' />"
                         onclick="document.getElementById('j_username').focus()" />
                 </td>
             </tr>        
@@ -115,8 +115,7 @@ if (cmaEnabled) {
 </s:if>
 
 <script>
-<!--
-<s:if test="openIdConfiguration != 'disabled'">
+<s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
 function focusToOpenidForm() {
     return (document.getElementById && document.getElementById("j_username") === null) ||
         getCookie("favorite_authentication_method") !== "username";
@@ -139,7 +138,7 @@ function saveOpenidIdentifier(theForm) {
 }
 </s:if>
 
-<s:if test="openIdConfiguration != 'only'">
+<s:if test="authMethod != 'OPENID'">
 function focusToUsernamePasswordForm() {
     return (document.getElementById && document.getElementById("openid_identifier") === null) ||
         getCookie("favorite_authentication_method") === "username";
@@ -165,5 +164,4 @@ function saveUsername(theForm) {
     setCookie("favorite_authentication_method", "username");
 }
 </s:if>
-//-->
 </script>

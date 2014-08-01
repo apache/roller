@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -42,8 +43,6 @@ public class ModifyUser extends UIAction {
     
     private static Log log = LogFactory.getLog(ModifyUser.class);
 
-    private static final boolean IS_CMA = WebloggerConfig.getBooleanProperty("authentication.cma.enabled");
-    
     // user we are modifying
     private User user = new User();
     
@@ -51,8 +50,7 @@ public class ModifyUser extends UIAction {
     private CreateUserBean bean = new CreateUserBean();
     
     private String userName = null;
-    
-    
+
     public ModifyUser() {
         this.actionName = "modifyUser";
         this.desiredMenu = "admin";
@@ -164,7 +162,7 @@ public class ModifyUser extends UIAction {
                     
                 }
             
-                if (!IS_CMA) {
+                if (!AuthMethod.CMA.equals(WebloggerConfig.getAuthMethod())) {
                     RollerContext.flushAuthenticationUserCache(getUser().getUserName());
                 }
 

@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserAttribute;
@@ -38,12 +39,8 @@ public class Profile extends UIAction {
     private static Log log = LogFactory.getLog(Profile.class);
     
     private ProfileBean bean = new ProfileBean();
-    private String openIdConfiguration = 
-        WebloggerConfig.getProperty("authentication.openid");
-    private boolean usingSso = 
-        WebloggerConfig.getBooleanProperty("users.sso.enabled");
-            
-    
+    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+
     public Profile() {
         this.pageTitle = "yourProfile.title";
     }
@@ -140,7 +137,6 @@ public class Profile extends UIAction {
         return INPUT;
     }
 
-    
     public void myValidate() {
         // check that passwords match if they were specified (w/StringUtils.equals, null == null)
         if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
@@ -148,8 +144,8 @@ public class Profile extends UIAction {
         }
     }
 
-    public String getOpenIdConfiguration() {
-        return openIdConfiguration;
+    public String getAuthMethod() {
+        return authMethod.name();
     }
     
     public ProfileBean getBean() {
@@ -158,9 +154,5 @@ public class Profile extends UIAction {
 
     public void setBean(ProfileBean bean) {
         this.bean = bean;
-    }
-    
-    public boolean getUsingSso() {
-        return this.usingSso;
     }
 }

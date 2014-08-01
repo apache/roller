@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
+import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -36,6 +37,8 @@ public class Login extends UIAction {
     
     private String error = null;
 
+    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+
     public Login() {
         this.pageTitle = "loginPage.title";
     }
@@ -50,10 +53,10 @@ public class Login extends UIAction {
         return false;
     }
 
-    public String getOpenIdConfiguration() {
-        return WebloggerConfig.getProperty("authentication.openid");
+    public String getAuthMethod() {
+        return authMethod.name();
     }
-    
+
     public String execute() {
         
         // set action error message if there was login error

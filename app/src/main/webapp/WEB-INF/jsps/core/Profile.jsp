@@ -48,7 +48,7 @@
             <td class="description"><s:text name="userRegister.tip.email" /></td>
         </tr>
         
-        <s:if test="openIdConfiguration != 'only' && !usingSso">
+        <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
             <tr>
                 <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
                 <td class="field">

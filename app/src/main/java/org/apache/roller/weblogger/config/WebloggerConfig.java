@@ -160,7 +160,7 @@ public final class WebloggerConfig {
     public static String getProperty(String key) {
         log.debug("Fetching property ["+key+"="+config.getProperty(key)+"]");
         String value = config.getProperty(key);
-        return value == null ? value : value.trim();
+        return value == null ? null : value.trim();
     }
     
     /**
@@ -273,6 +273,18 @@ public final class WebloggerConfig {
         if("${webapp.context}".equals(config.getProperty("themes.dir"))) {
             config.setProperty("themes.dir", path);
         }
+    }
+
+    /**
+     * Return the value of the authentication.method property as an AuthMethod
+     * enum value.  Matching is done by checking the propertyName of each AuthMethod
+     * enum object.
+     * <p />
+     * @throws IllegalArgumentException if property value defined in the properties
+     * file is missing or not the property name of any AuthMethod enum object.
+     */
+    public static AuthMethod getAuthMethod() {
+        return AuthMethod.getAuthMethod(getProperty("authentication.method"));
     }
     
 }

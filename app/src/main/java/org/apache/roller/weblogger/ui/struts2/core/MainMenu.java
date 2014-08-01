@@ -65,8 +65,6 @@ public class MainMenu extends UIAction {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             Weblog weblog = wmgr.getWeblog(getInviteId());      
-            // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
-            // TODO EXCEPTIONS: better exception handling
             umgr.confirmWeblogPermission(weblog, getAuthenticatedUser());
             WebloggerFactory.getWeblogger().flush();
 

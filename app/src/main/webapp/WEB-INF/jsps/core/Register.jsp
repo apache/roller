@@ -32,7 +32,7 @@
         </td>
     </tr>
         
-    <s:if test="fromSSO">
+    <s:if test="authMethod == 'LDAP'">
         <tr>
             <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
             <td class="field"><strong><s:property value="bean.userName" /></strong></td>
@@ -65,26 +65,26 @@
         <td class="description"><s:text name="userRegister.tip.email" /></td>
     </tr>
 
-    <s:if test="!fromSSO">
+    <s:if test="authMethod != 'LDAP'">
         <tr>
             <td colspan="3">
                 <h2><s:text name="userRegister.heading.authentication" /></h2>
 
-                <s:if test="openIdConfiguration == 'disabled'">
+                <s:if test="authMethod == 'ROLLERDB'">
                 <p><s:text name="userRegister.tip.openid.disabled" /></p>                    
                 </s:if>
 
-                <s:if test="openIdConfiguration == 'hybrid'">
+                <s:if test="authMethod == 'DB_OPENID'">
                 <p><s:text name="userRegister.tip.openid.hybrid" /></p>                    
                 </s:if>
 
-                <s:if test="openIdConfiguration == 'only'">
+                <s:if test="authMethod == 'OPENID'">
                 <p><s:text name="userRegister.tip.openid.only" /></p>                    
                 </s:if>
             </td>
         </tr>
         
-        <s:if test="openIdConfiguration != 'only'">
+        <s:if test="authMethod != 'OPENID'">
         <tr>
             <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
             <td class="field">
@@ -107,10 +107,10 @@
         </s:else>
     
 
-        <s:if test="openIdConfiguration != 'disabled'">
+        <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
             <tr>
                 <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
-                <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" id="f_openid_identifier"  onkeyup="onChange()"/></td>
+                <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" id="f_openid_identifier" onkeyup="onChange()"/></td>
                 <td class="description"><s:text name="userRegister.tip.openIdUrl" /></td>
             </tr>  
         </s:if> 
@@ -157,36 +157,35 @@
 <script>
 function onChange() {
     var disabled = true;
-    var openIdConfig    = '<s:property value="openIdConfiguration" />';
-    var ssoEnabled      = <s:property value="fromSSO" />;
+    var authMethod    = "<s:property value='authMethod' />";
     var emailAddress    = document.register['bean.emailAddress'].value;
     var userName = passwordText = passwordConfirm = openIdUrl = "";
 
-    if (ssoEnabled) {
+    if (authMethod == 'LDAP') {
         userName = '<s:property value="bean.userName" />';
     } else {
         userName = document.register['bean.userName'].value;
     }
 
-    if (ssoEnabled == false && openIdConfig != 'only') {
+    if (authMethod == "ROLLERDB" || authMethod == "DB_OPENID") {
         passwordText    = document.register['bean.passwordText'].value;
         passwordConfirm = document.register['bean.passwordConfirm'].value;
     }
-    if (openIdConfig != 'disabled') {
+    if (authMethod == "OPENID" || authMethod == "DB_OPENID") {
         openIdUrl = document.register['bean.openIdUrl'].value;
     }
 
-    if (ssoEnabled) {
+    if (authMethod == "LDAP") {
         if (emailAddress) disabled = false;
-    } else if (openIdConfig == 'disabled') {
+    } else if (authMethod == "ROLLERDB") {
         if (emailAddress && userName && passwordText && passwordConfirm) disabled = false;
-    } else if (openIdConfig == 'only') {
+    } else if (authMethod == "OPENID") {
         if (emailAddress && openIdUrl) disabled = false;
-    } else if (openIdConfig == 'hybrid') {
+    } else if (authMethod == "DB_OPENID") {
         if (emailAddress && ((passwordText && passwordConfirm) || (openIdUrl)) ) disabled = false;
     }
 
-    if (!ssoEnabled) {
+    if (authMethod != 'LDAP') {
         if ((passwordText || passwordConfirm) && !(passwordText == passwordConfirm)) {
             document.getElementById('readytip').innerHTML = '<s:text name="userRegister.error.mismatchedPasswords" />';
             disabled = true;
