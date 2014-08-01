@@ -117,15 +117,6 @@ public class EntryRemove extends EntryBase {
 		return INPUT;
 	}
 	
-    /**
-     * Cancel.
-     * 
-     * @return the string
-     */
-    public String cancel() {
-        return CANCEL;
-    }
-
 	public String getRemoveId() {
 		return removeId;
 	}

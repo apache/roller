@@ -91,8 +91,10 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                     Weblog actionWeblog = ((UIAction) theAction)
                             .getActionWeblog();
                     if (actionWeblog == null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("DENIED: required action weblog not found");
+                        if (log.isWarnEnabled()) {
+                            log.warn("User " + authenticatedUser.getUserName() +
+                                    " unable to process action \"" + ((UIAction) theAction).getActionName() +
+                                    "\" because no weblog was defined (Check JSP form provides weblog value.)");
                         }
                         return "access-denied";
                     }

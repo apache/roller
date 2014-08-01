@@ -29,21 +29,41 @@
 
 <table>
 <tr>
-<td>
-    <s:form action="entryRemove!remove">
-		<s:hidden name="salt" />
-        <s:hidden name="weblog" />
-        <s:hidden name="removeId" />
-        <s:submit value="%{getText('generic.yes')}" />
-    </s:form>
-</td>
-<td>
-    <s:form action="entryEdit">
-		<s:hidden name="salt" />
-        <s:hidden name="weblog" />
-        <s:hidden name="bean.id" value="%{removeEntry.id}"/>
-        <s:submit value="%{getText('generic.no')}"/>
-    </s:form>
-</td>
+    <s:if test="actionName == 'entryRemove'" >
+        <td>
+            <s:form action="entryRemove!remove">
+                <s:hidden name="salt" />
+                <s:hidden name="weblog" />
+                <s:hidden name="removeId" />
+                <s:submit value="%{getText('generic.yes')}" />
+            </s:form>
+        </td>
+        <td>
+            <s:form action="entryEdit">
+                <s:hidden name="salt" />
+                <s:hidden name="weblog" />
+                <s:hidden name="bean.id" value="%{removeEntry.id}"/>
+                <s:submit value="%{getText('generic.no')}"/>
+            </s:form>
+        </td>
+    </s:if>
+    <!%-- actionName == entryRemoveViaList --%>
+    <s:else>
+        <td>
+            <s:form action="entryRemoveViaList!remove">
+                <s:hidden name="salt" />
+                <s:hidden name="weblog" />
+                <s:hidden name="removeId" />
+                <s:submit value="%{getText('generic.yes')}" />
+            </s:form>
+        </td>
+        <td>
+            <s:form action="entries">
+                <s:hidden name="salt" />
+                <s:hidden name="weblog"/>
+                <s:submit value="%{getText('generic.no')}"/>
+            </s:form>
+        </td>
+    </s:else>
 </tr>
 </table>

@@ -256,21 +256,12 @@
             <result name="error" type="tiles">.MediaFileAddExternalInclude</result>
         </action>
 
-	<action name="mediaFileView!*" method="{1}"
+	    <action name="mediaFileView!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
             <result name="success" type="tiles">.MediaFileView</result>
             <result name="success.json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileViewLight.jsp</result>
         </action>
 
-<!--
-	<action name="mediaFileSearch!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileSearch">
-            <result name="input" type="tiles">.MediaFileSearch</result>
-            <result name="error" type="tiles">.MediaFileSearch</result>
-            <result name="success" type="tiles">.MediaFileSearch</result>
-        </action>
--->
-		
 	    <action name="mediaFileImageDim!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
             <result name="success" type="tiles">.MediaFileImageDimension</result>
@@ -296,35 +287,22 @@
             <result name="success" type="chain">entryAdd</result>
         </action>
 
-        <!-- Below activated by entries.jsp, kept separate from entryRemove!* above
-        as return page is different (the list of entries in this case, new blog
-        entry in the other.
+        <!-- Below activated by Entries.jsp and EntryRemove.jsp, kept separate from
+        entryRemove!* above as return pages are different, both in the confirm delete
+        and cancel delete scenarios.
 
-        Also defining an actionName parameter here different from that defined above.
-        This actionName, used to determine which menu item to highlight, is configured
-        in editor-menu.xml.  This value is read by class EntryRemove and used by
-        class MenuHelper to highlight the correct menu item.  See Struts2
-        StaticParametersInterceptor javadoc for more info.
-
-        Process flow:
-        1. Delete item on entries.jsp activates this action.
-        2. Tiles.xml is consulted to satisfy the input (here, EntryRemoveViaList.jsp
-        3. EntryRemoveViaList.jsp codes the yes confirmation to return to this action,
-        with method "EntryRemove.remove()" activated, a success of which will return
-        to the entries page as coded below with the blog entry removed from the table.
-        4. EntryRemoveViaList.jsp codes the no/cancel button to return to the
-        entries.jsp page with the blog article still remaining.
+        Note the different actionName parameters.  The actionName is used to determine
+        which menu item to highlight as configured in editor-menu.xml (and MenuHelper).
+        It's also used in EntryRemove.jsp to code the confirm delete and cancel buttons
+        to return to the appropriate pages based on the actionName.  See Struts2
+        StaticParametersInterceptor javadoc for more info on static parameters.
         -->
         <action name="entryRemoveViaList!*" method="{1}"
               class="org.apache.roller.weblogger.ui.struts2.editor.EntryRemove">
           <param name="actionName">entryRemoveViaList</param>
-          <result name="input" type="tiles">.EntryRemoveViaList</result>
+          <result name="input" type="tiles">.EntryRemove</result>
           <result name="error" type="chain">menu</result>
           <result name="success" type="chain">entries</result>
-          <result name="cancel" type="redirectAction">
-              <param name="actionName">entries</param>
-              <param name="weblog">${weblog}</param>
-          </result>
         </action>
 
         <action name="entries"
@@ -433,13 +411,6 @@
             <result name="error" type="chain">bookmarks</result>
         </action>
         
-        <!--
-        <action name="resources!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Resources">
-            <result name="list" type="tiles">.Resources</result>
-        </action>
-        -->
-
         <action name="weblogConfig!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.WeblogConfig">
             <result name="input" type="tiles">.WeblogConfig</result>
@@ -528,19 +499,8 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.Maintenance">
             <result name="success" type="tiles">.Maintenance</result>
         </action>
-        
-        <!--
-        <action name="importEntries!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.ImportEntriesAction">
-            <result name="importEntries.page">.import-entries</result>
-        </action>
-        
-        <action name="toggleLinkback!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.ToggleLinkbackDisplayAction">
-        </action>
-        -->
-    </package>
 
+    </package>
 
     <!-- Weblogger Authoring UI - overlay pages-->
     
@@ -554,7 +514,7 @@
             <result name="error" type="tiles">.MediaFileAddInclude</result>
         </action>
 
-	<action name="mediaFileImageChooser!*" method="{1}"
+	    <action name="mediaFileImageChooser!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageChooser">
             <param name="overlayMode">true</param>
             <result name="input" type="tiles">.MediaFileImageChooser</result>
@@ -564,38 +524,4 @@
 
     </package>
 
-    <!-- MOBILE BEGIN
-
-    <package name="mobile-authoring" namespace="/roller-ui/mobile" extends="weblogger">
-
-        <action name="menu!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.MainMenu">
-            <result name="success">/WEB-INF/jsps/mobile/MainMenu.jsp</result>
-        </action>
-
-        <action name="entries"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Entries">
-            <result name="list">/WEB-INF/jsps/mobile/Entries.jsp</result>
-        </action>
-
-        <action name="comments!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Comments">
-            <result name="list">/WEB-INF/jsps/mobile/Comments.jsp</result>
-        </action>
-
-        <action name="entryAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAdd">
-            <result name="list">/WEB-INF/jsps/mobile/EntryAdd.jsp</result>
-        </action>
-
-        <action name="entryEdit!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
-            <result name="list">/WEB-INF/jsps/mobile/EntryEdit.jsp</result>
-        </action>
-
-    </package>
-
-    MOBILE END -->
-
 </struts>
-
