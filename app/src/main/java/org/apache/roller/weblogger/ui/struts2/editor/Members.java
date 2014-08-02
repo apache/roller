@@ -65,26 +65,36 @@ public class Members extends UIAction implements ParameterAware {
     public String save() {
         
         log.debug("Attempting to process weblog permissions updates");
-        
+        int numAdmins = 0; // make sure at least one admin
         int removed = 0;
         int changed = 0;
         List<WeblogPermission> permsList = new ArrayList<WeblogPermission>();
         try {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();   
-            List<WeblogPermission> permissions = userMgr.getWeblogPermissionsIncludingPending(getActionWeblog());
+            List<WeblogPermission> permsFromDB = userMgr.getWeblogPermissionsIncludingPending(getActionWeblog());
 
             // we have to copy the permissions list so that when we remove permissions
             // below we don't get ConcurrentModificationExceptions
-            for (WeblogPermission perm : permissions) {
+            for (WeblogPermission perm : permsFromDB) {
                 permsList.add(perm);
             }
-            // one iteration for each line (user) in the members table
+
+            /* Check to see at least one admin would remain defined as a result of the save.
+             * Not normally a problem, as only a blog admin can access this page and admins can't
+             * demote themselves. However, the blog server admin can always access this page and
+             * remove everyone even if not a member of the blog, causing orphan blogs unless this
+             * check is in place.
+             *
+             * Also checking here to make sure an Admin is not demoting or removing himself.
+             */
+            User user = getAuthenticatedUser();
+            boolean error = false;
             for (WeblogPermission perms : permsList) {
-                
                 String sval = getParameter("perm-" + perms.getUser().getId());
                 if (sval != null) {
-                    boolean error = false;
-                    User user = getAuthenticatedUser();
+                    if (sval.equals(WeblogPermission.ADMIN) && !perms.isPending()) {
+                        numAdmins++;
+                    }
                     if (perms.getUser().getUserName().equals(user.getUserName())) {
                         // can't modify self
                         if (!sval.equals(WeblogPermission.ADMIN)) {
@@ -92,6 +102,17 @@ public class Members extends UIAction implements ParameterAware {
                             addError("memberPermissions.noSelfModifications");
                         }
                     }
+                }
+            }
+            if (numAdmins == 0) {
+                addError("memberPermissions.oneAdminRequired");
+                error = true;
+            }
+            // one iteration for each line (user) in the members table
+            for (WeblogPermission perms : permsList) {
+
+                String sval = getParameter("perm-" + perms.getUser().getId());
+                if (sval != null) {
                     if (!error && !perms.hasAction(sval)) {
                         if ("-1".equals(sval)) {
                              userMgr.revokeWeblogPermission(
