@@ -19,7 +19,6 @@
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
 <script>
-<!--
 function previewImage(q, theme) {
     q.attr('src','<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme=' + theme);
     var url = "<%= request.getContextPath() %>/roller-ui/authoring/themedata/";
@@ -51,7 +50,6 @@ function updateThemeChooser(selected) {
 function toggleImportThemeDisplay() {
     $('themeImport').toggle();
 }
--->
 </script>
 
 <p class="subtitle">

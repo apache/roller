@@ -120,7 +120,7 @@ public class ThemeEdit extends UIAction {
 
         Weblog weblog = getActionWeblog();
 
-        // we are dealing with a custom theme scenario
+        // Are we dealing with a custom theme scenario?
         if (WeblogTheme.CUSTOM.equals(getThemeType())) {
 
             // only continue if custom themes are allowed
@@ -160,7 +160,7 @@ public class ThemeEdit extends UIAction {
                         CacheManager.invalidate(weblog);
 
                         addMessage("themeEditor.setTheme.success", WeblogTheme.CUSTOM);
-                        if (t != null) {
+                        if (isImportTheme() && t != null) {
                             addMessage("Successfully copied templates from theme - "
                                     + t.getName());
                         }
