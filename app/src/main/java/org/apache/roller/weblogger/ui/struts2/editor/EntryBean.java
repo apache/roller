@@ -62,7 +62,7 @@ public class EntryBean {
     private int minutes = 0;
     private int seconds = 0;
     private boolean allowComments = true;
-    private Integer commentDays = Integer.valueOf(0);
+    private Integer commentDays = 0;
     private boolean rightToLeft = false;
     private boolean pinnedToMain = false;
     private String enclosureURL = null;
@@ -270,19 +270,19 @@ public class EntryBean {
     }
     
     public boolean isDraft() {
-        return status.equals(PubStatus.DRAFT.name());
+        return PubStatus.DRAFT.name().equals(status);
     }
     
     public boolean isPending() {
-        return status.equals(PubStatus.PENDING.name());
+        return PubStatus.PENDING.name().equals(status);
     }
     
     public boolean isPublished() {
-        return status.equals(PubStatus.PUBLISHED.name());
+        return PubStatus.PUBLISHED.name().equals(status);
     }
     
     public boolean isScheduled() {
-        return status.equals(PubStatus.SCHEDULED.name());
+        return PubStatus.SCHEDULED.name().equals(status);
     }
     
     public void copyTo(WeblogEntry entry) throws WebloggerException {

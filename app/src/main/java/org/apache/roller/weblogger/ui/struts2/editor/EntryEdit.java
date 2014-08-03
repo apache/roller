@@ -76,6 +76,13 @@ public final class EntryEdit extends EntryBase {
     }
 
     public void myPrepare() {
+        /*
+         * Need to reset actionName as processing is chained from
+         * EntryAdd via struts.xml and hence absorbs its value of "entryAdd"
+         * which would negatively effect the processing in EntryEdit.jsp
+         */
+        this.actionName = "entryEdit";
+
         if (getBean().getId() != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
@@ -96,9 +103,7 @@ public final class EntryEdit extends EntryBase {
      */
     @SkipValidation
     public String execute() {
-
-        // make sure we have an entry to edit and it belongs to the action
-        // weblog
+        // make sure we have an entry to edit and it belongs to the action weblog
         if (getEntry() == null) {
             return ERROR;
         } else if (!getEntry().getWebsite().equals(getActionWeblog())) {
@@ -118,8 +123,7 @@ public final class EntryEdit extends EntryBase {
      */
     public String save() {
 
-        // make sure we have an entry to edit and it belongs to the action
-        // weblog
+        // make sure we have an entry to edit and it belongs to the action weblog
         if (getEntry() == null) {
             return ERROR;
         } else if (!getEntry().getWebsite().equals(getActionWeblog())) {

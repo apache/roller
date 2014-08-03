@@ -83,13 +83,6 @@ public final class EntryAdd extends EntryBase {
 			log.error("ERROR retrieving user's permission", ex);
 		}
 
-		if (perm != null && perm.hasAction(WeblogPermission.ADMIN)
-				&& perm.hasAction(WeblogPermission.POST)) {
-			getBean().setStatus(PubStatus.PUBLISHED.name());
-		} else {
-			getBean().setStatus(PubStatus.PENDING.name());
-		}
-
 		// set entry locale based on weblog locale
 		getBean().setLocale(getActionWeblog().getLocale());
 

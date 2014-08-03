@@ -1,6 +1,6 @@
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  The ASF licenses this file to You
+  contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -29,29 +29,35 @@
 }
 </style>
 
-<script>
-function fullPreviewMode() {
-    window.open('<s:property value="previewURL" />');
-}
-</script>
+<%-- Titling, processing actions different between entry add and edit --%>
+<s:if test="actionName == 'entryEdit'">
+    <s:set var="subtitleKey">weblogEdit.subtitle.editEntry</s:set>
+    <s:set var="actionToRun">entryEdit!save</s:set>
+</s:if>
+<s:else>
+    <s:set var="subtitleKey">weblogEdit.subtitle.newEntry</s:set>
+    <s:set var="actionToRun">entryAdd!save</s:set>
+</s:else>
 
 <p class="subtitle">
-    <s:text name="weblogEdit.subtitle.editEntry" >
+    <s:text name="%{#subtitleKey}" >
         <s:param value="actionWeblog.handle" />
     </s:text>
 </p>
 
-<s:form id="entry" action="entryEdit!save">
+<s:form id="entry" action="%{#actionToRun}">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="bean.id" />
-    <s:hidden name="bean.commentCount" />
-    
+    <s:hidden name="bean.status" />
+    <s:if test="actionName == 'entryEdit'">
+        <s:hidden name="bean.id" />
+    </s:if>
+
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
-    
-    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">   
-        
+
+    <table class="entryEditTable" cellpadding="0" cellspacing="0" style="width:100%">
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="title"><s:text name="weblogEdit.title" /></label>
@@ -60,7 +66,7 @@ function fullPreviewMode() {
                 <s:textfield name="bean.title" size="70" maxlength="255" tabindex="1" style="width:60%"/>
             </td>
         </tr>
-        
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="status"><s:text name="weblogEdit.status" /></label>
@@ -71,11 +77,6 @@ function fullPreviewMode() {
                         <s:text name="weblogEdit.published" />
                         (<s:text name="weblogEdit.updateTime" />
                         <s:date name="entry.updateTime" format="dd/MM/yyyy hh:mm a" />)
-                        
-                        <s:if test='!getBooleanProp("weblogentry.editor.showFullPermalink")'>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<img src='<s:url value="/images/launch-link.png"/>' />
-                            <a href='<s:property value="entry.permalink" />'><s:text name="weblogEdit.permaLink" /></a>
-                        </s:if>
                     </span>
                 </s:if>
                 <s:elseif test="bean.draft">
@@ -99,11 +100,14 @@ function fullPreviewMode() {
                         <s:date name="entry.updateTime" />)
                     </span>
                 </s:elseif>
-                <s:hidden name="bean.status" />
+                <s:else>
+                    <span style="color:red; font-weight:bold"><s:text name="weblogEdit.unsaved" /></span>
+                </s:else>
             </td>
         </tr>
-    
-        <s:if test='getBooleanProp("weblogentry.editor.showFullPermalink")'>
+
+
+        <s:if test="actionName == 'entryEdit'">
             <tr>
                 <td class="entryEditFormLabel">
                     <label for="permalink"><s:text name="weblogEdit.permaLink" /></label>
@@ -119,7 +123,7 @@ function fullPreviewMode() {
                 </td>
             </tr>
         </s:if>
-        
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="categoryId"><s:text name="weblogEdit.category" /></label>
@@ -128,7 +132,7 @@ function fullPreviewMode() {
                 <s:select name="bean.categoryId" list="categories" listKey="id" listValue="name" size="1" />
             </td>
         </tr>
-        
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="title"><s:text name="weblogEdit.tags" /></label>
@@ -136,8 +140,8 @@ function fullPreviewMode() {
             <td>
                 <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" style="width:30%"/>
             </td>
-        </tr> 
-        
+        </tr>
+
         <s:if test="actionWeblog.enableMultiLang">
             <tr>
                 <td class="entryEditFormLabel">
@@ -151,26 +155,22 @@ function fullPreviewMode() {
         <s:else>
             <s:hidden name="bean.locale"/>
         </s:else>
-        
+
     </table>
-    
-    
+
     <%-- ================================================================== --%>
     <%-- Weblog edit or preview --%>
-    
-    <div style="width: 100%;"> <%-- need this div to control text-area size in IE 6 --%>
-        <%-- include edit page --%>
-        <div >
-            <s:include value="%{editor.jspPage}" />
-        </div>
+
+    <div>
+        <s:include value="%{editor.jspPage}" />
     </div>
-    
+
     <br />
-    
-    
+
+
     <%-- ================================================================== --%>
     <%-- plugin chooser --%>
-    
+
     <s:if test="!entryPlugins.isEmpty">
         <div id="pluginControlToggle" class="controlToggle">
             <span id="ipluginControl">+</span>
@@ -182,17 +182,17 @@ function fullPreviewMode() {
         </div>
     </s:if>
 
-    
+
     <%-- ================================================================== --%>
     <%-- advanced settings  --%>
-    
+
     <div id="miscControlToggle" class="controlToggle">
         <span id="imiscControl">+</span>
         <a class="controlToggle" onclick="javascript:toggleControl('miscControlToggle','miscControl')">
         <s:text name="weblogEdit.miscSettings" /></a>
     </div>
     <div id="miscControl" class="miscControl" style="display:none">
-        
+
         <label for="link"><s:text name="weblogEdit.pubTime" /></label>
         <div>
             <s:select name="bean.hours" list="hoursList" />
@@ -214,57 +214,60 @@ function fullPreviewMode() {
             </script>
             <s:textfield name="bean.dateString" size="12" readonly="true"/>
             <s:property value="actionWeblog.timeZone" />
-        </div>   
+        </div>
         <br />
-        
+
         <s:checkbox name="bean.allowComments" />
         <s:text name="weblogEdit.allowComments" />
         <s:text name="weblogEdit.commentDays" />
         <s:select name="bean.commentDays" list="commentDaysList" size="1" listKey="key" listValue="value" />
         <br />
-        
+
         <s:checkbox name="bean.rightToLeft" />
         <s:text name="weblogEdit.rightToLeft" />
         <br />
-        
+
         <s:if test="authenticatedUser.hasGlobalPermission('admin')">
             <s:checkbox name="bean.pinnedToMain" />
             <s:text name="weblogEdit.pinnedToMain" />
             <br />
         </s:if>
         <br />
-       
+
 		<table>
 			<tr>
-				<td><s:text name="weblogEdit.searchDescription" />:</td>
+				<td><s:text name="weblogEdit.searchDescription" />: </td>
 				<td><s:textfield name="bean.searchDescription" size="60" maxlength="255" style="width:100%"/> </td>
 			</tr>
-			<tr>
+            <tr>
 				<td><s:text name="weblogEdit.enclosureURL" />: </td>
 				<td><s:textfield name="bean.enclosureURL" size="40" maxlength="255" style="width:80%"/></td>
 			</tr>
-			<tr>
-				<td></td>
-				<td><s:if test="bean.enclosureURL != null">
-					<s:text name="weblogEdit.enclosureType" />: <s:property value='entry.findEntryAttribute("att_mediacast_type")' />
-					<s:text name="weblogEdit.enclosureLength" />: <s:property value='entry.findEntryAttribute("att_mediacast_length")' />
-				</s:if></td>
+            <s:if test="actionName == 'entryEdit'">
+                <tr>
+                    <td></td>
+                    <td><s:if test="bean.enclosureURL != null">
+                        <s:text name="weblogEdit.enclosureType" />: <s:property value='entry.findEntryAttribute("att_mediacast_type")' />
+                        <s:text name="weblogEdit.enclosureLength" />: <s:property value='entry.findEntryAttribute("att_mediacast_length")' />
+                    </s:if></td>
+                </tr>
+            </s:if>
 		</table>
     </div>
-    
-    
+
+
     <%-- ================================================================== --%>
     <%-- the button box --%>
-    
+
     <br>
     <div class="control">
         <span style="padding-left:7px">
             <s:submit value="%{getText('weblogEdit.save')}" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
-
-            <input type="button" name="fullPreview"
-                                value="<s:text name='weblogEdit.fullPreviewMode' />"
-                                onclick="fullPreviewMode()" />
-
+            <s:if test="actionName == 'entryEdit'">
+                <input type="button" name="fullPreview"
+                                    value="<s:text name='weblogEdit.fullPreviewMode' />"
+                                    onclick="fullPreviewMode()" />
+            </s:if>
             <s:if test="userAnAuthor">
                 <s:submit value="%{getText('weblogEdit.post')}" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
             </s:if>
@@ -273,20 +276,21 @@ function fullPreviewMode() {
             </s:else>
         </span>
 
-        <span style="float:right">
-            <s:url id="removeUrl" action="entryRemove">
-                <s:param name="weblog" value="actionWeblog.handle" />
-                <s:param name="removeId" value="%{entry.id}" />
-            </s:url>
-            <input type="button" value="<s:text name='weblogEdit.deleteEntry'/>" onclick="window.location='<s:property value="removeUrl" escape="false" />'" />
-        </span>
-
+        <s:if test="actionName == 'entryEdit'">
+            <span style="float:right">
+                <s:url id="removeUrl" action="entryRemove">
+                    <s:param name="weblog" value="actionWeblog.handle" />
+                    <s:param name="removeId" value="%{entry.id}" />
+                </s:url>
+                <input type="button" value="<s:text name='weblogEdit.deleteEntry'/>" onclick="window.location='<s:property value="removeUrl" escape="false" />'" />
+            </span>
+        </s:if>
     </div>
-    
+
     
     <%-- ================================================================== --%>
     <%-- Trackback control --%>
-    <s:if test="userAnAuthor">
+    <s:if test="actionName == 'entryEdit' && userAnAuthor">
         <br />
         <h2><s:text name="weblogEdit.trackback" /></h2>
         <s:text name="weblogEdit.trackbackUrl" />
@@ -295,10 +299,14 @@ function fullPreviewMode() {
 
         <s:submit value="%{getText('weblogEdit.sendTrackback')}" action="entryEdit!trackback" />
     </s:if>
-    
+
 </s:form>
 
 <script>
+function fullPreviewMode() {
+    window.open('<s:property value="previewURL" />');
+}
+
 //Get cookie to determine state of control
 if (getCookie('control_miscControl') != null) {
     if(getCookie('control_miscControl') == 'true'){
