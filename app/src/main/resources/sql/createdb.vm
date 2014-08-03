@@ -31,7 +31,7 @@ create table userrole (
 );
 create index ur_username_idx on userrole( username$!db.INDEXSIZE );
 
-create table  roller_userattribute(
+create table roller_userattribute(
     id        varchar(48) not null primary key,
     username  varchar(255) not null,
     attrname  varchar(255) not null,
@@ -222,6 +222,7 @@ create table roller_weblogentrytagagg (
 create index weta_weblogid_idx on roller_weblogentrytagagg( websiteid );
 create index weta_name_idx on roller_weblogentrytagagg( name );
 create index weta_lastused_idx on roller_weblogentrytagagg( lastused );
+alter table roller_weblogentrytagagg add constraint weta_weblog_tag_uq unique ( websiteid, name );
 
 create table newsfeed (
     id              varchar(48) not null primary key,

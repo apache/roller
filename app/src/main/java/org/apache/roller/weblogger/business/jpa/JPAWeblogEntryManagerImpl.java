@@ -1161,7 +1161,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             siteTagData.setLastUsed(lastUsed);
             strategy.store(siteTagData);
             
-        } else if(siteTagData != null) {
+        } else if (siteTagData != null) {
             siteTagData.setTotal(siteTagData.getTotal() + amount);
             siteTagData.setLastUsed(lastUsed);
             strategy.store(siteTagData);
