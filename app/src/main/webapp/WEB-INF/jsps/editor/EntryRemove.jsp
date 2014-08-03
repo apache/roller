@@ -27,43 +27,35 @@
     <s:text name="weblogEntryRemove.entryId" /> = [<s:property value="removeEntry.id"/>]
 </p>
 
+<%-- Differences between deletions from EntryEdit and Entries views --%>
+<s:if test="actionName == 'entryRemove'">
+    <s:set var="deleteAction">entryRemove!remove</s:set>
+    <s:set var="cancelAction">entryEdit</s:set>
+</s:if>
+<s:else>
+    <s:set var="deleteAction">entryRemoveViaList!remove</s:set>
+    <s:set var="cancelAction">entries</s:set>
+</s:else>
+
 <table>
 <tr>
-    <s:if test="actionName == 'entryRemove'" >
-        <td>
-            <s:form action="entryRemove!remove">
-                <s:hidden name="salt" />
-                <s:hidden name="weblog" />
-                <s:hidden name="removeId" />
-                <s:submit value="%{getText('generic.yes')}" />
-            </s:form>
-        </td>
-        <td>
-            <s:form action="entryEdit">
-                <s:hidden name="salt" />
-                <s:hidden name="weblog" />
+    <td>
+        <s:form action="%{#deleteAction}">
+            <s:hidden name="salt" />
+            <s:hidden name="weblog" />
+            <s:hidden name="removeId" />
+            <s:submit value="%{getText('generic.yes')}" />
+        </s:form>
+    </td>
+    <td>
+        <s:form action="%{#cancelAction}">
+            <s:hidden name="salt" />
+            <s:hidden name="weblog" />
+            <s:if test="actionName == 'entryRemove'" >
                 <s:hidden name="bean.id" value="%{removeEntry.id}"/>
-                <s:submit value="%{getText('generic.no')}"/>
-            </s:form>
-        </td>
-    </s:if>
-    <!%-- actionName == entryRemoveViaList --%>
-    <s:else>
-        <td>
-            <s:form action="entryRemoveViaList!remove">
-                <s:hidden name="salt" />
-                <s:hidden name="weblog" />
-                <s:hidden name="removeId" />
-                <s:submit value="%{getText('generic.yes')}" />
-            </s:form>
-        </td>
-        <td>
-            <s:form action="entries">
-                <s:hidden name="salt" />
-                <s:hidden name="weblog"/>
-                <s:submit value="%{getText('generic.no')}"/>
-            </s:form>
-        </td>
-    </s:else>
+            </s:if>
+            <s:submit value="%{getText('generic.no')}"/>
+        </s:form>
+    </td>
 </tr>
 </table>
