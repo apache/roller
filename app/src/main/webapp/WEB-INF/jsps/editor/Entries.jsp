@@ -159,7 +159,7 @@
     </td>
 
     <td>
-        <s:url id="editUrl" action="entryEdit">
+        <s:url var="editUrl" action="entryEdit">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
             <s:param name="bean.id" value="#post.id" />
         </s:url>
@@ -167,7 +167,7 @@
     </td>
 
     <td>
-        <s:url id="deleteUrl" action="entryRemoveViaList">
+        <s:url var="deleteUrl" action="entryRemoveViaList">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
             <s:param name="removeId" value="#post.id" />
         </s:url>

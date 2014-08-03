@@ -28,7 +28,7 @@
                 <p>
                     <%-- Add Category link --%>
                     <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
-                    <s:url id="addCategory" action="categoryAdd">
+                    <s:url var="addCategory" action="categoryAdd">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                     </s:url>
                     <s:a href="%{addCategory}"><s:text name="categoriesForm.addCategory" /></s:a>

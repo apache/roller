@@ -28,7 +28,7 @@
                 <br />
 
                 <img src='<s:url value="/images/image_add.png"/>' border="0"alt="icon" />
-                <s:url id="mediaFileAddURL" action="mediaFileAdd">
+                <s:url var="mediaFileAddURL" action="mediaFileAdd">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
                     <s:param name="directoryName" value="%{directoryName}" />
                 </s:url>
@@ -165,7 +165,7 @@ $("#searchButton").ready(function () {
     $("select").bind("change", maintainSearchButtonState);
 
     $("#resetButton").bind("click", function() {
-        <s:url id="mediaFileViewURL" action="mediaFileView">
+        <s:url var="mediaFileViewURL" action="mediaFileView">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
         window.location = '<s:property value="%{mediaFileViewURL}" />';

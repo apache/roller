@@ -61,7 +61,7 @@
                 <s:else>
                     <img src='<s:url value="/images/page_white_gear.png"/>' border="0" alt="icon" />
                 </s:else>
-                <s:url id="edit" action="templateEdit">
+                <s:url var="edit" action="templateEdit">
                     <s:param name="weblog" value="actionWeblog.handle" />
                     <s:param name="bean.id" value="#p.id" />
                 </s:url>
@@ -74,7 +74,7 @@
 
             <td class="center" style="vertical-align:middle">
                  <s:if test="!#p.required || !customTheme" >
-                     <s:url id="removeUrl" action="templateRemove">
+                     <s:url var="removeUrl" action="templateRemove">
                          <s:param name="weblog" value="actionWeblog.handle"/>
                          <s:param name="removeId" value="#p.id"/>
                      </s:url>

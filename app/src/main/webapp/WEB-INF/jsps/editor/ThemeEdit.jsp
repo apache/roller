@@ -148,7 +148,7 @@ function toggleImportThemeDisplay() {
         <s:else>
             <s:if test="customTheme">
                 <p>
-                    <s:url id="templatesUrl" action="templates">
+                    <s:url var="templatesUrl" action="templates">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                     </s:url>
                     &raquo; <s:a href="%{templatesUrl}"><s:text name="themeEditor.templatesLink" /></s:a><br/>

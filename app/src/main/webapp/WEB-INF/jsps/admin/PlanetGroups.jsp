@@ -56,7 +56,7 @@
         
         <s:if test="group != null" >
             &nbsp;&nbsp;
-            <s:url id="deleteUrl" action="planetGroups!delete">
+            <s:url var="deleteUrl" action="planetGroups!delete">
                 <s:param name="bean.id" value="%{bean.id}" />
             </s:url>
             <input type="button" 
@@ -105,7 +105,7 @@
     </td>
     
     <td class="rollertable">
-        <s:url id="groupUrl" action="planetGroups">
+        <s:url var="groupUrl" action="planetGroups">
             <s:param name="bean.id" value="#group.id" />
         </s:url>
         <s:a href="%{groupUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
@@ -113,7 +113,7 @@
     </td>       
     
     <td class="rollertable">
-        <s:url id="subUrl" action="planetSubscriptions">
+        <s:url var="subUrl" action="planetSubscriptions">
             <s:param name="groupHandle" value="#group.handle" />
         </s:url>
         <s:a href="%{subUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 

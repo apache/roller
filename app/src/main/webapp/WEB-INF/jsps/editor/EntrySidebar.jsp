@@ -48,7 +48,7 @@
                 </s:if>
                 <s:iterator id="post" value="#pendingEntries">
                     <span class="entryEditSidebarLink">
-                        <s:url id="editUrl" action="entryEdit">
+                        <s:url var="editUrl" action="entryEdit">
                             <s:param name="weblog" value="%{actionWeblog.handle}" />
                             <s:param name="bean.id" value="#post.id" />
                         </s:url>
@@ -68,7 +68,7 @@
                 </s:if>
                 <s:iterator id="post" value="#draftEntries">
                     <span class="entryEditSidebarLink">
-                        <s:url id="editUrl" action="entryEdit">
+                        <s:url var="editUrl" action="entryEdit">
                             <s:param name="weblog" value="%{actionWeblog.handle}" />
                             <s:param name="bean.id" value="#post.id" />
                         </s:url>
@@ -90,7 +90,7 @@
                     </s:if>
                     <s:iterator id="post" value="#pubEntries">
                         <span class="entryEditSidebarLink">
-                            <s:url id="editUrl" action="entryEdit">
+                            <s:url var="editUrl" action="entryEdit">
                                 <s:param name="weblog" value="%{actionWeblog.handle}" />
                                 <s:param name="bean.id" value="#post.id" />
                             </s:url>
@@ -110,7 +110,7 @@
                     </s:if>
                     <s:iterator id="post" value="#schedEntries">
                         <span class="entryEditSidebarLink">
-                            <s:url id="editUrl" action="entryEdit">
+                            <s:url var="editUrl" action="entryEdit">
                                 <s:param name="weblog" value="%{actionWeblog.handle}" />
                                 <s:param name="bean.id" value="#post.id" />
                             </s:url>

@@ -29,7 +29,7 @@
                 <p>
                     <%-- Add Bookmark link --%>
                     <img src='<s:url value="/images/link_add.png"/>' border="0"alt="icon" />
-                    <s:url id="addBookmark" action="bookmarkAdd">
+                    <s:url var="addBookmark" action="bookmarkAdd">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                         <s:param name="folderId" value="%{folder.id}" />
                     </s:url>
@@ -39,7 +39,7 @@
                 <p>
                     <%-- Add Folder link --%>
                     <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
-                    <s:url id="addFolder" action="folderAdd">
+                    <s:url var="addFolder" action="folderAdd">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                     </s:url>
                     <s:a href="%{addFolder}"><s:text name="bookmarksForm.addFolder" /></s:a>
@@ -48,7 +48,7 @@
                 <%-- Import bookmarks --%>
                 <p>
                     <img src='<s:url value="/images/link_add.png"/>' border="0"alt="icon" />
-                    <s:url id="importBookmarks" action="bookmarksImport">
+                    <s:url var="importBookmarks" action="bookmarksImport">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                     </s:url>
                     <s:a href="%{importBookmarks}"><s:text name="bookmarksForm.importBookmarks" /></s:a>

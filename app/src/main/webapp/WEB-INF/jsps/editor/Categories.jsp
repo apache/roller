@@ -76,7 +76,7 @@ function onMove()
                 </td>
                 
                 <td class="rollertable" align="center">
-                    <s:url id="editUrl" action="categoryEdit">
+                    <s:url var="editUrl" action="categoryEdit">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                         <s:param name="bean.id" value="#category.id" />
                     </s:url>
@@ -85,7 +85,7 @@ function onMove()
                 
                 <td class="rollertable" align="center">
                     <s:if test="AllCategories.size() > 1">
-                        <s:url id="removeUrl" action="categoryRemove">
+                        <s:url var="removeUrl" action="categoryRemove">
                             <s:param name="weblog" value="%{actionWeblog.handle}" />
                             <s:param name="removeId" value="#category.id" />
                         </s:url>

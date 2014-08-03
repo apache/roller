@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{bean.id}" />
+<s:url var="mediaFileURL" value="/roller-ui/rendering/media-resources/%{bean.id}" />
 
 <script>
 function addImage() {

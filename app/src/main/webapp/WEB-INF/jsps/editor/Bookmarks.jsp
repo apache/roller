@@ -61,7 +61,7 @@ function onMove()
 <s:else>
     <p class="subtitle">
     <s:text name="bookmarksForm.path" />: <s:text name="%{folder.name}" />
-    <s:url id="editUrl" action="folderEdit">
+    <s:url var="editUrl" action="folderEdit">
         <s:param name="weblog" value="%{actionWeblog.handle}" />
         <s:param name="bean.id" value="%{folder.id}" />
         <s:param name="folderId" value="%{folder.id}" suppressEmptyParameters="true" />
@@ -127,7 +127,7 @@ function onMove()
                 </td>
 
                 <td class="rollertable" align="center">
-                    <s:url id="editUrl" action="bookmarkEdit">
+                    <s:url var="editUrl" action="bookmarkEdit">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                         <s:param name="bean.id" value="#bookmark.id" />
                         <s:param name="folderId" value="%{folderId}" suppressEmptyParameters="true" />

@@ -84,7 +84,7 @@
             <td>
                 <a href='<s:text name="bean.permalink" />' target="_blank"
                    title='<s:text name="mediaFileEdit.linkTitle" />'>
-                   <s:url id="linkIconURL" value="/images/link.png"></s:url>
+                   <s:url var="linkIconURL" value="/images/link.png"></s:url>
                    <img border="0" src='<s:property value="%{linkIconURL}" />'
                        style="padding:2px 2px;" alt="link" />
                 </a>

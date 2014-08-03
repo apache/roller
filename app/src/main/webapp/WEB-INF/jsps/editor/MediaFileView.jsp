@@ -289,7 +289,7 @@
                             </s:if>
 
                             <s:else>
-                                <s:url id="mediaFileURL" value="/images/page.png"></s:url>
+                                <s:url var="mediaFileURL" value="/images/page.png"></s:url>
                                 <img border="0" src='<s:property value="%{mediaFileURL}" />'
                                      style="padding:40px 50px;" alt="logo" />
                             </s:else>
@@ -339,7 +339,7 @@
                             </s:if>
 
                             <s:else>
-                                <s:url id="mediaFileURL" value="/images/page.png"></s:url>
+                                <s:url var="mediaFileURL" value="/images/page.png"></s:url>
                                 <img border="0" src='<s:property value="%{mediaFileURL}" />'
                                      style="padding:40px 50px;" />
                             </s:else>
@@ -423,7 +423,7 @@
 
 <script>
     function onClickEdit(mediaFileId) {
-        <s:url id="mediaFileEditURL" action="mediaFileEdit">
+        <s:url var="mediaFileEditURL" action="mediaFileEdit">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
         $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);

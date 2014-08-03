@@ -278,7 +278,7 @@
 
         <s:if test="actionName == 'entryEdit'">
             <span style="float:right">
-                <s:url id="removeUrl" action="entryRemove">
+                <s:url var="removeUrl" action="entryRemove">
                     <s:param name="weblog" value="actionWeblog.handle" />
                     <s:param name="removeId" value="%{entry.id}" />
                 </s:url>

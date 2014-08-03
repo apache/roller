@@ -73,14 +73,14 @@
     <!-- TODO: Use icons here -->
     <td class="rollertable" align="center" >
         <s:if test="pingStatus[#pingTarget.id]">
-            <s:url id="disableUrl" action="pings!disable" >
+            <s:url var="disableUrl" action="pings!disable" >
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
                 <s:param name="pingTargetId" value="#pingTarget.id" />
             </s:url>
             <s:a href="%{disableUrl}"><s:text name="pingTarget.disable"/></s:a>
         </s:if>
         <s:else>
-            <s:url id="enableUrl" action="pings!enable" >
+            <s:url var="enableUrl" action="pings!enable" >
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
                 <s:param name="pingTargetId" value="#pingTarget.id" />
             </s:url>
@@ -89,7 +89,7 @@
     </td>
     
     <td class="rollertable">
-        <s:url id="pingNowUrl" action="pings!pingNow" >
+        <s:url var="pingNowUrl" action="pings!pingNow" >
             <s:param name="weblog" value="%{actionWeblog.handle}" />
             <s:param name="pingTargetId" value="#pingTarget.id" />
         </s:url>

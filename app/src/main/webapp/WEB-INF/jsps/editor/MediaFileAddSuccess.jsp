@@ -159,7 +159,7 @@
         <s:text name="mediaFileSuccess.noThanks" />
         <ul>
             <li>
-                <s:url id="mediaFileAddURL" action="mediaFileAdd">
+                <s:url var="mediaFileAddURL" action="mediaFileAdd">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
                     <s:param name="directoryName" value="%{directoryName}" />
                 </s:url>
@@ -169,7 +169,7 @@
             </li>
 
             <li>
-                <s:url id="mediaFileViewURL" action="mediaFileView">
+                <s:url var="mediaFileViewURL" action="mediaFileView">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
                     <s:param name="directoryId" value="%{bean.directoryId}" />
                 </s:url>

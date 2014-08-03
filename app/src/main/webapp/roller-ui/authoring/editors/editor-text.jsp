@@ -15,25 +15,43 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%-- This page is designed to be included in Entry[Edit|Add].jsp --%>
+<%-- This page is designed to be included in EntryEdit.jsp --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<style>
-    a:link, a:visited, a:hover, a:active     { text-decoration:underline; }
-    body        {
-        margin:0;
-        padding:0;
-        text-align:left;
-    }
-    h1          {
-        font-size:20px;
-        font-weight:bold;
-    }
-</style>
+<%-- ********************************************************************* --%>
+<%-- Text editors --%>
+
+<p class="toplabel">
+    <span style="font-weight:normal;float:right;">
+        <a href="#" onClick="onClickAddImage();">Add Image</a>&nbsp;
+    </span>
+</p>
+
+<p class="toplabel"><s:text name="weblogEdit.content" /></p>
+<s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
+
+<p class="toplabel"><s:text name="weblogEdit.summary" /></p>
+<s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6"/>
+
+<%-- ********************************************************************* --%>
+<%-- Lightbox for popping up image chooser --%>
+
+<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileChooser.popupTitle'/>">
+    <iframe id="mediaFileEditor"
+            style="visibility:inherit"
+            height="100%"
+            width="100%"
+            frameborder="no"
+            scrolling="auto">
+    </iframe>
+</div>
+
+<%-- ********************************************************************* --%>
+<%-- Editor event handling, on close, on add image, etc. --%>
 
 <script>
     function onClickAddImage(){
-        <s:url id="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
+        <s:url var="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
         $("#mediaFileEditor").attr('src','<s:property value="%{mediaFileImageChooser}" />');
@@ -53,110 +71,103 @@
     function onSelectImage(name, url) {
         $("#mediafile_edit_lightbox").dialog("close");
         $("#mediaFileEditor").attr('src','about:blank');
-        insertAtCursor(document.getElementById('entry_bean_text'),
-            '<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
+        insertImage('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
     }
-
-    function onClose(textForInsertion)
-    {
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('overlay_img').style.visibility = 'hidden';
-        if (textForInsertion && textForInsertion.length > 0) {
-            insertAtCursor(document.getElementById('entry_bean_text'), textForInsertion);
-        }
-    }
-
-    function insertAtCursor(textAreaElement, valueForInsertion) {
-        if (document.selection) {
-            textAreaElement.focus();
-            var range = document.selection.createRange();
-            range.text = valueForInsertion;
-        }
-        else if (textAreaElement.selectionStart || textAreaElement.selectionStart == '0') {
-            var preText;
-            var postText;
-            if (textAreaElement.selectionStart == 0) {
-                preText = '';
-                postText = '';
-            }
-            else {
-                preText = textAreaElement.value.substring(0, textAreaElement.selectionStart);
-                postText = textAreaElement.value.substring(textAreaElement.selectionEnd, textAreaElement.value.length);
-            }
-            textAreaElement.value =  preText + valueForInsertion + postText;
-            textAreaElement.selectionStart = preText.length + valueForInsertion.length;
-            textAreaElement.selectionEnd = textAreaElement.selectionStart;
-            textAreaElement.focus();
-        } else {
-            textAreaElement.value += valueForInsertion;
-            textAreaElement.focus();
-        }
-    }
-
 </script>
 
-<script>
-    <!--
-    function editorCleanup() {
-        // no-op
-    }
-    function changeSize(e, num) {
-        a = e.rows + num;
-        if (a > 0) e.rows = a;
-        var expires = new Date();
-        expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
-        setCookie("editorSize",e.rows,expires);
-    }
-    function changeSize1(e, num) {
-        a = e.rows + num;
-        if (a > 0) e.rows = a;
-        var expires = new Date();
-        expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
-        setCookie("editorSize1",e.rows,expires);
-    }
-    // -->
-</script>
+<s:if test="editor.id == 'editor-text.jsp'">
+    <%-- Plain text editor (raw HTML entry) --%>
 
+    <script>
+        function insertImage(imageURL) {
+            insertAtCursor(document.getElementById('edit_content'), imageURL);
+        }
+        function insertAtCursor(textAreaElement, valueForInsertion) {
+            if (document.selection) {
+                textAreaElement.focus();
+                var range = document.selection.createRange();
+                range.text = valueForInsertion;
+            }
+            else if (textAreaElement.selectionStart || textAreaElement.selectionStart == '0') {
+                var preText;
+                var postText;
+                if (textAreaElement.selectionStart == 0) {
+                    preText = '';
+                    postText = '';
+                }
+                else {
+                    preText = textAreaElement.value.substring(0, textAreaElement.selectionStart);
+                    postText = textAreaElement.value.substring(textAreaElement.selectionEnd, textAreaElement.value.length);
+                }
+                textAreaElement.value =  preText + valueForInsertion + postText;
+                textAreaElement.selectionStart = preText.length + valueForInsertion.length;
+                textAreaElement.selectionEnd = textAreaElement.selectionStart;
+                textAreaElement.focus();
+            } else {
+                textAreaElement.value += valueForInsertion;
+                textAreaElement.focus();
+            }
+        }
+    </script>
+</s:if>
+<s:else>
+    <%-- Rich text editor (Xinha, see: http://trac.xinha.org/wiki/NewbieGuide) --%>
 
-<%-- ===================================================================== --%>
+    <s:url var="xinhaHome" value="/roller-ui/authoring/editors/xinha-0.96.1"></s:url>
+    <script>
+        // (preferably absolute) URL (including trailing slash) where Xinha is installed
+        _editor_url  = '<s:property value="xinhaHome" />';
+        _editor_lang = "en";        // And the language we need to use in the editor.
+        _editor_skin = "blue-look"; // If you want use a skin, add the name (of the folder) here
+    </script>
+    <script src="<s:property value="xinhaHome" />/XinhaCore.js"></script>
 
-<p class="toplabel">
-    <span style="float:left;"><s:text name="weblogEdit.content" /></span>
-    <span style="font-weight:normal;float:right;">
-        <a href="#" onClick="onClickAddImage();">Add Image</a>&nbsp;
-    </span>
-</p>
+    <script>
+        function insertImage(imageURL) {
+            xinha_editors.edit_content.insertHTML(imageURL);
+        }
 
-<s:textarea name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
-<table style="width:100%"><tr><td align="right">
-    <!-- Add buttons to make this textarea taller or shorter -->
-    <input type="button" name="taller" value=" &darr; "
-           onclick="changeSize1(document.getElementById('entry_bean_text'), 5)" />
-    <input type="button" name="shorter" value=" &uarr; "
-           onclick="changeSize1(document.getElementById('entry_bean_text'), -5)" />
-</td></tr></table>
+        xinha_editors = null;
+        xinha_init    = null;
+        xinha_config  = null;
+        xinha_plugins = null;
 
+        xinha_init = xinha_init ? xinha_init : function() {
 
-<%-- ===================================================================== --%>
+            xinha_editors = xinha_editors ? xinha_editors : [
+                'edit_content', 'edit_summary'
+            ];
 
-<p class="toplabel"><s:text name="weblogEdit.summary" /></p>
+            xinha_plugins = xinha_plugins ? xinha_plugins :[];
+            if(!Xinha.loadPlugins(xinha_plugins, xinha_init)) return;
 
-<s:textarea name="bean.summary" cols="75" rows="5" cssStyle="width: 100%" tabindex="6"/>
+            xinha_config = xinha_config ? xinha_config() : new Xinha.Config();
+            xinha_config.pageStyleSheets = [ _editor_url + "examples/full_example.css" ];
+            xinha_config.toolbar =
+                [
+                ["popupeditor"],
+                ["separator","formatblock","fontname","fontsize","bold","italic","underline","strikethrough"],
+                ["separator","forecolor","hilitecolor","textindicator"],
+                ["separator","subscript","superscript"],
+                ["linebreak","separator","justifyleft","justifycenter","justifyright","justifyfull"],
+                ["separator","insertorderedlist","insertunorderedlist","outdent","indent"],
+                ["separator","inserthorizontalrule","createlink","insertimage","inserttable"],
+                ["linebreak","separator","undo","redo","selectall","print"], (Xinha.is_gecko ? [] : ["cut","copy","paste","overwrite","saveas"]),
+                ["separator","killword","clearfonts","removeformat","toggleborders","splitblock","lefttoright", "righttoleft"],
+                ["separator","htmlmode","showhelp","about"]
+            ];
 
-<table style="width:100%"><tr><td align="right">
-    <!-- Add buttons to make this textarea taller or shorter -->
-    <input type="button" name="taller" value=" &darr; "
-           onclick="changeSize(document.getElementById('entry_bean_summary'), 5)" />
-    <input type="button" name="shorter" value=" &uarr; "
-           onclick="changeSize(document.getElementById('entry_bean_summary'), -5)" />
-</td></tr></table>
+            // turn off Xinha's URL stripping default. Blog entries need absolute URLs,
+            // otherwise links will be broken in RSS/Atom feeds.
+            xinha_config.stripBaseHref = false;
 
-<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileChooser.popupTitle'/>">
-    <iframe id="mediaFileEditor"
-            style="visibility:inherit"
-            height="100%"
-            width="100%"
-            frameborder="no"
-            scrolling="auto">
-    </iframe>
-</div>
+            xinha_editors   = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
+            xinha_editors.edit_content.config.height = '300px';
+            xinha_editors.edit_summary.config.height = '200px';
+
+            Xinha.startEditors(xinha_editors);
+        }
+
+        Xinha._addEvent(window,'load', xinha_init);
+    </script>
+</s:else>

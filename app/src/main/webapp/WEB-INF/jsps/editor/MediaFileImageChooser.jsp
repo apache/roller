@@ -68,7 +68,7 @@
     <p class="subtitle">
         <s:text name="mediaFileView.folderName"/> /
         <s:iterator id="directory" value="currentDirectoryHierarchy">
-            <s:url id="getDirectoryByPathUrl" action="mediaFileImageChooser">
+            <s:url var="getDirectoryByPathUrl" action="mediaFileImageChooser">
                 <s:param name="directoryName" value="#directory.key" />
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
             </s:url>
@@ -141,10 +141,10 @@
                     <li class="align-images"
                         onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
-                        <s:url id="mediaFileURL" includeContext="false"
+                        <s:url var="mediaFileURL" includeContext="false"
                             value="%{#mediaFile.permalink}"></s:url>
 
-                        <s:url id="mediaFileThumbnailURL"
+                        <s:url var="mediaFileThumbnailURL"
                             value="%{#mediaFile.thumbnailURL}"></s:url>
 
                         <div class="mediaObject"

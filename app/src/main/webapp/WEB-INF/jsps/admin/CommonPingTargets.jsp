@@ -61,13 +61,13 @@
     <!-- TODO: Use icons here -->
     <td class="rollertable" align="center" >
         <s:if test="#pingTarget.autoEnabled">
-            <s:url id="disablePing" action="commonPingTargets!disable">
+            <s:url var="disablePing" action="commonPingTargets!disable">
                 <s:param name="pingTargetId" value="#pingTarget.id" />
             </s:url>
             <s:a href="%{disablePing}"><s:text name="pingTarget.disable"/></s:a>
         </s:if>
         <s:else>
-            <s:url id="enablePing" action="commonPingTargets!enable">
+            <s:url var="enablePing" action="commonPingTargets!enable">
                 <s:param name="pingTargetId" value="#pingTarget.id" />
             </s:url>
             <s:a href="%{enablePing}"><s:text name="pingTarget.enable"/></s:a>
@@ -75,7 +75,7 @@
     </td>
     
     <td class="rollertable" align="center">
-        <s:url id="editPing" action="commonPingTargetEdit">
+        <s:url var="editPing" action="commonPingTargetEdit">
             <s:param name="bean.id" value="#pingTarget.id" />
         </s:url>
         <s:a href="%{editPing}">
@@ -84,7 +84,7 @@
     </td>
     
     <td class="rollertable" align="center">
-        <s:url id="removePing" action="commonPingTargets!deleteConfirm">
+        <s:url var="removePing" action="commonPingTargets!deleteConfirm">
             <s:param name="pingTargetId" value="#pingTarget.id" />
         </s:url>
         <s:a href="%{removePing}">
@@ -98,7 +98,7 @@
 </table>
 
 <div style="padding: 4px; font-weight: bold;">
-    <s:url id="addPing" action="commonPingTargetAdd">
+    <s:url var="addPing" action="commonPingTargetAdd">
         <s:param name="weblog" value="actionWeblog.handle" />
     </s:url>
     <img src='<s:url value="/images/add.png"/>' border="0"alt="icon" /><s:a href="%{addPing}">Add Ping Target</s:a>
