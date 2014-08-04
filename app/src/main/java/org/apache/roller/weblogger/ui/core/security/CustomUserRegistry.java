@@ -50,12 +50,12 @@ public class CustomUserRegistry {
     private static final String DEFAULT_LOCALE_LDAP_ATTRIBUTE = "locale";
     private static final String DEFAULT_TIMEZONE_LDAP_ATTRIBUTE = "timezone";
     
-    private static final String SNAME_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.screenname";
-    private static final String UID_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.uid";
-    private static final String NAME_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.name";
-    private static final String EMAIL_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.email";
-    private static final String LOCALE_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.locale";
-    private static final String TIMEZONE_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.timezone";
+    private static final String SNAME_LDAP_PROPERTY = "users.ldap.registry.attributes.screenname";
+    private static final String UID_LDAP_PROPERTY = "users.ldap.registry.attributes.uid";
+    private static final String NAME_LDAP_PROPERTY = "users.ldap.registry.attributes.name";
+    private static final String EMAIL_LDAP_PROPERTY = "users.ldap.registry.attributes.email";
+    private static final String LOCALE_LDAP_PROPERTY = "users.ldap.registry.attributes.locale";
+    private static final String TIMEZONE_LDAP_PROPERTY = "users.ldap.registry.attributes.timezone";
 
     public static User getUserDetailsFromAuthentication(HttpServletRequest request) {
 
@@ -74,14 +74,14 @@ public class CustomUserRegistry {
         ud.setTimeZone(TimeZone.getDefault().getID());
         ud.setDateCreated(new java.util.Date());
 
-        String userName = null;
-        String password = null;
+        String userName;
+        String unusedPassword;
         String fullName = null;
         String email = null;
         String screenName = null;
         String locale = null;
         String timezone = null;
-        boolean enabled = false;
+        boolean enabled;
 
         if(authentication == null) {
             // Try to get SSO data from HttpServletRequest
@@ -124,7 +124,6 @@ public class CustomUserRegistry {
             UserDetails userDetails = (UserDetails) oPrincipal;
         
             userName = userDetails.getUsername();
-            password = userDetails.getPassword();
             enabled = userDetails.isEnabled();
         
         
@@ -152,12 +151,10 @@ public class CustomUserRegistry {
             } */
         }
 
-        boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.save");
-        if(!storePassword) {
-            password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue","<unknown>");
-        }
-
-        ud.setPassword(password);
+        // for LDAP we don't store its password in the roller_users table,
+        // just an string indicating external auth method being used.
+        unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue","<externalAuth>");
+        ud.setPassword(unusedPassword);
         ud.setEnabled(enabled ? Boolean.TRUE : Boolean.FALSE);
 
         ud.setUserName(userName);
@@ -192,7 +189,7 @@ public class CustomUserRegistry {
             return null;
         }
         
-        if(oValue == null) {
+        if (oValue == null) {
             return null;
         }
         

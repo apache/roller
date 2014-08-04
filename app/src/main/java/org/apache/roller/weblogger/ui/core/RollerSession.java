@@ -97,7 +97,7 @@ public class RollerSession
                     
                     // try one time to auto-provision, only happens if user==null
                     // which means installation has SSO-enabled in security.xml
-                    if (user == null && WebloggerConfig.getBooleanProperty("users.sso.autoProvision.enabled")) {
+                    if (user == null && WebloggerConfig.getBooleanProperty("users.ldap.autoProvision.enabled")) {
                         
                         // provisioning enabled, get provisioner and execute
                         AutoProvision provisioner = RollerContext.getAutoProvision();

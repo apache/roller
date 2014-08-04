@@ -322,7 +322,7 @@ public class RollerContext extends ContextLoaderListener
      * @return AutoProvision
      */
     public static AutoProvision getAutoProvision() {        
-        String clazzName = WebloggerConfig.getProperty("users.sso.autoProvision.className");
+        String clazzName = WebloggerConfig.getProperty("users.ldap.autoProvision.className");
         
         if (null == clazzName) {
             return null;

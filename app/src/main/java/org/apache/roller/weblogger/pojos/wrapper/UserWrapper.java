@@ -51,7 +51,7 @@ public final class UserWrapper {
      * username to be displayed publicly, so screen name is returned instead.
      */
     public String getUserName() {
-        if (WebloggerConfig.getBooleanProperty("user.privateUserNames")) {
+        if (WebloggerConfig.getBooleanProperty("user.hideUserNames")) {
             return this.pojo.getScreenName();
         }
         return this.pojo.getUserName();
