@@ -27,6 +27,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -47,27 +49,23 @@ import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
- * Edit an existing entry.
+ * Edit a new or existing entry.
  */
 public final class EntryEdit extends EntryBase {
-
-    private static final long MINUTE_IN_MILLIS = 60000;
 
     private static Log log = LogFactory.getLog(EntryEdit.class);
 
     // bean for managing form data
     private EntryBean bean = new EntryBean();
 
-    // the entry we are editing
+    // the entry we are adding or editing
     private WeblogEntry entry = null;
 
     // url to send trackback to
     private String trackbackUrl = null;
 
     public EntryEdit() {
-        this.actionName = "entryEdit";
         this.desiredMenu = "editor";
-        this.pageTitle = "weblogEdit.title.editEntry";
     }
 
     @Override
@@ -76,15 +74,14 @@ public final class EntryEdit extends EntryBase {
     }
 
     public void myPrepare() {
-        /*
-         * Need to reset actionName as processing is chained from
-         * EntryAdd via struts.xml and hence absorbs its value of "entryAdd"
-         * which would negatively effect the processing in EntryEdit.jsp
-         */
-        this.actionName = "entryEdit";
-
-        if (getBean().getId() != null) {
+        if (getBean().getId() == null) { // new entry?
+            // Create and initialize new, not-yet-saved Weblog Entry
+            entry = new WeblogEntry();
+            entry.setCreatorUserName(getAuthenticatedUser().getUserName());
+            entry.setWebsite(getActionWeblog());
+        } else { // already saved entry
             try {
+                // retrieve from DB WeblogEntry based on ID
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
                 setEntry(wmgr.getWeblogEntry(getBean().getId()));
@@ -97,39 +94,63 @@ public final class EntryEdit extends EntryBase {
     }
 
     /**
-     * Show form for editing an existing entry.
+     * Show form for adding/editing weblog entry.
      * 
      * @return String The result of the action.
      */
     @SkipValidation
     public String execute() {
-        // make sure we have an entry to edit and it belongs to the action weblog
-        if (getEntry() == null) {
-            return ERROR;
-        } else if (!getEntry().getWebsite().equals(getActionWeblog())) {
-            return DENIED;
+        if (getActionName().equals("entryEdit")) {
+            // load bean with pojo data
+            getBean().copyFrom(getEntry(), getLocale());
+        } else {
+            // set weblog defaults
+            getBean().setLocale(getActionWeblog().getLocale());
+            getBean().setAllowComments(getActionWeblog().getDefaultAllowComments());
+            getBean().setCommentDays(getActionWeblog().getDefaultCommentDays());
         }
-
-        // load bean with pojo data
-        getBean().copyFrom(getEntry(), getLocale());
 
         return INPUT;
     }
 
     /**
-     * Save weblog entry.
-     * 
+     * Save a draft entry.
+     *
      * @return String The result of the action.
      */
-    public String save() {
+    public String saveDraft() {
+        getBean().setStatus(PubStatus.DRAFT.name());
+        return save();
+    }
 
-        // make sure we have an entry to edit and it belongs to the action weblog
-        if (getEntry() == null) {
-            return ERROR;
-        } else if (!getEntry().getWebsite().equals(getActionWeblog())) {
-            return DENIED;
+    /**
+     * Publish an entry.
+     *
+     * @return String The result of the action.
+     */
+    public String publish() {
+        if (getActionWeblog().hasUserPermission(
+                getAuthenticatedUser(), WeblogPermission.POST)) {
+            Timestamp pubTime = getBean().getPubTime(getLocale(),
+                    getActionWeblog().getTimeZoneInstance());
+            if (pubTime != null && pubTime.after(
+                    new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
+                getBean().setStatus(PubStatus.SCHEDULED.name());
+            } else {
+                getBean().setStatus(PubStatus.PUBLISHED.name());
+            }
+        } else {
+            getBean().setStatus(PubStatus.PENDING.name());
         }
+        return save();
+    }
 
+    /**
+     * Processing logic common for saving drafts and publishing entries
+     *
+     * @return String The result of the action.
+     */
+    private String save() {
         if (!hasActionErrors()) {
             try {
                 WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger()
@@ -146,27 +167,9 @@ public final class EntryEdit extends EntryBase {
                 getBean().copyTo(weblogEntry);
 
                 // handle pubtime auto set
-                if (weblogEntry.isPublished()) {
-                    if (weblogEntry.getPubTime() == null) {
-                        // no time specified, use current time
-                        weblogEntry.setPubTime(weblogEntry.getUpdateTime());
-                    }
-
-                    // if user does not have author perms then force PENDING
-                    // status
-                    if (!getActionWeblog().hasUserPermission(
-                            getAuthenticatedUser(), WeblogPermission.POST)) {
-                        weblogEntry.setStatus(PubStatus.PENDING);
-                    }
-
-                    // If the entry was published to future, set status as
-                    // SCHEDULED we only consider an entry future published if
-                    // it is scheduled more than 1 minute into the future
-                    if (weblogEntry.getPubTime().after(
-                            new Date(System.currentTimeMillis() + MINUTE_IN_MILLIS))) {
-                        getBean().setStatus(PubStatus.SCHEDULED.name());
-                    }
-
+                if (weblogEntry.isPublished() && weblogEntry.getPubTime() == null) {
+                    // no time specified, use current time
+                    weblogEntry.setPubTime(weblogEntry.getUpdateTime());
                 }
 
                 // if user is an admin then apply pinned to main value as well
@@ -195,7 +198,7 @@ public final class EntryEdit extends EntryBase {
                     } catch (MediacastException ex) {
                         addMessage(getText(ex.getErrorKey()));
                     }
-                } else {
+                } else if ("entryEdit".equals(actionName)) {
                     try {
                         // if MediaCast string is empty, clean out MediaCast
                         // attributes
@@ -225,7 +228,7 @@ public final class EntryEdit extends EntryBase {
                 // notify search of the new entry
                 if (weblogEntry.isPublished()) {
                     reindexEntry(weblogEntry);
-                } else {
+                } else if ("entryEdit".equals(actionName)) {
                     removeEntryIndex(weblogEntry);
                 }
 
@@ -238,25 +241,87 @@ public final class EntryEdit extends EntryBase {
                             .queueApplicableAutoPings(weblogEntry);
                 }
 
-                if (weblogEntry.isPending()) {
-                    // implies that entry just changed to pending
-                    if (MailUtil.isMailConfigured()) {
-                        MailUtil.sendPendingEntryNotice(weblogEntry);
-                    }
-                    addMessage("weblogEdit.submittedForReview");
-                } else {
-                    addMessage("weblogEdit.changesSaved");
+                if (weblogEntry.isPending() && MailUtil.isMailConfigured()) {
+                    MailUtil.sendPendingEntryNotice(weblogEntry);
                 }
-
-                return INPUT;
+                if ("entryEdit".equals(actionName)) {
+                    addStatusMessage(getEntry().getStatus());
+                    // continue in entryEdit mode
+                    return INPUT;
+                } else {
+                    // now that entry is saved we have an id value for it
+                    // store it back in bean for use in next action
+                    getBean().setId(weblogEntry.getId());
+                    // flip over to entryEdit mode, as defined in struts.xml
+                    return SUCCESS;
+                }
 
             } catch (Exception e) {
                 log.error("Error saving new entry", e);
-                addError("weblogEdit.error.saving");
+                addError("generic.error.check.logs");
             }
         }
-
+        if ("entryAdd".equals(actionName)) {
+            // if here on entryAdd, nothing saved, so reset status to null (unsaved)
+            getBean().setStatus(null);
+        }
         return INPUT;
+    }
+
+    public EntryBean getBean() {
+        return bean;
+    }
+
+    public void setBean(EntryBean bean) {
+        this.bean = bean;
+    }
+
+    public WeblogEntry getEntry() {
+        return entry;
+    }
+
+    public void setEntry(WeblogEntry entry) {
+        this.entry = entry;
+    }
+
+    @SkipValidation
+    public String firstSave() {
+        addStatusMessage(getEntry().getStatus());
+        return execute();
+    }
+
+    private void addStatusMessage(PubStatus pubStatus) {
+        switch (pubStatus) {
+            case DRAFT:
+                addMessage("weblogEdit.draftSaved");
+                break;
+            case PUBLISHED:
+                addMessage("weblogEdit.publishedEntry");
+                break;
+            case SCHEDULED:
+                addMessage("weblogEdit.scheduledEntry", DateUtil.fullDate(getEntry().getPubTime()));
+                break;
+            case PENDING:
+                addMessage("weblogEdit.submittedForReview");
+                break;
+        }
+    }
+
+    public String getPreviewURL() {
+        return WebloggerFactory
+                .getWeblogger()
+                .getUrlStrategy()
+                .getPreviewURLStrategy(null)
+                .getWeblogEntryURL(getActionWeblog(), null,
+                        getEntry().getAnchor(), true);
+    }
+
+    public String getTrackbackUrl() {
+        return trackbackUrl;
+    }
+
+    public void setTrackbackUrl(String trackbackUrl) {
+        this.trackbackUrl = trackbackUrl;
     }
 
     /**
@@ -316,7 +381,7 @@ public final class EntryEdit extends EntryBase {
     }
 
     /**
-     * Get the list of all categories for the action weblog, not including root.
+     * Get the list of all categories for the action weblog
      */
     public List<WeblogCategory> getCategories() {
         try {
@@ -329,39 +394,6 @@ public final class EntryEdit extends EntryBase {
                     ex);
             return Collections.emptyList();
         }
-    }
-
-    public String getPreviewURL() {
-        return WebloggerFactory
-                .getWeblogger()
-                .getUrlStrategy()
-                .getPreviewURLStrategy(null)
-                .getWeblogEntryURL(getActionWeblog(), null,
-                        getEntry().getAnchor(), true);
-    }
-
-    public EntryBean getBean() {
-        return bean;
-    }
-
-    public void setBean(EntryBean bean) {
-        this.bean = bean;
-    }
-
-    public WeblogEntry getEntry() {
-        return entry;
-    }
-
-    public void setEntry(WeblogEntry entry) {
-        this.entry = entry;
-    }
-
-    public String getTrackbackUrl() {
-        return trackbackUrl;
-    }
-
-    public void setTrackbackUrl(String trackbackUrl) {
-        this.trackbackUrl = trackbackUrl;
     }
 
 }

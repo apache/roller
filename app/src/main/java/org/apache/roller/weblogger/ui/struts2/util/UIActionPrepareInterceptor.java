@@ -20,10 +20,6 @@ package org.apache.roller.weblogger.ui.struts2.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.ui.struts2.editor.EntryAdd;
-import org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile;
-import org.apache.roller.weblogger.ui.struts2.editor.EntryEdit;
-
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 
@@ -43,30 +39,12 @@ public class UIActionPrepareInterceptor extends MethodFilterInterceptor {
         }
 
         final Object action = invocation.getAction();
-        // final ActionContext context = invocation.getInvocationContext();
 
         // is this one of our own UIAction classes?
         if (action instanceof UIActionPreparable) {
 
             if (log.isDebugEnabled()) {
                 log.debug("action is UIActionPreparable, calling myPrepare() method");
-            }
-
-            // The EntryAdd->EntryEdit chain is the one place where we need
-            // to pass a parameter along the chain, thus this somewhat ugly hack
-            if (invocation.getStack().getRoot().size() > 1) {
-                Object action0 = invocation.getStack().getRoot().get(0);
-                Object action1 = invocation.getStack().getRoot().get(1);
-                if (action0 instanceof EntryEdit && action1 instanceof EntryAdd) {
-                    EntryEdit editAction = (EntryEdit) action0;
-                    EntryAdd addAction = (EntryAdd) action1;
-                    editAction.getBean().setId(addAction.getBean().getId());
-                } else if (action0 instanceof EntryAdd
-                        && action1 instanceof EntryAddWithMediaFile) {
-                    EntryAdd addAction = (EntryAdd) action0;
-                    EntryAddWithMediaFile mediaAction = (EntryAddWithMediaFile) action1;
-                    addAction.setBean(mediaAction.getBean());
-                }
             }
 
             UIActionPreparable theAction = (UIActionPreparable) action;

@@ -268,13 +268,21 @@
         </action>
 
         <action name="entryAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAdd">
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
+            <param name="actionName">entryAdd</param>
+            <param name="pageTitle">weblogEdit.title.newEntry</param>
             <result name="input" type="tiles">.EntryEdit</result>
-            <result name="success" type="chain">entryEdit</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">entryEdit!firstSave</param>
+                <param name="weblog">${weblog}</param>
+                <param name="bean.id">${bean.id}</param>
+            </result>
         </action>
 
         <action name="entryEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
+            <param name="actionName">entryEdit</param>
+            <param name="pageTitle">weblogEdit.title.editEntry</param>
             <result name="input" type="tiles">.EntryEdit</result>
             <result name="error" type="chain">menu</result>
         </action>

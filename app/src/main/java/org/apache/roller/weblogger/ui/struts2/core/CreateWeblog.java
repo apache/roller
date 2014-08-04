@@ -84,7 +84,7 @@ public class CreateWeblog extends UIAction {
             }
         } catch (WebloggerException ex) {
             log.error("error checking for existing weblogs count", ex);
-            addError("generic.system.error");
+            addError("generic.error.check.logs");
             return DISABLED_RETURN_CODE;
         }
         

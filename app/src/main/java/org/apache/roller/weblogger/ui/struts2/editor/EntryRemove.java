@@ -101,13 +101,13 @@ public class EntryRemove extends EntryBase {
 				WebloggerFactory.getWeblogger().flush();
 
 				// note to user
-				addMessage("weblogEdit.entryRemoved");
+				addMessage("weblogEdit.entryRemoved", entry.getTitle());
 
 				return SUCCESS;
 
 			} catch (Exception e) {
 				log.error("Error removing entry " + getRemoveId(), e);
-				addError("Error removing entry");
+				addError("generic.error.check.logs");
 			}
         } else {
 			addError("weblogEntry.notFound");

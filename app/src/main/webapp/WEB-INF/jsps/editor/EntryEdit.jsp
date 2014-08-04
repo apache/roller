@@ -32,11 +32,11 @@
 <%-- Titling, processing actions different between entry add and edit --%>
 <s:if test="actionName == 'entryEdit'">
     <s:set var="subtitleKey">weblogEdit.subtitle.editEntry</s:set>
-    <s:set var="actionToRun">entryEdit!save</s:set>
+    <s:set var="mainAction">entryEdit</s:set>
 </s:if>
 <s:else>
     <s:set var="subtitleKey">weblogEdit.subtitle.newEntry</s:set>
-    <s:set var="actionToRun">entryAdd!save</s:set>
+    <s:set var="mainAction">entryAdd</s:set>
 </s:else>
 
 <p class="subtitle">
@@ -45,7 +45,7 @@
     </s:text>
 </p>
 
-<s:form id="entry" action="%{#actionToRun}">
+<s:form id="entry">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.status" />
@@ -143,20 +143,21 @@
         </tr>
 
         <s:if test="actionWeblog.enableMultiLang">
-            <tr>
-                <td class="entryEditFormLabel">
-                    <label for="locale"><s:text name="weblogEdit.locale" /></label>
-                </td>
-                <td>
-                    <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-                </td>
-            </tr>
+                <tr>
+                    <td class="entryEditFormLabel">
+                        <label for="locale"><s:text name="weblogEdit.locale" /></label>
+                    </td>
+                    <td>
+                        <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
+                    </td>
+                </tr>
+            </table>
         </s:if>
         <s:else>
+            </table>
             <s:hidden name="bean.locale"/>
         </s:else>
 
-    </table>
 
     <%-- ================================================================== --%>
     <%-- Weblog edit or preview --%>
@@ -262,17 +263,17 @@
     <br>
     <div class="control">
         <span style="padding-left:7px">
-            <s:submit value="%{getText('weblogEdit.save')}" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
+            <s:submit value="%{getText('weblogEdit.save')}" action="%{#mainAction}!saveDraft" />
             <s:if test="actionName == 'entryEdit'">
                 <input type="button" name="fullPreview"
                                     value="<s:text name='weblogEdit.fullPreviewMode' />"
                                     onclick="fullPreviewMode()" />
             </s:if>
             <s:if test="userAnAuthor">
-                <s:submit value="%{getText('weblogEdit.post')}" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
+                <s:submit value="%{getText('weblogEdit.post')}" action="%{#mainAction}!publish"/>
             </s:if>
             <s:else>
-                <s:submit value="%{getText('weblogEdit.submitForReview')}" onclick="document.getElementById('entry_bean_status').value='PENDING';"/>
+                <s:submit value="%{getText('weblogEdit.submitForReview')}" action="%{#mainAction}!publish"/>
             </s:else>
         </span>
 

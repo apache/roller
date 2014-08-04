@@ -201,11 +201,11 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             WebloggerFactory.getWeblogger().flush();
             
             // notify user of our success
-            addMessage("weblogEdit.changesSaved");
+            addMessage("generic.changes.saved");
             
         } catch (WebloggerException ex) {
             log.error("Error saving roller properties", ex);
-            addError("error.update.rollerConfig");
+            addError("generic.error.check.logs");
         }
                 
         return SUCCESS;

@@ -172,7 +172,7 @@ public class ThemeEdit extends UIAction {
                     } catch (WebloggerException re) {
                         log.error("Error saving weblog - "
                                 + getActionWeblog().getHandle(), re);
-                        addError("Error setting theme");
+                        addError("generic.error.check.logs");
                     }
                 }
             } else {

@@ -98,7 +98,7 @@ public class Register extends UIAction implements ServletRequestAware {
             }
         } catch (Exception e) {
             log.error("Error checking user count", e);
-            addError("generic.system.error");
+            addError("generic.error.check.logs");
             return DISABLED_RETURN_CODE;
         }
                 
@@ -274,7 +274,7 @@ public class Register extends UIAction implements ServletRequestAware {
 
             } catch (WebloggerException ex) {
                 log.error("Error adding new user", ex);
-                addError("generic.system.error");
+                addError("generic.error.check.logs");
             }
         }
         
@@ -390,7 +390,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 }
             } catch (WebloggerException ex) {
                 log.error("error checking for user", ex);
-                addError("generic.system.error");
+                addError("generic.error.check.logs");
             }
         }
     }

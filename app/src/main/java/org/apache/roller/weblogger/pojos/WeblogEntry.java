@@ -888,8 +888,8 @@ public class WeblogEntry implements Serializable {
             return Arrays.asList( StringUtils.split(getPlugins(), ",") );
         }
         return new ArrayList<String>();
-    }    
-    
+    }
+
     /** Convenience method for checking status */
     public boolean isDraft() {
         return getStatus().equals(PubStatus.DRAFT);
@@ -948,11 +948,7 @@ public class WeblogEntry implements Serializable {
         boolean author = perm.hasAction(WeblogPermission.POST) || perm.hasAction(WeblogPermission.ADMIN);
         boolean limited = !author && perm.hasAction(WeblogPermission.EDIT_DRAFT);
         
-        if (author || (limited && (isDraft() || isPending()))) {
-            return true;
-        }
-        
-        return false;
+        return author || (limited && (status == PubStatus.DRAFT || status == PubStatus.PENDING));
     }
     
     /**
