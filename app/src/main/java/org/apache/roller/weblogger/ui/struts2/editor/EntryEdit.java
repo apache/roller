@@ -19,11 +19,14 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,11 +35,19 @@ import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
+import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.MediacastException;
@@ -51,7 +62,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 /**
  * Edit a new or existing entry.
  */
-public final class EntryEdit extends EntryBase {
+public final class EntryEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryEdit.class);
 
@@ -156,6 +167,9 @@ public final class EntryEdit extends EntryBase {
                 WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
 
+                IndexManager indexMgr = WebloggerFactory.getWeblogger()
+                        .getIndexManager();
+
                 WeblogEntry weblogEntry = getEntry();
 
                 // set updatetime & pubtime
@@ -227,9 +241,9 @@ public final class EntryEdit extends EntryBase {
 
                 // notify search of the new entry
                 if (weblogEntry.isPublished()) {
-                    reindexEntry(weblogEntry);
+                    indexMgr.addEntryReIndexOperation(entry);
                 } else if ("entryEdit".equals(actionName)) {
-                    removeEntryIndex(weblogEntry);
+                    indexMgr.removeEntryIndexOperation(entry);
                 }
 
                 // notify caches
@@ -394,6 +408,89 @@ public final class EntryEdit extends EntryBase {
                     ex);
             return Collections.emptyList();
         }
+    }
+
+    public List<WeblogEntryPlugin> getEntryPlugins() {
+        List<WeblogEntryPlugin> availablePlugins = Collections.emptyList();
+        try {
+            PluginManager ppmgr = WebloggerFactory.getWeblogger()
+                    .getPluginManager();
+            Map<String, WeblogEntryPlugin> plugins = ppmgr
+                    .getWeblogEntryPlugins(getActionWeblog());
+
+            if (plugins.size() > 0) {
+                availablePlugins = new ArrayList<WeblogEntryPlugin>();
+                for (WeblogEntryPlugin plugin : plugins.values()) {
+                    availablePlugins.add(plugin);
+                }
+            }
+        } catch (Exception ex) {
+            log.error("Error getting plugins list", ex);
+        }
+        return availablePlugins;
+    }
+
+    public WeblogEntryEditor getEditor() {
+        UIPluginManager pmgr = RollerContext.getUIPluginManager();
+        return pmgr.getWeblogEntryEditor(getActionWeblog().getEditorPage());
+    }
+
+    public boolean isUserAnAuthor() {
+        return getActionWeblog().hasUserPermission(getAuthenticatedUser(),
+                WeblogPermission.POST);
+    }
+
+    public String getJsonAutocompleteUrl() {
+        return WebloggerFactory.getWeblogger().getUrlStrategy()
+                .getWeblogTagsJsonURL(getActionWeblog(), false, 0);
+    }
+
+    /**
+     * Get recent published weblog entries
+     * @return List of published WeblogEntry objects sorted by publication time.
+     */
+    public List<WeblogEntry> getRecentPublishedEntries() {
+        return getRecentEntries(PubStatus.PUBLISHED, WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME);
+    }
+
+    /**
+     * Get recent scheduled weblog entries
+     * @return List of scheduled WeblogEntry objects sorted by publication time.
+     */
+    public List<WeblogEntry> getRecentScheduledEntries() {
+        return getRecentEntries(PubStatus.SCHEDULED, WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME);
+    }
+
+    /**
+     * Get recent draft weblog entries
+     * @return List of draft WeblogEntry objects sorted by update time.
+     */
+    public List<WeblogEntry> getRecentDraftEntries() {
+        return getRecentEntries(PubStatus.DRAFT, WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
+    }
+
+    /**
+     * Get recent pending weblog entries
+     * @return List of pending WeblogEntry objects sorted by update time.
+     */
+    public List<WeblogEntry> getRecentPendingEntries() {
+        return getRecentEntries(PubStatus.PENDING, WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
+    }
+
+    private List<WeblogEntry> getRecentEntries(PubStatus pubStatus, WeblogEntrySearchCriteria.SortBy sortBy) {
+        List<WeblogEntry> entries = Collections.emptyList();
+        try {
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(getActionWeblog());
+            wesc.setMaxResults(20);
+            wesc.setStatus(pubStatus);
+            wesc.setSortBy(sortBy);
+            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
+                    .getWeblogEntries(wesc);
+        } catch (WebloggerException ex) {
+            log.error("Error getting entries list", ex);
+        }
+        return entries;
     }
 
 }

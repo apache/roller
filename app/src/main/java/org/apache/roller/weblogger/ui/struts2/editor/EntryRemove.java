@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 import java.util.Collections;
@@ -34,7 +35,7 @@ import java.util.List;
 /**
  * Remove a weblog entry.
  */
-public class EntryRemove extends EntryBase {
+public class EntryRemove extends UIAction {
 
 	private static Log log = LogFactory.getLog(EntryRemove.class);
 
@@ -70,16 +71,14 @@ public class EntryRemove extends EntryBase {
 
 		if (getRemoveEntry() != null) {
 			try {
-
 				WeblogEntry entry = getRemoveEntry();
+                IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
 
 				try {
 					// remove the entry from the search index
 					// TODO: can we do this in a better way?
 					WeblogEntry.PubStatus originalStatus = entry.getStatus();
 					entry.setStatus(WeblogEntry.PubStatus.DRAFT);
-					IndexManager manager = WebloggerFactory.getWeblogger()
-							.getIndexManager();
 					manager.addEntryReIndexOperation(entry);
 					entry.setStatus(originalStatus);
 				} catch (WebloggerException ex) {
@@ -88,7 +87,7 @@ public class EntryRemove extends EntryBase {
 
 				// remove from search index
 				if (entry.isPublished()) {
-					removeEntryIndex(entry);
+                    manager.removeEntryIndexOperation(entry);
 				}
 
 				// flush caches
@@ -116,7 +115,7 @@ public class EntryRemove extends EntryBase {
 
 		return INPUT;
 	}
-	
+
 	public String getRemoveId() {
 		return removeId;
 	}
