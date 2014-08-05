@@ -37,100 +37,100 @@ import java.util.List;
  */
 public class EntryRemove extends UIAction {
 
-	private static Log log = LogFactory.getLog(EntryRemove.class);
+    private static Log log = LogFactory.getLog(EntryRemove.class);
 
-	// id of entry to remove
-	private String removeId = null;
+    // id of entry to remove
+    private String removeId = null;
 
-	// entry object to remove
-	private WeblogEntry removeEntry = null;
+    // entry object to remove
+    private WeblogEntry removeEntry = null;
 
-	public EntryRemove() {
+    public EntryRemove() {
         // actionName defined in struts.xml as it's different based on the caller
-		this.desiredMenu = "editor";
-		this.pageTitle = "weblogEdit.deleteEntry";
-	}
+        this.desiredMenu = "editor";
+        this.pageTitle = "weblogEdit.deleteEntry";
+    }
 
-	public void myPrepare() {
-		if (getRemoveId() != null) {
-			try {
-				WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-						.getWeblogEntryManager();
-				setRemoveEntry(wmgr.getWeblogEntry(getRemoveId()));
-			} catch (WebloggerException ex) {
-				log.error("Error looking up entry by id - " + getRemoveId(), ex);
-			}
-		}
-	}
+    public void myPrepare() {
+        if (getRemoveId() != null) {
+            try {
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
+                        .getWeblogEntryManager();
+                setRemoveEntry(wmgr.getWeblogEntry(getRemoveId()));
+            } catch (WebloggerException ex) {
+                log.error("Error looking up entry by id - " + getRemoveId(), ex);
+            }
+        }
+    }
 
-	public String execute() {
-		return INPUT;
-	}
+    public String execute() {
+        return INPUT;
+    }
 
-	public String remove() {
+    public String remove() {
 
-		if (getRemoveEntry() != null) {
-			try {
-				WeblogEntry entry = getRemoveEntry();
+        if (getRemoveEntry() != null) {
+            try {
+                WeblogEntry entry = getRemoveEntry();
                 IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
 
-				try {
-					// remove the entry from the search index
-					// TODO: can we do this in a better way?
-					WeblogEntry.PubStatus originalStatus = entry.getStatus();
-					entry.setStatus(WeblogEntry.PubStatus.DRAFT);
-					manager.addEntryReIndexOperation(entry);
-					entry.setStatus(originalStatus);
-				} catch (WebloggerException ex) {
-					log.warn("Trouble triggering entry indexing", ex);
-				}
+                try {
+                    // remove the entry from the search index
+                    // TODO: can we do this in a better way?
+                    WeblogEntry.PubStatus originalStatus = entry.getStatus();
+                    entry.setStatus(WeblogEntry.PubStatus.DRAFT);
+                    manager.addEntryReIndexOperation(entry);
+                    entry.setStatus(originalStatus);
+                } catch (WebloggerException ex) {
+                    log.warn("Trouble triggering entry indexing", ex);
+                }
 
-				// remove from search index
-				if (entry.isPublished()) {
+                // remove from search index
+                if (entry.isPublished()) {
                     manager.removeEntryIndexOperation(entry);
-				}
+                }
 
-				// flush caches
-				CacheManager.invalidate(entry);
+                // flush caches
+                CacheManager.invalidate(entry);
 
-				// remove entry itself
-				WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-						.getWeblogEntryManager();
-				wmgr.removeWeblogEntry(entry);
-				WebloggerFactory.getWeblogger().flush();
+                // remove entry itself
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
+                        .getWeblogEntryManager();
+                wmgr.removeWeblogEntry(entry);
+                WebloggerFactory.getWeblogger().flush();
 
-				// note to user
-				addMessage("weblogEdit.entryRemoved", entry.getTitle());
+                // note to user
+                addMessage("weblogEdit.entryRemoved", entry.getTitle());
 
-				return SUCCESS;
+                return SUCCESS;
 
-			} catch (Exception e) {
-				log.error("Error removing entry " + getRemoveId(), e);
-				addError("generic.error.check.logs");
-			}
+            } catch (Exception e) {
+                log.error("Error removing entry " + getRemoveId(), e);
+                addError("generic.error.check.logs");
+            }
         } else {
-			addError("weblogEntry.notFound");
-			return ERROR;
-		}
+            addError("weblogEntry.notFound");
+            return ERROR;
+        }
 
-		return INPUT;
-	}
+        return INPUT;
+    }
 
-	public String getRemoveId() {
-		return removeId;
-	}
+    public String getRemoveId() {
+        return removeId;
+    }
 
-	public void setRemoveId(String removeId) {
-		this.removeId = removeId;
-	}
+    public void setRemoveId(String removeId) {
+        this.removeId = removeId;
+    }
 
-	public WeblogEntry getRemoveEntry() {
-		return removeEntry;
-	}
+    public WeblogEntry getRemoveEntry() {
+        return removeEntry;
+    }
 
-	public void setRemoveEntry(WeblogEntry removeEntry) {
-		this.removeEntry = removeEntry;
-	}
+    public void setRemoveEntry(WeblogEntry removeEntry) {
+        this.removeEntry = removeEntry;
+    }
 
     // allow LIMITED users to delete their own draft/pending blog entries
     @Override
