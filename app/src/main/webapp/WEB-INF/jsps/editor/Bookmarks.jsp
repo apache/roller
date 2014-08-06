@@ -130,7 +130,7 @@ function onMove()
                     <s:url var="editUrl" action="bookmarkEdit">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                         <s:param name="bean.id" value="#bookmark.id" />
-                        <s:param name="folderId" value="%{folderId}" suppressEmptyParameters="true" />
+                        <s:param name="folderId" value="%{folderId}" suppressEmptyParameters="true"/>
                     </s:url>
                     <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
                              title="<s:text name='bookmarksForm.edit.tip' />" /></s:a>
@@ -170,7 +170,9 @@ function onMove()
         </s:if>
 
         <s:if test="folder.name != 'default'">
-            <s:submit value="%{getText('bookmarksForm.deleteFolder')}" action="bookmarks!deleteFolder" onclick="onDeleteFolder();return false;"/>
+            <span style="float:right">
+                <s:submit value="%{getText('bookmarksForm.deleteFolder')}" action="bookmarks!deleteFolder" onclick="onDeleteFolder();return false;"/>
+            </span>
         </s:if>
     </div>
 

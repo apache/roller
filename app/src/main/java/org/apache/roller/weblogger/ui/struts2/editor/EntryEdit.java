@@ -85,12 +85,13 @@ public final class EntryEdit extends UIAction {
     }
 
     public void myPrepare() {
-        if (getBean().getId() == null) { // new entry?
+        if (getBean().getId() == null) {
             // Create and initialize new, not-yet-saved Weblog Entry
             entry = new WeblogEntry();
             entry.setCreatorUserName(getAuthenticatedUser().getUserName());
             entry.setWebsite(getActionWeblog());
-        } else { // already saved entry
+        } else {
+            // already saved entry
             try {
                 // retrieve from DB WeblogEntry based on ID
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()

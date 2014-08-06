@@ -133,8 +133,16 @@ public abstract class UIAction extends ActionSupport
         } catch (Exception e) {}
         return false;
     }
-    
-    
+
+    /**
+     * Cancel.
+     *
+     * @return "CANCEL" string constant.
+     */
+    public String cancel() {
+        return CANCEL;
+    }
+
     public String getSiteURL() {
         return WebloggerRuntimeConfig.getRelativeContextURL();
     }

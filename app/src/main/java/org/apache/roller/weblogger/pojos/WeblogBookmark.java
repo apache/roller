@@ -62,18 +62,11 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         this.url = url;
         this.feedUrl = feedUrl;
         this.image = image;
-
         folder.addBookmark(this);
-        int size = folder.getBookmarks().size();
-        if (size == 1) {
-            this.priority = 0;
-        } else {
-            this.priority = folder.getBookmarks().get(size - 2).getPriority() + 1;
-        }
+        calculatePriority();
     }
     
     //------------------------------------------------------------- Attributes
-    
     public String getId() {
         return this.id;
     }
@@ -81,7 +74,16 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     public void setId(String id) {
         this.id = id;
     }
-    
+
+    public void calculatePriority() {
+        int size = folder.getBookmarks().size();
+        if (size == 1) {
+            this.priority = 0;
+        } else {
+            this.priority = folder.getBookmarks().get(size - 2).getPriority() + 1;
+        }
+    }
+
     /**
      * Name of bookmark.
      */

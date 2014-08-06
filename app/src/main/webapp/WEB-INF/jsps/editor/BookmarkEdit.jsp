@@ -17,28 +17,48 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<%-- Titling, processing actions different between bookmark add and edit --%>
+<s:if test="actionName == 'bookmarkEdit'">
+    <s:set var="subtitleKey">bookmarkForm.edit.subtitle</s:set>
+    <s:set var="mainAction">bookmarkEdit</s:set>
+</s:if>
+<s:else>
+    <s:set var="subtitleKey">bookmarkForm.add.subtitle</s:set>
+    <s:set var="mainAction">bookmarkAdd</s:set>
+</s:else>
+
 <p class="subtitle">
-    <s:text name="bookmarkForm.edit.subtitle" >
-        <s:param value="bookmark.folder.name" />
+    <s:text name="%{#subtitleKey}" >
+        <s:param value="bookmark.folder.name"/>
     </s:text>
 </p>
 
-<s:form action="bookmarkEdit!save">
+<p class="pagetip">
+    <s:text name="bookmarkForm.rootPrompt">
+        <s:param><s:text name="generic.name"/></s:param>
+        <s:param><s:text name="bookmarkForm.url"/></s:param>
+    </s:text>
+</p>
+
+<s:form>
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="bean.id" />
+    <%--
+        Edit action uses folderId for redirection back to proper bookmarks folder on cancel
+        (as configured in struts.xml); add action also, plus to know which folder to put new
+        bookmark in.
+    --%>
     <s:hidden name="folderId" />
-    
+    <s:if test="actionName == 'bookmarkEdit'">
+        <%-- bean for bookmark add does not have a bean id yet --%>
+        <s:hidden name="bean.id" />
+    </s:if>
+
     <table>
         
         <tr>
             <td><s:text name="generic.name" /></td>
             <td><s:textfield name="bean.name" maxlength="255" size="70" /></td>
-        </tr>
-        
-        <tr>
-            <td><s:text name="generic.description" /></td>
-            <td><s:textarea name="bean.description" rows="5" cols="50" /></td>
         </tr>
         
         <tr>
@@ -52,6 +72,11 @@
         </tr>
         
         <tr>
+            <td><s:text name="generic.description" /></td>
+            <td><s:textarea name="bean.description" rows="5" cols="50" /></td>
+        </tr>
+
+        <tr>
             <td><s:text name="bookmarkForm.image" /></td>
             <td><s:textfield name="bean.image" maxlength="255" size="70" /></td>
         </tr>
@@ -59,8 +84,8 @@
     </table>
     
     <p>
-        <s:submit value="%{getText('generic.save')}" />
-        <s:submit value="%{getText('generic.cancel')}" action="bookmarkAdd!cancel" />
+        <s:submit value="%{getText('generic.save')}" action="%{#mainAction}!save"/>
+        <s:submit value="%{getText('generic.cancel')}" action="bookmarkEdit!cancel" />
     </p>
     
 </s:form>

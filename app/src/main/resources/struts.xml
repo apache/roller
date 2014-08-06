@@ -362,30 +362,30 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.Bookmarks">
             <result name="list" type="tiles">.Bookmarks</result>
         </action>
-        
+
         <action name="bookmarkAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.BookmarkAdd">
-            <result name="input" type="tiles">.BookmarkAdd</result>
+                class="org.apache.roller.weblogger.ui.struts2.editor.BookmarkEdit">
+            <param name="actionName">bookmarkAdd</param>
+            <param name="pageTitle">bookmarkForm.add.title</param>
+            <result name="input" type="tiles">.BookmarkEdit</result>
             <result name="success" type="chain">bookmarks</result>
-            <result name="cancel" type="redirectAction">
-                <param name="actionName">bookmarks</param>
-                <param name="weblog">${weblog}</param>
-                <param name="folderId">${folderId}</param>
-                <param name="suppressEmptyParameters">true</param>
-            </result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
         <action name="bookmarkEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.BookmarkEdit">
+            <param name="actionName">bookmarkEdit</param>
+            <param name="pageTitle">bookmarkForm.edit.title</param>
             <result name="input" type="tiles">.BookmarkEdit</result>
+            <result name="success" type="chain">bookmarks</result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">bookmarks</param>
                 <param name="weblog">${weblog}</param>
                 <param name="folderId">${folderId}</param>
+                <!-- TODO: Remove in JSP? -->
                 <param name="suppressEmptyParameters">true</param>
             </result>
-            <result name="error" type="chain">bookmarks</result>
+            <result name="error" type="chain">bookmarkEdit</result>
         </action>
         
         <action name="bookmarksImport!*" method="{1}"

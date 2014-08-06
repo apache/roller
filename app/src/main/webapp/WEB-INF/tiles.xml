@@ -338,11 +338,6 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
     
-    <definition name=".BookmarkAdd" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarkAdd.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
-    </definition>
-    
     <definition name=".BookmarkEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarkEdit.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />

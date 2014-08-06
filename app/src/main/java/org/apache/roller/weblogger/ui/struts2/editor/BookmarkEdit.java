@@ -18,9 +18,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,116 +31,99 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
- * Add a new bookmark to a folder.
+ * Edit a new or existing bookmark (blogroll item).
  */
 public class BookmarkEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(BookmarkEdit.class);
-    
-    // the id of the folder we are working with
-    private String folderId = null;
-    
-    // the bookmark we are editing
-    private WeblogBookmark bookmark = null;
-    
+
     // bean for managing form data
     private BookmarkBean bean = new BookmarkBean();
-    
-    
+
+    // the id of the folder holding the bookmark
+    private String folderId = null;
+
+    // the bookmark we are adding or editing
+    private WeblogBookmark bookmark = null;
+
+
     public BookmarkEdit() {
-        this.actionName = "bookmarkEdit";
         this.desiredMenu = "editor";
-        this.pageTitle = "bookmarkForm.edit.title";
     }
 
     public void myPrepare() {
-        try {
+        if (StringUtils.isEmpty(bean.getId())) {
+            // Create and initialize new, not-yet-saved WeblogBookmark
+            bookmark = new WeblogBookmark();
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            if(!StringUtils.isEmpty(getBean().getId())) {
-                setBookmark(bmgr.getBookmark(getBean().getId()));
+            try {
+                if (!StringUtils.isEmpty(getFolderId())) {
+                    bookmark.setFolder(bmgr.getFolder(getFolderId()));
+                }
+            } catch (WebloggerException ex) {
+                addError("generic.error.check.logs");
+                log.error("Error looking up folder", ex);
             }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up bookmark - "+getBean().getId(), ex);
+        } else {
+            // existing bookmark, retrieve its info from DB
+            try {
+                BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+                bookmark = bmgr.getBookmark(getBean().getId());
+            } catch (WebloggerException ex) {
+                addError("generic.error.check.logs");
+                log.error("Error looking up bookmark" + getBean().getId(), ex);
+            }
         }
     }
     
     
     @SkipValidation
     public String execute() {
-        
-        if(getBookmark() == null) {
-            addError("Cannot edit null bookmark");
-            return ERROR;
+        if (!isAdd()) {
+            // make sure bean is populated with DB values on initial load
+            getBean().copyFrom(getBookmark());
         }
-        
-        // make sure bean is properly loaded with pojo data
-        getBean().copyFrom(getBookmark());
-        
         return INPUT;
     }
 
     
     public String save() {
-        
-        if(getBookmark() == null) {
-            addError("Cannot edit null bookmark");
-            return ERROR;
-        }
-        
+
         // validation
         myValidate();
         
         if(!hasActionErrors()) {
             try {
-                getBean().copyTo(getBookmark());
-
+                getBean().copyTo(bookmark);
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-                bmgr.saveBookmark(getBookmark());
+                bmgr.saveBookmark(bookmark);
                 WebloggerFactory.getWeblogger().flush();
-
-                CacheManager.invalidate(getBookmark());
-
-                addMessage("bookmarkForm.changesSaved");
+                CacheManager.invalidate(bookmark);
+                addMessage(isAdd() ? "bookmarkForm.created" : "bookmarkForm.updated",
+                        getBookmark().getName());
+                return SUCCESS;
 
             } catch(Exception ex) {
                 log.error("Error saving bookmark", ex);
-                addError("bookmarkForm.error.saving");
+                addError("generic.error.check.logs");
             }
         }
         
         return INPUT;
     }
 
-    /**
-     * Cancel.
-     * 
-     * @return the string
-     */
-    public String cancel() {
-        return CANCEL;
-    }
-    
     public void myValidate() {
-        if (StringUtils.isNotEmpty(getBean().getUrl()) && !validURL(getBean().getUrl())) {
-            addError("bookmarkgetBean().error.invalidURL", getBean().getUrl());
-        }
-        if (StringUtils.isNotEmpty(getBean().getFeedUrl()) && !validURL(getBean().getFeedUrl())) {
-            addError("bookmarkgetBean().error.invalidURL", getBean().getFeedUrl());
-        }
-        if (StringUtils.isNotEmpty(getBean().getImage()) && !validURL(getBean().getImage())) {
-            addError("bookmarkgetBean().error.invalidURL", getBean().getImage());
+        // if name new or changed, check new name doesn't already exist
+        if ((isAdd() || !getBean().getName().equals(bookmark.getName()))
+             && bookmark.getFolder().hasBookmarkOfName(getBean().getName())) {
+                addError("bookmarkForm.error.duplicateName", getBean().getUrl());
         }
     }
-    
-    public boolean validURL(String url) {
-        boolean valid = false;
-        try {
-            URL test = new URL(url);
-            valid = true;
-        } catch (MalformedURLException intentionallyIgnored) {}
-        return valid;
+
+    private boolean isAdd() {
+        return actionName.equals("bookmarkAdd");
     }
-    
+
     public String getFolderId() {
         return folderId;
     }
@@ -152,14 +132,6 @@ public class BookmarkEdit extends UIAction {
         this.folderId = folderId;
     }
     
-    public WeblogBookmark getBookmark() {
-        return bookmark;
-    }
-
-    public void setBookmark(WeblogBookmark bookmark) {
-        this.bookmark = bookmark;
-    }
-
     public BookmarkBean getBean() {
         return bean;
     }
@@ -167,5 +139,9 @@ public class BookmarkEdit extends UIAction {
     public void setBean(BookmarkBean bean) {
         this.bean = bean;
     }
-    
+
+    // getter needed because JSP reads this object in order to obtain folder name
+    public WeblogBookmark getBookmark() {
+        return bookmark;
+    }
 }
