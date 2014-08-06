@@ -27,7 +27,6 @@
     <mapping-file>org/apache/roller/weblogger/pojos/ObjectPermission.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogPermission.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/Weblog.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/UserAttribute.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/OAuthConsumerRecord.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/OAuthAccessorRecord.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/MediaFile.orm.xml</mapping-file>

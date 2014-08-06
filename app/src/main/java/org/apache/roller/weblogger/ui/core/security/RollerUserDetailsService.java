@@ -13,7 +13,6 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.UserAttribute;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataRetrievalFailureException;
 
@@ -39,15 +38,13 @@ public class RollerUserDetailsService implements UserDetailsService {
         try {
             UserManager umgr = roller.getUserManager();
             User userData;
-            // OpenID user
+            // OpenID user?
             if (userName.startsWith("http://") || userName.startsWith("https://")) {
                 if (userName.endsWith("/")) {
                     userName = userName.substring(0, userName.length() -1 );
                 }
                 try {
-                    userData = umgr.getUserByAttribute(
-                        UserAttribute.Attributes.OPENID_URL.toString(), 
-                        userName);
+                    userData = umgr.getUserByOpenIdUrl(userName);
                 } catch (WebloggerException ex) {
                     throw new DataRetrievalFailureException("ERROR in user lookup", ex);
                 }

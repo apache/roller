@@ -37,7 +37,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RollerPermission;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.UserAttribute;
 import org.apache.roller.weblogger.pojos.UserRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -82,12 +81,6 @@ public class JPAUserManagerImpl implements UserManager {
 
         // remove entry from cache mapping
         this.userNameToIdMap.remove(userName);
-        
-        // remove all associated attributes
-        List<UserAttribute> atts = getUserAttributes(userName);
-        for (UserAttribute att : atts) {
-            this.strategy.remove(att);
-        }
     }
 
     
@@ -135,7 +128,26 @@ public class JPAUserManagerImpl implements UserManager {
         return getUserByUserName(userName, Boolean.TRUE);
     }
 
-    
+    @Override
+    public User getUserByOpenIdUrl(String openIdUrl) throws WebloggerException {
+        if (openIdUrl == null) {
+            throw new WebloggerException("OpenID URL cannot be null");
+        }
+
+        TypedQuery<User> query;
+        User user;
+        query = strategy.getNamedQuery(
+                "User.getByOpenIdUrl", User.class);
+        query.setParameter(1, openIdUrl);
+        try {
+            user = query.getSingleResult();
+        } catch (NoResultException e) {
+            user = null;
+        }
+        return user;
+    }
+
+
     public User getUserByUserName(String userName, Boolean enabled)
             throws WebloggerException {
 
@@ -149,7 +161,7 @@ public class JPAUserManagerImpl implements UserManager {
 
             User user = this.getUser(
                     this.userNameToIdMap.get(userName));
-            if(user != null) {
+            if (user != null) {
                 // only return the user if the enabled status matches
                 if(enabled == null || enabled.equals(user.getEnabled())) {
                     log.debug("userNameToIdMap CACHE HIT - "+userName);
@@ -311,103 +323,6 @@ public class JPAUserManagerImpl implements UserManager {
         return results.get(0);
     }
 
-    
-    public User getUserByAttribute(String name, String value) throws WebloggerException {
-        return getUserByAttribute(name, value, Boolean.TRUE);
-    }
-
-    
-    public User getUserByAttribute(String name, String value, Boolean enabled) throws WebloggerException {
-        
-        if (value == null) {
-            throw new WebloggerException("user attribute cannot be null!");
-        }
-
-        String[] parts = value.split("&");
-        value = parts[0];
-
-        TypedQuery<UserAttribute> attrQuery = strategy.getNamedQuery("UserAttribute.getByAttrNameAndAttrValue",
-                UserAttribute.class);
-        attrQuery.setParameter(1, name);
-        attrQuery.setParameter(2, value);
-        UserAttribute attribute;
-
-        try {
-            attribute = attrQuery.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-
-        Object[] params;
-        TypedQuery<User> userQuery;
-        if (enabled != null) {
-            userQuery = strategy.getNamedQuery("User.getByUserName&Enabled", User.class);
-            params = new Object[]{attribute.getUserName(), enabled};
-        } else {
-            userQuery = strategy.getNamedQuery("User.getByUserName", User.class);
-            params = new Object[]{attribute.getUserName()};
-        }
-        for (int i = 0; i < params.length; i++) {
-            userQuery.setParameter(i + 1, params[i]);
-        }
-        User user;
-        try {
-            user = userQuery.getSingleResult();
-        } catch (NoResultException e) {
-            user = null;
-        }
-
-        return user;
-    }
-
-    
-    public UserAttribute getUserAttribute(String userName, String attribute) throws WebloggerException {
-        TypedQuery<UserAttribute> q = strategy.getNamedQuery("UserAttribute.getByUserNameAndAttrName", UserAttribute.class);
-        q.setParameter(1, userName);
-        q.setParameter(2, attribute);
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {            
-            return null;
-        }
-    }
-
-    
-    public List<UserAttribute> getUserAttributes(String userName) throws WebloggerException {
-        TypedQuery<UserAttribute> q = strategy.getNamedQuery("UserAttribute.getByUserName", UserAttribute.class);
-        q.setParameter(1, userName);
-        try {
-            return q.getResultList();
-        } catch (NoResultException e) {            
-            return null;
-        }
-    }
-
-    
-    public void setUserAttribute(String userName, String attribute, String value) throws WebloggerException {
-        UserAttribute userAttribute = null;
-        TypedQuery<UserAttribute> q = strategy.getNamedQuery("UserAttribute.getByUserNameAndAttrName",
-                UserAttribute.class);
-        q.setParameter(1, userName);
-        q.setParameter(2, attribute);
-        try {
-            userAttribute = q.getSingleResult();
-        } catch (NoResultException ignored) {
-        }
-        if (userAttribute != null) {
-            if (value.equals("")) {
-                this.strategy.remove(userAttribute);
-            } else {
-                userAttribute.setValue(value);
-                this.strategy.store(userAttribute);
-            }
-        } else {
-            userAttribute = new UserAttribute(userName, attribute, value);
-            this.strategy.store(userAttribute);
-        }
-    }
-
-    
     public User getUserByActivationCode(String activationCode) throws WebloggerException {
         if (activationCode == null) {
             throw new WebloggerException("activationcode is null");
@@ -684,6 +599,3 @@ public class JPAUserManagerImpl implements UserManager {
         }
     }
 }
-
-
-

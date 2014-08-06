@@ -33,6 +33,16 @@ update weblog set editorpage = 'editor-xinha.jsp' where editorpage = 'editor-rte
 #renameTable('rolleruser' 'roller_user')
 #renameTable('webpage' 'weblog_custom_template')
 
+-- openID value moved from deprecated roller_userattribute table to new roller_user.openid_url column
+#addColumnNull('roller_user' 'openid_url'  "varchar(255)")
+
+update roller_user ru
+set openid_url = (select attrvalue from roller_userattribute rua where attrname = 'openid.url' and ru.username = rua.username)
+where username in (select username from roller_userattribute rua where attrname = 'openid.url');
+
+-- roller_userattribute table no longer referenced by Roller application, can be
+-- manually dropped if your project is not using it for anything else
+
 create table custom_template_rendition (
     id varchar(48)  not null primary key,
     templateid varchar(48) not null,

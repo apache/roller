@@ -33,7 +33,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.UserAttribute;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 
 
@@ -90,13 +89,11 @@ public class RollerSession
                         if (openidurl.endsWith("/")) {
                             openidurl = openidurl.substring(0, openidurl.length() - 1);
                         }
-                        user = umgr.getUserByAttribute(
-                                UserAttribute.Attributes.OPENID_URL.toString(), 
-                                openidurl);
+                        user = umgr.getUserByOpenIdUrl(openidurl);
                     }
                     
                     // try one time to auto-provision, only happens if user==null
-                    // which means installation has SSO-enabled in security.xml
+                    // which means installation has LDAP enabled in security.xml
                     if (user == null && WebloggerConfig.getBooleanProperty("users.ldap.autoProvision.enabled")) {
                         
                         // provisioning enabled, get provisioner and execute

@@ -33,14 +33,12 @@ import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.UserAttribute;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-//import org.springframework.security.userdetails.openid.OpenIDUserAttribute;
 
 
 /**
@@ -234,18 +232,16 @@ public class Register extends UIAction implements ServletRequestAware {
                     ud.setActivationCode(inActivationCode);
                 }
 
-                // save new user
-                mgr.addUser(ud);
-
                 String openidurl = getBean().getOpenIdUrl();
                 if (openidurl != null) {
                     if (openidurl.endsWith("/")) {
                         openidurl = openidurl.substring(0, openidurl.length() - 1);
                     }
-                    mgr.setUserAttribute(
-                            ud.getUserName(), UserAttribute.Attributes.OPENID_URL.toString(),
-                            openidurl);
+                    ud.setOpenIdUrl(openidurl);
                 }
+
+                // save new user
+                mgr.addUser(ud);
 
                 WebloggerFactory.getWeblogger().flush();
 

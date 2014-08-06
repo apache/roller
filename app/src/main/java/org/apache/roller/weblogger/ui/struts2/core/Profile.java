@@ -26,7 +26,6 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.UserAttribute;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -62,18 +61,7 @@ public class Profile extends UIAction {
         getBean().setPasswordConfirm(null);
         getBean().setLocale(ud.getLocale());
         getBean().setTimeZone(ud.getTimeZone());
-        
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        try {
-            UserAttribute openIdUrl = mgr.getUserAttribute(
-                ud.getUserName(), UserAttribute.Attributes.OPENID_URL.toString());
-            if (openIdUrl != null) {
-                getBean().setOpenIdUrl(openIdUrl.getValue());
-            }
-        } catch (Exception ex) {
-            log.error("Unexpected error loading user OpenID url", ex);
-            addError("error in action", ex.toString());
-        }
+        getBean().setOpenIdUrl(ud.getOpenIdUrl());
         return INPUT;
     }
 
@@ -101,8 +89,7 @@ public class Profile extends UIAction {
                     if (openidurl != null && openidurl.endsWith("/")) {
                         openidurl = openidurl.substring(0, openidurl.length() - 1);
                     }
-                    mgr.setUserAttribute(existingUser.getUserName(), 
-                        UserAttribute.Attributes.OPENID_URL.toString(), openidurl);
+                    existingUser.setOpenIdUrl(openidurl);
                 } catch (Exception ex) {
                     log.error("Unexpected error saving user OpenID URL", ex);
                     addError("Error in action", ex.toString());

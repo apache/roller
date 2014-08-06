@@ -41,6 +41,7 @@ public class User implements Serializable {
     private String  id = UUIDGenerator.generateUUID();
     private String  userName;
     private String  password;
+    private String  openIdUrl;
     private String  screenName;
     private String  fullName;
     private String  emailAddress;
@@ -69,8 +70,7 @@ public class User implements Serializable {
         this.timeZone = timeZone;
         this.enabled = isEnabled;
     }
-    
-    
+
     /**
      * Id of the User.
      */
@@ -125,8 +125,18 @@ public class User implements Serializable {
             setPassword(newPassword);
         }
     }
-    
-    
+
+    /**
+     * Open ID URL of the user, if provided.
+     */
+    public String getOpenIdUrl() {
+        return openIdUrl;
+    }
+
+    public void setOpenIdUrl(String openIdUrl) {
+        this.openIdUrl = openIdUrl;
+    }
+
     /**
      * Screen name of the user.
      */

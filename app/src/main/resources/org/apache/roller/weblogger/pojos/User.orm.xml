@@ -33,6 +33,9 @@
         <named-query name="User.getByUserName&amp;Enabled">
             <query>SELECT u FROM User u WHERE u.userName= ?1 AND u.enabled = ?2</query>
         </named-query>
+        <named-query name="User.getByOpenIdUrl">
+            <query>SELECT u FROM User u WHERE u.openIdUrl = ?1</query>
+        </named-query>
         <named-query name="User.getByUserNameOrEmailAddressStartsWith">
             <query>SELECT u FROM User u WHERE u.userName LIKE ?1 OR u.emailAddress LIKE ?1</query>
         </named-query>
@@ -69,6 +72,9 @@
             </basic>
             <basic name="password">
                 <column name="passphrase" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="openIdUrl">
+                <column name="openid_url" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="fullName">
                 <column name="fullname" insertable="true" updatable="true" unique="true"/>

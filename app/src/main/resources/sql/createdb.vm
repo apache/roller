@@ -13,6 +13,7 @@ create table roller_user (
     id              varchar(48) not null primary key,
     username        varchar(255) not null,
     passphrase      varchar(255) not null,
+    openid_url      varchar(255),
     screenname      varchar(255) not null,
     fullname        varchar(255) not null,
     emailaddress    varchar(255) not null,
@@ -30,16 +31,6 @@ create table userrole (
     username         varchar(255) not null
 );
 create index ur_username_idx on userrole( username$!db.INDEXSIZE );
-
-create table roller_userattribute(
-    id        varchar(48) not null primary key,
-    username  varchar(255) not null,
-    attrname  varchar(255) not null,
-    attrvalue varchar(255) not null
-);    
-create index ua_username_idx  on roller_userattribute( username$!db.INDEXSIZE );
-create index ua_attrname_idx  on roller_userattribute( attrname$!db.INDEXSIZE );
-create index ua_attrvalue_idx on roller_userattribute( attrvalue$!db.INDEXSIZE );
 
 -- actions: comma separated list of actions permitted by permission
 -- objectid: for now this will always store weblogid
