@@ -348,11 +348,6 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".FolderAdd" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/FolderAdd.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
-    </definition>
-    
     <definition name=".FolderEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/FolderEdit.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />

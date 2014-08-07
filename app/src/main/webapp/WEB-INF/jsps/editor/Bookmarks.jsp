@@ -19,8 +19,7 @@
 
 <%-- JavaScript for bookmarks table --%>
 <script>
-// <!-- 
-function onDelete() 
+function onDelete()
 {
     if ( confirm("<s:text name='bookmarksForm.delete.confirm' />") ) 
     {
@@ -45,7 +44,6 @@ function onMove()
         document.bookmarks.submit();
     }
 }
-// -->
 </script>
 
 <s:if test="folder.name == 'default'">
@@ -64,7 +62,7 @@ function onMove()
     <s:url var="editUrl" action="folderEdit">
         <s:param name="weblog" value="%{actionWeblog.handle}" />
         <s:param name="bean.id" value="%{folder.id}" />
-        <s:param name="folderId" value="%{folder.id}" suppressEmptyParameters="true" />
+        <s:param name="folderId" value="%{folder.id}" />
     </s:url>
     <s:a href="%{editUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" /
         title="<s:text name='bookmarksForm.folder.edit.tip' />" /></s:a>

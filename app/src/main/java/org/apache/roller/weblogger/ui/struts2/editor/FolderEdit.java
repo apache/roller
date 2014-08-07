@@ -32,7 +32,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
- * Edit an existing folder.
+ * Edit a new or existing folder.
  */
 public class FolderEdit extends UIAction {
     
@@ -41,118 +41,96 @@ public class FolderEdit extends UIAction {
     // the id of the folder we are working with
     private String folderId = null;
     
-    // the folder we are editing
+    // the folder we are adding or editing
     private WeblogBookmarkFolder folder = null;
     
     // bean for managing form data
     private FolderBean bean = new FolderBean();
-    
-    
+
     public FolderEdit() {
-        this.actionName = "folderEdit";
         this.desiredMenu = "editor";
-        this.pageTitle = "folderForm.edit.title";
     }
 
     // load folder to edit
     public void myPrepare() {
-        try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            if(!StringUtils.isEmpty(getBean().getId())) {
-                setFolder(bmgr.getFolder(getBean().getId()));
+        if (StringUtils.isEmpty(bean.getId())) {
+            // Create and initialize new folder but don't save yet
+            folder = new WeblogBookmarkFolder();
+            folder.setWeblog(getActionWeblog());
+        } else {
+            // retrieve existing folder data from DB
+            try {
+                BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+                folder = bmgr.getFolder(getBean().getId());
+            } catch (WebloggerException ex) {
+                log.error("Error looking up folder", ex);
             }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up folder", ex);
         }
     }
-    
-    
+
     /**
      * Show folder edit page.
      */
     @SkipValidation
     public String execute() {
-        
-        if(getFolder() == null) {
-            addError("Cannot edit null folder");
-            return ERROR;
+        if (!isAdd()) {
+            // load bean with database values during initial load
+            getBean().copyFrom(folder);
         }
-        
-        // make sure bean is properly loaded from pojo data
-        getBean().copyFrom(getFolder());
-        
         return INPUT;
     }
 
-    
     /**
      * Save updated folder data.
      */
     public String save() {
-        
-        if(getFolder() == null) {
-            addError("Cannot edit null folder");
-            return ERROR;
-        }
-        
-        // validation
         myValidate();
         
         if(!hasActionErrors()) {
             try {
-
                 // copy updated attributes
-                getBean().copyTo(getFolder());
+                getBean().copyTo(folder);
 
                 // save changes
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-                bmgr.saveFolder(getFolder());
+                bmgr.saveFolder(folder);
                 WebloggerFactory.getWeblogger().flush();
 
                 // notify caches
-                CacheManager.invalidate(getFolder());
+                CacheManager.invalidate(folder);
 
-                addMessage("folderForm.update.success");
+                if (isAdd()) {
+                    // if adding, move to new folder upon save.
+                    folderId = folder.getId();
+                } else {
+                    // create message added in Bookmarks class as it's reached via a
+                    // redirect in struts.xml instead of a chain.
+                    addMessage("folderForm.updated");
+                }
+
+                return SUCCESS;
 
             } catch(Exception ex) {
                 log.error("Error saving folder", ex);
-                addError("Error saving folder");
+                addError("generic.error.check.logs");
             }
         }
         
         return INPUT;
     }
 
-    /**
-     * Cancel.
-     * 
-     * @return the string
-     */
-    public String cancel() {
-        return CANCEL;
-    }
-    
-    // TODO: validation
     public void myValidate() {
-        
-        // name is required, has max length, no html
-        
         // make sure new name is not a duplicate of an existing folder
-        if(!getFolder().getName().equals(getBean().getName())) {
-            Weblog weblog = getFolder().getWeblog();
-            if(weblog.hasBookmarkFolder(getBean().getName())) {
+        if((isAdd() || !folder.getName().equals(getBean().getName()))) {
+            if (folder.getWeblog().hasBookmarkFolder(getBean().getName())) {
                 addError("folderForm.error.duplicateName", getBean().getName());
             }
         }
     }
-    
 
-    public WeblogBookmarkFolder getFolder() {
-        return folder;
-    }
 
-    public void setFolder(WeblogBookmarkFolder folder) {
-        this.folder = folder;
+    private boolean isAdd() {
+        return actionName.equals("folderAdd");
     }
 
     public FolderBean getBean() {

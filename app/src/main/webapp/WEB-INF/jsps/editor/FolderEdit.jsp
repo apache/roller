@@ -17,21 +17,33 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<%-- Titling, processing actions different between add and edit --%>
+<s:if test="actionName == 'folderEdit'">
+    <s:set var="subtitleKey">folderForm.edit.subtitle</s:set>
+    <s:set var="mainAction">folderEdit</s:set>
+</s:if>
+<s:else>
+    <s:set var="subtitleKey">folderForm.add.subtitle</s:set>
+    <s:set var="mainAction">folderAdd</s:set>
+</s:else>
+
+
 <p class="subtitle">
-    <s:text name="folderForm.edit.subtitle" >
+    <s:text name="%{#subtitleKey}" >
         <s:param value="folder.name" />
     </s:text>
 </p>
 
-<s:form action="folderEdit!save">
+<s:form>
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="bean.id" />
-    
-    <%-- if we cancel then we need this attribute --%>
-    <%-- (Need to test after folder edit re-implemented) --%>
-    <s:hidden name="folderId" value="%{folder.id}" />
-    
+    <%-- folderId needed on cancel to determine folder to return to (see struts.xml) --%>
+    <s:hidden name="folderId" value="%{folderId}" />
+    <s:if test="actionName == 'folderEdit'">
+        <%-- bean for folder add does not have a bean id yet --%>
+        <s:hidden name="bean.id" />
+    </s:if>
+
     <table>
         <tr>
             <td><s:text name="generic.name" /></td>
@@ -40,7 +52,7 @@
     </table>
     
     <p>
-        <s:submit value="%{getText('generic.save')}" />
+        <s:submit value="%{getText('generic.save')}" action="%{#mainAction}!save"/>
         <s:submit value="%{getText('generic.cancel')}" action="folderEdit!cancel" />
     </p>
     

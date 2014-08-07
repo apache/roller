@@ -184,10 +184,4 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         return bmgr.getBookmarks(this);
     }
 
-    // convenience method for updating the folder name
-    public void updateName(String newName) throws WebloggerException {
-        setName(newName);
-        WebloggerFactory.getWeblogger().getBookmarkManager().saveFolder(this);
-    }
-    
 }

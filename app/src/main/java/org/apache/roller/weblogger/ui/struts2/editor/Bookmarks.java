@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * List bookmarks and folders and allow for moving them around and deleting them.
@@ -174,6 +175,13 @@ public class Bookmarks extends UIAction {
         return execute();
     }
 
+    @SkipValidation
+    public String folderCreated() {
+        // action from FolderEdit upon creation of a new folder, to display
+        // a success message prior to showing the new folder.
+        addMessage("folderForm.created");
+        return execute();
+    }
 
     /**
      * View the contents of another bookmark folder.

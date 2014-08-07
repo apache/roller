@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<%-- Titling, processing actions different between bookmark add and edit --%>
+<%-- Titling, processing actions different between add and edit --%>
 <s:if test="actionName == 'bookmarkEdit'">
     <s:set var="subtitleKey">bookmarkForm.edit.subtitle</s:set>
     <s:set var="mainAction">bookmarkEdit</s:set>

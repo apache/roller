@@ -382,8 +382,6 @@
                 <param name="actionName">bookmarks</param>
                 <param name="weblog">${weblog}</param>
                 <param name="folderId">${folderId}</param>
-                <!-- TODO: Remove in JSP? -->
-                <param name="suppressEmptyParameters">true</param>
             </result>
             <result name="error" type="chain">bookmarkEdit</result>
         </action>
@@ -395,26 +393,29 @@
         </action>
         
         <action name="folderAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.FolderAdd">
-            <result name="input" type="tiles">.FolderAdd</result>
-            <result name="success" type="chain">bookmarks</result>
-            <result name="cancel" type="redirectAction">
-                <param name="actionName">bookmarks</param>
+                class="org.apache.roller.weblogger.ui.struts2.editor.FolderEdit">
+            <param name="actionName">folderAdd</param>
+            <param name="pageTitle">folderForm.add.title</param>
+            <result name="input" type="tiles">.FolderEdit</result>
+            <!-- redirect because switching to the newly created bookmarks folder -->
+            <result name="success" type="redirectAction">
+                <param name="actionName">bookmarks!folderCreated</param>
                 <param name="weblog">${weblog}</param>
                 <param name="folderId">${folderId}</param>
-                <param name="suppressEmptyParameters">true</param>
             </result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
         <action name="folderEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.FolderEdit">
+            <param name="actionName">folderEdit</param>
+            <param name="pageTitle">folderForm.edit.title</param>
             <result name="input" type="tiles">.FolderEdit</result>
+            <result name="success" type="chain">bookmarks</result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">bookmarks</param>
                 <param name="weblog">${weblog}</param>
                 <param name="folderId">${folderId}</param>
-                <param name="suppressEmptyParameters">true</param>
             </result>
             <result name="error" type="chain">bookmarks</result>
         </action>

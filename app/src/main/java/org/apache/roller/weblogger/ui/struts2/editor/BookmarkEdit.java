@@ -80,7 +80,7 @@ public class BookmarkEdit extends UIAction {
     @SkipValidation
     public String execute() {
         if (!isAdd()) {
-            // make sure bean is populated with DB values on initial load
+            // load bean with database values during initial load
             getBean().copyFrom(getBookmark());
         }
         return INPUT;
@@ -88,10 +88,8 @@ public class BookmarkEdit extends UIAction {
 
     
     public String save() {
-
-        // validation
         myValidate();
-        
+
         if(!hasActionErrors()) {
             try {
                 getBean().copyTo(bookmark);

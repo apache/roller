@@ -46,9 +46,7 @@ public class FolderBean {
     }
 
     public void copyTo(WeblogBookmarkFolder dataHolder) throws WebloggerException {
-        if(!dataHolder.getName().equals(this.name)) {
-            dataHolder.updateName(this.name);
-        }
+        dataHolder.setName(this.name);
     }
 
     public void copyFrom(WeblogBookmarkFolder dataHolder) {
