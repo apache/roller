@@ -160,14 +160,11 @@
 
 
     <%-- ================================================================== --%>
-    <%-- Weblog edit or preview --%>
+    <%-- Weblog editor --%>
 
-    <div>
-        <s:include value="%{editor.jspPage}" />
-    </div>
+    <s:include value="%{editor.jspPage}" />
 
     <br />
-
 
     <%-- ================================================================== --%>
     <%-- plugin chooser --%>

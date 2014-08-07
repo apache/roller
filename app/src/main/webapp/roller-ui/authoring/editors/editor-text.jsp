@@ -22,21 +22,30 @@
 <%-- Text editors --%>
 
 <p class="toplabel">
-    <span style="font-weight:normal;float:right;">
-        <a href="#" onClick="onClickAddImage();">Add Image</a>&nbsp;
-    </span>
+
 </p>
 
-<p class="toplabel"><s:text name="weblogEdit.content" /></p>
-<s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
+<div id="accordion">
+    <h3>
+        <s:text name="weblogEdit.content" />
+        <span style="font-weight:normal;float:right;">
+            <a href="#" onClick="onClickAddImage();">Add Image</a>
+        </span>
+    </h3>
+    <div>
+        <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
+    </div>
+    <h3><s:text name="weblogEdit.summary" /></h3>
+    <div>
+        <s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6"/>
+    </div>
+</div>
 
-<p class="toplabel"><s:text name="weblogEdit.summary" /></p>
-<s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6"/>
 
 <%-- ********************************************************************* --%>
 <%-- Lightbox for popping up image chooser --%>
 
-<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileChooser.popupTitle'/>">
+<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileChooser.popupTitle'/>" style="display:none">
     <iframe id="mediaFileEditor"
             style="visibility:inherit"
             height="100%"
@@ -54,7 +63,7 @@
         <s:url var="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $("#mediaFileEditor").attr('src','<s:property value="%{mediaFileImageChooser}" />');
+        $( "#mediaFileEditor" ).attr('src','<s:property value="%{mediaFileImageChooser}" />');
         $(function() {
             $("#mediafile_edit_lightbox").dialog({
                 modal  : true,
@@ -79,6 +88,10 @@
     <%-- Plain text editor (raw HTML entry) --%>
 
     <script>
+        $(function() {
+            $( "#accordion" ).accordion({
+            });
+        });
         function insertImage(imageURL) {
             insertAtCursor(document.getElementById('edit_content'), imageURL);
         }
@@ -123,10 +136,24 @@
     <script src="<s:property value="xinhaHome" />/XinhaCore.js"></script>
 
     <script>
+        $(function() {
+            $( "#accordion" ).accordion({
+                activate: function( event, ui ) {
+                   <%-- Xinha summary editor needs a one-time init as it is
+                        not visible upon window opening (http://tinyurl.com/mn97j5l) --%>
+                   if (!summary_editor_initialized) {
+                       xinha_editors.edit_summary.sizeEditor();
+                       summary_editor_initialized = true;
+                   }
+                }
+            });
+        });
+
         function insertImage(imageURL) {
             xinha_editors.edit_content.insertHTML(imageURL);
         }
 
+        summary_editor_initialized = false;
         xinha_editors = null;
         xinha_init    = null;
         xinha_config  = null;
@@ -162,8 +189,6 @@
             xinha_config.stripBaseHref = false;
 
             xinha_editors   = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
-            xinha_editors.edit_content.config.height = '300px';
-            xinha_editors.edit_summary.config.height = '200px';
 
             Xinha.startEditors(xinha_editors);
         }
