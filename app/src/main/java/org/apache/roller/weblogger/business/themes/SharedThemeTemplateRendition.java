@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.business.themes;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -31,7 +30,6 @@ import java.util.Date;
  */
 public class SharedThemeTemplateRendition implements Serializable, TemplateRendition {
 
-	private WeblogTemplate weblogTemplate = null;
 	private String template = null;
 	private RenditionType type = null;
 	private TemplateLanguage templateLanguage = null;
@@ -52,15 +50,6 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 	// @Override
 	public void setTemplate(String template) {
 		this.template = template;
-	}
-
-	// @Override
-	public WeblogTemplate getWeblogTemplate() {
-		return null;
-	}
-
-	// @Override
-	public void setWeblogTemplate(WeblogTemplate templateId) {
 	}
 
 	// @Override

@@ -41,15 +41,11 @@ public interface TemplateRendition {
 
     String getTemplate();
 
-    WeblogTemplate getWeblogTemplate();
-
     TemplateLanguage getTemplateLanguage();
 
     RenditionType getType();
 
     void setTemplate(String template);
-
-    void setWeblogTemplate(WeblogTemplate template);
 
     void setTemplateLanguage(TemplateLanguage templateLanguage);
 
