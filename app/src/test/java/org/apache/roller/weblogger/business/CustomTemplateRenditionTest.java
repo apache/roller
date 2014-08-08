@@ -101,67 +101,61 @@ public class CustomTemplateRenditionTest extends TestCase{
 
            // create template
            mgr.saveTemplate(testPage);
-           TestUtils.endSession(true);
 
            //create standard template rendition
-           CustomTemplateRendition standardTemplateCode = new CustomTemplateRendition(testPage.getId(), RenditionType.STANDARD);
+           CustomTemplateRendition standardTemplateCode = new CustomTemplateRendition(testPage, RenditionType.STANDARD);
            standardTemplateCode.setTemplate("standard.template.code");
            standardTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
-           mgr.saveTemplateRendition(standardTemplateCode);
 
            //create mobile code
-           CustomTemplateRendition mobileTemplateCode = new CustomTemplateRendition(testPage.getId(), RenditionType.MOBILE);
+           CustomTemplateRendition mobileTemplateCode = new CustomTemplateRendition(testPage, RenditionType.MOBILE);
            mobileTemplateCode.setTemplate("mobile.template.code");
            mobileTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
-           mgr.saveTemplateRendition(mobileTemplateCode);
+
            TestUtils.endSession(true);
 
            // check that create was successful
-           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
-           assertNotNull(standardCode);
-           assertEquals(standardTemplateCode.getTemplate() ,standardCode.getTemplate());
+           WeblogTemplate testPageCheck = mgr.getTemplate(testPage.getId());
 
-           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
+           assertNotNull(testPageCheck);
+
+           standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
+           assertNotNull(standardCode);
+           assertEquals(standardTemplateCode.getTemplate(), standardCode.getTemplate());
+
+           mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
            assertNotNull(mobileCode);
            assertEquals(mobileTemplateCode.getTemplate() ,mobileCode.getTemplate());
 
            // update template Code
            standardCode = null;
-           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
+           standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
            standardCode.setTemplate("update.standard.template");
            mgr.saveTemplateRendition(standardCode);
 
            mobileCode = null;
-           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
+           mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
            mobileCode.setTemplate("update.mobile.template");
            mgr.saveTemplateRendition(mobileCode);
 
            TestUtils.endSession(true);
 
            // check that update was successful
-           standardCode =null;
-           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
+           standardCode = null;
+           standardCode = testPageCheck.getTemplateRendition(RenditionType.STANDARD);
            assertEquals("update.standard.template",standardCode.getTemplate());
 
-           mobileCode =null;
-           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
+           mobileCode = null;
+           mobileCode = testPageCheck.getTemplateRendition(RenditionType.MOBILE);
            assertEquals("update.mobile.template",mobileCode.getTemplate());
 
            WeblogTemplate page = mgr.getTemplate(testPage.getId());
            mgr.removeTemplate(page);
            TestUtils.endSession(true);
 
-           // check that update was successful
-           standardCode =null;
-           standardCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.STANDARD);
-           assertNull(standardCode);
-
-           mobileCode =null;
-           mobileCode = mgr.getTemplateRenditionByType(testPage.getId(), RenditionType.MOBILE);
-           assertNull(mobileCode);
+           // check that template remove was successful
+           testPageCheck = mgr.getTemplate(testPage.getId());
+           assertNull(testPageCheck);
 
        }
-
-
-
 }

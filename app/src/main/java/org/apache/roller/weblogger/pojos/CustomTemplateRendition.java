@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,21 +31,30 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 
 	private static final long serialVersionUID = -1497618963802805151L;
 	private String id = UUIDGenerator.generateUUID();
-	private String templateId = null;
+    private WeblogTemplate weblogTemplate = null;
 	// template contents
 	private String template = null;
 	private RenditionType type = null;
 	private TemplateLanguage templateLanguage = null;
 
-	public CustomTemplateRendition(String templateId, RenditionType type) {
-		this.templateId = templateId;
+	public CustomTemplateRendition(WeblogTemplate template, RenditionType type) {
+		this.weblogTemplate = template;
 		this.type = type;
+        weblogTemplate.addTemplateRendition(this);
 	}
 
 	public CustomTemplateRendition() {
 	}
 
-	public String getId() {
+    public WeblogTemplate getWeblogTemplate() {
+        return weblogTemplate;
+    }
+
+    public void setWeblogTemplate(WeblogTemplate weblogTemplate) {
+        this.weblogTemplate = weblogTemplate;
+    }
+
+    public String getId() {
 		return id;
 	}
 
@@ -53,24 +62,14 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 		this.id = id;
 	}
 
-	// @Override
+	@Override
 	public String getTemplate() {
 		return template;
 	}
 
-	// @Override
+	@Override
 	public void setTemplate(String template) {
 		this.template = template;
-	}
-
-	// @Override
-	public String getTemplateId() {
-		return templateId;
-	}
-
-	// @Override
-	public void setTemplateId(String templateId) {
-		this.templateId = templateId;
 	}
 
 	// @Override
@@ -87,7 +86,7 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 
 	public String toString() {
         return "{" + getId()
-                + ", " + getTemplateId()
+                + ", " + getWeblogTemplate().getId()
                 + ", [ " + getTemplate()
                 + "] , " + getType() + "}";
 	}
@@ -100,12 +99,12 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
             return false;
         }
 		CustomTemplateRendition o = (CustomTemplateRendition) other;
-		return new EqualsBuilder().append(getTemplateId(), o.getTemplateId())
+		return new EqualsBuilder().append(getWeblogTemplate().getId(), o.getWeblogTemplate().getId())
 				.append(getTemplate(), o.getTemplate()).isEquals();
 	}
 
 	public int hashCode() {
-		return new HashCodeBuilder().append(getTemplateId())
+		return new HashCodeBuilder().append(getWeblogTemplate().getId())
 				.append(getTemplate()).toHashCode();
 	}
 

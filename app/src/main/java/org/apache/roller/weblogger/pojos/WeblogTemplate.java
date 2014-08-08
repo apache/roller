@@ -22,11 +22,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -146,8 +147,9 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setOutputContentType(String outputContentType) {
         this.outputContentType = outputContentType;
     }
-    
-    
+
+    private List<CustomTemplateRendition> templateRenditions = new ArrayList<CustomTemplateRendition>();
+
     /**
      * Determine if this WeblogTemplate is required or not.
      */
@@ -174,8 +176,39 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         return ComponentType.CUSTOM.equals(getAction()) && !isRequired();
     }
 
-    public CustomTemplateRendition getTemplateRendition(CustomTemplateRendition.RenditionType type) throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateRenditionByType(getId(), type);
+
+    public List<CustomTemplateRendition> getTemplateRenditions() {
+        return templateRenditions;
+    }
+
+    public void setTemplateRenditions(List<CustomTemplateRendition> templateRenditions) {
+        this.templateRenditions = templateRenditions;
+    }
+
+    public CustomTemplateRendition getTemplateRendition(CustomTemplateRendition.RenditionType desiredType) throws WebloggerException {
+        for (CustomTemplateRendition rnd : templateRenditions) {
+            if (rnd.getType().equals(desiredType)) {
+                return rnd;
+            }
+        }
+        return null;
+    }
+
+    public void addTemplateRendition(CustomTemplateRendition newRendition) {
+        if (hasTemplateRendition(newRendition)) {
+            throw new IllegalArgumentException("Rendition type '" + newRendition.getType()
+                    + " for template '" + this.getName() + "' already exists.");
+        }
+        templateRenditions.add(newRendition);
+    }
+
+    public boolean hasTemplateRendition(CustomTemplateRendition proposed) {
+        for (CustomTemplateRendition rnd : templateRenditions) {
+            if(rnd.getType().equals(proposed.getType())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     //------------------------------------------------------- Good citizenship

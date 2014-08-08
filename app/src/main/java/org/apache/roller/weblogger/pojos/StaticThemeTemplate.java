@@ -108,7 +108,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     }
 
     public TemplateRendition getTemplateRendition(RenditionType type) throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateRenditionByType(this.id, type);
+        return null;
     }
 
     public void setType(RenditionType type){

@@ -41,7 +41,7 @@ public interface TemplateRendition {
 
     String getTemplate();
 
-    String getTemplateId();
+    WeblogTemplate getWeblogTemplate();
 
     TemplateLanguage getTemplateLanguage();
 
@@ -49,7 +49,7 @@ public interface TemplateRendition {
 
     void setTemplate(String template);
 
-    void setTemplateId(String templateId);
+    void setWeblogTemplate(WeblogTemplate template);
 
     void setTemplateLanguage(TemplateLanguage templateLanguage);
 

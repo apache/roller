@@ -30,7 +30,15 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -39,7 +47,6 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
-import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
@@ -168,8 +175,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List<WeblogTemplate> templates = templateQuery.getResultList();
 
         for (WeblogTemplate template : templates) {
-            // remove associated templateCode objects
-            this.removeTemplateRenditions(template);
             this.strategy.remove(template);
         }
         
@@ -242,13 +247,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     public void saveTemplateRendition(CustomTemplateRendition rendition) throws WebloggerException {
         this.strategy.store(rendition);
-        // template update should happen by saving rendition.
+
+        // update weblog last modified date.  date updated by saveWeblog()
+        roller.getWeblogManager().saveWeblog(rendition.getWeblogTemplate().getWeblog());
     }
     
     public void removeTemplate(WeblogTemplate template) throws WebloggerException {
-        //remove template code objects
-        this.removeTemplateRenditions(template);
-        this.strategy.flush();
         this.strategy.remove(template);
         // update weblog last modified date.  date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(template.getWeblog());
@@ -574,26 +578,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
     }
 
-    public CustomTemplateRendition getTemplateRenditionByType(String templateId, RenditionType type) throws WebloggerException{
-        if(templateId == null) {
-            throw new WebloggerException("Template ID is null");
-        }
-
-        if (type == null) {
-            throw new WebloggerException("Type is null");
-        }
-
-        TypedQuery<CustomTemplateRendition> query = strategy.getNamedQuery("CustomTemplateRendition.getRenditionByType",
-                CustomTemplateRendition.class);
-        query.setParameter(1, templateId);
-        query.setParameter(2, type);
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
     /**
      * @see org.apache.roller.weblogger.business.WeblogManager#getTemplates(Weblog)
      */
@@ -696,17 +680,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List<Long> results = strategy.getNamedQuery(
                 "Weblog.getCountAllDistinct", Long.class).getResultList();
         return results.get(0);
-    }
-
-    private void removeTemplateRenditions(WeblogTemplate template) throws WebloggerException {
-        TypedQuery<CustomTemplateRendition> codeQuery = strategy.getNamedQuery(
-                "CustomTemplateRendition.getRenditionsByTemplateId", CustomTemplateRendition.class);
-        codeQuery.setParameter(1, template.getId());
-        List<CustomTemplateRendition> codeList = codeQuery.getResultList();
-
-        for (CustomTemplateRendition code : codeList) {
-            this.strategy.remove(code);
-        }
     }
 
 }

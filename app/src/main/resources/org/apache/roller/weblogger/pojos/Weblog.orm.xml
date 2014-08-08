@@ -106,7 +106,7 @@
 			<many-to-one name="bloggerCategory" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory">
 				<join-column name="bloggercatid" insertable="true" updatable="true"/>
 			</many-to-one>
-            <one-to-many name="weblogCategories" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory" mapped-by="weblog" fetch="EAGER">
+            <one-to-many name="weblogCategories" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory" mapped-by="weblog">
                 <order-by>position</order-by>
                 <cascade>
                     <cascade-remove/>

@@ -180,12 +180,6 @@ public interface WeblogManager {
         throws WebloggerException;
 
     /**
-     * Get a custom template rendition by parent template ID and rendition type.
-     */
-    CustomTemplateRendition getTemplateRenditionByType(String templateId, RenditionType type)
-            throws WebloggerException ;
-
-    /**
      * Save a custom template rendition
      */
     void saveTemplateRendition(CustomTemplateRendition templateCode) throws WebloggerException;

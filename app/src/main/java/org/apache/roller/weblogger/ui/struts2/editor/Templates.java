@@ -167,7 +167,7 @@ public class Templates extends UIAction {
 
                 // Create weblog template codes for available types.
                 CustomTemplateRendition standardRendition = new CustomTemplateRendition(
-                        newTemplate.getId(), RenditionType.STANDARD);
+                        newTemplate, RenditionType.STANDARD);
                 standardRendition.setTemplate(getText("pageForm.newTemplateContent"));
                 standardRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
                 WebloggerFactory.getWeblogger().getWeblogManager()

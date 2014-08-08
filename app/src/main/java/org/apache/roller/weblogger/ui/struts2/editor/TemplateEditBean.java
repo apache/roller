@@ -161,7 +161,7 @@ public class TemplateEditBean {
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         } else { 
             // otherwise create it, then set it
-            CustomTemplateRendition tc = new CustomTemplateRendition(dataHolder.getId(), RenditionType.STANDARD);
+            CustomTemplateRendition tc = new CustomTemplateRendition(dataHolder, RenditionType.STANDARD);
 			tc.setTemplate("");
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         }

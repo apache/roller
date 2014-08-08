@@ -450,8 +450,7 @@ public class SharedThemeFromDir extends SharedTheme {
             log.error("Couldn't load stylesheet theme [" + this.getName()
                     + "] template file [" + templateFile + "]");
         }
-
-        templateRendition.setTemplateId(templateId);
+        //TODO: remove templateId above
         templateRendition.setTemplate(contents);
         templateRendition.setTemplateLanguage(templateCodeMetadata.getTemplateLang());
         templateRendition.setType(templateCodeMetadata.getType());

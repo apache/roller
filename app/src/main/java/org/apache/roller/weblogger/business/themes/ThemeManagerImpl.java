@@ -265,7 +265,7 @@ public class ThemeManagerImpl implements ThemeManager {
 					if (weblogTemplateCode == null) {
 						// Does not exist so create a new one
 						weblogTemplateCode = new CustomTemplateRendition(
-								template.getId(), type);
+								template, type);
 					}
 					weblogTemplateCode.setType(type);
 					weblogTemplateCode.setTemplate(templateCode.getTemplate());

@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business.themes;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -30,14 +31,13 @@ import java.util.Date;
  */
 public class SharedThemeTemplateRendition implements Serializable, TemplateRendition {
 
-	private String templateId = null;
+	private WeblogTemplate weblogTemplate = null;
 	private String template = null;
 	private RenditionType type = null;
 	private TemplateLanguage templateLanguage = null;
 	private Date lastModified = null;
 
-	public SharedThemeTemplateRendition(String templateId, RenditionType type) {
-		this.templateId = templateId;
+	public SharedThemeTemplateRendition(RenditionType type) {
 		this.type = type;
 	}
 
@@ -55,13 +55,12 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 	}
 
 	// @Override
-	public String getTemplateId() {
-		return templateId;
+	public WeblogTemplate getWeblogTemplate() {
+		return null;
 	}
 
 	// @Override
-	public void setTemplateId(String templateId) {
-		this.templateId = templateId;
+	public void setWeblogTemplate(WeblogTemplate templateId) {
 	}
 
 	// @Override
@@ -96,7 +95,7 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 	// ------------------------------------------------------- Good citizenship
 
 	public String toString() {
-        return "{" + this.templateId + ", [ " + this.template +"] , " + this.type + "}";
+        return "{" + this.template + ", [ " + this.template +"] , " + this.type + "}";
 	}
 
 	public boolean equals(Object other) {
@@ -107,12 +106,12 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
             return false;
         }
 		SharedThemeTemplateRendition o = (SharedThemeTemplateRendition) other;
-		return new EqualsBuilder().append(templateId, o.getTemplateId())
+		return new EqualsBuilder()
 				.append(template, o.getTemplate()).isEquals();
 	}
 
 	public int hashCode() {
-		return new HashCodeBuilder().append(getTemplateId())
+		return new HashCodeBuilder()
 				.append(getTemplate()).toHashCode();
 	}
 

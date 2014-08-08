@@ -56,6 +56,11 @@
             <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
+            <one-to-many name="templateRenditions" target-entity="org.apache.roller.weblogger.pojos.CustomTemplateRendition" mapped-by="weblogTemplate">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
             <transient name="custom"/>
             <transient name="required"/>
         </attributes>
