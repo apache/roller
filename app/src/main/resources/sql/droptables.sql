@@ -35,7 +35,6 @@ drop table autoping;
 drop table pingtarget;
 drop table bookmark;
 drop table bookmark_folder;
-drop table roller_userattribute;
 drop table roller_mediafiletag;
 drop table roller_mediafile;
 drop table roller_mediafiledir;

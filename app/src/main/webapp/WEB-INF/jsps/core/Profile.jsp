@@ -68,7 +68,7 @@
             <s:hidden name="bean.password" />
         </s:else>
         
-        <s:if test="openIdConfiguration != 'disabled'">
+        <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
             <tr>
                 <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
                 <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" id="f_openid_identifier" /></td>

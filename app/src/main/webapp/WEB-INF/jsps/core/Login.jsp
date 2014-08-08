@@ -46,7 +46,7 @@ if (cmaEnabled) {
             <tr>
                 <td width="20%" align="right"><s:text name="loginPage.openID" /></td>
                 <td width="80%">
-                    <input type="text" name="openid_identifier" id="openid_identifier" class="f_openid_identifier" size="40" maxlength="255" />
+                    <input type="text" name="openid_identifier" id="openid_identifier" class="f_openid_identifier" size="40" maxlength="255" style="width: 35%"/>
                 </td>
             </tr>    
             <tr>
