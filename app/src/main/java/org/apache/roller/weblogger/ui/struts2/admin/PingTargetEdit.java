@@ -16,139 +16,127 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.struts2.common;
+package org.apache.roller.weblogger.ui.struts2.admin;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
+import org.apache.roller.weblogger.ui.struts2.common.PingTargetFormBean;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
-
 /**
- * Base implementation for action that can edit an existing ping target.
+ * Add or modify a common ping target.
  */
-public abstract class PingTargetEditBase extends UIAction {
+public class PingTargetEdit extends UIAction {
     
+    private static Log log = LogFactory.getLog(PingTargetEdit.class);
+
     // ping target we are working on, if any
     private PingTarget pingTarget = null;
-    
+
     // a bean for managing submitted data
     private PingTargetFormBean bean = new PingTargetFormBean();
-    
-    
-    // get logger
-    protected abstract Log getLogger();
-    
-    
-    /**
-     * Prepare action by loading ping target to work on.
-     */
+
+    public PingTargetEdit() {
+        this.desiredMenu = "admin";
+        this.pageTitle = "pingTarget.pingTarget";
+    }
+
+    // no weblog required
+    public boolean isWeblogRequired() {
+        return false;
+    }
+
     public void myPrepare() {
-        
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         if(!StringUtils.isEmpty(getBean().getId())) {
-            
             try {
-                setPingTarget(pingTargetMgr.getPingTarget(getBean().getId()));
+                pingTarget = pingTargetMgr.getPingTarget(getBean().getId());
             } catch (WebloggerException ex) {
-                getLogger().error("Error looking up ping target - "+getBean().getId());
+                log.error("Error looking up ping target - "+getBean().getId());
             }
-            
-            if(getPingTarget() == null) {
+            if(pingTarget == null) {
                 addError("pingTarget.notFound", getBean().getId());
             }
-            
         } else {
             addError("pingTarget.unspecified");
         }
     }
-    
-    
+
     public String execute() {
-        
         if(!hasActionErrors()) {
             // load bean with data from ping target
-            getBean().copyFrom(getPingTarget());
+            getBean().copyFrom(pingTarget);
         } else {
             // if we already have an error then that means we couldn't load
             // an existing ping target to work on, so return ERROR result
             return ERROR;
         }
-        
         return INPUT;
     }
-    
-    
+
     /**
      * Save ping target.
      */
     public String save() {
-        
+
         if(hasActionErrors()) {
             // if we already have an error then that means we couldn't load
             // an existing ping target to work on, so return ERROR result
             return INPUT;
         }
-        
+
         // copy data from form into ping target
-        getBean().copyTo(getPingTarget());
-        
+        getBean().copyTo(pingTarget);
+
         // Call private helper to validate ping target
         // If there are errors, go back to the target edit page.
-        myValidate(getPingTarget());
-        
+        myValidate(pingTarget);
+
         if (!hasActionErrors()) {
             try {
                 // Appears to be ok.  Save it and flush.
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-                pingTargetMgr.savePingTarget(getPingTarget());
+                pingTargetMgr.savePingTarget(pingTarget);
                 WebloggerFactory.getWeblogger().flush();
 
                 addMessage("pingTarget.saved");
             } catch (WebloggerException ex) {
-                getLogger().error("Error saving ping target", ex);
+                log.error("Error saving ping target", ex);
                 addError("pingTarget.saved.error");
             }
         }
-        
+
         return INPUT;
     }
-    
-    
+
+
     /**
      * Private helper to validate a ping target.
      */
     protected void myValidate(PingTarget pingTarget) {
-        
+
         try {
             PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             if (!pingTargetMgr.isNameUnique(pingTarget)) {
                 addError("pingTarget.nameNotUnique");
             }
-            
+
             if (!pingTargetMgr.isUrlWellFormed(pingTarget)) {
                 addError("pingTarget.malformedUrl");
             } else if (!pingTargetMgr.isHostnameKnown(pingTarget)) {
                 addError("pingTarget.unknownHost");
             }
         } catch (WebloggerException ex) {
-            getLogger().error("Error validating ping target", ex);
+            log.error("Error validating ping target", ex);
             addError("pingTarget.saved.error");
         }
     }
-    
-    
-    public PingTarget getPingTarget() {
-        return pingTarget;
-    }
 
-    public void setPingTarget(PingTarget pingTarget) {
-        this.pingTarget = pingTarget;
-    }
-    
     public PingTargetFormBean getBean() {
         return bean;
     }
@@ -156,5 +144,6 @@ public abstract class PingTargetEditBase extends UIAction {
     public void setBean(PingTargetFormBean bean) {
         this.bean = bean;
     }
-    
+
+
 }

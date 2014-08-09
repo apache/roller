@@ -201,7 +201,7 @@
         </action>
         
         <action name="commonPingTargetEdit!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.admin.CommonPingTargetEdit">
+                class="org.apache.roller.weblogger.ui.struts2.admin.PingTargetEdit">
             <param name="actionName">commonPingTargetEdit</param>
             <result name="input" type="tiles">.PingTargetEdit</result>
             <result name="error" type="chain">commonPingTargets</result>
