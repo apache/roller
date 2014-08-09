@@ -25,7 +25,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.ui.struts2.common.PingTargetFormBean;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 /**
@@ -39,7 +38,7 @@ public class PingTargetEdit extends UIAction {
     private PingTarget pingTarget = null;
 
     // a bean for managing submitted data
-    private PingTargetFormBean bean = new PingTargetFormBean();
+    private PingTargetBean bean = new PingTargetBean();
 
     public PingTargetEdit() {
         this.desiredMenu = "admin";
@@ -57,7 +56,7 @@ public class PingTargetEdit extends UIAction {
             try {
                 pingTarget = pingTargetMgr.getPingTarget(getBean().getId());
             } catch (WebloggerException ex) {
-                log.error("Error looking up ping target - "+getBean().getId());
+                log.error("Error looking up ping target - " + getBean().getId());
             }
             if(pingTarget == null) {
                 addError("pingTarget.notFound", getBean().getId());
@@ -137,11 +136,11 @@ public class PingTargetEdit extends UIAction {
         }
     }
 
-    public PingTargetFormBean getBean() {
+    public PingTargetBean getBean() {
         return bean;
     }
 
-    public void setBean(PingTargetFormBean bean) {
+    public void setBean(PingTargetBean bean) {
         this.bean = bean;
     }
 

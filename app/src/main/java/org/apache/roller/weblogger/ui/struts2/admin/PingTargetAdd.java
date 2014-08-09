@@ -27,7 +27,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.ui.struts2.common.PingTargetFormBean;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -38,7 +37,7 @@ public class PingTargetAdd extends UIAction {
     private static Log log = LogFactory.getLog(PingTargetAdd.class);
 
     // a bean for managing submitted data
-    private PingTargetFormBean bean = new PingTargetFormBean();
+    private PingTargetBean bean = new PingTargetBean();
 
     public PingTargetAdd() {
         this.desiredMenu = "admin";
@@ -54,8 +53,8 @@ public class PingTargetAdd extends UIAction {
     }
 
     public String save() {
-        PingTarget pingTarget = new PingTarget(null, getBean().getName(),
-                getBean().getPingUrl(), false);
+        PingTarget pingTarget = new PingTarget(null, bean.getName(),
+                bean.getPingUrl(), false);
 
         myValidate(pingTarget);
 
@@ -101,11 +100,11 @@ public class PingTargetAdd extends UIAction {
         }
     }
 
-    public PingTargetFormBean getBean() {
+    public PingTargetBean getBean() {
         return bean;
     }
 
-    public void setBean(PingTargetFormBean bean) {
+    public void setBean(PingTargetBean bean) {
         this.bean = bean;
     }
 }

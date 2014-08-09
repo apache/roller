@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.struts2.common;
+package org.apache.roller.weblogger.ui.struts2.admin;
 
 import org.apache.roller.weblogger.pojos.PingTarget;
 
@@ -24,7 +24,7 @@ import org.apache.roller.weblogger.pojos.PingTarget;
 /**
  * Form bean used by ping target actions.
  */
-public class PingTargetFormBean {
+public class PingTargetBean {
     
     private String id = null;
     private String name = null;

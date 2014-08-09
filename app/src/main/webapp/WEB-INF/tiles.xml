@@ -183,8 +183,8 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
     </definition>
     
-    <definition name=".CommonPingTargets" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/CommonPingTargets.jsp" />
+    <definition name=".PingTargets" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargets.jsp" />
     </definition>
     
     <definition name=".PingTargetConfirm" extends=".tiles-tabbedpage" >
