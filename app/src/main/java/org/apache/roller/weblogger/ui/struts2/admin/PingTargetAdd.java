@@ -16,92 +16,91 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.struts2.common;
+package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.PingTarget;
+import org.apache.roller.weblogger.ui.struts2.common.PingTargetFormBean;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
 /**
- * Base implementation for action that can add a new ping target.
+ * Add or modify a common ping target.
  */
-public abstract class PingTargetAddBase extends UIAction {
-    
+public class PingTargetAdd extends UIAction {
+    private static Log log = LogFactory.getLog(PingTargetAdd.class);
+
     // a bean for managing submitted data
     private PingTargetFormBean bean = new PingTargetFormBean();
-    
-    
-    // get logger
-    protected abstract Log getLogger();
-    
-    // create a new ping target
-    protected abstract PingTarget createPingTarget();
-    
-    
+
+    public PingTargetAdd() {
+        this.desiredMenu = "admin";
+        this.pageTitle = "pingTarget.pingTarget";
+    }
+
     public String execute() {
         return INPUT;
     }
-    
-    
-    /**
-     * Save a new ping target.
-     */
+
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.ADMIN);
+    }
+
     public String save() {
-        
-        PingTarget pingTarget = createPingTarget();
-        
-        // Call private helper to validate ping target
-        // If there are errors, go back to the target edit page.
+        PingTarget pingTarget = new PingTarget(null, getBean().getName(),
+                getBean().getPingUrl(), false);
+
         myValidate(pingTarget);
-        
+
         if(!hasActionErrors()) {
             try {
                 // Appears to be ok.  Save it and flush.
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.savePingTarget(pingTarget);
                 WebloggerFactory.getWeblogger().flush();
-
                 addMessage("pingTarget.saved");
-
                 return SUCCESS;
-
             } catch (WebloggerException ex) {
-                getLogger().error("Error adding ping target", ex);
+                log.error("Error adding ping target", ex);
                 addError("pingTarget.saved.error");
             }
         }
-        
         return INPUT;
     }
-    
+
+    // no weblog required
+    public boolean isWeblogRequired() {
+        return false;
+    }
     
     /**
      * Private helper to validate a ping target.
      */
-    protected void myValidate(PingTarget pingTarget) {
-        
+    private void myValidate(PingTarget pingTarget) {
+
         try {
             PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             if (!pingTargetMgr.isNameUnique(pingTarget)) {
                 addError("pingTarget.nameNotUnique");
             }
-            
             if (!pingTargetMgr.isUrlWellFormed(pingTarget)) {
                 addError("pingTarget.malformedUrl");
             } else if (!pingTargetMgr.isHostnameKnown(pingTarget)) {
                 addError("pingTarget.unknownHost");
             }
         } catch (WebloggerException ex) {
-            getLogger().error("Error validating ping target", ex);
-            addError("Error doing ping target validation");
+            log.error("Error validating ping target", ex);
+            addError("generic.error.check.logs");
         }
     }
-    
-    
+
     public PingTargetFormBean getBean() {
         return bean;
     }
@@ -109,5 +108,4 @@ public abstract class PingTargetAddBase extends UIAction {
     public void setBean(PingTargetFormBean bean) {
         this.bean = bean;
     }
-    
 }
