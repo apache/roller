@@ -45,6 +45,10 @@ public class RollerUserDetailsService implements UserDetailsService {
                 }
                 try {
                     userData = umgr.getUserByOpenIdUrl(userName);
+                    if (userData == null) {
+                        log.warn("No user found with OpenID URL: " + userName +
+                                " (OpenID aliased by auth provider?) Confirm URL exists in roller_user table");
+                    }
                 } catch (WebloggerException ex) {
                     throw new DataRetrievalFailureException("ERROR in user lookup", ex);
                 }
