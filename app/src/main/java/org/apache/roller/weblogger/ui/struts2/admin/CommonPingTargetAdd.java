@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.ui.struts2.common.PingTargetAddBase;
 
 
 /**
- * Action for adding a common ping target.
+ * Add or modify a common ping target.
  */
 public class CommonPingTargetAdd extends PingTargetAddBase {
     
@@ -36,7 +36,6 @@ public class CommonPingTargetAdd extends PingTargetAddBase {
     
     
     public CommonPingTargetAdd() {
-        this.actionName = "commonPingTargetAdd";
         this.desiredMenu = "admin";
         this.pageTitle = "pingTarget.pingTarget";
     }
@@ -55,10 +54,8 @@ public class CommonPingTargetAdd extends PingTargetAddBase {
     protected Log getLogger() {
         return log;
     }
-    
-    
+
     protected PingTarget createPingTarget() {
-        
         return new PingTarget(
                 null, 
                 getBean().getName(), 

@@ -17,29 +17,43 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<%-- Titling, processing actions different between add and edit --%>
+<s:if test="actionName == 'commonPingTargetEdit'">
+    <s:set var="mainAction">commonPingTargetEdit</s:set>
+    <s:set var="subtitleKey">pingTargetEdit.subtitle</s:set>
+</s:if>
+<s:else>
+    <s:set var="mainAction">commonPingTargetAdd</s:set>
+    <s:set var="subtitleKey">pingTargetAdd.subtitle</s:set>
+</s:else>
+
 <p class="subtitle">
-<s:text name="commonPingTarget.subtitle"/>
+<s:text name="%{#subtitleKey}"/>
 </p>
 
-<s:form action="commonPingTargetEdit!save" >
+<s:form>
 	<s:hidden name="salt" />
-    <s:hidden name="bean.id" />
-    
+    <s:if test="actionName == 'commonPingTargetEdit'">
+        <%-- bean for add does not have a bean id yet --%>
+        <s:hidden name="bean.id" />
+    </s:if>
+
     <div class="formrow">
        <label for="name" class="formrow"><s:text name="generic.name" /></label>
-       <s:textfield name="bean.name" size="30" maxlength="30" />
+       <s:textfield name="bean.name" size="30" maxlength="30" style="width:50%"/>
     </div>
 
     <div class="formrow">
        <label for="pingUrl" class="formrow"><s:text name="pingTarget.pingUrl" /></label>
-       <s:textfield name="bean.pingUrl" size="100" maxlength="255" />
+       <s:textfield name="bean.pingUrl" size="100" maxlength="255" style="width:50%"/>
     </div>
 
     <p/>
+
     <div class="formrow">
        <label for="" class="formrow">&nbsp;</label>
-       <s:submit value="%{getText('generic.save')}" />
-       <s:submit value="%{getText('pingTarget.cancel')}" action="commonPingTargets" />
+       <s:submit value="%{getText('generic.save')}" action="%{#mainAction}!save"/>
+       <s:submit value="%{getText('generic.cancel')}" action="commonPingTargets" />
     </div>
 
 </s:form>

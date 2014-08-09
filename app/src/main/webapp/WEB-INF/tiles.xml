@@ -187,16 +187,12 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/CommonPingTargets.jsp" />
     </definition>
     
-    <definition name=".CommonPingTargetConfirm" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/CommonPingTargetConfirm.jsp" />
+    <definition name=".PingTargetConfirm" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargetRemove.jsp" />
     </definition>
     
-    <definition name=".CommonPingTargetAdd" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/CommonPingTargetAdd.jsp" />
-    </definition>
-    
-    <definition name=".CommonPingTargetEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/CommonPingTargetEdit.jsp" />
+    <definition name=".PingTargetEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargetEdit.jsp" />
     </definition>
     
     <definition name=".CacheInfo" extends=".tiles-tabbedpage" >

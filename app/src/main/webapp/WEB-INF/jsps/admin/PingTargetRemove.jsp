@@ -17,27 +17,29 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<p class="subtitle">
-<s:text name="commonPingTarget.subtitle"/>
-</p>
+<br />
+<h1><s:text name="" /></h1>
 
-<s:form action="commonPingTargetAdd!save" >
-	<s:hidden name="salt" />
+<p/>
+<s:text name="pingTarget.confirmCommonRemove" />
+<p/>
 
-    <div class="formrow">
-       <label for="name" class="formrow"><s:text name="generic.name" /></label>
-       <s:textfield name="bean.name" size="30" maxlength="30" />
-    </div>
+<table>
+    <tr><td><s:text name="generic.name" />&nbsp;&nbsp;</td><td><b><s:property value="pingTarget.name" /></b></td></tr>
+    <tr><td><s:text name="pingTarget.pingUrl" />&nbsp;&nbsp;</td><td><b><s:property value="pingTarget.pingUrl" /></b></td></tr>
+</table>
 
-    <div class="formrow">
-       <label for="pingUrl" class="formrow"><s:text name="pingTarget.pingUrl" /></label>
-       <s:textfield name="bean.pingUrl" size="70" maxlength="255" />
-    </div>
+<br/>
 
-    <p/>
-    <div class="formrow">
-       <label for="" class="formrow">&nbsp;</label>
-       <s:submit value="%{getText('generic.save')}" />
-    </div>
-
-</s:form>
+<div class="control">
+    <s:form action="commonPingTargets!delete">
+		<s:hidden name="salt" />
+        <s:hidden name="pingTargetId" />
+        <s:submit value="%{getText('generic.yes')}" />
+    </s:form>
+    &nbsp;
+    <s:form action="commonPingTargets">
+		<s:hidden name="salt" />
+        <s:submit value="%{getText('generic.cancel')}" />
+    </s:form>
+</div>

@@ -25,22 +25,18 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.struts2.common.PingTargetEditBase;
 
-
 /**
- * Action for modifying a common ping target.
+ * Add or modify a common ping target.
  */
 public class CommonPingTargetEdit extends PingTargetEditBase {
     
     private static Log log = LogFactory.getLog(CommonPingTargetEdit.class);
-    
-    
+
     public CommonPingTargetEdit() {
-        this.actionName = "commonPingTargetEdit";
         this.desiredMenu = "admin";
         this.pageTitle = "pingTarget.pingTarget";
     }
-    
-    
+
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
@@ -49,10 +45,9 @@ public class CommonPingTargetEdit extends PingTargetEditBase {
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
     protected Log getLogger() {
         return log;
     }
-    
+
 }
