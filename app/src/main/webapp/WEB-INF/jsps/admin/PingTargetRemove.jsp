@@ -17,8 +17,9 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<br />
-<h1><s:text name="" /></h1>
+<h2>
+    <s:text name="pingTarget.confirmRemoveTitle"/>
+</h2>
 
 <p/>
 <s:text name="pingTarget.confirmCommonRemove" />
@@ -32,14 +33,10 @@
 <br/>
 
 <div class="control">
-    <s:form action="commonPingTargets!delete">
+    <s:form>
 		<s:hidden name="salt" />
         <s:hidden name="pingTargetId" />
-        <s:submit value="%{getText('generic.yes')}" />
-    </s:form>
-    &nbsp;
-    <s:form action="commonPingTargets">
-		<s:hidden name="salt" />
-        <s:submit value="%{getText('generic.cancel')}" />
+        <s:submit value="%{getText('generic.yes')}" action="commonPingTargets!delete"/>
+        <s:submit value="%{getText('generic.cancel')}" action="commonPingTargets"/>
     </s:form>
 </div>

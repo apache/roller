@@ -159,9 +159,7 @@ public class PingTargets extends UIAction {
      * Delete a ping target.
      */
     public String delete() {
-
         if(getPingTarget() != null) {
-
             try {
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.removePingTarget(getPingTarget());
@@ -169,17 +167,14 @@ public class PingTargets extends UIAction {
 
                 // remove deleted target from list
                 getPingTargets().remove(getPingTarget());
-
-                addMessage("pingTarget.successfullyDeleted", getPingTarget().getName());
-
+                addMessage("pingTarget.deleted", getPingTarget().getName());
             } catch (WebloggerException ex) {
                 log.error("Error deleting ping target - " + getPingTargetId(), ex);
-                addError("pingTarget.errorDeleting", getPingTargetId());
+                addError("generic.error.check.logs", getPingTargetId());
             }
         } else {
             addError("pingTarget.notFound", getPingTargetId());
         }
-
         return LIST;
     }
 
