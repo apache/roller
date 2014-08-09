@@ -377,19 +377,14 @@ public abstract class UIAction extends ActionSupport
         return getMinutesList();
     }
     
-    public List getCommentDaysList() {
+    public List<KeyValueObject> getCommentDaysList() {
         
-        List opts = new ArrayList();
+        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
         
         opts.add(new KeyValueObject(0, getText("weblogEdit.unlimitedCommentDays")));
-        opts.add(new KeyValueObject(1, getText("weblogEdit.days1")));
-        opts.add(new KeyValueObject(2, getText("weblogEdit.days2")));
         opts.add(new KeyValueObject(3, getText("weblogEdit.days3")));
-        opts.add(new KeyValueObject(4, getText("weblogEdit.days4")));
-        opts.add(new KeyValueObject(5, getText("weblogEdit.days5")));
         opts.add(new KeyValueObject(7, getText("weblogEdit.days7")));
-        opts.add(new KeyValueObject(10, getText("weblogEdit.days10")));
-        opts.add(new KeyValueObject(20, getText("weblogEdit.days20")));
+        opts.add(new KeyValueObject(14, getText("weblogEdit.days14")));
         opts.add(new KeyValueObject(30, getText("weblogEdit.days30")));
         opts.add(new KeyValueObject(60, getText("weblogEdit.days60")));
         opts.add(new KeyValueObject(90, getText("weblogEdit.days90")));
