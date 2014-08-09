@@ -34,7 +34,7 @@
 </p>
 
 <p class="pagetip">
-    <s:text name="bookmarkForm.rootPrompt">
+    <s:text name="bookmarkForm.requiredFields">
         <s:param><s:text name="generic.name"/></s:param>
         <s:param><s:text name="bookmarkForm.url"/></s:param>
     </s:text>
@@ -58,27 +58,27 @@
         
         <tr>
             <td><s:text name="generic.name" /></td>
-            <td><s:textfield name="bean.name" maxlength="255" size="70" /></td>
+            <td><s:textfield name="bean.name" maxlength="255" size="70" style="width:50%"/></td>
         </tr>
         
         <tr>
             <td><s:text name="bookmarkForm.url" /></td>
-            <td><s:textfield name="bean.url" maxlength="255" size="70" /></td>
+            <td><s:textfield name="bean.url" maxlength="255" size="70" style="width:50%"/></td>
         </tr>
         
         <tr>
             <td><s:text name="bookmarkForm.rssUrl" /></td>
-            <td><s:textfield name="bean.feedUrl" maxlength="255" size="70" /></td>
+            <td><s:textfield name="bean.feedUrl" maxlength="255" size="70" style="width:50%"/></td>
         </tr>
         
         <tr>
             <td><s:text name="generic.description" /></td>
-            <td><s:textarea name="bean.description" rows="5" cols="50" /></td>
+            <td><s:textfield name="bean.description" maxlength="255" size="70" style="width:50%"/></td>
         </tr>
 
         <tr>
             <td><s:text name="bookmarkForm.image" /></td>
-            <td><s:textfield name="bean.image" maxlength="255" size="70" /></td>
+            <td><s:textfield name="bean.image" maxlength="255" size="70" style="width:50%"/></td>
         </tr>
         
     </table>

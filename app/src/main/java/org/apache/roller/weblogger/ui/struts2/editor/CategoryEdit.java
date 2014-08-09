@@ -34,25 +34,21 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
- * Edit an existing Category.
+ * Edit a new or existing weblog category.
  */
 public class CategoryEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(CategoryEdit.class);
     
-    // the category we are editing
+    // the (new or already existing) category we are editing
     private WeblogCategory category = null;
     
     // bean for managing form data
     private CategoryBean bean = new CategoryBean();
-    
-    
-    public CategoryEdit() {
-        this.actionName = "categoryEdit";
-        this.desiredMenu = "editor";
-        this.pageTitle = "categoryForm.edit.title";
-    }
 
+    public CategoryEdit() {
+        this.desiredMenu = "editor";
+    }
 
     @Override
     public List<String> requiredWeblogPermissionActions() {
@@ -61,13 +57,17 @@ public class CategoryEdit extends UIAction {
     
     
     public void myPrepare() {
-        try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            if(!StringUtils.isEmpty(getBean().getId())) {
-                setCategory(wmgr.getWeblogCategory(getBean().getId()));
+        if (StringUtils.isEmpty(bean.getId())) {
+            // Create and initialize new, not-yet-saved category
+            category = new WeblogCategory();
+            category.setWeblog(getActionWeblog());
+        } else {
+            try {
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+                category = wmgr.getWeblogCategory(getBean().getId());
+            } catch (WebloggerException ex) {
+                log.error("Error looking up category", ex);
             }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up category", ex);
         }
     }
     
@@ -77,78 +77,59 @@ public class CategoryEdit extends UIAction {
      */
     @SkipValidation
     public String execute() {
-        
-        if (getCategory() == null) {
-            addError("Cannot edit null category");
-            return ERROR;
+        if (!isAdd()) {
+            // make sure bean is properly loaded from pojo data
+            getBean().copyFrom(category);
         }
-        
-        // make sure bean is properly loaded from pojo data
-        getBean().copyFrom(getCategory());
-        
         return INPUT;
     }
 
-    
+    private boolean isAdd() {
+        return actionName.equals("categoryAdd");
+    }
+
     /**
      * Save new category.
      */
     public String save() {
-        
-        if(getCategory() == null) {
-            addError("Cannot edit null category");
-            return ERROR;
-        }
-        
-        // validation
         myValidate();
         
         if(!hasActionErrors()) {
             try {
+
                 // copy updated attributes
-                getBean().copyTo(getCategory());
+                getBean().copyTo(category);
 
                 // save changes
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                wmgr.saveWeblogCategory(getCategory());
+                wmgr.saveWeblogCategory(category);
                 WebloggerFactory.getWeblogger().flush();
 
                 // notify caches
-                CacheManager.invalidate(getCategory());
+                CacheManager.invalidate(category);
 
-                addMessage("categoryForm.changesSaved");
+                addMessage(isAdd()? "categoryForm.created"
+                        : "categoryForm.changesSaved",
+                        category.getName());
 
+                return SUCCESS;
             } catch(Exception ex) {
                 log.error("Error saving category", ex);
-                addError("categoryForm.error.saving");
+                addError("generic.error.check.logs");
             }
         }
         
         return INPUT;
     }
 
-    /**
-     * Cancel.
-     * 
-     * @return the string
-     */
-    public String cancel() {
-        return CANCEL;
-    }
-    
-    // TODO: validation
     public void myValidate() {
-        
-        // name is required, has max length, no html
-        
         // make sure new name is not a duplicate of an existing category
-        if (!getCategory().getName().equals(bean.getName()) &&
-            getCategory().getWeblog().hasCategory(bean.getName())) {
+        if ((isAdd() || !category.getName().equals(bean.getName())) &&
+            category.getWeblog().hasCategory(bean.getName())) {
             addError("categoryForm.error.duplicateName", bean.getName());
         }
     }
-
-
+/*
     public WeblogCategory getCategory() {
         return category;
     }
@@ -156,7 +137,7 @@ public class CategoryEdit extends UIAction {
     public void setCategory(WeblogCategory category) {
         this.category = category;
     }
-
+*/
     public CategoryBean getBean() {
         return bean;
     }

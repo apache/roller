@@ -17,14 +17,33 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<%-- Titling, processing actions different between add and edit --%>
+<s:if test="actionName == 'categoryEdit'">
+    <s:set var="subtitleKey">categoryForm.edit.subtitle</s:set>
+    <s:set var="mainAction">categoryEdit</s:set>
+</s:if>
+<s:else>
+    <s:set var="subtitleKey">categoryForm.add.subtitle</s:set>
+    <s:set var="mainAction">categoryAdd</s:set>
+</s:else>
+
 <p class="subtitle">
-    <s:text name="categoryForm.edit.subtitle" />
+    <s:text name="%{#subtitleKey}" />
+</p>
+
+<p class="pagetip">
+    <s:text name="categoryForm.requiredFields">
+        <s:param><s:text name="generic.name"/></s:param>
+    </s:text>
 </p>
 
 <s:form action="categoryEdit!save">
     <s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="bean.id" />
+    <s:if test="actionName == 'categoryEdit'">
+        <%-- bean for add does not have a bean id yet --%>
+        <s:hidden name="bean.id" />
+    </s:if>
 
     <table>
         
@@ -35,18 +54,18 @@
         
         <tr>
             <td><s:text name="categoryForm.image" /></td>
-            <td><s:textfield name="bean.image" size="120" style="width:80%"/></td>
+            <td><s:textfield name="bean.image" size="120" style="width:50%"/></td>
         </tr>
 
         <tr>
             <td><s:text name="generic.description" /></td>
-            <td><s:textarea name="bean.description" rows="5" cols="50" style="width:50%"/></td>
+            <td><s:textfield name="bean.description" size="120" style="width:50%"/></td>
         </tr>
 
     </table>
     
     <p>
-        <s:submit value="%{getText('generic.save')}" />
+        <s:submit value="%{getText('generic.save')}" action="%{#mainAction}!save"/>
         <s:submit value="%{getText('generic.cancel')}" action="categoryEdit!cancel" />
     </p>
     

@@ -61,6 +61,10 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         
         this.weblog = weblog;
         weblog.getWeblogCategories().add(this);
+        calculatePosition();
+    }
+
+    public void calculatePosition() {
         int size = weblog.getWeblogCategories().size();
         if (size == 1) {
             this.position = 0;
@@ -68,17 +72,11 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
             this.position = weblog.getWeblogCategories().get(size - 2).getPosition() + 1;
         }
     }
-    
-    
+
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getName());
-        buf.append("}");
-        return buf.toString();
+        return "{" + getId() + ", " + getName() + "}";
     }
     
     @Override
@@ -210,11 +208,4 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         }
     }
 
-    /**
-     * Convenience method for updating the category name
-     */
-    public void updateName(String newName) throws WebloggerException {
-        setName(newName);
-        WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogCategory(this);
-    }
 }

@@ -67,11 +67,7 @@ public class CategoryBean {
     
     
     public void copyTo(WeblogCategory dataHolder) throws WebloggerException {
-        
-        if(!dataHolder.getName().equals(this.name)) {
-            dataHolder.updateName(this.name);
-        }
-        
+        dataHolder.setName(name);
         dataHolder.setDescription(this.description);
         dataHolder.setImage(this.image);
     }

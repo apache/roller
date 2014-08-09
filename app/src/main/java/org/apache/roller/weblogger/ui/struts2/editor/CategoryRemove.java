@@ -93,7 +93,7 @@ public class CategoryRemove extends UIAction {
             }
         } catch (WebloggerException ex) {
             log.error("Error building categories list", ex);
-            addError("Error building categories list");
+            addError("generic.error.check.logs");
         }
         return INPUT;
     }
@@ -107,7 +107,7 @@ public class CategoryRemove extends UIAction {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
-                if(getTargetCategoryId() != null) {
+                if (getTargetCategoryId() != null) {
                     WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
                     wmgr.moveWeblogCategoryContents(getCategory(), target);
                     WebloggerFactory.getWeblogger().flush();
@@ -119,15 +119,11 @@ public class CategoryRemove extends UIAction {
 
                 wmgr.removeWeblogCategory(getCategory());
                 WebloggerFactory.getWeblogger().flush();
-
-                // set category id to parent for next page
-                setRemoveId(id);
-
+                addMessage("categoryForm.removed", category.getName());
                 return SUCCESS;
-
             } catch(Exception ex) {
-                log.error("Error removing category - "+getRemoveId(), ex);
-                addError("Error removing category");
+                log.error("Error removing category - " + getRemoveId(), ex);
+                addError("generic.error.check.logs");
             }
         }
         
