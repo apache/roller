@@ -34,11 +34,11 @@ public class PingTargetEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(PingTargetEdit.class);
 
-    // ping target we are working on, if any
-    private PingTarget pingTarget = null;
-
     // a bean for managing submitted data
     private PingTargetBean bean = new PingTargetBean();
+
+    // ping target we are working on, if any
+    private PingTarget pingTarget = null;
 
     public PingTargetEdit() {
         this.desiredMenu = "admin";
@@ -52,28 +52,28 @@ public class PingTargetEdit extends UIAction {
 
     public void myPrepare() {
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-        if(!StringUtils.isEmpty(getBean().getId())) {
+
+        if (!StringUtils.isEmpty(getBean().getId())) {
+            // edit case
             try {
                 pingTarget = pingTargetMgr.getPingTarget(getBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up ping target - " + getBean().getId());
             }
-            if(pingTarget == null) {
+            if (pingTarget == null) {
                 addError("pingTarget.notFound", getBean().getId());
             }
         } else {
-            addError("pingTarget.unspecified");
+            // add case
+            pingTarget = new PingTarget();
+            pingTarget.setConditionCode(PingTarget.CONDITION_OK);
+            pingTarget.setAutoEnabled(false);
         }
     }
 
     public String execute() {
-        if(!hasActionErrors()) {
-            // load bean with data from ping target
+        if (!isAdd()) {
             getBean().copyFrom(pingTarget);
-        } else {
-            // if we already have an error then that means we couldn't load
-            // an existing ping target to work on, so return ERROR result
-            return ERROR;
         }
         return INPUT;
     }
@@ -82,58 +82,61 @@ public class PingTargetEdit extends UIAction {
      * Save ping target.
      */
     public String save() {
-
-        if(hasActionErrors()) {
-            // if we already have an error then that means we couldn't load
-            // an existing ping target to work on, so return ERROR result
-            return INPUT;
-        }
-
-        // copy data from form into ping target
-        getBean().copyTo(pingTarget);
-
-        // Call private helper to validate ping target
-        // If there are errors, go back to the target edit page.
-        myValidate(pingTarget);
+        myValidate();
 
         if (!hasActionErrors()) {
             try {
-                // Appears to be ok.  Save it and flush.
+                // copy data from form into ping target
+                getBean().copyTo(pingTarget);
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.savePingTarget(pingTarget);
                 WebloggerFactory.getWeblogger().flush();
 
-                addMessage("pingTarget.saved");
+                addMessage(isAdd() ? "pingTarget.created" : "pingTarget.updated",
+                        pingTarget.getName());
+
+                return SUCCESS;
             } catch (WebloggerException ex) {
-                log.error("Error saving ping target", ex);
-                addError("pingTarget.saved.error");
+                log.error("Error adding/editing ping target", ex);
+                addError("generic.error.check.logs");
             }
         }
 
         return INPUT;
     }
 
-
     /**
      * Private helper to validate a ping target.
      */
-    protected void myValidate(PingTarget pingTarget) {
-
+    protected void myValidate() {
         try {
             PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-            if (!pingTargetMgr.isNameUnique(pingTarget)) {
-                addError("pingTarget.nameNotUnique");
+            if (StringUtils.isEmpty(bean.getName())) {
+                addError("pingTarget.nameMissing");
+            } else {
+                if (isAdd() || !pingTarget.getName().equals(bean.getName())) {
+                    if (pingTargetMgr.targetNameExists(bean.getName())) {
+                        addError("pingTarget.nameNotUnique");
+                    }
+                }
             }
-
-            if (!pingTargetMgr.isUrlWellFormed(pingTarget)) {
-                addError("pingTarget.malformedUrl");
-            } else if (!pingTargetMgr.isHostnameKnown(pingTarget)) {
-                addError("pingTarget.unknownHost");
+            if (StringUtils.isEmpty(bean.getPingUrl())) {
+                addError("pingTarget.pingUrlMissing");
+            } else {
+                if (!pingTargetMgr.isUrlWellFormed(bean.getPingUrl())) {
+                    addError("pingTarget.malformedUrl");
+                } else if (!pingTargetMgr.isHostnameKnown(bean.getPingUrl())) {
+                    addError("pingTarget.unknownHost");
+                }
             }
         } catch (WebloggerException ex) {
             log.error("Error validating ping target", ex);
-            addError("pingTarget.saved.error");
+            addError("generic.error.check.logs");
         }
+    }
+
+    private boolean isAdd() {
+        return actionName.equals("commonPingTargetAdd");
     }
 
     public PingTargetBean getBean() {
@@ -143,6 +146,4 @@ public class PingTargetEdit extends UIAction {
     public void setBean(PingTargetBean bean) {
         this.bean = bean;
     }
-
-
 }

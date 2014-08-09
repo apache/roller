@@ -67,40 +67,36 @@ public interface PingTargetManager {
     List<PingTarget> getCommonPingTargets() throws WebloggerException;
 
     /**
-     * Check if the ping target has a name that is unique in the appropriate set.  If the ping target has no website id
-     * (is common), then this checks if the name is unique amongst common targets, and if custom then unique amongst
-     * custom targets. If the target has a non-null id, then it is allowed to have the same name as tha existing stored
-     * target with the same id.
+     * Check if the ping target name already exists in Roller.
      *
-     * @param pingTarget
-     * @return true if the name is unique in the appropriate set (custom or common) ping targets.
+     * @param pingTargetName ping target name to check
+     * @return true if there is already a ping target with this name, false otherwise
      * @throws WebloggerException
      */
-    boolean isNameUnique(PingTarget pingTarget) throws WebloggerException;
-    
+    boolean targetNameExists(String pingTargetName) throws WebloggerException;
     
     /**
-     * Check if the url of the ping target is well-formed.  For this test, it must parse as a <code>java.net.URL</code>,
+     * Check if the url of a ping target is well-formed.  For this test, it must parse as a <code>java.net.URL</code>,
      * with protocol <code>http</code> and a non-empty <code>host</code> portion.
      *
-     * @param pingTarget
-     * @return true if the <code>pingUrl</code> property of the ping target is a well-formed url.
+     * @param pingTargetUrl url to check.
+     * @return true if the <code>pingTargetUrl</code> property of the ping target is a well-formed url.
      * @throws WebloggerException
      */
-    boolean isUrlWellFormed(PingTarget pingTarget) throws WebloggerException;
+    boolean isUrlWellFormed(String pingTargetUrl) throws WebloggerException;
     
     
     /**
-     * Check if the host portion of the url of the ping target is known, meaning it is either a well-formed IP address
+     * Check if the host portion of the url of a ping target is known, meaning it is either a well-formed IP address
      * or a hostname that resolves from the server.  The ping target url must parse as a <code>java.net.URL</code> in
      * order for the hostname to be extracted for this test.  This will return false if that parsing fails.
      *
-     * @param pingTarget
-     * @return true if the <code>pingUrl</code> (is well-formed and) the <code>host</code> portion of the url of the
+     * @param pingTargetUrl url to check.
+     * @return true if the <code>pingTargetUrl</code> (is well-formed and) the <code>host</code> portion of the url of the
      *         ping target is a valid IP address or a hostname that can be resolved on the server.
      * @throws WebloggerException
      */
-    boolean isHostnameKnown(PingTarget pingTarget) throws WebloggerException;
+    boolean isHostnameKnown(String pingTargetUrl) throws WebloggerException;
     
     
     /**

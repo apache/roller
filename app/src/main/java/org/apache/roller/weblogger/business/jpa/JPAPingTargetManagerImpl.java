@@ -81,37 +81,25 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         return (PingTarget)strategy.load(PingTarget.class, id);
     }
 
-    public boolean isNameUnique(PingTarget pingTarget) 
+    public boolean targetNameExists(String pingTargetName)
             throws WebloggerException {
-        String name = pingTarget.getName();
-        if (name == null || name.trim().length() == 0) {
-            return false;
-        }
-        
-        String id = pingTarget.getId();
-        
-        // Determine the set of "brother" targets
-        // among which this name should be unique.
-        List<PingTarget> brotherTargets;
-        brotherTargets = getCommonPingTargets();
 
-        // Within that set of targets, fail if there is a target 
+        // Within that set of targets, fail if there is a target
         // with the same name and that target doesn't
         // have the same id.
-        for (PingTarget brother : brotherTargets) {
-            if (brother.getName().equals(name) &&
-                    (id == null || !brother.getId().equals(id))) {
-                return false;
+        for (PingTarget pt : getCommonPingTargets()) {
+            if (pt.getName().equals(pingTargetName)) {
+                return true;
             }
         }
         // No conflict found
-        return true;
+        return false;
     }
 
     
-    public boolean isUrlWellFormed(PingTarget pingTarget) 
+    public boolean isUrlWellFormed(String url)
             throws WebloggerException {
-        String url = pingTarget.getPingUrl();
+
         if (url == null || url.trim().length() == 0) {
             return false;
         }
@@ -129,9 +117,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     
-    public boolean isHostnameKnown(PingTarget pingTarget) 
+    public boolean isHostnameKnown(String url)
             throws WebloggerException {
-        String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) {
             return false;
         }

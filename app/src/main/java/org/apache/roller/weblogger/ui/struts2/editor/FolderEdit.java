@@ -36,15 +36,15 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class FolderEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(FolderEdit.class);
-    
-    // the id of the folder we are working with
-    private String folderId = null;
-    
-    // the folder we are adding or editing
-    private WeblogBookmarkFolder folder = null;
-    
+
     // bean for managing form data
     private FolderBean bean = new FolderBean();
+
+    // the id of the folder we are working with
+    private String folderId = null;
+
+    // the folder we are adding or editing
+    private WeblogBookmarkFolder folder = null;
 
     public FolderEdit() {
         this.desiredMenu = "editor";
