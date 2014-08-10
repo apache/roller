@@ -35,7 +35,7 @@
     <div>
         <s:textarea id="edit_content" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
     </div>
-    <h3><s:text name="weblogEdit.summary" /></h3>
+    <h3><s:text name="weblogEdit.summary"/><tags:help key="weblogEdit.summary.tooltip"/></h3>
     <div>
         <s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6"/>
     </div>

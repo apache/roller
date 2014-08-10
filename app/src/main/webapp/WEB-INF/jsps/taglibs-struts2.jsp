@@ -23,3 +23,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags"%>

@@ -227,19 +227,19 @@
 
         <s:if test="authenticatedUser.hasGlobalPermission('admin')">
             <s:checkbox name="bean.pinnedToMain" />
-            <s:text name="weblogEdit.pinnedToMain" />
+            <s:text name="weblogEdit.pinnedToMain" /><tags:help key="weblogEdit.pinnedToMain.tooltip"/>
             <br />
         </s:if>
         <br />
 
 		<table>
 			<tr>
-				<td><s:text name="weblogEdit.searchDescription" />: </td>
+				<td><s:text name="weblogEdit.searchDescription" />:<tags:help key="weblogEdit.searchDescription.tooltip"/></td>
 				<td><s:textfield name="bean.searchDescription" size="60" maxlength="255" style="width:100%"/> </td>
 			</tr>
             <tr>
-				<td><s:text name="weblogEdit.enclosureURL" />: </td>
-				<td><s:textfield name="bean.enclosureURL" size="40" maxlength="255" style="width:80%"/></td>
+				<td><s:text name="weblogEdit.enclosureURL" />:<tags:help key="weblogEdit.enclosureURL.tooltip"/></td>
+				<td><s:textfield name="bean.enclosureURL" size="40" maxlength="255" style="width:100%"/></td>
 			</tr>
             <s:if test="actionName == 'entryEdit'">
                 <tr>

@@ -37,8 +37,7 @@ public class XinhaEditor implements WeblogEntryEditor {
     }
     
     public String getJspPage() {
-        // now handled within editor-text.jsp
-        return "/roller-ui/authoring/editors/editor-text.jsp";
+        return "/WEB-INF/jsps/editor/EntryEditor.jsp";
     }
     
 }

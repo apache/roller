@@ -36,7 +36,7 @@ public class TextEditor implements WeblogEntryEditor {
     }
     
     public String getJspPage() {
-        return "/roller-ui/authoring/editors/editor-text.jsp";
+        return "/WEB-INF/jsps/editor/EntryEditor.jsp";
     }
     
 }

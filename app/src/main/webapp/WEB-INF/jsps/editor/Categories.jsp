@@ -50,10 +50,11 @@ function onMove()
     <table class="rollertable">
         
         <tr class="rollertable">
-            <th class="rollertable" width="35%"><s:text name="generic.name" /></th>
-            <th class="rollertable" width="45%"><s:text name="generic.description" /></th>
-            <th class="rollertable" width="10%"><s:text name="generic.edit" /></th>
-            <th class="rollertable" width="10%"><s:text name="categoriesForm.remove" /></th>
+            <th class="rollertable" width="15%"><s:text name="generic.name" /></th>
+            <th class="rollertable" width="40%"><s:text name="generic.description" /></th>
+            <th class="rollertable" width="31%"><s:text name="categoriesForm.imageUrl" /></th>
+            <th class="rollertable" width="7%"><s:text name="generic.edit" /></th>
+            <th class="rollertable" width="7%"><s:text name="categoriesForm.remove" /></th>
         </tr>
         
         <s:if test="AllCategories != null && !AllCategories.isEmpty">
@@ -67,14 +68,12 @@ function onMove()
                 <tr class="rollertable_even">
             </s:else>
             
-                <td class="rollertable">
-                    <str:truncateNicely lower="15" upper="20" ><s:property value="#category.name" /></str:truncateNicely>
-                </td>
+                <td class="rollertable"><s:property value="#category.name" /></td>
                 
-                <td class="rollertable">
-                    <str:truncateNicely lower="30" upper="35" ><s:property value="#category.description" /></str:truncateNicely>
-                </td>
+                <td class="rollertable"><s:property value="#category.description" /></td>
                 
+                <td class="rollertable"><s:property value="#category.image" /></td>
+
                 <td class="rollertable" align="center">
                     <s:url var="editUrl" action="categoryEdit">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
