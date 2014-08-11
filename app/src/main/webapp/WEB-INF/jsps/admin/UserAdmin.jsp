@@ -18,10 +18,8 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script>
-<!-- //
 <%@ include file="/roller-ui/scripts/ajax-user.js" %>
-// -->
-</script> 
+</script>
 
 <p class="subtitle"><s:text name="userAdmin.subtitle.searchUser" /></p>
 <p><s:text name="userAdmin.prompt.searchUser" /></p>
@@ -30,7 +28,7 @@
    	<s:hidden name="salt" />
  
     <span style="margin:4px"><s:text name="inviteMember.userName" /></span>
-    <input name="userName" id="userName" size="30" maxlength="30" 
+    <input name="bean.userName" id="userName" size="30" maxlength="30"
            onfocus="onUserNameFocus(null)" onkeyup="onUserNameChange(null)" 
            style="margin:4px" />
     <input type="submit" value='<s:text name="generic.edit" />'

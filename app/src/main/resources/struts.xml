@@ -172,12 +172,20 @@
         </action>
         
         <action name="createUser!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.admin.CreateUser">
+                class="org.apache.roller.weblogger.ui.struts2.admin.UserEdit">
+            <param name="actionName">createUser</param>
+            <param name="pageTitle">userAdmin.title.createNewUser</param>
             <result name="input" type="tiles">.UserEdit</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">modifyUser!firstSave</param>
+                <param name="bean.id">${bean.id}</param>
+            </result>
         </action>
-        
+
         <action name="modifyUser!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.admin.ModifyUser">
+                class="org.apache.roller.weblogger.ui.struts2.admin.UserEdit">
+            <param name="actionName">modifyUser</param>
+            <param name="pageTitle">userAdmin.title.editUser</param>
             <result name="input" type="tiles">.UserEdit</result>
             <result name="error" type="chain">userAdmin</result>
             <result name="cancel" type="redirectAction">
@@ -199,6 +207,7 @@
         <action name="commonPingTargetAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.admin.PingTargetEdit">
             <param name="actionName">commonPingTargetAdd</param>
+            <param name="pageTitle">pingTarget.addTarget</param>
             <result name="input" type="tiles">.PingTargetEdit</result>
             <result name="success" type="chain">commonPingTargets</result>
         </action>
@@ -206,6 +215,7 @@
         <action name="commonPingTargetEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.admin.PingTargetEdit">
             <param name="actionName">commonPingTargetEdit</param>
+            <param name="pageTitle">pingTarget.editTarget</param>
             <result name="input" type="tiles">.PingTargetEdit</result>
             <result name="success" type="chain">commonPingTargets</result>
             <result name="error" type="chain">commonPingTargets</result>

@@ -83,8 +83,16 @@ public interface UserManager {
     
           
     //------------------------------------------------------------ user queries
-    
-    
+
+    /**
+     * Retrieve a user by its internal identifier id.
+     *
+     * @param id the id of the user to retrieve.
+     * @return the user object with specified id or null if not found
+     * @throws WebloggerException
+     */
+    User getUser(String id) throws WebloggerException;
+
     /**
      * Lookup a user by UserName.
      * 

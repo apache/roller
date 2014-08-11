@@ -21,6 +21,10 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,38 +36,34 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
 /**
  * Action that allows an admin to modify a users profile.
  */
-public class ModifyUser extends UIAction {
+public class UserEdit extends UIAction {
     
-    private static Log log = LogFactory.getLog(ModifyUser.class);
+    private static Log log = LogFactory.getLog(UserEdit.class);
 
-    // user we are modifying
-    private User user = new User();
-    
     // a bean to store our form data
     private CreateUserBean bean = new CreateUserBean();
-    
-    private String userName = null;
 
+    // user we are creating or modifying
+    private User user = null;
+    
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
-    public String getAuthMethod() {
-        return authMethod.name();
+    public UserEdit() {
+        this.desiredMenu = "admin";
     }
 
-    public ModifyUser() {
-        this.actionName = "modifyUser";
-        this.desiredMenu = "admin";
-        this.pageTitle = "userAdmin.title.editUser";
+    @Override
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
     }
-    
-    
+
     // admin role required
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
@@ -73,128 +73,147 @@ public class ModifyUser extends UIAction {
     public boolean isWeblogRequired() { 
         return false;
     }
-    
-    
+
     // prepare for action by loading user object we are modifying
     public void myPrepare() {
-        
-        // load the user object we are modifying
-        if (getUserName() != null) {
+        if (isAdd()) {
+            // create new User
+            user = new User();
+        } else {
             try {
+                // load the user object we are modifying
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                
-                // use enabled = 'null' to get both enabled and disabled users
-                setUser(mgr.getUserByUserName(getUserName(), null));
-                
-            } catch(Exception e) {
-                log.error("Error looking up user - "+getUserName(), e);
-            }
-        } else if (getBean().getId() != null) {
-            try {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                setUser(mgr.getUserByUserName(getBean().getUserName(), null));
+                if (bean.getId() != null) {
+                    // action came from CreateUser or return from ModifyUser
+                    user = mgr.getUser(getBean().getId());
+                } else if (bean.getUserName() != null) {
+                    // action came from UserAdmin screen.
+                    user = mgr.getUserByUserName(getBean().getUserName(), null);
+                }
             } catch (Exception e) {
-                log.error("Error looking up user - " + getBean().getId(), e);
+                log.error("Error looking up user (id/username) :" + bean.getId() + "/" + bean.getUserName(), e);
             }
         }
     }
-    
-    
+
     /**
      * Show admin user edit page.
      */
     public String execute() {
-        
-        if (getUser() != null && getUser().getUserName() != null) {
-            // populate form data from user profile data
-            getBean().copyFrom(getUser());
+        if (isAdd()) {
+            // initial user create
+            getBean().setLocale(Locale.getDefault().toString());
+            getBean().setTimeZone(TimeZone.getDefault().getID());
         } else {
-            addError("userAdmin.error.userNotFound");
-            return ERROR;
+            // populate form data from user profile data
+            getBean().copyFrom(user);
         }
-
         return INPUT;
     }
-    
-    
+
+    /**
+     * Post user created message after first save.
+     */
+    public String firstSave() {
+        addMessage("createUser.add.success", getBean().getUserName());
+        return execute();
+    }
+
     /**
      * Save modified user profile.
      */
     public String save() {
-        
-        // custom validation
         myValidate();
         
         if (!hasActionErrors()) {
-            
-            getBean().copyTo(getUser());
-            
+            getBean().copyTo(user);
+
             // reset password if set
             if (!StringUtils.isEmpty(getBean().getPassword())) {
                 try {
-                    getUser().resetPassword(getBean().getPassword());
+                    user.resetPassword(getBean().getPassword());
                 } catch (WebloggerException e) {
                     addMessage("yourProfile.passwordResetError");
                 }
             }
-            
+
             try {
-                boolean hasAdmin = false;
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                GlobalPermission adminPerm = 
+                if (isAdd()) {
+                    // fields not copied over from above copyTo():
+                    user.setUserName(getBean().getUserName());
+                    user.setDateCreated(new java.util.Date());
+                    // save new user
+                    mgr.addUser(user);
+                } else {
+                    mgr.saveUser(user);
+                }
+
+                // update Admin role as appropriate
+                boolean hasAdmin = false;
+                GlobalPermission adminPerm =
                     new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
-                if (mgr.checkPermission(adminPerm, getUser())) {
+                if (mgr.checkPermission(adminPerm, user)) {
                     hasAdmin = true;
                 }  
-                
                 // grant/revoke admin role if needed
                 if (hasAdmin && !getBean().isAdministrator()) {
-                    
                     if (!isUserEditingSelf()) {
                         // revoke role
-                        mgr.revokeRole("admin", getUser());
+                        mgr.revokeRole("admin", user);
                     } else {
                         addError("userAdmin.cantChangeOwnRole");
                     }
-                    
                 } else if(!hasAdmin && getBean().isAdministrator()) {
-                    
-                    if (!isUserEditingSelf()) {
-                        // grant role
-                        mgr.grantRole("admin", getUser());
-                    } else {
-                        addError("userAdmin.cantChangeOwnRole"); 
-                    }
-                    
+                    mgr.grantRole("admin", user);
                 }
-            
-                if (!AuthMethod.CMA.equals(WebloggerConfig.getAuthMethod())) {
-                    RollerContext.flushAuthenticationUserCache(getUser().getUserName());
-                }
-
-                // save the updated profile
-                mgr.saveUser(getUser());
                 WebloggerFactory.getWeblogger().flush();
-                
-                addMessage("userAdmin.userSaved");
-                                
-                return INPUT;
-                
+                if (isAdd()) {
+                    // now that user is saved we have an id value
+                    // store it back in bean for use in next action
+                    bean.setId(user.getId());
+                    // route to edit mode, saveFirst() provides the success message.
+                    return SUCCESS;
+                } else {
+                    addMessage("userAdmin.userSaved");
+                    return INPUT;
+                }
             } catch (WebloggerException ex) {
                 log.error("ERROR in action", ex);
-                addError("userAdmin.error.unexpectedError");
+                addError("generic.error.check.logs");
             }
-            
         }
-        
         return INPUT;
     }
     
+    private boolean isAdd() {
+        return actionName.equals("createUser");
+    }
+
     // TODO: replace with struts2 validation
     private void myValidate() {
-        
-        if(getUser().getUserName() == null) {
-            addError("userAdmin.error.userNotFound");
+        if (isAdd()) {
+            String allowed = WebloggerConfig.getProperty("username.allowedChars");
+            if(allowed == null || allowed.trim().length() == 0) {
+                allowed = Register.DEFAULT_ALLOWED_CHARS;
+            }
+            String safe = CharSetUtils.keep(getBean().getUserName(), allowed);
+
+            if (StringUtils.isEmpty(getBean().getUserName())) {
+                addError("error.add.user.missingUserName");
+            } else if (!safe.equals(getBean().getUserName()) ) {
+                addError("error.add.user.badUserName");
+            }
+            if ((authMethod == AuthMethod.ROLLERDB ||
+                    (authMethod == AuthMethod.DB_OPENID && StringUtils.isEmpty(getBean().getOpenIdUrl())))
+                    && StringUtils.isEmpty(getBean().getPassword())) {
+                addError("error.add.user.missingPassword");
+            }
+        }
+        else {
+            if (user.getUserName() == null) {
+                addError("userAdmin.error.userNotFound");
+            }
         }
         if (StringUtils.isEmpty(getBean().getEmailAddress())) {
             addError("error.add.user.missingEmailAddress");
@@ -209,24 +228,8 @@ public class ModifyUser extends UIAction {
         this.bean = bean;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-    
     public boolean isUserEditingSelf() {
-        return getUser().equals(getAuthenticatedUser());
+        return user.equals(getAuthenticatedUser());
     }
 
     public List<WeblogPermission> getPermissions() {
@@ -238,4 +241,7 @@ public class ModifyUser extends UIAction {
         return new ArrayList<WeblogPermission>();
     }
 
+    public String getAuthMethod() {
+        return authMethod.name();
+    }
 }

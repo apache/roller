@@ -50,6 +50,11 @@ public class FolderEdit extends UIAction {
         this.desiredMenu = "editor";
     }
 
+    @Override
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
+    }
+
     // load folder to edit
     public void myPrepare() {
         if (StringUtils.isEmpty(bean.getId())) {

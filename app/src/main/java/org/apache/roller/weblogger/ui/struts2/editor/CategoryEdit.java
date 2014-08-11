@@ -39,15 +39,20 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class CategoryEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(CategoryEdit.class);
-    
-    // the (new or already existing) category we are editing
-    private WeblogCategory category = null;
-    
+
     // bean for managing form data
     private CategoryBean bean = new CategoryBean();
 
+    // the (new or already existing) category we are editing
+    private WeblogCategory category = null;
+
     public CategoryEdit() {
         this.desiredMenu = "editor";
+    }
+
+    @Override
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
     }
 
     @Override
@@ -129,15 +134,7 @@ public class CategoryEdit extends UIAction {
             addError("categoryForm.error.duplicateName", bean.getName());
         }
     }
-/*
-    public WeblogCategory getCategory() {
-        return category;
-    }
 
-    public void setCategory(WeblogCategory category) {
-        this.category = category;
-    }
-*/
     public CategoryBean getBean() {
         return bean;
     }

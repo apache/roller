@@ -42,7 +42,11 @@ public class PingTargetEdit extends UIAction {
 
     public PingTargetEdit() {
         this.desiredMenu = "admin";
-        this.pageTitle = "pingTarget.pingTarget";
+    }
+
+    @Override
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
     }
 
     // no weblog required

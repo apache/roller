@@ -33,6 +33,15 @@
     </s:text>
 </p>
 
+<p class="pagetip">
+    <s:if test="actionName == 'modifyUser'">
+        <s:text name="userAdmin.editInstructions"/>
+    </s:if>
+    <s:else>
+        <s:text name="userAdmin.addInstructions"/>
+    </s:else>
+</p>
+
 <s:form>
 	<s:hidden name="salt" />
     <s:if test="actionName == 'modifyUser'">
@@ -51,13 +60,13 @@
                     <s:textfield name="bean.userName" size="30" maxlength="30" />
                 </s:else>
             </td>
-            <td class="description"><s:text name="userSettings.tip.username" />
-            <s:if test="actionName == 'modifyUser'">
-                <s:text name="userSettings.tip.username" />
-            </s:if>
-            <s:else>
-                <s:text name="userAdmin.tip.userName" />
-            </s:else>
+            <td class="description">
+                <s:if test="actionName == 'modifyUser'">
+                    <s:text name="userSettings.tip.username" />
+                </s:if>
+                <s:else>
+                    <s:text name="userAdmin.tip.userName" />
+                </s:else>
             </td>
         </tr>
 

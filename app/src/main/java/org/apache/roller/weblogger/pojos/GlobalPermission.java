@@ -93,6 +93,10 @@ public class GlobalPermission extends RollerPermission {
     }
         
     public boolean implies(Permission perm) {
+        if (getActionsAsList().isEmpty()) {
+            // new, unsaved user.
+            return false;
+        }
         if (perm instanceof WeblogPermission) {
             if (hasAction(ADMIN)) {
                 // admin implies all other permissions

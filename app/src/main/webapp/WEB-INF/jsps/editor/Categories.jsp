@@ -19,7 +19,6 @@
 
 <%-- JavaScript for categories table --%> 
 <script>
-// <!-- 
 function onMove()
 {
     if ( confirm("<s:text name='categoriesForm.move.confirm' />") ) 
@@ -28,7 +27,6 @@ function onMove()
         document.categories.submit();
     }
 }
-//-->
 </script>
 
 <p class="subtitle">

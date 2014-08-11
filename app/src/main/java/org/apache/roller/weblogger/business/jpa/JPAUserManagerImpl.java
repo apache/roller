@@ -116,12 +116,11 @@ public class JPAUserManagerImpl implements UserManager {
         }
     }
 
-    
+    @Override
     public User getUser(String id) throws WebloggerException {
         return (User)this.strategy.load(User.class, id);
     }
 
-    
     //------------------------------------------------------------ user queries
 
     public User getUserByUserName(String userName) throws WebloggerException {
@@ -340,28 +339,28 @@ public class JPAUserManagerImpl implements UserManager {
     //-------------------------------------------------------- permissions CRUD
  
     public boolean checkPermission(RollerPermission perm, User user) throws WebloggerException {
-        RollerPermission existingPerm = null;
 
         // if permission a weblog permission
         if (perm instanceof WeblogPermission) {
             // if user has specified permission in weblog return true
             WeblogPermission permToCheck = (WeblogPermission)perm;
             try {
-                existingPerm = getWeblogPermission(permToCheck.getWeblog(), user);
-            } catch (WebloggerException ignored) {}        
+                RollerPermission existingPerm = getWeblogPermission(permToCheck.getWeblog(), user);
+                if (existingPerm != null && existingPerm.implies(perm)) {
+                    return true;
+                }
+            } catch (WebloggerException ignored) {
             }
-        if (existingPerm != null && existingPerm.implies(perm)) {
-            return true;
         }
-        
-        // user has no existing perm in a weblog, so try his global perms
+
+        // if Blog Server admin would still have weblog permission above
         GlobalPermission globalPerm = new GlobalPermission(user);
         if (globalPerm.implies(perm)) {
             return true;
         }
-        
+
         if (log.isDebugEnabled()) {
-            log.debug("PERM CHECK FAILED: user "+user.getUserName()+" does not have " + perm.toString());
+            log.debug("PERM CHECK FAILED: user " + user.getUserName() + " does not have " + perm.toString());
         }
         return false;
     }

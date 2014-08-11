@@ -51,6 +51,11 @@ public class BookmarkEdit extends UIAction {
         this.desiredMenu = "editor";
     }
 
+    @Override
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
+    }
+
     public void myPrepare() {
         if (StringUtils.isEmpty(bean.getId())) {
             // Create and initialize new, not-yet-saved WeblogBookmark

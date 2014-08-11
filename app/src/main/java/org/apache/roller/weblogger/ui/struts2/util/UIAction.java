@@ -305,11 +305,12 @@ public abstract class UIAction extends ActionSupport
     }
 
     public void setPageTitle(String pageTitle) {
-        //this.pageTitle = pageTitle;
-        // no-op as mucks up the page titles on chains etc
+        // disabled by default as it causes page titles not
+        // to update on chain actions defined in struts.xml
+        // override in subclasses where you want this to occur.
+        // this.pageTitle = pageTitle;
     }
-    
-    
+
     public String getActionName() {
         return this.actionName;
     }

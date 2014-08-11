@@ -80,6 +80,11 @@ public final class EntryEdit extends UIAction {
     }
 
     @Override
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
+    }
+
+    @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }
