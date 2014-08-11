@@ -20,7 +20,10 @@ package org.apache.roller.weblogger.ui.struts2.util;
 
 
 /**
- * A simple object to maintain a key/value pair.
+ * A simple object to maintain a key/value pair.  Normally used within a List called by the UI
+ * when it is desired to specify a specific, not necessarily alphabetical, ordering of UI
+ * select or radio button values.  Addresses the weakness of most Map<K,V> implementations
+ * which lack an easily ability to maintain non-standard orderings.
  */
 public class KeyValueObject {
     
