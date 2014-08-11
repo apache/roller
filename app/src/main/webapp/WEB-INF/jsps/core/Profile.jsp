@@ -27,7 +27,7 @@
         <tr>
             <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
             <td class="field"><s:textfield name="bean.userName" size="30" maxlength="30" readonly="true" cssStyle="background: #e5e5e5" /></td>
-            <td class="description"><s:text name="yourProfile.tip.userName" /></td>
+            <td class="description"><s:text name="userSettings.tip.username" /></td>
         </tr>
         
         <tr>
@@ -63,7 +63,6 @@
                 <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
             </tr>
         </s:if>
-
         <s:else>
             <s:hidden name="bean.password" />
         </s:else>
@@ -71,7 +70,7 @@
         <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
             <tr>
                 <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
-                <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" id="f_openid_identifier" /></td>
+                <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" style="width:75%" id="f_openid_identifier" /></td>
                 <td class="description"><s:text name="userRegister.tip.openIdUrl" /></td>
             </tr>     
         </s:if>
@@ -96,7 +95,7 @@
     
     <br />
     
-    <s:submit value="%{getText('userSettings.button.save')}" />
+    <s:submit value="%{getText('generic.save')}" />
     <input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
 
 </s:form>

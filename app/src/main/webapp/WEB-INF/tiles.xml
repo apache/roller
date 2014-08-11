@@ -168,12 +168,8 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
     </definition>
     
-    <definition name=".CreateUser" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/CreateUser.jsp" />
-    </definition>
-    
-    <definition name=".ModifyUser" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/ModifyUser.jsp" />
+    <definition name=".UserEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/UserEdit.jsp" />
     </definition>
     
     <definition name=".GlobalCommentManagement" extends=".tiles-tabbedpage" >

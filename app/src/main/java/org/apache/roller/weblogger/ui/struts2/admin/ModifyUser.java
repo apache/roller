@@ -51,6 +51,12 @@ public class ModifyUser extends UIAction {
     
     private String userName = null;
 
+    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+
+    public String getAuthMethod() {
+        return authMethod.name();
+    }
+
     public ModifyUser() {
         this.actionName = "modifyUser";
         this.desiredMenu = "admin";
@@ -101,7 +107,7 @@ public class ModifyUser extends UIAction {
         
         if (getUser() != null && getUser().getUserName() != null) {
             // populate form data from user profile data
-            getBean().copyFrom(getUser(), getLocale());
+            getBean().copyFrom(getUser());
         } else {
             addError("userAdmin.error.userNotFound");
             return ERROR;
@@ -121,7 +127,7 @@ public class ModifyUser extends UIAction {
         
         if (!hasActionErrors()) {
             
-            getBean().copyTo(getUser(), getLocale());
+            getBean().copyTo(getUser());
             
             // reset password if set
             if (!StringUtils.isEmpty(getBean().getPassword())) {

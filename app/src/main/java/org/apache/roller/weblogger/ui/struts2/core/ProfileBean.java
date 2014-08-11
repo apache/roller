@@ -22,7 +22,7 @@ import org.apache.roller.weblogger.pojos.User;
 
 
 /**
- * A simple bean for managing the form data used by the RegisterForm.
+ * Bean for managing the form data used by Registration and Edit User Profile.
  */
 public class ProfileBean {
     
@@ -34,7 +34,7 @@ public class ProfileBean {
     private String emailAddress = null;
     private String locale = null;
     private String timeZone = null;
-    private String openidUrl = null;
+    private String openIdUrl = null;
     
     private String passwordText = null;
     private String passwordConfirm = null;
@@ -107,11 +107,11 @@ public class ProfileBean {
     }
 
     public String getOpenIdUrl() {
-        return openidUrl;
+        return openIdUrl;
     }
 
-    public void setOpenIdUrl(String openidUrl) {
-        this.openidUrl = openidUrl;
+    public void setOpenIdUrl(String openIdUrl) {
+        this.openIdUrl = openIdUrl;
     }
     
     public String getPasswordText() {
@@ -132,25 +132,26 @@ public class ProfileBean {
     
     
     public void copyTo(User dataHolder) {
-        
+        // avoiding password, that is handled separately in class Profile
         dataHolder.setScreenName(this.screenName);
         dataHolder.setFullName(this.fullName);
         dataHolder.setEmailAddress(this.emailAddress);
         dataHolder.setLocale(this.locale);
         dataHolder.setTimeZone(this.timeZone);
+        dataHolder.setOpenIdUrl(this.openIdUrl);
     }
     
     
     public void copyFrom(User dataHolder) {
-        
+        // avoiding password, that is handled separately in class Profile
         this.id = dataHolder.getId();
         this.userName = dataHolder.getUserName();
-        this.password = dataHolder.getPassword();
         this.screenName = dataHolder.getScreenName();
         this.fullName = dataHolder.getFullName();
         this.emailAddress = dataHolder.getEmailAddress();
         this.locale = dataHolder.getLocale();
         this.timeZone = dataHolder.getTimeZone();
+        this.openIdUrl = dataHolder.getOpenIdUrl();
     }
     
 }

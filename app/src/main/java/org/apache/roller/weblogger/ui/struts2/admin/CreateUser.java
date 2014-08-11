@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -45,8 +46,12 @@ public class CreateUser extends UIAction {
     
     // a bean to store our form data
     private CreateUserBean bean = new CreateUserBean();
-    
-    
+    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+
+    public String getAuthMethod() {
+        return authMethod.name();
+    }
+
     public CreateUser() {
         this.actionName = "createUser";
         this.desiredMenu = "admin";
@@ -96,16 +101,14 @@ public class CreateUser extends UIAction {
 
                 // copy form data into new user pojo
                 User newUser = new User();
-                getBean().copyTo(newUser, getLocale());
-                // password not copied
-                newUser.setDateCreated(new java.util.Date());
-
-                // set username and password
+                getBean().copyTo(newUser);
+                // fields not copied over from above copyTo():
                 newUser.setUserName(getBean().getUserName());
+                newUser.setDateCreated(new java.util.Date());
                 newUser.resetPassword(getBean().getPassword());
 
                 // are we granting the user admin rights?
-                if(((CreateUserBean)getBean()).isAdministrator()) {
+                if((getBean()).isAdministrator()) {
                     mgr.grantRole("admin", newUser);
                 }
 

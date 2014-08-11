@@ -32,7 +32,6 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * Allows user to edit his/her profile.
- * TODO: check on the impact of deleting that cookieLogin stuff
  */
 public class Profile extends UIAction {
     private static Log log = LogFactory.getLog(Profile.class);
@@ -54,18 +53,11 @@ public class Profile extends UIAction {
     @SkipValidation
     public String execute() {
         User ud = getAuthenticatedUser();
-        
         // load up the form from the users existing profile data
         getBean().copyFrom(ud);
-        getBean().setPasswordText(null);
-        getBean().setPasswordConfirm(null);
-        getBean().setLocale(ud.getLocale());
-        getBean().setTimeZone(ud.getTimeZone());
-        getBean().setOpenIdUrl(ud.getOpenIdUrl());
         return INPUT;
     }
 
-    
     public String save() {
 
         myValidate();
@@ -75,14 +67,9 @@ public class Profile extends UIAction {
             // We ONLY modify the user currently logged in
             User existingUser = getAuthenticatedUser();
 
-            // We want to be VERY selective about what data gets updated
-            existingUser.setScreenName(getBean().getScreenName());
-            existingUser.setFullName(getBean().getFullName());
-            existingUser.setEmailAddress(getBean().getEmailAddress());
-            existingUser.setLocale(getBean().getLocale());
-            existingUser.setTimeZone(getBean().getTimeZone());
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            
+            // copy updated attributes
+            getBean().copyTo(existingUser);
+
             if (StringUtils.isNotEmpty(getBean().getOpenIdUrl())) { 
                 try {
                     String openidurl = getBean().getOpenIdUrl();
@@ -108,19 +95,16 @@ public class Profile extends UIAction {
 
             try {
                 // save the updated profile
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 mgr.saveUser(existingUser);
                 WebloggerFactory.getWeblogger().flush();
-                addMessage("yourProfile.saved");
-
+                addMessage("generic.changes.saved");
                 return SUCCESS;
-
             } catch (WebloggerException ex) {
                 log.error("ERROR in action", ex);
                 addError("Unexpected error doing profile save");
             }
-
         }
-
         return INPUT;
     }
 
