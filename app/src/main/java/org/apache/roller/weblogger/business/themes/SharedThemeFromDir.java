@@ -176,8 +176,7 @@ public class SharedThemeFromDir extends SharedTheme {
             themeMetadata = parser.unmarshall(is);
         } catch (Exception ex) {
             throw new ThemeInitializationException(
-                    "Unable to parse theme descriptor for theme "
-                            + this.themeDir, ex);
+                    "Unable to parse theme.xml for theme " + this.themeDir, ex);
         }
 
         log.debug("Loading Theme " + themeMetadata.getName());
@@ -266,7 +265,7 @@ public class SharedThemeFromDir extends SharedTheme {
                                 templateFile.lastModified()), false, false);
 
                 for (RenditionType type : availableTypesList) {
-                    SharedThemeTemplateRendition rendition = createTemplateCode(
+                    SharedThemeTemplateRendition rendition = createRendition(
                             themeTemplate.getId(),
                             stylesheetTmpl.getTemplateRendition(type));
 
@@ -364,7 +363,7 @@ public class SharedThemeFromDir extends SharedTheme {
                     templateMetadata.isHidden(), templateMetadata.isNavbar());
 
             for (RenditionType type : availableTypesList) {
-                SharedThemeTemplateRendition templateCode = createTemplateCode(
+                SharedThemeTemplateRendition templateCode = createRendition(
                         themeTemplate.getId(),
                         templateMetadata.getTemplateRendition(type));
 
@@ -434,7 +433,7 @@ public class SharedThemeFromDir extends SharedTheme {
         this.resources.put(normalizedPath, resource);
     }
 
-    private SharedThemeTemplateRendition createTemplateCode(String templateId,
+    private SharedThemeTemplateRendition createRendition(String templateId,
             ThemeMetadataTemplateRendition templateCodeMetadata) {
         SharedThemeTemplateRendition templateRendition = new SharedThemeTemplateRendition();
 

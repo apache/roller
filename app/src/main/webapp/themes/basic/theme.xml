@@ -15,11 +15,10 @@
         <description>Stylesheet for Basic theme</description>
         <link>basic-custom.css</link>
         <contentType>text/html</contentType>
-        <templateCode>
-            <templateLanguage>velocity</templateLanguage>
+        <rendition>
             <contentsFile>basic-custom.css</contentsFile>
-            <type>standard</type>
-        </templateCode>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </stylesheet>
     
     <!-- templates -->
@@ -30,11 +29,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-            <templateLanguage>velocity</templateLanguage>
+        <rendition>
             <contentsFile>weblog.vm</contentsFile>
-            <type>standard</type>
-        </templateCode>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
     
     <template action="permalink">
@@ -44,11 +42,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-            <templateLanguage>velocity</templateLanguage>
+        <rendition>
             <contentsFile>permalink.vm</contentsFile>
-            <type>standard</type>
-        </templateCode>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
     
     <template action="search">
@@ -58,11 +55,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-            <templateLanguage>velocity</templateLanguage>
+        <rendition>
             <contentsFile>searchresults.vm</contentsFile>
-            <type>standard</type>
-        </templateCode>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
     
     <template action="custom">
@@ -72,11 +68,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-            <templateLanguage>velocity</templateLanguage>
+        <rendition>
             <contentsFile>_day.vm</contentsFile>
-            <type>standard</type>
-        </templateCode>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
     
     <template action="custom">
@@ -86,10 +81,9 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-            <templateLanguage>velocity</templateLanguage>
+        <rendition>
             <contentsFile>sidebar.vm</contentsFile>
-            <type>standard</type>
-        </templateCode>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
 </weblogtheme>

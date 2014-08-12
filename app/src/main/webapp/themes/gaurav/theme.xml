@@ -17,11 +17,10 @@
         <description>Custom style sheet</description>
 	    <link>custom.css</link>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>custom_css.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <contentsFile>custom_css.vm</contentsFile>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </stylesheet>
     
     <!-- templates -->
@@ -32,11 +31,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>weblog.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <contentsFile>weblog.vm</contentsFile>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
 
     <template action="permalink">
@@ -46,11 +44,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>entry.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <contentsFile>entry.vm</contentsFile>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
 
     <template action="tagsIndex">
@@ -60,11 +57,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>tags_index.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <contentsFile>tags_index.vm</contentsFile>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
 
     <template action="search">
@@ -74,11 +70,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>search.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <contentsFile>search.vm</contentsFile>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
 
     <template action="custom">
@@ -88,11 +83,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>day.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <templateLanguage>velocity</templateLanguage>
+            <contentsFile>day.vm</contentsFile>
+        </rendition>
     </template>
 
     <template action="custom">
@@ -102,11 +96,10 @@
         <navbar>true</navbar>
         <hidden>false</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>archives.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <contentsFile>archives.vm</contentsFile>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
 
     <template action="custom">
@@ -116,11 +109,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>std_head.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <contentsFile>std_head.vm</contentsFile>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
 
     <template action="custom">
@@ -130,11 +122,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>std_header.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <contentsFile>std_header.vm</contentsFile>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
 
     <template action="custom">
@@ -144,11 +135,10 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <templateCode>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>std_footer.vm</contentsFile>
-           <type>standard</type>
-       </templateCode>
+        <rendition>
+            <contentsFile>std_footer.vm</contentsFile>
+            <templateLanguage>velocity</templateLanguage>
+        </rendition>
     </template>
     
     <resource path="css/font-awesome.min.css" />

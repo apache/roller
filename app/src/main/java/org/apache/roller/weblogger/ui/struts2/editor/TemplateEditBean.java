@@ -86,7 +86,7 @@ public class TemplateEditBean {
     public void setDescription( String description ) {
         this.description = description;
     }
-    
+
     public String getLink() {
         return this.link;
     }
@@ -94,7 +94,7 @@ public class TemplateEditBean {
     public void setLink( String link ) {
         this.link = link;
     }
-    
+
     public String getContentsStandard() {
         return this.contentsStandard;
     }

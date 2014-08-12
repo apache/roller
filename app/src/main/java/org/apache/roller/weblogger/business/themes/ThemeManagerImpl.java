@@ -119,7 +119,7 @@ public class ThemeManagerImpl implements ThemeManager {
 			// the disk preemptive and cache them
 			this.themes = loadAllThemesFromDisk();
 
-			log.info("Loaded " + this.themes.size() + " themes from disk.");
+			log.info("Successfully loaded " + this.themes.size() + " themes from disk.");
 		}
 	}
 
@@ -401,18 +401,21 @@ public class ThemeManagerImpl implements ThemeManager {
 		String[] themenames = themesdir.list(filter);
 
 		if (themenames == null) {
-			log.warn("No themes loaded!  Perhaps you specified the wrong "
-					+ "location for your themes directory?");
+			log.warn("No themes found!  Perhaps wrong directory for themes specified?  "
+					+ "(Check themes.dir setting in roller[-custom].properties file.)");
 		} else {
+            log.info("Loading themes from " + themesdir.getAbsolutePath() + "...");
+
             // now go through each theme and load it into a Theme object
             for (String themeName : themenames) {
                 try {
                     Theme theme = new SharedThemeFromDir(this.themeDir
                             + File.separator + themeName);
                     themeMap.put(theme.getId(), theme);
+                    log.info("Loaded theme '" + themeName + "'");
                 } catch (Exception unexpected) {
                     // shouldn't happen, so let's learn why it did
-                    log.error("Problem reading theme " + themeName, unexpected);
+                    log.error("Problem processing theme '" + themeName + "':", unexpected);
                 }
             }
         }
