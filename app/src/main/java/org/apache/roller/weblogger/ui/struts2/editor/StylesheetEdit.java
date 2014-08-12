@@ -86,7 +86,7 @@ public class StylesheetEdit extends UIAction {
                     // template doesn't exist yet, so create it
                     WeblogTemplate stylesheetTmpl = new WeblogTemplate();
                     stylesheetTmpl.setWeblog(getActionWeblog());
-                    stylesheetTmpl.setAction(ThemeTemplate.ComponentType.CUSTOM);
+                    stylesheetTmpl.setAction(ThemeTemplate.ComponentType.STYLESHEET);
                     stylesheetTmpl.setName(stylesheet.getName());
                     stylesheetTmpl.setDescription(stylesheet.getDescription());
                     stylesheetTmpl.setLink(stylesheet.getLink());

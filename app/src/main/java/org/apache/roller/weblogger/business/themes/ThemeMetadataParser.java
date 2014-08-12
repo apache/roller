@@ -147,7 +147,7 @@ public class ThemeMetadataParser {
                     throw new ThemeParsingException("Invalid rendition type " + renditionValue + " found.");
                 }
             } else {
-                // default to standard if type not provided (most templates don't have multiple renditions anyway)
+                // default to standard if type not provided, as most templates are single-rendition
                 rendition.setType(RenditionType.STANDARD);
             }
             String templateString = renditionElement.getChildText("templateLanguage");
@@ -209,7 +209,7 @@ public class ThemeMetadataParser {
                     throw new ThemeParsingException("Invalid rendition type " + renditionValue + " found.");
                 }
             } else {
-                // default to standard if type not provided (most templates don't have multiple renditions anyway)
+                // default to standard if type not provided, as most templates are single-rendition
                 rendition.setType(RenditionType.STANDARD);
             }
             String templateString = renditionElement.getChildText("templateLanguage");
