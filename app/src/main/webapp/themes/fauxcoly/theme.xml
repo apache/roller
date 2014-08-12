@@ -27,7 +27,6 @@
     <template action="weblog">
         <name>Weblog</name>
         <description>Main page of weblog</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -40,7 +39,6 @@
     <template action="permalink">
         <name>Entry</name>
         <description>Page for one weblog entry</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -53,7 +51,6 @@
     <template action="tagsIndex">
         <name>TagsIndex</name>
         <description>Tag index page</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -66,7 +63,6 @@
     <template action="search">
         <name>Search</name>
         <description>Search results page</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -79,7 +75,6 @@
     <template action="custom">
         <name>_day</name>
         <description>One day's worth of entries</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -105,7 +100,6 @@
     <template action="custom">
         <name>standard_head</name>
         <description>Contents of HTML head</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -118,7 +112,6 @@
     <template action="custom">
         <name>standard_header</name>
         <description>Displayed in header of each page</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -131,7 +124,6 @@
     <template action="custom">
         <name>standard_footer</name>
         <description>For footer of each page</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>

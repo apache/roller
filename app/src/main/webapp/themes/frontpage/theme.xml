@@ -13,7 +13,6 @@
     <template action="weblog">
         <name>Weblog</name>
         <description>Weblog</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -26,7 +25,6 @@
     <template action="custom">
         <name>_blogdirectory</name>
         <description>_blogdirectory</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -39,7 +37,6 @@
     <template action="custom">
         <name>_blogprofile</name>
         <description>_blogprofile</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -52,7 +49,6 @@
     <template action="custom">
         <name>_blogs</name>
         <description>_blogs</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -65,7 +61,6 @@
     <template action="custom">
         <name>_css</name>
         <description>_css</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -78,7 +73,6 @@
     <template action="custom">
         <name>_day</name>
         <description>_day</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -91,7 +85,6 @@
     <template action="custom">
         <name>_decorator</name>
         <description>_decorator</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -104,7 +97,6 @@
     <template action="custom">
         <name>_entry</name>
         <description>_entry</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -117,7 +109,6 @@
     <template action="custom">
         <name>_footer</name>
         <description>_footer</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
@@ -130,7 +121,6 @@
     <template action="custom">
         <name>_header</name>
         <description>_header</description>
-        <link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
