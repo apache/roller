@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -99,6 +100,7 @@ public class UserEdit extends UIAction {
     /**
      * Show admin user edit page.
      */
+    @SkipValidation
     public String execute() {
         if (isAdd()) {
             // initial user create
@@ -114,6 +116,7 @@ public class UserEdit extends UIAction {
     /**
      * Post user created message after first save.
      */
+    @SkipValidation
     public String firstSave() {
         addMessage("createUser.add.success", getBean().getUserName());
         return execute();
@@ -190,7 +193,6 @@ public class UserEdit extends UIAction {
         return actionName.equals("createUser");
     }
 
-    // TODO: replace with struts2 validation
     private void myValidate() {
         if (isAdd()) {
             String allowed = WebloggerConfig.getProperty("username.allowedChars");
@@ -214,9 +216,6 @@ public class UserEdit extends UIAction {
             if (user.getUserName() == null) {
                 addError("userAdmin.error.userNotFound");
             }
-        }
-        if (StringUtils.isEmpty(getBean().getEmailAddress())) {
-            addError("error.add.user.missingEmailAddress");
         }
     }
 

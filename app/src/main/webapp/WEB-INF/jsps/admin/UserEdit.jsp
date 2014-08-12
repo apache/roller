@@ -34,12 +34,9 @@
 </p>
 
 <p class="pagetip">
-    <s:if test="actionName == 'modifyUser'">
-        <s:text name="userAdmin.editInstructions"/>
-    </s:if>
-    <s:else>
+    <s:if test="actionName == 'createUser'">
         <s:text name="userAdmin.addInstructions"/>
-    </s:else>
+    </s:if>
 </p>
 
 <s:form>
@@ -94,7 +91,7 @@
             <tr>
                 <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
                 <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" style="width:75%" id="f_openid_identifier" /></td>
-                <td class="description"><s:text name="userRegister.tip.openIdUrl" /></td>
+                <td class="description"><s:text name="userAdmin.tip.openIdUrl" /></td>
             </tr>
         </s:if>
 

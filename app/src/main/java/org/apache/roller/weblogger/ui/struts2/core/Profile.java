@@ -109,6 +109,14 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
+        if (authMethod == AuthMethod.OPENID && StringUtils.isEmpty(getBean().getOpenIdUrl())) {
+            addError("userRegister.error.missingOpenID");
+        }
+
+        if (authMethod == AuthMethod.DB_OPENID && StringUtils.isEmpty(getBean().getOpenIdUrl()) && StringUtils.isEmpty(getBean().getPassword())) {
+            addError("userRegister.error.missingOpenIDOrPassword");
+        }
+
         // check that passwords match if they were specified (w/StringUtils.equals, null == null)
         if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");
