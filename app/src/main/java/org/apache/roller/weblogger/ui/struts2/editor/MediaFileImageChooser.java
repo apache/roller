@@ -91,11 +91,8 @@ public class MediaFileImageChooser extends MediaFileBase {
 
             this.childFiles = new ArrayList<MediaFile>();
 
-            // only add image files
             for (MediaFile mf : directory.getMediaFiles()) {
-                if (mf.isImageFile()) {
-                    this.childFiles.add(mf);
-                }
+                this.childFiles.add(mf);
             }
 
             Collections.sort(this.childFiles, new MediaFileComparator(

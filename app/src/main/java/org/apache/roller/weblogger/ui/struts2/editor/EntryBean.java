@@ -219,8 +219,8 @@ public class EntryBean {
         return enclosureURL;
     }
     
-    public void setEnclosureURL(String trackbackUrl) {
-        this.enclosureURL = trackbackUrl;
+    public void setEnclosureURL(String enclosureUrl) {
+        this.enclosureURL = enclosureUrl;
     }
     
     public String getSearchDescription() {

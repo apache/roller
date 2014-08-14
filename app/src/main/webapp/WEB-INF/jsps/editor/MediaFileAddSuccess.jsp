@@ -33,30 +33,32 @@
 
 <script>
     $(document).ready(function() {
-
         $("#submit").attr("disabled", true);
 
         $("input[type='checkbox']").change(function() {
-            $("#submit").attr("disabled", true);
-            var boxes = $("input[type='checkbox']");
-            for (var i=0; i<boxes.length; i++) {
-                if (boxes.get(i).checked) {
-                    $("#submit").attr("disabled", false);
-                    break;
-                }
+            if ($("#enclosureURL").get(0).getAttribute("value") != '') {
+                $("#submit").attr("disabled", false);
+                return;
             }
-            if ($("#enclosureUrl").get(0).getAttribute("value") != '') {
-            }
+            $("#submit").attr("disabled", isImageChecked() ? false : true);
         });
     });
-
-    function setEnclosure(url) {
-        $("#enclosureUrl").get(0).value = url;
-        if (url != '') {
-            $("#submit").attr("disabled", false);
-        } else {
-            $("#submit").attr("disabled", true);
+    function isImageChecked() {
+        var boxes = $("input[type='checkbox']");
+        for (var i=0; i<boxes.length; i++) {
+            if (boxes.get(i).checked) {
+                return true;
+            }
         }
+        return false;
+    }
+    function setEnclosure(url) {
+        $("#enclosureURL").get(0).value = url;
+        if (isImageChecked()) {
+            $("#submit").attr("disabled", false);
+            return;
+        }
+        $("#submit").attr("disabled", url == '' ? true : false);
     }
 </script>
 
@@ -68,12 +70,10 @@
     <s:text name="mediaFileSuccess.pageTip" />
 </p>
 
-<s:form id="entry" action="entryAddWithMediaFile">
+<s:form id="entry">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="enclosureUrl" id="enclosureUrl" />
-    <input type="hidden" name="type" value="weblog" />
-
+    <s:hidden name="bean.enclosureURL" id="enclosureURL" />
 
     <s:if test="newImages.size() > 0">
         <p><s:text name="mediaFileSuccess.selectImages" /></p>
@@ -120,7 +120,7 @@
     <s:if test="newFiles.size() > 0">
         <p><s:text name="mediaFileSuccess.selectEnclosure" /></p>
 
-        <%-- checkboxed list of other files uploaded uploaded --%>
+        <%-- checkboxed list of other files uploaded --%>
         <table class="mediaFileTable">
             <s:iterator value="newFiles" id="newFile">
             <tr>
@@ -151,7 +151,7 @@
     <div style="margin-top:20px"">
 
         <p><s:text name="mediaFileSuccess.createPostPrompt" /></p>
-        <input type="submit" id="submit" value='<s:text name="mediaFileSuccess.createPost" />' />
+        <s:submit id="submit" value="%{getText('mediaFileSuccess.createPost')}" action="entryAddWithMediaFile"/>
         <br/>
         <br/>
         <br/>

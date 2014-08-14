@@ -37,8 +37,9 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     private EntryBean bean = new EntryBean();
 
     private String   weblog = null;
-    private String   type = null;
+    // used by MediaFileView.jsp: multiple images and optional enclosure URL to create a blog post
     private String[] selectedImages = null;
+    // used by MediaFileView.jsp: single image to create a blog post
     private String   selectedImage = null;
     
 
@@ -65,11 +66,10 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 
             StringBuilder sb = new StringBuilder();
 
-            if ("weblog".equals(type) && selectedImages != null) {
-
-                for (int i=0; i<selectedImages.length; i++) {
-                    MediaFile mediaFile = manager.getMediaFile(selectedImages[i]);
-                    String link = "";
+            if (selectedImages != null) {
+                for (String image : selectedImages) {
+                    MediaFile mediaFile = manager.getMediaFile(image);
+                    String link;
 
                     if (mediaFile.isImageFile()) {
                         link = "<p>" + mediaFile.getName() + "</p>";
@@ -90,15 +90,13 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                 }
             }
 
-            else if ("podcast".equals(type) && StringUtils.isNotEmpty(selectedImage)) {
-                MediaFile podcastFile = manager.getMediaFile(selectedImage);
+            if (bean.getEnclosureURL() != null) {
                 sb.append("<p>")
                   .append(getText("mediaFileEdit.includesEnclosure"))
                   .append("<br />")
                   .append("<a href=''>")
-                  .append(podcastFile.getPermalink())
+                  .append(bean.getEnclosureURL())
                   .append("</a></p>");
-                bean.setEnclosureURL(podcastFile.getPermalink());
             }
 
             bean.setText(sb.toString());
@@ -129,20 +127,6 @@ public class EntryAddWithMediaFile extends MediaFileBase {
      */
     public void setSelectedImages(String[] selectedImages) {
         this.selectedImages = selectedImages;
-    }
-
-    /**
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * @param type the enclosureUrl to set
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**

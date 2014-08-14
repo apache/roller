@@ -14,11 +14,18 @@ http://yuilibrary.com/license/
 
 jQuery v2.1.1 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license
 
-
-And Roller contains some snippets of code from the Blojsom and Pebble
+Roller contains some snippets of code from the Blojsom and Pebble
 blog servers, which are both licensed under the terms of the BSD license 
 (http://www.opensource.org/licenses/bsd-license.php).
 
+-------------------------------------------------------------------------------
+
+Some themes packaged with Roller use Font Awesome by Dave Gandy
+(http://fontawesome.io), whose licensing is subject to the SIL OFL 1.1:
+http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+Some themes packaged with Roller use the MIT-licensed Bootstrap:
+https://github.com/twbs/bootstrap/blob/master/LICENSE
 
 -------------------------------------------------------------------------------
 

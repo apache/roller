@@ -148,7 +148,8 @@
                             value="%{#mediaFile.thumbnailURL}"></s:url>
 
                         <div class="mediaObject"
-                             onclick="onSelectImage('<s:property value="#mediaFile.name"/>','<s:property value="%{mediaFileURL}" />')" >
+                             onclick="onSelectMediaFile('<s:property value="#mediaFile.name"/>',
+                             '<s:property value="%{mediaFileURL}" />','<s:property value="#mediaFile.isImageFile()"/>')" >
 
                             <s:if test="#mediaFile.imageFile">
 
@@ -185,9 +186,7 @@
 
 
 <script>
-<!--
-    function onSelectImage(name, url) {
-        window.parent.onSelectImage(name, url);
+    function onSelectMediaFile(name, url, isImage) {
+        window.parent.onSelectMediaFile(name, url, isImage);
     }
--->
 </script>

@@ -29,7 +29,7 @@
     <h3>
         <s:text name="weblogEdit.content" />
         <span style="font-weight:normal;float:right;">
-            <a href="#" onClick="onClickAddImage();">Add Image</a>
+            <a href="#" onClick="onClickAddImage();"><s:text name="weblogEdit.insertMediaFile" /></a>
         </span>
     </h3>
     <div>
@@ -45,7 +45,7 @@
 <%-- ********************************************************************* --%>
 <%-- Lightbox for popping up image chooser --%>
 
-<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileChooser.popupTitle'/>" style="display:none">
+<div id="mediafile_edit_lightbox" title="<s:text name='weblogEdit.insertMediaFile'/>" style="display:none">
     <iframe id="mediaFileEditor"
             style="visibility:inherit"
             height="100%"
@@ -77,10 +77,14 @@
         $("#mediaFileEditor").attr('src','about:blank');
     }
 
-    function onSelectImage(name, url) {
+    function onSelectMediaFile(name, url, isImage) {
         $("#mediafile_edit_lightbox").dialog("close");
         $("#mediaFileEditor").attr('src','about:blank');
-        insertImage('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
+        if (isImage == "true") {
+            insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
+        } else {
+            insertMediaFile('<a href="' + url + '">' + name + '</a>');
+        }
     }
 </script>
 
@@ -92,8 +96,8 @@
             $( "#accordion" ).accordion({
             });
         });
-        function insertImage(imageURL) {
-            insertAtCursor(document.getElementById('edit_content'), imageURL);
+        function insertMediaFile(anchorTag) {
+            insertAtCursor(document.getElementById('edit_content'), anchorTag);
         }
         function insertAtCursor(textAreaElement, valueForInsertion) {
             if (document.selection) {
@@ -149,8 +153,8 @@
             });
         });
 
-        function insertImage(imageURL) {
-            xinha_editors.edit_content.insertHTML(imageURL);
+        function insertMediaFile(anchorTag) {
+            xinha_editors.edit_content.insertHTML(anchorTag);
         }
 
         summary_editor_initialized = false;

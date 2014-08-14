@@ -383,7 +383,7 @@
             <span style="padding-left:7px">
                 <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
                     <input id="toggleButton" type="button"
-                       value='<s:text name="mediaFileView.toggleSelected" />' onclick="onToggle()" />
+                       value='<s:text name="generic.toggle" />' onclick="onToggle()" />
 
                     <input id="deleteButton" type="button"
                        value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
@@ -397,9 +397,9 @@
 
             <s:if test="currentDirectory.name != 'default' && !pager">
                 <!-- need a clearfix to use this float -->
-                <!-- <span style="float:right"> -->
+                <span style="float:right">
                     <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
-                <!-- </span> -->
+                </span>
             </s:if>
         </div>
     </s:if>
@@ -411,7 +411,7 @@
 
 <%-- ***************************************************************** --%>
 
-<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileEdit.popupTitle'/>">
+<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileEdit.popupTitle'/>" style="display:none">
     <iframe id="mediaFileEditor"
             style="visibility:inherit"
             height="100%"
