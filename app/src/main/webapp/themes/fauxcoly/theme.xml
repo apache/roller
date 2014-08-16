@@ -159,6 +159,8 @@
         </rendition>
     </template>
 
+    <resource path="css/cssgrids-min.css" />
+
     <resource path="images/faux-columns-950.png" />
     <resource path="images/background-950x250.png" />
 
