@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     #includeTemplate($model.weblog "standard_head")
-    <title>$model.weblog.name: $model.weblog.description</title>
+    <title>$model.weblog.name: $model.weblog.tagline</title>
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
     <link rel="stylesheet" href='$url.page("custom.css")' />

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   #includeTemplate($model.weblog "standard_head")
-  <title>$model.weblog.name: $model.weblog.description</title>
+  <title>$model.weblog.name: $model.weblog.tagline</title>
 </head>
 <body>
 
@@ -18,7 +18,7 @@
 	
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header">$model.weblog.name&nbsp;<small>$model.weblog.description</small></h1>
+				<h1 class="page-header">$model.weblog.name&nbsp;<small>$model.weblog.tagline</small></h1>
 			</div>
 	  	</div>
 	  	

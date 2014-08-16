@@ -6,7 +6,7 @@
         </tr>
         <tr>
             <td>Description</td>
-            <td>$profileWeblog.description</td>
+            <td>$profileWeblog.about</td>
         </tr>
         <tr>
             <td>Created by</td>

@@ -150,8 +150,8 @@ will be created.
         #if ($utils.isNotEmpty($model.weblogEntry.searchDescription))
             <meta name="description" content="$model.weblogEntry.searchDescription">
         #end
-    #elseif ($utils.isNotEmpty($model.weblog.description))
-        <meta name="description" content="$model.weblog.description">
+    #elseif ($utils.isNotEmpty($model.weblog.about))
+        <meta name="description" content="$model.weblog.about">
     #end
 #end
 

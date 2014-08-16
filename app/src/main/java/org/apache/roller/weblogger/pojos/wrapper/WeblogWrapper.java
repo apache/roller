@@ -108,15 +108,9 @@ public final class WeblogWrapper {
         return StringEscapeUtils.escapeHtml4(this.pojo.getName());
     }
     
-    /* Deprecated in Roller 5.1 */
-    public String getDescription() {
-        return getTagline();
-    }
-
     public String getTagline() {
         return HTMLSanitizer.conditionallySanitize(this.pojo.getTagline());
     }
-
 
     public UserWrapper getCreator() {
         return UserWrapper.wrap(this.pojo.getCreator());
@@ -125,8 +119,7 @@ public final class WeblogWrapper {
     public Boolean getEnableBloggerApi() {
         return this.pojo.getEnableBloggerApi();
     }
-    
-    
+
     public WeblogCategoryWrapper getBloggerCategory() {
         return WeblogCategoryWrapper.wrap(this.pojo.getBloggerCategory(), urlStrategy);
     }
@@ -376,7 +369,7 @@ public final class WeblogWrapper {
      * this is a special method to access the original pojo
      * we don't really want to do this, but it's necessary
      * because some parts of the rendering process still need the
-     * orginal pojo object
+     * original pojo object
      */
     public Weblog getPojo() {
         return this.pojo;

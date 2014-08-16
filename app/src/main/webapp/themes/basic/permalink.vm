@@ -5,7 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>$model.weblogEntry.title : $model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
-    <link rel="stylesheet" media="all" href="$model.weblog.stylesheet">
+    #showAnalyticsTrackingCode($model.weblog)
+    <link rel="stylesheet" href="$model.weblog.stylesheet">
     #showMetaDescription()
 </head>
 <!-- permalink -->

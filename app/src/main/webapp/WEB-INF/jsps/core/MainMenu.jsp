@@ -85,7 +85,7 @@
                        
                        <tr>
                            <td class="mm_subtable_label"><s:text name='generic.description' /></td>
-                           <td><s:property value="#perms.weblog.description" escape="false" /></td>
+                           <td><s:property value="#perms.weblog.about" escape="false" /></td>
                        </tr>
 
                        <tr>

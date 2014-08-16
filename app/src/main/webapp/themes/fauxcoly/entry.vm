@@ -144,6 +144,7 @@
     </style>
     <link rel="stylesheet" href='$url.page("custom.css")' />
     #showMetaDescription()
+    #showAnalyticsTrackingCode($model.weblog)
 </head>
 <body>
 

@@ -24,7 +24,7 @@
   <title>$utils.escapeXML($utils.removeHTML($model.weblog.name)) (Comments)</title>
   <link>$url.home</link>
   <atom:link rel="self" type="application/rss+xml" href="$url.feed.comments.rss($model.categoryName, $model.excerpts)" />
-  <description>$utils.escapeXML($model.weblog.description)</description>
+  <description>$utils.escapeXML($model.weblog.tagline)</description>
   <language>en-us</language>
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>

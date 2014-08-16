@@ -6,6 +6,8 @@
   #includeTemplate($model.weblog "standard_head")
   <title>$model.weblog.name: $model.weblogEntry.title</title>
   <link rel="stylesheet" href='$url.page("custom.css")' />
+  #showAnalyticsTrackingCode($model.weblog)
+  #showMetaDescription()
 </head>
 <body>
 
@@ -19,7 +21,7 @@
 	
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header">$model.weblog.name&nbsp;<small>$model.weblog.description</small></h1>
+				<h1 class="page-header">$model.weblog.name&nbsp;<small>$model.weblog.tagline</small></h1>
 			</div>
 	  	</div>
 	  	<div class="row">

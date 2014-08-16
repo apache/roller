@@ -30,7 +30,7 @@
   #else
     <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss" />
   #end
-  <description>$utils.escapeXML($model.weblog.description)</description>
+  <description>$utils.escapeXML($model.weblog.tagline)</description>
   <language>en-us</language>
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>

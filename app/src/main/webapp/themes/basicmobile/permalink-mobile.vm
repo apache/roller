@@ -11,15 +11,14 @@
   <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/jquery.mobile.icons.min.css" />
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
   #showMetaDescription()
+  #showAnalyticsTrackingCode($model.weblog)
 
   <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 
   <script>
-
     $(document).bind("mobileinit", function(){
       $.mobile.ajaxEnabled = false;
     });
-
   </script>
 
   <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
