@@ -39,16 +39,17 @@
     
 </s:form>
 
-<p class="subtitle"><s:text name="userAdmin.subtitle.userCreation" /></p>
-<s:text name="userAdmin.prompt.orYouCan" />
-<s:url action="createUser" id="createUser" />
-<a href="<s:property value="createUser" />">
-    <s:text name="userAdmin.prompt.createANewUser" />
-</a>
+<%-- LDAP uses external user creation --%>
+<s:if test="authMethod != 'LDAP'">
+    <p class="subtitle"><s:text name="userAdmin.subtitle.userCreation" /></p>
+    <s:text name="userAdmin.prompt.orYouCan" />
+    <s:url action="createUser" id="createUser" />
+    <a href="<s:property value="createUser" />">
+        <s:text name="userAdmin.prompt.createANewUser" />
+    </a>
+</s:if>
 
 <%-- this forces focus to the userName field --%>
 <script>
-<!--
     document.getElementById('userName').focus();
-// -->
 </script>

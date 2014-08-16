@@ -389,6 +389,21 @@ public class Register extends UIAction implements ServletRequestAware {
                 addError("generic.error.check.logs");
             }
         }
+
+        // check that OpenID, if provided, is not taken
+        if (!StringUtils.isEmpty(getBean().getOpenIdUrl())) {
+            try {
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                if (mgr.getUserByOpenIdUrl(getBean().getOpenIdUrl()) != null) {
+                    addError("error.add.user.openIdInUse");
+                    // reset OpenID URL
+                    getBean().setOpenIdUrl(null);
+                }
+            } catch (WebloggerException ex) {
+                log.error("error checking OpenID URL", ex);
+                addError("generic.error.check.logs");
+            }
+        }
     }
     
     

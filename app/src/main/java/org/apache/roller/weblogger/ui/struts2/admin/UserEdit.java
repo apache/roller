@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.CharSetUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -131,6 +132,30 @@ public class UserEdit extends UIAction {
         if (!hasActionErrors()) {
             getBean().copyTo(user);
 
+            if (authMethod == AuthMethod.DB_OPENID) {
+                if (StringUtils.isEmpty(user.getPassword())
+                        && StringUtils.isEmpty(bean.getPassword())
+                        && StringUtils.isEmpty(bean.getOpenIdUrl())) {
+                    addError("userRegister.error.missingOpenIDOrPassword");
+                    return INPUT;
+                } else if (StringUtils.isNotEmpty(bean.getOpenIdUrl())
+                        && StringUtils.isNotEmpty(bean.getPassword())) {
+                    addError("userRegister.error.bothOpenIDAndPassword");
+                    return INPUT;
+                }
+            }
+
+            // User.password does not allow null, so generate one
+            if (authMethod.equals(AuthMethod.OPENID) ||
+                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+                try {
+                    String randomString = RandomStringUtils.randomAlphanumeric(255);
+                    user.resetPassword(randomString);
+                } catch (WebloggerException e) {
+                    addMessage("yourProfile.passwordResetError");
+                }
+            }
+
             // reset password if set
             if (!StringUtils.isEmpty(getBean().getPassword())) {
                 try {
@@ -215,6 +240,23 @@ public class UserEdit extends UIAction {
         else {
             if (user.getUserName() == null) {
                 addError("userAdmin.error.userNotFound");
+            }
+        }
+        if ((authMethod == AuthMethod.OPENID) && StringUtils.isEmpty(getBean().getOpenIdUrl())) {
+            addError("userRegister.error.missingOpenID");
+        }
+
+        // check that OpenID, if provided, is not taken
+        if (!StringUtils.isEmpty(getBean().getOpenIdUrl())) {
+            try {
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                User user = mgr.getUserByOpenIdUrl(bean.getOpenIdUrl());
+                if (user != null && !(user.getUserName().equals(bean.getUserName()))) {
+                    addError("error.add.user.openIdInUse");
+                }
+            } catch (WebloggerException ex) {
+                log.error("error checking OpenID URL", ex);
+                addError("generic.error.check.logs");
             }
         }
     }

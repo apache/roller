@@ -20,6 +20,9 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.roller.weblogger.config.AuthMethod;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -29,14 +32,14 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  */
 public class UserAdmin extends UIAction {
     
-    
     public UserAdmin() {
         this.actionName = "userAdmin";
         this.desiredMenu = "admin";
         this.pageTitle = "userAdmin.title.searchUser";
     }
-    
-    
+
+    private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
+
     // admin role required    
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
@@ -46,13 +49,16 @@ public class UserAdmin extends UIAction {
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
     /**
      * Show user admin search page.
      */
     public String execute() {
         return SUCCESS;
     }
-    
+
+    public String getAuthMethod() {
+        return authMethod.name();
+    }
+
 }

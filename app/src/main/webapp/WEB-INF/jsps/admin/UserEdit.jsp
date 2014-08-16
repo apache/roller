@@ -37,6 +37,11 @@
     <s:if test="actionName == 'createUser'">
         <s:text name="userAdmin.addInstructions"/>
     </s:if>
+    <s:if test="authMethod == 'DB_OPENID'">
+        <p class="pagetip">
+            <s:text name="userAdmin.noPasswordForOpenID"/>
+        </p>
+    </s:if>
 </p>
 
 <s:form>

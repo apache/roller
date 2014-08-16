@@ -17,6 +17,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.core;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,11 +60,10 @@ public class Profile extends UIAction {
     }
 
     public String save() {
-
         myValidate();
 
         if (!hasActionErrors()) {
-            
+
             // We ONLY modify the user currently logged in
             User existingUser = getAuthenticatedUser();
 
@@ -79,7 +79,32 @@ public class Profile extends UIAction {
                     existingUser.setOpenIdUrl(openidurl);
                 } catch (Exception ex) {
                     log.error("Unexpected error saving user OpenID URL", ex);
-                    addError("Error in action", ex.toString());
+                    addError("generic.error.check.logs");
+                    return INPUT;
+                }
+            }
+
+            if (authMethod == AuthMethod.DB_OPENID) {
+                if (StringUtils.isEmpty(existingUser.getPassword())
+                        && StringUtils.isEmpty(bean.getPasswordText())
+                        && StringUtils.isEmpty(bean.getOpenIdUrl())) {
+                    addError("userRegister.error.missingOpenIDOrPassword");
+                    return INPUT;
+                } else if (StringUtils.isNotEmpty(bean.getOpenIdUrl())
+                        && StringUtils.isNotEmpty(bean.getPasswordText())) {
+                    addError("userRegister.error.bothOpenIDAndPassword");
+                    return INPUT;
+                }
+            }
+
+            // User.password does not allow null, so generate one
+            if (authMethod.equals(AuthMethod.OPENID) ||
+                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+                String randomString = RandomStringUtils.randomAlphanumeric(255);
+                try {
+                    existingUser.resetPassword(randomString);
+                } catch (WebloggerException e) {
+                    addMessage("yourProfile.passwordResetError");
                 }
             }
 
@@ -109,17 +134,26 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
-        if (authMethod == AuthMethod.OPENID && StringUtils.isEmpty(getBean().getOpenIdUrl())) {
-            addError("userRegister.error.missingOpenID");
-        }
-
-        if (authMethod == AuthMethod.DB_OPENID && StringUtils.isEmpty(getBean().getOpenIdUrl()) && StringUtils.isEmpty(getBean().getPassword())) {
-            addError("userRegister.error.missingOpenIDOrPassword");
-        }
-
-        // check that passwords match if they were specified (w/StringUtils.equals, null == null)
-        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
-            addError("userRegister.error.mismatchedPasswords");
+        if (StringUtils.isEmpty(getBean().getOpenIdUrl())) {
+            // check that passwords match if they were specified (w/StringUtils.equals, null == null)
+            if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
+                addError("userRegister.error.mismatchedPasswords");
+            }
+            if (authMethod == AuthMethod.OPENID) {
+                addError("userRegister.error.missingOpenID");
+            }
+        } else {
+            // check that OpenID, if provided, is not taken
+            try {
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                User user = mgr.getUserByOpenIdUrl(bean.getOpenIdUrl());
+                if (user != null && !(user.getUserName().equals(bean.getUserName()))) {
+                    addError("error.add.user.openIdInUse");
+                }
+            } catch (WebloggerException ex) {
+                log.error("error checking OpenID URL", ex);
+                addError("generic.error.check.logs");
+            }
         }
     }
 

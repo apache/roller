@@ -17,7 +17,13 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<p class="subtitle"><s:text name="yourProfile.description" /></p>
+<p class="subtitle"><s:text name="userAdmin.title.editUser" /></p>
+
+<s:if test="authMethod == 'DB_OPENID'">
+    <p class="pagetip">
+        <s:text name="userAdmin.noPasswordForOpenID"/>
+    </p>
+</s:if>
 
 <s:form action="profile!save">
 	<s:hidden name="salt" />

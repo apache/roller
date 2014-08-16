@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.Collections;
-import java.util.Locale;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
