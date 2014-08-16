@@ -90,6 +90,9 @@ delete from pingtarget where websiteid is not null;
 #dropForeignKey("pingtarget" "pt_websiteid_fk")
 #dropColumn("pingtarget" "websiteid")
 
+-- If you run this script manually (i.e. you are doing installation.type=manual)
+-- them you may need to comment out this next statement, this index does not 
+-- exist in all Roller systems:
 #dropIndex("bookmark_folder" "folder_namefolderid_uq")
 
 -- Removal of bookmark subfolders and renaming of former root folder to 'default'
