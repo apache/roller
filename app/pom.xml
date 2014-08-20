@@ -24,7 +24,7 @@
         <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
         <lucene.version>4.9.0</lucene.version>
         <spring.version>4.0.6.RELEASE</spring.version>
-        <spring.security.version>3.2.4.RELEASE</spring.security.version>
+        <spring.security.version>3.2.5.RELEASE</spring.security.version>
     </properties>
 
     <dependencies>
@@ -519,7 +519,7 @@
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
+                <version>2.17</version>
                 <configuration>
                     <systemProperties>
                         <property>
