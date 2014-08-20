@@ -211,11 +211,11 @@
       </property-def>
       <property-def  name="uploads.file.maxsize"  key="configForm.maxFileSize">
          <type>string</type>
-         <default-value>1.00</default-value>
+         <default-value>2.00</default-value>
       </property-def>
       <property-def  name="uploads.dir.maxsize"  key="configForm.maxDirSize">
          <type>string</type>
-         <default-value>4.00</default-value>
+         <default-value>20.00</default-value>
       </property-def>
 
    </display-group >
