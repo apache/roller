@@ -19,10 +19,10 @@
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
 <script>
-function previewImage(q, theme) {
+function previewImage(q, q_desc, theme) {
     q.attr('src','<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme=' + theme);
     var url = "<%= request.getContextPath() %>/roller-ui/authoring/themedata/";
-	$.ajax({ url: url, data: {theme:theme}, success: function(data) { $('#themedescription').html(data);} });
+	$.ajax({ url: url, data: {theme:theme}, success: function(data) { q_desc.html(data);} });
 }
 function fullPreview(selector) {
     selected = selector.selectedIndex;
@@ -106,18 +106,18 @@ function toggleImportThemeDisplay() {
         <p>
             <s:select id="sharedSelector" name="themeId" list="themes"
                       listKey="id" listValue="name" size="1"
-                      onchange="previewImage($('#sharedPreviewImg'), this[selectedIndex].value)"/>
+                      onchange="previewImage($('#sharedPreviewImg'), $('#sThemeDescription'), this[selectedIndex].value)"/>
         </p>
-        <p id="themedescription"></p>
+        <p id="sThemeDescription"></p>
         <p>
             <img id="sharedPreviewImg" src="" />
             <!-- initialize preview image at page load -->
             <script>
                 <s:if test="customTheme">
-                    previewImage($('#sharedPreviewImg'), '<s:property value="themes[0].id"/>');
+                    previewImage($('#sharedPreviewImg'), $('#sThemeDescription'), '<s:property value="themes[0].id"/>');
                 </s:if>
                 <s:else>
-                    previewImage($('#sharedPreviewImg'), '<s:property value="themeId"/>');
+                    previewImage($('#sharedPreviewImg'), $('#sThemeDescription'), '<s:property value="themeId"/>');
                 </s:else>
             </script>
         </p>
@@ -172,17 +172,18 @@ function toggleImportThemeDisplay() {
             <p>
                 <s:select id="customSelector" name="importThemeId" list="themes"
                           listKey="id" listValue="name" size="1"
-                          onchange="previewImage($('#customPreviewImg'), this[selectedIndex].value)"/>
+                          onchange="previewImage($('#customPreviewImg'), $('#cThemeDescription'), this[selectedIndex].value)"/>
             </p>
+            <p id="cThemeDescription"></p>
             <p>
                 <img id="customPreviewImg" src="" />
                 <!-- initialize preview image at page load -->
                 <script>
                 <s:if test="customTheme">
-                    previewImage($('#customPreviewImg'), '<s:property value="themes[0].id"/>');
+                    previewImage($('#customPreviewImg'), $('#cThemeDescription'), '<s:property value="themes[0].id"/>');
                 </s:if>
                 <s:else>
-                    previewImage($('#customPreviewImg'), '<s:property value="themeId"/>');
+                    previewImage($('#customPreviewImg'), $('#cThemeDescription'), '<s:property value="themeId"/>');
                 </s:else>
                 </script>
             </p>
