@@ -50,7 +50,6 @@ import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Extends normal page renderer model to represent search results.
@@ -66,7 +65,7 @@ public class SearchResultsModel extends PageModel {
 	private URLStrategy urlStrategy = null;
 
 	// the actual search results mapped by Day -> Set of entries
-	private Map<Date, TreeSet<WeblogEntryWrapper>> results
+    private Map<Date, TreeSet<WeblogEntryWrapper>> results
             = new TreeMap<Date, TreeSet<WeblogEntryWrapper>>(Collections.reverseOrder());
 
 	// the pager used by the 3.0+ rendering system
@@ -249,8 +248,8 @@ public class SearchResultsModel extends PageModel {
 
 	public String getTerm() {
 		String query = searchRequest.getQuery();
-		return (query == null) 
-			? "" : StringEscapeUtils.escapeXml(Utilities.escapeHTML(query));
+        return (query == null)
+			? "" : StringEscapeUtils.escapeXml10(query);
 	}
 
 	public String getRawTerm() {
