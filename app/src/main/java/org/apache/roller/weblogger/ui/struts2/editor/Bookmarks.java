@@ -73,7 +73,9 @@ public class Bookmarks extends UIAction {
                 setFolder(bmgr.getFolder(getFolderId()));
             } else {
                 setFolder(bmgr.getDefaultFolder(getActionWeblog()));
-                setFolderId(getFolder().getId());
+                if (getFolder() != null) {
+                    setFolderId(getFolder().getId());
+                }
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up folder", ex);

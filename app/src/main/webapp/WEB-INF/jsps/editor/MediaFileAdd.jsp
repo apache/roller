@@ -178,8 +178,9 @@
 
     <br />
     <div class="control">
-       <input type="submit" value='<s:text name="mediaFileAdd.upload" />' name="upload" />
-       <s:submit value="%{getText('generic.cancel')}" action="mediaFileView" />
+       <%-- <input type="submit" value='<s:text name="mediaFileAdd.upload" />' name="upload" /> --%>
+       <s:submit value="%{getText('mediaFileAdd.upload')}" action="mediaFileAdd!save" />
+       <s:submit value="%{getText('generic.cancel')}" action="mediaFileAdd!cancel" />
     </div>
 
 </s:form>

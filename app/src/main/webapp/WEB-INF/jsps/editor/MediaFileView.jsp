@@ -378,10 +378,10 @@
     <div style="clear:left;"></div>
 
     <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'default' && !pager)">
-        <div class="control">
+        <div class="control group" style="margin-top: 15px">
 
-            <span style="padding-left:7px">
-                <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
+            <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
+                <span style="padding-left:7px;margin-top: 20px">
                     <input id="toggleButton" type="button"
                        value='<s:text name="generic.toggle" />' onclick="onToggle()" />
 
@@ -392,12 +392,12 @@
                        value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()" />
 
                     <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="name" />
-                </s:if>
-            </span>
+                </span>
+            </s:if>
 
             <s:if test="currentDirectory.name != 'default' && !pager">
-                <!-- need a clearfix to use this float -->
-                <span style="float:right">
+                <!-- need a group (above) clearfix to use this float correctly -->
+                <span style="float:right;">
                     <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
                 </span>
             </s:if>

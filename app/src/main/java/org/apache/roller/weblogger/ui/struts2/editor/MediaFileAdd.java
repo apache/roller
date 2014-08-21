@@ -19,11 +19,11 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -247,6 +247,15 @@ public class MediaFileAdd extends MediaFileBase {
         if (!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
             addError("error.upload.disabled");
         }
+    }
+    
+    /**
+     * Cancel.
+     * 
+     * @return the string
+     */
+    public String cancel() {
+        return CANCEL;
     }
 
     public MediaFileBean getBean() {
