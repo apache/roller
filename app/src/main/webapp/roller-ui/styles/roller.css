@@ -864,7 +864,7 @@ div.autocomplete ul li {
 #ewecontextmenu .yuimenuitem-selected a {color:#ffffff;}
 
 /*** Right control floats aka clearfix ***/
-.group:after {
+.clearfix:after {
   content: "";
   display: table;
   clear: both;

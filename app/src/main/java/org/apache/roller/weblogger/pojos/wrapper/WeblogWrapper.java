@@ -184,8 +184,12 @@ public final class WeblogWrapper {
     public Date getDateCreated() {
         return this.pojo.getDateCreated();
     }
-    
-    
+
+
+    public String getDefaultPlugins() {
+        return this.pojo.getDefaultPlugins();
+    }
+
     public Locale getLocaleInstance() {
         return this.pojo.getLocaleInstance();
     }

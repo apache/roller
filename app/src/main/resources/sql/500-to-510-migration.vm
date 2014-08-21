@@ -15,7 +15,6 @@ update roller_properties set name = 'user.account.email.activation' where name =
 #dropColumn('weblog' 'ignorewords')
 #dropColumn('weblog' 'defaultpageid')
 #dropColumn('weblog' 'weblogdayid')
-#dropColumn('weblog' 'defaultplugins')
 
 -- two weblog columns renamed
 #addColumnNotNull('weblog' 'visible' $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_TRUE)

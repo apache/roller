@@ -252,7 +252,7 @@
             <result name="input" type="tiles">.MediaFileAdd</result>
             <result name="success" type="tiles">.MediaFileAddSuccess</result>
             <result name="error" type="tiles">.MediaFileAdd</result>
-             <result name="cancel" type="redirectAction">
+            <result name="cancel" type="redirectAction">
                 <param name="actionName">mediaFileView</param>
                 <param name="weblog">${weblog}</param>
             </result>

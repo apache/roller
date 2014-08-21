@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 
@@ -40,6 +41,7 @@ public class WeblogConfigBean {
     private String emailAddress = null;
     private String locale = null;
     private String timeZone = null;
+    private String defaultPlugins = null;
     private int entryDisplayCount = 15;
     private boolean active = true;
     private boolean commentModerationRequired = false;
@@ -51,6 +53,7 @@ public class WeblogConfigBean {
     private String analyticsCode = null;
     
     private String bloggerCategoryId = null;
+    private String[] defaultPluginsArray = null;
     private boolean applyCommentDefaults = false;
     
     
@@ -222,6 +225,13 @@ public class WeblogConfigBean {
         this.bloggerCategoryId = bloggerCategoryId;
     }
 
+    public String[] getDefaultPluginsArray() {
+        return defaultPluginsArray;
+    }
+
+    public void setDefaultPluginsArray(String[] strings) {
+        defaultPluginsArray = strings;
+    }
     public boolean getApplyCommentDefaults() {
         return applyCommentDefaults;
     }
@@ -262,6 +272,7 @@ public class WeblogConfigBean {
         this.emailAddress = dataHolder.getEmailAddress();
         this.locale = dataHolder.getLocale();
         this.timeZone = dataHolder.getTimeZone();
+        this.defaultPlugins = dataHolder.getDefaultPlugins();
         this.entryDisplayCount = dataHolder.getEntryDisplayCount();
         setActive(dataHolder.getActive());
         this.commentModerationRequired = dataHolder.getCommentModerationRequired();
@@ -272,6 +283,9 @@ public class WeblogConfigBean {
         setAbout(dataHolder.getAbout());
         if (dataHolder.getBloggerCategory() != null) {
             bloggerCategoryId = dataHolder.getBloggerCategory().getId();
+        }
+        if (dataHolder.getDefaultPlugins() != null) {
+            defaultPluginsArray = StringUtils.split(dataHolder.getDefaultPlugins(), ",");
         }
     }
     
@@ -289,6 +303,7 @@ public class WeblogConfigBean {
         dataHolder.setEmailAddress(this.emailAddress);
         dataHolder.setLocale(this.locale);
         dataHolder.setTimeZone(this.timeZone);
+        dataHolder.setDefaultPlugins(StringUtils.join(this.defaultPluginsArray, ","));
         dataHolder.setEntryDisplayCount(this.entryDisplayCount);
         dataHolder.setActive(this.getActive());
         dataHolder.setCommentModerationRequired(this.commentModerationRequired);

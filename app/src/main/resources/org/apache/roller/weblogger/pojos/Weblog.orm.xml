@@ -81,7 +81,10 @@
 				<column name="datecreated" insertable="true" updatable="true" unique="false"/>
 				<temporal>TIMESTAMP</temporal>
 			</basic>
-			<basic name="entryDisplayCount">
+            <basic name="defaultPlugins">
+                <column name="defaultplugins" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="entryDisplayCount">
 				<column name="displaycnt" insertable="true" updatable="true" unique="false"/>
 			</basic>
 			<basic name="visible">

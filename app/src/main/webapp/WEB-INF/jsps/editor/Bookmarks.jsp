@@ -153,7 +153,7 @@ function onMove()
         </s:else>
     </table>
     
-    <div class="control group">
+    <div class="control clearfix">
         <s:if test="folder.bookmarks.size > 0">
                 <%-- Delete-selected button --%>
                 <input type="button" value="<s:text name="bookmarksForm.delete"/>" onclick="onDelete();return false;" />
@@ -168,7 +168,6 @@ function onMove()
         </s:if>
 
         <s:if test="folder.name != 'default'">
-            <!-- need a group (above) clearfix to use this float correctly -->
             <span style="float:right">
                 <s:submit value="%{getText('bookmarksForm.deleteFolder')}" action="bookmarks!deleteFolder" onclick="onDeleteFolder();return false;"/>
             </span>

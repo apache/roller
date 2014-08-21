@@ -125,6 +125,12 @@ public final class EntryEdit extends UIAction {
             getBean().setLocale(getActionWeblog().getLocale());
             getBean().setAllowComments(getActionWeblog().getDefaultAllowComments());
             getBean().setCommentDays(getActionWeblog().getDefaultCommentDays());
+            // apply weblog default plugins
+            if (getActionWeblog().getDefaultPlugins() != null) {
+                getBean().setPlugins(
+                        StringUtils.split(getActionWeblog().getDefaultPlugins(),
+                                ","));
+            }
         }
 
         return INPUT;

@@ -249,15 +249,6 @@ public class MediaFileAdd extends MediaFileBase {
         }
     }
     
-    /**
-     * Cancel.
-     * 
-     * @return the string
-     */
-    public String cancel() {
-        return CANCEL;
-    }
-
     public MediaFileBean getBean() {
         return bean;
     }

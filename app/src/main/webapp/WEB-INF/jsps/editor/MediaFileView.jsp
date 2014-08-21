@@ -378,7 +378,7 @@
     <div style="clear:left;"></div>
 
     <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'default' && !pager)">
-        <div class="control group" style="margin-top: 15px">
+        <div class="control clearfix" style="margin-top: 15px">
 
             <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
                 <span style="padding-left:7px;margin-top: 20px">
@@ -396,7 +396,6 @@
             </s:if>
 
             <s:if test="currentDirectory.name != 'default' && !pager">
-                <!-- need a group (above) clearfix to use this float correctly -->
                 <span style="float:right;">
                     <s:submit value="%{getText('mediaFileView.deleteFolder')}" action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
                 </span>
