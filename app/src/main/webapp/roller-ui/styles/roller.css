@@ -19,7 +19,7 @@
 /*
 roller.css: Base CSS styles for Roller web UI
 
-CUSTOMIZABLE color and background image setttings have been separated out
+CUSTOMIZABLE color and background image settings have been separated out
 and placed in separate colors.css files for different color schemes.
 */
 
@@ -749,35 +749,17 @@ pre {
     margin-bottom: 5px;
 }
 
-/* tag autocomplete */
-
-div.autocomplete {
-    position:absolute;
-    width:250px;
-    background-color:white;
-    border:1px solid #888;
-    margin:0px;
-    padding:0px;
-}
-div.autocomplete ul {
-    list-style-type:none;
-    margin:0px;
-    padding:0px;
-}
-div.autocomplete ul li.selected { background-color: #ffb;}
-
-div.autocomplete ul li {
-    list-style-type:none;
-    display:block;
-    margin:0;
-    padding:2px;
-    cursor:pointer;
-}
-
-
 .chooser {
     margin: 10px;
     padding: 10px 20px 20px 20px;
+    background: #eee;
+    border: 1px solid #gray;
+    height: 8em;
+}
+
+div.selectedChooser {
+    background: #CCFFCC;
+    border: 1px solid #008000;
 }
 
 .chooser h2 {
@@ -788,42 +770,9 @@ div.autocomplete ul li {
     margin: 0px 30px 30px 30px;
 }
 
+
 /* ---------------------------------------------------------------------- */
 /* Media File styles */
-
-/*** for overlay ***/
-.yui-overlay span, #close {
-    float: left;
-}
-
-#close { float: right; }
-
-#overlay {
-    position: fixed;
-    z-index:100;
-    top: 0px;
-    left: 0px;
-    height:100%;
-    width:100%;
-    display: none;
-    background-color:#000;
-    filter:alpha(opacity=25);
-    -moz-opacity: 0.25;
-    opacity: 0.25;
-}
-
-.container-close {
-    position:absolute;
-    top:2px;
-    right:4px;
-    z-index:6;
-    height:12px;
-    width:12px;
-    margin:0px;
-    padding:0px;
-    background:url('http://yui.yahooapis.com/2.6.0/build/container/assets/close12_1.gif') no-repeat;
-    cursor:pointer
-}
 
 .align-images {
     display:inline;
@@ -849,19 +798,6 @@ div.autocomplete ul li {
     margin:15px 0px;
     padding-left: 0.5em;
 }
-#ewecontextmenu {
-    background-color:#CECECE;
-    border:1px solid #808080;
-    line-height:1.5;
-}
-
-#ewecontextmenu li a {
-    text-decoration:none;
-    color: #000000;
-}
-
-#ewecontextmenu .yuimenuitem-selected{background-color:#36404C;}
-#ewecontextmenu .yuimenuitem-selected a {color:#ffffff;}
 
 /*** Right control floats aka clearfix ***/
 .clearfix:after {

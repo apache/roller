@@ -30,25 +30,16 @@ function fullPreview(selector) {
 }
 function updateThemeChooser(selected) {
     if (selected[0].value == 'shared') {
-        $('#sharedChooser').css('background','#CCFFCC'); 
-        $('#sharedChooser').css('border','1px solid #008000'); 
+        $('#sharedChooser').addClass("selectedChooser");
+        $('#customChooser').removeClass("selectedChooser");
         $('#sharedOptioner').show();
-
-        $('#customChooser').css('background','#eee'); 
-        $('#customChooser').css('border','1px solid #gray'); 
         $('#customOptioner').hide();
     } else {
-        $('#customChooser').css('background','#CCFFCC'); 
-        $('#customChooser').css('border','1px solid #008000'); 
+        $('#customChooser').addClass("selectedChooser");
+        $('#sharedChooser').removeClass("selectedChooser");
         $('#customOptioner').show();
-
-        $('#sharedChooser').css('background','#eee'); 
-        $('#sharedChooser').css('border','1px solid #gray'); 
         $('#sharedOptioner').hide();
     }
-}
-function toggleImportThemeDisplay() {
-    $('themeImport').toggle();
 }
 </script>
 
@@ -65,18 +56,18 @@ function toggleImportThemeDisplay() {
     <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
             <td width="50%" valign="top">
-                <div id="sharedChooser" class="chooser" style="height: 8em">
+                <div id="sharedChooser" class="chooser">
                     <h2><input id="sharedRadio" type="radio" name="themeType" value="shared"
-                               <s:if test="!customTheme">checked="true"</s:if>
+                               <s:if test="!customTheme">checked</s:if>
                                onclick="updateThemeChooser($(this))" />&nbsp;
                     <s:text name="themeEditor.sharedTheme" /></h2>
                     <s:text name="themeEditor.sharedThemeDescription" />
                 </div>
             </td>
             <td width="50%" valign="top">
-                <div id="customChooser" class="chooser" style="height: 8em">
+                <div id="customChooser" class="chooser">
                     <h2><input id="customRadio" type="radio" name="themeType" value="custom"
-                               <s:if test="customTheme">checked="true"</s:if>
+                               <s:if test="customTheme">checked</s:if>
                                onclick="updateThemeChooser($(this))" />&nbsp;
                     <s:text name="themeEditor.customTheme" /></h2>
                     <s:text name="themeEditor.customThemeDescription" />
@@ -145,6 +136,7 @@ function toggleImportThemeDisplay() {
                 <span class="warning"><s:text name="themeEditor.importRequired" /></span>
             </p>
         </s:if>
+
         <s:else>
             <s:if test="customTheme">
                 <p>
@@ -210,12 +202,11 @@ function toggleImportThemeDisplay() {
 <script>
     <s:if test="customTheme">
         updateThemeChooser($('#customRadio'));
+        <s:if test="firstCustomization">
+            $('#themeImport').show();
+        </s:if>
     </s:if>
     <s:else>
         updateThemeChooser($('#sharedRadio'));
     </s:else>
-
-    <s:if test="firstCustomization">
-        $('#themeImport').show();
-    </s:if>
 </script>
