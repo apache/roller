@@ -90,110 +90,58 @@ function updateThemeChooser(selected) {
                 </s:else>
             </s:if>
             <s:else>
-                <s:text name="themeEditor.selectTheme" />
+                <s:text name="themeEditor.selectTheme" />:
             </s:else>
         </p>
 
+    </div>
+
+    <div id="customOptioner" class="optioner" style="display:none;">
+        <s:if test="firstCustomization">
+            <p>
+                <s:text name="themeEditor.importRequired" />
+            </p>
+        </s:if>
+        <s:else>
+            <p>
+                <span class="warning"><s:text name="themeEditor.importWarning" /></span>
+            </p>
+        </s:else>
+    </div>
+
+    <div id="themeOptioner" class="optioner">
         <p>
-            <s:select id="sharedSelector" name="themeId" list="themes"
+            <s:select id="themeSelector" name="selectedThemeId" list="themes"
                       listKey="id" listValue="name" size="1"
-                      onchange="previewImage($('#sharedPreviewImg'), $('#sThemeDescription'), this[selectedIndex].value)"/>
+                      onchange="previewImage($('#themeThumbnail'), $('#themeDescription'), this[selectedIndex].value)"/>
         </p>
-        <p id="sThemeDescription"></p>
+
+        <p id="themeDescription"></p>
         <p>
-            <img id="sharedPreviewImg" src="" />
+            <img id="themeThumbnail" src="" />
             <!-- initialize preview image at page load -->
             <script>
-                <s:if test="customTheme">
-                    previewImage($('#sharedPreviewImg'), $('#sThemeDescription'), '<s:property value="themes[0].id"/>');
-                </s:if>
-                <s:else>
-                    previewImage($('#sharedPreviewImg'), $('#sThemeDescription'), '<s:property value="themeId"/>');
-                </s:else>
+            <s:if test="customTheme">
+                previewImage($('#themeThumbnail'), $('#themeDescription'), '<s:property value="themes[0].id"/>');
+            </s:if>
+            <s:else>
+                previewImage($('#themeThumbnail'), $('#themeDescription'), '<s:property value="themeId"/>');
+            </s:else>
             </script>
         </p>
         <p>
             <s:text name="themeEditor.previewDescription" />
         </p>
-
-        <div class="control">
-            <span style="padding-left:7px">
-                <input type="button" name="themePreview"
-                                value="<s:text name='themeEditor.preview' />"
-                                onclick="fullPreview($('#sharedSelector').get(0))" />
-
-                <s:submit value="%{getText('themeEditor.save')}" />
-            </span>
-        </div>
-
     </div>
 
-    <div id="customOptioner" class="optioner" style="display:none;">
+    <div class="control">
+        <span style="padding-left:7px">
+            <input type="button" name="themePreview"
+                            value="<s:text name='themeEditor.preview' />"
+                            onclick="fullPreview($('#themeSelector').get(0))" />
 
-        <s:if test="firstCustomization">
-            <p>
-                <s:hidden name="importTheme" value="true" />
-                <span class="warning"><s:text name="themeEditor.importRequired" /></span>
-            </p>
-        </s:if>
-
-        <s:else>
-            <s:if test="customTheme">
-                <p>
-                    <s:url var="templatesUrl" action="templates">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    </s:url>
-                    &raquo; <s:a href="%{templatesUrl}"><s:text name="themeEditor.templatesLink" /></s:a><br/>
-                    <s:text name="themeEditor.templatesDescription" />
-                </p>
-            </s:if>
-
-            <p>
-                <s:checkbox name="importTheme" onclick="$('#themeImport').toggle();" />
-                <s:text name="themeEditor.import" />
-            </p>
-        </s:else>
-
-        <div id="themeImport" style="display:none;">
-            <s:if test="customTheme">
-                <p>
-                    <span class="warning"><s:text name="themeEditor.importWarning" /></span>
-                </p>
-            </s:if>
-
-            <p>
-                <s:select id="customSelector" name="importThemeId" list="themes"
-                          listKey="id" listValue="name" size="1"
-                          onchange="previewImage($('#customPreviewImg'), $('#cThemeDescription'), this[selectedIndex].value)"/>
-            </p>
-            <p id="cThemeDescription"></p>
-            <p>
-                <img id="customPreviewImg" src="" />
-                <!-- initialize preview image at page load -->
-                <script>
-                <s:if test="customTheme">
-                    previewImage($('#customPreviewImg'), $('#cThemeDescription'), '<s:property value="themes[0].id"/>');
-                </s:if>
-                <s:else>
-                    previewImage($('#customPreviewImg'), $('#cThemeDescription'), '<s:property value="themeId"/>');
-                </s:else>
-                </script>
-            </p>
-            <p>
-                <s:text name="themeEditor.previewDescription" />
-            </p>
-        </div>
-
-        <div class="control">
-            <span style="padding-left:7px">
-                <input type="button" name="themePreview"
-                                value="<s:text name='themeEditor.preview' />"
-                                onclick="fullPreview($('#customSelector').get(0))" />
-
-                <s:submit value="%{getText('themeEditor.save')}" />
-            </span>
-        </div>
-
+            <s:submit value="%{getText('themeEditor.save')}" />
+        </span>
     </div>
 
 </s:form>
@@ -202,9 +150,6 @@ function updateThemeChooser(selected) {
 <script>
     <s:if test="customTheme">
         updateThemeChooser($('#customRadio'));
-        <s:if test="firstCustomization">
-            $('#themeImport').show();
-        </s:if>
     </s:if>
     <s:else>
         updateThemeChooser($('#sharedRadio'));

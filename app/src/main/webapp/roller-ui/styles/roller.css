@@ -762,11 +762,11 @@ div.selectedChooser {
     border: 1px solid #008000;
 }
 
-.chooser h2 {
+div.chooser h2 {
     letter-spacing: 0.0em;
 }
 
-.optioner {
+div.optioner {
     margin: 0px 30px 30px 30px;
 }
 
