@@ -49,7 +49,7 @@ public class ThemeEdit extends UIAction {
     private static Log log = LogFactory.getLog(Templates.class);
 
     // list of available themes
-    private List<Theme> themes = Collections.emptyList();
+    private List<SharedTheme> themes = Collections.emptyList();
 
     // type of theme desired, either 'shared' or 'custom'
     private String themeType = null;
@@ -70,10 +70,9 @@ public class ThemeEdit extends UIAction {
     }
 
     public void myPrepare() {
-
         ThemeManager themeMgr = WebloggerFactory.getWeblogger()
                 .getThemeManager();
-        setThemes(themeMgr.getEnabledThemesList());
+        themes = themeMgr.getEnabledThemesList();
     }
 
     public String execute() {
@@ -258,12 +257,8 @@ public class ThemeEdit extends UIAction {
         return false;
     }
 
-    public List<Theme> getThemes() {
+    public List<SharedTheme> getThemes() {
         return themes;
-    }
-
-    public void setThemes(List<Theme> themes) {
-        this.themes = themes;
     }
 
     public String getThemeType() {

@@ -67,7 +67,7 @@ public interface ThemeManager {
      *
      * @return List A list of Theme objects which are enabled.
      */
-    List<Theme> getEnabledThemesList();
+    List<SharedTheme> getEnabledThemesList();
 
     /**
      * Import all the contents for a Theme into a weblog.

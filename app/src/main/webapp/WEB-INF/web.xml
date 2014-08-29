@@ -261,12 +261,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>PreviewThemeImageServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PreviewThemeImageServlet</servlet-class>
-        <load-on-startup>9</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>AtomServlet</servlet-name>
         <servlet-class>com.rometools.propono.atom.server.AtomServlet</servlet-class>
     </servlet>
@@ -282,8 +276,8 @@
     </servlet>
 
     <servlet>
-        <servlet-name>ThemeDescriptionServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.ThemeDescriptionServlet</servlet-class>
+        <servlet-name>ThemeDataServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.ThemeDataServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -400,12 +394,6 @@
         <url-pattern>/roller-ui/authoring/previewresource/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>PreviewThemeImageServlet</servlet-name>
-        <url-pattern>/roller-ui/authoring/previewtheme</url-pattern>
-    </servlet-mapping>
-
-
     <!-- Servlets for supporting Ajax -->
     <servlet-mapping>
         <servlet-name>CommentDataServlet</servlet-name>
@@ -418,7 +406,7 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>ThemeDescriptionServlet</servlet-name>
+        <servlet-name>ThemeDataServlet</servlet-name>
         <url-pattern>/roller-ui/authoring/themedata/*</url-pattern>
     </servlet-mapping>
 

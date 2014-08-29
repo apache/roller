@@ -82,7 +82,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	// directory where themes are kept
 	private String themeDir = null;
 	// the Map contains ... (theme id, Theme)
-	private Map<String, Theme> themes = null;
+	private Map<String, SharedTheme> themes = null;
 
 	@com.google.inject.Inject
 	protected ThemeManagerImpl(Weblogger roller) {
@@ -174,11 +174,9 @@ public class ThemeManagerImpl implements ThemeManager {
 
 	/**
 	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getEnabledThemesList()
-	 * 
-	 *      TODO: reimplement enabled vs. disabled logic once we support it
 	 */
-	public List<Theme> getEnabledThemesList() {
-		List<Theme> allThemes = new ArrayList<Theme>(this.themes.values());
+	public List<SharedTheme> getEnabledThemesList() {
+		List<SharedTheme> allThemes = new ArrayList<SharedTheme>(this.themes.values());
 
 		// sort 'em ... default ordering for themes is by name
 		Collections.sort(allThemes);
@@ -384,9 +382,9 @@ public class ThemeManagerImpl implements ThemeManager {
 	 * This is a convenience method which loads all the theme data from themes
 	 * stored on the filesystem in the roller webapp /themes/ directory.
 	 */
-	private Map<String, Theme> loadAllThemesFromDisk() {
+	private Map<String, SharedTheme> loadAllThemesFromDisk() {
 
-		Map<String, Theme> themeMap = new HashMap<String, Theme>();
+		Map<String, SharedTheme> themeMap = new HashMap<String, SharedTheme>();
 
 		// first, get a list of the themes available
 		File themesdir = new File(this.themeDir);
@@ -409,7 +407,7 @@ public class ThemeManagerImpl implements ThemeManager {
             // now go through each theme and load it into a Theme object
             for (String themeName : themenames) {
                 try {
-                    Theme theme = new SharedThemeFromDir(this.themeDir
+                    SharedTheme theme = new SharedThemeFromDir(this.themeDir
                             + File.separator + themeName);
                     themeMap.put(theme.getId(), theme);
                     log.info("Loaded theme '" + themeName + "'");
@@ -432,7 +430,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		try {
 
-			Theme theme = new SharedThemeFromDir(this.themeDir + File.separator
+            SharedTheme theme = new SharedThemeFromDir(this.themeDir + File.separator
 					+ reloadTheme);
 
             Theme loadedTheme = themes.get(theme.getId());

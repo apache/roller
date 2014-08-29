@@ -335,7 +335,7 @@ $( "#tagAutoComplete" )
     .autocomplete({
         delay: 500,
         source: function(request, response) {
-            $.getJSON("<s:property value="jsonAutocompleteUrl" />", { format: 'json', prefix: extractLast( request.term ) },
+            $.getJSON("<s:property value='jsonAutocompleteUrl' />", { format: 'json', prefix: extractLast( request.term ) },
             function(data) {
                 response($.map(data.tagcounts, function (dataValue) {
                     return {

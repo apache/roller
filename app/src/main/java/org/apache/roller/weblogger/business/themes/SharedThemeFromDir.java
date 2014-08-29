@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 /**
  * The Theme object encapsulates all elements of a single weblog theme. It is
  * used mostly to contain all the templates for a theme, but does contain other
- * theme related attributes such as name, last modifed date, etc.
+ * theme related attributes such as name, last modified date, etc.
  */
 public class SharedThemeFromDir extends SharedTheme {
 

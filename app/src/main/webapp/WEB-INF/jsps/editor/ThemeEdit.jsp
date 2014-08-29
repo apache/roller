@@ -16,17 +16,20 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js' />"></script>
 
 <script>
-function previewImage(q, q_desc, theme) {
-    q.attr('src','<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme=' + theme);
-    var url = "<%= request.getContextPath() %>/roller-ui/authoring/themedata/";
-	$.ajax({ url: url, data: {theme:theme}, success: function(data) { q_desc.html(data);} });
+function previewImage(themeId) {
+  $.ajax({ url: "<s:url value='themedata'/>",
+    data: {theme:themeId}, success: function(data) {
+      $('#themeDescription').html(data.description);
+      $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
+    }
+  });
 }
 function fullPreview(selector) {
     selected = selector.selectedIndex;
-    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+selector.options[selected].value);
+    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme=' + selector.options[selected].value);
 }
 function updateThemeChooser(selected) {
     if (selected[0].value == 'shared') {
@@ -93,7 +96,6 @@ function updateThemeChooser(selected) {
                 <s:text name="themeEditor.selectTheme" />:
             </s:else>
         </p>
-
     </div>
 
     <div id="customOptioner" class="optioner" style="display:none;">
@@ -113,21 +115,12 @@ function updateThemeChooser(selected) {
         <p>
             <s:select id="themeSelector" name="selectedThemeId" list="themes"
                       listKey="id" listValue="name" size="1"
-                      onchange="previewImage($('#themeThumbnail'), $('#themeDescription'), this[selectedIndex].value)"/>
+                      onchange="previewImage(this[selectedIndex].value)"/>
         </p>
 
         <p id="themeDescription"></p>
         <p>
             <img id="themeThumbnail" src="" />
-            <!-- initialize preview image at page load -->
-            <script>
-            <s:if test="customTheme">
-                previewImage($('#themeThumbnail'), $('#themeDescription'), '<s:property value="themes[0].id"/>');
-            </s:if>
-            <s:else>
-                previewImage($('#themeThumbnail'), $('#themeDescription'), '<s:property value="themeId"/>');
-            </s:else>
-            </script>
         </p>
         <p>
             <s:text name="themeEditor.previewDescription" />
@@ -150,8 +143,10 @@ function updateThemeChooser(selected) {
 <script>
     <s:if test="customTheme">
         updateThemeChooser($('#customRadio'));
+        previewImage('<s:property value="themes[0].id"/>');
     </s:if>
     <s:else>
         updateThemeChooser($('#sharedRadio'));
+        previewImage('<s:property value="themeId"/>');
     </s:else>
 </script>

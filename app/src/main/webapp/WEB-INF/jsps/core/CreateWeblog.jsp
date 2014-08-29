@@ -19,14 +19,14 @@
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
 <script>
-<!--
-function previewImage(theme) {
-    document.preview.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
-    console.log(theme);
-    var url = "<%= request.getContextPath() %>/roller-ui/authoring/themedata/";
-	$.ajax({ url: url, data: {theme:theme}, success: function(data) { $('#themedescription').html(data);} });
+function previewImage(themeId) {
+  $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata",
+    data: {theme:themeId}, success: function(data) {
+      $('#themedescription').html(data.description);
+      $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
+    }
+  });
 }
-
 
 function handlePreview(handle) {
     previewSpan = document.getElementById("handlePreview");
@@ -38,12 +38,11 @@ function handlePreview(handle) {
 	    previewSpan.replaceChild(n2, n1);
     }
 }
--->
 </script>
 
 <p class="subtitle"><s:text name="createWebsite.prompt" /></p>
 
-<br /> 
+<br />
 
 <s:form action="createWeblog!save">
 <s:hidden name="salt" />
@@ -105,7 +104,7 @@ function handlePreview(handle) {
         <p id="themedescription"></p>
         <br />
 
-        <img name="preview" src='' />
+        <img id="themeThumbnail" src='' />
         <!-- initialize preview image at page load -->
         <script>
             <s:if test="bean.theme == null">
@@ -122,13 +121,13 @@ function handlePreview(handle) {
 </table>
 
 <br />
-   
+
 <s:submit value="%{getText('createWebsite.button.save')}" />
 <input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
-    
+
 </s:form>
 
 <script>
     document.forms[0].elements[0].focus();
 </script>
-    
+
