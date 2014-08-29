@@ -17,16 +17,9 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js' />"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
 
 <script>
-function previewImage(themeId) {
-  $.ajax({ url: "<s:url value='themedata'/>",
-    data: {theme:themeId}, success: function(data) {
-      $('#themeDescription').html(data.description);
-      $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
-    }
-  });
-}
 function fullPreview(selector) {
     selected = selector.selectedIndex;
     window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme=' + selector.options[selected].value);
@@ -111,16 +104,15 @@ function updateThemeChooser(selected) {
         </s:else>
     </div>
 
-    <div id="themeOptioner" class="optioner">
+    <div id="themeOptioner" class="optioner" ng-app="themeSelectModule" ng-controller="themeController">
         <p>
-            <s:select id="themeSelector" name="selectedThemeId" list="themes"
-                      listKey="id" listValue="name" size="1"
-                      onchange="previewImage(this[selectedIndex].value)"/>
+            <select id="themeSelector" name="selectedThemeId" size="1"
+            ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
         </p>
 
-        <p id="themeDescription"></p>
+        <p>{{ selectedTheme.description }}</p>
         <p>
-            <img id="themeThumbnail" src="" />
+            <img src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
         </p>
         <p>
             <s:text name="themeEditor.previewDescription" />
@@ -141,12 +133,18 @@ function updateThemeChooser(selected) {
 
 <%-- initializes the chooser/optioner/themeImport display at page load time --%>
 <script>
-    <s:if test="customTheme">
-        updateThemeChooser($('#customRadio'));
-        previewImage('<s:property value="themes[0].id"/>');
-    </s:if>
-    <s:else>
-        updateThemeChooser($('#sharedRadio'));
-        previewImage('<s:property value="themeId"/>');
-    </s:else>
+    angular.module('themeSelectModule', [])
+        .controller('themeController', ['$scope', function($scope) {
+            $.ajax({ url: "<s:url value='themedata'/>", async:false,
+                success: function(data) { $scope.themes = data; }
+            });
+            <s:if test="customTheme">
+                updateThemeChooser($('#customRadio'));
+                $scope.selectedTheme = $scope.themes[0];
+            </s:if>
+            <s:else>
+                updateThemeChooser($('#sharedRadio'));
+                $scope.selectedTheme = $.grep($scope.themes, function(e){ return e.id == "<s:property value='themeId'/>"; })[0];
+            </s:else>
+    }]);
 </script>
