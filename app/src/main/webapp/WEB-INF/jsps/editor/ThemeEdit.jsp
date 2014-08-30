@@ -92,15 +92,26 @@ function updateThemeChooser(selected) {
     </div>
 
     <div id="customOptioner" class="optioner" style="display:none;">
-        <s:if test="firstCustomization">
-            <p>
-                <s:text name="themeEditor.importRequired" />
-            </p>
-        </s:if>
-        <s:else>
+        <%-- if already custom, an update must mean an import. --%>
+        <s:if test="customTheme">
             <p>
                 <span class="warning"><s:text name="themeEditor.importWarning" /></span>
+                <s:hidden name="importTheme" value="true" />
             </p>
+        </s:if>
+        <%-- shared, may be required to do an import if no custom templates present --%>
+        <s:else>
+            <s:if test="firstCustomization">
+                <p>
+                    <s:text name="themeEditor.importRequired" />
+                    <s:hidden name="importTheme" value="true" />
+                </p>
+            </s:if>
+            <s:else>
+                <%-- User has option not just to switch from shared to custom but also override present custom templates --%>
+                <s:checkbox name="importTheme"/> <s:text name="themeEditor.importAndOverwriteTemplates" />
+                    <tags:help key="themeEditor.importAndOverwriteTemplates.tooltip"/>
+            </s:else>
         </s:else>
     </div>
 
