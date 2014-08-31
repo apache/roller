@@ -54,8 +54,13 @@ public class StylesheetEdit extends UIAction {
     private String contentsStandard = null;
     private String contentsMobile = null;
 
-    // Do we have a custom stylesheet already for a custom theme
-    private boolean customStylesheet = false;
+    private boolean sharedTheme;
+
+    // read by JSP to determine if user just deleted his shared theme customized stylesheet
+    private boolean sharedStylesheetDeleted;
+
+    // Do we have a custom stylesheet already for a shared theme
+    private boolean sharedThemeCustomStylesheet = false;
 
     public StylesheetEdit() {
         this.actionName = "stylesheetEdit";
@@ -65,6 +70,8 @@ public class StylesheetEdit extends UIAction {
 
     @Override
     public void myPrepare() {
+        sharedTheme = !WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme());
+        sharedStylesheetDeleted = false;
 
         ThemeTemplate stylesheet = null;
         try {
@@ -126,7 +133,7 @@ public class StylesheetEdit extends UIAction {
                     addMessage("stylesheetEdit.create.success");
                 }
 
-                // See if we have a custom style sheet from a custom theme.
+                // See if we're using a shared theme with a custom stylesheet
                 if (!WeblogTheme.CUSTOM.equals(getActionWeblog()
                         .getEditorTheme())
                         && getActionWeblog().getTheme().getStylesheet() != null) {
@@ -140,13 +147,13 @@ public class StylesheetEdit extends UIAction {
                                             .getStylesheet().getLink());
 
                     if (override != null) {
-                        customStylesheet = true;
+                        sharedThemeCustomStylesheet = true;
                     }
                 }
 
             } catch (WebloggerException ex) {
                 log.error(
-                        "Error finding/adding stylesheet tempalate from weblog - "
+                        "Error finding/adding stylesheet template from weblog - "
                                 + getActionWeblog().getHandle(), ex);
             }
         }
@@ -156,33 +163,26 @@ public class StylesheetEdit extends UIAction {
      * Show stylesheet edit page.
      */
     public String execute() {
-
-        if (getTemplate() == null) {
-            return ERROR;
+        if (template != null) {
+            try {
+                if (getTemplate().getTemplateRendition(RenditionType.STANDARD) != null) {
+                    setContentsStandard(getTemplate().getTemplateRendition(
+                            RenditionType.STANDARD).getTemplate());
+                } else {
+                    setContentsStandard("");
+                }
+                if (getTemplate().getTemplateRendition(RenditionType.MOBILE) != null) {
+                    setContentsMobile(getTemplate().getTemplateRendition(
+                            RenditionType.MOBILE).getTemplate());
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Standard: " + getContentsStandard() + " Mobile: "
+                            + getContentsMobile());
+                }
+            } catch (WebloggerException e) {
+                log.error("Error loading Weblog template codes for stylesheet", e);
+            }
         }
-
-        try {
-
-            if (getTemplate().getTemplateRendition(RenditionType.STANDARD) != null) {
-                setContentsStandard(getTemplate().getTemplateRendition(
-                        RenditionType.STANDARD).getTemplate());
-            } else {
-                setContentsStandard("");
-            }
-            if (getTemplate().getTemplateRendition(RenditionType.MOBILE) != null) {
-                setContentsMobile(getTemplate().getTemplateRendition(
-                        RenditionType.MOBILE).getTemplate());
-            }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Standard: " + getContentsStandard() + " Mobile: "
-                        + getContentsMobile());
-            }
-
-        } catch (WebloggerException e) {
-            log.error("Error loading Weblog template codes for stylesheet", e);
-        }
-
         return INPUT;
     }
 
@@ -190,12 +190,6 @@ public class StylesheetEdit extends UIAction {
      * Save an existing stylesheet.
      */
     public String save() {
-
-        if (getTemplate() == null) {
-            addError("stylesheetEdit.error.cannotFind");
-            return ERROR;
-        }
-
         if (!hasActionErrors()) {
             try {
 
@@ -245,27 +239,14 @@ public class StylesheetEdit extends UIAction {
                 addError("Error saving template - check Roller logs");
             }
         }
-
         return INPUT;
     }
 
     /**
-     * Revert the stylesheet to its original state.
+     * Revert the stylesheet to its original state.  UI provides this only for shared themes.
      */
     public String revert() {
-
-        if (getTemplate() == null) {
-            addError("stylesheetEdit.error.cannotFind");
-            return ERROR;
-        }
-
-        // make sure we are still using a shared theme so that reverting is
-        // possible
-        if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-            addError("stylesheetEdit.error.customTheme");
-        }
-
-        if (!hasActionErrors()) {
+        if (sharedTheme && !hasActionErrors()) {
             try {
 
                 WeblogTemplate stylesheet = getTemplate();
@@ -312,10 +293,9 @@ public class StylesheetEdit extends UIAction {
             } catch (WebloggerException ex) {
                 log.error("Error updating stylesheet template for weblog - "
                         + getActionWeblog().getHandle(), ex);
-                addError("stylesheetEdit.revert.failure");
+                addError("generic.error.check.logs");
             }
         }
-
         return execute();
     }
 
@@ -323,31 +303,14 @@ public class StylesheetEdit extends UIAction {
      * set theme to default stylesheet, ie delete it.
      */
     public String delete() {
-
-        if (getTemplate() == null) {
-            log.error("Unable to locate stylesheet template");
-            addError("error.recordnotfound");
-            return ERROR;
-        }
-
-        // make sure we are still using a shared theme so that deleting is
-        // possible
-        if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-            log.error("Unable to delete stylesheet");
-            addError("stylesheetEdit.error.customTheme");
-        }
-
-        if (!hasActionErrors()) {
+        if (template != null && sharedTheme && !hasActionErrors()) {
             try {
-
-                WeblogTemplate stylesheet = getTemplate();
-
                 // Delete template and flush
                 WeblogManager mgr = WebloggerFactory.getWeblogger()
                         .getWeblogManager();
 
                 // Remove template and page codes
-                mgr.removeTemplate(stylesheet);
+                mgr.removeTemplate(template);
 
                 Weblog weblog = getActionWeblog();
 
@@ -355,25 +318,25 @@ public class StylesheetEdit extends UIAction {
                 mgr.saveWeblog(weblog);
 
                 // notify caches
-                CacheManager.invalidate(stylesheet);
+                CacheManager.invalidate(template);
 
                 // Flush for operation
                 WebloggerFactory.getWeblogger().flush();
 
                 // success message
                 addMessage("stylesheetEdit.default.success",
-                        stylesheet.getName());
+                        template.getName());
+
+                template = null;
+                sharedStylesheetDeleted = true;
 
             } catch (Exception e) {
                 log.error("Error deleting stylesheet template for weblog - "
                         + getActionWeblog().getHandle(), e);
-
-                return ERROR;
+                addError("generic.error.check.logs");
             }
         }
-
-        return "delete";
-
+        return INPUT;
     }
 
     /**
@@ -443,21 +406,20 @@ public class StylesheetEdit extends UIAction {
     }
 
     /**
-     * Checks if is custom stylesheet.
+     * Checks if using a shared theme with a custom stylesheet.
      * 
-     * @return true, if checks if is custom stylesheet
+     * @return true, if checks if shared theme and custom stylesheet
      */
-    public boolean isCustomStylesheet() {
-        return customStylesheet;
+    public boolean isSharedThemeCustomStylesheet() {
+        return sharedThemeCustomStylesheet;
     }
 
     /**
-     * Sets the custom stylesheet.
-     * 
-     * @param customStylesheet
-     *            the custom stylesheet
+     * Checks if user just deleted his custom shared stylesheet
+     *
+     * @return true, if custom shared stylesheet was deleted.
      */
-    public void setCustomStylesheet(boolean customStylesheet) {
-        this.customStylesheet = customStylesheet;
+    public boolean isSharedStylesheetDeleted() {
+        return sharedStylesheetDeleted;
     }
 }

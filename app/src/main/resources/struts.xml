@@ -460,8 +460,6 @@
         <action name="stylesheetEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.StylesheetEdit">
             <result name="input" type="tiles">.StylesheetEdit</result>
-            <result name="error" type="tiles">.StylesheetEditError</result>
-            <result name="delete" type="tiles">.StylesheetEditError</result>
         </action>
         
         <action name="templates!*" method="{1}"
