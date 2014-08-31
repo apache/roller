@@ -69,7 +69,7 @@ Each menu or menu item is governed by four attributes:
     <!--  if we already have checked weblogPerms="admin" globalPerms="login" we should -->
     <!--  not need to recheck on each tab item as they are the same -->
     <menu name="tabbedmenu.design" weblogPerms="admin" globalPerms="login" enabledProperty="themes.customtheme.allowed">
-        
+
         <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="themeEdit"
                    name="tabbedmenu.website.themes" />
@@ -80,7 +80,7 @@ Each menu or menu item is governed by four attributes:
         
         <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="templates"
-                   name="tabbedmenu.website.pages" 
+                   name="tabbedmenu.website.pages"
                    subactions="templateAdd,templateEdit,templateRemove,templatesRemove" />
     </menu>
     

@@ -119,28 +119,12 @@
     <%-- ================================================================== --%>
     <%-- Save, Close and Resize text area buttons--%>
 
-    <script>
-        if (getCookie("templateEditorRows") != null) {
-            document.getElementById('template_bean_contentsMobile').rows = getCookie("templateEditorRows");
-            document.getElementById('template_bean_contentsStandard').rows = getCookie("templateEditorRows");
-        } else {
-            document.getElementById('template_bean_contentsMobile').rows = 20;
-            document.getElementById('template_bean_contentsStandard').rows = 20;
-        }
-
-    </script>
-
     <table style="width:100%">
         <tr>
             <td>
                 <s:submit value="%{getText('generic.save')}" />
                 <input type="button" value='<s:text name="generic.done"/>'
                     onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'" />
-            </td>
-            <td align="right">
-                <!-- Add buttons to make this textarea taller or shorter -->
-                <input type="button" name="taller" value=" &darr; " onclick="changeSize1(5)" />
-                <input type="button" name="shorter" value=" &uarr; " onclick="changeSize1(-5)" />
             </td>
         </tr>
     </table>
@@ -270,18 +254,6 @@ function launchPage() {
     } else {
         window.open(weblogURL + 'page/' + originalLink+'?type='+type, '_blank');
     }
-}
-function changeSize1(num) {
-    var standardElem = document.getElementById('template_bean_contentsStandard');
-    var mobileElem = document.getElementById('template_bean_contentsMobile');
-    a = standardElem.rows + num;
-    if (a > 0) {
-        standardElem.rows = a;
-        mobileElem.rows = a;
-    }
-    var expires = new Date();
-    expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
-    setCookie("templateEditorRows", standardElem.rows, expires);
 }
 //Get cookie to determine state of control
 if (getCookie('control_advancedControl') != null) {

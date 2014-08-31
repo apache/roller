@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.util.Utilities;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -149,6 +150,13 @@ public final class MenuHelper {
         Menu tabMenu = new Menu();
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
 
+
+        // Hack - for blogger convenience, the design tab of the edit
+        // menu defaults to the templates tab item (instead of theme edit)
+        // if the weblog is using a custom theme.
+        boolean customThemeOverride = "editor".equals(menuId)
+                && WeblogTheme.CUSTOM.equals(weblog.getEditorTheme());
+
         // iterate over tabs from parsed config
         for (ParsedTab configTab : menuConfig.getTabs()) {
 
@@ -198,33 +206,9 @@ public final class MenuHelper {
                 boolean firstItem = true;
                 boolean selectable = true;
 
-                // See if we need to include tab item for current tab
-                HashMap<String, HashSet<String>> menu = itemMenu.get(menuId);
-                HashSet<String> item = null;
-                if (menu != null) {
-                    // Should always have an item
-                    item = menu.get(configTab.getName());
-                }
-
                 for (ParsedTabItem configTabItem : configTab.getTabItems()) {
 
-                    // log.debug("config tab item = " +
-                    // configTabItem.getName());
-
                     boolean includeItem = true;
-
-                    if (currentAction != null && !item.contains(currentAction)) {
-                        // includeItem = false;
-                        // Set first action on menu
-                        // if (firstItem) {
-                        tab.setAction(configTabItem.getAction());
-                        // firstItem = false;
-                        // }
-                        // System.out.println("skipped : "
-                        // + configTabItem.getAction());
-                        // Skip the rest of this menu
-                        break;
-                    }
 
                     if (configTabItem.getEnabledProperty() != null) {
                         includeItem = getBooleanProperty(configTabItem
@@ -275,10 +259,13 @@ public final class MenuHelper {
                             selectable = false;
                         }
 
-                        // the url for the tab is the url of the first item of
-                        // the tab
+                        // the url for the tab is the url of the first tab item
                         if (firstItem) {
-                            tab.setAction(tabItem.getAction());
+                            if (customThemeOverride && "tabbedmenu.design".equals(tab.getKey())) {
+                                tab.setAction("templates");
+                            } else {
+                                tab.setAction(tabItem.getAction());
+                            }
                             firstItem = false;
                         }
 

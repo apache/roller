@@ -30,7 +30,7 @@ public class MenuTab {
     private String key = null;
     private String action = null;
     private boolean selected = false;
-    private List items = new ArrayList();
+    private List<MenuTabItem> items = new ArrayList<MenuTabItem>();
     
     
     public void addItem(MenuTabItem item) {
@@ -62,11 +62,11 @@ public class MenuTab {
         this.selected = selected;
     }
     
-    public List getItems() {
+    public List<MenuTabItem> getItems() {
         return items;
     }
 
-    public void setItems(List items) {
+    public void setItems(List<MenuTabItem> items) {
         this.items = items;
     }
     

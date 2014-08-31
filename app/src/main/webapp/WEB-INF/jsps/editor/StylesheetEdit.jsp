@@ -76,15 +76,6 @@
     <%-- ================================================================== --%>
     <%-- Save, Close and Resize text area buttons--%>
 
-    <script>
-        if (getCookie("templateEditorRows") != null) {
-            document.getElementById('stylesheetEdit_contentsMobile').rows = getCookie("templateEditorRows");
-            document.getElementById('stylesheetEdit_contentsStandard').rows = getCookie("templateEditorRows");
-        } else {
-            document.getElementById('stylesheetEdit_contentsMobile').rows = 20;
-            document.getElementById('stylesheetEdit_contentsStandard').rows = 20;
-        }
-    </script>
     <table style="width:100%">
         <tr>
             <td>
@@ -97,30 +88,10 @@
                     <s:submit value="%{getText('stylesheetEdit.delete')}" onclick="deleteStylesheet();return false;" />
                 </s:if>
             </td>
-            <td align="right">
-                <!-- Add buttons to make this textarea taller or shorter -->
-                <input type="button" name="taller" value=" &darr; " onclick="changeSize1(5)" />
-                <input type="button" name="shorter" value=" &uarr; " onclick="changeSize1(-5)" />
-            </td>
         </tr>
     </table>
     
 </s:form>
-
-<script>
-function changeSize1(num) {
-    var standardElem = document.getElementById('stylesheetEdit_contentsStandard');
-    var mobileElem = document.getElementById('stylesheetEdit_contentsMobile');
-    a = standardElem.rows + num;
-    if (a > 0) {
-        standardElem.rows = a;
-        mobileElem.rows = a;
-    }
-    var expires = new Date();
-    expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
-    setCookie("templateEditorRows", standardElem.rows, expires);
-}
-</script>
 
 <script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
 <script src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>

@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class Menu {
     
-    private List tabs = new ArrayList();
+    private List<MenuTab> tabs = new ArrayList<MenuTab>();
     
     
     public void addTab(MenuTab tab) {
@@ -35,11 +35,11 @@ public class Menu {
     }
     
     
-    public List getTabs() {
+    public List<MenuTab> getTabs() {
         return tabs;
     }
 
-    public void setTabs(List menus) {
+    public void setTabs(List<MenuTab> menus) {
         this.tabs = menus;
     }
     
