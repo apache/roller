@@ -30,6 +30,7 @@ import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
@@ -69,11 +70,11 @@ public class ThemeResourceLoader extends ResourceLoader {
                     "Need to specify a template name!");
         }
 
-        TemplateRendition.RenditionType renditionType = TemplateRendition.RenditionType.STANDARD;
+        RenditionType renditionType = RenditionType.STANDARD;
         if (name.contains("|")) {
             String[] pair = name.split("\\|");
             name = pair[0];
-            renditionType = TemplateRendition.RenditionType.valueOf(pair[1].toUpperCase());
+            renditionType = RenditionType.valueOf(pair[1].toUpperCase());
         }
 
         try {
@@ -98,8 +99,13 @@ public class ThemeResourceLoader extends ResourceLoader {
             }
 
             final String contents;
+
             if (template.getTemplateRendition(renditionType) != null) {
                 contents = template.getTemplateRendition(renditionType).getTemplate();
+            } else if (renditionType != RenditionType.STANDARD
+                    && template.getTemplateRendition(RenditionType.STANDARD) != null) {
+                // fall back to standard rendition type if others not defined
+                contents = template.getTemplateRendition(RenditionType.STANDARD).getTemplate();
             } else {
                 throw new ResourceNotFoundException("Rendering [" + renditionType.name()
                         + "] of Template [" + split[1] + "] not found.");

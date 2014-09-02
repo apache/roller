@@ -109,7 +109,7 @@ public class VelocityRenderer implements Renderer {
         } catch (Exception ex) {
             // some kind of generic/unknown exception, dump it to the logs
             log.error(
-                    "Unknown exception creatting renderer for "
+                    "Unknown exception creating renderer for "
                             + template.getId(), ex);
 
             // throw if back to the caller
