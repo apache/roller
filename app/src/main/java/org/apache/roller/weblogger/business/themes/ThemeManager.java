@@ -76,11 +76,16 @@ public interface ThemeManager {
      *            The weblog (website) to import the theme into.
      * @param theme
      *            The theme that should be imported.
+     * @param skipStylesheet
+     *            Whether the stylesheet should be omitted from the import.  Useful
+     *            when moving from a shared theme with a custom stylesheet to a custom
+     *            theme importing the same shared theme, as it allows the user's custom
+     *            stylesheet to remain.
      *
      * @throws WebloggerException
      *             If there is some kind of error in saving.
      */
-    void importTheme(Weblog website, SharedTheme theme)
+    void importTheme(Weblog website, SharedTheme theme, boolean skipStylesheet)
             throws WebloggerException;
 
     /**

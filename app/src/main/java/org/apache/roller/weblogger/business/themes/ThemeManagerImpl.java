@@ -129,7 +129,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	public SharedTheme getTheme(String id) throws WebloggerException {
 
 		// try to lookup theme from library
-		SharedTheme theme = (SharedTheme) this.themes.get(id);
+		SharedTheme theme = this.themes.get(id);
 
 		// no theme? throw exception.
 		if (theme == null) {
@@ -186,9 +186,9 @@ public class ThemeManagerImpl implements ThemeManager {
 
 	/**
 	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#importTheme(Weblog,
-	 *      SharedTheme)
+	 *      SharedTheme, boolean)
 	 */
-	public void importTheme(Weblog weblog, SharedTheme theme)
+	public void importTheme(Weblog weblog, SharedTheme theme, boolean skipStylesheet)
 			throws WebloggerException {
 
 		log.debug("Importing theme [" + theme.getName() + "] to weblog ["
@@ -199,8 +199,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		MediaFileDirectory root = fileMgr.getDefaultMediaFileDirectory(weblog);
         if (root == null) {
-            log.warn("Weblog " + weblog.getHandle()
-                    + " does not have a root MediaFile directory");
+            log.warn("Weblog " + weblog.getHandle() + " does not have a root MediaFile directory");
         }
 
 		Set<ComponentType> importedActionTemplates = new HashSet<ComponentType>();
@@ -228,14 +227,8 @@ public class ThemeManagerImpl implements ThemeManager {
 				newTmpl = true;
 			}
 
-			// TODO: fix conflict situation
-			// it's possible that someone has defined a theme template which
-			// matches 2 existing templates, 1 by action, the other by name
-
-			// update template attributes
-			// NOTE: we don't want to copy the template data for an existing
-			// stylesheet
-			if (newTmpl || !themeTemplate.equals(stylesheetTemplate)) {
+			// update template attributes except leave existing custom stylesheets as-is
+			if (!themeTemplate.equals(stylesheetTemplate) || !skipStylesheet) {
 				template.setAction(themeTemplate.getAction());
 				template.setName(themeTemplate.getName());
 				template.setDescription(themeTemplate.getDescription());
@@ -247,33 +240,32 @@ public class ThemeManagerImpl implements ThemeManager {
 
 				// save it
 				wmgr.saveTemplate(template);
-			}
 
-			// create weblog template code objects and save them
-			for (RenditionType type : RenditionType.values()) {
+                // create weblog template code objects and save them
+                for (RenditionType type : RenditionType.values()) {
 
-				// See if we already have some code for this template already (eg previous theme)
-				CustomTemplateRendition weblogTemplateCode = template.getTemplateRendition(type);
+                    // See if we already have some code for this template already (eg previous theme)
+                    CustomTemplateRendition weblogTemplateCode = template.getTemplateRendition(type);
 
-				// Get the template for the new theme
-				TemplateRendition templateCode = themeTemplate.getTemplateRendition(type);
-				if (templateCode != null) {
-					
-					// Check for existing template
-					if (weblogTemplateCode == null) {
-						// Does not exist so create a new one
-						weblogTemplateCode = new CustomTemplateRendition(
-								template, type);
-					}
-					weblogTemplateCode.setType(type);
-					weblogTemplateCode.setTemplate(templateCode.getTemplate());
-					weblogTemplateCode.setTemplateLanguage(templateCode
-                            .getTemplateLanguage());
-					WebloggerFactory.getWeblogger().getWeblogManager()
-							.saveTemplateRendition(weblogTemplateCode);
-				}
+                    // Get the template for the new theme
+                    TemplateRendition templateCode = themeTemplate.getTemplateRendition(type);
+                    if (templateCode != null) {
 
-			}
+                        // Check for existing template
+                        if (weblogTemplateCode == null) {
+                            // Does not exist so create a new one
+                            weblogTemplateCode = new CustomTemplateRendition(template, type);
+                        }
+                        weblogTemplateCode.setType(type);
+                        weblogTemplateCode.setTemplate(templateCode.getTemplate());
+                        weblogTemplateCode.setTemplateLanguage(templateCode
+                                .getTemplateLanguage());
+                        WebloggerFactory.getWeblogger().getWeblogManager()
+                                .saveTemplateRendition(weblogTemplateCode);
+                    }
+
+                }
+            }
 		}
 
 		// now, see if the weblog has left over non-custom action templates that
@@ -286,8 +278,7 @@ public class ThemeManagerImpl implements ThemeManager {
 			if (!importedActionTemplates.contains(action)) {
 				WeblogTemplate toDelete = wmgr.getTemplateByAction(weblog, action);
 				if (toDelete != null) {
-					log.debug("Removing stale action template "
-							+ toDelete.getId());
+					log.debug("Removing stale action template " + toDelete.getId());
 					wmgr.removeTemplate(toDelete);
 				}
 			}

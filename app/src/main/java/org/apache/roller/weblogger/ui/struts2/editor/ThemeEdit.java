@@ -62,8 +62,8 @@ public class ThemeEdit extends UIAction {
     // a potentially new selected theme
     private String selectedThemeId = null;
 
-    // Do we have a custom stylesheet already
-    private boolean customStylesheet = false;
+    // Are we using a shared theme with a custom stylesheet
+    private boolean sharedThemeCustomStylesheet = false;
 
     public ThemeEdit() {
         this.actionName = "themeEdit";
@@ -75,21 +75,8 @@ public class ThemeEdit extends UIAction {
         ThemeManager themeMgr = WebloggerFactory.getWeblogger()
                 .getThemeManager();
         themes = themeMgr.getEnabledThemesList();
-    }
 
-    public String execute() {
-
-        // set theme to current value
-        if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-            setThemeId(null);
-            setSelectedThemeId(null);
-            setImportTheme(false);
-        } else {
-            setThemeId(getActionWeblog().getTheme().getId());
-            setSelectedThemeId(getThemeId());
-        }
-
-        // See if we have a custom style sheet from a custom theme.
+        // See if we're using a shared theme with a custom template
         try {
             if (!WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())
                     && getActionWeblog().getTheme().getStylesheet() != null) {
@@ -102,12 +89,25 @@ public class ThemeEdit extends UIAction {
                                 getActionWeblog().getTheme().getStylesheet()
                                         .getLink());
                 if (override != null) {
-                    customStylesheet = true;
+                    sharedThemeCustomStylesheet = true;
                 }
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up stylesheet on weblog - "
                     + getActionWeblog().getHandle(), ex);
+        }
+    }
+
+    public String execute() {
+
+        // set theme to current value
+        if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
+            setThemeId(null);
+            setSelectedThemeId(null);
+            setImportTheme(false);
+        } else {
+            setThemeId(getActionWeblog().getTheme().getId());
+            setSelectedThemeId(getThemeId());
         }
 
         return INPUT;
@@ -123,41 +123,37 @@ public class ThemeEdit extends UIAction {
         // Are we dealing with a custom theme scenario?
         if (WeblogTheme.CUSTOM.equals(getThemeType())) {
 
-            // do theme import if necessary
-            SharedTheme t = null;
-
-            try {
-                ThemeManager themeMgr = WebloggerFactory.getWeblogger()
-                        .getThemeManager();
-                if (importTheme && !StringUtils.isEmpty(selectedThemeId)) {
-                    t = themeMgr.getTheme(selectedThemeId);
-                    themeMgr.importTheme(getActionWeblog(), t);
+            // do theme import if requested
+            if (importTheme) {
+                try {
+                    ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
+                    if (!StringUtils.isEmpty(selectedThemeId)) {
+                        SharedTheme t = themeMgr.getTheme(selectedThemeId);
+                        // if moving from shared w/custom SS to custom import of same shared theme,
+                        // keep the custom stylesheet.
+                        boolean skipStylesheet = (sharedThemeCustomStylesheet && selectedThemeId.equals(weblog.getEditorTheme()));
+                        themeMgr.importTheme(getActionWeblog(), t, skipStylesheet);
+                        addMessage("themeEditor.setCustomTheme.success", t.getName());
+                    }
+                } catch (Exception re) {
+                    log.error("Error customizing theme for weblog - "
+                            + getActionWeblog().getHandle(), re);
+                    addError("generic.error.check.logs");
+                    return execute();
                 }
-            } catch (Exception re) {
-                log.error("Error customizing theme for weblog - "
-                        + getActionWeblog().getHandle(), re);
-                addError("generic.error.check.logs");
-                return execute();
             }
 
             if (!hasActionErrors()) {
                 try {
-                    weblog.setEditorTheme(WeblogTheme.CUSTOM);
-                    log.debug("Saving custom theme for weblog "
-                            + weblog.getHandle());
-
                     // save updated weblog and flush
-                    WebloggerFactory.getWeblogger().getWeblogManager()
-                            .saveWeblog(weblog);
+                    weblog.setEditorTheme(WeblogTheme.CUSTOM);
+                    WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
                     WebloggerFactory.getWeblogger().flush();
 
                     // make sure to flush the page cache so ppl can see the change
                     CacheManager.invalidate(weblog);
 
                     addMessage("themeEditor.setTheme.success", WeblogTheme.CUSTOM);
-                    if (importTheme && t != null) {
-                        addMessage("themeEditor.setCustomTheme.success", t.getName());
-                    }
                     addMessage("themeEditor.setCustomTheme.instructions");
 
                 } catch (WebloggerException re) {
@@ -166,48 +162,35 @@ public class ThemeEdit extends UIAction {
                     addError("generic.error.check.logs");
                 }
             }
+
         } else if ("shared".equals(getThemeType())) {
 
             // make sure theme is valid and enabled
             Theme newTheme = null;
-            if (selectedThemeId == null) {
-                addError("No theme specified");
-            } else {
-                try {
-                    ThemeManager themeMgr = WebloggerFactory.getWeblogger()
-                            .getThemeManager();
-                    newTheme = themeMgr.getTheme(selectedThemeId);
 
-                    if (!newTheme.isEnabled()) {
-                        addError("Theme not enabled");
-                    }
-
-                } catch (Exception ex) {
-                    log.warn(ex);
-                    addError("Theme not found");
-                }
+            try {
+                ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
+                newTheme = themeMgr.getTheme(selectedThemeId);
+            } catch (Exception ex) {
+                log.warn(ex);
+                addError("Theme not found");
             }
 
             if (!hasActionErrors()) {
                 try {
-
                     String originalTheme = weblog.getEditorTheme();
 
-                    WeblogManager mgr = WebloggerFactory.getWeblogger()
-                            .getWeblogManager();
+                    WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
                     // Remove old style sheet
-                    if (!WeblogTheme.CUSTOM.equals(originalTheme)
-                            && !originalTheme.equals(selectedThemeId)
-                            && getActionWeblog().getTheme().getStylesheet() != null) {
-
-                        WeblogTemplate stylesheet = mgr.getTemplateByLink(
-                                getActionWeblog(), getActionWeblog().getTheme()
-                                        .getStylesheet().getLink());
+                    if (!originalTheme.equals(selectedThemeId) && getActionWeblog().getTheme().getStylesheet() != null) {
+                        WeblogTemplate stylesheet = mgr.getTemplateByAction(getActionWeblog(),
+                                ComponentType.STYLESHEET);
 
                         if (stylesheet != null) {
                             // Remove template and its renditions
                             mgr.removeTemplate(stylesheet);
+                            sharedThemeCustomStylesheet = false;
                         }
                     }
 
@@ -230,16 +213,10 @@ public class ThemeEdit extends UIAction {
                     }
 
                 } catch (WebloggerException re) {
-                    log.error("Error saving weblog - "
-                            + getActionWeblog().getHandle(), re);
-                    addError("Error setting theme");
+                    log.error("Error saving weblog - " + getActionWeblog().getHandle(), re);
+                    addError("generic.error.check.logs");
                 }
             }
-
-            // unknown theme scenario, error
-        } else {
-            // invalid theme type
-            addError("no valid theme type submitted");
         }
 
         return execute();
@@ -300,12 +277,12 @@ public class ThemeEdit extends UIAction {
     }
 
     /**
-     * Checks if we have a custom stylesheet.
+     * Checks if we are using a shared theme with a custom stylesheet.
      * 
-     * @return true, if checks if is custom stylesheet
+     * @return true, if using a shared theme with a custom stylesheet; false otherwise.
      */
-    public boolean isCustomStylesheet() {
-        return customStylesheet;
+    public boolean isSharedThemeCustomStylesheet() {
+        return sharedThemeCustomStylesheet;
     }
 
 }
