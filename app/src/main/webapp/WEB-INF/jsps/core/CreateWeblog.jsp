@@ -17,17 +17,9 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
 
 <script>
-function previewImage(themeId) {
-  $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata",
-    data: {theme:themeId}, success: function(data) {
-      $('#themedescription').html(data.description);
-      $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
-    }
-  });
-}
-
 function handlePreview(handle) {
     previewSpan = document.getElementById("handlePreview");
     var n1 = previewSpan.childNodes[0];
@@ -97,23 +89,14 @@ function handlePreview(handle) {
 
 <tr>
     <td class="label"><label for="theme" /><s:text name="createWebsite.theme" /></label></td>
-    <td class="field">
-        <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name" onchange="previewImage(this[selectedIndex].value)"/>
+    <td class="field" ng-app="themeSelectModule" ng-controller="themeController">
+        <select id="themeSelector" name="bean.theme" size="1"
+        ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
         <br />
         <br />
-        <p id="themedescription"></p>
+        <p>{{ selectedTheme.description }}</p>
         <br />
-
-        <img id="themeThumbnail" src='' />
-        <!-- initialize preview image at page load -->
-        <script>
-            <s:if test="bean.theme == null">
-                previewImage('<s:property value="themes[0].id"/>');
-            </s:if>
-            <s:else>
-                previewImage('<s:property value="bean.theme"/>');
-            </s:else>
-        </script>
+        <img src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
     </td>
     <td class="description"><s:text name="createWebsite.tip.theme" /></td>
 </tr>
@@ -129,5 +112,13 @@ function handlePreview(handle) {
 
 <script>
     document.forms[0].elements[0].focus();
+
+    angular.module('themeSelectModule', [])
+        .controller('themeController', ['$scope', function($scope) {
+            $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata", async:false,
+                success: function(data) { $scope.themes = data; }
+            });
+            $scope.selectedTheme = $scope.themes[0];
+    }]);
 </script>
 
