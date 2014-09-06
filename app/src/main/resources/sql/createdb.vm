@@ -60,15 +60,6 @@ create table roller_audit_log (
     change_time     $db.TIMESTAMP_SQL_TYPE              
 );
 
-create table usercookie (
-    id              varchar(48) not null primary key,
-    username        varchar(255) not null,
-    cookieid        varchar(100) not null,
-    datecreated     $db.TIMESTAMP_SQL_TYPE not null
-);
-create index uc_username_idx on usercookie( username$!db.INDEXSIZE );
-create index uc_cookieid_idx on usercookie( cookieid$!db.INDEXSIZE );
-
 create table weblog (
     id                varchar(48) not null primary key,
     name              varchar(255) not null,
