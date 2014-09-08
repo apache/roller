@@ -114,7 +114,6 @@ public class CategoryRemove extends UIAction {
                 }
 
                 // notify cache
-                String id = getCategory().getId();
                 CacheManager.invalidate(getCategory());
 
                 wmgr.removeWeblogCategory(getCategory());

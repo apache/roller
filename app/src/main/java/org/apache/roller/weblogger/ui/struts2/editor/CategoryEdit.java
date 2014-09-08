@@ -107,11 +107,14 @@ public class CategoryEdit extends UIAction {
 
                 // save changes
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+                if (isAdd()) {
+                    getActionWeblog().addCategory(category);
+                }
                 wmgr.saveWeblogCategory(category);
                 WebloggerFactory.getWeblogger().flush();
 
                 // notify caches
-                CacheManager.invalidate(category);
+                CacheManager.invalidate(getActionWeblog());
 
                 addMessage(isAdd()? "categoryForm.created"
                         : "categoryForm.changesSaved",
