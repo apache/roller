@@ -23,6 +23,9 @@ This product includes:
     Copyright (c) 2003-2004 dynarch.com
     All rights reserved.
     http://trac.xinha.org/wiki/Licence
+    
+* Snippets of code from Spring Mobile
+    Copyright (c) 2010-2014 Pivotal, Inc. All Rights Reserved. 
 
 OTHER NOTICES
 

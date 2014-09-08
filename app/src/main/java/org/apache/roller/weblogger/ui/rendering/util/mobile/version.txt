@@ -1,6 +1,0 @@
-
-Version Notes
-
-https://github.com/spring-projects/spring-mobile
-
-master >  LiteDeviceResolver 11 Feb 2014

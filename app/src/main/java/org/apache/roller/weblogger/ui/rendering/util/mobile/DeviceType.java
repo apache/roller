@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Code from Spring Mobile and modified for use in Apache Roller
+ * https://github.com/spring-projects/spring-mobile 11 Feb 2014
+ * 
+ */
 package org.apache.roller.weblogger.ui.rendering.util.mobile;
 
 /**
