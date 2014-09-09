@@ -120,8 +120,9 @@ public class WeblogFeedRequest extends WeblogRequest {
          *
          */
         if(request.getParameter("cat") != null) {
+            // replacing plus sign below with its encoded equivalent (http://stackoverflow.com/a/6926987)
             this.weblogCategoryName =
-                    URLUtilities.decode(request.getParameter("cat"));
+                    URLUtilities.decode(request.getParameter("cat").replace("+", "%2B"));
         }
         
         if(request.getParameter("tags") != null) {
