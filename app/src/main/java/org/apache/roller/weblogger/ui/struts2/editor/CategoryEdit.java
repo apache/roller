@@ -109,6 +109,7 @@ public class CategoryEdit extends UIAction {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 if (isAdd()) {
                     getActionWeblog().addCategory(category);
+                    category.calculatePosition();
                 }
                 wmgr.saveWeblogCategory(category);
                 WebloggerFactory.getWeblogger().flush();
