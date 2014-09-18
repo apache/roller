@@ -141,13 +141,6 @@ public interface WeblogEntryManager {
             throws WebloggerException;
 
     /**
-     * Remove tag with given name from given WeblogEntryData
-     * @param name Name of tag to be removed
-     */
-    void removeWeblogEntryTag(String name,WeblogEntry entry)
-            throws WebloggerException;
-
-    /**
      * Save weblog category.
      */
     void saveWeblogCategory(WeblogCategory cat) throws WebloggerException;
@@ -292,21 +285,6 @@ public interface WeblogEntryManager {
      */
     boolean getTagComboExists(List tags, Weblog weblog)
         throws WebloggerException;
-    
-    /**
-     * This method maintains the tag aggregate table up-to-date with total counts. More
-     * specifically every time this method is called it will act upon exactly two rows
-     * in the database (tag,website,count), one with website matching the argument passed
-     * and one where website is null. If the count ever reaches zero, the row must be deleted.
-     * 
-     * @param name      The tag name
-     * @param website   The website to used when updating the stats.
-     * @param amount    The amount to increment the tag count (it can be positive or negative).
-     * @throws WebloggerException
-     */
-    void updateTagCount(String name, Weblog website, int amount)
-        throws WebloggerException;
-    
     
     /**
      * Get a HitCountData by id.

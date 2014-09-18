@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -89,7 +90,12 @@ public class WeblogEntry implements Serializable {
     private PubStatus status        = PubStatus.DRAFT;
     private String    locale        = null;
     private String    creatorUserName = null;      
-    private String    searchDescription = null;      
+    private String    searchDescription = null;
+
+    // set to true when switching between pending/draft/scheduled and published
+    // either the aggregate table needs the entry's tags added (for published)
+    // or subtracted (anything else)
+    private Boolean   refreshAggregates = Boolean.FALSE;
 
     // Associated objects
     private Weblog        website  = null;
@@ -99,8 +105,8 @@ public class WeblogEntry implements Serializable {
     private Set<WeblogEntryAttribute> attSet = new TreeSet<WeblogEntryAttribute>();
     
     private Set<WeblogEntryTag> tagSet = new HashSet<WeblogEntryTag>();
-    private Set<String> removedTags = new HashSet<String>();
-    private Set<String> addedTags = new HashSet<String>();
+    private Set<WeblogEntryTag> removedTags = new HashSet<WeblogEntryTag>();
+    private Set<WeblogEntryTag> addedTags = new HashSet<WeblogEntryTag>();
     
     //----------------------------------------------------------- Construction
     
@@ -520,18 +526,16 @@ public class WeblogEntry implements Serializable {
         this.locale = locale;
     }
     
-    public Set<WeblogEntryTag> getTags()
-     {
+    public Set<WeblogEntryTag> getTags() {
          return tagSet;
-     }
-     
-     @SuppressWarnings("unused")
-    private void setTags(Set<WeblogEntryTag> tagSet) throws WebloggerException
-     {
+    }
+
+    @SuppressWarnings("unused")
+    private void setTags(Set<WeblogEntryTag> tagSet) throws WebloggerException {
          this.tagSet = tagSet;
-         this.removedTags = new HashSet();
-         this.addedTags = new HashSet();
-     }    
+         this.removedTags = new HashSet<WeblogEntryTag>();
+         this.addedTags = new HashSet<WeblogEntryTag>();
+    }
      
     /**
      * Roller lowercases all tags based on locale because there's not a 1:1 mapping
@@ -560,55 +564,17 @@ public class WeblogEntry implements Serializable {
         tag.setTime(getUpdateTime());
         tagSet.add(tag);
         
-        addedTags.add(name);
+        addedTags.add(tag);
     }
 
-    public void onRemoveTag(String name) throws WebloggerException {
-        removedTags.add(name);
-    }
-
-    public Set getAddedTags() {
+    public Set<WeblogEntryTag> getAddedTags() {
         return addedTags;
     }
     
-    public Set getRemovedTags() {
+    public Set<WeblogEntryTag> getRemovedTags() {
         return removedTags;
     }
 
-    public void updateTags(List<String> updatedTags) throws WebloggerException {
-        
-        if(updatedTags == null) {
-            return;
-        }
-        
-        Set<String> newTags = new HashSet<String>(updatedTags.size());
-        Locale localeObject = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
-        
-        for (String name : updatedTags) {
-            newTags.add(Utilities.normalizeTag(name, localeObject));
-        }
-        
-        Set<String> removeTags = new HashSet<String>();
-
-        // remove old ones no longer passed.
-        for (WeblogEntryTag tag : getTags()) {
-            if (!newTags.contains(tag.getName())) {
-                removeTags.add(tag.getName());
-            } else {
-                newTags.remove(tag.getName());
-            }
-        }
-
-        WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        for (String removeTag : removeTags) {
-            weblogEntryManager.removeWeblogEntryTag(removeTag, this);
-        }
-        
-        for (String newTag : newTags) {
-            addTag(newTag);
-        }
-    }
-   
     public String getTagsAsString() {
         StringBuilder sb = new StringBuilder();
         // Sort by name
@@ -626,12 +592,36 @@ public class WeblogEntry implements Serializable {
 
     public void setTagsAsString(String tags) throws WebloggerException {
         if (StringUtils.isEmpty(tags)) {
+            removedTags.addAll(tagSet);
             tagSet.clear();
             return;
         }
 
-        updateTags(Utilities.splitStringAsTags(tags));
-    }  
+        List<String> updatedTags = Utilities.splitStringAsTags(tags);
+        Set<String> newTags = new HashSet<String>(updatedTags.size());
+        Locale localeObject = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
+
+        for (String name : updatedTags) {
+            newTags.add(Utilities.normalizeTag(name, localeObject));
+        }
+
+        // remove old ones no longer passed.
+        for (Iterator it = tagSet.iterator(); it.hasNext();) {
+            WeblogEntryTag tag = (WeblogEntryTag) it.next();
+            if (!newTags.contains(tag.getName())) {
+                // tag no longer listed in UI, needs removal from DB
+                removedTags.add(tag);
+                it.remove();
+            } else {
+                // already in persisted set, therefore isn't new
+                newTags.remove(tag.getName());
+            }
+        }
+
+        for (String newTag : newTags) {
+            addTag(newTag);
+        }
+    }
 
     // ------------------------------------------------------------------------
     
@@ -1033,6 +1023,14 @@ public class WeblogEntry implements Serializable {
      */
     public String getDisplayContent() { 
         return displayContent(null);
+    }
+
+    public Boolean getRefreshAggregates() {
+        return refreshAggregates;
+    }
+
+    public void setRefreshAggregates(Boolean refreshAggregates) {
+        this.refreshAggregates = refreshAggregates;
     }
 
 }

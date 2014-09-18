@@ -7,7 +7,7 @@
             class="org.apache.roller.weblogger.pojos.WeblogEntryTag" access="PROPERTY">
         <table name="roller_weblogentrytag"/>
         <named-query name="WeblogEntryTag.getByWeblog">
-            <query>SELECT w FROM WeblogEntryTag w WHERE w.weblog= ?1</query>
+            <query>SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1</query>
         </named-query>
         <attributes>
             <id name="id">

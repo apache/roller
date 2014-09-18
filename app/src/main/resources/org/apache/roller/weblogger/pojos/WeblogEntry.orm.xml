@@ -130,6 +130,7 @@
             <transient name="pluginsList"/>
             <transient name="addedTags"/>
             <transient name="removedTags"/>
+            <transient name="refreshAggregates"/>
         </attributes>
     </entity>
 </entity-mappings>

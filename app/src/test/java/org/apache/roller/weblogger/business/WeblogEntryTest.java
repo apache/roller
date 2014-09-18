@@ -477,8 +477,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.endSession(true);
 
             entry = mgr.getWeblogEntry(id);
-            mgr.removeWeblogEntryTag("testtag", entry);
-            mgr.removeWeblogEntryTag("testtag2", entry);
+            entry.setTagsAsString("");
             mgr.saveWeblogEntry(entry);
             TestUtils.endSession(true);
 
@@ -636,11 +635,7 @@ public class WeblogEntryTest extends TestCase {
         entry = mgr.getWeblogEntry(id);
         assertEquals(2, entry.getTags().size());
 
-        List<String> updateTags = new ArrayList<String>();
-        updateTags.add("testwillstaytag");
-        updateTags.add("testnewtag");
-        updateTags.add("testnewtag3");
-        entry.updateTags(updateTags);
+        entry.setTagsAsString("testwillstaytag testnewtag testnewtag3");
         mgr.saveWeblogEntry(entry);
         TestUtils.endSession(true);
 
@@ -691,11 +686,7 @@ public class WeblogEntryTest extends TestCase {
                 original = tagData.getTime();
         }
 
-        List<String> updateTags = new ArrayList<String>();
-        updateTags.add("testwillstaytag");
-        updateTags.add("testnewtag");
-        updateTags.add("testnewtag3");
-        entry.updateTags(updateTags);
+        entry.setTagsAsString("testwillstaytag testnewtag testnewtag3");
         mgr.saveWeblogEntry(entry);
         TestUtils.endSession(true);
 
@@ -806,11 +797,7 @@ public class WeblogEntryTest extends TestCase {
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             entry = mgr.getWeblogEntryByAnchor(testWeblog, "entry2");
-            List<String> updateTags = new ArrayList<String>();
-            updateTags.add("one");
-            updateTags.add("three");
-            updateTags.add("five");
-            entry.updateTags(updateTags);
+            entry.setTagsAsString("one three five");
             mgr.saveWeblogEntry(entry);
 
             TestUtils.endSession(true);

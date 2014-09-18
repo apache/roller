@@ -977,10 +977,10 @@ public class Utilities {
     }
 
     /**
-     * @param tags
-     * @return
+     * @param tags String holding space separated list of tags
+     * @return List of strings, one string for each tag
      */
-    public static List splitStringAsTags(String tags) {
+    public static List<String> splitStringAsTags(String tags) {
         String[] tagsarr = StringUtils.split(tags, TAG_SPLIT_CHARS);
         if (tagsarr == null) {
             return Collections.emptyList();

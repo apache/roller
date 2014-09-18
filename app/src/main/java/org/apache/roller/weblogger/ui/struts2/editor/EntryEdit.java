@@ -143,6 +143,11 @@ public final class EntryEdit extends UIAction {
      */
     public String saveDraft() {
         getBean().setStatus(PubStatus.DRAFT.name());
+        if (entry.isPublished()) {
+            // entry reverted from published to non-viewable draft
+            // so need to reduce tag aggregates
+            entry.setRefreshAggregates(true);
+        }
         return save();
     }
 
@@ -159,8 +164,16 @@ public final class EntryEdit extends UIAction {
             if (pubTime != null && pubTime.after(
                     new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
                 getBean().setStatus(PubStatus.SCHEDULED.name());
+                if (entry.isPublished()) {
+                    // entry went from published to scheduled, need to reduce tag aggregates
+                    entry.setRefreshAggregates(true);
+                }
             } else {
                 getBean().setStatus(PubStatus.PUBLISHED.name());
+                if (getBean().getId() != null && !entry.isPublished()) {
+                    // if not a new add, need to add tags to aggregates
+                    entry.setRefreshAggregates(true);
+                }
             }
         } else {
             getBean().setStatus(PubStatus.PENDING.name());
@@ -176,7 +189,7 @@ public final class EntryEdit extends UIAction {
     private String save() {
         if (!hasActionErrors()) {
             try {
-                WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger()
+                WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
 
                 IndexManager indexMgr = WebloggerFactory.getWeblogger()
@@ -228,11 +241,11 @@ public final class EntryEdit extends UIAction {
                     try {
                         // if MediaCast string is empty, clean out MediaCast
                         // attributes
-                        weblogMgr.removeWeblogEntryAttribute(
+                        weblogEntryManager.removeWeblogEntryAttribute(
                                 "att_mediacast_url", weblogEntry);
-                        weblogMgr.removeWeblogEntryAttribute(
+                        weblogEntryManager.removeWeblogEntryAttribute(
                                 "att_mediacast_type", weblogEntry);
-                        weblogMgr.removeWeblogEntryAttribute(
+                        weblogEntryManager.removeWeblogEntryAttribute(
                                 "att_mediacast_length", weblogEntry);
 
                     } catch (WebloggerException e) {
@@ -248,7 +261,7 @@ public final class EntryEdit extends UIAction {
                 }
 
                 log.debug("Saving entry");
-                weblogMgr.saveWeblogEntry(weblogEntry);
+                weblogEntryManager.saveWeblogEntry(weblogEntry);
                 WebloggerFactory.getWeblogger().flush();
 
                 // notify search of the new entry

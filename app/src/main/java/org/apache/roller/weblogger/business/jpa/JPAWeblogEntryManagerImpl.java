@@ -194,12 +194,31 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             entry.setAnchor(this.createAnchor(entry));
         }
         
-        for (Object name : entry.getAddedTags()) {
-            updateTagCount((String) name, entry.getWebsite(), 1);
+        if (entry.isPublished()) {
+            // tag aggregates are updated only when entry published in order for
+            // tag cloud counts to match published articles
+            if (entry.getRefreshAggregates()) {
+                // blog entry wasn't published before, so all tags need to be incremented
+                for (WeblogEntryTag tag : entry.getTags()) {
+                    updateTagCount(tag.getName(), entry.getWebsite(), 1);
+                }
+            } else {
+                // only new tags need to be incremented
+                for (WeblogEntryTag tag : entry.getAddedTags()) {
+                    updateTagCount(tag.getName(), entry.getWebsite(), 1);
+                }
+            }
+        } else {
+            if (entry.getRefreshAggregates()) {
+                // blog entry no longer published so need to reduce aggregate count
+                for (WeblogEntryTag tag : entry.getTags()) {
+                    updateTagCount(tag.getName(), entry.getWebsite(), -1);
+                }
+            }
         }
 
-        for (Object name : entry.getRemovedTags()) {
-            updateTagCount((String) name, entry.getWebsite(), -1);
+        for (WeblogEntryTag tag : entry.getRemovedTags()) {
+            removeWeblogEntryTag(tag);
         }
 
         // if the entry was published to future, set status as SCHEDULED
@@ -241,13 +260,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             this.strategy.remove(comment);
         }
         
-        // remove tags aggregates
+        // remove tag & tag aggregates
         if (entry.getTags() != null) {
-            for (Iterator it = entry.getTags().iterator(); it.hasNext(); ) {
-                WeblogEntryTag tag = (WeblogEntryTag) it.next();
-                updateTagCount(tag.getName(), entry.getWebsite(), -1);
-                it.remove();
-                this.strategy.remove(tag);
+            for (WeblogEntryTag tag : entry.getTags()) {
+                removeWeblogEntryTag(tag);
             }
         }
         
@@ -489,28 +505,13 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
     }
     
-    public void removeWeblogEntryTag(String name, WeblogEntry entry)
-    throws WebloggerException {
-
-        // seems silly, why is this not done in WeblogEntry?
-
-        for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
-            WeblogEntryTag tag = (WeblogEntryTag) it.next();
-            if (tag.getName().equals(name)) {
-
-                //Call back the entity to adjust its internal state
-                entry.onRemoveTag(name);
-
-                //Remove it from the collection
-                it.remove();
-
-                //Remove it from database
-                this.strategy.remove(tag);
-                this.strategy.flush();
-            }
+    private void removeWeblogEntryTag(WeblogEntryTag tag) throws WebloggerException {
+        if (tag.getWeblogEntry().isPublished()) {
+            updateTagCount(tag.getName(), tag.getWeblogEntry().getWebsite(), -1);
         }
+        this.strategy.remove(tag);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -1103,17 +1104,25 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         //instead of objects as done currently
         return (results != null && results.size() == tags.size());
     }
-    
+
     /**
-     * @inheritDoc
+     * This method maintains the tag aggregate table up-to-date with total counts. More
+     * specifically every time this method is called it will act upon exactly two rows
+     * in the database (tag,website,count), one with website matching the argument passed
+     * and one where website is null. If the count ever reaches zero, the row must be deleted.
+     *
+     * @param name      The tag name
+     * @param website   The website to used when updating the stats.
+     * @param amount    The amount to increment the tag count (it can be positive or negative).
+     * @throws WebloggerException
      */
-    public void updateTagCount(String name, Weblog website, int amount)
+    private void updateTagCount(String name, Weblog website, int amount)
     throws WebloggerException {
-        if(amount == 0) {
+        if (amount == 0) {
             throw new WebloggerException("Tag increment amount cannot be zero.");
         }
         
-        if(website == null) {
+        if (website == null) {
             throw new WebloggerException("Website cannot be NULL.");
         }
         
