@@ -175,7 +175,7 @@
     <definition name=".GlobalCommentManagement" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalCommentManagement.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/admin/GlobalCommentManagementSidebar.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
     </definition>
     

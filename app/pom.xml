@@ -16,14 +16,8 @@
     <packaging>war</packaging>
 
     <properties>
-        <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
-        <testMediaDir>${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
-        <testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
-        <testThemesDir>${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
-        <testIndexDir>${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
-        <testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
-        <lucene.version>4.9.0</lucene.version>
-        <spring.version>4.0.6.RELEASE</spring.version>
+        <lucene.version>4.10.0</lucene.version>
+        <spring.version>4.1.0.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
     </properties>
 

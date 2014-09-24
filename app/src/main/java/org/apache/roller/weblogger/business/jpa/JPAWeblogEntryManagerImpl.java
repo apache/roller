@@ -635,9 +635,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         if (csc.getSearchText() != null) {
-            params.add(size++, "%" + csc.getSearchText() + "%");
-            appendConjuctionToWhereclause(whereClause, "(c.url LIKE ?")
-                .append(size).append(" OR c.content LIKE ?").append(size).append(")");
+            params.add(size++, "%" + csc.getSearchText().toUpperCase() + "%");
+            appendConjuctionToWhereclause(whereClause, "upper(c.content) LIKE ?").append(size);
         }
         
         if (csc.getStartDate() != null) {
