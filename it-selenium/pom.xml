@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.1.1-SNAPSHOT</version>
+        <version>5.1.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -118,7 +118,7 @@
                             <port>4224</port>
                             <sources>
                                 <script>
-                                    <sourceFile>target/roller-selenium-tests-5.1.0-SNAPSHOT/WEB-INF/classes/dbscripts/derby/createdb.sql</sourceFile>
+                                    <sourceFile>target/roller-selenium-tests-${project.version}/WEB-INF/classes/dbscripts/derby/createdb.sql</sourceFile>
                                 </script>
                             </sources>
                         </configuration>
@@ -144,7 +144,7 @@
                     <webApp>
                         <contextPath>/roller</contextPath>
                     </webApp>
-                    <webAppSourceDirectory>target/roller-selenium-tests-5.1.0-SNAPSHOT</webAppSourceDirectory>
+                    <webAppSourceDirectory>target/roller-selenium-tests-${project.version}</webAppSourceDirectory>
                     <jettyXml>../app/src/test/resources/jetty.xml</jettyXml>
                     <systemProperties>
                         <systemProperty>
