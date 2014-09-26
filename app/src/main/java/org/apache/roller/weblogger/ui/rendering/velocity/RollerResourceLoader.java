@@ -89,6 +89,10 @@ public class RollerResourceLoader extends ResourceLoader {
 			}
 			String contents = "";
 			TemplateRendition templateCode = page.getTemplateRendition(renditionType);
+            if (templateCode == null && renditionType != RenditionType.STANDARD) {
+                // fall back to standard rendition if mobile or other unavailable
+                templateCode = page.getTemplateRendition(RenditionType.STANDARD);
+            }
 			if (templateCode != null) {
 				contents = templateCode.getTemplate();
 			}
