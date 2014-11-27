@@ -479,7 +479,7 @@ public class RollerAtomHandler implements AtomHandler {
                 }
             }
         } catch (Exception e) {
-            log.debug(e);
+            log.debug("Error authenticating via BASIC Auth", e);
         }
         if (valid) {
             return userID;
