@@ -305,7 +305,7 @@
                             <input type="hidden" id="mediafileidentity"
                                    value="<s:property value='#mediaFile.id'/>" />
 
-                            <str:truncateNicely lower="70" upper="18">
+                            <str:truncateNicely lower="47" upper="47">
                                 <s:property value="#mediaFile.name" />
                             </str:truncateNicely>
 
