@@ -13,8 +13,4 @@ trunk that has been modified to add a REST API, powered by Apache CXF and Apache
 could power a new JavaScript based web interface for Roller.
 
 
-That's all
----
-
-Want to contribute? Shoot me a PR.
 
