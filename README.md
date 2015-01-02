@@ -1,4 +1,4 @@
-README.md
+Rollarcus
 ===
 
 This is __Rollarcus__: my experimental fork of [Apache Roller](https://github.com/apache/roller).
