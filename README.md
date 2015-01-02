@@ -9,8 +9,9 @@ branch of Roller's trunk that has been modified to use Apache Shiro for security
 Also, all Spring depdenencies have been removed.
 
 2) [jaxrs_not_struts](https://github.com/snoopdave/rollarcus/tree/jaxrs_not_struts): is a branch of Roller's
-trunk that has been modified to add a REST API, powered by Apache CXF and Apache Shiro. Someday this REST API
-could power a new JavaScript based web interface for Roller.
+trunk that has been modified to add a REST API, powered by Apache CXF, Apache Shiro and includes Arquillian-powered
+tests for the REST API. Someday this REST API could power a new JavaScript based web interface for Roller
+and allow the project to move on from Struts.
 
 
 
