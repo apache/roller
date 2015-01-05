@@ -420,13 +420,18 @@ public class PageServlet extends HttpServlet {
         if (StringUtils.isNotEmpty(page.getOutputContentType())) {
             contentType = page.getOutputContentType() + "; charset=utf-8";
         } else {
-            String mimeType = RollerContext.getServletContext().getMimeType(
-                    page.getLink());
-            if (mimeType != null) {
-                // we found a match ... set the content deviceType
-                contentType = mimeType + "; charset=utf-8";
+            final String defaultContentType = "text/html; charset=utf-8";
+            if (page.getLink() == null) {
+                contentType = defaultContentType;
             } else {
-                contentType = "text/html; charset=utf-8";
+                String mimeType = RollerContext.getServletContext().getMimeType(
+                        page.getLink());
+                if (mimeType != null) {
+                    // we found a match ... set the content deviceType
+                    contentType = mimeType + "; charset=utf-8";
+                } else {
+                    contentType = defaultContentType;
+                }
             }
         }
 
