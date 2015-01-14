@@ -67,9 +67,6 @@ public class FileContentManagerImpl implements FileContentManager {
 
         this.storageDir = inStorageDir.replace('/', File.separatorChar);
 
-        System.out
-                .println(" ***** FileContentManager mediafiles.storage.dir : "
-                        + inStorageDir);
     }
 
     public void initialize() {
