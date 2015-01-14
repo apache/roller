@@ -22,24 +22,22 @@
 
 -- Any changes here should also be in docs/testing/junit-cleartables-mysql.sql.
 
-delete mt from website w, roller_mediafile mf, roller_mediafiletag mt where w.id = mf.weblogid and mt.mediafile_id = mf.id and w.creator like 'junit_%';
-delete mf from website w, roller_mediafile mf where w.id = mf.weblogid and w.creator like 'junit_%';
-delete md from website w, roller_mediafiledir md where w.id = md.websiteid and w.creator like 'junit_%';
+delete mt from weblog w, roller_mediafile mf, roller_mediafiletag mt where w.id = mf.weblogid and mt.mediafile_id = mf.id and w.creator like 'junit_%';
+delete mf from weblog w, roller_mediafile mf where w.id = mf.weblogid and w.creator like 'junit_%';
+delete md from weblog w, roller_mediafiledir md where w.id = md.websiteid and w.creator like 'junit_%';
+delete from roller_mediafile WHERE creator like 'junit_%';
+delete from roller_mediafiledir;
 
--- no weblog
--- delete from roller_mediafile WHERE creator like 'junit_%';
--- delete from roller_mediafiledir;
+delete r from weblog w, referer r WHERE w.id = r.websiteid and w.creator like 'junit_%';
 
-delete r from website w, referer r WHERE w.id = r.websiteid and w.creator like 'junit_%';
+delete from weblog WHERE creator like 'junit_%';
 
-delete from website WHERE creator like 'junit_%';
-
-delete b from website w, folder f, bookmark b where f.id = b.folderid and w.id = f.websiteid and w.creator like 'junit_%';
-delete from folder WHERE websiteid like 'junit_%';
+delete b from weblog w, bookmark_folder f, bookmark b where f.id = b.folderid and w.id = f.websiteid and w.creator like 'junit_%';
+delete from bookmark_folder WHERE websiteid like 'junit_%';
 
 delete from userrole WHERE username like 'junit_%';
 delete from roller_permission WHERE username like 'junit_%';
-delete from rolleruser WHERE username like 'junit_%';
+delete from roller_user WHERE username like 'junit_%';
 delete from roller_userattribute WHERE username like 'junit_%';
 delete from roller_oauthconsumer WHERE username like 'junit_%';
 delete from roller_oauthaccessor WHERE username like 'junit_%';

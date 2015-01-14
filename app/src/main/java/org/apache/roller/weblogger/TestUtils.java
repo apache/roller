@@ -79,7 +79,8 @@ public final class TestUtils {
             // always initialize the properties manager and flush
             WebloggerFactory.getWeblogger().initialize();
 
-            // Reset data for local tests see events-custom.properties
+            // Reset data for local tests see
+            // docs/testing/roller-junit.properties for howto
             Boolean local = WebloggerConfig.getBooleanProperty(
                     "junit.testdata.reset", false);
 
@@ -306,14 +307,13 @@ public final class TestUtils {
     /**
      * Convenience method for creating a weblog category.
      */
-    public static WeblogCategory setupWeblogCategory(Weblog weblog,
-            String name) throws Exception {
+    public static WeblogCategory setupWeblogCategory(Weblog weblog, String name)
+            throws Exception {
 
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
                 .getWeblogEntryManager();
 
-        WeblogCategory testCat = new WeblogCategory(weblog, name,
-                null, null);
+        WeblogCategory testCat = new WeblogCategory(weblog, name, null, null);
         mgr.saveWeblogCategory(testCat);
 
         // flush to db
@@ -357,12 +357,14 @@ public final class TestUtils {
     }
 
     /**
-     * Convenience method for creating a published weblog entry with the blog's default category
+     * Convenience method for creating a published weblog entry with the blog's
+     * default category
      */
-    public static WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) throws Exception {
+    public static WeblogEntry setupWeblogEntry(String anchor, Weblog weblog,
+            User user) throws Exception {
 
-        return TestUtils.setupWeblogEntry(anchor, weblog.getWeblogCategories().iterator().next(), PubStatus.PUBLISHED,
-                weblog, user);
+        return TestUtils.setupWeblogEntry(anchor, weblog.getWeblogCategories()
+                .iterator().next(), PubStatus.PUBLISHED, weblog, user);
     }
 
     /**
@@ -609,13 +611,13 @@ public final class TestUtils {
     /**
      * Convenience method for creating a weblog folder.
      */
-    public static WeblogBookmarkFolder setupFolder(Weblog weblog, String name) throws Exception {
+    public static WeblogBookmarkFolder setupFolder(Weblog weblog, String name)
+            throws Exception {
 
         BookmarkManager mgr = WebloggerFactory.getWeblogger()
                 .getBookmarkManager();
 
-        WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(
-                name, weblog);
+        WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(name, weblog);
         mgr.saveFolder(testFolder);
 
         // flush to db
