@@ -408,7 +408,7 @@ public class FileContentManagerImpl implements FileContentManager {
         File file = new File(filePath);
         if(!file.exists()) {
             throw new FileNotFoundException("Invalid path ["+filePath+"], "+
-                    "directory doesn't exist.");
+                    "file does not exist.");
         } else if(!file.canRead()) {
             throw new FilePathException("Invalid path ["+filePath+"], "+
                     "cannot read from path.");
