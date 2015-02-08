@@ -133,7 +133,7 @@ public class WeblogCalendarModel implements CalendarModel {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(weblog);
             // since we need an entry.pubTime > endDate, but the method uses startDate
-            wesc.setStartDate(new Date(startDate.getTime()-1));
+            wesc.setStartDate(new Date(endDate.getTime()+1));
             wesc.setCatName(cat);
             wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.ASCENDING);
