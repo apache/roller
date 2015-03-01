@@ -264,6 +264,10 @@ public final class EntryEdit extends UIAction {
                 weblogEntryManager.saveWeblogEntry(weblogEntry);
                 WebloggerFactory.getWeblogger().flush();
 
+                // necessary to work around timestamp resolution issue in some databases
+                // see also https://issues.apache.org/jira/browse/ROL-2063
+                weblogEntryManager.evict(weblogEntry);
+
                 // notify search of the new entry
                 if (weblogEntry.isPublished()) {
                     indexMgr.addEntryReIndexOperation(entry);
