@@ -92,16 +92,6 @@ public abstract class UIAction extends ActionSupport
 		return salt;
 	}
 	
-	/**
-     * Sets the salt.
-     * 
-     * @param salt
-     *            the new salt
-     */
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-    
     // default action permissions, user is required
     public boolean isUserRequired() {
         return true;
