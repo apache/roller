@@ -22,7 +22,7 @@
 		        #if($model.permalink)
 		            <p>$entry.displayContent</p>
 		        #else
-		            #if($entry.summary != "")
+		            #if($utils.isNotEmpty($entry.summary))
 		                <p>$entry.summary</p>
                         <a class="btn btn-primary" href="$url.entry($entry.anchor)">Read More <i class="icon-angle-right"></i></a>
                     #else
