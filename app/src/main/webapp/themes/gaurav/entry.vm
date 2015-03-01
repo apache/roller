@@ -180,8 +180,8 @@
 						}
 		
 						function fixURL(theForm) {
-							if (theForm.url.value != "" &&
-								theForm.url.value.indexOf("http://") == -1) { //prepend http://
+							if (theForm.url.value != "" && !/^\S+:\/\//.test(theForm.url.value)) {
+                                // URL has no scheme so prepend http://
 								theForm.url.value = "http://"+theForm.url.value;
 							}
 							saveUserInformation(theForm);
