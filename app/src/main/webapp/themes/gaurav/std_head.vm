@@ -4,6 +4,7 @@
 #else
    <meta name="Description" content="$model.weblogEntry.searchDescription">
 #end
+<meta name="viewport" content="initial-scale=1.0">
 
 <!-- Bootstrap core CSS -->
 <link rel="stylesheet" href="$url.resource('css/bootstrap.css')" >
