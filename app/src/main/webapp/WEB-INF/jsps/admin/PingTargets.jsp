@@ -101,5 +101,5 @@
     <s:url var="addPing" action="commonPingTargetAdd">
         <s:param name="weblog" value="actionWeblog.handle" />
     </s:url>
-    <img src='<s:url value="/images/add.png"/>' border="0"alt="icon" /><s:a href="%{addPing}">Add Ping Target</s:a>
+    <img src='<s:url value="/images/add.png"/>' border="0" alt="icon" /><s:a href="%{addPing}"><s:text name="pingTarget.addTarget" /></s:a>
 </div>
