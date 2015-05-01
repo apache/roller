@@ -19,20 +19,17 @@
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.Random;
-import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.util.I18nMessages;
 
 
 /**
  * Asks the commenter to answer a simple math question.
  */
 public class MathCommentAuthenticator implements CommentAuthenticator {
-    
-    private transient ResourceBundle bundle =
-            ResourceBundle.getBundle("ApplicationResources");
     
     private static Log mLogger = LogFactory.getLog(MathCommentAuthenticator.class);
     
@@ -60,11 +57,12 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         // pull existing values out of session
         Integer value1o = (Integer)request.getSession().getAttribute("mathValue1");
         Integer value2o = (Integer)request.getSession().getAttribute("mathValue2");
-        
+
+        I18nMessages messages = I18nMessages.getMessages(request.getLocale());
         StringBuilder sb = new StringBuilder();
         
         sb.append("<p>");
-        sb.append(bundle.getString("comments.mathAuthenticatorQuestion"));
+        sb.append(messages.getString("comments.mathAuthenticatorQuestion"));
         sb.append("</p><p>");
         sb.append(value1o);
         sb.append(" + ");
