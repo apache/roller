@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.rendering.model;
@@ -29,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
@@ -122,8 +126,8 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAuthor(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermission(
-                        parsedRequest.getUser(), WeblogPermission.POST);
+                return weblog.getPojo().userHasWeblogRole(
+                        parsedRequest.getUser(), WeblogRole.POST);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -134,8 +138,8 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAdmin(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermission(
-                        parsedRequest.getUser(), WeblogPermission.ADMIN);
+                return weblog.getPojo().userHasWeblogRole(
+                        parsedRequest.getUser(), WeblogRole.OWNER);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);

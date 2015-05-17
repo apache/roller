@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -26,6 +29,7 @@ import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.business.pings.WeblogUpdatePinger;
 import org.apache.xmlrpc.XmlRpcException;
@@ -66,13 +70,11 @@ public class Pings extends UIAction {
         this.pageTitle = "pings.title";
     }
     
-    
-    // admin perms required
-    public String requireWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
     }
-    
-    
+
     public void myPrepare() {
         
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();

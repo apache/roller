@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.admin;
@@ -35,9 +38,9 @@ import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPl
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -81,15 +84,9 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     
     
     @Override
-    public boolean isWeblogRequired() {
-        return false;
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
     }
-    
-    @Override
-    public List<String> requiredGlobalPermissionActions() {
-        return Collections.singletonList(GlobalPermission.ADMIN);
-    }
-    
     
     /**
      * Prepare action by loading runtime properties map.

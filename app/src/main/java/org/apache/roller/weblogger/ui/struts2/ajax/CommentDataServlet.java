@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.ajax;
@@ -31,6 +34,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -63,7 +67,7 @@ public class CommentDataServlet extends HttpServlet {
                 // need post permission to view comments
                 RollerSession rses = RollerSession.getRollerSession(request);
                 Weblog weblog = c.getWeblogEntry().getWebsite();
-                if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
+                if (weblog.userHasWeblogRole(rses.getAuthenticatedUser(), WeblogRole.POST)) {
                     String content = Utilities.escapeHTML(c.getContent());
                     content = WordUtils.wrap(content, 72);
                     content = StringEscapeUtils.escapeEcmaScript(content);
@@ -102,7 +106,7 @@ public class CommentDataServlet extends HttpServlet {
                 // need post permission to edit comments
                 RollerSession rses = RollerSession.getRollerSession(request);
                 Weblog weblog = c.getWeblogEntry().getWebsite();
-                if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
+                if (weblog.userHasWeblogRole(rses.getAuthenticatedUser(), WeblogRole.POST)) {
                     String content = Utilities.streamToString(request.getInputStream());
                     c.setContent(content);
                     // don't update the posttime when updating the comment

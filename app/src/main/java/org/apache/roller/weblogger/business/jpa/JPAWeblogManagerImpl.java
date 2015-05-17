@@ -14,7 +14,11 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
+
 
 package org.apache.roller.weblogger.business.jpa;
 
@@ -22,29 +26,15 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.pings.AutoPingManager;
+import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
@@ -62,8 +52,21 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /*
  * JPAWeblogManagerImpl.java
@@ -213,7 +216,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // remove permissions
         for (WeblogPermission perm : umgr.getWeblogPermissions(weblog)) {
-            umgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS);
+            umgr.revokeWeblogRole(perm.getWeblog(), perm.getUser());
         }
         
         // flush the changes before returning. This is required as there is a
@@ -267,11 +270,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private void addWeblogContents(Weblog newWeblog)
     throws WebloggerException {
         
-        // grant weblog creator ADMIN permission
-        List<String> actions = new ArrayList<String>();
-        actions.add(WeblogPermission.ADMIN);
-        roller.getUserManager().grantWeblogPermission(
-                newWeblog, newWeblog.getCreator(), actions);
+        // grant weblog creator OWNER permission
+        roller.getUserManager().grantWeblogRole(
+                newWeblog, newWeblog.getCreator(), WeblogRole.OWNER);
         
         String cats = WebloggerConfig.getProperty("newuser.categories");
         WeblogCategory firstCat = null;

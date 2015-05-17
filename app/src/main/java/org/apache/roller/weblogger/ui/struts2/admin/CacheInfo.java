@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.admin;
@@ -21,7 +24,8 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -44,15 +48,10 @@ public class CacheInfo extends UIAction {
         this.pageTitle = "cacheInfo.title";
     }
     
-    
-    public List<String> requiredGlobalPermissionActions() {
-        return Collections.singletonList(GlobalPermission.ADMIN);
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
     }
-    
-    public boolean isWeblogRequired() {
-        return false;
-    }
-    
     
     public void myPrepare() {
         Map cacheStats = CacheManager.getStats();

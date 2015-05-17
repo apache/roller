@@ -14,12 +14,14 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -34,9 +36,10 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -66,14 +69,14 @@ public class UserEdit extends UIAction {
         this.pageTitle = pageTitle;
     }
 
-    // admin role required
-    public List<String> requiredGlobalPermissionActions() {
-        return Collections.singletonList(GlobalPermission.ADMIN);
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
     }
-    
-    // no weblog required
-    public boolean isWeblogRequired() { 
-        return false;
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
     }
 
     // prepare for action by loading user object we are modifying
@@ -171,30 +174,18 @@ public class UserEdit extends UIAction {
                     // fields not copied over from above copyTo():
                     user.setUserName(getBean().getUserName());
                     user.setDateCreated(new java.util.Date());
+                    user.setGlobalRole(getBean().isAdministrator() ? GlobalRole.ADMIN : GlobalRole.BLOGGER);
                     // save new user
                     mgr.addUser(user);
                 } else {
+                    if (!isUserEditingSelf()) {
+                        user.setGlobalRole(getBean().isAdministrator() ? GlobalRole.ADMIN : GlobalRole.BLOGGER);
+                    } else if (mgr.isGlobalAdmin(user) != getBean().isAdministrator()) {
+                        addError("userAdmin.cantChangeOwnRole");
+                    }
                     mgr.saveUser(user);
                 }
 
-                // update Admin role as appropriate
-                boolean hasAdmin = false;
-                GlobalPermission adminPerm =
-                    new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
-                if (mgr.checkPermission(adminPerm, user)) {
-                    hasAdmin = true;
-                }  
-                // grant/revoke admin role if needed
-                if (hasAdmin && !getBean().isAdministrator()) {
-                    if (!isUserEditingSelf()) {
-                        // revoke role
-                        mgr.revokeRole("admin", user);
-                    } else {
-                        addError("userAdmin.cantChangeOwnRole");
-                    }
-                } else if(!hasAdmin && getBean().isAdministrator()) {
-                    mgr.grantRole("admin", user);
-                }
                 WebloggerFactory.getWeblogger().flush();
                 if (isAdd()) {
                     // now that user is saved we have an id value

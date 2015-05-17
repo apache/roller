@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -94,11 +95,9 @@ public class RollerUserDetailsService implements UserDetailsService {
     }
         
      private List<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {
-         List<String> roles = umgr.getRoles(userData);
-         List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(roles.size());
-         for (String role : roles) {
-             authorities.add(new SimpleGrantedAuthority(role));
-         }
+         GlobalRole role = umgr.getGlobalRole(userData);
+         List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(1);
+         authorities.add(new SimpleGrantedAuthority(role.name()));
          return authorities;
      }
     

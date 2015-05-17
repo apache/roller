@@ -15,7 +15,6 @@
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogHitCount.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/PingQueueEntry.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/PingTarget.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/UserRole.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/RuntimeConfigProperty.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/TaskLock.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/User.orm.xml</mapping-file>
@@ -24,7 +23,6 @@
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryTagAggregate.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryTag.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogTemplate.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/ObjectPermission.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogPermission.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/Weblog.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/OAuthConsumerRecord.orm.xml</mapping-file>

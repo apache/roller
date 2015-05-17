@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.ajax;
@@ -62,7 +65,7 @@ public class UserDataServlet extends HttpServlet {
         boolean admin = false;
 
         // This user check can be removed as we protected by spring (see above).
-        WeblogRequest weblogRequest = null;
+        WeblogRequest weblogRequest;
         try {
             weblogRequest = new WeblogRequest(request);
 
@@ -72,7 +75,7 @@ public class UserDataServlet extends HttpServlet {
                 // user not found
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
-            } else if (user.hasGlobalPermission("admin")) {
+            } else if (user.isGlobalAdmin()) {
                 // admin
                 admin = true;
             }

@@ -14,17 +14,12 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.core.util.menu;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,16 +28,25 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.util.Utilities;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A helper class for dealing with UI menus.
@@ -115,7 +119,7 @@ public final class MenuHelper {
                 menu = buildMenu(menuId, menuConfig, currentAction, user,
                         weblog);
             } catch (WebloggerException ex) {
-                log.error("ERROR: fethcing user roles", ex);
+                log.error("ERROR: fetching user roles", ex);
             }
         }
 
@@ -145,11 +149,8 @@ public final class MenuHelper {
             String currentAction, User user, Weblog weblog)
             throws WebloggerException {
 
-        // log.debug("creating menu for action - " + currentAction);
-
         Menu tabMenu = new Menu();
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-
 
         // Hack - for blogger convenience, the design tab of the edit
         // menu defaults to the templates tab item (instead of theme edit)
@@ -171,32 +172,18 @@ public final class MenuHelper {
                         .getDisabledProperty());
             }
 
-            // user roles check
-            if (includeTab && configTab.getGlobalPermissionActions() != null
-                    && !configTab.getGlobalPermissionActions().isEmpty()) {
-                try {
-                    GlobalPermission perm = new GlobalPermission(
-                            configTab.getGlobalPermissionActions());
-                    if (!umgr.checkPermission(perm, user)) {
-                        includeTab = false;
-                    }
-                } catch (WebloggerException ex) {
-                    log.error("ERROR: fetching user roles", ex);
-                    includeTab = false;
-                }
+            // global role check
+            if (includeTab && !user.hasEffectiveGlobalRole(configTab.getRequiredGlobalRole())) {
+                includeTab = false;
             }
 
-            // weblog permissions check
-            if (includeTab && configTab.getWeblogPermissionActions() != null
-                    && !configTab.getWeblogPermissionActions().isEmpty()) {
-                WeblogPermission perm = new WeblogPermission(weblog,
-                        configTab.getWeblogPermissionActions());
+            // weblog role check
+            if (includeTab) {
+                WeblogPermission perm = new WeblogPermission(weblog, configTab.getRequiredWeblogRole());
                 includeTab = umgr.checkPermission(perm, user);
             }
 
             if (includeTab) {
-
-                // log.debug("tab allowed - " + configTab.getName());
 
                 // all checks passed, tab should be included
                 MenuTab tab = new MenuTab();
@@ -206,6 +193,7 @@ public final class MenuHelper {
                 boolean firstItem = true;
                 boolean selectable = true;
 
+                // now check if each tab item should be included
                 for (ParsedTabItem configTabItem : configTab.getTabItems()) {
 
                     boolean includeItem = true;
@@ -218,25 +206,16 @@ public final class MenuHelper {
                                 .getDisabledProperty());
                     }
 
-                    // user roles check
-                    if (includeItem
-                            && configTabItem.getGlobalPermissionActions() != null
-                            && !configTabItem.getGlobalPermissionActions()
-                                    .isEmpty()) {
-                        GlobalPermission perm = new GlobalPermission(
-                                configTabItem.getGlobalPermissionActions());
-                        if (!umgr.checkPermission(perm, user)) {
+                    // global role check
+                    if (includeItem && (configTabItem.getRequiredGlobalRole() != null)) {
+                        if (!user.hasEffectiveGlobalRole(configTabItem.getRequiredGlobalRole())) {
                             includeItem = false;
                         }
                     }
 
-                    // weblog permissions check
-                    if (includeItem
-                            && configTabItem.getWeblogPermissionActions() != null
-                            && !configTabItem.getWeblogPermissionActions()
-                                    .isEmpty()) {
-                        WeblogPermission perm = new WeblogPermission(weblog,
-                                configTabItem.getWeblogPermissionActions());
+                    // weblog role check
+                    if (includeItem && (configTabItem.getRequiredWeblogRole() != null)) {
+                        WeblogPermission perm = new WeblogPermission(weblog, configTabItem.getRequiredWeblogRole());
                         includeItem = umgr.checkPermission(perm, user);
                     }
 
@@ -372,14 +351,9 @@ public final class MenuHelper {
         ParsedTab tab = new ParsedTab();
 
         tab.setName(element.getAttributeValue("name"));
-        if (element.getAttributeValue("weblogPerms") != null) {
-            tab.setWeblogPermissionActions(Utilities.stringToStringList(
-                    element.getAttributeValue("weblogPerms"), ","));
-        }
-        if (element.getAttributeValue("globalPerms") != null) {
-            tab.setGlobalPermissionActions(Utilities.stringToStringList(
-                    element.getAttributeValue("globalPerms"), ","));
-        }
+        tab.setRequiredWeblogRole(
+                WeblogRole.valueOf(element.getAttributeValue("weblogRole")));
+        tab.setRequiredGlobalRole(GlobalRole.valueOf(element.getAttributeValue("globalRole")));
         tab.setEnabledProperty(element.getAttributeValue("enabledProperty"));
         tab.setDisabledProperty(element.getAttributeValue("disabledProperty"));
 
@@ -452,14 +426,16 @@ public final class MenuHelper {
             tabItem.setSubActions(set);
         }
 
-        if (element.getAttributeValue("weblogPerms") != null) {
-            tabItem.setWeblogPermissionActions(Utilities.stringToStringList(
-                    element.getAttributeValue("weblogPerms"), ","));
+        if (element.getAttributeValue("weblogRole") != null) {
+            tabItem.setRequiredWeblogRole(WeblogRole.valueOf(
+                element.getAttributeValue("weblogRole")));
         }
-        if (element.getAttributeValue("globalPerms") != null) {
-            tabItem.setGlobalPermissionActions(Utilities.stringToStringList(
-                    element.getAttributeValue("globalPerms"), ","));
+
+        if (element.getAttributeValue("globalRole") != null) {
+            tabItem.setRequiredGlobalRole(GlobalRole.valueOf(
+                element.getAttributeValue("globalRole")));
         }
+
         tabItem.setEnabledProperty(element.getAttributeValue("enabledProperty"));
         tabItem.setDisabledProperty(element
                 .getAttributeValue("disabledProperty"));

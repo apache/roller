@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.rendering.model;
@@ -24,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.ui.core.util.menu.Menu;
 import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -67,28 +70,27 @@ public class MenuModel implements Model {
                     "  MenuModel only supports page requests.");
         }
     }
-    
-    
+
     /**
-     * Get a Menu representing the admin UI action menu, if the user is 
+     * Get a Menu representing the admin UI action menu, if the user is
      * currently logged in and is an admin.
      */
     public Menu getAdminMenu() {
         try {
-            GlobalPermission adminPerm = 
-                new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
-            boolean hasAdmin = WebloggerFactory.getWeblogger().getUserManager()
-                    .checkPermission(adminPerm, pageRequest.getUser());            
-            if (pageRequest.isLoggedIn() && hasAdmin) {
-                return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
+            if (pageRequest.isLoggedIn()) {
+                boolean isAdmin = WebloggerFactory.getWeblogger().getUserManager()
+                        .isGlobalAdmin(pageRequest.getUser());
+                if (isAdmin) {
+                    return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
+                }
             }
         } catch (WebloggerException ex) {
-            logger.debug("ERROR: fetching user roles");
+            logger.warn("WARN: problem fetching global role for user " + pageRequest.getUser());
         }
         return null;
     }
-    
-    
+
+
     /**
      * Get a Menu representing the author UI action menu, if the use is
      * currently logged in.
@@ -99,5 +101,5 @@ public class MenuModel implements Model {
         }
         return null;
     }
-    
+
 }

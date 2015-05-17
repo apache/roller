@@ -53,7 +53,6 @@ drop table custom_template_rendition;
 -- core platform tables
 drop table roller_permission;
 drop table weblog;
-drop table userrole;
 drop table roller_user;
 
 -- oauth tables

@@ -14,22 +14,25 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are under same ASF license.
 */
 package org.apache.roller.weblogger.business;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 
+import java.util.List;
 
 /**
  * Test User/Weblog Permissions related business operations.
@@ -101,17 +104,9 @@ public class PermissionTest extends TestCase {
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
         
         WeblogPermission p1 = new WeblogPermission(testWeblog, testUser, 
-            WeblogPermission.ADMIN + "," + WeblogPermission.POST);
-        assertTrue(p1.hasAction(WeblogPermission.POST));
-        assertTrue(p1.hasAction(WeblogPermission.ADMIN));
-        assertEquals(2, p1.getActionsAsList().size());
-       
-        WeblogPermission p2 = new WeblogPermission(testWeblog, testUser, 
-            WeblogPermission.EDIT_DRAFT);
-        p1.addActions(p2);
-        assertEquals(3, p1.getActionsAsList().size());
-        
-        
+            WeblogRole.POST);
+        assertTrue(p1.getWeblogRole() == WeblogRole.POST);
+
         WeblogPermission perm = null;
          
         // delete permissions
@@ -119,52 +114,36 @@ public class PermissionTest extends TestCase {
         testUser = TestUtils.getManagedUser(testUser);
         perm = mgr.getWeblogPermission(testWeblog, testUser);
         assertNotNull(perm);
-        mgr.revokeWeblogPermission(testWeblog, testUser, WeblogPermission.ALL_ACTIONS);
+        mgr.revokeWeblogRole(testWeblog, testUser);
         TestUtils.endSession(true);
         
         // check that delete was successful
-        perm = null;
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        testUser = TestUtils.getManagedUser(testUser);
         perm = mgr.getWeblogPermission(testWeblog, testUser);
         assertNull(perm);
         
         // create permissions
-        List<String> actions = new ArrayList<String>();
-        actions.add(WeblogPermission.ADMIN);
-        actions.add(WeblogPermission.POST);
-        mgr.grantWeblogPermission(testWeblog, testUser, actions);
+        mgr.grantWeblogRole(testWeblog, testUser, WeblogRole.OWNER);
         TestUtils.endSession(true);
         
         // check that create was successful
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        testUser = TestUtils.getManagedUser(testUser);
-        perm = null;
         perm = mgr.getWeblogPermission(testWeblog, testUser);
         assertNotNull(perm);
-        assertTrue(perm.hasAction(WeblogPermission.POST));
-        assertTrue(perm.hasAction(WeblogPermission.ADMIN));
+        assertTrue(perm.getWeblogRole() == WeblogRole.OWNER);
         TestUtils.endSession(true);
         
-        // revoke those same permissions
-        mgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS);
+        // revoke role
+        mgr.revokeWeblogRole(perm.getWeblog(), perm.getUser());
         TestUtils.endSession(true);
         
-        // add only draft permission
-        mgr.grantWeblogPermission(testWeblog, testUser, 
-                Collections.singletonList(WeblogPermission.EDIT_DRAFT));
+        // add only draft role
+        mgr.grantWeblogRole(testWeblog, testUser, WeblogRole.EDIT_DRAFT);
         TestUtils.endSession(true);
 
-        // check that user has draft permisson only
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        testUser = TestUtils.getManagedUser(testUser);
-        perm = null;
+        // check that user has draft permission only
         perm = mgr.getWeblogPermission(testWeblog, testUser);
         assertNotNull(perm);
-        assertTrue(perm.hasAction(WeblogPermission.EDIT_DRAFT));
-        assertFalse(perm.hasAction(WeblogPermission.POST));
-        assertFalse(perm.hasAction(WeblogPermission.ADMIN));
-        
+        assertTrue(perm.getWeblogRole() == WeblogRole.EDIT_DRAFT);
+
         log.info("END");
     }  
     
@@ -194,9 +173,7 @@ public class PermissionTest extends TestCase {
         perms = mgr.getWeblogPermissions(TestUtils.getManagedWebsite(testWeblog));
         assertEquals(1, perms.size());
 
-        List<String> actions = new ArrayList<String>();
-        actions.add(WeblogPermission.POST);
-        mgr.grantWeblogPermissionPending(testWeblog, user, actions);
+        mgr.grantPendingWeblogRole(testWeblog, user, WeblogRole.POST);
         TestUtils.endSession(true);
 
         // get pending permissions for a user
@@ -215,7 +192,7 @@ public class PermissionTest extends TestCase {
                 TestUtils.getManagedWebsite(testWeblog), 
                 TestUtils.getManagedUser(testUser));
         assertNotNull(perm);
-        assertTrue(perm.hasAction(WeblogPermission.ADMIN));
+        assertTrue(perm.getWeblogRole() == WeblogRole.OWNER);
 
         // pending permissions should not be visible
         perm = null;
@@ -252,9 +229,7 @@ public class PermissionTest extends TestCase {
         List perms = null;
 
         // invite user to weblog
-        List<String> actions = new ArrayList<String>();
-        actions.add(WeblogPermission.EDIT_DRAFT);
-        umgr.grantWeblogPermissionPending(testWeblog, user, actions);
+        umgr.grantPendingWeblogRole(testWeblog, user, WeblogRole.EDIT_DRAFT);
         TestUtils.endSession(true);
 
         // accept invitation
@@ -282,7 +257,7 @@ public class PermissionTest extends TestCase {
         assertEquals(2, users.size());
 
         // test user can be retired from website
-        umgr.revokeWeblogPermission(testWeblog, user, WeblogPermission.ALL_ACTIONS);
+        umgr.revokeWeblogRole(testWeblog, user);
         TestUtils.endSession(true);
 
         //user = umgr.getUser(user.getId());
@@ -305,18 +280,18 @@ public class PermissionTest extends TestCase {
         log.info("BEGIN");
        
         WeblogPermission perm = 
-            new WeblogPermission(testWeblog, testUser, WeblogPermission.POST);
+            new WeblogPermission(testWeblog, testUser, WeblogRole.POST);
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         assertTrue(umgr.checkPermission(perm, testUser));
         
         // we need a second user for this test
         User adminUser = TestUtils.setupUser("adminUser");
-        umgr.grantRole("admin", adminUser);
+        adminUser.setGlobalRole(GlobalRole.ADMIN);
         TestUtils.endSession(true);
 
         // because adminUser is a global admin, they should have POST perm
         WeblogPermission perm2 = 
-            new WeblogPermission(testWeblog, testUser, WeblogPermission.POST);
+            new WeblogPermission(testWeblog, testUser, WeblogRole.POST);
         assertTrue(umgr.checkPermission(perm, testUser));
 
         // cleanup the extra test user

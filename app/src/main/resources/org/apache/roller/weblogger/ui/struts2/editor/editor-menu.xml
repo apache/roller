@@ -1,111 +1,82 @@
 <!-- 
-Defines the Roller Weblog Editor/Admin UI menu and roles allowed to use each 
+Defines the Roller Weblog Editor UI menu and roles allowed to use each
 menu. See also, admin-menu.xml, which defines the Global Admin menu.
-Each menu or menu item is governed by four attributes:
+The availability of each menu or menu item is governed by four attributes:
 
-    1) globalPerms: these are the global permissions required to view the item
-       Possible values:
-       - admin:    superuser, administers server, etc.
-       - login:    allowed to login and save profile
-       - weblog:   is allowed to create and user weblogs
-       Use "any" to indicate that role is not required to view item
-       
-    2) weblogPerms: these are the weblog specific permissions required to view item
-       - post:        edit and publish entries, bookmarks
-       - edit_draft:  create and edit draft posts only
-       - admin:       edit and publish entries, edit categories, manage users, etc.
-       Use "any" to indicate that website perms are not required to view item
+    1) globalRole: minimum GlobalRole required for the menu option to be available
+
+    2) weblogRole: minimum WeblogRole required
        
     3) enable property: if true, show this menu
 
     4) disable property: if true, don't show this menu
     
     Note : Adding unnecessary authority checks will slow menu rendering
-    
 -->
 <menu-bar>
     
-    <!--  if we already have checked globalPerms="login" we should -->
-    <!--  not need to recheck on each tab item as they are the same -->
-    <menu name="tabbedmenu.weblog" weblogPerms="edit_draft" globalPerms="login" >
+    <menu name="tabbedmenu.weblog" weblogRole="EDIT_DRAFT" globalRole="BLOGGER" >
         
-        <!-- globalPerms="login" -->
-        <menu-item action="entryAdd" 
+        <menu-item action="entryAdd"
                    name="tabbedmenu.weblog.newEntry" 
-                   weblogPerms="edit_draft" 
+                   weblogRole="EDIT_DRAFT"
                    subactions="entryEdit,entryRemove" />
         
-        <!-- globalPerms="login" -->
-        <menu-item action="entries" 
+        <menu-item action="entries"
                    name="tabbedmenu.weblog.archives" 
-                   weblogPerms="post"
+                   weblogRole="POST"
                    subactions="entryRemoveViaList" />
 
-        <!-- globalPerms="login" -->
-        <menu-item action="comments" 
-                   name="tabbedmenu.admin.commentManagement" 
-                   weblogPerms="post" />
+        <menu-item action="comments"
+                   name="tabbedmenu.admin.commentManagement"
+                   weblogRole="POST" />
         
-        <!-- globalPerms="login" -->
-        <menu-item action="categories"   
+        <menu-item action="categories"
                    name="tabbedmenu.weblog.categories" 
-                   weblogPerms="post"
+                   weblogRole="POST"
                    subactions="categoryAdd,categoryEdit,categoryRemove" />
         
-        <!-- globalPerms="login" -->
-        <menu-item action="bookmarks"    
+        <menu-item action="bookmarks"
                    name="tabbedmenu.bookmarks.allFolders" 
-                   weblogPerms="admin"
+                   weblogRole="OWNER"
                    subactions="bookmarkAdd,bookmarkEdit,folderAdd,folderEdit,bookmarksImport" />
 
-        <!-- globalPerms="login" -->
         <menu-item action="mediaFileView"
                    name="tabbedmenu.weblog.mediaFiles"
-                   weblogPerms="post"
+                   weblogRole="POST"
                    subactions="mediaFileAdd,mediaFileSearch" />
 
     </menu>
     
-    <!--  if we already have checked weblogPerms="admin" globalPerms="login" we should -->
-    <!--  not need to recheck on each tab item as they are the same -->
-    <menu name="tabbedmenu.design" weblogPerms="admin" globalPerms="login" enabledProperty="themes.customtheme.allowed">
+    <menu name="tabbedmenu.design" weblogRole="OWNER" globalRole="LOGIN" enabledProperty="themes.customtheme.allowed">
 
-        <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="themeEdit"
                    name="tabbedmenu.website.themes" />
         
-        <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="stylesheetEdit"
                    name="tabbedmenu.design.stylesheet" />
         
-        <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="templates"
                    name="tabbedmenu.website.pages"
                    subactions="templateAdd,templateEdit,templateRemove,templatesRemove" />
     </menu>
     
     
-    <!--  if we already have checked weblogPerms="admin" globalPerms="login" we should -->
-    <!--  not need to recheck on each tab item as they are the same -->
-    <menu name="tabbedmenu.website" weblogPerms="admin" globalPerms="login">
+    <menu name="tabbedmenu.website" weblogRole="OWNER" globalRole="BLOGGER">
         
-        <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="weblogConfig"
                    name="tabbedmenu.website.settings" 
                    subactions="weblogRemove" />
         
-        <!-- globalPerms="login" weblogPerms="admin" -->
-        <menu-item action="members" 
+        <menu-item action="members"
                    name="tabbedmenu.website.members" 
                    subactions="invite" 
                    enabledProperty="groupblogging.enabled"/>
         
-        <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="pings"
                    name="tabbedmenu.weblog.pingSetup" 
                    disabledProperty="pings.disablePingUsage" />
         
-        <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="maintenance"
                    name="tabbedmenu.website.maintenance" />
     </menu>

@@ -14,6 +14,9 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are under same ASF license.
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
 import com.rometools.propono.atom.common.Categories;
@@ -26,9 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.WSSEUtilities;
 import com.rometools.propono.atom.common.AtomService;
@@ -47,8 +48,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
-
 
 /**
  * Weblogger's ROME Propono-based Atom Protocol implementation.
@@ -368,9 +367,9 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Return true if user is allowed to create/edit weblog entries and file uploads in a website.
      */
-    public static  boolean canEdit(User u, Weblog website) {
+    public static boolean canEdit(User u, Weblog website) {
         try {
-            return website.hasUserPermission(u, WeblogPermission.POST);
+            return website.userHasWeblogRole(u, WeblogRole.POST);
         } catch (Exception e) {
             log.error("Checking website.hasUserPermissions()");
         }

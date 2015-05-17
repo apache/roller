@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.admin;
@@ -23,7 +26,7 @@ import java.util.List;
 
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -40,14 +43,9 @@ public class UserAdmin extends UIAction {
 
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
-    // admin role required    
-    public List<String> requiredGlobalPermissionActions() {
-        return Collections.singletonList(GlobalPermission.ADMIN);
-    }
-    
-    // no weblog required
-    public boolean isWeblogRequired() {
-        return false;
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
     }
 
     /**

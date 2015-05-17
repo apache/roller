@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 package org.apache.roller.weblogger.ui.struts2.core;
 
@@ -22,9 +25,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.OAuthManager;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -41,12 +47,15 @@ public class OAuthKeys extends UIAction {
         this.pageTitle = "oauthKeys.title";
     }
     
-    
-    // override default security, we do not require an action weblog
-    public boolean isWeblogRequired() {
-        return false;
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
     }
 
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
+    }
 
     @SkipValidation
     public String execute() {
@@ -62,7 +71,8 @@ public class OAuthKeys extends UIAction {
                 flush = true;
             }
 
-            if (isUserIsAdmin()) {
+            UserManager um = WebloggerFactory.getWeblogger().getUserManager();
+            if (um.isGlobalAdmin(ud)) {
                 siteWideConsumer = omgr.getConsumer();
                 if (siteWideConsumer == null) {
                     String consumerKey = DigestUtils.md5Hex(

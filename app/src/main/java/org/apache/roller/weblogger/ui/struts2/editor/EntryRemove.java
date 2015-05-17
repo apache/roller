@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -24,8 +27,10 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -132,10 +137,15 @@ public class EntryRemove extends UIAction {
         this.removeEntry = removeEntry;
     }
 
-    // allow LIMITED users to delete their own draft/pending blog entries
     @Override
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
+    }
+
+    // will allow drafters to delete just their own draft/pending blog entries.
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.EDIT_DRAFT;
     }
 
 }

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.core;
@@ -32,7 +35,9 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -69,18 +74,18 @@ public class Register extends UIAction implements ServletRequestAware {
         this.pageTitle = "newUser.addNewUser";
     }
     
-    // override default security, we do not require an authenticated user
-    public boolean isUserRequired() {
-        return false;
-    }
-    
-    // override default security, we do not require an action weblog
-    public boolean isWeblogRequired() {
-        return false;
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
     }
     
     public String getAuthMethod() {
         return authMethod.name();
+    }
+
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.NOAUTHNEEDED;
     }
 
     @SkipValidation

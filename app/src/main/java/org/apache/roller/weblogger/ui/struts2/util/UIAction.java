@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.util;
@@ -24,10 +27,10 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.util.menu.Menu;
 import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
 import org.apache.struts2.interceptor.RequestAware;
@@ -35,7 +38,6 @@ import org.apache.struts2.interceptor.RequestAware;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -101,36 +103,14 @@ public abstract class UIAction extends ActionSupport
         // no-op
     }
 
-    // default action permissions, user is required
-    public boolean isUserRequired() {
-        return true;
-    }
-    
-    
-    // default action permissions, weblog is required
-    public boolean isWeblogRequired() {
-        return true;
-    }
-    
-    // Default is ADMIN for safety, if a subclasser forgets to override this only admins can use.
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.ADMIN);
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.ADMIN;
     }
 
-    public List<String> requiredGlobalPermissionActions() {
-        return Collections.singletonList(GlobalPermission.LOGIN);
-    }
-    
-    
-    // convenient way to tell if user being dealt with is an admin
-    public boolean isUserIsAdmin() {
-        try {
-            GlobalPermission adminPerm = new GlobalPermission( 
-                Collections.singletonList(GlobalPermission.ADMIN));
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            return umgr.checkPermission(adminPerm, getAuthenticatedUser());
-        } catch (Exception e) {}
-        return false;
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.OWNER;
     }
 
     /**
@@ -409,5 +389,15 @@ public abstract class UIAction extends ActionSupport
             return s;
         }
         return StringEscapeUtils.escapeHtml4(s);
+    }
+
+    // convenience function for JSPs wishing to enable certain functionality if
+    // user has the Global Admin role.
+    public boolean isUserIsAdmin() {
+        try {
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            return umgr.isGlobalAdmin(getAuthenticatedUser());
+        } catch (Exception e) {}
+        return false;
     }
 }

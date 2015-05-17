@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -29,10 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -67,13 +67,16 @@ public class Entries extends UIAction {
         this.pageTitle = "weblogEntryQuery.title";
     }
     
-    
     @Override
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.POST);
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
     }
-    
-    
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.POST;
+    }
+
     public String execute() {
         
         if (log.isDebugEnabled()) {

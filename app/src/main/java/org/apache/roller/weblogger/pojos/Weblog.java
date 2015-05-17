@@ -14,6 +14,9 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are under same ASF license.
 */
 
 package org.apache.roller.weblogger.pojos;
@@ -419,23 +422,23 @@ public class Weblog implements Serializable {
         }
         return TimeZone.getTimeZone(getTimeZone());
     }
-    
+
     /**
      * Returns true if user has all permission action specified.
      */
-    public boolean hasUserPermission(User user, String action) {
+/*    public boolean hasUserPermission(User user, String action) {
         return hasUserPermissions(user, Collections.singletonList(action));
     }
-    
+*/
     
     /**
      * Returns true if user has all permissions actions specified in the weblog.
      */
-    public boolean hasUserPermissions(User user, List<String> actions) {
+    public boolean userHasWeblogRole(User user, WeblogRole weblogRole) {
         try {
             // look for user in website's permissions
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogPermission userPerms = new WeblogPermission(this, user, actions);
+            WeblogPermission userPerms = new WeblogPermission(this, weblogRole);
             return umgr.checkPermission(userPerms, user);
             
         } catch (WebloggerException ex) {

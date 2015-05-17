@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -25,8 +28,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 /**
@@ -45,10 +50,15 @@ public class Categories extends UIAction {
 		this.pageTitle = "categoriesForm.rootTitle";
 	}
 
-	@Override
-	public List<String> requiredWeblogPermissionActions() {
-		return Collections.singletonList(WeblogPermission.POST);
-	}
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
+    }
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.POST;
+    }
 
 	public String execute() {
 		try {

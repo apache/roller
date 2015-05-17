@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -27,8 +30,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.ParameterAware;
@@ -36,9 +41,6 @@ import org.apache.struts2.interceptor.ParameterAware;
 
 /**
  * Allows weblog admin to list/modify member permissions.
- *
- * TODO: fix bug in UserManager which doesn't remove permissions from the
- * website.permissions collection when a permission is deleted.
  */
 public class Members extends UIAction implements ParameterAware {
     
@@ -92,12 +94,12 @@ public class Members extends UIAction implements ParameterAware {
             for (WeblogPermission perms : permsList) {
                 String sval = getParameter("perm-" + perms.getUser().getId());
                 if (sval != null) {
-                    if (sval.equals(WeblogPermission.ADMIN) && !perms.isPending()) {
+                    if (sval.equals(WeblogRole.OWNER.name()) && !perms.isPending()) {
                         numAdmins++;
                     }
                     if (perms.getUser().getUserName().equals(user.getUserName())) {
                         // can't modify self
-                        if (!sval.equals(WeblogPermission.ADMIN)) {
+                        if (!sval.equals(WeblogRole.OWNER.name())) {
                             error = true;
                             addError("memberPermissions.noSelfModifications");
                         }
@@ -113,16 +115,16 @@ public class Members extends UIAction implements ParameterAware {
 
                 String sval = getParameter("perm-" + perms.getUser().getId());
                 if (sval != null) {
-                    if (!error && !perms.hasAction(sval)) {
+                    if (!error && !perms.getWeblogRole().name().equals(sval)) {
                         if ("-1".equals(sval)) {
-                             userMgr.revokeWeblogPermission(
-                                    perms.getWeblog(), perms.getUser(), WeblogPermission.ALL_ACTIONS);
+                             userMgr.revokeWeblogRole(
+                                    perms.getWeblog(), perms.getUser());
                             removed++;
                         } else {
-                            userMgr.revokeWeblogPermission(
-                                    perms.getWeblog(), perms.getUser(), WeblogPermission.ALL_ACTIONS);
-                            userMgr.grantWeblogPermission(
-                                    perms.getWeblog(), perms.getUser(), Utilities.stringToStringList(sval, ","));
+                            userMgr.revokeWeblogRole(
+                                    perms.getWeblog(), perms.getUser());
+                            userMgr.grantWeblogRole(
+                                    perms.getWeblog(), perms.getUser(), WeblogRole.valueOf(sval));
                             changed++;
                         }
                     }
@@ -169,7 +171,18 @@ public class Members extends UIAction implements ParameterAware {
     public void setParameters(Map parameters) {
         this.parameters = parameters;
     }
-    
+
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
+    }
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.OWNER;
+    }
+
+
     public List<WeblogPermission> getWeblogPermissions() {
         try {
             return WebloggerFactory.getWeblogger().getUserManager().getWeblogPermissionsIncludingPending(getActionWeblog());
