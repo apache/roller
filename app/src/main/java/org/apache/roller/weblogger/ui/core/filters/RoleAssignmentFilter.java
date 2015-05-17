@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.core.filters;
@@ -32,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 
 
@@ -70,17 +74,18 @@ class RoleAssignmentRequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public boolean isUserInRole(String roleName) {
+    public boolean isUserInRole(String roleToCheck) {
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         if (getUserPrincipal() != null) {
             try {
                 User user = umgr.getUserByUserName(getUserPrincipal().getName(), Boolean.TRUE);
-                return umgr.hasRole(roleName, user);
+                return user.hasEffectiveGlobalRole(GlobalRole.valueOf(roleToCheck));
             } catch (WebloggerException ex) {
                 log.error("ERROR checking user rile", ex);
             }
         }
         return false;
     }
+
 }
 

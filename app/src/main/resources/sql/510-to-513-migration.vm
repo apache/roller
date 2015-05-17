@@ -1,0 +1,28 @@
+-- Roles consolidated into the roller_user table.
+#addColumnNull("roller_user" "role"  "varchar(16)")
+
+-- Set new global roles from the now-unused userrole table:
+update roller_user ru
+set role = 'BLOGGER'
+where ru.username in (select ur.username
+from userrole ur
+where role = 'editor');
+
+update roller_user ru
+set role = 'ADMIN'
+where ru.username in (select ur.username
+from userrole ur
+where role = 'admin');
+
+-- Update the weblog roles to the new terminology
+update roller_permission rp
+set actions = 'OWNER'
+where actions = 'admin'
+
+update roller_permission rp
+set actions = 'POST'
+where actions = 'post'
+
+update roller_permission rp
+set actions = 'EDIT_DRAFT'
+where actions = 'edit_draft'

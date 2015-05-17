@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are under same ASF license.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -78,9 +81,9 @@
                        
                        <tr>
                            <td class="mm_subtable_label"><s:text name='yourWebsites.permission'/></td>
-                           <td><s:if test='#perms.hasAction("admin")'  >ADMIN</s:if>
-                           <s:if test='#perms.hasAction("post")'       >AUTHOR</s:if>
-                           <s:if test='#perms.hasAction("edit_draft")' >LIMITED</s:if></td>
+                           <td><s:if test='#perms.weblogRole.name() == "OWNER"'>OWNER</s:if>
+                           <s:if test='#perms.weblogRole.name() == "POST"'>PUBLISHER</s:if>
+                           <s:if test='#perms.weblogRole.name() == "EDIT_DRAFT"'>CONTRIBUTOR</s:if></td>
                        </tr>
                        
                        <tr>
@@ -112,7 +115,7 @@
                        <br />
 
                        <%-- Show Entries link with count for users above LIMITED permission --%>
-                       <s:if test='!(#perms.hasAction("edit_draft"))'>
+                       <s:if test='!(#perms.weblogRole.name() == "EDIT_DRAFT")'>
                            <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
@@ -122,7 +125,7 @@
                        </s:if>
 
                        <%-- Show Comments link with count for users above LIMITED permission --%>
-                       <s:if test='!(#perms.hasAction("edit_draft"))'>
+                       <s:if test='!(#perms.weblogRole.name() == "EDIT_DRAFT")'>
                            <s:url action="comments" namespace="/roller-ui/authoring" id="manageComments">
                                <s:param name="weblog" value="#perms.weblog.handle" />
                            </s:url>
@@ -132,7 +135,7 @@
                        </s:if>
 
                        <%-- Only admins get access to theme and config settings --%>
-                       <s:if test='#perms.hasAction("admin")'>
+                       <s:if test='#perms.weblogRole.name() == "OWNER"'>
                            
                            <%-- And only show theme option if custom themes are enabled --%>
                            <s:if test="getProp('themes.customtheme.allowed')">

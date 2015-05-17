@@ -15,6 +15,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are under same ASF license.
 -->
 <beans:beans xmlns="http://www.springframework.org/schema/security"
        xmlns:beans="http://www.springframework.org/schema/beans"
@@ -29,13 +32,13 @@
     <http pattern="/styles/**" security="none"/>
 
     <http auto-config="false" access-decision-manager-ref="accessDecisionManager">
-        <intercept-url pattern="/roller-ui/login-redirect**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/profile**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/createWeblog**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/menu**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/authoring/**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/admin/**" access="admin"/>
-        <intercept-url pattern="/rewrite-status*" access="admin"/>
+        <intercept-url pattern="/roller-ui/login-redirect**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/roller-ui/profile**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/roller-ui/createWeblog**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/roller-ui/menu**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/roller-ui/authoring/**" access="ADMIN,BLOGGER"/>
+        <intercept-url pattern="/roller-ui/admin/**" access="ADMIN"/>
+        <intercept-url pattern="/rewrite-status*" access="ADMIN"/>
 
         <form-login login-page="/roller-ui/login.rol"
                     authentication-failure-url="/roller-ui/login.rol?error=true"
@@ -132,7 +135,7 @@
         <beans:constructor-arg>
             <beans:bean
                     class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator">
-                <beans:property name="defaultRole" value="editor" />
+                <beans:property name="defaultRole" value="BLOGGER" />
             </beans:bean>
         </beans:constructor-arg>
     </beans:bean>

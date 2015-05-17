@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.admin;
@@ -21,7 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import java.util.Collections;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 
 
@@ -169,12 +172,11 @@ public class CreateUserBean {
         this.activationCode = dataHolder.getActivationCode();
 
         try {
-            GlobalPermission adminPerm = 
-                new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
             this.administrator = WebloggerFactory.getWeblogger().getUserManager()
-                    .checkPermission(adminPerm, dataHolder);
-
-        } catch (WebloggerException ex) {}
+                    .isGlobalAdmin(dataHolder);
+        } catch (WebloggerException ex) {
+            this.administrator = false;
+        }
     }
     
 }

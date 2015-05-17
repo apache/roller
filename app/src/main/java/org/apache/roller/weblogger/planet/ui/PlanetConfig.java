@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.planet.ui;
@@ -31,8 +34,9 @@ import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.DisplayGroup;
 import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.struts2.interceptor.ParameterAware;
 
 
@@ -61,18 +65,6 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
         this.pageTitle = "planetConfig.title";
     }
     
-    
-    public List<String> requiredGlobalPermissionActions() {
-        return Collections.singletonList(GlobalPermission.ADMIN);
-    }
-
-    
-    @Override
-    public boolean isWeblogRequired() {
-        return false;
-    }
-    
-    
     @Override
     public void myPrepare() {
         try {
@@ -95,7 +87,6 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
         }
     }
 
-    
     public String execute() {
         return INPUT;
     }

@@ -14,6 +14,9 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are under same ASF license.
 */
 
 package org.apache.roller.weblogger.business;
@@ -26,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 
 
@@ -184,51 +188,21 @@ public class UserTest extends TestCase {
         assertNotNull(user);
         
         if (WebloggerConfig.getBooleanProperty("users.firstUserAdmin")) {
-            assertEquals(2, mgr.getRoles(user).size());
-            assertTrue(mgr.hasRole("editor", user));
-            assertTrue(mgr.hasRole("admin", user));
+            assertTrue(user.getGlobalRole() == GlobalRole.ADMIN);
         } else {
-            assertEquals(1, mgr.getRoles(user).size());
-            assertTrue(mgr.hasRole("editor", user));
-            assertFalse(mgr.hasRole("admin", user));
+            assertTrue(user.getGlobalRole() == GlobalRole.BLOGGER);
         }
         
-        // remove role
-        mgr.revokeRole("editor",user);
+        // change role to NOAUTHNEEDED
+        user.setGlobalRole(GlobalRole.LOGIN);
         mgr.saveUser(user);
         TestUtils.endSession(true);
         
-        // check that role was removed
-        user = null;
+        // check that role was switched
         user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
-        if (WebloggerConfig.getBooleanProperty("users.firstUserAdmin")) {
-            assertEquals(1, mgr.getRoles(user).size());
-            assertFalse(mgr.hasRole("editor", user));
-            assertTrue(mgr.hasRole("admin", user));
-        } else {
-            assertEquals(0, mgr.getRoles(user).size());
-            assertFalse(mgr.hasRole("editor", user));
-            assertFalse(mgr.hasRole("admin", user));
-        }
-        // add role
-        mgr.grantRole("editor", user);
-        mgr.saveUser(user);
-        TestUtils.endSession(true);
-        
-        // check that role was added
-        user = null;
-        user = mgr.getUserByUserName(testUser.getUserName());
-        assertNotNull(user);
-        if (WebloggerConfig.getBooleanProperty("users.firstUserAdmin")) {
-            assertEquals(2, mgr.getRoles(user).size());
-            assertTrue(mgr.hasRole("editor", user));
-            assertTrue(mgr.hasRole("admin", user));
-        } else {
-            assertEquals(1, mgr.getRoles(user).size());
-            assertTrue(mgr.hasRole("editor", user));
-            assertFalse(mgr.hasRole("admin", user));
-        }
+        assertTrue(user.getGlobalRole() == GlobalRole.LOGIN);
+
         // remove test user
         TestUtils.teardownUser(testUser.getUserName());
         TestUtils.endSession(true);

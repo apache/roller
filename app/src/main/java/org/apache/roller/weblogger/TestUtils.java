@@ -14,19 +14,11 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
-/*
- * TestUtils.java
  *
- * Created on April 6, 2006, 8:38 PM
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
-
 package org.apache.roller.weblogger;
-
-import java.io.InputStream;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
@@ -46,6 +38,7 @@ import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -57,6 +50,11 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+
+import java.io.InputStream;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class for unit test classes.
@@ -196,6 +194,7 @@ public final class TestUtils {
         User testUser = new User();
         testUser.setUserName(userName);
         testUser.setPassword("password");
+        testUser.setGlobalRole(GlobalRole.BLOGGER);
         testUser.setScreenName("Test User Screen Name");
         testUser.setFullName("Test User");
         testUser.setEmailAddress("TestUser@dev.null");
@@ -297,8 +296,7 @@ public final class TestUtils {
 
         // remove all permissions
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        mgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(),
-                WeblogPermission.ALL_ACTIONS);
+        mgr.revokeWeblogRole(perm.getWeblog(), perm.getUser());
 
         // flush to db
         WebloggerFactory.getWeblogger().flush();

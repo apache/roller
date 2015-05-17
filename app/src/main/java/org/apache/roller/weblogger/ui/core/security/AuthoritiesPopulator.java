@@ -14,13 +14,16 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 package org.apache.roller.weblogger.ui.core.security;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.ldap.core.DirContextOperations;
@@ -35,15 +38,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-/**
- * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
- */
 public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
 
-    /** A default role which will be assigned to all authenticated users if set */
-    private GrantedAuthority defaultRole = null;
-
-    
     /* (non-Javadoc)
      * @see org.springframework.security.ldap.LdapAuthoritiesPopulator#getGrantedAuthorities(org.springframework.ldap.core.DirContextOperations, String)
      */
@@ -55,43 +51,23 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
         }
 
         User user;
-        List<String> roles = new ArrayList<String>();
+        GlobalRole role;
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            UserManager umgr = roller.getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             user = umgr.getUserByUserName(username, Boolean.TRUE);
             if (user != null) {
-                roles = umgr.getRoles(user);
+                role = umgr.getGlobalRole(user);
+            } else {
+                throw new UsernameNotFoundException("User " + username + " could not be found.");
             }
         } catch (WebloggerException ex) {
             throw new DataRetrievalFailureException("ERROR in user lookup", ex);
         }
 
-        int roleCount = roles.size() + (defaultRole != null ? 1 : 0);
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(roleCount);
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
-        }
-        
-        if (defaultRole != null) {
-            authorities.add(defaultRole);
-        }
-
-        if (authorities.size() == 0) {
-            // TODO: This doesn't seem like the right type of exception to throw here, but retained it, fixed the message
-            throw new UsernameNotFoundException("User " + username + " has no roles granted and there is no default role set.");
-        }
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(1);
+        authorities.add(new SimpleGrantedAuthority(role.name()));
 
         return authorities;
     }
 
-    /**
-     * The default role which will be assigned to all users.
-     *
-     * @param defaultRole the role name, including any desired prefix.
-     */
-    public void setDefaultRole(String defaultRole) {
-        Assert.notNull(defaultRole, "The defaultRole property cannot be set to null");
-        this.defaultRole = new SimpleGrantedAuthority(defaultRole);
-    }
 }

@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.planet.ui;
@@ -29,8 +32,8 @@ import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
-
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 
 /**
  * Manage planet group subscriptions, default group is "all".
@@ -48,25 +51,12 @@ public class PlanetSubscriptions extends PlanetUIAction {
     // the subscription to deal with
     private String subUrl = null;
     
-    
     public PlanetSubscriptions() {
         this.actionName = "planetSubscriptions";
         this.desiredMenu = "admin";
         this.pageTitle = "planetSubscriptions.title";
     }
-    
-    
-    @Override
-    public List<String> requiredGlobalPermissionActions() {
-        return Collections.singletonList(GlobalPermission.ADMIN);
-    }
-    
-    @Override
-    public boolean isWeblogRequired() {
-        return false;
-    }
-    
-    
+
     @Override
     public void myPrepare() {
         

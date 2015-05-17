@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
@@ -915,11 +917,9 @@ public class WeblogEntry implements Serializable {
     public boolean hasWritePermissions(User user) throws WebloggerException {
         
         // global admins can hack whatever they want
-        GlobalPermission adminPerm = 
-            new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
-        boolean hasAdmin = WebloggerFactory.getWeblogger().getUserManager()
-            .checkPermission(adminPerm, user); 
-        if (hasAdmin) {
+        boolean isAdmin = WebloggerFactory.getWeblogger().getUserManager()
+            .isGlobalAdmin(user);
+        if (isAdmin) {
             return true;
         }
         
@@ -935,8 +935,8 @@ public class WeblogEntry implements Serializable {
             return false;
         }
 
-        boolean author = perm.hasAction(WeblogPermission.POST) || perm.hasAction(WeblogPermission.ADMIN);
-        boolean limited = !author && perm.hasAction(WeblogPermission.EDIT_DRAFT);
+        boolean author = perm.hasEffectiveWeblogRole(WeblogRole.POST);
+        boolean limited = perm.getWeblogRole().equals(WeblogRole.EDIT_DRAFT);
         
         return author || (limited && (status == PubStatus.DRAFT || status == PubStatus.PENDING));
     }

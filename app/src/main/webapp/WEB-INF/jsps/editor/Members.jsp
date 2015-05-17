@@ -14,6 +14,8 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+  Source file modified from the original ASF source; all changes made
+  are under same ASF license.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
         
@@ -85,18 +87,18 @@ function save() {
                 </td>               
                 <td class="rollertable">
                     <input type="radio" 
-                        <s:if test='#perm.hasAction("admin")'>checked</s:if>
-                        name='perm-<s:property value="#perm.user.id" />' value="admin" />
+                        <s:if test='#perm.weblogRole.name == "OWNER"'>checked</s:if>
+                        name='perm-<s:property value="#perm.user.id" />' value="OWNER" />
                 </td>
                 <td class="rollertable">
 	                <input type="radio" 
-                        <s:if test='#perm.hasAction("post")'>checked</s:if>
-                        name='perm-<s:property value="#perm.user.id" />' value="post" />
+                        <s:if test='#perm.weblogRole.name == "POST"'>checked</s:if>
+                        name='perm-<s:property value="#perm.user.id" />' value="POST" />
                 </td>                
                 <td class="rollertable">
                     <input type="radio" 
-                        <s:if test='#perm.hasAction("edit_draft")'>checked</s:if>
-                        name='perm-<s:property value="#perm.user.id" />' value="edit_draft" />
+                        <s:if test='#perm.weblogRole.name == "EDIT_DRAFT"'>checked</s:if>
+                        name='perm-<s:property value="#perm.user.id" />' value="EDIT_DRAFT" />
                 </td>                
                 <td class="rollertable">
                     <input type="radio" 

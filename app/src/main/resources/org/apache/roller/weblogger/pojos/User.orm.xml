@@ -45,6 +45,9 @@
         <named-query name="User.getByEndDate&amp;StartDateOrderByStartDateDesc">
             <query>SELECT u FROM User u WHERE u.dateCreated &lt; ?1 AND u.dateCreated &gt; ?2 ORDER BY u.dateCreated DESC</query>
         </named-query>
+        <named-query name="User.getGlobalRole">
+            <query>SELECT u.globalRole FROM User u WHERE u.userName = ?1</query>
+        </named-query>
         <named-query name="User.getCountByUserNameLike">
             <query>SELECT COUNT(u) FROM User u WHERE UPPER(u.userName) LIKE ?1</query>
         </named-query>
@@ -63,6 +66,10 @@
             </basic>
             <basic name="userName">
                 <column name="username" insertable="true" updatable="true" unique="true"/>
+            </basic>
+            <basic name="globalRole">
+                <column name="role" insertable="true" updatable="true" unique="false"/>
+                <enumerated>STRING</enumerated>
             </basic>
             <basic name="screenName">
                 <column name="screenname" insertable="true" updatable="true" unique="true"/>

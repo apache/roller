@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -26,8 +29,10 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 
@@ -52,6 +57,11 @@ public class MembersInvite extends UIAction {
         this.actionName = "invite";
         this.desiredMenu = "editor";
         this.pageTitle = "inviteMember.title";
+    }
+
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
     }
 
     public String execute() {
@@ -118,8 +128,8 @@ public class MembersInvite extends UIAction {
         // if no errors then send the invitation
         if(!hasActionErrors()) {
             try {
-                umgr.grantWeblogPermissionPending(getActionWeblog(), user,
-                        Collections.singletonList(getPermissionString()));
+                umgr.grantPendingWeblogRole(getActionWeblog(), user,
+                    WeblogRole.valueOf(getPermissionString()));
                 WebloggerFactory.getWeblogger().flush();
 
                 addMessage("inviteMember.userInvited");

@@ -14,9 +14,15 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.core.util.menu;
+
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +33,11 @@ import java.util.List;
  */
 public class ParsedTab {
     
-    private String name = null;
-    private List<String> weblogPermissionActions = null;
-    private List<String> globalPermissionActions = null;
-    private String enabledProperty = null;
-    private String disabledProperty = null;
+    private String name;
+    private GlobalRole requiredGlobalRole;
+    private WeblogRole requiredWeblogRole;
+    private String enabledProperty;
+    private String disabledProperty;
     
     private List<ParsedTabItem> tabItems = new ArrayList<ParsedTabItem>();
     
@@ -47,20 +53,20 @@ public class ParsedTab {
         this.name = name;
     }
 
-    public List<String> getWeblogPermissionActions() {
-        return weblogPermissionActions;
+    public GlobalRole getRequiredGlobalRole() {
+        return requiredGlobalRole;
     }
 
-    public void setWeblogPermissionActions(List<String> actions) {
-        this.weblogPermissionActions = actions;
+    public void setRequiredGlobalRole(GlobalRole role) {
+        this.requiredGlobalRole = role;
     }
 
-    public List<String> getGlobalPermissionActions() {
-        return globalPermissionActions;
+    public WeblogRole getRequiredWeblogRole() {
+        return requiredWeblogRole;
     }
 
-    public void setGlobalPermissionActions(List<String> actions) {
-        this.globalPermissionActions = actions;
+    public void setRequiredWeblogRole(WeblogRole role) {
+        this.requiredWeblogRole = role;
     }
 
     public String getEnabledProperty() {

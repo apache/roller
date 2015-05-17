@@ -6,9 +6,7 @@ See comments in editor-menu.xml for info about attributes.
 -->
 <menu-bar>
     
-    <!--  if we already have checked globalPerms="admin" we should -->
-    <!--  not need to recheck on each tab item as they are the same -->
-    <menu name="tabbedmenu.admin" globalPerms="admin">
+    <menu name="tabbedmenu.admin" globalRole="ADMIN">
         
         <!-- globalPerms="admin" -->
         <menu-item action="globalConfig"
@@ -33,9 +31,7 @@ See comments in editor-menu.xml for info about attributes.
                    name="tabbedmenu.admin.cacheInfo" />
     </menu>
     
-    <!--  if we already have checked globalPerms="admin" we should -->
-    <!--  not need to recheck on each tab item as they are the same -->
-    <menu name="tabbedmenu.planet" globalPerms="admin" enabledProperty="planet.aggregator.enabled">
+    <menu name="tabbedmenu.planet" globalRole="ADMIN" enabledProperty="planet.aggregator.enabled">
         
         <!-- globalPerms="admin" -->
         <menu-item action="planetConfig"

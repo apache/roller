@@ -14,6 +14,9 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are under same ASF license.
 */
 
 package org.apache.roller.weblogger.util;
@@ -230,68 +233,24 @@ public class PasswordUtility
     }   
     
     /**
-     * Grant admin role to user by adding admin role for user to userrole table
+     * Grant admin role to user
      */
     private static void grantAdmin(Connection con, String userName) throws Exception
     {
-        // Find userid of specified user
-        String userid;
-        PreparedStatement userQuery = con.prepareStatement(
-           "select id from roller_user where username=?");
-        userQuery.setString(1, userName);
-        ResultSet userRS = userQuery.executeQuery();
-        if (!userRS.next()) {
-            System.err.println("ERROR: username not found in database");
-            return;
-        } else {
-            userid = userRS.getString(1);
-        }
-        
-        // Is user already an admin?
-        PreparedStatement roleQuery = con.prepareStatement(
-           "select username from userrole where username=? and rolename='admin'");
-        roleQuery.setString(1, userName);
-        ResultSet roleRS = roleQuery.executeQuery();
-        if (!roleRS.next()) {
-            // User not admin; add admin role
-            PreparedStatement adminInsert = con.prepareStatement(
-               "insert into userrole (id,rolename,username,userid) values (?,?,?,?)");
-            adminInsert.setString(1, userName);
-            adminInsert.setString(2, "admin");
-            adminInsert.setString(3, userName);
-            adminInsert.setString(4, userid);
-            adminInsert.executeUpdate();
-            System.out.println("User granted admin role");
-        } else {
-            System.out.println("User was already an admin");
-        }
+        PreparedStatement userUpdate = con.prepareStatement(
+           "update roller_user set role='ADMIN' where username=?");
+        userUpdate.setString(1, userName);
+        userUpdate.executeUpdate();
     }
 
     /**
-     * Revoke admin role from user by removing admin role from userrole table
+     * Revoke admin role from user
      */
     private static void revokeAdmin(Connection con, String userName) throws Exception
     {
-        // Find userid of specified user
-        String userid;
-        PreparedStatement userQuery = con.prepareStatement(
-           "select id from roller_user where username=?");
-        userQuery.setString(1, userName);
-        ResultSet userRS = userQuery.executeQuery();
-        if (!userRS.next()) 
-        {
-            System.err.println("ERROR: username not found in database");
-            return;
-        }
-        else 
-        {
-            userid = userRS.getString(1);
-        }
-        
-        // Delete user's admin entries from userrole table
-        PreparedStatement roleDelete = con.prepareStatement(
-           "delete from userrole where userid=? and rolename='admin'");
-        roleDelete.setString(1, userid);
-        roleDelete.executeUpdate();
+        PreparedStatement userUpdate = con.prepareStatement(
+           "update roller_user set role='BLOGGER' where username=?");
+        userUpdate.setString(1, userName);
+        userUpdate.executeUpdate();
     }
 }

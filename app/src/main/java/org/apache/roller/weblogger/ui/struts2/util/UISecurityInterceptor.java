@@ -14,21 +14,24 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
+import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
-
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 
 /**
  * A struts2 interceptor for configuring specifics of the weblogger ui.
@@ -56,10 +59,7 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
             final UISecurityEnforced theAction = (UISecurityEnforced) action;
 
             // are we requiring an authenticated user?
-            if (theAction.isUserRequired()) {
-
-                UserManager umgr = WebloggerFactory.getWeblogger()
-                        .getUserManager();
+            if (theAction.requiredGlobalRole() != GlobalRole.NOAUTHNEEDED) {
 
                 User authenticatedUser = ((UIAction) theAction)
                         .getAuthenticatedUser();
@@ -70,50 +70,37 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                     return "access-denied";
                 }
 
-                // are we also enforcing global permissions?
-                if (theAction.requiredGlobalPermissionActions() != null
-                        && !theAction.requiredGlobalPermissionActions()
-                                .isEmpty()) {
-                    GlobalPermission perm = new GlobalPermission(
-                            theAction.requiredGlobalPermissionActions());
-                    if (!umgr.checkPermission(perm, authenticatedUser)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("DENIED: user does not have permission = "
-                                    + perm.toString());
-                        }
-                        return "access-denied";
+                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+                if (umgr.hasEffectiveGlobalRole(authenticatedUser, theAction.requiredGlobalRole())) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("DENIED: user " + authenticatedUser.getUserName() + " does not have "
+                                        + theAction.requiredGlobalRole().name() + " role");
                     }
+                    return "access-denied";
                 }
 
                 // are we requiring a valid action weblog?
-                if (theAction.isWeblogRequired()) {
+                if (theAction.requiredWeblogRole() != WeblogRole.NOBLOGNEEDED) {
 
-                    Weblog actionWeblog = ((UIAction) theAction)
-                            .getActionWeblog();
+                    Weblog actionWeblog = ((UIAction) theAction).getActionWeblog();
                     if (actionWeblog == null) {
                         if (log.isWarnEnabled()) {
                             log.warn("User " + authenticatedUser.getUserName() +
                                     " unable to process action \"" + ((UIAction) theAction).getActionName() +
-                                    "\" because no weblog was defined (Check JSP form provides weblog value.)");
+                                    "\" because no weblog was defined (Check JSP form provided weblog value.)");
                         }
                         return "access-denied";
                     }
 
                     // are we also enforcing a specific weblog permission?
-                    if (theAction.requiredWeblogPermissionActions() != null
-                            && !theAction.requiredWeblogPermissionActions()
-                                    .isEmpty()) {
-                        WeblogPermission required = new WeblogPermission(
-                                actionWeblog,
-                                theAction.requiredWeblogPermissionActions());
+                    WeblogPermission required = new WeblogPermission(
+                            actionWeblog, theAction.requiredWeblogRole());
 
-                        if (!umgr.checkPermission(required, authenticatedUser)) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("DENIED: user does not have required weblog permissions = "
-                                        + required);
-                            }
-                            return "access-denied";
+                    if (!umgr.checkPermission(required, authenticatedUser)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("DENIED: user does not have required weblog permissions = " + required);
                         }
+                        return "access-denied";
                     }
                 }
 

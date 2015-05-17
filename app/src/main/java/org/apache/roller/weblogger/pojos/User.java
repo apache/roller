@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -37,10 +40,11 @@ import org.apache.roller.weblogger.util.Utilities;
 public class User implements Serializable {
     
     public static final long serialVersionUID = -6354583200913127874L;
-    
+
     private String  id = UUIDGenerator.generateUUID();
     private String  userName;
     private String  password;
+    private GlobalRole globalRole;
     private String  openIdUrl;
     private String  screenName;
     private String  fullName;
@@ -54,15 +58,17 @@ public class User implements Serializable {
     public User() {
     }
     
-    public User( String id, String userName,
-            String password, String fullName,
+    public User(String userName,
+            String password,
+            GlobalRole globalRole,
+            String fullName,
             String emailAddress,
             String locale, String timeZone,
             Date dateCreated,
             Boolean isEnabled) {
-        //this.id = id;
         this.userName = userName;
         this.password = password;
+        this.globalRole = globalRole;
         this.fullName = fullName;
         this.emailAddress = emailAddress;
         this.dateCreated = (Date)dateCreated.clone();
@@ -109,7 +115,23 @@ public class User implements Serializable {
     public void setPassword( String password ) {
         this.password = password;
     }
-    
+
+    public GlobalRole getGlobalRole() {
+        return this.globalRole;
+    }
+
+    public boolean isGlobalAdmin() {
+        return this.globalRole == GlobalRole.ADMIN;
+    }
+
+    public boolean hasEffectiveGlobalRole(GlobalRole roleToCheck) {
+        return globalRole.getWeight() >= roleToCheck.getWeight();
+    }
+
+    public void setGlobalRole(GlobalRole globalRole) {
+        this.globalRole = globalRole;
+    }
+
     /**
      * Reset this user's password, handles encryption if configured.
      *
@@ -231,21 +253,7 @@ public class User implements Serializable {
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }
-    
-     
-    public boolean hasGlobalPermission(String action) {
-        return hasGlobalPermissions(Collections.singletonList(action));
-    }
-    
-    public boolean hasGlobalPermissions(List<String> actions) {
-        try {
-            GlobalPermission perm = new GlobalPermission(actions);
-            return WebloggerFactory.getWeblogger().getUserManager().checkPermission(perm, this);
-        } catch (WebloggerException ex) {
-            return false;
-        }
-    }
-    
+
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
@@ -254,6 +262,7 @@ public class User implements Serializable {
         buf.append(getId());
         buf.append(", ").append(getUserName());
         buf.append(", ").append(getFullName());
+        buf.append(", ").append(getGlobalRole());
         buf.append(", ").append(getEmailAddress());
         buf.append(", ").append(getDateCreated());
         buf.append(", ").append(getEnabled());

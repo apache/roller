@@ -14,19 +14,23 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.business;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.RollerPermission;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Interface to user, role and permissions management.
@@ -185,29 +189,28 @@ public interface UserManager {
     /**
      * Return true if user has permission specified.
      */
-    boolean checkPermission(RollerPermission perm, User user)
+    boolean checkPermission(WeblogPermission perm, User user)
             throws WebloggerException;
     
     
     /**
-     * Grant to user specific actions in a weblog.
+     * Grant to user specific WeblogRole for a weblog
      * (will create new permission record if none already exists)
      * @param weblog  Weblog to grant permissions in
      * @param user    User to grant permissions to
-     * @param actions Actions to be granted
+     * @param weblogRole Role to grant user
      */
-    void grantWeblogPermission(Weblog weblog, User user, List<String> actions)
+    void grantWeblogRole(Weblog weblog, User user, WeblogRole weblogRole)
             throws WebloggerException;
 
     
     /**
-     * Grant to user specific actions in a weblog, but pending confirmation.
-     * (will create new permission record if none already exists)
+     * Grant to user a specific WeblogRole for a weblog, but pending confirmation.
      * @param weblog  Weblog to grant permissions in
      * @param user    User to grant permissions to
-     * @param actions Actions to be granted
+     * @param role    WeblogRole to grant
      */
-    void grantWeblogPermissionPending(Weblog weblog, User user, List<String> actions)
+    void grantPendingWeblogRole(Weblog weblog, User user, WeblogRole role)
             throws WebloggerException;
 
     
@@ -232,13 +235,11 @@ public interface UserManager {
 
     
     /**
-     * Revoke from user specific actions in a weblog.
-     * (if resulting permission has empty removes permission record)
-     * @param weblog  Weblog to grant permissions in
-     * @param user    User to grant permissions to
-     * @param actions Actions to be granted
+     * Revoke from user his WeblogRole for a given weblog.
+     * @param weblog  Weblog to revoke WeblogRole from
+     * @param user    User to remove WeblogRole from
      */
-    void revokeWeblogPermission(Weblog weblog, User user, List<String> actions)
+    void revokeWeblogRole(Weblog weblog, User user)
             throws WebloggerException;
 
     
@@ -289,34 +290,24 @@ public interface UserManager {
 
     //--------------------------------------------------------------- role CRUD
 
-    
     /**
-     * Grant role to user.
+     * Returns GlobalRole assigned to a user.  Useful if wish to retrieve
+     * the latest DB-stored role value prior to allowing a certain
+     * action.
      */
-    void grantRole(String roleName, User user) throws WebloggerException;
-    
-    
-    /**
-     * Revoke role from user.
-     */
-    void revokeRole(String roleName, User user) throws WebloggerException;
+    GlobalRole getGlobalRole(User user) throws WebloggerException;
 
-        
     /**
-     * Returns true if user has role specified, should be used only for testing.
-     * @deprecated Use checkPermission() instead.
+     * Convenience method to check if a user has a role of GlobalRole.ADMIN
      */
-    boolean hasRole(String roleName, User user) throws WebloggerException;
-    
-    
-    /**
-     * Get roles associated with user, should be used only for testing.
-     * Get all roles associated with user.
-     * @deprecated Use checkPermission() instead.
-     */
-    List<String> getRoles(User user) throws WebloggerException;
+    boolean isGlobalAdmin(User user) throws WebloggerException;
 
-    
+    /**
+     * Convenience method to check if a user has a role equal to or more
+     * powerful than a specified one
+     */
+    public boolean hasEffectiveGlobalRole(User user, GlobalRole roleToCheck) throws WebloggerException;
+
     /**
      * Release any resources held by manager.
      */

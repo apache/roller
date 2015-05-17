@@ -18,6 +18,9 @@
 
 package org.apache.roller.weblogger.ui.core.util.menu;
 
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogRole;
+
 import java.util.List;
 import java.util.Set;
 
@@ -30,12 +33,11 @@ public class ParsedTabItem {
     private String name = null;
     private String action = null;
     private Set<String> subActions = null;
-    private List<String> weblogPermissionActions = null;
-    private List<String> globalPermissionActions = null;
+    private GlobalRole requiredGlobalRole = null;
+    private WeblogRole requiredWeblogRole = null;
     private String enabledProperty = null;
     private String disabledProperty = null;
-    
-    
+
     public String getName() {
         return name;
     }
@@ -60,20 +62,20 @@ public class ParsedTabItem {
         this.subActions = subActions;
     }
 
-    public List<String> getWeblogPermissionActions() {
-        return weblogPermissionActions;
+    public GlobalRole getRequiredGlobalRole() {
+        return requiredGlobalRole;
     }
 
-    public void setWeblogPermissionActions(List<String> perms) {
-        this.weblogPermissionActions = perms;
+    public void setRequiredGlobalRole(GlobalRole requiredGlobalRole) {
+        this.requiredGlobalRole = requiredGlobalRole;
     }
 
-    public List<String> getGlobalPermissionActions() {
-        return globalPermissionActions;
+    public WeblogRole getRequiredWeblogRole() {
+        return requiredWeblogRole;
     }
 
-    public void setGlobalPermissionActions(List<String> perms) {
-        this.globalPermissionActions = perms;
+    public void setRequiredWeblogRole(WeblogRole requiredWeblogRole) {
+        this.requiredWeblogRole = requiredWeblogRole;
     }
 
     public String getEnabledProperty() {

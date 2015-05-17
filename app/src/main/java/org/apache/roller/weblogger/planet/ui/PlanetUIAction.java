@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.planet.ui;
@@ -21,6 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -36,7 +41,16 @@ public abstract class PlanetUIAction extends UIAction {
     // the planet used by all Planet actions
     private Planet planet = null;
     
-    
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
+    }
+
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.ADMIN;
+    }
+
     public Planet getPlanet() {
         if(planet == null) {
             try {

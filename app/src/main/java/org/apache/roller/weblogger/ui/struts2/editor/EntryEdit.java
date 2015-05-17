@@ -14,9 +14,44 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
+import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
+import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.util.MediacastException;
+import org.apache.roller.weblogger.util.MediacastResource;
+import org.apache.roller.weblogger.util.MediacastUtil;
+import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
+import org.apache.roller.weblogger.util.Trackback;
+import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
+import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -26,38 +61,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.RollerConstants;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.plugins.PluginManager;
-import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
-import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.pojos.GlobalPermission;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.roller.weblogger.ui.core.RollerContext;
-import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
-import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
-import org.apache.roller.weblogger.util.MailUtil;
-import org.apache.roller.weblogger.util.MediacastException;
-import org.apache.roller.weblogger.util.MediacastResource;
-import org.apache.roller.weblogger.util.MediacastUtil;
-import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
-import org.apache.roller.weblogger.util.Trackback;
-import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
-import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * Edit a new or existing entry.
@@ -85,8 +88,13 @@ public final class EntryEdit extends UIAction {
     }
 
     @Override
-    public List<String> requiredWeblogPermissionActions() {
-        return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
+    }
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.EDIT_DRAFT;
     }
 
     public void myPrepare() {
@@ -157,8 +165,8 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String publish() {
-        if (getActionWeblog().hasUserPermission(
-                getAuthenticatedUser(), WeblogPermission.POST)) {
+        if (getActionWeblog().userHasWeblogRole(
+                getAuthenticatedUser(), WeblogRole.POST)) {
             Timestamp pubTime = getBean().getPubTime(getLocale(),
                     getActionWeblog().getTimeZoneInstance());
             if (pubTime != null && pubTime.after(
@@ -212,10 +220,8 @@ public final class EntryEdit extends UIAction {
                 }
 
                 // if user is an admin then apply pinned to main value as well
-                GlobalPermission adminPerm = new GlobalPermission(
-                        Collections.singletonList(GlobalPermission.ADMIN));
                 if (WebloggerFactory.getWeblogger().getUserManager()
-                        .checkPermission(adminPerm, getAuthenticatedUser())) {
+                        .isGlobalAdmin(getAuthenticatedUser())) {
                     weblogEntry.setPinnedToMain(getBean().getPinnedToMain());
                 }
 
@@ -465,8 +471,8 @@ public final class EntryEdit extends UIAction {
     }
 
     public boolean isUserAnAuthor() {
-        return getActionWeblog().hasUserPermission(getAuthenticatedUser(),
-                WeblogPermission.POST);
+        return getActionWeblog().userHasWeblogRole(getAuthenticatedUser(),
+                WeblogRole.POST);
     }
 
     public String getJsonAutocompleteUrl() {

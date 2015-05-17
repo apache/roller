@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.core;
@@ -30,6 +33,8 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.springframework.beans.factory.access.BootstrapException;
 
@@ -52,15 +57,15 @@ public class Install extends UIAction {
     private List<String> messages = null;
     private String databaseName = "Unknown";
 
-
-    public boolean isUserRequired() {
-        return false;
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.NOAUTHNEEDED;
     }
 
-    public boolean isWeblogRequired() {
-        return false;
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
     }
-
 
     public String execute() {
 

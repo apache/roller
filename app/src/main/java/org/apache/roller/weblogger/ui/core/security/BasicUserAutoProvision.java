@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 package org.apache.roller.weblogger.ui.core.security;
 
@@ -26,9 +29,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 
 /**
  * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
@@ -55,17 +56,9 @@ public class BasicUserAutoProvision implements AutoProvision {
 				if (ud.getId() == null) {
 					ud.setId(UUIDGenerator.generateUUID());
 				}
-				mgr.addUser(ud);
 
-				// for some reason the User object doesn't contain a isAdmin setting
-				// so it makes it difficult to add grants without that info, so setting
-				// them manually here
-				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-				for (GrantedAuthority auth : authentication.getAuthorities()) {
-					if (auth.getAuthority().contains("admin") || auth.getAuthority().contains("ADMIN")) {
-						mgr.grantRole("admin", ud);
-					}
-				}
+                ud.setGlobalRole(GlobalRole.BLOGGER);
+                mgr.addUser(ud);
 				WebloggerFactory.getWeblogger().flush();
                 return true;
 

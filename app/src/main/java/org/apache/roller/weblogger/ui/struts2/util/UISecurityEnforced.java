@@ -14,52 +14,32 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are under same ASF license.
  */
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
 import java.util.List;
-
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 
 /**
  * Implemented by struts2 actions which want to enforce some level of security
- * protection on their action.
- * 
- * Available enforcements are ...
- *   - require a logged in user
- *   - require a valid weblog to work on
- *   - require a specific user role, such as "admin"
- *   - require a specific weblog permission
- *
+ * protection on their action.  Actions are of two types: GlobalRoles (system-wide
+ * permissions such as server settings and user management) and WeblogRoles (attached
+ * to each blog for which a single user has a specified role.)
  */
 public interface UISecurityEnforced {
     
     /**
-     * Does the action require an authenticated user?
-     *
-     * @return boolean True if authenticated user is required, false otherwise.
+     * Minimum global role required for the action
      */
-    boolean isUserRequired();
-    
-    
-    /**
-     * Does the action require a valid weblog to work on?
-     *
-     * This only takes effect if isUserRequired() is 'true'.
-     *
-     * @return boolean True if action weblog is required, false otherwise.
-     */
-    boolean isWeblogRequired();
-    
-    
-    /**
-     * List of global permission actions required to access resource.
-     */
-    List<String> requiredWeblogPermissionActions();
-    
-    
+    WeblogRole requiredWeblogRole();
+
     /** 
-     * List of weblog permissions required to access action if applicable.
+     * Minimum global role required for the action
      */
-    List<String> requiredGlobalPermissionActions();
+    GlobalRole requiredGlobalRole();
 }
