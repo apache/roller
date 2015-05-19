@@ -133,7 +133,7 @@ public class URLModel implements Model {
     
     
     public String getCommentAuthenticator() {
-        return getSite()+"/CommentAuthenticatorServlet";
+        return getSite()+"/CommentAuthenticatorServlet?weblog="+weblog.getHandle();
     }
     
     
