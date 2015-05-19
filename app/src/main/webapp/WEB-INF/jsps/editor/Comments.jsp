@@ -122,9 +122,17 @@
                 </s:text>
             </div>
             <div style="float:right;">
-                <s:date name="firstComment.postTime" format="MM/dd/yy hh:mm a" />
+                <s:if test="firstComment.postTime != null">
+                    <s:text name="commentManagement.date.toStringFormat">
+                        <s:param value="firstComment.postTime" />
+                    </s:text>
+                </s:if>
                 ---
-                <s:date name="lastComment.postTime" format="MM/dd/yy hh:mm a" />
+                <s:if test="lastComment.postTime != null">
+                    <s:text name="commentManagement.date.toStringFormat">
+                        <s:param value="lastComment.postTime" />
+                    </s:text>
+                </s:if>
             </div>
             <br />
 
