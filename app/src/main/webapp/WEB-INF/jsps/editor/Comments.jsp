@@ -317,7 +317,7 @@
                                     </s:if>
                                     <div class="details">
                                         <s:text name="commentManagement.postTime" />&nbsp;:&nbsp;
-                                        <s:property value="#comment.postTime" />
+                                        <s:date name="#comment.postTime"/>
                                     </div>
                                 </div>
                                 <div class="viewdetails bot">
