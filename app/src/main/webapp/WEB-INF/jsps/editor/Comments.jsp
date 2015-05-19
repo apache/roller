@@ -61,7 +61,7 @@
     <s:if test="actionName == 'comments'">
         <s:if test="bean.entryId != null && !bean.entryId.equals('') ">
             <s:text name="commentManagement.entry.subtitle">
-                <s:param value="firstComment.weblogEntry.title"/>
+                <s:param value="queryEntry.title"/>
             </s:text>
         </s:if>
         <s:else>
