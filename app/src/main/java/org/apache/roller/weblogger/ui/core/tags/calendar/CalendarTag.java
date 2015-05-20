@@ -156,6 +156,7 @@ public class CalendarTag extends TagSupport {
 
             // formatter Month-Year title of calendar
             SimpleDateFormat formatTitle = new SimpleDateFormat(bundle.getString("calendar.dateFormat"), mLocale);
+            formatTitle.setTimeZone(todayCal.getTimeZone());
             
             // go back to first day in month
             cal = model.getCalendar();

@@ -22,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -39,16 +41,19 @@ import org.apache.roller.util.DateUtil;
 public class BigWeblogCalendarModel extends WeblogCalendarModel {
     
     private static Log mLogger = LogFactory.getLog(BigWeblogCalendarModel.class);
-    
+
     protected final SimpleDateFormat starDateFormat =
             DateUtil.get8charDateFormat();
-    
+
     protected final SimpleDateFormat singleDayFormat =
             new SimpleDateFormat("dd");
-    
-    
+
+
     public BigWeblogCalendarModel(WeblogPageRequest pRequest, String cat) {
         super(pRequest, cat);
+        TimeZone tz = weblog.getTimeZoneInstance();
+        starDateFormat.setTimeZone(tz);
+        singleDayFormat.setTimeZone(tz);
     }
     
     

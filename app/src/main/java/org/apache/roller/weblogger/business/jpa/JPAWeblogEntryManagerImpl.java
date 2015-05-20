@@ -788,11 +788,13 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
         Calendar cal = Calendar.getInstance();
+        SimpleDateFormat formatter = DateUtil.get8charDateFormat();
         if (wesc.getWeblog() != null) {
-            cal.setTimeZone(wesc.getWeblog().getTimeZoneInstance());
+            TimeZone tz = wesc.getWeblog().getTimeZoneInstance();
+            cal.setTimeZone(tz);
+            formatter.setTimeZone(tz);
         }
 
-        SimpleDateFormat formatter = DateUtil.get8charDateFormat();
         for (WeblogEntry entry : entries) {
             Date sDate = DateUtil.getNoonOfDay(entry.getPubTime(), cal);
             if (map.get(sDate) == null) {
