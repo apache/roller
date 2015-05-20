@@ -1353,14 +1353,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     /**
-     * @inheritDoc
-     */
-    @Override
-    public void evict(WeblogEntry entry) throws WebloggerException {
-        strategy.getEntityManager(false).getEntityManagerFactory().getCache().evict(WeblogEntry.class, entry.getId());
-    }
-
-    /**
      * Appends given expression to given whereClause. If whereClause already
      * has other conditions, an " AND " is also appended before appending
      * the expression
