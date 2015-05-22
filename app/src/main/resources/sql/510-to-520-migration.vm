@@ -2,7 +2,7 @@
  510-to-520-migration.vm: Velocity template that generates vendor-specific database scripts
 
  DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
- **#
+**#
 
 -- Roles consolidated into the roller_user table.
 #addColumnNull("roller_user" "role"  "varchar(16)")

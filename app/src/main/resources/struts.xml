@@ -407,12 +407,6 @@
             <result name="error" type="chain">bookmarkEdit</result>
         </action>
         
-        <action name="bookmarksImport!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.BookmarksImport">
-            <result name="input" type="tiles">.BookmarksImport</result>
-            <result name="success" type="chain">bookmarks</result>
-        </action>
-        
         <action name="folderAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.FolderEdit">
             <param name="actionName">folderAdd</param>

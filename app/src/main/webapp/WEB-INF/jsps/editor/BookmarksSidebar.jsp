@@ -45,15 +45,6 @@
                     </s:url>
                     <s:a href="%{addFolder}"><s:text name="bookmarksForm.addFolder" /></s:a>
                 </p>
-                
-                <%-- Import bookmarks --%>
-                <p>
-                    <img src='<s:url value="/images/link_add.png"/>' border="0"alt="icon" />
-                    <s:url var="importBookmarks" action="bookmarksImport">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    </s:url>
-                    <s:a href="%{importBookmarks}"><s:text name="bookmarksForm.importBookmarks" /></s:a>
-                </p>
 
                 <br />
                 <br />
