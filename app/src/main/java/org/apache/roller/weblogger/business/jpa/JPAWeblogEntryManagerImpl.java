@@ -63,7 +63,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
+import java.util.TimeZone;
 
 /**
  * JPAWeblogManagerImpl.java
@@ -800,11 +800,13 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
         Calendar cal = Calendar.getInstance();
+        SimpleDateFormat formatter = DateUtil.get8charDateFormat();
         if (wesc.getWeblog() != null) {
-            cal.setTimeZone(wesc.getWeblog().getTimeZoneInstance());
+            TimeZone tz = wesc.getWeblog().getTimeZoneInstance();
+            cal.setTimeZone(tz);
+            formatter.setTimeZone(tz);
         }
 
-        SimpleDateFormat formatter = DateUtil.get8charDateFormat();
         for (WeblogEntry entry : entries) {
             Date sDate = DateUtil.getNoonOfDay(entry.getPubTime(), cal);
             if (map.get(sDate) == null) {
@@ -1360,14 +1362,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         q.setParameter(1, PubStatus.PUBLISHED);
         q.setParameter(2, website);
         return q.getResultList().get(0);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public void evict(WeblogEntry entry) throws WebloggerException {
-        strategy.getEntityManager(false).getEntityManagerFactory().getCache().evict(WeblogEntry.class, entry.getId());
     }
 
     /**

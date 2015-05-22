@@ -2,7 +2,7 @@
 ## $entry here is a WeblogEntryWrapper
 <!-- _day-mobile -->
 <ul data-role="listview" data-divider-theme="b" data-inset="true">
-  <li data-role="list-divider">$utils.formatDate($day, "EEEE MMM dd, yyyy")</li>
+  <li data-role="list-divider">$utils.formatDate($day, $text.get("macro.weblog.date.toStringFormat"))</li>
   ## Loop entries
   #foreach( $entry in $entries )
     <li data-role="list-divider" data-theme="a">
@@ -34,7 +34,7 @@
           </p>
         #end
         <p class="ui-li-desc content-textbox">
-          Posted at $utils.formatDate($entry.pubTime, "hh:mma MMM dd, yyyy")
+          Posted at $utils.formatDate($entry.pubTime, $text.get("macro.weblog.datetime.toStringFormat"))
           by $entry.creator.screenName in <span class="category">$entry.category.name</span>
         </p>
       #if(!$model.permalink)

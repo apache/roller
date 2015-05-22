@@ -19,13 +19,8 @@
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -69,15 +64,18 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
             int                page) {
         
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
-        
+
+        TimeZone tz = weblog.getTimeZoneInstance();
+
         monthFormat = new SimpleDateFormat(
             messageUtils.getString("weblogEntriesPager.month.dateFormat"));
+        monthFormat.setTimeZone(tz);
         
         getEntries();
         
         month = parseDate(dateString);
         
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(tz);
         
         cal.setTime(month);
         cal.add(Calendar.MONTH, 1);
@@ -193,7 +191,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getNextCollectionLink() {
         if (nextMonth != null) {
-            String next = DateUtil.format6chars(nextMonth);
+            String next = DateUtil.format6chars(nextMonth, weblog.getTimeZoneInstance());
             return createURL(0, 0, weblog, locale, pageLink, null, next, catName, tags);
         }
         return null;
@@ -210,7 +208,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getPrevCollectionLink() {
         if (prevMonth != null) {
-            String prev = DateUtil.format6chars(prevMonth);
+            String prev = DateUtil.format6chars(prevMonth, weblog.getTimeZoneInstance());
             return createURL(0, 0, weblog, locale, pageLink, null, prev, catName, tags);
         }
         return null;

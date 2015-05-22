@@ -1,0 +1,83 @@
+#**
+ 510-to-520-migration.vm: Velocity template that generates vendor-specific database scripts
+
+ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+ **#
+
+-- Roles consolidated into the roller_user table.
+#addColumnNull("roller_user" "role"  "varchar(16)")
+
+-- Set new global roles from the now-unused userrole table:
+update roller_user ru
+set role = 'BLOGGER'
+where ru.username in (select ur.username
+from userrole ur
+where role = 'editor');
+
+update roller_user ru
+set role = 'ADMIN'
+where ru.username in (select ur.username
+from userrole ur
+where role = 'admin');
+
+-- Update the weblog roles to the new terminology
+update roller_permission rp
+set actions = 'OWNER'
+where actions = 'admin'
+
+update roller_permission rp
+set actions = 'POST'
+where actions = 'post'
+
+update roller_permission rp
+set actions = 'EDIT_DRAFT'
+where actions = 'edit_draft'
+
+#**
+ PostgreSQL respects original not null attribute.
+ **#
+#macro(expandTimestamp $tableName $columnName)
+#if($db.DBTYPE == "MYSQL")
+#alterColumnType($tableName $columnName 'datetime(3)')
+#elseif ($db.DBTYPE == "ORACLE")
+#alterColumnType($tableName $columnName 'timestamp(3)')
+#elseif ($db.DBTYPE == "POSTGRESQL")
+#alterColumnType($tableName $columnName 'timestamp(3) with time zone')
+#end
+#end
+
+#macro(expandTimestampNotNull $tableName $columnName)
+#if($db.DBTYPE == "MYSQL")
+#alterColumnType($tableName $columnName 'datetime(3) not null')
+#elseif ($db.DBTYPE == "ORACLE")
+#alterColumnType($tableName $columnName 'timestamp(3) not null')
+#elseif ($db.DBTYPE == "POSTGRESQL")
+#alterColumnType($tableName $columnName 'timestamp(3) with time zone')
+#end
+#end
+
+-- Expanding datetime or timestamp columns
+-- Affects only for MySQL, Oracle, PostgreSQL
+
+#expandTimestampNotNull('pingqueueentry' 'entrytime')
+#expandTimestamp('pingtarget' 'lastsuccess')
+#expandTimestampNotNull('rag_entry' 'published')
+#expandTimestamp('rag_entry' 'updated')
+#expandTimestamp('rag_subscription' 'last_updated')
+#expandTimestamp('roller_audit_log' 'change_time')
+#expandTimestampNotNull('roller_comment' 'posttime')
+#expandTimestampNotNull('roller_mediafile' 'date_uploaded')
+#expandTimestamp('roller_mediafile' 'last_updated')
+#expandTimestampNotNull('roller_oauthaccessor' 'created')
+#expandTimestampNotNull('roller_oauthaccessor' 'updated')
+#expandTimestampNotNull('roller_permission' 'datecreated')
+#expandTimestamp('roller_tasklock' 'timeacquired')
+#expandTimestamp('roller_tasklock' 'lastrun')
+#expandTimestampNotNull('roller_user' 'datecreated')
+#expandTimestampNotNull('roller_weblogentrytag' 'time')
+#expandTimestampNotNull('roller_weblogentrytagagg' 'lastused')
+#expandTimestampNotNull('weblog' 'datecreated')
+#expandTimestamp('weblog' 'lastmodified')
+#expandTimestampNotNull('weblog_custom_template' 'updatetime')
+#expandTimestamp('weblogentry' 'pubtime')
+#expandTimestampNotNull('weblogentry' 'updatetime')

@@ -74,29 +74,40 @@ public class InitFilter implements Filter {
     }
 
     private String getAbsoluteUrl(HttpServletRequest request) {
+        return getAbsoluteUrl(request.isSecure(),
+                request.getServerName(), request.getContextPath(),
+                request.getRequestURI(), request.getRequestURL().toString());
+    }
+
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    public void destroy() {
+    }
+
+    protected static String getAbsoluteUrl(boolean secure, String serverName, String contextPath, String requestURI, String requestURL){
 
         String url = null;
 
         String fullUrl = null;
 
-        if (!request.isSecure()) {
-            fullUrl = request.getRequestURL().toString();
+        if (!secure) {
+            fullUrl = requestURL;
         } else {
-            fullUrl = "http://" + request.getServerName()
-                    + request.getContextPath();
+            fullUrl = "http://" + serverName + contextPath;
         }
 
         // if the uri is only "/" then we are basically done
-        if ("/".equals(request.getRequestURI())) {
+        if ("/".equals(requestURI)) {
             if (log.isDebugEnabled()) {
-                log.debug(fullUrl.substring(0, fullUrl.length() - 1));
+                log.debug("requestURI is only '/'. fullUrl: " + fullUrl);
             }
-            return fullUrl.substring(0, fullUrl.length() - 1);
+            return removeTrailingSlash(fullUrl);
         }
 
         // find first "/" starting after hostname is specified
         int index = fullUrl.indexOf('/',
-                fullUrl.indexOf(request.getServerName()));
+                fullUrl.indexOf(serverName));
 
         if (index != -1) {
             // extract just the part leading up to uri
@@ -106,20 +117,16 @@ public class InitFilter implements Filter {
         }
 
         // then just add on the context path
-        url += request.getContextPath();
+        url += contextPath;
 
         // make certain that we don't end with a /
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
-        }
+        return removeTrailingSlash(url);
+    }
 
+    protected static String removeTrailingSlash(String url) {
+        if (url.endsWith("/")) {
+            return url.substring(0, url.length() - 1);
+        }
         return url;
     }
-
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
-
-    public void destroy() {
-    }
-
 }

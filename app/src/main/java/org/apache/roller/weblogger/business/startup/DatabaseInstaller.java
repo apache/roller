@@ -242,6 +242,10 @@ public class DatabaseInstaller {
                 upgradeTo510(con, runScripts);
                 dbversion = 510;
             }
+            if(dbversion < 520) {
+                upgradeTo520(con, runScripts);
+                dbversion = 520;
+            }
             
             // make sure the database version is the exact version
             // we are upgrading too.
@@ -754,7 +758,34 @@ public class DatabaseInstaller {
             throw new StartupException("Problem upgrading database to version 510", ex);
         }        
 	}
-    
+
+    /**
+     * Upgrade database to Roller 5.2
+     */
+    private void upgradeTo520(Connection con, boolean runScripts) throws StartupException {
+
+        // first we need to run upgrade scripts
+        SQLScriptRunner runner = null;
+        try {
+            if (runScripts) {
+                String handle = getDatabaseHandle(con);
+                String scriptPath = handle + "/510-to-520-migration.sql";
+                successMessage("Running database upgrade script: "+scriptPath);
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner.runScript(con, true);
+                messages.addAll(runner.getMessages());
+            }
+        } catch(Exception ex) {
+            log.error("ERROR running 520 database upgrade script", ex);
+            if (runner != null) {
+                messages.addAll(runner.getMessages());
+            }
+
+            errorMessage("Problem upgrading database to version 520", ex);
+            throw new StartupException("Problem upgrading database to version 520", ex);
+        }
+    }
+
     /**
      * Use database product name to get the database script directory name.
      */

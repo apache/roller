@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
+import java.util.Locale;
 import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -58,7 +59,8 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         Integer value1o = (Integer)request.getSession().getAttribute("mathValue1");
         Integer value2o = (Integer)request.getSession().getAttribute("mathValue2");
 
-        I18nMessages messages = I18nMessages.getMessages(request.getLocale());
+        Locale locale = CommentAuthenticatorUtils.getLocale(request);
+        I18nMessages messages = I18nMessages.getMessages(locale);
         StringBuilder sb = new StringBuilder();
         
         sb.append("<p>");
