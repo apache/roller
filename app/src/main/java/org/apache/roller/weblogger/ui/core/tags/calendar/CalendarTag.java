@@ -150,12 +150,13 @@ public class CalendarTag extends TagSupport {
             // ceate object to represent today
             todayCal = model.getCalendar();
             todayCal.setTime( new Date() );
-            
-            // formatter Month-Year title of calendar
-            SimpleDateFormat formatTitle = new SimpleDateFormat("MMMM yyyy", mLocale);
-            
+
             // get Resource Bundle
             ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources", mLocale);
+
+            // formatter Month-Year title of calendar
+            SimpleDateFormat formatTitle = new SimpleDateFormat(bundle.getString("calendar.dateFormat"), mLocale);
+            formatTitle.setTimeZone(todayCal.getTimeZone());
             
             // go back to first day in month
             cal = model.getCalendar();
@@ -368,6 +369,6 @@ public class CalendarTag extends TagSupport {
     public int doEndTag( PrintWriter pw ) throws JspException {
         return EVAL_PAGE;
     }
-    
+
 }
 

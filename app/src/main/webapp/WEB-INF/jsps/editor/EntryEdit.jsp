@@ -76,7 +76,7 @@
                     <span style="color:green; font-weight:bold">
                         <s:text name="weblogEdit.published" />
                         (<s:text name="weblogEdit.updateTime" />
-                        <s:date name="entry.updateTime" format="dd/MM/yyyy hh:mm a" />)
+                        <s:date name="entry.updateTime" />)
                     </span>
                 </s:if>
                 <s:elseif test="bean.draft">

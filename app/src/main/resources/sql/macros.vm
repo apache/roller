@@ -146,3 +146,14 @@ drop table if exists $tableName;
 	concat($s1, $s2) 
 #end 
 #end
+
+
+#macro(alterColumnType $tableName $columnName $columnType)
+#if($db.DBTYPE == "MYSQL" || $db.DBTYPE == "ORACLE")
+alter table $tableName modify $columnName $columnType;
+#elseif ($db.DBTYPE == "POSTGRESQL")
+alter table $tableName alter column $columnName type $columnType;
+#else
+-- You should alter type of column $columnName of table $tableName to $columnType
+#end
+#end

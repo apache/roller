@@ -61,7 +61,7 @@
     <s:if test="actionName == 'comments'">
         <s:if test="bean.entryId != null && !bean.entryId.equals('') ">
             <s:text name="commentManagement.entry.subtitle">
-                <s:param value="firstComment.weblogEntry.title"/>
+                <s:param value="queryEntry.title"/>
             </s:text>
         </s:if>
         <s:else>
@@ -122,9 +122,17 @@
                 </s:text>
             </div>
             <div style="float:right;">
-                <s:date name="firstComment.postTime" format="MM/dd/yy hh:mm a" />
+                <s:if test="firstComment.postTime != null">
+                    <s:text name="commentManagement.date.toStringFormat">
+                        <s:param value="firstComment.postTime" />
+                    </s:text>
+                </s:if>
                 ---
-                <s:date name="lastComment.postTime" format="MM/dd/yy hh:mm a" />
+                <s:if test="lastComment.postTime != null">
+                    <s:text name="commentManagement.date.toStringFormat">
+                        <s:param value="lastComment.postTime" />
+                    </s:text>
+                </s:if>
             </div>
             <br />
 
@@ -317,7 +325,7 @@
                                     </s:if>
                                     <div class="details">
                                         <s:text name="commentManagement.postTime" />&nbsp;:&nbsp;
-                                        <s:property value="#comment.postTime" />
+                                        <s:date name="#comment.postTime"/>
                                     </div>
                                 </div>
                                 <div class="viewdetails bot">

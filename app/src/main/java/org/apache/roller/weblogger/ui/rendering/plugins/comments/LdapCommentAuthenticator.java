@@ -18,6 +18,7 @@
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.Hashtable;
+import java.util.Locale;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -73,7 +74,8 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 			ldapPass = ldapPassTemp != null ? ldapPassTemp : "";
 		}
 
-		I18nMessages messages = I18nMessages.getMessages(request.getLocale());
+		Locale locale = CommentAuthenticatorUtils.getLocale(request);
+		I18nMessages messages = I18nMessages.getMessages(locale);
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("<p>");

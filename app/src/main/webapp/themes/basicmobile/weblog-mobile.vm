@@ -70,7 +70,7 @@
       #else
         ## No entries.
         <ul data-role="listview" data-divider-theme="b" data-inset="true">
-          <li data-role="list-divider">$utils.formatDate($utils.now, "EEEE MMM dd, yyyy")</li>
+          <li data-role="list-divider">$utils.formatDate($utils.now, $text.get("macro.weblog.date.toStringFormat"))</li>
           <li data-theme="a">
             <span class="ui-li-desc content-textbox">
               <h3>$text.get("macro.weblog.noEntriesForCategory")</h3>

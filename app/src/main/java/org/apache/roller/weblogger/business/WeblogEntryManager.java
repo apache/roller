@@ -398,10 +398,5 @@ public interface WeblogEntryManager {
      */    
     long getEntryCount(Weblog websiteData) throws WebloggerException;
 
-    /**
-     * Evict an entry from cache
-     */
-    void evict(WeblogEntry entry) throws WebloggerException;
-    
 }
 

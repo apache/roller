@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TimeZone;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -69,15 +70,18 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
             int                page) {
         
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
-        
+
+        TimeZone tz = weblog.getTimeZoneInstance();
+
         dayFormat = new SimpleDateFormat(
             messageUtils.getString("weblogEntriesPager.day.dateFormat"));
+        dayFormat.setTimeZone(tz);
         
         getEntries();
         
         day = parseDate(dateString);
-        
-        Calendar cal = Calendar.getInstance();
+
+        Calendar cal = Calendar.getInstance(tz);
         
         cal.setTime(day);
         cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -199,7 +203,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getNextCollectionLink() {
         if (nextDay != null) {
-            String next = DateUtil.format8chars(nextDay);
+            String next = DateUtil.format8chars(nextDay, weblog.getTimeZoneInstance());
             return createURL(0, 0, weblog, locale, pageLink, null, next, catName, tags);
         }
         return null;
@@ -216,7 +220,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getPrevCollectionLink() {
         if (prevDay != null) {
-            String prev = DateUtil.format8chars(prevDay);
+            String prev = DateUtil.format8chars(prevDay, weblog.getTimeZoneInstance());
             return createURL(0, 0, weblog, locale, pageLink, null, prev, catName, tags);
         }
         return null;
