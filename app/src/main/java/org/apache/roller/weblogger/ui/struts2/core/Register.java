@@ -143,7 +143,6 @@ public class Register extends UIAction implements ServletRequestAware {
         }*/
             
         try {
-
             if (WebloggerConfig.getAuthMethod() == AuthMethod.LDAP) {
                 // See if user is already logged in via Spring Security
                 User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
@@ -151,15 +150,7 @@ public class Register extends UIAction implements ServletRequestAware {
                     // Copy user details from Spring Security, including LDAP attributes
                     getBean().copyFrom(fromSSOUser);
                 }
-            } else if (WebloggerConfig.getAuthMethod() == AuthMethod.CMA) {
-                // See if user is already logged in via CMA
-                if (getServletRequest().getUserPrincipal() != null) {
-                    // Only detail we get is username, sadly no LDAP attributes
-                    getBean().setUserName(getServletRequest().getUserPrincipal().getName());
-                    getBean().setScreenName(getServletRequest().getUserPrincipal().getName());
-                }
             }
-            
         } catch (Exception ex) {
             log.error("Error reading SSO user data", ex);
             addError("error.editing.user", ex.toString());
@@ -327,10 +318,9 @@ public class Register extends UIAction implements ServletRequestAware {
     public void myValidate() {
         
         // if using external auth, we don't want to error on empty password/username from HTML form.
-        boolean usingSSO = authMethod == AuthMethod.LDAP || authMethod == AuthMethod.CMA;
-        if (usingSSO) {
+        if (authMethod == AuthMethod.LDAP) {
             // store an unused marker in the Roller DB for the passphrase in
-            // the LDAP or CMA cases, as actual passwords are stored externally
+            // the LDAP case, as actual passwords are stored externally
             String unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
             
             // Preserve username and password, Spring Security case
@@ -339,13 +329,6 @@ public class Register extends UIAction implements ServletRequestAware {
                 getBean().setPasswordText(unusedPassword);
                 getBean().setPasswordConfirm(unusedPassword);
                 getBean().setUserName(fromSSOUser.getUserName());
-            }
-
-            // Preserve username and password, CMA case             
-            else if (getServletRequest().getUserPrincipal() != null) {
-                getBean().setUserName(getServletRequest().getUserPrincipal().getName());
-                getBean().setPasswordText(unusedPassword);
-                getBean().setPasswordConfirm(unusedPassword);
             }
         }
         
