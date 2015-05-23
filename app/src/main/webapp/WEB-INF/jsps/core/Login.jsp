@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 
 <%-- Body of the login page, invoked from login.jsp --%>
@@ -22,16 +25,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <%!
-String securityCheckUrl = null;
-boolean cmaEnabled = "CMA".equals(WebloggerConfig.getAuthMethod());
-%>
-
-<%
-if (cmaEnabled) {
-    securityCheckUrl = "/j_security_check";
-} else {
-    securityCheckUrl = "/roller_j_security_check";
-}
+String securityCheckUrl = "/roller_j_security_check";
 %>
 
 <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">

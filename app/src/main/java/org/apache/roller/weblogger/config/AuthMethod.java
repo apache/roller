@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.config;
 
@@ -21,8 +24,7 @@ public enum AuthMethod {
     ROLLERDB("db"),
     LDAP("ldap"),
     OPENID("openid"),
-    DB_OPENID("db-openid"),
-    CMA("cma");
+    DB_OPENID("db-openid");
 
     private final String propertyName;
 
