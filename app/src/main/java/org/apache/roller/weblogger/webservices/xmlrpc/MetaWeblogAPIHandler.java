@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.webservices.xmlrpc;
@@ -51,7 +54,7 @@ import org.apache.xmlrpc.XmlRpcException;
 /**
  * Weblogger XML-RPC Handler for the MetaWeblog API.
  * 
- * MetaWeblog API spec can be found at http://www.xmlrpc.com/metaWeblogApi
+ * MetaWeblog API spec can be found at http://xmlrpc.scripting.com/metaWeblogApi.html
  * 
  * @author David M Johnson
  */

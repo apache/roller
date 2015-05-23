@@ -16,7 +16,7 @@
 * directory of this distribution.
 *
 * Source file modified from the original ASF source; all changes made
-* are under same ASF license.
+* are also under Apache License.
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
 import com.rometools.propono.atom.common.Categories;
@@ -56,14 +56,15 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
  * that accepts everything. The entries collection represents the weblog 
  * entries in a single weblog and the everything collection represents that 
  * weblog's uploaded-files. 
- * 
- * Here are the APP URIs suppored by Weblogger:
+ *
+ * End-point is at [context]/roller-services/app
+ *
+ * Here are the APP URIs supported by Weblogger:
  * 
  * <pre>
  *    /roller-services/app
  *    Introspection doc
- * 
- * 
+ *
  *    /roller-services/app/[weblog-handle>/entries
  *    Entry collection for a weblog (GET, POST)
  * 
@@ -73,7 +74,6 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
  *    /roller-services/app/[weblog-handle]/entry/[id]
  *    Individual entry (GET, PUT, DELETE)
  *
- * 
  *    /roller-services/app/[weblog-handle]/resources
  *    Resource (i.e. file-uploads) collection for a weblog (GET, POST)
  * 
