@@ -16,7 +16,7 @@
  * directory of this distribution.
  *
  * Source file modified from the original ASF source; all changes made
- * are under same ASF license.
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.struts2.admin;

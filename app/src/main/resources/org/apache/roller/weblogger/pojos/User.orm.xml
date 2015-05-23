@@ -68,7 +68,7 @@
                 <column name="username" insertable="true" updatable="true" unique="true"/>
             </basic>
             <basic name="globalRole">
-                <column name="role" insertable="true" updatable="true" unique="false"/>
+                <column name="global_role" insertable="true" updatable="true" unique="false"/>
                 <enumerated>STRING</enumerated>
             </basic>
             <basic name="screenName">

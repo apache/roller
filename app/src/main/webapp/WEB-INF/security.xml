@@ -17,7 +17,7 @@
   directory of this distribution.
 
   Source file modified from the original ASF source; all changes made
-  are under same ASF license.
+  are also under Apache License.
 -->
 <beans:beans xmlns="http://www.springframework.org/schema/security"
        xmlns:beans="http://www.springframework.org/schema/beans"
