@@ -71,7 +71,7 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                 }
 
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                if (umgr.hasEffectiveGlobalRole(authenticatedUser, theAction.requiredGlobalRole())) {
+                if (!umgr.hasEffectiveGlobalRole(authenticatedUser, theAction.requiredGlobalRole())) {
                     if (log.isDebugEnabled()) {
                         log.debug("DENIED: user " + authenticatedUser.getUserName() + " does not have "
                                         + theAction.requiredGlobalRole().name() + " role");

@@ -28,9 +28,11 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -52,14 +54,17 @@ public class CreateWeblog extends UIAction {
     public CreateWeblog() {
         this.pageTitle = "createWebsite.title";
     }
-    
-    
-    // override default security, we do not require an action weblog
-    public boolean isWeblogRequired() {
-        return false;
+
+    @java.lang.Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
     }
-    
-    
+
+    @java.lang.Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
+    }
+
     @SkipValidation
     public String execute() {
 
