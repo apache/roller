@@ -86,9 +86,6 @@ public final class WebloggerConfig {
                     System.out
                             .println("Roller Weblogger: No custom properties file found in classpath");
                 }
-
-                System.out
-                .println("(To run eclipse junit local tests see docs/testing/roller-junit.properties)");
             }
 
             // finally, check for an external config file

@@ -74,7 +74,7 @@ public class DatabaseInstaller {
             
             // just check for a couple key Roller tables
             // roller_user table called rolleruser before Roller 5.1
-            if (tableExists(con, "userrole") && (tableExists(con, "roller_user") || tableExists(con, "rolleruser"))) {
+            if (tableExists(con, "weblog") && (tableExists(con, "roller_user") || tableExists(con, "rolleruser"))) {
                 return false;
             }
             

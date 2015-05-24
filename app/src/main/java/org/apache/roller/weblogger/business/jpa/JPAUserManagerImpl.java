@@ -518,7 +518,7 @@ public class JPAUserManagerImpl implements UserManager {
 
     @Override
     public GlobalRole getGlobalRole(User user) throws WebloggerException {
-        TypedQuery<GlobalRole> q = strategy.getNamedQuery("User.getRequiredGlobalRole", GlobalRole.class);
+        TypedQuery<GlobalRole> q = strategy.getNamedQuery("User.getGlobalRole", GlobalRole.class);
         q.setParameter(1, user.getUserName());
         try {
             return q.getSingleResult();
