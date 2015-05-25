@@ -23,15 +23,15 @@
        xmlns:beans="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+          http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
           http://www.springframework.org/schema/security
-          http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+          http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
     <http pattern="/images/**" security="none"/>
     <http pattern="/scripts/**" security="none"/>
     <http pattern="/styles/**" security="none"/>
 
-    <http auto-config="false" access-decision-manager-ref="accessDecisionManager">
+    <http use-expressions="false" auto-config="false" access-decision-manager-ref="accessDecisionManager">
         <intercept-url pattern="/roller-ui/login-redirect**" access="ADMIN,BLOGGER"/>
         <intercept-url pattern="/roller-ui/profile**" access="ADMIN,BLOGGER"/>
         <intercept-url pattern="/roller-ui/createWeblog**" access="ADMIN,BLOGGER"/>
@@ -39,6 +39,9 @@
         <intercept-url pattern="/roller-ui/authoring/**" access="ADMIN,BLOGGER"/>
         <intercept-url pattern="/roller-ui/admin/**" access="ADMIN"/>
         <intercept-url pattern="/rewrite-status*" access="ADMIN"/>
+
+        <!-- CSRF presently handled manually via Roller's salt filters -->
+        <csrf disabled="true"/>
 
         <form-login login-page="/roller-ui/login.rol"
                     authentication-failure-url="/roller-ui/login.rol?error=true"
@@ -51,12 +54,8 @@
     </http>
 
     <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+        <beans:constructor-arg ref="roleVoter"/>
         <beans:property name="allowIfAllAbstainDecisions" value="false"/>
-        <beans:property name="decisionVoters">
-            <beans:list>
-                <beans:ref bean="roleVoter"/>
-            </beans:list>
-        </beans:property>
     </beans:bean>
 
     <beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter">
@@ -78,7 +77,7 @@
 
     <beans:bean id="rememberMeAuthenticationProvider"
                 class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
-        <beans:property name="key" value="springRocks"/>
+        <beans:constructor-arg value="springRocks"/>
     </beans:bean>
 
     <beans:bean id = "openIDAuthProvider" class="org.springframework.security.openid.OpenIDAuthenticationProvider">

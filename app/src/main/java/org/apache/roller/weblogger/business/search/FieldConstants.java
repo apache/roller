@@ -14,22 +14,18 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-/* Created on Jul 19, 2003 */
 package org.apache.roller.weblogger.business.search;
-
-import org.apache.lucene.util.Version;
 
 /**
  * Field constants for indexing blog entries and comments.
- * 
+ *
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public final class FieldConstants {
-
-    // Set what version we are on
-    public static final Version LUCENE_VERSION = Version.LUCENE_44;
-
     public static final String ANCHOR = "anchor";
     public static final String UPDATED = "updated";
     public static final String ID = "id";

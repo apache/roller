@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-/* Created on Jul 16, 2003 */
 package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
@@ -26,10 +28,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.util.BytesRef;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -43,8 +47,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
  * AddWeblogOperation<br>
  * RemoveWeblogOperation<br>
  * RebuildUserIndexOperation
- * 
- * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public abstract class IndexOperation implements Runnable {
 
@@ -137,6 +139,10 @@ public abstract class IndexOperation implements Runnable {
         if (data.getPubTime() != null) {
             doc.add(new StringField(FieldConstants.PUBLISHED, data.getPubTime()
                     .toString(), Field.Store.YES));
+            // below effectively required Lucene 5.0+, as SearchOperation
+            // sorts on this field
+            doc.add(new SortedDocValuesField(FieldConstants.PUBLISHED,
+                    new BytesRef(data.getPubTime().toString())));
         }
 
         // index Category, needs to be in lower case as it is used in a term
@@ -173,8 +179,7 @@ public abstract class IndexOperation implements Runnable {
             LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(
                     IndexManagerImpl.getAnalyzer(), 1000);
 
-            IndexWriterConfig config = new IndexWriterConfig(
-                    FieldConstants.LUCENE_VERSION, analyzer);
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
             writer = new IndexWriter(manager.getIndexDirectory(), config);
 
