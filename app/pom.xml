@@ -16,9 +16,10 @@
     <packaging>war</packaging>
 
     <properties>
-        <lucene.version>4.10.3</lucene.version>
-        <spring.version>4.1.4.RELEASE</spring.version>
-        <spring.security.version>3.2.5.RELEASE</spring.security.version>
+        <lucene.version>5.1.0</lucene.version>
+        <spring.version>4.1.6.RELEASE</spring.version>
+        <spring.security.version>4.0.1.RELEASE</spring.security.version>
+        <struts2.version>2.3.24</struts2.version>
     </properties>
 
     <dependencies>
@@ -34,7 +35,7 @@
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
-            <version>2.5.2</version>
+            <version>2.6.0</version>
         </dependency>
 
         <!-- Alternative testing with Hibernate (used by default with JBoss)
@@ -67,11 +68,6 @@
             <scope>runtime</scope>
         </dependency-->
 
-        <!-- To test with OpenJPA instead of EclipseLink, will need to add OpenJPA
-             dependencies and static bytecode enhancement of the generated JPA classes
-             to this pom.xml.  Check the Roller source code repository for a copy of
-             this pom.xml prior to July 2013 for the necessary OpenJPA configuration -->
-
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -81,7 +77,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>3.0</version>
+            <version>4.0</version>
         </dependency>
 
         <dependency>
@@ -183,7 +179,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.10</version>
+            <version>1.7.12</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -252,13 +248,13 @@
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-spring-plugin</artifactId>
-            <version>2.3.16.3</version>
+            <version>${struts2.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-tiles-plugin</artifactId>
-            <version>2.3.16.3</version>
+            <version>${struts2.version}</version>
         </dependency>
 
         <dependency>
@@ -298,7 +294,7 @@
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <type>jar</type>
         </dependency>
         <dependency>

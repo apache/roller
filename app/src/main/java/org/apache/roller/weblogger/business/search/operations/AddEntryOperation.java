@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-/* Created on Jul 16, 2003 */
 package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
@@ -31,7 +33,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 /**
  * An operation that adds a new log entry into the index.
- * @author Mindaugas Idzelis  (min@idzelis.com)
  */
 public class AddEntryOperation extends WriteToIndexOperation {
     
@@ -50,7 +51,7 @@ public class AddEntryOperation extends WriteToIndexOperation {
     /**
      * Adds a web log entry into the index.
      */
-    public AddEntryOperation(Weblogger roller, IndexManagerImpl mgr,WeblogEntry data) {
+    public AddEntryOperation(Weblogger roller, IndexManagerImpl mgr, WeblogEntry data) {
         super(mgr);
         this.roller = roller;
         this.data = data;
@@ -62,7 +63,7 @@ public class AddEntryOperation extends WriteToIndexOperation {
         IndexWriter writer = beginWriting();
         
         // since this operation can be run on a separate thread we must treat
-        // the weblog object passed in as a detached object which is proned to
+        // the weblog object passed in as a detached object which is prone to
         // lazy initialization problems, so requery for the object now
         try {
             WeblogEntryManager wMgr = roller.getWeblogEntryManager();

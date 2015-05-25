@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-/* Created on Jul 18, 2003 */
 package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
@@ -41,8 +43,6 @@ import org.apache.roller.weblogger.business.search.IndexUtil;
 
 /**
  * An operation that searches the index.
- * 
- * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class SearchOperation extends ReadFromIndexOperation {
 
@@ -105,7 +105,7 @@ public class SearchOperation extends ReadFromIndexOperation {
             searcher = new IndexSearcher(reader);
 
             MultiFieldQueryParser multiParser = new MultiFieldQueryParser(
-                    FieldConstants.LUCENE_VERSION, SEARCH_FIELDS,
+                    SEARCH_FIELDS,
                     IndexManagerImpl.getAnalyzer());
 
             // Make it an AND by default. Comment this out for an or (default)

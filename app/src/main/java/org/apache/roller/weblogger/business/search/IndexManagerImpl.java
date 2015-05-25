@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.search;
@@ -53,9 +56,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 /**
  * Lucene implementation of IndexManager. This is the central entry point into
  * the Lucene searching API.
- * 
- * @author Mindaugas Idzelis (min@idzelis.com)
- * @author mraible (formatting and making indexDir configurable)
  */
 @com.google.inject.Singleton
 public class IndexManagerImpl implements IndexManager {
@@ -64,6 +64,8 @@ public class IndexManagerImpl implements IndexManager {
 
     private IndexReader reader;
     private final Weblogger roller;
+
+    private final int MAX_TOKEN_COUNT = 100;
 
     static Log mLogger = LogFactory.getFactory().getInstance(
             IndexManagerImpl.class);
@@ -152,7 +154,7 @@ public class IndexManagerImpl implements IndexManager {
 
             if (indexExists()) {
                 if (useRAMIndex) {
-                    Directory filesystem = getFSDirectory(false);
+                    FSDirectory filesystem = getFSDirectory(false);
                     try {
                         fRAMindex = new RAMDirectory(filesystem, IOContext.DEFAULT);
                     } catch (IOException e) {
@@ -236,7 +238,7 @@ public class IndexManagerImpl implements IndexManager {
      * @return Analyzer to be used in manipulating the database.
      */
     public static final Analyzer getAnalyzer() {
-        return new StandardAnalyzer(FieldConstants.LUCENE_VERSION);
+        return new StandardAnalyzer();
     }
 
     private void scheduleIndexOperation(final IndexOperation op) {
@@ -306,13 +308,13 @@ public class IndexManagerImpl implements IndexManager {
         return false;
     }
 
-    private Directory getFSDirectory(boolean delete) {
+    private FSDirectory getFSDirectory(boolean delete) {
 
-        Directory directory = null;
+        FSDirectory directory = null;
 
         try {
 
-            directory = FSDirectory.open(new File(indexDir));
+            directory = FSDirectory.open(new File(indexDir).toPath());
 
             if (delete && directory != null) {
                 // clear old files
@@ -339,9 +341,8 @@ public class IndexManagerImpl implements IndexManager {
         try {
 
             IndexWriterConfig config = new IndexWriterConfig(
-                    FieldConstants.LUCENE_VERSION, new LimitTokenCountAnalyzer(
-                            IndexManagerImpl.getAnalyzer(),
-                            IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL));
+                    new LimitTokenCountAnalyzer(
+                            IndexManagerImpl.getAnalyzer(), MAX_TOKEN_COUNT));
 
             writer = new IndexWriter(dir, config);
 
@@ -364,9 +365,8 @@ public class IndexManagerImpl implements IndexManager {
                 Directory fsdir = getFSDirectory(true);
                 IndexWriter writer = null;
                 try {
-                    IndexWriterConfig config = new IndexWriterConfig(FieldConstants.LUCENE_VERSION,
-                            new LimitTokenCountAnalyzer(IndexManagerImpl.getAnalyzer(),
-                                    IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL));
+                    IndexWriterConfig config = new IndexWriterConfig(
+                            new LimitTokenCountAnalyzer(IndexManagerImpl.getAnalyzer(), MAX_TOKEN_COUNT));
                     writer = new IndexWriter(fsdir, config);
                     writer.addIndexes(new Directory[] { dir });
                     writer.commit();

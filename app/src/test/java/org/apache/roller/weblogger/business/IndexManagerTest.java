@@ -1,20 +1,23 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+ */
 package org.apache.roller.weblogger.business;
 
 import java.sql.Timestamp;
@@ -65,8 +68,8 @@ public class IndexManagerTest extends TestCase {
             testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
             TestUtils.endSession(true);
 
-            //WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            //assertEquals(1, wmgr.getWeblogCount());
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            assertEquals(1, wmgr.getWeblogCount());
  
         } catch (Exception ex) {
             log.error("ERROR in test setup", ex);
@@ -133,8 +136,8 @@ public class IndexManagerTest extends TestCase {
         TestUtils.endSession(true);
         wd2 = TestUtils.getManagedWeblogEntry(wd2);
 
-         imgr.executeIndexOperationNow(
-             new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd2));
+        imgr.executeIndexOperationNow(
+            new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd2));
 
         Thread.sleep(RollerConstants.SEC_IN_MS);
 
