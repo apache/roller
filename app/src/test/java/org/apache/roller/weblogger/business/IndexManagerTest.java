@@ -114,7 +114,7 @@ public class IndexManagerTest extends TestCase {
 
         IndexManager imgr = WebloggerFactory.getWeblogger().getIndexManager();
         imgr.executeIndexOperationNow(
-            new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd1));
+            new AddEntryOperation(WebloggerFactory.getWeblogger().getWeblogEntryManager(), (IndexManagerImpl)imgr, wd1));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setTitle("A Piece of the Action");
@@ -137,7 +137,7 @@ public class IndexManagerTest extends TestCase {
         wd2 = TestUtils.getManagedWeblogEntry(wd2);
 
         imgr.executeIndexOperationNow(
-            new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd2));
+            new AddEntryOperation(WebloggerFactory.getWeblogger().getWeblogEntryManager(), (IndexManagerImpl)imgr, wd2));
 
         Thread.sleep(RollerConstants.SEC_IN_MS);
 

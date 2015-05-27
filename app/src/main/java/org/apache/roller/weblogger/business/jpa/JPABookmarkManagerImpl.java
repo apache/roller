@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
@@ -29,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -43,7 +42,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 @com.google.inject.Singleton
 public class JPABookmarkManagerImpl implements BookmarkManager {
     
-    private final Weblogger roller;
+    private final WeblogManager weblogManager;
     private final JPAPersistenceStrategy strategy;
     
     
@@ -57,9 +56,9 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
      * Creates a new instance of JPABookmarkManagerImpl
      */
    @com.google.inject.Inject
-   protected JPABookmarkManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
+   protected JPABookmarkManagerImpl(WeblogManager wm, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Bookmark Manager");
-        this.roller = roller;
+        this.weblogManager = wm;
         this.strategy = strategy;
     }
 
@@ -78,7 +77,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(bookmark);
 
         // update weblog last modified date (date is updated by saveWebsite())
-        roller.getWeblogManager().saveWeblog(bookmark.getWebsite());
+        weblogManager.saveWeblog(bookmark.getWebsite());
     }
 
     public WeblogBookmark getBookmark(String id) throws WebloggerException {
@@ -95,7 +94,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.remove(bookmark);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(weblog);
+        weblogManager.saveWeblog(weblog);
     }
 
     public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {
@@ -108,7 +107,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(folder);
 
         // update weblog last modified date.  date updated by saveWeblog()
-        roller.getWeblogManager().saveWeblog(folder.getWeblog());
+        weblogManager.saveWeblog(folder.getWeblog());
     }
 
     public void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException {
@@ -117,7 +116,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.remove(folder);
 
         // update weblog last modified date.  date updated by saveWeblog()
-        roller.getWeblogManager().saveWeblog(weblog);
+        weblogManager.saveWeblog(weblog);
     }
 
     /**

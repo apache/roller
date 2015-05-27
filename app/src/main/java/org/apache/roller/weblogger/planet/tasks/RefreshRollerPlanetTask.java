@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.planet.tasks;
@@ -22,11 +25,11 @@ import java.util.Date;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.SpringWebloggerProvider;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.planet.business.updater.FeedUpdater;
 import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.GuiceWebloggerProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerProvider;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
@@ -146,8 +149,8 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
         WebloggerStartup.prepare();
         
         // we need to use our own planet provider for integration
-        String guiceModule = WebloggerConfig.getProperty("planet.aggregator.guice.module");
-        WebloggerProvider provider = new GuiceWebloggerProvider(guiceModule);
+        String springFile = WebloggerConfig.getProperty("planet.aggregator.spring.context.file");
+        WebloggerProvider provider = new SpringWebloggerProvider(springFile);
         WebloggerFactory.bootstrap(provider);
                         
         RefreshRollerPlanetTask task = new RefreshRollerPlanetTask();

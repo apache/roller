@@ -55,7 +55,7 @@ import org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher;
 
 
 /**
- * Guice module for configuring JPA as Weblogger-backend.
+ *   gger-backend.
  */
 public class JPAWebloggerModule implements Module {
 

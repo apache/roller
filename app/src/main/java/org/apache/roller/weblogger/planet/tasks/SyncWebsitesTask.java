@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.planet.tasks;
@@ -32,7 +35,7 @@ import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.GuiceWebloggerProvider;
+import org.apache.roller.weblogger.business.SpringWebloggerProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerProvider;
 import org.apache.roller.weblogger.business.runnable.RollerTask;
@@ -236,18 +239,17 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
      * Task may be run from the command line 
      */
     public static void main(String[] args) throws Exception {
-        
+
         // before we can do anything we need to bootstrap the planet backend
         WebloggerStartup.prepare();
-        
+
         // we need to use our own planet provider for integration
-        String guiceModule = WebloggerConfig.getProperty("planet.aggregator.guice.module");
-        WebloggerProvider provider = new GuiceWebloggerProvider(guiceModule);
+        String springFile = WebloggerConfig.getProperty("planet.aggregator.spring.context.file");
+        WebloggerProvider provider = new SpringWebloggerProvider(springFile);
         WebloggerFactory.bootstrap(provider);
-        
+
         SyncWebsitesTask task = new SyncWebsitesTask();
         task.init();
         task.run();
     }
-    
 }

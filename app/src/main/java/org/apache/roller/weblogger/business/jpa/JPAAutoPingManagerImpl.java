@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business.jpa;
 
@@ -31,7 +34,6 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import org.apache.roller.weblogger.business.Weblogger;
 
 /*
  * JPAAutoPingManagerImpl.java
@@ -42,7 +44,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 @com.google.inject.Singleton
 public class JPAAutoPingManagerImpl implements AutoPingManager {
 
-    private final Weblogger roller;
+    private final PingQueueManager pingQueueManager;
     private final JPAPersistenceStrategy strategy;
     /**
      * The logger instance for this class.
@@ -53,8 +55,8 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
      * Creates a new instance of JPAAutoPingManagerImpl
      */
     @com.google.inject.Inject
-    protected JPAAutoPingManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
-        this.roller = roller;
+    protected JPAAutoPingManagerImpl(PingQueueManager pqm, JPAPersistenceStrategy strategy) {
+        this.pingQueueManager = pqm;
         this.strategy = strategy;
     }
 
@@ -94,10 +96,9 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
             return;
         }
 
-        PingQueueManager pingQueueMgr = roller.getPingQueueManager();
         List<AutoPing> applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
         for (AutoPing autoPing : applicableAutopings) {
-            pingQueueMgr.addQueueEntry(autoPing);
+            pingQueueManager.addQueueEntry(autoPing);
         }
     }
 

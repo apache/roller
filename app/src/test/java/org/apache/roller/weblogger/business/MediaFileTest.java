@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business;
 
@@ -1052,7 +1055,7 @@ public class MediaFileTest extends TestCase {
             TestUtils.endSession(true);
         }
     }
-
+/*
     public void testStorageUpgrade() throws Exception {
         User testUser = null;
         Weblog testWeblog1 = null;
@@ -1127,7 +1130,7 @@ public class MediaFileTest extends TestCase {
             TestUtils.endSession(true);
         }
     }
-
+*/
     /**
      * Test deletion of media file folder association with named queries
      * 

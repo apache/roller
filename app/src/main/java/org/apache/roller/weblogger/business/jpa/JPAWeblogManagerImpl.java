@@ -30,8 +30,6 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -81,16 +79,25 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private static final Comparator<StatCount> STAT_COUNT_COUNT_REVERSE_COMPARATOR =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
-    private final Weblogger roller;
+    private final UserManager userManager;
+    private final WeblogEntryManager weblogEntryManager;
+    private final MediaFileManager mediaFileManager;
+    private final AutoPingManager autoPingManager;
+    private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of weblogHandles -> weblogIds
     private Map<String,String> weblogHandleToIdMap = new Hashtable<String,String>();
 
     @com.google.inject.Inject
-    protected JPAWeblogManagerImpl(Weblogger roller, JPAPersistenceStrategy strat) {
+    protected JPAWeblogManagerImpl(UserManager um, WeblogEntryManager wem, MediaFileManager mfm,
+                                   AutoPingManager apm, PingTargetManager ptm, JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA Weblog Manager");
-        this.roller = roller;
+        this.userManager = um;
+        this.weblogEntryManager = wem;
+        this.mediaFileManager = mfm;
+        this.autoPingManager = apm;
+        this.pingTargetManager = ptm;
         this.strategy = strat;
     }
     
@@ -124,9 +131,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private void removeWeblogContents(Weblog weblog)
     throws  WebloggerException {
         
-        UserManager        umgr = roller.getUserManager();
-        WeblogEntryManager emgr = roller.getWeblogEntryManager();
-
         // remove tags
         TypedQuery<WeblogEntryTag> tagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblog",
                 WeblogEntryTag.class);
@@ -141,7 +145,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // remove site tag aggregates
-        List<TagStat> tags = emgr.getTags(weblog, null, null, 0, -1);
+        List<TagStat> tags = weblogEntryManager.getTags(weblog, null, null, 0, -1);
         updateTagAggregates(tags);
         
         // delete all weblog tag aggregates
@@ -165,8 +169,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // Remove the weblog's auto ping configurations
-        AutoPingManager autoPingMgr = roller.getAutopingManager();
-        List<AutoPing> autopings = autoPingMgr.getAutoPingsByWebsite(weblog);
+        List<AutoPing> autopings = autoPingManager.getAutoPingsByWebsite(weblog);
         for (AutoPing autoPing : autopings) {
             this.strategy.remove(autoPing);
         }
@@ -192,8 +195,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // remove mediafile metadata
         // remove uploaded files
-        MediaFileManager mfmgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-        mfmgr.removeAllFiles(weblog);
+        mediaFileManager.removeAllFiles(weblog);
         //List<MediaFileDirectory> dirs = mmgr.getMediaFileDirectories(weblog);
         //for (MediaFileDirectory dir : dirs) {
             //this.strategy.remove(dir);
@@ -205,7 +207,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         refQuery.setParameter(1, weblog);
         List<WeblogEntry> entries = refQuery.getResultList();
         for (WeblogEntry entry : entries) {
-            emgr.removeWeblogEntry(entry);
+            weblogEntryManager.removeWeblogEntry(entry);
         }
         this.strategy.flush();
         
@@ -215,8 +217,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         removeCategories.executeUpdate();
 
         // remove permissions
-        for (WeblogPermission perm : umgr.getWeblogPermissions(weblog)) {
-            umgr.revokeWeblogRole(perm.getWeblog(), perm.getUser());
+        for (WeblogPermission perm : userManager.getWeblogPermissions(weblog)) {
+            userManager.revokeWeblogRole(perm.getWeblog(), perm.getUser());
         }
         
         // flush the changes before returning. This is required as there is a
@@ -245,20 +247,20 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.store(template);
         
         // update weblog last modified date.  date updated by saveWeblog()
-        roller.getWeblogManager().saveWeblog(template.getWeblog());
+        saveWeblog(template.getWeblog());
     }
 
     public void saveTemplateRendition(CustomTemplateRendition rendition) throws WebloggerException {
         this.strategy.store(rendition);
 
         // update weblog last modified date.  date updated by saveWeblog()
-        roller.getWeblogManager().saveWeblog(rendition.getWeblogTemplate().getWeblog());
+        saveWeblog(rendition.getWeblogTemplate().getWeblog());
     }
     
     public void removeTemplate(WeblogTemplate template) throws WebloggerException {
         this.strategy.remove(template);
         // update weblog last modified date.  date updated by saveWeblog()
-        roller.getWeblogManager().saveWeblog(template.getWeblog());
+        saveWeblog(template.getWeblog());
     }
     
     public void addWeblog(Weblog newWeblog) throws WebloggerException {
@@ -271,7 +273,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     throws WebloggerException {
         
         // grant weblog creator OWNER permission
-        roller.getUserManager().grantWeblogRole(
+        userManager.grantWeblogRole(
                 newWeblog, newWeblog.getCreator(), WeblogRole.OWNER);
         
         String cats = WebloggerConfig.getProperty("newuser.categories");
@@ -324,20 +326,16 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
         }
 
-        roller.getMediaFileManager().createDefaultMediaFileDirectory(newWeblog);
+        mediaFileManager.createDefaultMediaFileDirectory(newWeblog);
 
         // flush so that all data up to this point can be available in db
         this.strategy.flush();
 
-        // add any auto enabled ping targets
-        PingTargetManager pingTargetMgr = roller.getPingTargetManager();
-        AutoPingManager autoPingMgr = roller.getAutopingManager();
-        
-        for (PingTarget pingTarget : pingTargetMgr.getCommonPingTargets()) {
+        for (PingTarget pingTarget : pingTargetManager.getCommonPingTargets()) {
             if(pingTarget.isAutoEnabled()) {
                 AutoPing autoPing = new AutoPing(
                         null, pingTarget, newWeblog);
-                autoPingMgr.saveAutoPing(autoPing);
+                autoPingManager.saveAutoPing(autoPing);
             }
         }
 
@@ -469,7 +467,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (user == null) {
             return weblogs;
         }
-        List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(user);
+        List<WeblogPermission> perms = userManager.getWeblogPermissions(user);
         for (WeblogPermission perm : perms) {
             Weblog weblog = perm.getWeblog();
             if ((!enabledOnly || weblog.getVisible()) && BooleanUtils.isTrue(weblog.getActive())) {
@@ -481,7 +479,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     public List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
         List<User> users = new ArrayList<User>();
-        List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(weblog);
+        List<WeblogPermission> perms = userManager.getWeblogPermissions(weblog);
         for (WeblogPermission perm : perms) {
             User user = perm.getUser();
             if (user == null) {

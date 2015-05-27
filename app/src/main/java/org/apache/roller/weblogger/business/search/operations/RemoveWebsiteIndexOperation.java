@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-/* Created on Jul 16, 2003 */
 package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
@@ -27,7 +29,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.IndexUtil;
@@ -50,7 +52,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
     // ========================================================
 
     private Weblog website;
-    private Weblogger roller;
+    private WeblogManager weblogManager;
 
     // ~ Constructors
     // ===========================================================
@@ -61,10 +63,10 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
      * @param website
      *            The website to rebuild the index for, or null for all sites.
      */
-    public RemoveWebsiteIndexOperation(Weblogger roller, IndexManagerImpl mgr,
+    public RemoveWebsiteIndexOperation(WeblogManager wm, IndexManagerImpl mgr,
             Weblog website) {
         super(mgr);
-        this.roller = roller;
+        this.weblogManager = wm;
         this.website = website;
     }
 
@@ -78,7 +80,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
         try {
-            this.website = roller.getWeblogManager().getWeblog(
+            this.website = weblogManager.getWeblog(
                     this.website.getId());
         } catch (WebloggerException ex) {
             mLogger.error("Error getting website object", ex);
