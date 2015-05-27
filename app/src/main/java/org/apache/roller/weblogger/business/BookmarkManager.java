@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
@@ -135,18 +138,7 @@ public interface BookmarkManager {
     List<WeblogBookmark> getBookmarks(WeblogBookmarkFolder folder)
             throws WebloggerException;
     
-    
-    /** 
-     * Import bookmarks and folders from OPML string into the specified folder.
-     *
-     * @param weblog The weblog to import the OPML into.
-     * @param folder The NEW folder name to import the OPML into.
-     * @param opml OPML data to be imported.
-     */
-    void importBookmarks(Weblog weblog, String folder, String opml)
-            throws WebloggerException;
-    
-    
+
     /**
      * Release all resources associated with Roller session.
      */

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business;
 
@@ -105,7 +108,7 @@ public class FileContentManagerTest extends TestCase {
         }
 
         // store a file
-        InputStream is = getClass().getResourceAsStream("/bookmarks.opml");
+        InputStream is = getClass().getResourceAsStream("/jetty.xml");
         fmgr.saveFileContent(testWeblog, "bookmarks-file-id", is);
 
         // make sure file was stored successfully
