@@ -14,19 +14,19 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
 
 package org.apache.roller.weblogger.business;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -293,33 +293,5 @@ public class BookmarkTest extends TestCase {
             TestUtils.endSession(true);
         }
     }
-    
-    
-    public void _testBookmarkImport() throws Exception {
-        
-        InputStream fis = this.getClass().getResourceAsStream("/bookmarks.opml");
-        getRoller().getBookmarkManager().importBookmarks(
-                TestUtils.getManagedWebsite(testWeblog), "ZZZ_imports_ZZZ", fileToString(fis));
-        TestUtils.endSession(true);
-        
-        WeblogBookmarkFolder fd = null;
-        
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        fd = getRoller().getBookmarkManager().getFolder(testWeblog, "ZZZ_imports_ZZZ");
-        assertTrue(fd.retrieveBookmarks().size() > 0 );
-        getRoller().getBookmarkManager().removeFolder(fd);
-        TestUtils.endSession(true);
-    }
-    
-    
-    private String fileToString( InputStream is ) throws java.io.IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String s = null;
-        StringBuilder sb = new StringBuilder();
-        while ( (s=br.readLine()) != null ) {
-            sb.append( s );
-        }
-        return sb.toString();
-    }
-    
+
 }

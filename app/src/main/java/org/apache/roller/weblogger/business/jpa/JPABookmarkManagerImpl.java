@@ -15,26 +15,24 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import java.io.StringReader;
 import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.input.SAXBuilder;
 
 /*
  * JPABookmarkManagerImpl.java
@@ -127,93 +125,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
      */
     public WeblogBookmarkFolder getFolder(String id) throws WebloggerException {
         return (WeblogBookmarkFolder) strategy.load(WeblogBookmarkFolder.class, id);
-    }
-
-    
-    public void importBookmarks(
-            Weblog website, String folderName, String opml)
-            throws WebloggerException {
-
-        try {
-            // Build JDOC document OPML string
-            SAXBuilder builder = new SAXBuilder();
-            StringReader reader = new StringReader( opml );
-            Document doc = builder.build( reader );
-
-            WeblogBookmarkFolder newFolder = getFolder(website, folderName);
-            if (newFolder == null) {
-                newFolder = new WeblogBookmarkFolder(
-                        folderName, website);
-                this.strategy.store(newFolder);
-            }
-
-            // Iterate through children of OPML body, importing each
-            Element body = doc.getRootElement().getChild("body");
-            for (Object elem : body.getChildren()) {
-                importOpmlElement((Element) elem, newFolder );
-            }
-        } catch (Exception ex) {
-            throw new WebloggerException(ex);
-        }
-    }
-
-    // convenience method used when importing bookmarks
-    // NOTE: this method does not commit any changes; 
-    // that is done higher up in execution chain
-    private void importOpmlElement(
-            Element elem, WeblogBookmarkFolder folder)
-            throws WebloggerException {
-        String text = elem.getAttributeValue("text");
-        String title = elem.getAttributeValue("title");
-        String desc = elem.getAttributeValue("description");
-        String url = elem.getAttributeValue("url");
-        String xmlUrl = elem.getAttributeValue("xmlUrl");
-        String htmlUrl = elem.getAttributeValue("htmlUrl");
-
-        title =   null!=title ? title : text;
-        desc =    null!=desc ? desc : title;
-        xmlUrl =  null!=xmlUrl ? xmlUrl : url;
-        url =     null!=htmlUrl ? htmlUrl : url;
-        
-        // better to truncate imported OPML fields than to fail import or drop whole bookmark
-        int maxLength = RollerConstants.TEXTWIDTH_255;
-
-        if (title != null && title.length() > maxLength) {
-            title = title.substring(0,  maxLength);
-        }
-        if (desc != null && desc.length() > maxLength) {
-            desc = desc.substring(0, maxLength);
-        }
-        if (url != null && url.length() > maxLength) {
-            url = url.substring(0, maxLength);
-        }
-        if (xmlUrl != null && xmlUrl.length() > maxLength) {
-            xmlUrl = xmlUrl.substring(0, maxLength);
-        }
-
-        if (elem.getChildren().size()==0) {
-            // Leaf element.  Store a bookmark
-            // Currently bookmarks must have at least a name and 
-            // HTML url to be stored. Previous logic was
-            // trying to skip invalid ones, but was letting ones 
-            // with an xml url and no html url through
-            // which could result in a db exception.
-            if (null != title && null != url) {
-                WeblogBookmark bd = new WeblogBookmark(folder,
-                        title,
-                        desc,
-                        url,
-                        xmlUrl,
-                        null);
-                folder.addBookmark(bd);
-                this.strategy.store(bd);
-            }
-        } else {
-            // Import suboutline's children into folder
-            for (Object subelem : elem.getChildren("outline")) {
-                importOpmlElement((Element) subelem, folder );
-            }
-        }
     }
 
     /**
