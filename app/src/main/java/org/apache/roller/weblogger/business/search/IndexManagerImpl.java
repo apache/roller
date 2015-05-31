@@ -41,7 +41,9 @@ import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
-import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
 import org.apache.roller.weblogger.business.search.operations.ReIndexEntryOperation;
@@ -63,7 +65,9 @@ public class IndexManagerImpl implements IndexManager {
     // =============================================
 
     private IndexReader reader;
-    private final Weblogger roller;
+    private final WeblogManager weblogManager;
+    private final WeblogEntryManager weblogEntryManager;
+    private final ThreadManager threadManager;
 
     private final int MAX_TOKEN_COUNT = 100;
 
@@ -99,8 +103,10 @@ public class IndexManagerImpl implements IndexManager {
      * @param roller - the weblogger instance
      */
     @com.google.inject.Inject
-    protected IndexManagerImpl(Weblogger roller) {
-        this.roller = roller;
+    protected IndexManagerImpl(WeblogManager wm, WeblogEntryManager wem, ThreadManager tm) {
+        this.weblogManager = wm;
+        this.weblogEntryManager = wem;
+        this.threadManager = tm;
 
         // check config to see if the internal search is enabled
         String enabled = WebloggerConfig.getProperty("search.enabled");
@@ -190,36 +196,36 @@ public class IndexManagerImpl implements IndexManager {
     // ================================================================
 
     public void rebuildWebsiteIndex() throws WebloggerException {
-        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this,
-                null));
+        scheduleIndexOperation(new RebuildWebsiteIndexOperation(weblogManager, weblogEntryManager,
+                this, null));
     }
 
     public void rebuildWebsiteIndex(Weblog website) throws WebloggerException {
-        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this,
-                website));
+        scheduleIndexOperation(new RebuildWebsiteIndexOperation(weblogManager, weblogEntryManager,
+                this, website));
     }
 
     public void removeWebsiteIndex(Weblog website) throws WebloggerException {
-        scheduleIndexOperation(new RemoveWebsiteIndexOperation(roller, this,
-                website));
+        scheduleIndexOperation(new RemoveWebsiteIndexOperation(weblogManager,
+                this, website));
     }
 
     public void addEntryIndexOperation(WeblogEntry entry)
             throws WebloggerException {
-        AddEntryOperation addEntry = new AddEntryOperation(roller, this, entry);
+        AddEntryOperation addEntry = new AddEntryOperation(weblogEntryManager, this, entry);
         scheduleIndexOperation(addEntry);
     }
 
     public void addEntryReIndexOperation(WeblogEntry entry)
             throws WebloggerException {
-        ReIndexEntryOperation reindex = new ReIndexEntryOperation(roller, this,
+        ReIndexEntryOperation reindex = new ReIndexEntryOperation(weblogEntryManager, this,
                 entry);
         scheduleIndexOperation(reindex);
     }
 
     public void removeEntryIndexOperation(WeblogEntry entry)
             throws WebloggerException {
-        RemoveEntryOperation removeOp = new RemoveEntryOperation(roller, this,
+        RemoveEntryOperation removeOp = new RemoveEntryOperation(weblogEntryManager, this,
                 entry);
         executeIndexOperationNow(removeOp);
     }
@@ -247,7 +253,7 @@ public class IndexManagerImpl implements IndexManager {
             if (this.searchEnabled) {
                 mLogger.debug("Starting scheduled index operation: "
                         + op.getClass().getName());
-                roller.getThreadManager().executeInBackground(op);
+                threadManager.executeInBackground(op);
             }
         } catch (InterruptedException e) {
             mLogger.error("Error executing operation", e);
@@ -263,7 +269,7 @@ public class IndexManagerImpl implements IndexManager {
             if (this.searchEnabled) {
                 mLogger.debug("Executing index operation now: "
                         + op.getClass().getName());
-                roller.getThreadManager().executeInForeground(op);
+                threadManager.executeInForeground(op);
             }
         } catch (InterruptedException e) {
             mLogger.error("Error executing operation", e);

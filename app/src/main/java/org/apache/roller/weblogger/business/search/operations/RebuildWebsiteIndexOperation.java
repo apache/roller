@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-/* Created on Jul 16, 2003 */
 package org.apache.roller.weblogger.business.search.operations;
 
 import java.text.MessageFormat;
@@ -29,7 +31,7 @@ import org.apache.lucene.index.Term;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.IndexUtil;
@@ -55,7 +57,8 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
     // ========================================================
 
     private Weblog website;
-    private Weblogger roller;
+    private WeblogManager weblogManager;
+    private WeblogEntryManager weblogEntryManager;
 
     // ~ Constructors
     // ===========================================================
@@ -66,10 +69,11 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
      * @param website
      *            The website to rebuild the index for, or null for all users.
      */
-    public RebuildWebsiteIndexOperation(Weblogger roller, IndexManagerImpl mgr,
+    public RebuildWebsiteIndexOperation(WeblogManager wm, WeblogEntryManager wem, IndexManagerImpl mgr,
             Weblog website) {
         super(mgr);
-        this.roller = roller;
+        this.weblogManager = wm;
+        this.weblogEntryManager = wem;
         this.website = website;
     }
 
@@ -86,7 +90,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         if (this.website != null) {
             mLogger.debug("Reindexining weblog " + website.getHandle());
             try {
-                this.website = roller.getWeblogManager().getWeblog(
+                this.website = weblogManager.getWeblog(
                         this.website.getId());
             } catch (WebloggerException ex) {
                 mLogger.error("Error getting website object", ex);
@@ -116,12 +120,10 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                 }
 
                 // Add Doc
-                WeblogEntryManager weblogManager = roller
-                        .getWeblogEntryManager();
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 wesc.setWeblog(website);
                 wesc.setStatus(PubStatus.PUBLISHED);
-                List<WeblogEntry> entries = weblogManager.getWeblogEntries(wesc);
+                List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
 
                 mLogger.debug("Entries to index: " + entries.size());
 
@@ -131,17 +133,11 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                             "Indexed entry {0}: {1}",
                             entry.getPubTime(), entry.getAnchor()));
                 }
-
-                // release the database connection
-                roller.release();
             }
         } catch (Exception e) {
             mLogger.error("ERROR adding/deleting doc to index", e);
         } finally {
             endWriting();
-            if (roller != null) {
-                roller.release();
-            }
         }
 
         Date end = new Date();

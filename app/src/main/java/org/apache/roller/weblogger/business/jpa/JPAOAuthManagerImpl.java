@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.jpa;
@@ -36,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.OAuthManager;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.OAuthAccessorRecord;
 import org.apache.roller.weblogger.pojos.OAuthConsumerRecord;
@@ -45,7 +49,7 @@ import org.apache.roller.weblogger.pojos.OAuthConsumerRecord;
  * JPA based OAuth manager implementation.
  */
 public class JPAOAuthManagerImpl implements OAuthManager {
-    private final Weblogger roller;
+    private final URLStrategy urlStrategy;
     private final JPAPersistenceStrategy strategy;
     private final OAuthValidator validator;
 
@@ -58,19 +62,19 @@ public class JPAOAuthManagerImpl implements OAuthManager {
 
     @com.google.inject.Inject
     public JPAOAuthManagerImpl(
-            Weblogger roller,
+            URLStrategy urlStrategy,
             JPAPersistenceStrategy strategy,
             OAuthValidator validator) {
-        this.roller = roller;
+        this.urlStrategy = urlStrategy;
         this.strategy = strategy;
         this.validator = validator;
     }
     
     public OAuthServiceProvider getServiceProvider() {
         return new OAuthServiceProvider(
-            roller.getUrlStrategy().getOAuthRequestTokenURL(),
-            roller.getUrlStrategy().getOAuthAuthorizationURL(),
-            roller.getUrlStrategy().getOAuthAccessTokenURL());
+            urlStrategy.getOAuthRequestTokenURL(),
+            urlStrategy.getOAuthAuthorizationURL(),
+            urlStrategy.getOAuthAccessTokenURL());
     }
 
     public OAuthValidator getValidator() {

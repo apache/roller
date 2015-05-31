@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2015 Glen Mazza
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <beans:bean id="webloggerBean" class="org.apache.roller.weblogger.business.jpa.JPAWebloggerImpl">
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:constructor-arg ref="autoPingManager"/>
+        <beans:constructor-arg ref="bookmarkManager"/>
+        <beans:constructor-arg ref="indexManager"/>
+        <beans:constructor-arg ref="mediaFileManager"/>
+        <beans:constructor-arg ref="fileContentManager"/>
+        <beans:constructor-arg ref="pingQueueManager"/>
+        <beans:constructor-arg ref="pingTargetManager"/>
+        <beans:constructor-arg ref="pluginManager"/>
+        <beans:constructor-arg ref="propertiesManager"/>
+        <beans:constructor-arg ref="themeManager"/>
+        <beans:constructor-arg ref="threadManager"/>
+        <beans:constructor-arg ref="userManager"/>
+        <beans:constructor-arg ref="weblogManager"/>
+        <beans:constructor-arg ref="weblogEntryManager"/>
+        <beans:constructor-arg ref="oauthManager"/>
+        <beans:constructor-arg ref="feedFetcher"/>
+        <beans:constructor-arg ref="planetManager"/>
+        <beans:constructor-arg ref="planetUrlStrategy"/>
+        <beans:constructor-arg ref="urlStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="jpaPersistenceStrategy" class="org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy">
+        <beans:constructor-arg>
+            <beans:bean class="org.apache.roller.weblogger.business.DatabaseProvider"/>
+        </beans:constructor-arg>
+    </beans:bean>
+
+    <beans:bean id="autoPingManager" class="org.apache.roller.weblogger.business.jpa.JPAAutoPingManagerImpl">
+        <beans:constructor-arg ref="pingQueueManager"/>
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="bookmarkManager" class="org.apache.roller.weblogger.business.jpa.JPABookmarkManagerImpl">
+        <beans:constructor-arg ref="weblogManager"/>
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="indexManager" class="org.apache.roller.weblogger.business.search.IndexManagerImpl">
+        <beans:constructor-arg ref="weblogManager"/>
+        <beans:constructor-arg ref="weblogEntryManager"/>
+        <beans:constructor-arg ref="threadManager"/>
+    </beans:bean>
+
+    <beans:bean id="mediaFileManager" class="org.apache.roller.weblogger.business.jpa.JPAMediaFileManagerImpl">
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="fileContentManager" class="org.apache.roller.weblogger.business.FileContentManagerImpl"/>
+
+    <beans:bean id="pingQueueManager" class="org.apache.roller.weblogger.business.jpa.JPAPingQueueManagerImpl">
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="pingTargetManager" class="org.apache.roller.weblogger.business.jpa.JPAPingTargetManagerImpl">
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="pluginManager" class="org.apache.roller.weblogger.business.plugins.PluginManagerImpl"/>
+
+    <beans:bean id="propertiesManager" class="org.apache.roller.weblogger.business.jpa.JPAPropertiesManagerImpl">
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="themeManager" class="org.apache.roller.weblogger.business.themes.ThemeManagerImpl">
+        <beans:constructor-arg ref="mediaFileManager"/>
+        <beans:constructor-arg ref="weblogManager"/>
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="threadManager" class="org.apache.roller.weblogger.business.jpa.JPAThreadManagerImpl">
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="weblogManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogManagerImpl">
+        <beans:constructor-arg ref="userManager"/>
+        <beans:constructor-arg ref="weblogEntryManager"/>
+        <beans:constructor-arg ref="mediaFileManager"/>
+        <beans:constructor-arg ref="autoPingManager"/>
+        <beans:constructor-arg ref="pingTargetManager"/>
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="weblogEntryManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogEntryManagerImpl">
+        <beans:constructor-arg ref="autoPingManager"/>
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="oauthManager" class="org.apache.roller.weblogger.business.jpa.JPAOAuthManagerImpl">
+        <beans:constructor-arg ref="urlStrategy"/>
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:constructor-arg>
+            <beans:bean class="net.oauth.SimpleOAuthValidator"/>
+        </beans:constructor-arg>
+    </beans:bean>
+
+    <beans:bean id="feedFetcher" class="org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher"/>
+
+    <beans:bean id="planetManager" class="org.apache.roller.planet.business.jpa.JPAPlanetManagerImpl">
+        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+    </beans:bean>
+
+    <beans:bean id="planetUrlStrategy" class="org.apache.roller.planet.business.MultiPlanetURLStrategy"/>
+
+    <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>
+
+</beans:beans>

@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-/* Created on Jul 16, 2003 */
 package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
@@ -26,7 +28,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -48,7 +49,7 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
     // ========================================================
 
     private WeblogEntry data;
-    private Weblogger roller;
+    private WeblogEntryManager weblogEntryManager;
 
     // ~ Constructors
     // ===========================================================
@@ -56,10 +57,10 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
     /**
      * Adds a web log entry into the index.
      */
-    public ReIndexEntryOperation(Weblogger roller, IndexManagerImpl mgr,
+    public ReIndexEntryOperation(WeblogEntryManager wem, IndexManagerImpl mgr,
             WeblogEntry data) {
         super(mgr);
-        this.roller = roller;
+        this.weblogEntryManager = wem;
         this.data = data;
     }
 
@@ -72,8 +73,7 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
         // the weblog object passed in as a detached object which is prone to
         // lazy initialization problems, so requery for the object now
         try {
-            WeblogEntryManager wMgr = roller.getWeblogEntryManager();
-            this.data = wMgr.getWeblogEntry(this.data.getId());
+            this.data = weblogEntryManager.getWeblogEntry(this.data.getId());
         } catch (WebloggerException ex) {
             mLogger.error("Error getting weblogentry object", ex);
             return;
@@ -93,9 +93,6 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
         } catch (IOException e) {
             mLogger.error("Problems adding/deleting doc to index", e);
         } finally {
-            if (roller != null) {
-                roller.release();
-            }
             endWriting();
         }
     }

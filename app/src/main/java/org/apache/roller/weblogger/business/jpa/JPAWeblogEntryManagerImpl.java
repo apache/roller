@@ -29,7 +29,7 @@ import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.StatCountCountComparator;
@@ -76,7 +76,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     private static final Log LOG = LogFactory.getLog(JPAWeblogEntryManagerImpl.class);
     
-    private final Weblogger roller;
+    private final AutoPingManager autoPingManager;
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
@@ -92,9 +92,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     
     @com.google.inject.Inject
-    protected JPAWeblogEntryManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
+    protected JPAWeblogEntryManagerImpl(AutoPingManager apm, JPAPersistenceStrategy strategy) {
         LOG.debug("Instantiating JPA Weblog Manager");
-        this.roller = roller;
+        this.autoPingManager = apm;
         this.strategy = strategy;
     }
     
@@ -107,8 +107,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             throw new WebloggerException("Duplicate category name, cannot save category");
         }
 
-        // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(cat.getWeblog());
+        updateWeblogLastModifiedDate(cat.getWeblog());
         this.strategy.store(cat);
     }
     
@@ -131,8 +130,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             this.strategy.store(cat.getWeblog());
         }
 
-        // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(cat.getWeblog());
+        updateWeblogLastModifiedDate(cat.getWeblog());
     }
 
     /**
@@ -166,9 +164,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public void saveComment(WeblogEntryComment comment) throws WebloggerException {
         this.strategy.store(comment);
-        
-        // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(comment.getWeblogEntry().getWebsite());
+        updateWeblogLastModifiedDate(comment.getWeblogEntry().getWebsite());
     }
     
     /**
@@ -176,9 +172,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public void removeComment(WeblogEntryComment comment) throws WebloggerException {
         this.strategy.remove(comment);
-        
-        // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWeblog(comment.getWeblogEntry().getWebsite());
+        updateWeblogLastModifiedDate(comment.getWeblogEntry().getWebsite());
     }
     
     /**
@@ -248,15 +242,20 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
-            roller.getWeblogManager().saveWeblog(entry.getWebsite());
+            updateWeblogLastModifiedDate(entry.getWebsite());
         }
         
         if(entry.isPublished()) {
             // Queue applicable pings for this update.
-            roller.getAutopingManager().queueApplicableAutoPings(entry);
+            autoPingManager.queueApplicableAutoPings(entry);
         }
     }
     
+    private void updateWeblogLastModifiedDate(Weblog weblog) throws WebloggerException {
+        weblog.setLastModified(new java.util.Date());
+        strategy.store(weblog);
+    }
+
     /**
      * @inheritDoc
      */
@@ -291,9 +290,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // remove entry
         this.strategy.remove(entry);
         
-        // update weblog last modified date.  date updated by saveWebsite()
         if (entry.isPublished()) {
-            roller.getWeblogManager().saveWeblog(weblog);
+            updateWeblogLastModifiedDate(weblog);
         }
         
         // remove entry from cache mapping

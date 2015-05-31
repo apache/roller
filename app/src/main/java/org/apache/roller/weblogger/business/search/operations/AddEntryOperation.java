@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
@@ -44,16 +43,16 @@ public class AddEntryOperation extends WriteToIndexOperation {
     //~ Instance fields ========================================================
     
     private WeblogEntry data;
-    private Weblogger roller;
+    private WeblogEntryManager weblogEntryManager;
     
     //~ Constructors ===========================================================
     
     /**
      * Adds a web log entry into the index.
      */
-    public AddEntryOperation(Weblogger roller, IndexManagerImpl mgr, WeblogEntry data) {
+    public AddEntryOperation(WeblogEntryManager wem, IndexManagerImpl mgr, WeblogEntry data) {
         super(mgr);
-        this.roller = roller;
+        this.weblogEntryManager = wem;
         this.data = data;
     }
     
@@ -66,8 +65,7 @@ public class AddEntryOperation extends WriteToIndexOperation {
         // the weblog object passed in as a detached object which is prone to
         // lazy initialization problems, so requery for the object now
         try {
-            WeblogEntryManager wMgr = roller.getWeblogEntryManager();
-            this.data = wMgr.getWeblogEntry(this.data.getId());
+            this.data = weblogEntryManager.getWeblogEntry(this.data.getId());
         } catch (WebloggerException ex) {
             mLogger.error("Error getting weblogentry object", ex);
             return;
@@ -80,9 +78,6 @@ public class AddEntryOperation extends WriteToIndexOperation {
         } catch (IOException e) {
             mLogger.error("Problems adding doc to index", e);
         } finally {
-            if (roller != null) {
-                roller.release();
-            }
             endWriting();
         }
     }   
