@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
@@ -43,8 +46,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogMediaResourceRequest;
  * Serves media files uploaded by users.
  * 
  * Since we keep resources in a location outside of the webapp context we need a
- * way to serve them up. This servlet assumes that resources are stored on a
- * filesystem in the "uploads.dir" directory.
+ * way to serve them up.
  */
 public class MediaResourceServlet extends HttpServlet {
 
