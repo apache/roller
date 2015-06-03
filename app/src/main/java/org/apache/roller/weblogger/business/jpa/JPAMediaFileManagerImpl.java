@@ -61,7 +61,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-@com.google.inject.Singleton
 public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     private final JPAPersistenceStrategy strategy;
@@ -72,7 +71,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * Creates a new instance of MediaFileManagerImpl
      */
-    @com.google.inject.Inject
     protected JPAMediaFileManagerImpl(JPAPersistenceStrategy persistenceStrategy) {
         this.strategy = persistenceStrategy;
     }

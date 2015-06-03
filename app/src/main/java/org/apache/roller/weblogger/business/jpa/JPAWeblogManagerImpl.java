@@ -70,7 +70,6 @@ import java.util.TreeMap;
  * JPAWeblogManagerImpl.java
  * Created on May 31, 2006, 4:08 PM
  */
-@com.google.inject.Singleton
 public class JPAWeblogManagerImpl implements WeblogManager {
     
     /** The logger instance for this class. */
@@ -89,7 +88,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     // cached mapping of weblogHandles -> weblogIds
     private Map<String,String> weblogHandleToIdMap = new Hashtable<String,String>();
 
-    @com.google.inject.Inject
     protected JPAWeblogManagerImpl(UserManager um, WeblogEntryManager wem, MediaFileManager mfm,
                                    AutoPingManager apm, PingTargetManager ptm, JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA Weblog Manager");

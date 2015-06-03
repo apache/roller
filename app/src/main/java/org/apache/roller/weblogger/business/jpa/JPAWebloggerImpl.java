@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business.jpa;
 
@@ -42,7 +45,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 /**
  * A JPA specific implementation of the Weblogger business layer.
  */
-@com.google.inject.Singleton
 public class JPAWebloggerImpl extends WebloggerImpl {
 
     // a persistence utility class
@@ -53,7 +55,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
      * Single constructor.
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    @com.google.inject.Inject
     protected JPAWebloggerImpl(
         JPAPersistenceStrategy strategy,
         AutoPingManager      autoPingManager,

@@ -15,6 +15,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business.jpa;
 
@@ -42,7 +45,6 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
  * Created on May 29, 2006, 2:06 PM
  *
  */
-@com.google.inject.Singleton
 public class JPAPropertiesManagerImpl implements PropertiesManager {
     
     /** The logger instance for this class. */
@@ -55,7 +57,6 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     /**
      * Creates a new instance of JPAPropertiesManagerImpl
      */
-    @com.google.inject.Inject
     protected JPAPropertiesManagerImpl(JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Properties Manager");
         this.strategy = strategy;

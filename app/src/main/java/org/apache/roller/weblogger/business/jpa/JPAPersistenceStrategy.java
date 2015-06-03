@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.jpa;
@@ -41,7 +44,6 @@ import org.apache.roller.weblogger.business.DatabaseProvider;
 /**
  * Responsible for the lowest-level interaction with the JPA API.
  */
-@com.google.inject.Singleton
 public class JPAPersistenceStrategy {
     
     private static Log logger = 
@@ -63,7 +65,6 @@ public class JPAPersistenceStrategy {
      * @param dbProvider database configuration information for manual configuration.
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    @com.google.inject.Inject
     protected JPAPersistenceStrategy(DatabaseProvider dbProvider) throws WebloggerException {
         String jpaConfigurationType = WebloggerConfig.getProperty("jpa.configurationType");
         if ("jndi".equals(jpaConfigurationType)) {

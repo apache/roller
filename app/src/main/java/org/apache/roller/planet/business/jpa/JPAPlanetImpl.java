@@ -34,8 +34,7 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
  * Implements Planet, the entry point interface for the Roller-Planet business 
  * tier APIs using the Java Persistence API (JPA).
  */
-@com.google.inject.Singleton
-public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {   
+public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     
     private static Log log = LogFactory.getLog(JPAPlanetImpl.class);
     
@@ -51,9 +50,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     
     // feed fetcher
     private final FeedFetcher feedFetcher;
-    
-        
-    @com.google.inject.Inject  
+
     protected JPAPlanetImpl(
             JPAPersistenceStrategy strategy, 
             PlanetManager     planetManager, 

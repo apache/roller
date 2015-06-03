@@ -60,7 +60,6 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             .getFactory().getInstance(JPAOAuthManagerImpl.class);
 
 
-    @com.google.inject.Inject
     public JPAOAuthManagerImpl(
             URLStrategy urlStrategy,
             JPAPersistenceStrategy strategy,

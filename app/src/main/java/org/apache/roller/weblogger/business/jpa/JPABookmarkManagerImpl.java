@@ -39,7 +39,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Created on May 31, 2006, 3:49 PM
  *
  */
-@com.google.inject.Singleton
 public class JPABookmarkManagerImpl implements BookmarkManager {
     
     private final WeblogManager weblogManager;
@@ -55,7 +54,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     /**
      * Creates a new instance of JPABookmarkManagerImpl
      */
-   @com.google.inject.Inject
    protected JPABookmarkManagerImpl(WeblogManager wm, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Bookmark Manager");
         this.weblogManager = wm;

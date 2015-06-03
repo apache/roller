@@ -71,7 +71,6 @@ import java.util.TimeZone;
  * Created on May 31, 2006, 4:08 PM
  *
  */
-@com.google.inject.Singleton
 public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     private static final Log LOG = LogFactory.getLog(JPAWeblogEntryManagerImpl.class);
@@ -91,7 +90,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
     
-    @com.google.inject.Inject
     protected JPAWeblogEntryManagerImpl(AutoPingManager apm, JPAPersistenceStrategy strategy) {
         LOG.debug("Instantiating JPA Weblog Manager");
         this.autoPingManager = apm;
