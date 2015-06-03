@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-@com.google.inject.Singleton
 public class JPAUserManagerImpl implements UserManager {
     private static Log log = LogFactory.getLog(JPAUserManagerImpl.class);
 
@@ -49,13 +48,10 @@ public class JPAUserManagerImpl implements UserManager {
     // cached mapping of userNames -> userIds
     private Map<String, String> userNameToIdMap = new HashMap<String, String>();
     
-
-    @com.google.inject.Inject
     protected JPAUserManagerImpl(JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA User Manager");
         this.strategy = strat;
     }
-
 
     public void release() {}
     

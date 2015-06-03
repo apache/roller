@@ -41,7 +41,6 @@ import javax.persistence.TypedQuery;
  * Created on May 29, 2006, 11:29 AM
  *
  */
-@com.google.inject.Singleton
 public class JPAAutoPingManagerImpl implements AutoPingManager {
 
     private final PingQueueManager pingQueueManager;
@@ -54,7 +53,6 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     /**
      * Creates a new instance of JPAAutoPingManagerImpl
      */
-    @com.google.inject.Inject
     protected JPAAutoPingManagerImpl(PingQueueManager pqm, JPAPersistenceStrategy strategy) {
         this.pingQueueManager = pqm;
         this.strategy = strategy;

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business.jpa;
@@ -46,7 +49,6 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
  *
  * @author Dave Johnson
  */
-@com.google.inject.Singleton
 public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetManager {
     
     private static Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);
@@ -54,7 +56,6 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     /** The strategy for this manager. */
     private final JPAPersistenceStrategy strategy;
 
-    @com.google.inject.Inject  
     protected JPAPlanetManagerImpl(JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Planet Manager");
         

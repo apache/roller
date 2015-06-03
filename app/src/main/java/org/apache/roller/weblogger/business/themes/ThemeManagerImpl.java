@@ -64,7 +64,6 @@ import org.apache.roller.weblogger.util.RollerMessages;
  * This particular implementation reads theme data off the filesystem and
  * assumes that those themes are not changeable at runtime.
  */
-@com.google.inject.Singleton
 public class ThemeManagerImpl implements ThemeManager {
 
 	static FileTypeMap map = null;
@@ -89,7 +88,6 @@ public class ThemeManagerImpl implements ThemeManager {
 	// the Map contains ... (theme id, Theme)
 	private Map<String, SharedTheme> themes = null;
 
-	@com.google.inject.Inject
 	protected ThemeManagerImpl(WeblogManager wm, MediaFileManager mfm, JPAPersistenceStrategy jpa) {
 
 		this.weblogManager = wm;

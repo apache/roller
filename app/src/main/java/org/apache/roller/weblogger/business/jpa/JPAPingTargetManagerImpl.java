@@ -15,6 +15,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business.jpa;
 
@@ -36,12 +39,10 @@ import org.apache.roller.weblogger.pojos.PingTarget;
  * Created on May 29, 2006, 2:24 PM
  *
  */
-@com.google.inject.Singleton
 public class JPAPingTargetManagerImpl implements PingTargetManager {
     
     private final JPAPersistenceStrategy strategy;
 
-    @com.google.inject.Inject
     protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
     }

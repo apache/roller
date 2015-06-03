@@ -15,6 +15,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business.jpa;
 
@@ -35,7 +38,6 @@ import org.apache.roller.weblogger.pojos.PingQueueEntry;
  * Created on May 28, 2006, 4:11 PM
  *
  */
-@com.google.inject.Singleton
 public class JPAPingQueueManagerImpl implements PingQueueManager {
 
     private static Log log = LogFactory.getLog(
@@ -48,12 +50,10 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
     /**
      * Creates a new instance of JPAPingQueueManagerImpl
      */
-    @com.google.inject.Inject
     protected JPAPingQueueManagerImpl(JPAPersistenceStrategy strategy) {
         this.strategy =  strategy;
     }
 
-    
     public PingQueueEntry getQueueEntry(String id) 
             throws WebloggerException {
         return (PingQueueEntry)strategy.load(

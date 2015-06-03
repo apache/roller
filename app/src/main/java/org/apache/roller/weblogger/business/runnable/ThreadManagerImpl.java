@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.runnable;
@@ -37,7 +40,6 @@ import org.apache.roller.weblogger.pojos.TaskLock;
 /**
  * Manage Roller's thread use.
  */
-@com.google.inject.Singleton
 public abstract class ThreadManagerImpl implements ThreadManager {
     
     private static final Log LOG = LogFactory.getLog(ThreadManagerImpl.class);

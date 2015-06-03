@@ -59,7 +59,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * Lucene implementation of IndexManager. This is the central entry point into
  * the Lucene searching API.
  */
-@com.google.inject.Singleton
 public class IndexManagerImpl implements IndexManager {
     // ~ Static fields/initializers
     // =============================================
@@ -102,7 +101,6 @@ public class IndexManagerImpl implements IndexManager {
      * 
      * @param roller - the weblogger instance
      */
-    @com.google.inject.Inject
     protected IndexManagerImpl(WeblogManager wm, WeblogEntryManager wem, ThreadManager tm) {
         this.weblogManager = wm;
         this.weblogEntryManager = wem;
