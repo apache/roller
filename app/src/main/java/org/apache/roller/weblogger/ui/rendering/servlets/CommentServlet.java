@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
@@ -65,8 +68,8 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * We validate each incoming comment based on various comment settings and if
  * all checks are passed then the comment is saved.
  * 
- * Incoming comments are tested against the MT Blacklist. If they are found to
- * be spam, then they are marked as spam and hidden from view.
+ * Incoming comments are tested against any site and/or weblog-defined blacklist values. If they
+ * are found to be spam, then they are marked as spam and hidden from view.
  * 
  * If email notification is turned on, each new comment will result in an email
  * sent to the blog owner and all who have commented on the same post.

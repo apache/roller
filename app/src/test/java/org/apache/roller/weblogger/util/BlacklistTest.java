@@ -14,11 +14,17 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.util;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Pattern;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -33,7 +39,9 @@ public class BlacklistTest extends TestCase {
         LogFactory.getLog(BlacklistTest.class);  
     
     private Blacklist blacklist;
-    
+    private List<String> blacklistStr = new LinkedList<String>();
+    private List<Pattern> blacklistRegex = new LinkedList<Pattern>();
+
       
     public BlacklistTest() {
         super();
@@ -52,10 +60,8 @@ public class BlacklistTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         blacklist = Blacklist.getBlacklist();
-        String FS = File.separator;
-        String blacklistName = System.getProperty("project.build.directory") + FS + "classes" + "blacklist.txt";
-        log.info("Processing Blacklist file: " + blacklistName);
-        blacklist.loadBlacklistFromFile(blacklistName);
+        Blacklist.populateSpamRules("www.myblacklistedsite.com", blacklistStr,
+                blacklistRegex, null);
     }
     
     /**
@@ -67,34 +73,14 @@ public class BlacklistTest extends TestCase {
     }
     
     public void testIsBlacklisted0() {
-        assertFalse(blacklist.isBlacklisted("four score and seven years ago.com"));
+        assertFalse(blacklist.isBlacklisted("four score and seven years ago.com", blacklistStr, blacklistRegex));
     }
     
     // test non-regex
     public void testIsBlacklisted1() {
-        assertTrue(blacklist.isBlacklisted("www.myblacklistedsite.com"));
+        assertTrue(blacklist.isBlacklisted("www.myblacklistedsite.com", blacklistStr, blacklistRegex));
     }
-    
-    // test the regex patterns
-    public void testIsBlacklisted2() {
-        assertTrue(blacklist.isBlacklisted("www.lsotr.com"));
-    }
-    
-    // test the regex patterns
-    public void testIsBlacklisted3() {
-        assertTrue(blacklist.isBlacklisted("buymoreonline.com"));
-    }
-    
-    // test the regex patterns
-    public void testIsBlacklisted4() {
-        assertTrue(blacklist.isBlacklisted("diet-enlargement.com"));
-    }
-    
-    // test the regex patterns
-    public void testIsBlacklisted5() {
-        assertTrue(blacklist.isBlacklisted("viagra.com"));
-    }
-    
+
     public static Test suite() {
         return new TestSuite(BlacklistTest.class);
     }
