@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -40,7 +43,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String description = null;
-    private String image = null;
     private int position;
 
     // associations
@@ -52,13 +54,11 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     public WeblogCategory(
             Weblog weblog,
             String name,
-            String description,
-            String image) {
+            String description) {
         
         this.name = name;
         this.description = description;
-        this.image = image;
-        
+
         this.weblog = weblog;
         weblog.getWeblogCategories().add(this);
         calculatePosition();
@@ -157,17 +157,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         this.position = position;
     }
 
-    /**
-     * An image icon to represent this category.
-     */
-    public String getImage() {
-        return this.image;
-    }
-    
-    public void setImage(String image) {
-        this.image = image;
-    }
-    
     /**
      * Get the weblog which owns this category.
      */

@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -70,8 +73,6 @@ function onMove()
                 
                 <td class="rollertable"><s:property value="#category.description" /></td>
                 
-                <td class="rollertable"><s:property value="#category.image" /></td>
-
                 <td class="rollertable" align="center">
                     <s:url var="editUrl" action="categoryEdit">
                         <s:param name="weblog" value="%{actionWeblog.handle}" />

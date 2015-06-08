@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
@@ -179,10 +182,10 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             testUser = TestUtils.getManagedUser(testUser);
 
             // add some categories and entries to test with
-            WeblogCategory c1 = new WeblogCategory(testWeblog, "c1", null, null);
+            WeblogCategory c1 = new WeblogCategory(testWeblog, "c1", null);
             mgr.saveWeblogCategory(c1);
 
-            WeblogCategory dest = new WeblogCategory(testWeblog, "dest", null, null);
+            WeblogCategory dest = new WeblogCategory(testWeblog, "dest", null);
             mgr.saveWeblogCategory(dest);
 
             TestUtils.endSession(true);

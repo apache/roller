@@ -20,11 +20,5 @@
             <message key="Category.error.descriptionSize">unspecified key</message>
         </field-validator>
     </field>
-    
-    <field name="bean.image">
-        <field-validator type="url">
-            <message key="Category.error.imageBad">unspecified key</message>
-        </field-validator>
-    </field>
-    
+
 </validators>

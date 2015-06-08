@@ -14,7 +14,11 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
+
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
@@ -56,20 +60,10 @@ public class CategoryBean {
     public void setDescription( String description ) {
         this.description = description;
     }
-    
-    public String getImage() {
-        return image;
-    }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
-    
-    
     public void copyTo(WeblogCategory dataHolder) throws WebloggerException {
         dataHolder.setName(name);
         dataHolder.setDescription(this.description);
-        dataHolder.setImage(this.image);
     }
     
     
@@ -77,7 +71,6 @@ public class CategoryBean {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();
-        this.image = dataHolder.getImage();
     }
     
 }
