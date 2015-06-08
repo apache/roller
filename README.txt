@@ -1,7 +1,6 @@
 README.txt
 
-Welcome to TightBlog, a curated fork of Apache Roller (but no longer Apache Roller and not compatible with it).
-This application is not yet ready for release.
+Welcome to TightBlog, a fork of Apache Roller (but no longer Roller).  This application is not yet ready for release.
 
 Differences between TightBlog and Roller can be seen from the closed issues page:
   https://github.com/gmazza/tightblog/issues?q=is%3Aissue+is%3Aclosed

@@ -26,9 +26,6 @@
             <basic name="description">
                 <column name="description" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <basic name="image">
-                <column name="image" insertable="true" updatable="true" unique="false"/>
-            </basic>
             <basic name="position">
                 <column name="position" insertable="true" updatable="true" unique="false"/>
             </basic>

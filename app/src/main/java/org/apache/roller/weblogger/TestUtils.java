@@ -311,7 +311,7 @@ public final class TestUtils {
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
                 .getWeblogEntryManager();
 
-        WeblogCategory testCat = new WeblogCategory(weblog, name, null, null);
+        WeblogCategory testCat = new WeblogCategory(weblog, name, null);
         mgr.saveWeblogCategory(testCat);
 
         // flush to db

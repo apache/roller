@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -55,11 +58,6 @@
         <tr>
             <td><s:text name="generic.description" /></td>
             <td><s:textfield name="bean.description" size="120" style="width:50%"/></td>
-        </tr>
-
-        <tr>
-            <td><s:text name="categoryForm.image" /></td>
-            <td><s:textfield name="bean.image" size="120" style="width:50%"/></td>
         </tr>
 
     </table>

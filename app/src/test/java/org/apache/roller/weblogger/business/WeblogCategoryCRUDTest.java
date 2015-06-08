@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
@@ -86,8 +89,8 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
-        WeblogCategory testCat = new WeblogCategory(testWeblog, "root", "desc", null);
-        WeblogCategory testCat2 = new WeblogCategory(testWeblog, "root2", "desc2", null);
+        WeblogCategory testCat = new WeblogCategory(testWeblog, "root", "desc");
+        WeblogCategory testCat2 = new WeblogCategory(testWeblog, "root2", "desc2");
         assertFalse(testCat2.equals(testCat));
         mgr.removeWeblogCategory(testCat);
         mgr.removeWeblogCategory(testCat2);
@@ -113,7 +116,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         assertEquals(1, testWeblog.getWeblogCategories().size());
 
         // add a new category
-        WeblogCategory newCat = new WeblogCategory(testWeblog, "catTestCategory", null, null);
+        WeblogCategory newCat = new WeblogCategory(testWeblog, "catTestCategory", null);
         mgr.saveWeblogCategory(newCat);
         TestUtils.endSession(true);
         
@@ -169,7 +172,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
         // add a category above default one
-        WeblogCategory testCat = new WeblogCategory(testWeblog, "SampleCategory", null, null);
+        WeblogCategory testCat = new WeblogCategory(testWeblog, "SampleCategory", null);
         mgr.saveWeblogCategory(testCat);
         TestUtils.endSession(true);
         

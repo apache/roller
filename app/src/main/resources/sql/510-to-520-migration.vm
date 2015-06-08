@@ -7,6 +7,9 @@
 -- Roles consolidated into the roller_user table.
 #addColumnNull("roller_user" "role"  "varchar(16)")
 
+-- images removed from categories
+#dropColumn('weblogcategory' 'image')
+
 -- Set new global roles from the now-unused userrole table:
 update roller_user ru
 set role = 'BLOGGER'
