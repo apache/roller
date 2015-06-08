@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util;
@@ -104,7 +107,9 @@ public class CommentValidatorTest extends TestCase {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
        
-        comment.setContent("nice friendly stuff"); 
+        comment.getWeblogEntry().getWebsite().setBlacklist("www.myblacklistedsite.com");
+
+        comment.setContent("nice friendly stuff");
         assertEquals(100, mgr.validateComment(comment, msgs));
 
         comment.setContent("blah blah www.myblacklistedsite.com blah");
