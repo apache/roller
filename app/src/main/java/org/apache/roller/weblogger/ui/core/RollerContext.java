@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.core;
@@ -113,16 +116,6 @@ public class RollerContext extends ContextLoaderListener
         } else {
             ctxPath += "resources";
         }
-        
-        // try setting the uploads path to <context>/resources
-        // NOTE: this should go away at some point
-        // we leave it here for now to allow users to keep writing
-        // uploads into their webapp context, but this is a bad idea
-        //
-        // also, the WebloggerConfig.setUploadsDir() method is smart
-        // enough to disregard this call unless the uploads.path
-        // is set to ${webapp.context}
-        WebloggerConfig.setUploadsDir(ctxPath);
         
         // try setting the themes path to <context>/themes
         // NOTE: this should go away at some point
