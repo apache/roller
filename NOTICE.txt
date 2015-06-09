@@ -24,9 +24,6 @@ This product includes:
     All rights reserved.
     http://trac.xinha.org/wiki/Licence
     
-* Snippets of code from Spring Mobile
-    Copyright (c) 2010-2014 Pivotal, Inc. All Rights Reserved. 
-
 OTHER NOTICES
 
 * Roller includes icons by Mark James (http://www.famfamfam.com/lab/icons)
