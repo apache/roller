@@ -337,7 +337,7 @@ public class MediaFileTest extends TestCase {
         TestUtils.teardownWeblog(testWeblog.getId());
         TestUtils.teardownUser(testUser.getUserName());
 
-        String uploadsDirName = WebloggerConfig.getProperty("uploads.dir");
+        String uploadsDirName = WebloggerConfig.getProperty("mediafiles.storage.dir");
         File flag = new File(uploadsDirName + File.separator
                 + "migration-status.properties");
         flag.delete();

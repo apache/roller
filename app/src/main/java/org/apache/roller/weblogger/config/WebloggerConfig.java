@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.config;
@@ -237,23 +240,6 @@ public final class WebloggerConfig {
             props.put(key, config.get(key));
         }
         return props;
-    }
-    
-
-    /**
-     * Set the "uploads.dir" property at runtime.
-     * <p />
-     * Properties are meant to be read-only, but we make this exception because  
-     * we know that some people are still writing their uploads to the webapp  
-     * context and we can only get that path at runtime (and for unit testing).
-     * <p />
-     * This property is *not* persisted in any way.
-     */
-    public static void setUploadsDir(String path) {
-        // only do this if the user wants to use the webapp context
-        if("${webapp.context}".equals(config.getProperty("uploads.dir"))) {
-            config.setProperty("uploads.dir", path);
-        }
     }
     
     /**
