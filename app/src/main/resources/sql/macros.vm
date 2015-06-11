@@ -24,7 +24,7 @@ Special macro to add table column with not-null restriction and default value
     alter table $table alter $column set not null;
 #elseif ($db.DBTYPE == "HSQLDB")
     alter table $table add column $column $type default $default not null; 
-#elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "DB2")
+#elseif ($db.DBTYPE == "DERBY")
     alter table $table add column $column $type with default $default not null;
 #elseif ($db.DBTYPE == "ORACLE" || $db.DBTYPE == "MSSQL")
     alter table $table add $column $type default $default not null;  
@@ -44,7 +44,7 @@ Special macro to drop NOT NULL requirement from an 'id' column.
     alter table $table  alter column id drop not null;
 #elseif ($db.DBTYPE == "HSQLDB")
     alter table $table alter column id varchar(48) null;
-#elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "DB2")
+#elseif ($db.DBTYPE == "DERBY")
     alter table $table drop primary key;
     alter table $table alter column id null;
 #elseif ($db.DBTYPE == "ORACLE")
@@ -63,7 +63,7 @@ Special macro to drop NOT NULL requirement from a column.
     alter table $table  alter column $colname drop not null;
 #elseif ($db.DBTYPE == "HSQLDB" || $db.DBTYPE == "MSSQL")
     alter table $table alter column $colname $coltype null;
-#elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "DB2")
+#elseif ($db.DBTYPE == "DERBY")
     alter table $table alter column $colname null;
 #elseif ($db.DBTYPE == "ORACLE")
     alter table $table alter column $colname null; 
