@@ -445,60 +445,60 @@ create table roller_mediafiledir (
 -- page, entry, category, comment
 
 alter table weblog_custom_template add constraint wct_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references weblog( id ) ;
 
 alter table custom_template_rendition add constraint ctr_templateid_fk
-    foreign key ( templateid ) references weblog_custom_template( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( templateid ) references weblog_custom_template( id ) ;
 
 alter table weblogentry add constraint we_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references weblog( id ) ;
 
 alter table weblogentry add constraint we_categoryid_fk
-    foreign key ( categoryid ) references weblogcategory( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( categoryid ) references weblogcategory( id ) ;
 
 alter table roller_weblogentrytag add constraint rwtg_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( entryid ) references weblogentry( id ) ;
 
 alter table weblogcategory add constraint wc_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references weblog( id ) ;
 
 alter table roller_comment add constraint co_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( entryid ) references weblogentry( id ) ;
 
 alter table entryattribute add constraint att_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( entryid ) references weblogentry( id ) ;
 
 -- bookmark_folder and bookmark
 
 alter table bookmark_folder add constraint fo_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references weblog( id ) ;
 
 alter table bookmark add constraint bm_folderid_fk
-    foreign key ( folderid ) references bookmark_folder( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( folderid ) references bookmark_folder( id ) ;
 
 -- media file foreign key constraints
 
 alter table roller_mediafile add constraint roller_mediafiledir_id_fk
-    foreign key (directoryid) references roller_mediafiledir(id) $!db.ADDL_FK_PARAMS ;
+    foreign key (directoryid) references roller_mediafiledir(id) ;
 
 alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
-    foreign key (mediafile_id) references roller_mediafile(id) $!db.ADDL_FK_PARAMS ;
+    foreign key (mediafile_id) references roller_mediafile(id) ;
 
 alter table roller_mediafiledir add constraint mf_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references weblog( id ) ;
 
 -- newsfeed
 
 alter table newsfeed add constraint nf_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) $!db.ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references weblog( id ) ;
 
 -- autoping
 
 alter table autoping add constraint ap_weblogid_fk
-    foreign key (websiteid) references weblog(id) $!db.ADDL_FK_PARAMS ;
+    foreign key (websiteid) references weblog(id) ;
 
 alter table autoping add constraint ap_pingtargetid_fk
-    foreign key (pingtargetid) references pingtarget(id) $!db.ADDL_FK_PARAMS ;
+    foreign key (pingtargetid) references pingtarget(id) ;
 
 -- oauth indexes
 
