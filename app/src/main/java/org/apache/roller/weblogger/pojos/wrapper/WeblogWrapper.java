@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.TagStat;
+import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 import java.util.*;
@@ -344,10 +345,14 @@ public final class WeblogWrapper {
         }
         return wrapped;
     }
-    
-    
-    public WeblogBookmarkFolderWrapper getBookmarkFolder(String folderName) {
-        return WeblogBookmarkFolderWrapper.wrap(this.pojo.getBookmarkFolder(folderName));
+
+    public List<WeblogBookmarkWrapper> getBookmarks() {
+        // iterate through and wrap
+        List<WeblogBookmarkWrapper> wrappedCollection = new ArrayList<WeblogBookmarkWrapper>(this.pojo.getBookmarks().size());
+        for (WeblogBookmark bookmark : this.pojo.getBookmarks()) {
+            wrappedCollection.add(WeblogBookmarkWrapper.wrap(bookmark));
+        }
+        return wrappedCollection;
     }
 
     public int getTodaysHits() {

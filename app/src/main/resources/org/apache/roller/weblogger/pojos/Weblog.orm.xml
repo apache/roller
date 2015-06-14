@@ -115,7 +115,7 @@
                     <cascade-remove/>
                 </cascade>
             </one-to-many>
-            <one-to-many name="bookmarkFolders" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder" mapped-by="weblog">
+            <one-to-many name="bookmarks" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmark" mapped-by="weblog">
                 <cascade>
                     <cascade-persist/>
                     <cascade-remove/>

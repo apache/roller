@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -231,15 +230,6 @@ public final class CacheManager {
         log.debug("invalidating bookmark = "+bookmark.getId());
         for (CacheHandler handler : cacheHandlers) {
             handler.invalidate(bookmark);
-        }
-    }
-    
-    
-    public static void invalidate(WeblogBookmarkFolder folder) {
-        
-        log.debug("invalidating folder = "+folder.getId());
-        for (CacheHandler handler : cacheHandlers) {
-            handler.invalidate(folder);
         }
     }
     

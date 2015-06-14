@@ -44,7 +44,6 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
@@ -182,13 +181,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             this.strategy.remove(template);
         }
         
-        // remove folders (including bookmarks)
-        TypedQuery<WeblogBookmarkFolder> folderQuery = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite",
-                WeblogBookmarkFolder.class);
-        folderQuery.setParameter(1, weblog);
-        List<WeblogBookmarkFolder> folders = folderQuery.getResultList();
-        for (WeblogBookmarkFolder wbf : folders) {
-            this.strategy.remove(wbf);
+        // remove bookmarks
+        TypedQuery<WeblogBookmark> bookmarkQuery = strategy.getNamedQuery("Bookmark.getByWeblog",
+                WeblogBookmark.class);
+        bookmarkQuery.setParameter(1, weblog);
+        List<WeblogBookmark> bookmarks = bookmarkQuery.getResultList();
+        for (WeblogBookmark bookmark : bookmarks) {
+            this.strategy.remove(bookmark);
         }
 
         // remove mediafile metadata
@@ -301,10 +300,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.store(newWeblog);
 
         // add default bookmarks
-        WeblogBookmarkFolder defaultFolder = new WeblogBookmarkFolder(
-                "default", newWeblog);
-        this.strategy.store(defaultFolder);
-        
         String blogroll = WebloggerConfig.getProperty("newuser.blogroll");
         if (blogroll != null) {
             String[] splitroll = blogroll.split(",");
@@ -312,11 +307,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 String[] rollitems = splitItem.split("\\|");
                 if (rollitems.length > 1) {
                     WeblogBookmark b = new WeblogBookmark(
-                            defaultFolder,
+                            newWeblog,
                             rollitems[0],
                             "",
                             rollitems[1].trim(),
-                            null,
                             null);
                     this.strategy.store(b);
                 }

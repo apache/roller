@@ -35,7 +35,7 @@ These are the documented macros in order defined in this file:
     #showWeblogEntryCommentForm($entry)
 
     #showWeblogEntryLinksList($entries)
-    #showBookmarkLinksList($folderObj)
+    #showBookmarkLinksList($weblog)
     #showWeblogCategoryLinksList()
     #showMobileCategoryLinksList()
     #showAtomFeedsList($weblog)
@@ -489,10 +489,9 @@ Show entries as a HTML ul list.
 #** 
 Show bookmarks as a HTML ul list.
 *#
-#macro(showBookmarkLinksList $folderObject)
+#macro(showBookmarkLinksList $weblog)
 <ul class="rFolder">
-    #set($bookmarks = $folderObject.getBookmarks())
-    #set($divId = $utils.replace($folderObject.name, " ", "_" ))
+    #set($bookmarks = $weblog.getBookmarks())
     #foreach($bookmark in $bookmarks)
         <li class="rFolderItem">
         #if($utils.isNotEmpty($bookmark.Image))
@@ -506,11 +505,6 @@ Show bookmarks as a HTML ul list.
                 src="$bookmark.image" class="rBookmark" /></a>
           #end
         #else
-            #if($utils.isNotEmpty( $bookmark.FeedUrl))
-            <a href="$bookmark.feedUrl"><img class="smrssbadge"
-               src="$url.absoluteSite/images/smrssbadge.gif"
-               alt="$text.get("macro.bookmark.urlFeed")"/></a>
-            #end
             <a href="$bookmark.url" title="$bookmark.description">$bookmark.name</a>
         #end
         </li>

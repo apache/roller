@@ -42,7 +42,6 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -609,7 +608,7 @@ public final class TestUtils {
     /**
      * Convenience method for creating a weblog folder.
      */
-    public static WeblogBookmarkFolder setupFolder(Weblog weblog, String name)
+/*    public static WeblogBookmarkFolder setupFolder(Weblog weblog, String name)
             throws Exception {
 
         BookmarkManager mgr = WebloggerFactory.getWeblogger()
@@ -626,10 +625,10 @@ public final class TestUtils {
 
         return testFolder;
     }
-
+*/
     /**
      * Convenience method for removing a weblog folder.
-     */
+     */ /*
     public static void teardownFolder(String id) throws Exception {
 
         // lookup the folder
@@ -643,7 +642,7 @@ public final class TestUtils {
         // flush to db
         WebloggerFactory.getWeblogger().flush();
     }
-
+*/
     /**
      * Convenience method that returns managed copy of given user.
      */

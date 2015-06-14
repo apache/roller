@@ -70,14 +70,4 @@ public final class WeblogBookmarkWrapper {
         return this.pojo.getImage();
     }
     
-    
-    public String getFeedUrl() {
-        return this.pojo.getFeedUrl();
-    }
-    
-    
-    public WeblogBookmarkFolderWrapper getFolder() {
-        return WeblogBookmarkFolderWrapper.wrap(this.pojo.getFolder());
-    }
-    
 }
