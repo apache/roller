@@ -114,24 +114,17 @@ create table custom_template_rendition (
     #columnNotNullWithDefault('type' 'varchar(16)' 'STANDARD')
 );
 
-create table bookmark_folder (
-    id               varchar(48) not null primary key,
-    name             varchar(255) not null,
-    websiteid        varchar(48) not null
-);
-create index fo_weblogid_idx on bookmark_folder( websiteid );
-
 create table bookmark (
     id               varchar(48) not null primary key,
-    folderid         varchar(48) not null,
+    weblogid         varchar(48) not null,
     name             varchar(255) not null,
     description      varchar(255),
     url              varchar(255) not null,
     priority         integer default 100 not null,
-    image            varchar(255),
-    feedurl          varchar(255)
+    image            varchar(255)
 );
-create index bm_folderid_idx on bookmark( folderid );
+create index bm_weblogid_idx on bookmark( weblogid );
+
 
 create table weblogcategory (
     id               varchar(48) not null primary key,
@@ -468,13 +461,11 @@ alter table roller_comment add constraint co_entryid_fk
 alter table entryattribute add constraint att_entryid_fk
     foreign key ( entryid ) references weblogentry( id ) ;
 
--- bookmark_folder and bookmark
+-- blogroll_item must link to an existing weblog
 
-alter table bookmark_folder add constraint fo_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) ;
+alter table bookmark add constraint bm_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
 
-alter table bookmark add constraint bm_folderid_fk
-    foreign key ( folderid ) references bookmark_folder( id ) ;
 
 -- media file foreign key constraints
 

@@ -17,8 +17,7 @@
 
     <h2>Links</h2>
     <div class="sidebar">
-    #set($defaultFolder = $model.weblog.getBookmarkFolder("/"))
-    #showBookmarkLinksList($defaultFolder)
+    #showBookmarkLinksList($model.weblog)
     </div>
 
     <h2>Navigation</h2>

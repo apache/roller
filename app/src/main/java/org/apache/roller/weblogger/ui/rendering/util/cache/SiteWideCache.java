@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util.cache;
@@ -33,7 +36,6 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -357,22 +359,11 @@ public final class SiteWideCache implements CacheHandler {
      * A bookmark has changed.
      */
     public void invalidate(WeblogBookmark bookmark) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(bookmark.getWebsite().getHandle())) {
-            invalidate(bookmark.getWebsite());
+        if(WebloggerRuntimeConfig.isSiteWideWeblog(bookmark.getWeblog().getHandle())) {
+            invalidate(bookmark.getWeblog());
         }
     }
-    
-    
-    /**
-     * A folder has changed.
-     */
-    public void invalidate(WeblogBookmarkFolder folder) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(folder.getWeblog().getHandle())) {
-            invalidate(folder.getWeblog());
-        }
-    }
-    
-    
+
     /**
      * A comment has changed.
      */

@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.util.List;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
@@ -30,15 +29,8 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
 
-/*
- * JPABookmarkManagerImpl.java
- *
- * Created on May 31, 2006, 3:49 PM
- *
- */
 public class JPABookmarkManagerImpl implements BookmarkManager {
     
     private final WeblogManager weblogManager;
@@ -62,11 +54,8 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
    
     public void saveBookmark(WeblogBookmark bookmark) throws WebloggerException {
-        boolean exists = getBookmark(bookmark.getId()) != null;
-        if (!exists) {
-            // New object make sure that relationship is set on managed copy of other side
-            bookmark.getFolder().addBookmark(bookmark);
-        }
+        boolean newBookmark = getBookmark(bookmark.getId()) == null;
+
         // set ranking (order of appearance) of bookmark
         if (bookmark.getPriority() == null) {
             bookmark.calculatePriority();
@@ -74,8 +63,13 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
         this.strategy.store(bookmark);
 
+        if (newBookmark) {
+            // New object make sure that relationship is set on managed copy of other side
+            bookmark.getWeblog().getBookmarks().add(bookmark);
+        }
+
         // update weblog last modified date (date is updated by saveWebsite())
-        weblogManager.saveWeblog(bookmark.getWebsite());
+        weblogManager.saveWeblog(bookmark.getWeblog());
     }
 
     public WeblogBookmark getBookmark(String id) throws WebloggerException {
@@ -83,10 +77,10 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException {
-        Weblog weblog = bookmark.getWebsite();
+        Weblog weblog = bookmark.getWeblog();
         
-        //Remove the bookmark from its parent folder
-        bookmark.getFolder().getBookmarks().remove(bookmark);
+        //Remove the bookmark from its weblog
+        bookmark.getWeblog().getBookmarks().remove(bookmark);
         
         // Now remove it from database
         this.strategy.remove(bookmark);
@@ -95,107 +89,21 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         weblogManager.saveWeblog(weblog);
     }
 
-    public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {
-
-        // If new folder make sure name is unique
-        if ((folder.getId() == null || this.getFolder(folder.getId()) == null) && isDuplicateFolderName(folder)) {
-            throw new WebloggerException("Duplicate folder name");
-        }
-
-        this.strategy.store(folder);
-
-        // update weblog last modified date.  date updated by saveWeblog()
-        weblogManager.saveWeblog(folder.getWeblog());
-    }
-
-    public void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException {
-        Weblog weblog = folder.getWeblog();
-        weblog.getBookmarkFolders().remove(folder);
-        this.strategy.remove(folder);
-
-        // update weblog last modified date.  date updated by saveWeblog()
-        weblogManager.saveWeblog(weblog);
-    }
-
-    /**
-     * Retrieve folder and lazy-load its bookmarks.
-     */
-    public WeblogBookmarkFolder getFolder(String id) throws WebloggerException {
-        return (WeblogBookmarkFolder) strategy.load(WeblogBookmarkFolder.class, id);
-    }
-
     /**
      * @see org.apache.roller.weblogger.business.BookmarkManager#getBookmarks(
-     *      org.apache.roller.weblogger.pojos.WeblogBookmarkFolder)
+     *      org.apache.roller.weblogger.pojos.Weblog)
      */
-    public List<WeblogBookmark> getBookmarks(WeblogBookmarkFolder folder)
+    public List<WeblogBookmark> getBookmarks(Weblog weblog)
             throws WebloggerException {
         TypedQuery<WeblogBookmark> query;
         List<WeblogBookmark> results;
 
-        query = strategy.getNamedQuery("BookmarkData.getByFolder", WeblogBookmark.class);
-        query.setParameter(1, folder);
+        query = strategy.getNamedQuery("Bookmark.getByWeblog", WeblogBookmark.class);
+        query.setParameter(1, weblog);
         results = query.getResultList();
 
         return results;
     }
-
-    public WeblogBookmarkFolder getFolder(Weblog website, String name)
-            throws WebloggerException {
-
-        // Do simple lookup by name
-        TypedQuery<WeblogBookmarkFolder> query = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name",
-                WeblogBookmarkFolder.class);
-        query.setParameter(1, website);
-        query.setParameter(2, name);
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    public WeblogBookmarkFolder getDefaultFolder(Weblog weblog)
-            throws WebloggerException {
-
-        if (weblog == null) {
-            throw new WebloggerException("weblog is null");
-        }
-        
-        TypedQuery<WeblogBookmarkFolder> q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&Name",
-                WeblogBookmarkFolder.class);
-        q.setParameter(1, weblog);
-        q.setParameter(2, "default");
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    public List<WeblogBookmarkFolder> getAllFolders(Weblog website)
-            throws WebloggerException {
-        if (website == null) {
-            throw new WebloggerException("Website is null");
-        }
-        
-        TypedQuery<WeblogBookmarkFolder> q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite",
-                WeblogBookmarkFolder.class);
-        q.setParameter(1, website);
-        return q.getResultList();
-    }
-
-    
-    /**
-     * make sure the given folder doesn't already exist.
-     */
-    private boolean isDuplicateFolderName(WeblogBookmarkFolder folder) 
-        throws WebloggerException {
-
-        // ensure that no sibling folders share the same name
-        return getFolder(folder.getWeblog(), folder.getName()) != null;
-    }
-
 
     public void release() {}
     

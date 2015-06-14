@@ -11,7 +11,6 @@
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogBookmark.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryComment.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryAttribute.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/WeblogBookmarkFolder.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogHitCount.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/PingQueueEntry.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/PingTarget.orm.xml</mapping-file>

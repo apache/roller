@@ -25,7 +25,6 @@ import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
-import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -42,7 +41,6 @@ import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -601,44 +599,6 @@ public final class TestUtils {
 
         // remove
         mgr.removeHitCount(testCount);
-
-        // flush to db
-        WebloggerFactory.getWeblogger().flush();
-    }
-
-    /**
-     * Convenience method for creating a weblog folder.
-     */
-    public static WeblogBookmarkFolder setupFolder(Weblog weblog, String name)
-            throws Exception {
-
-        BookmarkManager mgr = WebloggerFactory.getWeblogger()
-                .getBookmarkManager();
-
-        WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(name, weblog);
-        mgr.saveFolder(testFolder);
-
-        // flush to db
-        WebloggerFactory.getWeblogger().flush();
-
-        // query to make sure we return the persisted object
-        testFolder = mgr.getFolder(testFolder.getId());
-
-        return testFolder;
-    }
-
-    /**
-     * Convenience method for removing a weblog folder.
-     */
-    public static void teardownFolder(String id) throws Exception {
-
-        // lookup the folder
-        BookmarkManager mgr = WebloggerFactory.getWeblogger()
-                .getBookmarkManager();
-        WeblogBookmarkFolder folder = mgr.getFolder(id);
-
-        // remove the cat
-        mgr.removeFolder(folder);
 
         // flush to db
         WebloggerFactory.getWeblogger().flush();

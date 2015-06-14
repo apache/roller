@@ -32,7 +32,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -44,11 +43,9 @@ import org.apache.roller.weblogger.util.I18nUtils;
 
 
 /**
- * Website has many-to-many association with users. Website has one-to-many and
- * one-direction associations with weblog entries, weblog categories, folders and
- * other objects. Use UserManager to create, fetch, update and retrieve websites.
- *
- * @author David M Johnson
+ * Weblogs have a many-to-many association with users. They also have one-to-many and
+ * one-direction associations with weblog entries, weblog categories, bookmarks and
+ * other objects. Use WeblogManager to create, fetch, update and retrieve weblogs.
  */
 public class Weblog implements Serializable {
     
@@ -95,7 +92,7 @@ public class Weblog implements Serializable {
 
     private List<WeblogCategory> weblogCategories = new ArrayList<WeblogCategory>();
 
-    private List<WeblogBookmarkFolder> bookmarkFolders = new ArrayList<WeblogBookmarkFolder>();
+    private List<WeblogBookmark> bookmarks = new ArrayList<WeblogBookmark>();
 
     private List<MediaFileDirectory> mediaFileDirectories = new ArrayList<MediaFileDirectory>();
 
@@ -494,7 +491,7 @@ public class Weblog implements Serializable {
     /**
      * The last time any visible part of this weblog was modified.
      * This includes a change to weblog settings, entries, themes, templates, 
-     * comments, categories, bookmarks, folders, etc.
+     * comments, categories, bookmarks, etc.
      *
      * Pings are explicitly not included because pings do not
      * affect visible changes to a weblog.
@@ -724,28 +721,6 @@ public class Weblog implements Serializable {
         return recentComments;
     }
 
-    
-    /**
-     * Get bookmark folder by name.
-     * @param folderName Name or path of bookmark folder to be returned (null for root)
-     * @return Folder object requested.
-     */
-    public WeblogBookmarkFolder getBookmarkFolder(String folderName) {
-        try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            BookmarkManager bmgr = roller.getBookmarkManager();
-            if (folderName == null || folderName.equals("nil") || folderName.trim().equals("/")) {
-                return bmgr.getDefaultFolder(this);
-            } else {
-                return bmgr.getFolder(this, folderName);
-            }
-        } catch (WebloggerException re) {
-            log.error("ERROR: fetching folder for weblog", re);
-        }
-        return null;
-    }
-
-
     /**
      * Get number of hits counted today.
      */
@@ -850,12 +825,12 @@ public class Weblog implements Serializable {
         return false;
     }
 
-    public List<WeblogBookmarkFolder> getBookmarkFolders() {
-        return bookmarkFolders;
+    public List<WeblogBookmark> getBookmarks() {
+        return bookmarks;
     }
 
-    public void setBookmarkFolders(List<WeblogBookmarkFolder> bookmarkFolders) {
-        this.bookmarkFolders = bookmarkFolders;
+    public void setBookmarks(List<WeblogBookmark> bookmarks) {
+        this.bookmarks = bookmarks;
     }
 
     public List<MediaFileDirectory> getMediaFileDirectories() {
@@ -867,33 +842,32 @@ public class Weblog implements Serializable {
     }
 
     /**
-     * Add a bookmark folder to this weblog.
+     * Add a bookmark to this weblog.
      */
-    public void addBookmarkFolder(WeblogBookmarkFolder folder) {
+    public void addBookmark(WeblogBookmark item) {
 
-        // make sure folder is not null
-        if(folder == null || folder.getName() == null) {
-            throw new IllegalArgumentException("Folder cannot be null and must have a valid name");
+        // make sure blogroll item is not null
+        if(item == null || item.getName() == null) {
+            throw new IllegalArgumentException("Bookmark cannot be null and must have a valid name");
         }
 
-        // make sure we don't already have a folder with that name
-        if(this.hasBookmarkFolder(folder.getName())) {
-            throw new IllegalArgumentException("Duplicate folder name '" + folder.getName() + "'");
+        if(this.hasBookmark(item.getName())) {
+            throw new IllegalArgumentException("Duplicate bookmark name '" + item.getName() + "'");
         }
 
-        // add it to our list of child folder
-        getBookmarkFolders().add(folder);
+        // add it to our blogroll
+        getBookmarks().add(item);
     }
 
     /**
-     * Does this Weblog have a bookmark folder with the specified name?
+     * Does this Weblog have a bookmark with the same name?
      *
-     * @param name The name of the folder to check for.
+     * @param name The name of the bookmark to check for.
      * @return boolean true if exists, false otherwise.
      */
-    public boolean hasBookmarkFolder(String name) {
-        for (WeblogBookmarkFolder folder : this.getBookmarkFolders()) {
-            if(name.toLowerCase().equals(folder.getName().toLowerCase())) {
+    public boolean hasBookmark(String name) {
+        for (WeblogBookmark bookmark : this.getBookmarks()) {
+            if(name.toLowerCase().equals(bookmark.getName().toLowerCase())) {
                 return true;
             }
         }

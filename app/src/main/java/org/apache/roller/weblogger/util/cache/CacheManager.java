@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.util.cache;
@@ -27,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -231,15 +233,6 @@ public final class CacheManager {
         log.debug("invalidating bookmark = "+bookmark.getId());
         for (CacheHandler handler : cacheHandlers) {
             handler.invalidate(bookmark);
-        }
-    }
-    
-    
-    public static void invalidate(WeblogBookmarkFolder folder) {
-        
-        log.debug("invalidating folder = "+folder.getId());
-        for (CacheHandler handler : cacheHandlers) {
-            handler.invalidate(folder);
         }
     }
     

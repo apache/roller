@@ -45,9 +45,6 @@ public class BookmarkEdit extends UIAction {
     // bean for managing form data
     private BookmarkBean bean = new BookmarkBean();
 
-    // the id of the folder holding the bookmark
-    private String folderId = null;
-
     // the bookmark we are adding or editing
     private WeblogBookmark bookmark = null;
 
@@ -74,15 +71,7 @@ public class BookmarkEdit extends UIAction {
         if (StringUtils.isEmpty(bean.getId())) {
             // Create and initialize new, not-yet-saved WeblogBookmark
             bookmark = new WeblogBookmark();
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            try {
-                if (!StringUtils.isEmpty(getFolderId())) {
-                    bookmark.setFolder(bmgr.getFolder(getFolderId()));
-                }
-            } catch (WebloggerException ex) {
-                addError("generic.error.check.logs");
-                log.error("Error looking up folder", ex);
-            }
+            bookmark.setWeblog(getActionWeblog());
         } else {
             // existing bookmark, retrieve its info from DB
             try {
@@ -116,6 +105,7 @@ public class BookmarkEdit extends UIAction {
                 bmgr.saveBookmark(bookmark);
                 WebloggerFactory.getWeblogger().flush();
                 CacheManager.invalidate(bookmark);
+                CacheManager.invalidate(bookmark.getWeblog());
                 addMessage(isAdd() ? "bookmarkForm.created" : "bookmarkForm.updated",
                         getBookmark().getName());
                 return SUCCESS;
@@ -132,7 +122,7 @@ public class BookmarkEdit extends UIAction {
     public void myValidate() {
         // if name new or changed, check new name doesn't already exist
         if ((isAdd() || !getBean().getName().equals(bookmark.getName()))
-             && bookmark.getFolder().hasBookmarkOfName(getBean().getName())) {
+             && bookmark.getWeblog().hasBookmark(getBean().getName())) {
                 addError("bookmarkForm.error.duplicateName", getBean().getUrl());
         }
     }
@@ -141,14 +131,6 @@ public class BookmarkEdit extends UIAction {
         return actionName.equals("bookmarkAdd");
     }
 
-    public String getFolderId() {
-        return folderId;
-    }
-
-    public void setFolderId(String folderId) {
-        this.folderId = folderId;
-    }
-    
     public BookmarkBean getBean() {
         return bean;
     }
@@ -157,7 +139,6 @@ public class BookmarkEdit extends UIAction {
         this.bean = bean;
     }
 
-    // getter needed because JSP reads this object in order to obtain folder name
     public WeblogBookmark getBookmark() {
         return bookmark;
     }

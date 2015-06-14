@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -25,15 +28,13 @@ import org.apache.roller.util.UUIDGenerator;
 
 
 /**
- * <p>Represents a single URL in a user's favorite web-bookmarks collection.
- * Don't construct one of these yourself, instead use the create method in
- * the your BookmarkManager implementation.</p>
+ * <p>Represents a single URL for a weblog.</p>
  */
 public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> {
     
     public static final long serialVersionUID = 2315131256728236003L;
     
-    private WeblogBookmarkFolder folder;
+    private Weblog weblog;
     
     private String id = UUIDGenerator.generateUUID();
     private String name;
@@ -41,8 +42,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     private String url;
     private Integer priority;
     private String image;
-    private String feedUrl;
-    
+
     //----------------------------------------------------------- Constructors
     
     /** Default constructor, for use in form beans only. */
@@ -50,22 +50,20 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
     
     public WeblogBookmark(
-            WeblogBookmarkFolder parent,
+            Weblog parent,
             String name,
             String desc,
             String url,
-            String feedUrl,
             String image) {
-        this.folder = parent;
+        this.weblog = parent;
         this.name = name;
         this.description = desc;
         this.url = url;
-        this.feedUrl = feedUrl;
         this.image = image;
-        folder.addBookmark(this);
+        weblog.addBookmark(this);
         calculatePriority();
     }
-    
+
     //------------------------------------------------------------- Attributes
     public String getId() {
         return this.id;
@@ -76,11 +74,11 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
 
     public void calculatePriority() {
-        int size = folder.getBookmarks().size();
+        int size = weblog.getBookmarks().size();
         if (size == 1) {
             this.priority = 0;
         } else {
-            this.priority = folder.getBookmarks().get(size - 2).getPriority() + 1;
+            this.priority = weblog.getBookmarks().get(size - 2).getPriority() + 1;
         }
     }
 
@@ -136,22 +134,14 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         this.image = image;
     }
     
-    public String getFeedUrl() {
-        return this.feedUrl;
-    }
-    
-    public void setFeedUrl(String feedUrl) {
-        this.feedUrl = feedUrl;
-    }
-    
     //---------------------------------------------------------- Relationships
 
-    public org.apache.roller.weblogger.pojos.WeblogBookmarkFolder getFolder() {
-        return this.folder;
+    public Weblog getWeblog() {
+        return this.weblog;
     }
     
-    public void setFolder(org.apache.roller.weblogger.pojos.WeblogBookmarkFolder folder) {
-        this.folder = folder;
+    public void setWeblog(Weblog weblog) {
+        this.weblog = weblog;
     }
     
     //------------------------------------------------------- Good citizenship
@@ -175,7 +165,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         WeblogBookmark o = (WeblogBookmark)other;
         return new EqualsBuilder()
         .append(getName(), o.getName())
-        .append(getFolder(), o.getFolder())
+        .append(getWeblog(), o.getWeblog())
         .append(getUrl(), o.getUrl())
         .isEquals();
     }
@@ -183,7 +173,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())
-        .append(getFolder())
+        .append(getWeblog())
         .append(getUrl())
         .toHashCode();
     }
@@ -193,10 +183,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
      */
     public int compareTo(WeblogBookmark o) {
         return priority.compareTo(o.getPriority());
-    }
-    
-    public Weblog getWebsite() {
-        return getFolder().getWeblog();
     }
     
 }

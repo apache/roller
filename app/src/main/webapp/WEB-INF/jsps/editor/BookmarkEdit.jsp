@@ -67,11 +67,6 @@
         </tr>
         
         <tr>
-            <td><s:text name="bookmarkForm.rssUrl" /></td>
-            <td><s:textfield name="bean.feedUrl" maxlength="255" size="70" style="width:50%"/></td>
-        </tr>
-        
-        <tr>
             <td><s:text name="generic.description" /></td>
             <td><s:textfield name="bean.description" maxlength="255" size="70" style="width:50%"/></td>
         </tr>

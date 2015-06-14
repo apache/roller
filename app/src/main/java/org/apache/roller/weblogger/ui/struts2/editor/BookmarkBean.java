@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -31,9 +34,7 @@ public class BookmarkBean {
     private String description = null;
     private String url = null;
     private String image = null;
-    private String feedUrl = null;
-    
-    
+
     public String getId() {
         return this.id;
     }
@@ -74,31 +75,19 @@ public class BookmarkBean {
         this.image = image;
     }
     
-    public String getFeedUrl() {
-        return this.feedUrl;
-    }
-    
-    public void setFeedUrl( String feedUrl ) {
-        this.feedUrl = feedUrl;
-    }
-    
-    
     public void copyTo(WeblogBookmark dataHolder) {
         dataHolder.setName(this.name);
         dataHolder.setDescription(this.description);
         dataHolder.setUrl(this.url);
         dataHolder.setImage(this.image);
-        dataHolder.setFeedUrl(this.feedUrl);
     }
-    
-    
+
     public void copyFrom(WeblogBookmark dataHolder) {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();
         this.url = dataHolder.getUrl();
         this.image = dataHolder.getImage();
-        this.feedUrl = dataHolder.getFeedUrl();
     }
     
 }

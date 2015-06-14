@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.io.BufferedReader;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
@@ -29,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -83,108 +81,83 @@ public class BookmarkTest extends TestCase {
     public void testBookmarkCRUD() throws Exception {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
-        
+        WeblogManager wmgr = getRoller().getWeblogManager();
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogBookmarkFolder root = bmgr.getDefaultFolder(testWeblog);
-        
-        WeblogBookmarkFolder folder = new WeblogBookmarkFolder("TestFolder2", TestUtils.getManagedWebsite(testWeblog));
-        bmgr.saveFolder(folder);
-        TestUtils.endSession(true);
-        
-        // query for folder again since session ended
-        folder = bmgr.getFolder(folder.getId());
-        
+
         // Add bookmark by adding to folder
         WeblogBookmark bookmark1 = new WeblogBookmark(
-                folder,
+                testWeblog,
                 "TestBookmark1",
                 "created by testBookmarkCRUD()",
                 "http://www.example.com",
-                "http://www.example.com/rss.xml",
                 "test.jpg");
-        folder.addBookmark(bookmark1);
-        
+        bmgr.saveBookmark(bookmark1);
+
         // Add another bookmark
         WeblogBookmark bookmark2 = new WeblogBookmark(
-                folder,
+                testWeblog,
                 "TestBookmark2",
                 "created by testBookmarkCRUD()",
                 "http://www.example.com",
-                "http://www.example.com/rss.xml",
                 "test.jpf");
-        folder.addBookmark(bookmark2);
-        
+        bmgr.saveBookmark(bookmark2);
+
         TestUtils.endSession(true);
-        
-        WeblogBookmarkFolder testFolder = null;
+
         WeblogBookmark bookmarkb = null, bookmarka = null;
         
         // See that two bookmarks were stored
-        testFolder = bmgr.getFolder(folder.getId());
-        assertEquals(2, testFolder.getBookmarks().size());
-        Iterator<WeblogBookmark> iter = testFolder.getBookmarks().iterator();
+        List<WeblogBookmark> bookmarks = bmgr.getBookmarks(testWeblog);
+        assertEquals(2, bookmarks.size());
+        Iterator<WeblogBookmark> iter = bookmarks.iterator();
         bookmarka = iter.next();
         bookmarkb = iter.next();
         
-        // Remove one bookmark
-        bmgr.removeBookmark(bookmarka);        
-        bmgr.removeBookmark(bookmarkb);        
-        bmgr.saveFolder(testFolder);
+        // Remove one bookmark via Bookmark Manager
+        bmgr.removeBookmark(bookmarka);
         TestUtils.endSession(true);
                 
         // Folder should now contain one bookmark
         assertNull(bmgr.getBookmark(bookmarka.getId()));
-        assertNull(bmgr.getBookmark(bookmarkb.getId()));
-        testFolder = bmgr.getFolder(folder.getId());
-        assertEquals(0, testFolder.getBookmarks().size());
-        
-        // Remove folder
-        bmgr.removeFolder(testFolder);
+        assertNotNull(bmgr.getBookmark(bookmarkb.getId()));
+        Weblog weblogTest2 = wmgr.getWeblog(testWeblog.getId());
+        assertEquals(1, weblogTest2.getBookmarks().size());
+
+        // Remove other bookmark via Weblog Manager
+        weblogTest2.getBookmarks().remove(bookmarkb);
+        wmgr.saveWeblog(weblogTest2);
         TestUtils.endSession(true);
-        
-        // Folder and one remaining bookmark should be gone
-        assertNull( bmgr.getBookmark(bookmarkb.getId()) );
-        assertNull( bmgr.getFolder(folder.getId()) );
+
+        // Last bookmark should be gone
+        weblogTest2 = wmgr.getWeblog(testWeblog.getId());
+        assertEquals(0, weblogTest2.getBookmarks().size());
     }
-    
-    
+
     /**
      * Test all bookmark lookup methods.
      */
-    public void _testBookmarkLookups() throws Exception {
+    public void testBookmarkLookups() throws Exception {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
-        
+        WeblogManager wmgr = getRoller().getWeblogManager();
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogBookmarkFolder root = bmgr.getDefaultFolder(testWeblog);
-        
-        // add some folders
-        WeblogBookmarkFolder f1 = new WeblogBookmarkFolder("f1", TestUtils.getManagedWebsite(testWeblog));
-        bmgr.saveFolder(f1);
-        WeblogBookmarkFolder f2 = new WeblogBookmarkFolder("f2", TestUtils.getManagedWebsite(testWeblog));
-        bmgr.saveFolder(f2);
-        WeblogBookmarkFolder f3 = new WeblogBookmarkFolder("f3", TestUtils.getManagedWebsite(testWeblog));
-        bmgr.saveFolder(f3);
-        
-        TestUtils.endSession(true);
-        
-        f1 = bmgr.getFolder(f1.getId());              
-        f2 = bmgr.getFolder(f2.getId());              
 
         // add some bookmarks
         WeblogBookmark b1 = new WeblogBookmark(
-                f1, "b1", "testbookmark",
-                "http://example.com", "http://example.com/rss",
+                testWeblog, "b1", "testbookmark13",
+                "http://example.com",
                 "image.gif");
         bmgr.saveBookmark(b1);
         WeblogBookmark b2 = new WeblogBookmark(
-                f1, "b2", "testbookmark",
-                "http://example.com", "http://example.com/rss",
+                testWeblog, "b2", "testbookmark14",
+                "http://example.com",
                 "image.gif");
         bmgr.saveBookmark(b2);
         WeblogBookmark b3 = new WeblogBookmark(
-                f2, "b3", "testbookmark",
-                "http://example.com", "http://example.com/rss",
+                testWeblog, "b3", "testbookmark16",
+                "http://example.com",
                 "image.gif");
         bmgr.saveBookmark(b3);
         
@@ -194,104 +167,12 @@ public class BookmarkTest extends TestCase {
         WeblogBookmark testBookmark = bmgr.getBookmark(b1.getId());
         assertNotNull(testBookmark);
         assertEquals("b1", testBookmark.getName());
-        
-        // test lookup of all bookmarks in single folder
-        WeblogBookmarkFolder testFolder = bmgr.getFolder(f1.getId());
-        List allBookmarks = bmgr.getBookmarks(testFolder);
+
+        // test lookup of all bookmarks for a website
+        Weblog testWeblog2 = wmgr.getWeblog(testWeblog.getId());
+        List<WeblogBookmark> allBookmarks = bmgr.getBookmarks(testWeblog2);
         assertNotNull(allBookmarks);
-        assertEquals(2, allBookmarks.size());
-        
-        // getBookmarks(folder, false) should also match folder.getBookmarks()
-        assertEquals(allBookmarks.size(), testFolder.getBookmarks().size());
+        assertEquals(3, allBookmarks.size());
         
     }
-    
-    
-    /**
-     * Creates folder tree like this:
-     *    root/
-     *       dest/
-     *       f1/
-     *          b1
-     *          f2/
-     *             f3/
-     *
-     * TODO: this test is commented out because the way this functionality is
-     * really done is simply by changing the parent of a folder or bookmark
-     * and then saving it, so there really is no need for a full moveFolder()
-     * method.  i am leaving this test here for a while just in case we change
-     * our minds.
-     */
-    public void _testMoveFolderContents() throws Exception {
-        BookmarkManager bmgr = getRoller().getBookmarkManager();
-        try {        
-
-            testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            WeblogBookmarkFolder root = bmgr.getDefaultFolder(testWeblog);
-
-            WeblogBookmarkFolder dest = new WeblogBookmarkFolder("dest", testWeblog);
-            bmgr.saveFolder(dest);
-
-            // create source folder f1
-            WeblogBookmarkFolder f1 = new WeblogBookmarkFolder("f1", testWeblog);
-            bmgr.saveFolder(f1);
-
-            // create bookmark b1 inside source folder f1
-            WeblogBookmark b1 = new WeblogBookmark(
-                    f1, "b1", "testbookmark",
-                    "http://example.com", "http://example.com/rss",
-                    "image.gif");
-            f1.addBookmark(b1);
-
-            // create folder f2 inside f1
-            WeblogBookmarkFolder f2 = new WeblogBookmarkFolder("f2", testWeblog);
-            bmgr.saveFolder(f2);
-
-            // create bookmark b2 inside folder f2
-            WeblogBookmark b2 = new WeblogBookmark(
-                    f2, "b2", "testbookmark",
-                    "http://example.com", "http://example.com/rss",
-                    "image.gif");
-            f2.addBookmark(b2);
-
-            // create folder f3 inside folder f2
-            WeblogBookmarkFolder f3 = new WeblogBookmarkFolder("f3", testWeblog);
-            bmgr.saveFolder(f3);
-
-            // crete bookmark b3 inside folder f3
-            WeblogBookmark b3 = new WeblogBookmark(
-                    f3, "b3", "testbookmark",
-                    "http://example.com", "http://example.com/rss",
-                    "image.gif");
-            f3.addBookmark(b3);
-
-            TestUtils.endSession(true);
-
-            // verify our new tree
-            dest = bmgr.getFolder(dest.getId());
-            f1 = bmgr.getFolder(f1.getId());
-            f2 = bmgr.getFolder(f2.getId());
-            f3 = bmgr.getFolder(f3.getId());
-            assertEquals(0, dest.getBookmarks().size());
-            assertEquals(1, f1.getBookmarks().size());
-            assertEquals(1, f2.getBookmarks().size());
-            assertEquals(1, f3.getBookmarks().size());
-            assertEquals(0, dest.retrieveBookmarks().size());
-            assertEquals(3, f1.retrieveBookmarks().size());
-
-            // check that paths and child folders are correct
-            assertEquals("f1", f1.getName());
-            assertEquals(1, dest.getWeblog().getBookmarkFolders().size());
-        
-            bmgr.removeFolder(f1);
-            bmgr.removeFolder(dest);
-
-        } catch(Throwable t) {
-            log.error("Exception running test", t);
-            throw (Exception) t;
-        } finally {
-            TestUtils.endSession(true);
-        }
-    }
-
 }

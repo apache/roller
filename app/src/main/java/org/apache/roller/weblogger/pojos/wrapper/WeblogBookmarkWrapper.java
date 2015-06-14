@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos.wrapper;
@@ -68,16 +71,6 @@ public final class WeblogBookmarkWrapper {
 
     public String getImage() {
         return this.pojo.getImage();
-    }
-    
-    
-    public String getFeedUrl() {
-        return this.pojo.getFeedUrl();
-    }
-    
-    
-    public WeblogBookmarkFolderWrapper getFolder() {
-        return WeblogBookmarkFolderWrapper.wrap(this.pojo.getFolder());
     }
     
 }

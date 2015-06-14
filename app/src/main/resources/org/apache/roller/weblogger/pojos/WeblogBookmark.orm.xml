@@ -6,8 +6,8 @@
     <entity metadata-complete="true" name="WeblogBookmark"
             class="org.apache.roller.weblogger.pojos.WeblogBookmark" access="PROPERTY">
         <table name="bookmark"/>
-        <named-query name="BookmarkData.getByFolder">
-            <query>SELECT b FROM WeblogBookmark b WHERE b.folder = ?1 order by b.priority</query>
+        <named-query name="Bookmark.getByWeblog">
+            <query>SELECT b FROM WeblogBookmark b WHERE b.weblog = ?1 order by b.priority</query>
         </named-query>
         <attributes>
             <id name="id">
@@ -28,18 +28,13 @@
             <basic name="image">
                 <column name="image" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <basic name="feedUrl">
-                <column name="feedurl" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <many-to-one name="folder" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder">
-                <join-column name="folderid" insertable="true" updatable="true" />
+            <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+                <join-column name="weblogid" insertable="true" updatable="true" nullable="false"/>
                 <cascade>
                     <cascade-persist />
-                    <cascade-merge />
                     <cascade-refresh />
                 </cascade>
-            </many-to-one>            
-            <transient name="website"/>
+            </many-to-one>
         </attributes>
     </entity>
 </entity-mappings>

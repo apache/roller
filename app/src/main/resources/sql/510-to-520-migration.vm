@@ -10,6 +10,19 @@
 -- images removed from categories
 #dropColumn('weblogcategory' 'image')
 
+-- bookmark folders removed
+
+#dropForeignKey("bookmark" "bm_folderid_fk")
+#dropIndex("bookmark", "bm_folderid_idx")
+#dropColumn("bookmark", "feedurl")
+#addColumnNull("bookmark" "weblogid" "varchar48")
+update bookmark bm set weblogid = select websiteid from bookmark_folder bf where bf.id = bm.folderid;
+
+#dropColumn("bookmark", "folderid")
+#dropTableIfExists("bookmark_folder")
+alter table bookmark add constraint bm_weblogid_fk foreign key ( weblogid ) references weblog( id ) ;
+
+
 -- Set new global roles from the now-unused userrole table:
 update roller_user ru
 set role = 'BLOGGER'

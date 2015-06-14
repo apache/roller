@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -34,16 +37,6 @@
                         <s:param name="folderId" value="%{folder.id}" />
                     </s:url>
                     <s:a href="%{addBookmark}"><s:text name="bookmarksForm.addBookmark" /></s:a>
-                </p>
-                
-                <p>
-                    <%-- Add Folder link --%>
-                    <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
-                    <s:url var="addFolder" action="folderAdd">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="folderId" value="%{folder.id}" />
-                    </s:url>
-                    <s:a href="%{addFolder}"><s:text name="bookmarksForm.addFolder" /></s:a>
                 </p>
 
                 <br />
