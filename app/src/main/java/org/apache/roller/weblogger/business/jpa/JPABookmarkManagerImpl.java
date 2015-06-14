@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.util.List;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
