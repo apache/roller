@@ -51,9 +51,8 @@ function onMove()
     <table class="rollertable">
         
         <tr class="rollertable">
-            <th class="rollertable" width="15%"><s:text name="generic.name" /></th>
-            <th class="rollertable" width="40%"><s:text name="generic.description" /></th>
-            <th class="rollertable" width="31%"><s:text name="categoriesForm.imageUrl" /></th>
+            <th class="rollertable" width="25%"><s:text name="generic.name" /></th>
+            <th class="rollertable" width="61%"><s:text name="generic.description" /></th>
             <th class="rollertable" width="7%"><s:text name="generic.edit" /></th>
             <th class="rollertable" width="7%"><s:text name="categoriesForm.remove" /></th>
         </tr>

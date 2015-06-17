@@ -135,22 +135,8 @@ public class UserEdit extends UIAction {
         if (!hasActionErrors()) {
             getBean().copyTo(user);
 
-            if (authMethod == AuthMethod.DB_OPENID) {
-                if (StringUtils.isEmpty(user.getPassword())
-                        && StringUtils.isEmpty(bean.getPassword())
-                        && StringUtils.isEmpty(bean.getOpenIdUrl())) {
-                    addError("userRegister.error.missingOpenIDOrPassword");
-                    return INPUT;
-                } else if (StringUtils.isNotEmpty(bean.getOpenIdUrl())
-                        && StringUtils.isNotEmpty(bean.getPassword())) {
-                    addError("userRegister.error.bothOpenIDAndPassword");
-                    return INPUT;
-                }
-            }
-
             // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID) ||
-                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            if (authMethod.equals(AuthMethod.OPENID)) {
                 try {
                     String randomString = RandomStringUtils.randomAlphanumeric(255);
                     user.resetPassword(randomString);
@@ -222,8 +208,7 @@ public class UserEdit extends UIAction {
             } else if (!safe.equals(getBean().getUserName()) ) {
                 addError("error.add.user.badUserName");
             }
-            if ((authMethod == AuthMethod.ROLLERDB ||
-                    (authMethod == AuthMethod.DB_OPENID && StringUtils.isEmpty(getBean().getOpenIdUrl())))
+            if (authMethod == AuthMethod.ROLLERDB
                     && StringUtils.isEmpty(getBean().getPassword())) {
                 addError("error.add.user.missingPassword");
             }

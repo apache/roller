@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %> 
 
@@ -36,11 +39,6 @@
 <p class="pagetip">
     <s:if test="actionName == 'createUser'">
         <s:text name="userAdmin.addInstructions"/>
-    </s:if>
-    <s:if test="authMethod == 'DB_OPENID'">
-        <p class="pagetip">
-            <s:text name="userAdmin.noPasswordForOpenID"/>
-        </p>
     </s:if>
 </p>
 
@@ -84,7 +82,7 @@
             <td class="description"><s:text name="userAdmin.tip.fullName" /></td>
         </tr>
         
-        <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
+        <s:if test="authMethod == 'ROLLERDB'">
             <tr>
                 <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
                 <td class="field"><s:password name="bean.password" size="20" maxlength="20" /></td>
@@ -92,7 +90,7 @@
             </tr>
         </s:if>
 
-        <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
+        <s:if test="authMethod == 'OPENID'">
             <tr>
                 <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
                 <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" style="width:75%" id="f_openid_identifier" /></td>

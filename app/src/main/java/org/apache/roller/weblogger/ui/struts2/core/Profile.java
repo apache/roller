@@ -93,22 +93,8 @@ public class Profile extends UIAction {
                 }
             }
 
-            if (authMethod == AuthMethod.DB_OPENID) {
-                if (StringUtils.isEmpty(existingUser.getPassword())
-                        && StringUtils.isEmpty(bean.getPasswordText())
-                        && StringUtils.isEmpty(bean.getOpenIdUrl())) {
-                    addError("userRegister.error.missingOpenIDOrPassword");
-                    return INPUT;
-                } else if (StringUtils.isNotEmpty(bean.getOpenIdUrl())
-                        && StringUtils.isNotEmpty(bean.getPasswordText())) {
-                    addError("userRegister.error.bothOpenIDAndPassword");
-                    return INPUT;
-                }
-            }
-
             // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID) ||
-                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            if (authMethod.equals(AuthMethod.OPENID)) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 try {
                     existingUser.resetPassword(randomString);

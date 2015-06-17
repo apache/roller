@@ -14,7 +14,10 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
--->
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
+--%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p><s:text name="userRegister.prompt" /></p>
@@ -74,17 +77,13 @@
                 <p><s:text name="userRegister.tip.openid.disabled" /></p>                    
                 </s:if>
 
-                <s:if test="authMethod == 'DB_OPENID'">
-                <p><s:text name="userRegister.tip.openid.hybrid" /></p>                    
-                </s:if>
-
                 <s:if test="authMethod == 'OPENID'">
                 <p><s:text name="userRegister.tip.openid.only" /></p>                    
                 </s:if>
             </td>
         </tr>
         
-        <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
+        <s:if test="authMethod == 'ROLLERDB'">
         <tr>
             <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
             <td class="field">
@@ -107,7 +106,7 @@
         </s:else>
     
 
-        <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
+        <s:if test="authMethod == 'OPENID'">
             <tr>
                 <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
                 <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" style="width:75%" id="f_openid_identifier" onkeyup="onChange()"/></td>
@@ -167,11 +166,10 @@ function onChange() {
         userName = document.register['bean.userName'].value;
     }
 
-    if (authMethod == "ROLLERDB" || authMethod == "DB_OPENID") {
+    if (authMethod == "ROLLERDB") {
         passwordText    = document.register['bean.passwordText'].value;
         passwordConfirm = document.register['bean.passwordConfirm'].value;
-    }
-    if (authMethod == "OPENID" || authMethod == "DB_OPENID") {
+    } else if (authMethod == "OPENID") {
         openIdUrl = document.register['bean.openIdUrl'].value;
     }
 
@@ -181,8 +179,6 @@ function onChange() {
         if (emailAddress && userName && passwordText && passwordConfirm) disabled = false;
     } else if (authMethod == "OPENID") {
         if (emailAddress && openIdUrl) disabled = false;
-    } else if (authMethod == "DB_OPENID") {
-        if (emailAddress && ((passwordText && passwordConfirm) || (openIdUrl)) ) disabled = false;
     }
 
     if (authMethod != 'LDAP') {
