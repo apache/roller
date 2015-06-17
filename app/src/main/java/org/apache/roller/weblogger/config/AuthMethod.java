@@ -23,8 +23,7 @@ package org.apache.roller.weblogger.config;
 public enum AuthMethod {
     ROLLERDB("db"),
     LDAP("ldap"),
-    OPENID("openid"),
-    DB_OPENID("db-openid");
+    OPENID("openid");
 
     private final String propertyName;
 

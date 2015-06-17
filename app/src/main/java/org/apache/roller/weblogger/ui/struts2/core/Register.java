@@ -351,8 +351,7 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         // User.password does not allow null, so generate one
-        if (getAuthMethod().equals(AuthMethod.OPENID.name()) ||
-                (getAuthMethod().equals(AuthMethod.DB_OPENID.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
+        if (getAuthMethod().equals(AuthMethod.OPENID.name())) {
             String randomString = RandomStringUtils.randomAlphanumeric(255);
             getBean().setPasswordText(randomString);
             getBean().setPasswordConfirm(randomString);

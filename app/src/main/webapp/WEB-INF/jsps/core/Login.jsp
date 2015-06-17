@@ -28,7 +28,7 @@
 String securityCheckUrl = "/roller_j_security_check";
 %>
 
-<s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
+<s:if test="authMethod == 'OPENID'">
     
     <p><s:text name="loginPage.openIdPrompt" /></p>
     
@@ -55,14 +55,8 @@ String securityCheckUrl = "/roller_j_security_check";
 
 <s:if test="authMethod != 'OPENID'">
 
-    <s:if test="authMethod == 'DB_OPENID'">
-        <p><s:text name="loginPage.openIdHybridPrompt" /></p>
-    </s:if>
-    
-    <s:else>
-        <p><s:text name="loginPage.prompt" /></p>
-    </s:else>
-    
+    <p><s:text name="loginPage.prompt" /></p>
+
     <form method="post" id="loginForm" 
           action="<c:url value="<%= securityCheckUrl %>"/>"
           onsubmit="saveUsername(this)">
@@ -109,7 +103,7 @@ String securityCheckUrl = "/roller_j_security_check";
 </s:if>
 
 <script>
-<s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
+<s:if test="authMethod == 'OPENID'">
 function focusToOpenidForm() {
     return (document.getElementById && document.getElementById("j_username") === null) ||
         getCookie("favorite_authentication_method") !== "username";
