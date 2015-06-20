@@ -99,7 +99,13 @@ function onMove()
                 <td style="vertical-align:middle" colspan="6"><s:text name="categoriesForm.noresults" /></td>
             </tr>
         </s:else>
-        
     </table>
-    
+
+    <div class="control clearfix">
+        <s:url var="addCategory" action="categoryAdd">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
+        <input type="button" value="<s:text name='categoriesForm.addCategory'/>" onclick="window.location='<s:property value='addCategory' escape='false' />'"/>
+     </div>
+
 </s:form>

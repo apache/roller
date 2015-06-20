@@ -280,7 +280,7 @@
                     <s:param name="weblog" value="actionWeblog.handle" />
                     <s:param name="removeId" value="%{entry.id}" />
                 </s:url>
-                <input type="button" value="<s:text name='weblogEdit.deleteEntry'/>" onclick="window.location='<s:property value="removeUrl" escape="false" />'" />
+                <input type="button" value="<s:text name='weblogEdit.deleteEntry'/>" onclick="window.location='<s:property value="removeUrl" escape="false" />'"/>
             </span>
         </s:if>
     </div>

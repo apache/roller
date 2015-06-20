@@ -392,7 +392,7 @@
             <result name="success" type="chain">bookmarks</result>
             <result name="error" type="chain">bookmarks</result>
         </action>
-        
+
         <action name="bookmarkEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.BookmarkEdit">
             <param name="actionName">bookmarkEdit</param>
