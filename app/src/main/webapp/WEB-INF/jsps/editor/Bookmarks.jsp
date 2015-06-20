@@ -116,6 +116,11 @@ function onDelete()
     </table>
     
     <div class="control clearfix">
+        <s:url var="addBookmark" action="bookmarkAdd">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
+        <input type="button" value="<s:text name='bookmarksForm.addBookmark'/>" onclick="window.location='<s:property value="addBookmark" escape="false" />'"/>
+
         <s:if test="weblogObj.bookmarks.size > 0">
                 <%-- Delete-selected button --%>
                 <input type="button" value="<s:text name="bookmarksForm.delete"/>" onclick="onDelete();return false;" />

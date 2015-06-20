@@ -15,6 +15,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 -->
 <!DOCTYPE tiles-definitions PUBLIC 
    "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN" 
@@ -305,7 +308,6 @@
     
     <definition name=".Categories" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Categories.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CategoriesSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
     
@@ -321,7 +323,6 @@
     
     <definition name=".Bookmarks" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/BookmarksSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
     
@@ -329,17 +330,7 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarkEdit.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
-    
-    <definition name=".BookmarksImport" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarksImport.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
-    </definition>
-    
-    <definition name=".FolderEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/FolderEdit.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
-    </definition>
-    
+
     <definition name=".Resources" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Resources.jsp" />
     </definition>

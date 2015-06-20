@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -43,12 +46,7 @@
 <s:form>
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <%--
-        Edit action uses folderId for redirection back to proper bookmarks folder on cancel
-        (as configured in struts.xml); add action also, plus to know which folder to put new
-        bookmark in.
-    --%>
-    <s:hidden name="folderId" />
+
     <s:if test="actionName == 'bookmarkEdit'">
         <%-- bean for bookmark add does not have a bean id yet --%>
         <s:hidden name="bean.id" />
