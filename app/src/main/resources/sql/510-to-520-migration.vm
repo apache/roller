@@ -10,6 +10,12 @@
 -- images removed from categories
 #dropColumn('weblogcategory' 'image')
 
+-- roller_permission revamped to user_weblog_role
+#dropColumn('roller_permission', 'objecttype')
+#renameColumn('roller_permission', 'objectid', 'weblogid', 'varchar(48)')
+#renameColumn('roller_permission', 'actions', 'weblog_role', 'varchar(48)')
+#renameTable('roller_permission', 'user_weblog_role')
+
 -- bookmark folders removed
 
 #dropForeignKey("bookmark" "bm_folderid_fk")
@@ -37,15 +43,15 @@ from userrole ur
 where role = 'admin');
 
 -- Update the weblog roles to the new terminology
-update roller_permission rp
+update user_weblog_role
 set actions = 'OWNER'
 where actions = 'admin'
 
-update roller_permission rp
+update user_weblog_role
 set actions = 'POST'
 where actions = 'post'
 
-update roller_permission rp
+update user_weblog_role
 set actions = 'EDIT_DRAFT'
 where actions = 'edit_draft'
 
@@ -80,13 +86,12 @@ where actions = 'edit_draft'
 #expandTimestampNotNull('rag_entry' 'published')
 #expandTimestamp('rag_entry' 'updated')
 #expandTimestamp('rag_subscription' 'last_updated')
-#expandTimestamp('roller_audit_log' 'change_time')
 #expandTimestampNotNull('roller_comment' 'posttime')
 #expandTimestampNotNull('roller_mediafile' 'date_uploaded')
 #expandTimestamp('roller_mediafile' 'last_updated')
 #expandTimestampNotNull('roller_oauthaccessor' 'created')
 #expandTimestampNotNull('roller_oauthaccessor' 'updated')
-#expandTimestampNotNull('roller_permission' 'datecreated')
+#expandTimestampNotNull('user_weblog_role' 'datecreated')
 #expandTimestamp('roller_tasklock' 'timeacquired')
 #expandTimestamp('roller_tasklock' 'lastrun')
 #expandTimestampNotNull('roller_user' 'datecreated')

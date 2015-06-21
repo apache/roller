@@ -27,33 +27,13 @@ create table roller_user (
 );
 alter table roller_user add constraint ru_username_uq unique ( username$!db.INDEXSIZE );
 
--- actions: comma separated list of actions permitted by permission
--- objectid: for now this will always store weblogid
--- objectType: for now this will always be 'Weblog'
-create table roller_permission (
+create table user_weblog_role (
    id              varchar(48) not null primary key,
    username        varchar(255) not null,
-   actions         varchar(255), 
-   objectid        varchar(48),           
-   objecttype      varchar(255), 
-   pending         $db.BOOLEAN_SQL_TYPE_TRUE,         
+   weblogid        varchar(48),
+   weblog_role     varchar(48),
+   pending         $db.BOOLEAN_SQL_TYPE_TRUE,
    datecreated     $db.TIMESTAMP_SQL_TYPE not null
-);
-
-
--- Audit log records time and comment about change
--- user_id: user that made change
--- object_id: id of associated object, if any
--- object_class: name of associated object class (e.g. WeblogEntryData)
--- comment: description of change
--- change_time: time that change was made
-create table roller_audit_log (
-    id              varchar(48) not null primary key,
-    user_id         varchar(48) not null,  
-    object_id       varchar(48),           
-    object_class    varchar(255),          
-    comment_text    varchar(255) not null, 
-    change_time     $db.TIMESTAMP_SQL_TYPE              
 );
 
 create table weblog (
@@ -194,16 +174,6 @@ create index weta_weblogid_idx on roller_weblogentrytagagg( websiteid );
 create index weta_name_idx on roller_weblogentrytagagg( name );
 create index weta_lastused_idx on roller_weblogentrytagagg( lastused );
 alter table roller_weblogentrytagagg add constraint weta_weblog_tag_uq unique ( websiteid, name );
-
-create table newsfeed (
-    id              varchar(48) not null primary key,
-    name            varchar(255) not null,
-    description     varchar(255) not null,
-    link            varchar(255) not null,
-    websiteid       varchar(48) not null
-);
-create index nf_weblogid_idx on newsfeed( websiteid );
-
 
 create table roller_comment (
     id         varchar(48) not null primary key,
@@ -476,11 +446,6 @@ alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
     foreign key (mediafile_id) references roller_mediafile(id) ;
 
 alter table roller_mediafiledir add constraint mf_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) ;
-
--- newsfeed
-
-alter table newsfeed add constraint nf_weblogid_fk
     foreign key ( websiteid ) references weblog( id ) ;
 
 -- autoping

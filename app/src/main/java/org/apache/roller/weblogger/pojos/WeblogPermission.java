@@ -33,14 +33,13 @@ import org.apache.commons.logging.LogFactory;
 
 
 /**
- * Permission for one specific weblog
+ * WeblogRole that a user has for a specific weblog
  */
 public class WeblogPermission implements Serializable {
 
     protected String  id = UUIDGenerator.generateUUID();
     protected String  userName;
-    protected String  objectType;
-    protected String  objectId;
+    protected String  weblogId;
     protected boolean pending = false;
     protected Date dateCreated = new Date();
     protected WeblogRole weblogRole;
@@ -78,12 +77,12 @@ public class WeblogPermission implements Serializable {
         this.userName = username;
     }
 
-    public String getObjectId() {
-        return objectId;
+    public String getWeblogId() {
+        return weblogId;
     }
 
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
+    public void setWeblogId(String weblogId) {
+        this.weblogId = weblogId;
     }
 
     public Date getDateCreated() {
@@ -104,20 +103,18 @@ public class WeblogPermission implements Serializable {
 
     public WeblogPermission(Weblog weblog, User user, WeblogRole weblogRole) {
         setWeblogRole(weblogRole);
-        objectType = "Weblog";
-        objectId = weblog.getHandle();
+        weblogId = weblog.getHandle();
         userName = user.getUserName();
     }
 
     public WeblogPermission(Weblog weblog, WeblogRole weblogRole) {
         setWeblogRole(weblogRole);
-        objectType = "Weblog";
-        objectId = weblog.getHandle();
+        weblogId = weblog.getHandle();
     }
 
     public Weblog getWeblog() throws WebloggerException {
-        if (objectId != null) {
-            return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(objectId, null);
+        if (weblogId != null) {
+            return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(weblogId, null);
         }
         return null;
     }
@@ -131,7 +128,7 @@ public class WeblogPermission implements Serializable {
 
     public String toString() {
         String sb = "WeblogPermission: ";
-        sb += "Object ID = " + getObjectId();
+        sb += "Weblog ID = " + getWeblogId();
         sb += "; User Name = " + getUserName();
         sb += "; WeblogRole = " + getWeblogRole().name();
         return sb;
@@ -147,7 +144,7 @@ public class WeblogPermission implements Serializable {
         WeblogPermission o = (WeblogPermission)other;
         return new EqualsBuilder()
                 .append(getUserName(), o.getUserName())
-                .append(getObjectId(), o.getObjectId())
+                .append(getWeblogId(), o.getWeblogId())
                 .append(getWeblogRole(), o.getWeblogRole())
                 .isEquals();
     }
@@ -155,7 +152,7 @@ public class WeblogPermission implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(getUserName())
-                .append(getObjectId())
+                .append(getWeblogId())
                 .append(getWeblogRole())
                 .toHashCode();
     }

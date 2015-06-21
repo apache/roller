@@ -165,7 +165,7 @@
                        </s:if>
 
                        <%-- don't allow last admin to resign from blog --%>
-                       <s:if test='!(#perms.hasAction("admin") && #perms.weblog.adminUserCount == 1)'>
+                       <s:if test='!(#perms.weblogRole.name() == "OWNER")'>
                           <img src='<c:url value="/images/delete.png"/>' />
                           <s:url action="memberResign" namespace="/roller-ui/authoring" id="resignWeblog">
                               <s:param name="weblog" value="#perms.weblog.handle" />
