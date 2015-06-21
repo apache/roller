@@ -94,6 +94,8 @@ public class JPAUserManagerImpl implements UserManager {
             // account with e-mail property), enable it for admin user
             newUser.setEnabled(Boolean.TRUE);
             newUser.setActivationCode(null);
+        } else {
+            newUser.setGlobalRole(GlobalRole.BLOGGER);
         }
 
         if (getUserByUserName(newUser.getUserName()) != null ||
@@ -350,7 +352,7 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     public WeblogPermission getWeblogPermission(Weblog weblog, User user) throws WebloggerException {
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId"
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogId"
                 , WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
@@ -362,7 +364,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     public WeblogPermission getWeblogPermissionIncludingPending(Weblog weblog, User user) throws WebloggerException {
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
@@ -376,7 +378,7 @@ public class JPAUserManagerImpl implements UserManager {
     public void grantWeblogRole(Weblog weblog, User user, WeblogRole role) throws WebloggerException {
 
         // first, see if user already has a permission for the specified object
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
@@ -401,7 +403,7 @@ public class JPAUserManagerImpl implements UserManager {
     public void grantPendingWeblogRole(Weblog weblog, User user, WeblogRole role) throws WebloggerException {
 
         // first, see if user already has a permission for the specified object
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
@@ -425,7 +427,7 @@ public class JPAUserManagerImpl implements UserManager {
     public void confirmWeblogPermission(Weblog weblog, User user) throws WebloggerException {
 
         // get specified permission
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
@@ -445,7 +447,7 @@ public class JPAUserManagerImpl implements UserManager {
     public void declineWeblogPermission(Weblog weblog, User user) throws WebloggerException {
 
         // get specified permission
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
@@ -462,7 +464,7 @@ public class JPAUserManagerImpl implements UserManager {
     @Override
     public void revokeWeblogRole(Weblog weblog, User user) throws WebloggerException {
         // get specified permission
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogIdIncludingPending",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
@@ -478,35 +480,35 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     public List<WeblogPermission> getWeblogPermissions(User user) throws WebloggerException {
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByUserName",
                 WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         return q.getResultList();
     }
 
     public List<WeblogPermission> getWeblogPermissions(Weblog weblog) throws WebloggerException {
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogId",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByWeblogId",
                 WeblogPermission.class);
         q.setParameter(1, weblog.getHandle());
         return q.getResultList();
     }
 
     public List<WeblogPermission> getWeblogPermissionsIncludingPending(Weblog weblog) throws WebloggerException {
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogIdIncludingPending",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByWeblogIdIncludingPending",
                 WeblogPermission.class);
         q.setParameter(1, weblog.getHandle());
         return q.getResultList();
     }
 
     public List<WeblogPermission> getPendingWeblogPermissions(User user) throws WebloggerException {
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByUserName&Pending",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&Pending",
                 WeblogPermission.class);
         q.setParameter(1, user.getUserName());
         return q.getResultList();
     }
 
     public List<WeblogPermission> getPendingWeblogPermissions(Weblog weblog) throws WebloggerException {
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogId&Pending",
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("UserWeblogRole.getByWeblogId&Pending",
                 WeblogPermission.class);
         q.setParameter(1, weblog.getHandle());
         return q.getResultList();

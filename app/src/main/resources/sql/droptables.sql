@@ -13,6 +13,9 @@
 -- limitations under the License.  For additional information regarding
 -- copyright in this work, please see the NOTICE file in the top level
 -- directory of this distribution.
+--
+-- Source file modified from the original ASF source; all changes made
+-- are also under Apache License.
 
 -- planet tables
 drop table rag_entry;
@@ -23,9 +26,7 @@ drop table rag_planet;
 drop table rag_properties;
 
 -- non-associated tables
-drop table newsfeed;
 drop table roller_properties;
-drop table roller_audit_log;
 drop table roller_tasklock;
 
 -- supplemental services tables
@@ -33,7 +34,6 @@ drop table pingqueueentry;
 drop table autoping;
 drop table pingtarget;
 drop table bookmark;
-drop table bookmark_folder;
 drop table roller_mediafiletag;
 drop table roller_mediafile;
 drop table roller_mediafiledir;
@@ -51,7 +51,7 @@ drop table weblog_custom_template;
 drop table custom_template_rendition;
 
 -- core platform tables
-drop table roller_permission;
+drop table user_weblog_role;
 drop table weblog;
 drop table roller_user;
 

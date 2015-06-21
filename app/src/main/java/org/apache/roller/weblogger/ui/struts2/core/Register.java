@@ -188,6 +188,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 ud.setUserName(getBean().getUserName());
                 ud.setDateCreated(new java.util.Date());
                 ud.setEnabled(Boolean.TRUE);
+                ud.setGlobalRole(GlobalRole.BLOGGER);
 
                 // If user set both password and passwordConfirm then reset password
                 if (!StringUtils.isEmpty(getBean().getPasswordText()) &&

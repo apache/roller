@@ -14,14 +14,15 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script>
-// <!--
 <%@ include file="/roller-ui/scripts/ajax-user.js" %>
-// -->
-</script> 
+</script>
 
 <p class="subtitle"><s:text name="inviteMember.subtitle" /></p>
 <p><s:text name="inviteMember.prompt" /></p>
@@ -49,11 +50,11 @@
     <div style="clear:left">
        <label for="userName" class="formrow" />
            <s:text name="inviteMember.permissions" /></label>
-       <input type="radio" name="permissionString" value="admin"  />
+       <input type="radio" name="permissionString" value="OWNER"  />
        <s:text name="inviteMember.administrator" />
-       <input type="radio" name="permissionString" value="post" checked />
+       <input type="radio" name="permissionString" value="POST" checked />
        <s:text name="inviteMember.author" />
-       <input type="radio" name="permissionString" value="edit_draft" />
+       <input type="radio" name="permissionString" value="EDIT_DRAFT" />
        <s:text name="inviteMember.limited" />
     </div>  
          
