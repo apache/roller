@@ -178,7 +178,7 @@ public final class MenuHelper {
             }
 
             // weblog role check
-            if (includeTab) {
+            if (includeTab && weblog != null) {
                 WeblogPermission perm = new WeblogPermission(weblog, configTab.getRequiredWeblogRole());
                 includeTab = umgr.checkPermission(perm, user);
             }
@@ -214,7 +214,7 @@ public final class MenuHelper {
                     }
 
                     // weblog role check
-                    if (includeItem && (configTabItem.getRequiredWeblogRole() != null)) {
+                    if (includeItem && weblog != null && (configTabItem.getRequiredWeblogRole() != null)) {
                         WeblogPermission perm = new WeblogPermission(weblog, configTabItem.getRequiredWeblogRole());
                         includeItem = umgr.checkPermission(perm, user);
                     }
@@ -426,14 +426,14 @@ public final class MenuHelper {
             tabItem.setSubActions(set);
         }
 
+        if (element.getAttributeValue("globalRole") != null) {
+            tabItem.setRequiredGlobalRole(GlobalRole.valueOf(
+                    element.getAttributeValue("globalRole")));
+        }
+
         if (element.getAttributeValue("weblogRole") != null) {
             tabItem.setRequiredWeblogRole(WeblogRole.valueOf(
                 element.getAttributeValue("weblogRole")));
-        }
-
-        if (element.getAttributeValue("globalRole") != null) {
-            tabItem.setRequiredGlobalRole(GlobalRole.valueOf(
-                element.getAttributeValue("globalRole")));
         }
 
         tabItem.setEnabledProperty(element.getAttributeValue("enabledProperty"));
