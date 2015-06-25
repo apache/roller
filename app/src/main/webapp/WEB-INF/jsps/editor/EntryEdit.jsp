@@ -239,14 +239,14 @@
 			</tr>
             <tr>
 				<td><s:text name="weblogEdit.enclosureURL" />:<tags:help key="weblogEdit.enclosureURL.tooltip"/></td>
-				<td><s:textfield name="bean.enclosureURL" size="40" maxlength="255" style="width:100%"/></td>
+				<td><s:textfield name="bean.enclosureUrl" size="40" maxlength="255" style="width:100%"/></td>
 			</tr>
             <s:if test="actionName == 'entryEdit'">
                 <tr>
                     <td></td>
-                    <td><s:if test="bean.enclosureURL != null">
-                        <s:text name="weblogEdit.enclosureType" />: <s:property value='entry.findEntryAttribute("att_mediacast_type")' />
-                        <s:text name="weblogEdit.enclosureLength" />: <s:property value='entry.findEntryAttribute("att_mediacast_length")' />
+                    <td><s:if test="bean.enclosureUrl != null">
+                        <s:text name="weblogEdit.enclosureType" />: <s:property value='bean.enclosureType' />
+                        <s:text name="weblogEdit.enclosureLength" />: <s:property value='bean.enclosureLength' />
                     </s:if></td>
                 </tr>
             </s:if>

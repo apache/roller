@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 *#
 
 #** macros for use by Roller's built-in feed templates
@@ -45,9 +48,9 @@
 #if( $utils.isNotEmpty($entry.text) )
         <content type="html">$utils.escapeXML($entry.transformedText)</content>
 #end
-#set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
-#set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
-#set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
+#set( $mc_url = $entry.enclosureUrl )
+#set( $mc_type = $entry.enclosureType )
+#set( $mc_length = $entry.enclosureLength )
 #if( $mc_url && $mc_length && $mc_type )
         <link rel="enclosure" type="$mc_type" length="$mc_length" href="$utils.escapeXML($mc_url)"/>
 #set($mc_url = false) #set($mc_type = false) #set($mc_length = false)#end
@@ -73,9 +76,9 @@
     #if( $utils.isNotEmpty($entry.summary) && $utils.isNotEmpty($entry.text))<atom:summary type="html">$utils.escapeXML($entry.transformedSummary)</atom:summary>#end
     #if( $utils.isNotEmpty($entry.summary) && $utils.isEmpty($entry.text))<description>$utils.escapeXML($entry.transformedText)</description>#end
     #if( $utils.isNotEmpty($entry.text) )<description>$utils.escapeXML($entry.transformedText)</description>#end
-    #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
-    #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
-    #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
+    #set( $mc_url = $entry.enclosureUrl )
+    #set( $mc_type = $entry.enclosureType )
+    #set( $mc_length = $entry.enclosureLength )
     #if( $mc_url && $mc_length && $mc_type )
        <enclosure url="$utils.escapeXML($mc_url)" type="$mc_type" length="$mc_length" />
        #set($mc_url = false) #set($mc_type = false) #set($mc_length = false)

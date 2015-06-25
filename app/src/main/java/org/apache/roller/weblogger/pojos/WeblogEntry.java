@@ -79,8 +79,9 @@ public class WeblogEntry implements Serializable {
     private String    link          = null;
     private String    summary       = null;
     private String    text          = null;
-    private String    contentType   = null;
-    private String    contentSrc    = null;
+    private String    enclosureUrl  = null;
+    private String    enclosureType = null;
+    private Long      enclosureLength  = null;
     private String    anchor        = null;
     private Timestamp pubTime       = null;
     private Timestamp updateTime    = null;
@@ -102,9 +103,6 @@ public class WeblogEntry implements Serializable {
     // Associated objects
     private Weblog        website  = null;
     private WeblogCategory category = null;
-    
-    // Collection of name/value entry attributes
-    private Set<WeblogEntryAttribute> attSet = new TreeSet<WeblogEntryAttribute>();
     
     private Set<WeblogEntryTag> tagSet = new HashSet<WeblogEntryTag>();
     private Set<WeblogEntryTag> removedTags = new HashSet<WeblogEntryTag>();
@@ -312,35 +310,31 @@ public class WeblogEntry implements Serializable {
     public void setText(String text) {
         this.text = text;
     }
-    
-    /**
-     * Get content type (text, html, xhtml or a MIME content type)
-     */
-    public String getContentType() {
-        return contentType;
+
+    public String getEnclosureUrl() {
+        return enclosureUrl;
     }
-    
-    /**
-     * Set content type (text, html, xhtml or a MIME content type)
-     */
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+
+    public void setEnclosureUrl(String enclosureUrl) {
+        this.enclosureUrl = enclosureUrl;
     }
-    
-    /**
-     * Get URL for out-of-line content.
-     */
-    public String getContentSrc() {
-        return contentSrc;
+
+    public String getEnclosureType() {
+        return enclosureType;
     }
-    
-    /**
-     * Set URL for out-of-line content.
-     */
-    public void setContentSrc(String contentSrc) {
-        this.contentSrc = contentSrc;
+
+    public void setEnclosureType(String enclosureType) {
+        this.enclosureType = enclosureType;
     }
-    
+
+    public Long getEnclosureLength() {
+        return enclosureLength;
+    }
+
+    public void setEnclosureLength(Long enclosureLength) {
+        this.enclosureLength = enclosureLength;
+    }
+
     public String getAnchor() {
         return this.anchor;
     }
@@ -348,47 +342,7 @@ public class WeblogEntry implements Serializable {
     public void setAnchor(String anchor) {
         this.anchor = anchor;
     }
-    
-    //-------------------------------------------------------------------------
 
-    public Set<WeblogEntryAttribute> getEntryAttributes() {
-        return attSet;
-    }
-
-    public void setEntryAttributes(Set atts) {
-        this.attSet = atts;
-    }
-    
-    public String findEntryAttribute(String name) {
-        if (getEntryAttributes() != null) {
-            for (WeblogEntryAttribute att : getEntryAttributes()) {
-                if (name.equals(att.getName())) {
-                    return att.getValue();
-                }
-            }
-        }
-        return null;
-    }
-        
-    public void putEntryAttribute(String name, String value) throws Exception {
-        WeblogEntryAttribute att = null;
-        for (WeblogEntryAttribute o : getEntryAttributes()) {
-            if (name.equals(o.getName())) {
-                att = o; 
-                break;
-            }
-        }
-        if (att == null) {
-            att = new WeblogEntryAttribute();
-            att.setEntry(this);
-            att.setName(name);
-            att.setValue(value);
-            getEntryAttributes().add(att);
-        } else {
-            att.setValue(value);
-        }
-    }
-    
     //-------------------------------------------------------------------------
     
     /**

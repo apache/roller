@@ -45,15 +45,6 @@
             <basic name="text">
                 <column name="text" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <basic name="searchDescription">
-                <column name="search_description" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <basic name="contentType">
-                <column name="content_type" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <basic name="contentSrc">
-                <column name="content_src" insertable="true" updatable="true" unique="false"/>
-            </basic>
             <basic name="anchor">
                 <column name="anchor" insertable="true" updatable="true" unique="false"/>
             </basic>
@@ -97,12 +88,6 @@
             <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <one-to-many name="entryAttributes" mapped-by="entry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntryAttribute" fetch="LAZY">
-                <cascade>
-                    <cascade-persist/>
-                    <cascade-remove />
-                </cascade>
-            </one-to-many>
             <one-to-many name="tags" mapped-by="weblogEntry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntryTag" fetch="LAZY">
                 <order-by>name</order-by>
                 <cascade>
@@ -110,6 +95,18 @@
                     <cascade-remove />
                 </cascade>
             </one-to-many>
+            <basic name="enclosureUrl">
+                <column name="enclosure_url" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="enclosureType">
+                <column name="enclosure_type" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="enclosureLength">
+                <column name="enclosure_length" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="searchDescription">
+                <column name="search_description" insertable="true" updatable="true" unique="false"/>
+            </basic>
             <transient name="creator"/>
             <transient name="categories"/>
             <transient name="commentCount"/>

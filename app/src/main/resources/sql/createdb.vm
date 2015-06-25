@@ -134,10 +134,11 @@ create table weblogentry (
     pinnedtomain    $db.BOOLEAN_SQL_TYPE_FALSE not null,
     locale          varchar(20),
     status          varchar(20) not null,
-    summary         $db.TEXT_SQL_TYPE default null, 
-    content_type    varchar(48) default null, 
-    content_src     varchar(255) default null,
-    search_description varchar(255) default null
+    summary         $db.TEXT_SQL_TYPE,
+    search_description varchar(255),
+    enclosure_url   varchar(255),
+    enclosure_type  varchar(48),
+    enclosure_length integer
 );
 create index we_weblogid_idx on weblogentry( websiteid );
 create index we_categoryid_idx on weblogentry( categoryid );
@@ -261,17 +262,6 @@ create table roller_hitcounts (
 create index rhc_websiteid_idx on roller_hitcounts( websiteid );
 create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
 
--- Entry attribute: metadata for weblog entries
-create table entryattribute (
-    id       varchar(48) not null primary key,
-    entryid  varchar(48) not null,
-    name     varchar(255) not null,
-    value    $db.TEXT_SQL_TYPE not null
-);
-create index ea_entryid_idx on entryattribute( entryid );
-alter table entryattribute add constraint ea_name_uq unique ( entryid, name$!db.INDEXSIZE );
-
-
 -- OAUTH SUPPORT
 
 -- each record is an OAuth consumer key and secret, can be tied to just one user
@@ -293,13 +283,11 @@ create table roller_oauthaccessor (
     authorized   $db.BOOLEAN_SQL_TYPE_FALSE
 );
 
+-- PLANET FEED AGGREGATOR
 create table rag_properties (
     name     varchar(255) not null primary key,
     value    $db.TEXT_SQL_TYPE
 );
-
-
--- PLANET FEED AGGREGATOR
 
 create table rag_planet (
     id              varchar(48) not null primary key,
@@ -426,9 +414,6 @@ alter table weblogcategory add constraint wc_weblogid_fk
     foreign key ( websiteid ) references weblog( id ) ;
 
 alter table roller_comment add constraint co_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) ;
-
-alter table entryattribute add constraint att_entryid_fk
     foreign key ( entryid ) references weblogentry( id ) ;
 
 -- blogroll_item must link to an existing weblog

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos.wrapper;
@@ -29,7 +32,6 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagComparator;
@@ -118,42 +120,20 @@ public final class WeblogEntryWrapper {
         return HTMLSanitizer.conditionallySanitize(this.pojo.getText());
     }
     
-    
-    public String getContentType() {
-        return this.pojo.getContentType();
+    public String getEnclosureUrl() {
+        return this.pojo.getEnclosureUrl();
     }
-    
-    
-    public String getContentSrc() {
-        return this.pojo.getContentSrc();
+
+    public String getEnclosureType() {
+        return this.pojo.getEnclosureType();
     }
-    
-    
+
+    public Long getEnclosureLength() {
+        return this.pojo.getEnclosureLength();
+    }
+
     public String getAnchor() {
         return this.pojo.getAnchor();
-    }
-    
-    
-    public List getEntryAttributes() {
-        Set initialCollection = this.pojo.getEntryAttributes();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryAttributeWrapper.wrap((WeblogEntryAttribute) it.next()));
-            i++;
-        }
-        
-        return wrappedCollection;
-    }
-    
-    
-    public String findEntryAttribute(String name) {
-        return this.pojo.findEntryAttribute(name);
     }
     
     

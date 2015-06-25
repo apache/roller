@@ -40,7 +40,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
@@ -276,15 +275,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             }
         }
         
-        // remove attributes
-        if (entry.getEntryAttributes() != null) {
-            for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext(); ) {
-                WeblogEntryAttribute att = (WeblogEntryAttribute) it.next();
-                it.remove();
-                this.strategy.remove(att);
-            }
-        }
-
         // remove entry
         this.strategy.remove(entry);
         
@@ -493,24 +483,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             query.setMaxResults(max);
         }
         return query.getResultList();
-    }
-    
-    public void removeWeblogEntryAttribute(String name, WeblogEntry entry)
-    throws WebloggerException {
-
-        // seems silly, why is this not done in WeblogEntry?
-
-        for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext();) {
-            WeblogEntryAttribute entryAttribute = (WeblogEntryAttribute) it.next();
-            if (entryAttribute.getName().equals(name)) {
-
-                //Remove it from database
-                this.strategy.remove(entryAttribute);
-
-                //Remove it from the collection
-                it.remove();
-            }
-        }
     }
     
     private void removeWeblogEntryTag(WeblogEntryTag tag) throws WebloggerException {

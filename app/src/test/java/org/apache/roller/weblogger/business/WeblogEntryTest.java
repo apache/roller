@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
@@ -936,9 +939,9 @@ public class WeblogEntryTest extends TestCase {
   
     
     /**
-     * Test that we can add and remove entry attributes for an entry.
+     * Test that we can save and retrieve entry enclosure URL data
      */
-     public void testEntryAttributeCRUD() throws Exception {
+     public void testEnclosureCRUD() throws Exception {
         
         WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry entry;
@@ -962,9 +965,9 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         testEntry = TestUtils.getManagedWeblogEntry(testEntry);
-        testEntry.putEntryAttribute("att_mediacast_url", "http://podcast-schmodcast.com");
-        testEntry.putEntryAttribute("att_mediacast_type", "application/drivel");
-        testEntry.putEntryAttribute("att_mediacast_length", "3141592654");
+        testEntry.setEnclosureUrl("http://podcast-schmodcast.com");
+        testEntry.setEnclosureType("application/drivel");
+        testEntry.setEnclosureLength(2141592654L);
                     
         TestUtils.endSession(true);
         
@@ -972,14 +975,9 @@ public class WeblogEntryTest extends TestCase {
         entry = emgr.getWeblogEntry(id);
         assertNotNull(entry);
         assertEquals(testEntry, entry);
-        assertNotNull(entry.getEntryAttributes());
-        assertEquals(3, entry.getEntryAttributes().size());
-        assertNotNull(entry.findEntryAttribute("att_mediacast_url"));
-        assertNotNull(entry.findEntryAttribute("att_mediacast_type"));
-        assertNotNull(entry.findEntryAttribute("att_mediacast_length"));
-        assertEquals("http://podcast-schmodcast.com", entry.findEntryAttribute("att_mediacast_url"));
-        assertEquals("application/drivel", entry.findEntryAttribute("att_mediacast_type"));
-        assertEquals("3141592654", entry.findEntryAttribute("att_mediacast_length"));
+        assertEquals(entry.getEnclosureUrl(), "http://podcast-schmodcast.com");
+        assertEquals(entry.getEnclosureType(), "application/drivel");
+        assertEquals(entry.getEnclosureLength(), new Long(2141592654L));
         
         // update a weblog entry
         entry.setTitle("testtest");

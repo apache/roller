@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -27,7 +30,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -65,7 +67,9 @@ public class EntryBean {
     private Integer commentDays = 0;
     private boolean rightToLeft = false;
     private boolean pinnedToMain = false;
-    private String enclosureURL = null;
+    private String enclosureUrl = null;
+    private String enclosureType = null;
+    private Long enclosureLength = null;
     private String searchDescription = null;
     private int commentCount = 0;
     
@@ -215,14 +219,30 @@ public class EntryBean {
         this.pinnedToMain = pinnedToMain;
     }
     
-    public String getEnclosureURL() {
-        return enclosureURL;
+    public String getEnclosureUrl() {
+        return enclosureUrl;
     }
     
-    public void setEnclosureURL(String enclosureUrl) {
-        this.enclosureURL = enclosureUrl;
+    public void setEnclosureUrl(String enclosureUrl) {
+        this.enclosureUrl = enclosureUrl;
     }
-    
+
+    public String getEnclosureType() {
+        return enclosureType;
+    }
+
+    public void setEnclosureType(String enclosureType) {
+        this.enclosureType = enclosureType;
+    }
+
+    public Long getEnclosureLength() {
+        return enclosureLength;
+    }
+
+    public void setEnclosureLength(Long enclosureLength) {
+        this.enclosureLength = enclosureLength;
+    }
+
     public String getSearchDescription() {
         return searchDescription;
     }
@@ -294,7 +314,10 @@ public class EntryBean {
         entry.setText(getText());
         entry.setTagsAsString(getTagsAsString());
         entry.setSearchDescription(getSearchDescription());
-        
+        entry.setEnclosureUrl(getEnclosureUrl());
+        entry.setEnclosureType(getEnclosureType());
+        entry.setEnclosureLength(getEnclosureLength());
+
         // figure out the category selected
         if (getCategoryId() != null) {
             WeblogCategory cat = null;
@@ -329,7 +352,7 @@ public class EntryBean {
     
     
     /**
-     * Copy values from WeblogEntryData to this Form.
+     * Copy values from WeblogEntry to this Form.
      */
     public void copyFrom(WeblogEntry entry, Locale locale) {
         
@@ -378,16 +401,9 @@ public class EntryBean {
         setCommentDays(entry.getCommentDays());
         setRightToLeft(entry.getRightToLeft());
         setPinnedToMain(entry.getPinnedToMain());
-        
-        // enclosure url, if it exists
-        Set<WeblogEntryAttribute> attrs = entry.getEntryAttributes();
-        if(attrs != null && attrs.size() > 0) {
-            for (WeblogEntryAttribute attr : attrs) {
-                if ("att_mediacast_url".equals(attr.getName())) {
-                    setEnclosureURL(attr.getValue());
-                }
-            }
-        }
+        setEnclosureUrl(entry.getEnclosureUrl());
+        setEnclosureType(entry.getEnclosureType());
+        setEnclosureLength(entry.getEnclosureLength());
     }
     
     
@@ -406,6 +422,7 @@ public class EntryBean {
         buf.append("seconds = ").append(getSeconds()).append("\n");
         buf.append("text = ").append(getText()).append("\n");
         buf.append("summary = ").append(getSummary()).append("\n");
+        buf.append("enclosure URL = ").append(getEnclosureUrl()).append("\n");
         buf.append("search description = ").append(getSearchDescription()).append("\n");
         buf.append("comments = ").append(getAllowComments()).append("\n");
         buf.append("commentDays = ").append(getCommentDays()).append("\n");
