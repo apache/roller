@@ -44,7 +44,6 @@ drop table roller_hitcounts;
 drop table roller_comment;
 drop table roller_weblogentrytag;
 drop table roller_weblogentrytagagg;
-drop table entryattribute;
 drop table weblogentry;
 drop table weblogcategory;
 drop table weblog_custom_template;

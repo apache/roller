@@ -28,6 +28,29 @@ update bookmark bm set weblogid = select websiteid from bookmark_folder bf where
 #dropTableIfExists("bookmark_folder")
 alter table bookmark add constraint bm_weblogid_fk foreign key ( weblogid ) references weblog( id ) ;
 
+-- entry attributes moved into weblogentry table
+
+#dropColumn("weblogentry", "content_type")
+#dropColumn("weblogentry", "content_src")
+#addColumnNull("weblogentry" "enclosure_url" "varchar(255)")
+#addColumnNull("weblogentry" "enclosure_type" "varchar(48)")
+#addColumnNull("weblogentry" "enclosure_length" "integer")
+
+update weblogentry we set enclosure_url =
+(select value from entryattribute where name = "att_mediacast_url" and entryid = we.id)
+where we.id in
+(select entryid from entryattribute where name = "att_mediacast_url")
+
+update weblogentry we set enclosure_type =
+(select value from entryattribute where name = "att_mediacast_type" and entryid = we.id)
+where we.id in
+(select entryid from entryattribute where name = "att_mediacast_type")
+
+update weblogentry we set enclosure_length =
+(select value from entryattribute where name = "att_mediacast_length" and entryid = we.id)
+where we.id in
+(select entryid from entryattribute where name = "att_mediacast_length")
+
 
 -- Set new global roles from the now-unused userrole table:
 update roller_user ru

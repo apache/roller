@@ -134,13 +134,6 @@ public interface WeblogEntryManager {
     List<WeblogEntry> getWeblogEntriesPinnedToMain(Integer max) throws WebloggerException;
 
     /**
-     * Remove attribute with given name from given WeblogEntryData
-     * @param name Name of attribute to be removed
-     */
-    void removeWeblogEntryAttribute(String name,WeblogEntry entry)
-            throws WebloggerException;
-
-    /**
      * Save weblog category.
      */
     void saveWeblogCategory(WeblogCategory cat) throws WebloggerException;

@@ -90,12 +90,12 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                 }
             }
 
-            if (!StringUtils.isEmpty(bean.getEnclosureURL())) {
+            if (!StringUtils.isEmpty(bean.getEnclosureUrl())) {
                 sb.append("<p>")
                   .append(getText("mediaFileEdit.includesEnclosure"))
                   .append("<br />")
-                  .append("<a href='" + bean.getEnclosureURL() + "'>")
-                  .append(bean.getEnclosureURL())
+                  .append("<a href='" + bean.getEnclosureUrl() + "'>")
+                  .append(bean.getEnclosureUrl())
                   .append("</a></p>");
             }
 

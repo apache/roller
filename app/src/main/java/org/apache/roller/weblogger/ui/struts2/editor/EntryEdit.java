@@ -225,38 +225,26 @@ public final class EntryEdit extends UIAction {
                     weblogEntry.setPinnedToMain(getBean().getPinnedToMain());
                 }
 
-                if (!StringUtils.isEmpty(getBean().getEnclosureURL())) {
+                if (!StringUtils.isEmpty(getBean().getEnclosureUrl())) {
                     try {
                         // Fetch MediaCast resource
                         log.debug("Checking MediaCast attributes");
                         MediacastResource mediacast = MediacastUtil
-                                .lookupResource(getBean().getEnclosureURL());
+                                .lookupResource(getBean().getEnclosureUrl());
 
                         // set mediacast attributes
-                        weblogEntry.putEntryAttribute("att_mediacast_url",
-                                mediacast.getUrl());
-                        weblogEntry.putEntryAttribute("att_mediacast_type",
-                                mediacast.getContentType());
-                        weblogEntry.putEntryAttribute("att_mediacast_length", ""
-                                + mediacast.getLength());
+                        weblogEntry.setEnclosureUrl(mediacast.getUrl());
+                        weblogEntry.setEnclosureType(mediacast.getContentType());
+                        weblogEntry.setEnclosureLength(new Long(mediacast.getLength()));
 
                     } catch (MediacastException ex) {
                         addMessage(getText(ex.getErrorKey()));
                     }
                 } else if ("entryEdit".equals(actionName)) {
-                    try {
-                        // if MediaCast string is empty, clean out MediaCast
-                        // attributes
-                        weblogEntryManager.removeWeblogEntryAttribute(
-                                "att_mediacast_url", weblogEntry);
-                        weblogEntryManager.removeWeblogEntryAttribute(
-                                "att_mediacast_type", weblogEntry);
-                        weblogEntryManager.removeWeblogEntryAttribute(
-                                "att_mediacast_length", weblogEntry);
-
-                    } catch (WebloggerException e) {
-                        addMessage(getText("weblogEdit.mediaCastErrorRemoving"));
-                    }
+                    // if MediaCast string is empty, clean out MediaCast attributes
+                    weblogEntry.setEnclosureUrl(null);
+                    weblogEntry.setEnclosureType(null);
+                    weblogEntry.setEnclosureLength(null);
                 }
 
                 if (log.isDebugEnabled()) {
