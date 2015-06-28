@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
     <package>org.apache.roller.planet.pojos</package>
     <entity metadata-complete="true" name="PlanetGroup" class="org.apache.roller.planet.pojos.PlanetGroup" access="PROPERTY">
-        <table name="rag_group"/>
+        <table name="planet_group"/>
         <named-query name="PlanetGroup.getByHandle">
             <query>SELECT p FROM PlanetGroup p WHERE p.handle = ?1</query>
         </named-query>

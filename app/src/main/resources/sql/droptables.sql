@@ -18,12 +18,11 @@
 -- are also under Apache License.
 
 -- planet tables
-drop table rag_entry;
-drop table rag_group_subscription;
-drop table rag_subscription;
-drop table rag_group;
-drop table rag_planet;
-drop table rag_properties;
+drop table planet_subscription_entry;
+drop table planet_group_subscription;
+drop table planet_subscription;
+drop table planet_group;
+drop table planet;
 
 -- non-associated tables
 drop table roller_properties;

@@ -101,14 +101,24 @@ where actions = 'edit_draft'
 #end
 #end
 
+-- rag_ tables renamed to planet_
+#renameTable('rag_planet', 'planet')
+#renameTable('rag_group', 'planet_group')
+#renameTable('rag_subscription', 'planet_subscription')
+#renameTable('rag_group_subscription', 'planet_group_subscription')
+#renameTable('rag_entry', 'planet_subscription_entry')
+
+insert into roller_properties select * from rag_properties;
+#dropTable('rag_properties')
+
 -- Expanding datetime or timestamp columns
 -- Affects only for MySQL, Oracle, PostgreSQL
 
 #expandTimestampNotNull('pingqueueentry' 'entrytime')
 #expandTimestamp('pingtarget' 'lastsuccess')
-#expandTimestampNotNull('rag_entry' 'published')
-#expandTimestamp('rag_entry' 'updated')
-#expandTimestamp('rag_subscription' 'last_updated')
+#expandTimestampNotNull('planet_subscription_entry' 'published')
+#expandTimestamp('planet_subscription_entry' 'updated')
+#expandTimestamp('planet_subscription' 'last_updated')
 #expandTimestampNotNull('roller_comment' 'posttime')
 #expandTimestampNotNull('roller_mediafile' 'date_uploaded')
 #expandTimestamp('roller_mediafile' 'last_updated')

@@ -5,7 +5,7 @@
     <package>org.apache.roller.planet.pojos</package>
     <entity metadata-complete="true" name="Subscription"
             class="org.apache.roller.planet.pojos.Subscription" access="PROPERTY">
-        <table name="rag_subscription"/>
+        <table name="planet_subscription"/>
         <named-query name="Subscription.getAll">
             <query>SELECT p FROM Subscription p</query>
         </named-query>
@@ -55,7 +55,7 @@
             </one-to-many>
             <many-to-many name="groups"
                           target-entity="org.apache.roller.planet.pojos.PlanetGroup">
-                <join-table name="rag_group_subscription">
+                <join-table name="planet_group_subscription">
                     <join-column name="subscription_id"/>
                     <inverse-join-column name="group_id"/>
                 </join-table>

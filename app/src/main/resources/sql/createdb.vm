@@ -284,21 +284,17 @@ create table roller_oauthaccessor (
 );
 
 -- PLANET FEED AGGREGATOR
-create table rag_properties (
-    name     varchar(255) not null primary key,
-    value    $db.TEXT_SQL_TYPE
-);
 
-create table rag_planet (
+create table planet (
     id              varchar(48) not null primary key,
     handle          varchar(32) not null,
     title           varchar(255) not null,
     description     varchar(255)
 );
-alter table rag_planet add constraint ragp_handle_uq unique ( handle );
+alter table planet add constraint planet_handle_uq unique ( handle );
 
 
-create table rag_group (
+create table planet_group (
     id               varchar(48) not null primary key,
     planet_id        varchar(48) not null,
     handle           varchar(32) not null,
@@ -309,10 +305,10 @@ create table rag_group (
     cat_restriction  $db.TEXT_SQL_TYPE,
     group_page       varchar(255)
 );
-alter table rag_group add constraint ragg_handle_uq unique ( planet_id, handle );
+alter table planet_group add constraint plgp_handle_uq unique ( planet_id, handle );
 
 
-create table rag_subscription (
+create table planet_subscription (
     id               varchar(48) not null primary key,
     title            varchar(255) not null,
     feed_url         varchar(255) not null,
@@ -322,18 +318,18 @@ create table rag_subscription (
     inbound_links    integer default -1,
     inbound_blogs    integer default -1
 );
-alter table rag_subscription add constraint rags_feed_url_uq unique ( feed_url$!db.INDEXSIZE_LARGE );
+alter table planet_subscription add constraint plsb_feed_url_uq unique ( feed_url$!db.INDEXSIZE_LARGE );
 
 
-create table rag_group_subscription (
+create table planet_group_subscription (
     group_id         varchar(48) not null,
     subscription_id  varchar(48) not null
 );
-create index raggs_gid_idx on rag_group_subscription(group_id); 
-create index raggs_sid_idx on rag_group_subscription(subscription_id); 
+create index planet_gid_idx on planet_group_subscription(group_id);
+create index planet_sid_idx on planet_group_subscription(subscription_id);
 
 
-create table rag_entry (
+create table planet_subscription_entry (
     id               varchar(48) not null primary key,
     subscription_id  varchar(48) not null,
     handle           varchar(255),
@@ -346,11 +342,11 @@ create table rag_entry (
     published        $db.TIMESTAMP_SQL_TYPE not null,
     updated          $db.TIMESTAMP_SQL_TYPE    
 );
-create index rage_sid_idx on rag_entry(subscription_id);
+create index plntsbent_sid_idx on planet_subscription_entry(subscription_id);
 
 -- create a default planet and group
-insert into rag_planet (id, handle, title) values ('zzz_default_planet_zzz', 'default', 'Default Planet');
-insert into rag_group (id, planet_id, handle, title) values ('zzz_all_group_zzz', 'zzz_default_planet_zzz', 'all', 'Default Group');
+insert into planet (id, handle, title) values ('zzz_default_planet_zzz', 'default', 'Default Planet');
+insert into planet_group (id, planet_id, handle, title) values ('zzz_all_group_zzz', 'zzz_default_planet_zzz', 'all', 'Default Group');
 
 
 -- MEDIA BLOGGING

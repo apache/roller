@@ -5,7 +5,7 @@
     <package>org.apache.roller.planet.pojos</package>
     <entity metadata-complete="true" name="SubscriptionEntry" class="org.apache.roller.planet.pojos.SubscriptionEntry"
             access="PROPERTY">
-        <table name="rag_entry"/>
+        <table name="planet_subscription_entry"/>
         <named-query name="SubscriptionEntry.getByFeedURL">
             <query>SELECT p FROM SubscriptionEntry p WHERE p.subscription.feedURL = ?1</query>
         </named-query>

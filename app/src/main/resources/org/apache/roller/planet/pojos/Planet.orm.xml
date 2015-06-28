@@ -5,7 +5,7 @@
     <package>org.apache.roller.planet.pojos</package>
     <entity metadata-complete="true" name="Planet"
             class="org.apache.roller.planet.pojos.Planet" access="PROPERTY">
-        <table name="rag_planet"/>
+        <table name="planet"/>
         <named-query name="Planet.getAll">
             <query>SELECT p FROM Planet p</query>
         </named-query>
