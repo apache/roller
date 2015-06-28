@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -244,10 +247,14 @@
             <s:if test="actionName == 'entryEdit'">
                 <tr>
                     <td></td>
-                    <td><s:if test="bean.enclosureUrl != null">
-                        <s:text name="weblogEdit.enclosureType" />: <s:property value='bean.enclosureType' />
-                        <s:text name="weblogEdit.enclosureLength" />: <s:property value='bean.enclosureLength' />
-                    </s:if></td>
+                    <td>
+                        <s:if test="bean.enclosureType != null && bean.enclosureType != ''">
+                            <s:text name="weblogEdit.enclosureType" />: <s:property value='bean.enclosureType' />
+                        </s:if>
+                        <s:if test="bean.enclosureLength != null && bean.enclosureLength != 0">
+                            <s:text name="weblogEdit.enclosureLength" />: <s:property value='bean.enclosureLength' />
+                        </s:if>
+                    </td>
                 </tr>
             </s:if>
 		</table>
