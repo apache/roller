@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
@@ -36,7 +39,7 @@
         $("#submit").attr("disabled", true);
 
         $("input[type='checkbox']").change(function() {
-            if ($("#enclosureURL").get(0).getAttribute("value") != '') {
+            if ($("#enclosureUrl").get(0).getAttribute("value") != '') {
                 $("#submit").attr("disabled", false);
                 return;
             }
@@ -53,7 +56,7 @@
         return false;
     }
     function setEnclosure(url) {
-        $("#enclosureURL").get(0).value = url;
+        $("#enclosureUrl").get(0).value = url;
         if (isImageChecked()) {
             $("#submit").attr("disabled", false);
             return;
@@ -73,7 +76,7 @@
 <s:form id="entry">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
-    <s:hidden name="bean.enclosureURL" id="enclosureURL" />
+    <s:hidden name="bean.enclosureUrl" id="enclosureUrl" />
 
     <s:if test="newImages.size() > 0">
         <p><s:text name="mediaFileSuccess.selectImages" /></p>

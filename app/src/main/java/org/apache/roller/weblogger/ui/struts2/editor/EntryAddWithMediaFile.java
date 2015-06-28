@@ -23,6 +23,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.util.MediacastResource;
+import org.apache.roller.weblogger.util.MediacastUtil;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -97,6 +99,12 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                   .append("<a href='" + bean.getEnclosureUrl() + "'>")
                   .append(bean.getEnclosureUrl())
                   .append("</a></p>");
+
+                // set mediacast attributes
+                MediacastResource mediacast = MediacastUtil
+                        .lookupResource(getBean().getEnclosureUrl());
+                bean.setEnclosureType(mediacast.getContentType());
+                bean.setEnclosureLength(mediacast.getLength());
             }
 
             bean.setText(sb.toString());

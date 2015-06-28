@@ -43,6 +43,11 @@
         <!-- CSRF presently handled manually via Roller's salt filters -->
         <csrf disabled="true"/>
 
+        <!-- Needed to allow for popups -->
+        <headers>
+            <frame-options policy="SAMEORIGIN"/>
+        </headers>
+
         <form-login login-page="/roller-ui/login.rol"
                     authentication-failure-url="/roller-ui/login.rol?error=true"
                     login-processing-url="/roller_j_security_check"/>
