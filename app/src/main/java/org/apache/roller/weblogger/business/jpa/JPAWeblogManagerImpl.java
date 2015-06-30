@@ -158,7 +158,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         removeCounts.executeUpdate();
         
         // Remove the weblog's ping queue entries
-        TypedQuery<PingQueueEntry> q = strategy.getNamedQuery("PingQueueEntry.getByWebsite", PingQueueEntry.class);
+        TypedQuery<PingQueueEntry> q = strategy.getNamedQuery("PingQueueEntry.getByWeblog", PingQueueEntry.class);
         q.setParameter(1, weblog);
         List queueEntries = q.getResultList();
         for (Object obj : queueEntries) {
@@ -324,8 +324,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         for (PingTarget pingTarget : pingTargetManager.getCommonPingTargets()) {
             if(pingTarget.isAutoEnabled()) {
-                AutoPing autoPing = new AutoPing(
-                        null, pingTarget, newWeblog);
+                AutoPing autoPing = new AutoPing(pingTarget, newWeblog);
                 autoPingManager.saveAutoPing(autoPing);
             }
         }

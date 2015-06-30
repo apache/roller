@@ -188,7 +188,7 @@ public class PingsTest extends TestCase {
         TestUtils.endSession(true);
         
         // create autoPing
-        autoPing = new AutoPing(null, pingTarget, testWeblog);
+        autoPing = new AutoPing(pingTarget, testWeblog);
         mgr.saveAutoPing(autoPing);
         String id = autoPing.getId();
         TestUtils.endSession(true);
@@ -316,7 +316,7 @@ public class PingsTest extends TestCase {
         // create autoPing
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         pingTarget = ptmgr.getPingTarget(pingTarget.getId());
-        autoPing = new AutoPing(null, pingTarget, testWeblog);
+        autoPing = new AutoPing(pingTarget, testWeblog);
         mgr.saveAutoPing(autoPing);
         String id = autoPing.getId();
         TestUtils.endSession(true);

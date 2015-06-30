@@ -210,30 +210,30 @@ create table pingtarget (
 );
 
 -- auto ping configurations
--- websiteid:  fk reference to weblog for which this auto ping configuration applies
+-- weblogid:  fk reference to weblog for which this auto ping configuration applies
 -- pingtargetid: fk reference to the ping target to be pinged when the weblog changes
 create table autoping (
     id            varchar(48) not null primary key,
-    websiteid     varchar(48) not null,
+    weblogid     varchar(48) not null,
     pingtargetid  varchar(48) not null 
 );
-create index ap_websiteid_idx on autoping( websiteid );
+create index ap_weblogid_idx on autoping( weblogid );
 create index ap_pingtid_idx on autoping( pingtargetid );
 
 -- entrytime: timestamp of original entry onto the ping queue
 -- pingtargetid: weak fk reference to ping target (not constrained)
--- websiteid: weak fk reference to weblog originating the ping (not constrained)
+-- weblogid: weak fk reference to weblog originating the ping (not constrained)
 -- attempts:  number of ping attempts that have been made for this entry
 create table pingqueueentry (
     id             varchar(48) not null primary key,
     entrytime      $db.TIMESTAMP_SQL_TYPE not null, 
     pingtargetid   varchar(48) not null,  
-    websiteid      varchar(48) not null,  
+    weblogid      varchar(48) not null,
     attempts       integer not null
 );
 create index pqe_entrytime_idx on pingqueueentry( entrytime );
 create index pqe_pingtid_idx on pingqueueentry( pingtargetid );
-create index pqe_websiteid_idx on pingqueueentry( websiteid );
+create index pqe_weblogid_idx on pingqueueentry( weblogid );
 
 create table roller_properties (
     name     varchar(255) not null primary key,
@@ -432,7 +432,7 @@ alter table roller_mediafiledir add constraint mf_weblogid_fk
 -- autoping
 
 alter table autoping add constraint ap_weblogid_fk
-    foreign key (websiteid) references weblog(id) ;
+    foreign key (weblogid) references weblog(id) ;
 
 alter table autoping add constraint ap_pingtargetid_fk
     foreign key (pingtargetid) references pingtarget(id) ;

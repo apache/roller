@@ -118,7 +118,7 @@ public class Pings extends UIAction {
         if(getPingTarget() != null) {
             try {
                 AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
-                AutoPing autoPing = new AutoPing(null, getPingTarget(), getActionWeblog());
+                AutoPing autoPing = new AutoPing(getPingTarget(), getActionWeblog());
                 autoPingMgr.saveAutoPing(autoPing);
                 WebloggerFactory.getWeblogger().flush();
             } catch(Exception ex) {

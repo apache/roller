@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.pings;
@@ -127,7 +130,7 @@ public final class PingQueueProcessor {
         }
         
         PingTarget pingTarget = pingQueueEntry.getPingTarget();
-        Weblog website = pingQueueEntry.getWebsite();
+        Weblog website = pingQueueEntry.getWeblog();
         boolean pingSucceeded = false;
         if (PingConfig.getLogPingsOnly()) {
             // Just log the ping and pretend it succeeded.
