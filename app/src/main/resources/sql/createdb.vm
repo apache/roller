@@ -75,7 +75,7 @@ create table weblog_custom_template (
     name            varchar(255)  not null,
     description     varchar(255),
     link            varchar(255),
-    websiteid       varchar(48) not null,
+    weblogid        varchar(48) not null,
     updatetime      $db.TIMESTAMP_SQL_TYPE not null,
     hidden          $db.BOOLEAN_SQL_TYPE_FALSE not null,
     navbar          $db.BOOLEAN_SQL_TYPE_FALSE not null,
@@ -84,7 +84,7 @@ create table weblog_custom_template (
 );
 create index wp_name_idx on weblog_custom_template(name$!db.INDEXSIZE);
 create index wp_link_idx on weblog_custom_template(link$!db.INDEXSIZE);
-create index wp_id_idx on weblog_custom_template(websiteid);
+create index wp_id_idx on weblog_custom_template(weblogid);
 
 create table custom_template_rendition (
     id           varchar(48)  not null primary key,
@@ -110,10 +110,10 @@ create table weblogcategory (
     id               varchar(48) not null primary key,
     name             varchar(255) not null,
     description      varchar(255),
-    websiteid        varchar(48) not null,
+    weblogid        varchar(48) not null,
     position         integer default 0 not null
 );
-create index wc_weblogid_idx on weblogcategory( websiteid );
+create index wc_weblogid_idx on weblogcategory( weblogid );
 
 create table weblogentry (
     id              varchar(48)  not null primary key,
@@ -392,7 +392,7 @@ create table roller_mediafiledir (
 -- page, entry, category, comment
 
 alter table weblog_custom_template add constraint wct_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) ;
+    foreign key ( weblogid ) references weblog( id ) ;
 
 alter table custom_template_rendition add constraint ctr_templateid_fk
     foreign key ( templateid ) references weblog_custom_template( id ) ;
@@ -407,7 +407,7 @@ alter table roller_weblogentrytag add constraint rwtg_entryid_fk
     foreign key ( entryid ) references weblogentry( id ) ;
 
 alter table weblogcategory add constraint wc_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) ;
+    foreign key ( weblogid ) references weblog( id ) ;
 
 alter table roller_comment add constraint co_entryid_fk
     foreign key ( entryid ) references weblogentry( id ) ;

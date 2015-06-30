@@ -16,11 +16,9 @@
     <mapping-file>org/apache/roller/weblogger/pojos/TaskLock.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/User.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/UserWeblogRole.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/WeblogCategory.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntry.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryTagAggregate.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryTag.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/WeblogTemplate.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/Weblog.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/OAuthConsumerRecord.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/OAuthAccessorRecord.orm.xml</mapping-file>
@@ -36,5 +34,7 @@
 
     <class>org.apache.roller.weblogger.pojos.AutoPing</class>
     <class>org.apache.roller.weblogger.pojos.PingQueueEntry</class>
+    <class>org.apache.roller.weblogger.pojos.WeblogCategory</class>
+    <class>org.apache.roller.weblogger.pojos.WeblogTemplate</class>
   </persistence-unit>
 </persistence>

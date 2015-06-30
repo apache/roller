@@ -23,6 +23,18 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
 
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +48,24 @@ import java.util.Set;
  * This template is different from the generic template because it also
  * contains a reference to the website it is part of.
  */
+@Entity
+@Table(name="weblog_custom_template")
+@NamedQueries({
+    @NamedQuery(name="WeblogTemplate.getByWeblog",
+            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1"),
+
+    @NamedQuery(name="WeblogTemplate.getByWeblogOrderByName",
+            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 ORDER BY w.name"),
+
+    @NamedQuery(name="WeblogTemplate.getByWeblog&Link",
+            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.link = ?2"),
+
+    @NamedQuery(name="WeblogTemplate.getByAction",
+            query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.action = ?2"),
+
+    @NamedQuery(name="WeblogTemplate.getByWeblog&Name",
+        query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.name= ?2")
+})
 public class WeblogTemplate implements ThemeTemplate, Serializable {
     
     public static final long serialVersionUID = -613737191638263428L;
@@ -64,7 +94,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     }
 
     public WeblogTemplate() {}
-    
+
+    @Id
     public String getId() {
         return this.id;
     }
@@ -73,6 +104,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.id = id;
     }
 
+    @ManyToOne
+    @JoinColumn(name="weblogid",nullable=false)
     public Weblog getWeblog() {
         return this.weblog;
     }
@@ -80,7 +113,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public void setWeblog( Weblog website ) {
         this.weblog = website;
     }
-    
+
+    @Basic(optional=false)
     public ComponentType getAction() {
         return action;
     }
@@ -89,6 +123,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.action = action;
     }
 
+    @Basic(optional=false)
     public String getName() {
         return this.name;
     }
@@ -113,6 +148,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.link = link;
     }
 
+    @Column(name="updatetime", nullable=false)
     public Date getLastModified() {
         return lastModified;
     }
@@ -121,6 +157,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         lastModified = newtime;
     }
 
+    @Basic(optional=false)
     public boolean isNavbar() {
         return navbar;
     }
@@ -129,6 +166,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.navbar = navbar;
     }
 
+    @Basic(optional=false)
     public boolean isHidden() {
         return hidden;
     }
@@ -140,6 +178,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     /**
      * Content-type rendered by template or null for auto-detection by link extension.
      */
+    @Column(name="outputtype")
     public String getOutputContentType() {
         return outputContentType;
     }
@@ -153,6 +192,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     /**
      * Determine if this WeblogTemplate is required or not.
      */
+    @Transient
     public boolean isRequired() {
        /*
         * this is kind of hacky right now, but it's like that so we can be
@@ -172,11 +212,14 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
      * A convenience method for testing if this template represents a 'custom'
      * template, meaning a template with action = ACTION_CUSTOM.
      */
+    @Transient
     public boolean isCustom() {
         return ComponentType.CUSTOM.equals(getAction()) && !isRequired();
     }
 
 
+    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.CustomTemplateRendition.class,
+            cascade= CascadeType.ALL, mappedBy="weblogTemplate")
     public List<CustomTemplateRendition> getTemplateRenditions() {
         return templateRenditions;
     }

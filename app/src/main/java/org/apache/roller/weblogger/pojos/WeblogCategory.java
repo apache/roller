@@ -31,21 +31,45 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 
 /**
  * Weblog Category.
  */
+@Entity
+@Table(name="weblogcategory")
+@NamedQueries({
+        @NamedQuery(name="WeblogCategory.getByWeblog",
+                query="SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 order by w.position"),
+
+        @NamedQuery(name="WeblogCategory.getByWeblog&Name",
+                query="SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 AND w.name = ?2"),
+
+        @NamedQuery(name="WeblogCategory.removeByWeblog",
+                query="DELETE FROM WeblogCategory w WHERE w.weblog = ?1")
+})
 public class WeblogCategory implements Serializable, Comparable<WeblogCategory> {
     
     public static final long serialVersionUID = 1435782148712018954L;
     
-    // attributes
+    // unique internal ID of object
     private String id = UUIDGenerator.generateUUID();
+    // category name
     private String name = null;
+    // category description
     private String description = null;
+    // left-to-right comparative ordering of category, higher numbers go to the right
     private int position;
-
-    // associations
+    // parent weblog of category
     private Weblog weblog = null;
 
     public WeblogCategory() {
@@ -73,82 +97,34 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         }
     }
 
-    //------------------------------------------------------- Good citizenship
 
-    public String toString() {
-        return "{" + getId() + ", " + getName() + "}";
-    }
-    
-    @Override
-    public boolean equals(Object other) {
-        
-        if (other == null) {
-            return false;
-        }
-        
-        if (other instanceof WeblogCategory) {
-            WeblogCategory o = (WeblogCategory) other;
-            return new EqualsBuilder()
-                .append(getName(), o.getName())
-                .append(getWeblog(), o.getWeblog())
-                .isEquals();
-        }        
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .append(getName())
-            .append(getWeblog())
-            .toHashCode();
-    }
-    
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(WeblogCategory other) {
-        return getName().compareTo(other.getName());
-    }
-
-    /**
-     * Database surrogate key.
-     */
+    @Id
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    
-    /**
-     * The display name for this category.
-     */
+
+    @Basic(optional = false)
     public String getName() {
         return this.name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
-    
-    /**
-     * A full description for this category.
-     */
+
     public String getDescription() {
         return this.description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * A 0-based position indicator for desired display order of that category.
-     */
+    @Basic(optional = false)
     public int getPosition() {
         return position;
     }
@@ -157,15 +133,21 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         this.position = position;
     }
 
-    /**
-     * Get the weblog which owns this category.
-     */
+    @ManyToOne
+    @JoinColumn(name="weblogid",nullable=false)
     public Weblog getWeblog() {
         return weblog;
     }
-    
+
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
+    }
+
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compareTo(WeblogCategory other) {
+        return getName().compareTo(other.getName());
     }
 
     /**
@@ -189,6 +171,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     /**
      * Returns true if category is in use.
      */
+    @Transient
     public boolean isInUse() {
         try {
             return WebloggerFactory.getWeblogger().getWeblogEntryManager().isWeblogCategoryInUse(this);
@@ -197,4 +180,32 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
         }
     }
 
+    public String toString() {
+        return "{" + getId() + ", " + getName() + "}";
+    }
+
+    @Override
+    public boolean equals(Object other) {
+
+        if (other == null) {
+            return false;
+        }
+
+        if (other instanceof WeblogCategory) {
+            WeblogCategory o = (WeblogCategory) other;
+            return new EqualsBuilder()
+                    .append(getName(), o.getName())
+                    .append(getWeblog(), o.getWeblog())
+                    .isEquals();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(getName())
+                .append(getWeblog())
+                .toHashCode();
+    }
 }
