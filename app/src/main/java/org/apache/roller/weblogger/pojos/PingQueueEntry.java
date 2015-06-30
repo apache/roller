@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -24,134 +27,109 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 
 /**
  * Ping queue entry.  Each instance of this class represents an entry on the ping queue. The entry indicates when it was
  * added to the queue, which configuration to apply for the ping, and the number of ping attempts that have been made
  * for this entry so far.
- * 
- * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
+@Entity
+@Table(name="pingqueueentry")
+@NamedQueries({
+    @NamedQuery(name="PingQueueEntry.getAllOrderByEntryTime",
+            query="SELECT p FROM PingQueueEntry p ORDER BY p.entryTime"),
+
+    @NamedQuery(name="PingQueueEntry.getByPingTarget&Weblog",
+            query="SELECT p FROM PingQueueEntry p WHERE p.pingTarget = ?1 AND p.weblog = ?2"),
+
+    @NamedQuery(name="PingQueueEntry.getByWeblog",
+            query="SELECT p FROM PingQueueEntry p WHERE p.weblog = ?1"),
+
+    @NamedQuery(name="PingQueueEntry.removeByPingTarget",
+            query="DELETE FROM PingQueueEntry p WHERE p.pingTarget = ?1")
+})
 public class PingQueueEntry implements Serializable {
-    
-    private String id = UUIDGenerator.generateUUID();
-    private Timestamp entryTime = null;
-    private PingTarget pingTarget = null;
-    private Weblog website = null;
-    private int attempts = 0;
 
     public static final long serialVersionUID = -1468021030819538243L;
 
-    
-    /**
-     * Default constructor.  Leaves all fields at Java-specified default values.
-     */
+    // Unique ID of object
+    private String id = UUIDGenerator.generateUUID();
+
+    // Timestamp of first entry onto queue
+    private Timestamp entryTime = null;
+
+    // Target site to ping
+    private PingTarget pingTarget = null;
+
+    // weblog causing the ping
+    private Weblog weblog = null;
+
+    // number of prior ping attempts
+    private int attempts = 0;
+
     public PingQueueEntry() {
     }
 
-    /**
-     * Construct with all members
-     *
-     * @param id         unique id of this entry
-     * @param entryTime  timestamp of first entry onto queue
-     * @param pingTarget target site to ping
-     * @param website    website originating the ping
-     * @param attempts   number of prior ping attempts
-     */
-    public PingQueueEntry(String id, Timestamp entryTime, PingTarget pingTarget, Weblog website, int attempts) {
-        //this.id = id;
+    public PingQueueEntry(Timestamp entryTime, PingTarget pingTarget, Weblog weblog, int attempts) {
         this.entryTime = entryTime;
         this.pingTarget = pingTarget;
-        this.website = website;
+        this.weblog = weblog;
         this.attempts = attempts;
     }
 
-    /**
-     * Get the unique id (primary key) of this object.
-     *
-     * @return the unique id of this object.
-     */
+    @Id
     public String getId() {
         return id;
     }
 
-    /**
-     * Set the unique id (primary key) of this object.
-     *
-     * @param id
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * Get the entry time.  Get the time this entry was first added to the queue.
-     *
-     * @return the time the entry was first added to the queue.
-     */
+    @Basic(optional=false)
     public Timestamp getEntryTime() {
         return entryTime;
     }
 
-    /**
-     * Set the entry time.
-     *
-     * @param entryTime the time the entry was first added to the queue.
-     */
     public void setEntryTime(Timestamp entryTime) {
         this.entryTime = entryTime;
     }
 
-    /**
-     * Get the ping target.  Get the target to ping.
-     *
-     * @return the ping target to ping.
-     */
+    @ManyToOne
+    @JoinColumn(name="pingtargetid",nullable=false)
     public PingTarget getPingTarget() {
         return pingTarget;
     }
 
-    /**
-     * Set the ping target.
-     *
-     * @param pingTarget target to ping.
-     */
     public void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
     }
 
-    /**
-     * Get the website originating the ping.
-     *
-     * @return the website originating the ping.
-     */
-    public Weblog getWebsite() {
-        return website;
+    @ManyToOne
+    @JoinColumn(name="weblogid",nullable=false)
+    public Weblog getWeblog() {
+        return weblog;
     }
 
-    /**
-     * Set the website originating the ping.
-     *
-     * @param website the website originating the ping.
-     */
-    public void setWebsite(Weblog website) {
-        this.website = website;
+    public void setWeblog(Weblog weblog) {
+        this.weblog = weblog;
     }
 
-    /**
-     * Get the number of ping attempts that have been made for this queue entry.
-     *
-     * @return the number of ping attempts that have been made for this queue entry.
-     */
+    @Basic(optional=false)
     public int getAttempts() {
         return attempts;
     }
 
-    /**
-     * Set the number of failures that have occurred for this queue entry.
-     *
-     * @param attempts
-     */
     public void setAttempts(int attempts) {
         this.attempts = attempts;
     }
@@ -167,16 +145,8 @@ public class PingQueueEntry implements Serializable {
         return newAttempts;
     }
 
-    //------------------------------------------------------- Good citizenship
-
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getEntryTime());
-        buf.append(", ").append(getAttempts());
-        buf.append("}");
-        return buf.toString();
+        return "{" + getId() + ", " + getEntryTime() + ", " + getAttempts() + "}";
     }
     
     public boolean equals(Object other) {
@@ -189,14 +159,14 @@ public class PingQueueEntry implements Serializable {
         PingQueueEntry o = (PingQueueEntry)other;
         return new EqualsBuilder()
             .append(getEntryTime(), o.getEntryTime()) 
-            .append(getWebsite(), o.getWebsite()) 
+            .append(getWeblog(), o.getWeblog())
             .isEquals();
     }
     
     public int hashCode() { 
         return new HashCodeBuilder()
             .append(getEntryTime())
-            .append(getWebsite())
+            .append(getWeblog())
             .toHashCode();
     }
     

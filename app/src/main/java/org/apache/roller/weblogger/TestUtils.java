@@ -526,7 +526,7 @@ public final class TestUtils {
                 .getAutopingManager();
 
         // store auto ping
-        AutoPing autoPing = new AutoPing(null, ping, getManagedWebsite(weblog));
+        AutoPing autoPing = new AutoPing(ping, getManagedWebsite(weblog));
         mgr.saveAutoPing(autoPing);
 
         // flush to db

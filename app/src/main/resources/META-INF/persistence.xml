@@ -11,7 +11,6 @@
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogBookmark.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryComment.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogHitCount.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/PingQueueEntry.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/PingTarget.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/RuntimeConfigProperty.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/TaskLock.orm.xml</mapping-file>
@@ -28,12 +27,14 @@
     <mapping-file>org/apache/roller/weblogger/pojos/MediaFile.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/MediaFileTag.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/MediaFileDirectory.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/AutoPing.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/CustomTemplateRendition.orm.xml</mapping-file>
 
     <mapping-file>org/apache/roller/planet/pojos/Planet.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/planet/pojos/PlanetGroup.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/planet/pojos/Subscription.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/planet/pojos/SubscriptionEntry.orm.xml</mapping-file>
+
+    <class>org.apache.roller.weblogger.pojos.AutoPing</class>
+    <class>org.apache.roller.weblogger.pojos.PingQueueEntry</class>
   </persistence-unit>
 </persistence>

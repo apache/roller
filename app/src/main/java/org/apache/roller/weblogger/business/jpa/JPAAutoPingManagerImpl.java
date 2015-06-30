@@ -71,7 +71,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     }
 
     public void removeAutoPing(PingTarget pingTarget, Weblog website) throws WebloggerException {
-        Query q = strategy.getNamedUpdate("AutoPing.removeByPingTarget&Website");
+        Query q = strategy.getNamedUpdate("AutoPing.removeByPingTarget&Weblog");
         q.setParameter(1, pingTarget);
         q.setParameter(2, website);
         q.executeUpdate();
@@ -101,7 +101,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     }
 
     public List<AutoPing> getAutoPingsByWebsite(Weblog website) throws WebloggerException {
-        TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByWebsite", AutoPing.class);
+        TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByWeblog", AutoPing.class);
         q.setParameter(1, website);
         return q.getResultList();
     }

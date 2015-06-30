@@ -16,6 +16,10 @@
 #renameColumn('roller_permission', 'actions', 'weblog_role', 'varchar(48)')
 #renameTable('roller_permission', 'user_weblog_role')
 
+-- switch websiteid columns to weblogid
+#renameColumn('autoping', 'websiteid', 'weblogid', 'varchar(48) not null')
+#renameColumn('pingqueueentry', 'websiteid', 'weblogid', 'varchar(48) not null')
+
 -- bookmark folders removed
 
 #dropForeignKey("bookmark" "bm_folderid_fk")

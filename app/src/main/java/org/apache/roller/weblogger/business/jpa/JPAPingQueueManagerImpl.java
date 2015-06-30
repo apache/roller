@@ -88,8 +88,8 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         PingQueueEntry pingQueueEntry =
                 new PingQueueEntry(
-                    null, now, autoPing.getPingTarget(), 
-                    autoPing.getWebsite(), 0);
+                    now, autoPing.getPingTarget(),
+                    autoPing.getWeblog(), 0);
         this.saveQueueEntry(pingQueueEntry);
     }
 
@@ -104,10 +104,10 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
     private boolean isAlreadyQueued(AutoPing autoPing) 
         throws WebloggerException {
         // first, determine if an entry already exists
-        TypedQuery<PingQueueEntry> q = strategy.getNamedQuery("PingQueueEntry.getByPingTarget&Website",
+        TypedQuery<PingQueueEntry> q = strategy.getNamedQuery("PingQueueEntry.getByPingTarget&Weblog",
                 PingQueueEntry.class);
         q.setParameter(1, autoPing.getPingTarget());
-        q.setParameter(2, autoPing.getWebsite());
+        q.setParameter(2, autoPing.getWeblog());
         return q.getResultList().size() > 0;
     }
 
