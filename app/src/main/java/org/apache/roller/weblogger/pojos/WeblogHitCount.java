@@ -14,7 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 
 package org.apache.roller.weblogger.pojos;
 
@@ -22,29 +25,65 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 
 /**
  * Represents hit count data for a weblog.
  */
+@Entity
+@Table(name="roller_hitcounts")
+@NamedQueries({
+        @NamedQuery(name="WeblogHitCount.getByWeblog",
+                query="SELECT h FROM WeblogHitCount h WHERE h.weblog = ?1"),
+        @NamedQuery(name="WeblogHitCount.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
+                query="SELECT h FROM WeblogHitCount h WHERE h.weblog.visible = true AND h.weblog.active = true AND h.weblog.lastModified > ?1 AND h.dailyHits > 0 ORDER BY h.dailyHits DESC"),
+        @NamedQuery(name="WeblogHitCount.updateDailyHitCountZero",
+                query="UPDATE WeblogHitCount h SET h.dailyHits = 0")
+})
 public class WeblogHitCount implements Serializable {
     
     private String id = UUIDGenerator.generateUUID();
     private Weblog weblog = null;
     private int dailyHits = 0;
     
-    
     public WeblogHitCount() {}
-    
-    
-    //------------------------------------------------------- Good citizenship
+
+    @Id
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @ManyToOne
+    @JoinColumn(name="weblogid",nullable=false)
+    public Weblog getWeblog() {
+        return weblog;
+    }
+
+    public void setWeblog(Weblog weblog) {
+        this.weblog = weblog;
+    }
+
+    public int getDailyHits() {
+        return dailyHits;
+    }
+
+    public void setDailyHits(int dailyHits) {
+        this.dailyHits = dailyHits;
+    }
 
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getDailyHits());
-        buf.append("}");
-        return buf.toString();
+        return "{" + getId() + ", " + getDailyHits() + "}";
     }
     
     public boolean equals(Object other) {
@@ -66,32 +105,4 @@ public class WeblogHitCount implements Serializable {
             .append(getWeblog())
             .toHashCode();
     }
-    
-    
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-    
-    
-    public Weblog getWeblog() {
-        return weblog;
-    }
-
-    public void setWeblog(Weblog weblog) {
-        this.weblog = weblog;
-    }
-    
-    
-    public int getDailyHits() {
-        return dailyHits;
-    }
-
-    public void setDailyHits(int dailyHits) {
-        this.dailyHits = dailyHits;
-    }
-    
 }

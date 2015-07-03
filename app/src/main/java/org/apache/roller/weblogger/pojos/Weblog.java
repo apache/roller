@@ -41,12 +41,40 @@ import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.util.I18nUtils;
 
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
 
 /**
  * Weblogs have a many-to-many association with users. They also have one-to-many and
  * one-direction associations with weblog entries, weblog categories, bookmarks and
  * other objects. Use WeblogManager to create, fetch, update and retrieve weblogs.
  */
+@Entity
+@Table(name="weblog")
+@NamedQueries({
+        @NamedQuery(name="Weblog.getByHandle",
+                query="SELECT w FROM Weblog w WHERE w.handle = ?1"),
+        @NamedQuery(name="Weblog.getByLetterOrderByHandle",
+                query="SELECT w FROM Weblog w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle"),
+        @NamedQuery(name="Weblog.getCountAllDistinct",
+                query="SELECT COUNT(w) FROM Weblog w"),
+        @NamedQuery(name="Weblog.getCountByHandleLike",
+                query="SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1")
+})
 public class Weblog implements Serializable {
     
     public static final long serialVersionUID = 206437645033737127L;
@@ -118,37 +146,11 @@ public class Weblog implements Serializable {
         this.locale = locale;
         this.timeZone = timeZone;
     }
-    
-    //------------------------------------------------------- Good citizenship
 
-    public String toString() {
-        return  "{" + getId() + ", " + getHandle()
-        + ", " + getName() + ", " + getEmailAddress()
-        + ", " + getLocale() + ", " + getTimeZone() + "}";
-    }
-
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof Weblog)) {
-            return false;
-        }
-        Weblog o = (Weblog)other;
-        return new EqualsBuilder()
-            .append(getHandle(), o.getHandle()) 
-            .isEquals();
-    }
-    
-    public int hashCode() { 
-        return new HashCodeBuilder()
-            .append(getHandle())
-            .toHashCode();
-    } 
-    
     /**
      * Get the Theme object in use by this weblog, or null if no theme selected.
      */
+    @Transient
     public WeblogTheme getTheme() {
         try {
             // let the ThemeManager handle it
@@ -162,9 +164,7 @@ public class Weblog implements Serializable {
         return null;
     }
 
-    /**
-     * Id of the Website.
-     */
+    @Id
     public String getId() {
         return this.id;
     }
@@ -176,6 +176,7 @@ public class Weblog implements Serializable {
     /**
      * Short URL safe string that uniquely identifies the website.
      */
+    @Basic(optional=false)
     public String getHandle() {
         return this.handle;
     }
@@ -187,6 +188,7 @@ public class Weblog implements Serializable {
     /**
      * Name of the Website.
      */
+    @Basic(optional=false)
     public String getName() {
         return this.name;
     }
@@ -210,6 +212,7 @@ public class Weblog implements Serializable {
     /**
      * Original creator of website.
      */
+    @Transient
     public org.apache.roller.weblogger.pojos.User getCreator() {
         try {
             return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(creator);
@@ -218,10 +221,9 @@ public class Weblog implements Serializable {
         }
         return null;
     }
-    
-    /**
-     * Username of original creator of website.
-     */
+
+
+    @Column(name="creator")
     public String getCreatorUserName() {
         return creator;
     }
@@ -230,6 +232,8 @@ public class Weblog implements Serializable {
         creator = creatorUserName;
     }
 
+
+    @Basic(optional=false)
     public Boolean getEnableBloggerApi() {
         return this.enableBloggerApi;
     }
@@ -237,7 +241,9 @@ public class Weblog implements Serializable {
     public void setEnableBloggerApi(Boolean enableBloggerApi) {
         this.enableBloggerApi = enableBloggerApi;
     }
-    
+
+    @ManyToOne
+    @JoinColumn(name="bloggercatid")
     public WeblogCategory getBloggerCategory() { return bloggerCategory; }
     
     public void setBloggerCategory(WeblogCategory bloggerCategory) {
@@ -259,7 +265,8 @@ public class Weblog implements Serializable {
     public void setBlacklist(String blacklist) {
         this.blacklist = blacklist;
     }
-    
+
+    @Basic(optional=false)
     public Boolean getAllowComments() {
         return this.allowComments;
     }
@@ -267,7 +274,8 @@ public class Weblog implements Serializable {
     public void setAllowComments(Boolean allowComments) {
         this.allowComments = allowComments;
     }
-    
+
+    @Basic(optional=false)
     public Boolean getDefaultAllowComments() {
         return defaultAllowComments;
     }
@@ -275,7 +283,8 @@ public class Weblog implements Serializable {
     public void setDefaultAllowComments(Boolean defaultAllowComments) {
         this.defaultAllowComments = defaultAllowComments;
     }
-    
+
+    @Basic(optional=false)
     public int getDefaultCommentDays() {
         return defaultCommentDays;
     }
@@ -283,7 +292,8 @@ public class Weblog implements Serializable {
     public void setDefaultCommentDays(int defaultCommentDays) {
         this.defaultCommentDays = defaultCommentDays;
     }
-    
+
+    @Column(name="commentmod", nullable=false)
     public Boolean getModerateComments() {
         return moderateComments;
     }
@@ -291,7 +301,8 @@ public class Weblog implements Serializable {
     public void setModerateComments(Boolean moderateComments) {
         this.moderateComments = moderateComments;
     }
-    
+
+    @Basic(optional=false)
     public Boolean getEmailComments() {
         return this.emailComments;
     }
@@ -299,7 +310,8 @@ public class Weblog implements Serializable {
     public void setEmailComments(Boolean emailComments) {
         this.emailComments = emailComments;
     }
-    
+
+    @Basic(optional=false)
     public String getEmailAddress() {
         return this.emailAddress;
     }
@@ -308,9 +320,6 @@ public class Weblog implements Serializable {
         this.emailAddress = emailAddress;
     }
     
-    /**
-     * EditorTheme of the Website.
-     */
     public String getEditorTheme() {
         return this.editorTheme;
     }
@@ -319,9 +328,6 @@ public class Weblog implements Serializable {
         this.editorTheme = editorTheme;
     }
     
-    /**
-     * Locale of the Website.
-     */
     public String getLocale() {
         return this.locale;
     }
@@ -330,9 +336,6 @@ public class Weblog implements Serializable {
         this.locale = locale;
     }
     
-    /**
-     * Timezone of the Website.
-     */
     public String getTimeZone() {
         return this.timeZone;
     }
@@ -340,7 +343,9 @@ public class Weblog implements Serializable {
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
-    
+
+    @Basic(optional=false)
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getDateCreated() {
         if (dateCreated == null) {
             return null;
@@ -391,7 +396,7 @@ public class Weblog implements Serializable {
         this.setVisible(other.getVisible());
         this.setDateCreated(other.getDateCreated());
         this.setEntryDisplayCount(other.getEntryDisplayCount());
-        this.setActive(other.getActive());
+        this.setActive(other.isActive());
         this.setLastModified(other.getLastModified());
         this.setWeblogCategories(other.getWeblogCategories());
     }
@@ -403,6 +408,7 @@ public class Weblog implements Serializable {
      *
      * @return Locale
      */
+    @Transient
     public Locale getLocaleInstance() {
         return I18nUtils.toLocale(getLocale());
     }
@@ -413,6 +419,7 @@ public class Weblog implements Serializable {
      * otherwise return system default instance.
      * @return TimeZone
      */
+    @Transient
     public TimeZone getTimeZoneInstance() {
         if (getTimeZone() == null) {
             this.setTimeZone( TimeZone.getDefault().getID() );
@@ -444,7 +451,8 @@ public class Weblog implements Serializable {
         }
         return false;
     }
-    
+
+    @Column(name="displaycnt", nullable=false)
     public int getEntryDisplayCount() {
         return entryDisplayCount;
     }
@@ -456,6 +464,7 @@ public class Weblog implements Serializable {
     /**
      * Set to FALSE to disable and hide this weblog from public view.
      */
+    @Basic(optional=false)
     public Boolean getVisible() {
         return this.visible;
     }
@@ -468,7 +477,8 @@ public class Weblog implements Serializable {
      * Set to FALSE to exclude this weblog from community areas such as the
      * front page and the planet page.
      */
-    public Boolean getActive() {
+    @Column(name="isactive", nullable=false)
+    public Boolean isActive() {
         return active;
     }
     
@@ -478,8 +488,9 @@ public class Weblog implements Serializable {
     
     /**
      * Returns true if comment moderation is required by website or config.
-     */ 
-    public boolean getCommentModerationRequired() { 
+     */
+    @Transient
+    public boolean getCommentModerationRequired() {
         return (getModerateComments()
          || WebloggerRuntimeConfig.getBooleanProperty("users.moderation.required"));
     }
@@ -497,6 +508,7 @@ public class Weblog implements Serializable {
      * affect visible changes to a weblog.
      *
      */
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getLastModified() {
         return lastModified;
     }
@@ -511,6 +523,7 @@ public class Weblog implements Serializable {
      *
      * If false then urls with various locale restrictions should fail.
      */
+    @Basic(optional=false)
     public boolean isEnableMultiLang() {
         return enableMultiLang;
     }
@@ -526,6 +539,7 @@ public class Weblog implements Serializable {
      * If false then the default weblog view only shows entry from the
      * default locale chosen for this weblog.
      */
+    @Basic(optional=false)
     public boolean isShowAllLangs() {
         return showAllLangs;
     }
@@ -533,11 +547,13 @@ public class Weblog implements Serializable {
     public void setShowAllLangs(boolean showAllLangs) {
         this.showAllLangs = showAllLangs;
     }
-    
+
+    @Transient
     public String getURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, false);
     }
 
+    @Transient
     public String getAbsoluteURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, true);
     }
@@ -545,6 +561,7 @@ public class Weblog implements Serializable {
     /**
      * The path under the weblog's resources to an icon image.
      */
+    @Column(name="icon")
     public String getIconPath() {
         return iconPath;
     }
@@ -581,6 +598,7 @@ public class Weblog implements Serializable {
     /**
      * Get initialized plugins for use during rendering process.
      */
+    @Transient
     public Map<String, WeblogEntryPlugin> getInitializedPlugins() {
         if (initializedPlugins == null) {
             try {
@@ -724,6 +742,7 @@ public class Weblog implements Serializable {
     /**
      * Get number of hits counted today.
      */
+    @Transient
     public int getTodaysHits() {
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
@@ -762,8 +781,9 @@ public class Weblog implements Serializable {
             log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
         }
         return results;
-    }      
+    }
 
+    @Transient
     public long getCommentCount() {
         long count = 0;
         try {
@@ -775,7 +795,8 @@ public class Weblog implements Serializable {
         }
         return count;
     }
-    
+
+    @Transient
     public long getEntryCount() {
         long count = 0;
         try {
@@ -808,6 +829,9 @@ public class Weblog implements Serializable {
         getWeblogCategories().add(category);
     }
 
+    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.WeblogCategory.class,
+            cascade=CascadeType.REMOVE, mappedBy="weblog")
+    @OrderBy("position")
     public List<WeblogCategory> getWeblogCategories() {
         return weblogCategories;
     }
@@ -825,6 +849,8 @@ public class Weblog implements Serializable {
         return false;
     }
 
+    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.WeblogBookmark.class,
+            cascade={CascadeType.REMOVE, CascadeType.PERSIST}, mappedBy="weblog")
     public List<WeblogBookmark> getBookmarks() {
         return bookmarks;
     }
@@ -833,6 +859,8 @@ public class Weblog implements Serializable {
         this.bookmarks = bookmarks;
     }
 
+    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.MediaFileDirectory.class,
+            cascade={CascadeType.REMOVE, CascadeType.PERSIST}, mappedBy="weblog")
     public List<MediaFileDirectory> getMediaFileDirectories() {
         return mediaFileDirectories;
     }
@@ -897,6 +925,33 @@ public class Weblog implements Serializable {
             }
         }
         return null;
+    }
+
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return  "{" + getId() + ", " + getHandle()
+                + ", " + getName() + ", " + getEmailAddress()
+                + ", " + getLocale() + ", " + getTimeZone() + "}";
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof Weblog)) {
+            return false;
+        }
+        Weblog o = (Weblog)other;
+        return new EqualsBuilder()
+                .append(getHandle(), o.getHandle())
+                .isEquals();
+    }
+
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(getHandle())
+                .toHashCode();
     }
 
 }

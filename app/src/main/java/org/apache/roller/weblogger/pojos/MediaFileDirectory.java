@@ -14,7 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 package org.apache.roller.weblogger.pojos;
 
 import java.util.HashSet;
@@ -24,9 +27,27 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
-/**
- * Represents a Media file directory.
- */
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name="roller_mediafiledir")
+@NamedQueries({
+        @NamedQuery(name="MediaFileDirectory.getByWeblog",
+                query="SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1"),
+        @NamedQuery(name="MediaFileDirectory.getByWeblogAndName",
+                query="SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1 AND d.name = ?2")
+})
 public class MediaFileDirectory {
 
     private String id;
@@ -49,30 +70,16 @@ public class MediaFileDirectory {
         weblog.getMediaFileDirectories().add(this);
     }
 
-    public boolean isEmpty() {
-        return getMediaFiles().isEmpty();
-    }
-
-    /**
-     * Database surrogate key.
-     * 
-     */
+    @Id
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id
-     *            the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * A short name for this folder.
-     * 
-     */
+    @Basic(optional=false)
     public String getName() {
         return name;
     }
@@ -81,10 +88,6 @@ public class MediaFileDirectory {
         this.name = name;
     }
 
-    /**
-     * A full description for this folder.
-     * 
-     */
     public String getDescription() {
         return description;
     }
@@ -93,10 +96,8 @@ public class MediaFileDirectory {
         this.description = description;
     }
 
-    /**
-     * Get the weblog which owns this folder.
-     * 
-     */
+    @ManyToOne
+    @JoinColumn(name="weblogid",nullable=false)
     public Weblog getWeblog() {
         return weblog;
     }
@@ -105,16 +106,20 @@ public class MediaFileDirectory {
         this.weblog = weblog;
     }
 
-    /**
-     * The collection of files in this directory
-     * 
-     */
+    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.MediaFile.class,
+            cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy="directory")
+    @OrderBy("name")
     public Set<MediaFile> getMediaFiles() {
         return mediaFiles;
     }
 
     public void setMediaFiles(Set<MediaFile> mediaFiles) {
         this.mediaFiles = mediaFiles;
+    }
+
+    @Transient
+    public boolean isEmpty() {
+        return getMediaFiles().isEmpty();
     }
 
     /**

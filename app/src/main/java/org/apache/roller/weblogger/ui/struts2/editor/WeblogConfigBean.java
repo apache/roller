@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -240,7 +243,7 @@ public class WeblogConfigBean {
         this.applyCommentDefaults = applyCommentDefaults;
     }
     
-    public boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
@@ -274,7 +277,7 @@ public class WeblogConfigBean {
         this.timeZone = dataHolder.getTimeZone();
         this.defaultPlugins = dataHolder.getDefaultPlugins();
         this.entryDisplayCount = dataHolder.getEntryDisplayCount();
-        setActive(dataHolder.getActive());
+        setActive(dataHolder.isActive());
         this.commentModerationRequired = dataHolder.getCommentModerationRequired();
         this.enableMultiLang = dataHolder.isEnableMultiLang();
         this.showAllLangs = dataHolder.isShowAllLangs();
@@ -305,7 +308,7 @@ public class WeblogConfigBean {
         dataHolder.setTimeZone(this.timeZone);
         dataHolder.setDefaultPlugins(StringUtils.join(this.defaultPluginsArray, ","));
         dataHolder.setEntryDisplayCount(this.entryDisplayCount);
-        dataHolder.setActive(this.getActive());
+        dataHolder.setActive(this.isActive());
         dataHolder.setCommentModerationRequired(this.commentModerationRequired);
         dataHolder.setEnableMultiLang(this.enableMultiLang);
         dataHolder.setShowAllLangs(this.showAllLangs);

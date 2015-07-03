@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -34,6 +36,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -139,6 +143,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     }
 
     @Column(name="updatetime", nullable=false)
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getLastModified() {
         return lastModified;
     }
@@ -190,7 +195,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     }
 
     @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.CustomTemplateRendition.class,
-            cascade= CascadeType.ALL, mappedBy="weblogTemplate")
+            cascade=CascadeType.ALL, mappedBy="weblogTemplate")
     public List<CustomTemplateRendition> getTemplateRenditions() {
         return templateRenditions;
     }
