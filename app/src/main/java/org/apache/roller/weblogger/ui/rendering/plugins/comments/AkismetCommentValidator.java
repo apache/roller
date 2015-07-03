@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
@@ -56,7 +59,7 @@ public class AkismetCommentValidator implements CommentValidator {
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
         StringBuilder sb = new StringBuilder();
         sb.append("blog=").append(
-            WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(comment.getWeblogEntry().getWebsite(), null, true)).append("&");
+            WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(comment.getWeblogEntry().getWeblog(), null, true)).append("&");
         sb.append("user_ip="        ).append(comment.getRemoteHost()).append("&");
         sb.append("user_agent="     ).append(comment.getUserAgent()).append("&");
         sb.append("referrer="       ).append(comment.getReferrer()).append("&");

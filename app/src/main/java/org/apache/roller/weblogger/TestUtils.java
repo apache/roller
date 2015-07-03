@@ -380,7 +380,7 @@ public final class TestUtils {
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date()
                 .getTime()));
         testEntry.setStatus(status);
-        testEntry.setWebsite(getManagedWebsite(weblog));
+        testEntry.setWeblog(getManagedWebsite(weblog));
         testEntry.setCreatorUserName(getManagedUser(user).getUserName());
         testEntry.setCategory(cat);
 

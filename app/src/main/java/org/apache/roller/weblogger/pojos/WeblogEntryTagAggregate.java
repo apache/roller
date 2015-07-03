@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -24,17 +27,46 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 
 /**
  * Tag aggregate data.
  */
+@Entity
+@Table(name="roller_weblogentrytagagg")
+@NamedQueries({
+        @NamedQuery(name="WeblogEntryTagAggregate.getByName&WeblogOrderByLastUsedDesc",
+                query="SELECT w FROM WeblogEntryTagAggregate w WHERE w.name = ?1 AND w.weblog = ?2 ORDER BY w.lastUsed DESC"),
+        @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblog",
+                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 GROUP BY w.name, w.total ORDER BY w.total DESC"),
+        @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblog&StartDate",
+                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 AND w.lastUsed >= ?2 GROUP BY w.name, w.total ORDER BY w.total DESC"),
+        @NamedQuery(name="WeblogEntryTagAggregate.removeByTotalLessEqual",
+                query="DELETE FROM WeblogEntryTagAggregate w WHERE w.total <= ?1"),
+        @NamedQuery(name="WeblogEntryTagAggregate.removeByWeblog",
+                query="DELETE FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1"),
+        @NamedQuery(name="WeblogEntryTagAggregate.getByName&WeblogNullOrderByLastUsedDesc",
+                query="SELECT w FROM WeblogEntryTagAggregate w WHERE w.name = ?1 AND w.weblog IS NULL ORDER BY w.lastUsed DESC"),
+        @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblogNull",
+                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL GROUP BY w.name, w.total ORDER BY w.total DESC"),
+        @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblogNull&StartDate",
+                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL AND w.lastUsed >= ?1 GROUP BY w.name, w.total ORDER BY w.total DESC")
+})
 public class WeblogEntryTagAggregate implements Serializable {
     
     public static final long serialVersionUID = -4343500268898106982L;
     
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
-    private Weblog website = null;
+    private Weblog weblog = null;
     private Timestamp lastUsed = null;
     private int total = 0;
     
@@ -42,20 +74,16 @@ public class WeblogEntryTagAggregate implements Serializable {
     public WeblogEntryTagAggregate() {
     }
     
-    public WeblogEntryTagAggregate(String id,
-            Weblog website,
+    public WeblogEntryTagAggregate(Weblog weblog,
             String name, int total) {
-        //this.id = id;
-        this.website = website;
+        this.weblog = weblog;
         this.name = name;
         this.total = total;
     }
     
     //------------------------------------------------------- Simple properties
     
-    /**
-     * Unique ID and primary key.
-     */
+    @Id
     public String getId() {
         return this.id;
     }
@@ -63,20 +91,18 @@ public class WeblogEntryTagAggregate implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+    @ManyToOne
+    @JoinColumn(name="weblogid", nullable=true)
     public Weblog getWeblog() {
-        return this.website;
+        return this.weblog;
     }
     
-    public void setWeblog(Weblog website) {
-        this.website = website;
+    public void setWeblog(Weblog weblog) {
+        this.weblog = weblog;
     }
-    
-    
-    /**
-     * Tag value.
-     */
+
+    @Basic(optional=false)
     public String getName() {
         return this.name;
     }
@@ -84,8 +110,8 @@ public class WeblogEntryTagAggregate implements Serializable {
     public void setName( String name ) {
         this.name = name;
     }
-    
-    
+
+    @Basic(optional=false)
     public int getTotal() {
         return this.total;
     }
@@ -93,8 +119,8 @@ public class WeblogEntryTagAggregate implements Serializable {
     public void setTotal(int total) {
         this.total = total;
     }
-    
-    
+
+    @Basic(optional=false)
     public Timestamp getLastUsed() {
         return this.lastUsed;
     }
@@ -106,14 +132,7 @@ public class WeblogEntryTagAggregate implements Serializable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getName());
-        buf.append(", ").append(getTotal());
-        buf.append(", ").append(getLastUsed());
-        buf.append("}");
-        return buf.toString();
+        return "{" + getId() + ", " + getName() + ", " + getTotal() + ", " + getLastUsed() + "}";
     }
     
     public boolean equals(Object other) {

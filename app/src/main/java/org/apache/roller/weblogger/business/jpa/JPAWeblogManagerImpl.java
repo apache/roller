@@ -200,7 +200,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.flush();
 
         // remove entries
-        TypedQuery<WeblogEntry> refQuery = strategy.getNamedQuery("WeblogEntry.getByWebsite", WeblogEntry.class);
+        TypedQuery<WeblogEntry> refQuery = strategy.getNamedQuery("WeblogEntry.getByWeblog", WeblogEntry.class);
         refQuery.setParameter(1, weblog);
         List<WeblogEntry> entries = refQuery.getResultList();
         for (WeblogEntry entry : entries) {
@@ -226,7 +226,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     protected void updateTagAggregates(List<TagStat> tags) throws WebloggerException {
         for (TagStat stat : tags) {
             TypedQuery<WeblogEntryTagAggregate> query = strategy.getNamedQueryCommitFirst(
-                    "WeblogEntryTagAggregate.getByName&WebsiteNullOrderByLastUsedDesc", WeblogEntryTagAggregate.class);
+                    "WeblogEntryTagAggregate.getByName&WeblogNullOrderByLastUsedDesc", WeblogEntryTagAggregate.class);
             query.setParameter(1, stat.getName());
             try {
                 WeblogEntryTagAggregate agg = query.getSingleResult();

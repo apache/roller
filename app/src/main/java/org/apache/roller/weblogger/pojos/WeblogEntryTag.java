@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.pojos;
 
@@ -26,11 +29,27 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 
 /**
  * Tag bean.
- * @author Elias Torres
  */
+@Entity
+@Table(name="roller_weblogentrytag")
+@NamedQueries({
+        @NamedQuery(name="WeblogEntryTag.getByWeblog",
+                query="SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1")
+})
 public class WeblogEntryTag implements Serializable {
     private static Log log = LogFactory.getLog(WeblogEntryTag.class);    
     
@@ -48,13 +67,11 @@ public class WeblogEntryTag implements Serializable {
     }
     
     public WeblogEntryTag(
-            String id,
             Weblog website,
             WeblogEntry weblogEntry,
             User user, 
             String name,
             Timestamp time) {
-        //this.id = id;
         this.website = website;
         this.weblogEntry = weblogEntry;
         this.userName = user.getUserName();
@@ -67,6 +84,7 @@ public class WeblogEntryTag implements Serializable {
     /**
      * Unique ID and primary key.
      */
+    @Id
     public String getId() {
         return this.id;
     }
@@ -79,6 +97,8 @@ public class WeblogEntryTag implements Serializable {
     /**
      * ID of website that this tag refers to.
      */
+    @ManyToOne
+    @JoinColumn(name="weblogid",nullable=false)
     public Weblog getWeblog() {
         return this.website;
     }
@@ -86,8 +106,10 @@ public class WeblogEntryTag implements Serializable {
     public void setWeblog(Weblog website) {
         this.website = website;
     }
-    
-    
+
+
+    @ManyToOne
+    @JoinColumn(name="entryid",nullable=false)
     public WeblogEntry getWeblogEntry() {
         return weblogEntry;
     }
@@ -97,6 +119,7 @@ public class WeblogEntryTag implements Serializable {
     }
     
     
+    @Transient
     public User getUser() {
         try {
             return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
@@ -105,7 +128,9 @@ public class WeblogEntryTag implements Serializable {
         }
         return null;
     }
-    
+
+
+    @Column(name="creator", nullable=false)
     public String getCreatorUserName() {
         return userName;
     }
@@ -117,6 +142,7 @@ public class WeblogEntryTag implements Serializable {
     /**
      * Tag value.
      */
+    @Basic(optional=false)
     public String getName() {
         return this.name;
     }
@@ -124,8 +150,8 @@ public class WeblogEntryTag implements Serializable {
     public void setName( String name ) {
         this.name = name;
     }
-    
-    
+
+    @Basic(optional=false)
     public java.sql.Timestamp getTime() {
         return this.time;
     }

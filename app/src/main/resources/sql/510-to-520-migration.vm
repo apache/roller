@@ -21,6 +21,9 @@
 #renameColumn('pingqueueentry', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('weblog_custom_template', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('weblog_category', 'websiteid', 'weblogid', 'varchar(48) not null')
+#renameColumn('weblogentry', 'websiteid', 'weblogid', 'varchar(48) not null')
+#renameColumn('roller_weblogentrytag', 'websiteid', 'weblogid', 'varchar(48) not null')
+#renameColumn('roller_weblogentrytagagg', 'websiteid', 'weblogid', 'varchar(48) not null')
 
 -- bookmark folders removed
 

@@ -134,7 +134,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
-        validate(entry.getWebsite().getHandle(), userid,password);
+        validate(entry.getWeblog().getHandle(), userid,password);
         
         Hashtable postcontent = struct;
         String description = (String)postcontent.get("description");
@@ -180,7 +180,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             if ( cat != null ) {
                 // Use first category specified by request
                 WeblogCategory cd =
-                        weblogMgr.getWeblogCategoryByName(entry.getWebsite(), cat);
+                        weblogMgr.getWeblogCategoryByName(entry.getWeblog(), cat);
                 entry.setCategory(cd);
             }
             
@@ -189,7 +189,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             roller.flush();
             
             // notify cache
-            flushPageCache(entry.getWebsite());
+            flushPageCache(entry.getWeblog());
             
             // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
@@ -264,7 +264,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             entry.setLocale(website.getLocale());
             entry.setPubTime(new Timestamp(dateCreated.getTime()));
             entry.setUpdateTime(current);
-            entry.setWebsite(website);
+            entry.setWeblog(website);
             entry.setCreatorUserName(user.getUserName());
             entry.setCommentDays(website.getDefaultCommentDays());
             entry.setAllowComments(website.getDefaultAllowComments());
@@ -303,7 +303,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             roller.flush();
             
             // notify cache
-            flushPageCache(entry.getWebsite());
+            flushPageCache(entry.getWeblog());
             
             // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
@@ -340,7 +340,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         if (entry == null) {
             throw new XmlRpcException(INVALID_POSTID, INVALID_POSTID_MSG);
         }
-        validate(entry.getWebsite().getHandle(), userid, password);
+        validate(entry.getWeblog().getHandle(), userid, password);
         
         try {
             return createPostStruct(entry, userid);

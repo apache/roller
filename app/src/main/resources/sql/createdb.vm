@@ -123,7 +123,7 @@ create table weblogentry (
     text            $db.TEXT_SQL_TYPE not null,
     pubtime         $db.TIMESTAMP_SQL_TYPE_NULL,
     updatetime      $db.TIMESTAMP_SQL_TYPE     not null,
-    websiteid       varchar(48)  not null,
+    weblogid       varchar(48)  not null,
     categoryid      varchar(48)  not null,
     publishentry    $db.BOOLEAN_SQL_TYPE_TRUE not null,
     link            varchar(255),
@@ -140,41 +140,41 @@ create table weblogentry (
     enclosure_type  varchar(48),
     enclosure_length integer
 );
-create index we_weblogid_idx on weblogentry( websiteid );
+create index we_weblogid_idx on weblogentry( weblogid );
 create index we_categoryid_idx on weblogentry( categoryid );
 create index we_pinnedtom_idx on weblogentry(pinnedtomain);
 create index we_creator_idx on weblogentry(creator);
 create index we_status_idx on weblogentry(status);
 create index we_locale_idx on weblogentry(locale);
-create index we_combo1_idx on weblogentry(status, pubtime, websiteid);
-create index we_combo2_idx on weblogentry(websiteid, pubtime, status);
+create index we_combo1_idx on weblogentry(status, pubtime, weblogid);
+create index we_combo2_idx on weblogentry(weblogid, pubtime, status);
 
 create table roller_weblogentrytag (
     id              varchar(48)   not null primary key,
     entryid         varchar(48)   not null,
-    websiteid       varchar(48)   not null,    
+    weblogid        varchar(48)   not null,
     creator	        varchar(255)   not null,
     name            varchar(255)  not null,
     time            $db.TIMESTAMP_SQL_TYPE 	not null
 );
 
 create index wet_entryid_idx on roller_weblogentrytag( entryid );
-create index wet_weblogid_idx on roller_weblogentrytag( websiteid );
+create index wet_weblogid_idx on roller_weblogentrytag( weblogid );
 create index wet_creator_idx on roller_weblogentrytag( creator );
 create index wet_name_idx on roller_weblogentrytag( name );
 
 create table roller_weblogentrytagagg (
     id              varchar(48)   not null primary key,
-    websiteid       varchar(48) ,    
+    weblogid        varchar(48) ,
     name            varchar(255)  not null,
     total           integer		  not null,
     lastused        $db.TIMESTAMP_SQL_TYPE 	not null
 );
 
-create index weta_weblogid_idx on roller_weblogentrytagagg( websiteid );
+create index weta_weblogid_idx on roller_weblogentrytagagg( weblogid );
 create index weta_name_idx on roller_weblogentrytagagg( name );
 create index weta_lastused_idx on roller_weblogentrytagagg( lastused );
-alter table roller_weblogentrytagagg add constraint weta_weblog_tag_uq unique ( websiteid, name );
+alter table roller_weblogentrytagagg add constraint weta_weblog_tag_uq unique ( weblogid, name );
 
 create table roller_comment (
     id         varchar(48) not null primary key,
@@ -398,7 +398,7 @@ alter table custom_template_rendition add constraint ctr_templateid_fk
     foreign key ( templateid ) references weblog_custom_template( id ) ;
 
 alter table weblogentry add constraint we_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) ;
+    foreign key ( weblogid ) references weblog( id ) ;
 
 alter table weblogentry add constraint we_categoryid_fk
     foreign key ( categoryid ) references weblogcategory( id ) ;

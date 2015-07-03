@@ -368,8 +368,8 @@ public final class SiteWideCache implements CacheHandler {
      * A comment has changed.
      */
     public void invalidate(WeblogEntryComment comment) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(comment.getWeblogEntry().getWebsite().getHandle())) {
-            invalidate(comment.getWeblogEntry().getWebsite());
+        if(WebloggerRuntimeConfig.isSiteWideWeblog(comment.getWeblogEntry().getWeblog().getHandle())) {
+            invalidate(comment.getWeblogEntry().getWeblog());
         }
     }
     

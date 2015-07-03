@@ -121,7 +121,7 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setAnchor("testEntryAnchor");
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        testEntry.setWebsite(testWeblog);
+        testEntry.setWeblog(testWeblog);
         testEntry.setCreatorUserName(testUser.getUserName());
 
         WeblogCategory cat = testWeblog.getWeblogCategory("General");
@@ -374,7 +374,7 @@ public class WeblogEntryTest extends TestCase {
                     new java.sql.Timestamp(new java.util.Date().getTime()));
             testEntry.setUpdateTime(
                     new java.sql.Timestamp(new java.util.Date().getTime()));
-            testEntry.setWebsite(testWeblog);
+            testEntry.setWeblog(testWeblog);
             testEntry.setCreatorUserName(testUser.getUserName());
             testEntry.setCategory(testWeblog.getWeblogCategory("General"));
 
@@ -953,7 +953,7 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setAnchor("testEntryAnchor");
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        testEntry.setWebsite(testWeblog);
+        testEntry.setWeblog(testWeblog);
         testEntry.setCreatorUserName(testUser.getUserName());
 
         WeblogCategory cat = testWeblog.getWeblogCategory("General");
