@@ -107,7 +107,7 @@ public class CommentValidatorTest extends TestCase {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
        
-        comment.getWeblogEntry().getWebsite().setBlacklist("www.myblacklistedsite.com");
+        comment.getWeblogEntry().getWeblog().setBlacklist("www.myblacklistedsite.com");
 
         comment.setContent("nice friendly stuff");
         assertEquals(100, mgr.validateComment(comment, msgs));

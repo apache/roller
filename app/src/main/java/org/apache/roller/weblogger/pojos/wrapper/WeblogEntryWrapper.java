@@ -94,8 +94,8 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public WeblogWrapper getWebsite() {
-        return WeblogWrapper.wrap(this.pojo.getWebsite(), urlStrategy);
+    public WeblogWrapper getWeblog() {
+        return WeblogWrapper.wrap(this.pojo.getWeblog(), urlStrategy);
     }
     
     

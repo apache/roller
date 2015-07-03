@@ -13,21 +13,21 @@
         </named-query>
         <named-query name="WeblogEntryComment.getCountDistinctByWebsite&amp;Status">
             <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
-            <query>SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.website = ?1 AND c.status = ?2</query>
+            <query>SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.status = ?2</query>
         </named-query>
         <named-query name="WeblogEntryComment.getMostCommentedWebsiteByEndDate">
             <!--
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result 
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name</query>
+            <query>SELECT COUNT(c), c.weblogEntry.weblog.id, c.weblogEntry.weblog.handle, c.weblogEntry.weblog.name FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 GROUP BY c.weblogEntry.weblog.id, c.weblogEntry.weblog.handle, c.weblogEntry.weblog.name</query>
         </named-query>
         <named-query name="WeblogEntryComment.getMostCommentedWebsiteByEndDate&amp;StartDate">
             <!--
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2 GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
+            <query>SELECT COUNT(c), c.weblogEntry.weblog.id, c.weblogEntry.weblog.handle, c.weblogEntry.weblog.name FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2 GROUP BY c.weblogEntry.weblog.id, c.weblogEntry.weblog.handle, c.weblogEntry.weblog.name
             </query>
         </named-query>
         <named-query name="WeblogEntryComment.getMostCommentedWeblogEntryByEndDate">
@@ -35,28 +35,28 @@
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
+            <query>SELECT COUNT(c), c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 GROUP BY c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
         </named-query>
         <named-query name="WeblogEntryComment.getMostCommentedWeblogEntryByEndDate&amp;StartDate">
             <!--
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
+            <query>SELECT COUNT(c), c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2 GROUP BY c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
         </named-query>
         <named-query name="WeblogEntryComment.getMostCommentedWeblogEntryByWebsite&amp;EndDate">
             <!--
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.website = ?1 AND c.weblogEntry.pubTime &lt; ?2 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
+            <query>SELECT COUNT(c), c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.weblogEntry.pubTime &lt; ?2 GROUP BY c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
         </named-query>
         <named-query name="WeblogEntryComment.getMostCommentedWeblogEntryByWebsite&amp;EndDate&amp;StartDate">
             <!--
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.website = ?1 AND c.weblogEntry.pubTime &lt; ?2 AND c.weblogEntry.pubTime &gt; ?3 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
+            <query>SELECT COUNT(c), c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.weblog = ?1 AND c.weblogEntry.pubTime &lt; ?2 AND c.weblogEntry.pubTime &gt; ?3 GROUP BY c.weblogEntry.weblog.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
         </named-query>
         <attributes>
             <id name="id">

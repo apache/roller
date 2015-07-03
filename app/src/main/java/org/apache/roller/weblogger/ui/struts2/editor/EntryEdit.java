@@ -102,7 +102,7 @@ public final class EntryEdit extends UIAction {
             // Create and initialize new, not-yet-saved Weblog Entry
             entry = new WeblogEntry();
             entry.setCreatorUserName(getAuthenticatedUser().getUserName());
-            entry.setWebsite(getActionWeblog());
+            entry.setWeblog(getActionWeblog());
         } else {
             // already saved entry
             try {
@@ -367,7 +367,7 @@ public final class EntryEdit extends UIAction {
         // weblog
         if (getEntry() == null) {
             return ERROR;
-        } else if (!getEntry().getWebsite().equals(getActionWeblog())) {
+        } else if (!getEntry().getWeblog().equals(getActionWeblog())) {
             return DENIED;
         }
 

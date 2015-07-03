@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.util;
@@ -108,7 +111,7 @@ public class Trackback {
         String excerpt = StringUtils.left( Utilities.removeHTML(entry.getDisplayContent()),
                 RollerConstants.TEXTWIDTH_255);
         String url = entry.getPermalink();
-        String blog_name = entry.getWebsite().getName();
+        String blog_name = entry.getWeblog().getName();
         
         // build trackback post parameters as query string
         Map params = new HashMap();

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.webservices.xmlrpc;
@@ -93,11 +96,11 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             return false;
         }
         
-        validate(entry.getWebsite().getHandle(), userid, password);
+        validate(entry.getWeblog().getHandle(), userid, password);
         
         try {
             // notify cache
-            flushPageCache(entry.getWebsite());
+            flushPageCache(entry.getWeblog());
 
             // delete the entry
             weblogMgr.removeWeblogEntry(entry);
@@ -350,7 +353,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 roller.flush();
                 
                 // notify cache
-                flushPageCache(entry.getWebsite());
+                flushPageCache(entry.getWeblog());
                 
                 return true;
             } catch (Exception e) {
@@ -415,7 +418,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entry.setUpdateTime(current);
             User user = roller.getUserManager().getUserByUserName(userid);
             entry.setCreatorUserName(user.getUserName());
-            entry.setWebsite(website);
+            entry.setWeblog(website);
             entry.setCategory(website.getBloggerCategory());
             entry.setCommentDays(website.getDefaultCommentDays());
             if (publish) {
@@ -429,7 +432,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             roller.flush();
             
             // notify cache
-            flushPageCache(entry.getWebsite());
+            flushPageCache(entry.getWeblog());
             
             return entry.getId();
         } catch (Exception e) {

@@ -113,7 +113,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     }
 
     public List<AutoPing> getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
-        return getAutoPingsByWebsite(changedWeblogEntry.getWebsite());
+        return getAutoPingsByWebsite(changedWeblogEntry.getWeblog());
     }
 
     public void release() {

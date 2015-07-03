@@ -104,16 +104,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.id = id;
     }
 
-    @ManyToOne
-    @JoinColumn(name="weblogid",nullable=false)
-    public Weblog getWeblog() {
-        return this.weblog;
-    }
-    
-    public void setWeblog( Weblog website ) {
-        this.weblog = website;
-    }
-
     @Basic(optional=false)
     public ComponentType getAction() {
         return action;
@@ -189,6 +179,35 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
 
     private List<CustomTemplateRendition> templateRenditions = new ArrayList<CustomTemplateRendition>();
 
+    @ManyToOne
+    @JoinColumn(name="weblogid",nullable=false)
+    public Weblog getWeblog() {
+        return this.weblog;
+    }
+
+    public void setWeblog( Weblog website ) {
+        this.weblog = website;
+    }
+
+    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.CustomTemplateRendition.class,
+            cascade= CascadeType.ALL, mappedBy="weblogTemplate")
+    public List<CustomTemplateRendition> getTemplateRenditions() {
+        return templateRenditions;
+    }
+
+    public void setTemplateRenditions(List<CustomTemplateRendition> templateRenditions) {
+        this.templateRenditions = templateRenditions;
+    }
+
+    /**
+     * A convenience method for testing if this template represents a 'custom'
+     * template, meaning a template with action = ACTION_CUSTOM.
+     */
+    @Transient
+    public boolean isCustom() {
+        return ComponentType.CUSTOM.equals(getAction()) && !isRequired();
+    }
+
     /**
      * Determine if this WeblogTemplate is required or not.
      */
@@ -206,26 +225,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         * and possibly applicable to any template.
         */
         return (requiredTemplates.contains(getName()) || "Weblog".equals(getLink()));
-    }
-
-    /**
-     * A convenience method for testing if this template represents a 'custom'
-     * template, meaning a template with action = ACTION_CUSTOM.
-     */
-    @Transient
-    public boolean isCustom() {
-        return ComponentType.CUSTOM.equals(getAction()) && !isRequired();
-    }
-
-
-    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.CustomTemplateRendition.class,
-            cascade= CascadeType.ALL, mappedBy="weblogTemplate")
-    public List<CustomTemplateRendition> getTemplateRenditions() {
-        return templateRenditions;
-    }
-
-    public void setTemplateRenditions(List<CustomTemplateRendition> templateRenditions) {
-        this.templateRenditions = templateRenditions;
     }
 
     public CustomTemplateRendition getTemplateRendition(CustomTemplateRendition.RenditionType desiredType) throws WebloggerException {

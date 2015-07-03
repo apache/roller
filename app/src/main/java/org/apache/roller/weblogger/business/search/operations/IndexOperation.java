@@ -111,7 +111,7 @@ public abstract class IndexOperation implements Runnable {
 
         // keyword
         doc.add(new StringField(FieldConstants.WEBSITE_HANDLE, data
-                .getWebsite().getHandle(), Field.Store.YES));
+                .getWeblog().getHandle(), Field.Store.YES));
 
         // text, don't index deleted/disabled users of a group blog
         if (data.getCreator() != null) {

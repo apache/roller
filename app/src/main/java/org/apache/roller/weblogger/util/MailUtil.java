@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.util;
@@ -97,11 +100,11 @@ public class MailUtil {
             
             // list of enabled website authors and admins
             List<String> reviewers = new ArrayList<String>();
-            List<User> websiteUsers = wmgr.getWeblogUsers(entry.getWebsite(), true);
+            List<User> websiteUsers = wmgr.getWeblogUsers(entry.getWeblog(), true);
             
             // build list of reviewers (website users with author permission)
             for (User websiteUser : websiteUsers) {
-                if (entry.getWebsite().userHasWeblogRole(
+                if (entry.getWeblog().userHasWeblogRole(
                         websiteUser, WeblogRole.POST)
                         && websiteUser.getEmailAddress() != null) {
                     reviewers.add(websiteUser.getEmailAddress());
@@ -111,17 +114,17 @@ public class MailUtil {
             to = (String[])reviewers.toArray(new String[reviewers.size()]);
             
             // Figure URL to entry edit page
-            String editURL = WebloggerFactory.getWeblogger().getUrlStrategy().getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), true);
+            String editURL = WebloggerFactory.getWeblogger().getUrlStrategy().getEntryEditURL(entry.getWeblog().getHandle(), entry.getId(), true);
             
             ResourceBundle resources = ResourceBundle.getBundle(
-                    "ApplicationResources", entry.getWebsite().getLocaleInstance());
+                    "ApplicationResources", entry.getWeblog().getLocaleInstance());
             StringBuilder sb = new StringBuilder();
             sb.append(
                     MessageFormat.format(
                     resources.getString("weblogEntry.pendingEntrySubject"),
                     new Object[] {
-                entry.getWebsite().getName(),
-                entry.getWebsite().getHandle()
+                entry.getWeblog().getName(),
+                entry.getWeblog().getHandle()
             }));
             subject = sb.toString();
             sb = new StringBuilder();
@@ -261,7 +264,7 @@ public class MailUtil {
         // TODO: Factor out email notification from moderate message to owner.
 
         WeblogEntry entry = commentObject.getWeblogEntry();
-        Weblog weblog = entry.getWebsite();
+        Weblog weblog = entry.getWeblog();
         User user = entry.getCreator();
         
         // Only send email if email notification is enabled, or a pending message that needs moderation.
@@ -519,7 +522,7 @@ public class MailUtil {
             throws MailingException {
         
         WeblogEntry entry = cd.getWeblogEntry();
-        Weblog weblog = entry.getWebsite();
+        Weblog weblog = entry.getWeblog();
         User user = entry.getCreator();
         
         // use either the weblog configured from address or the site configured from address

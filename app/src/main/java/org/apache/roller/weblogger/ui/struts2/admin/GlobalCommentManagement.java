@@ -253,7 +253,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
                 WeblogEntryComment deleteComment;
                 for (String deleteId : deletes) {
                     deleteComment = wmgr.getComment(deleteId);
-                    flushList.add(deleteComment.getWeblogEntry().getWebsite());
+                    flushList.add(deleteComment.getWeblogEntry().getWeblog());
                     wmgr.removeComment(deleteComment);
                 }
             }
@@ -281,7 +281,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
                     comment.setStatus(ApprovalStatus.SPAM);
                     wmgr.saveComment(comment);
                     
-                    flushList.add(comment.getWeblogEntry().getWebsite());
+                    flushList.add(comment.getWeblogEntry().getWeblog());
                 } else if(!spamIds.contains(id) &&
                         ApprovalStatus.SPAM.equals(comment.getStatus())) {
                     // Administrator unmarked as spam, so changing to DISAPPROVED
@@ -290,7 +290,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
                     comment.setStatus(ApprovalStatus.DISAPPROVED);
                     wmgr.saveComment(comment);
                     
-                    flushList.add(comment.getWeblogEntry().getWebsite());
+                    flushList.add(comment.getWeblogEntry().getWeblog());
                 }
             }
             

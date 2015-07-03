@@ -330,7 +330,7 @@ public class EntryBean {
             
             if(cat == null) {
                 throw new WebloggerException("Category could not be found - "+getCategoryId());
-            } else if(!entry.getWebsite().equals(cat.getWeblog())) {
+            } else if(!entry.getWeblog().equals(cat.getWeblog())) {
                 throw new WebloggerException("Illegal category, not owned by action weblog");
             } else {
                 entry.setCategory(cat);
@@ -381,7 +381,7 @@ public class EntryBean {
             //Calendar cal = Calendar.getInstance(locale);
             Calendar cal = Calendar.getInstance();
             cal.setTime(entry.getPubTime());
-            cal.setTimeZone(entry.getWebsite().getTimeZoneInstance());
+            cal.setTimeZone(entry.getWeblog().getTimeZoneInstance());
             
             setHours(cal.get(Calendar.HOUR_OF_DAY));
             setMinutes(cal.get(Calendar.MINUTE));
@@ -391,7 +391,7 @@ public class EntryBean {
             // however at this point our calendar widget does not take into account
             // locales and only operates in the standard English US locale.
             DateFormat df = new SimpleDateFormat("MM/dd/yy");
-            df.setTimeZone(entry.getWebsite().getTimeZoneInstance());
+            df.setTimeZone(entry.getWeblog().getTimeZoneInstance());
             setDateString(df.format(entry.getPubTime()));
             
             log.debug("pubtime vals are "+getDateString()+", "+getHours()+", "+getMinutes()+", "+getSeconds());

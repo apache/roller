@@ -14,6 +14,9 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
 package org.apache.roller.weblogger.util;
 
@@ -87,7 +90,7 @@ public final class BlacklistChecker {
         boolean ret = false;
         List<String> stringRules = new ArrayList<String>();
         List<Pattern> regexRules = new ArrayList<Pattern>();
-        Weblog website = c.getWeblogEntry().getWebsite();
+        Weblog website = c.getWeblogEntry().getWeblog();
         Blacklist.populateSpamRules(
             website.getBlacklist(), stringRules, regexRules, 
             WebloggerRuntimeConfig.getProperty("spam.blacklist"));

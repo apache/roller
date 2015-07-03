@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
@@ -55,7 +58,7 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
             linkback = new LinkbackExtractor(
                     comment.getUrl(),
                     WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(
-                    comment.getWeblogEntry().getWebsite(),
+                    comment.getWeblogEntry().getWeblog(),
                     null,
                     comment.getWeblogEntry().getAnchor(),
                     true));

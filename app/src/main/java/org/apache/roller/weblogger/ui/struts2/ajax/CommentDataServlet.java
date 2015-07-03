@@ -65,7 +65,7 @@ public class CommentDataServlet extends HttpServlet {
             } else {
                 // need post permission to view comments
                 RollerSession rses = RollerSession.getRollerSession(request);
-                Weblog weblog = c.getWeblogEntry().getWebsite();
+                Weblog weblog = c.getWeblogEntry().getWeblog();
                 if (weblog.userHasWeblogRole(rses.getAuthenticatedUser(), WeblogRole.POST)) {
                     String content = Utilities.escapeHTML(c.getContent());
                     content = WordUtils.wrap(content, 72);
@@ -104,7 +104,7 @@ public class CommentDataServlet extends HttpServlet {
             } else {
                 // need post permission to edit comments
                 RollerSession rses = RollerSession.getRollerSession(request);
-                Weblog weblog = c.getWeblogEntry().getWebsite();
+                Weblog weblog = c.getWeblogEntry().getWeblog();
                 if (weblog.userHasWeblogRole(rses.getAuthenticatedUser(), WeblogRole.POST)) {
                     String content = Utilities.streamToString(request.getInputStream());
                     c.setContent(content);

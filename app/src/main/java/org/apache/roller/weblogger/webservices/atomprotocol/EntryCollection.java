@@ -13,6 +13,9 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
@@ -103,7 +106,7 @@ public class EntryCollection {
             // Save it and commit it
             WeblogEntryManager mgr = roller.getWeblogEntryManager();
             WeblogEntry rollerEntry = new WeblogEntry();
-            rollerEntry.setWebsite(website);
+            rollerEntry.setWeblog(website);
             rollerEntry.setCreatorUserName(this.user.getUserName());
             rollerEntry.setLocale(website.getLocale());
             copyToRollerEntry(entry, rollerEntry);
@@ -264,7 +267,7 @@ public class EntryCollection {
                     mgr.saveWeblogEntry(rollerEntry);
                     roller.flush();
                     
-                    CacheManager.invalidate(rollerEntry.getWebsite());
+                    CacheManager.invalidate(rollerEntry.getWeblog());
                     if (rollerEntry.isPublished()) {
                         roller.getIndexManager().addEntryReIndexOperation(rollerEntry);
                     }
@@ -290,7 +293,7 @@ public class EntryCollection {
             }
             if (RollerAtomHandler.canEdit(user, rollerEntry)) {
                 WeblogEntryManager mgr = roller.getWeblogEntryManager();
-                CacheManager.invalidate(rollerEntry.getWebsite());
+                CacheManager.invalidate(rollerEntry.getWeblog());
                 reindexEntry(rollerEntry);
                 mgr.removeWeblogEntry(rollerEntry);
                 log.debug("Deleted entry:" + rollerEntry.getAnchor());
@@ -344,7 +347,7 @@ public class EntryCollection {
         // Add Atom category for Weblogger category, using category scheme
         List<Category> categories = new ArrayList<Category>();
         Category atomCat = new Category();
-        atomCat.setScheme(RollerAtomService.getWeblogCategoryScheme(entry.getWebsite()));
+        atomCat.setScheme(RollerAtomService.getWeblogCategoryScheme(entry.getWeblog()));
         atomCat.setTerm(entry.getCategory().getName());
         categories.add(atomCat);
         
@@ -369,7 +372,7 @@ public class EntryCollection {
         editlink.setRel("edit");
         editlink.setHref(
                 atomURL
-                +"/"+entry.getWebsite().getHandle() + "/entry/" + entry.getId());
+                +"/"+entry.getWeblog().getHandle() + "/entry/" + entry.getId());
         List<Link> otherlinks = new ArrayList<Link>();
         otherlinks.add(editlink);
         atomEntry.setOtherLinks(otherlinks);
@@ -425,12 +428,12 @@ public class EntryCollection {
         if (categories != null && categories.size() > 0) {
             for (Category cat : categories) {
                 if (cat.getScheme() != null && cat.getScheme().equals(
-                        RollerAtomService.getWeblogCategoryScheme(rollerEntry.getWebsite()))) {
+                        RollerAtomService.getWeblogCategoryScheme(rollerEntry.getWeblog()))) {
                     String catString = cat.getTerm();
                     if (catString != null) {
                         WeblogCategory rollerCat =
                                 roller.getWeblogEntryManager().getWeblogCategoryByName(
-                                rollerEntry.getWebsite(), catString);
+                                rollerEntry.getWeblog(), catString);
                         if (rollerCat != null) {
                             // Found a valid category, so break out
                             rollerEntry.setCategory(rollerCat);
@@ -442,7 +445,7 @@ public class EntryCollection {
         }
         if (rollerEntry.getCategory() == null) {
             // Didn't find a category? Fall back to the default Blogger API category.
-            rollerEntry.setCategory(rollerEntry.getWebsite().getBloggerCategory());
+            rollerEntry.setCategory(rollerEntry.getWeblog().getBloggerCategory());
         }
         
         // Now process incoming categories that are tags:

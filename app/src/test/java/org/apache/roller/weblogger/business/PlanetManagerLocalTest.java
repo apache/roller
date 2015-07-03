@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business;
 
@@ -73,7 +76,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry1.setAnchor("testEntryAnchor1");
             testEntry1.setPubTime(new Timestamp(new Date().getTime()));
             testEntry1.setUpdateTime(new Timestamp(new Date().getTime()));
-            testEntry1.setWebsite(testWeblog);
+            testEntry1.setWeblog(testWeblog);
             testEntry1.setCreatorUserName(testUser.getUserName());
             testEntry1.setCategory(testWeblog.getWeblogCategory("General"));
             testEntry1.setStatus(PubStatus.PUBLISHED);
@@ -86,7 +89,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry2.setAnchor("testEntryAnchor2");
             testEntry2.setPubTime(new Timestamp(new Date().getTime()));
             testEntry2.setUpdateTime(new Timestamp(new Date().getTime()));
-            testEntry2.setWebsite(testWeblog);
+            testEntry2.setWeblog(testWeblog);
             testEntry2.setCreatorUserName(testUser.getUserName());
             testEntry2.setCategory(testWeblog.getWeblogCategory("General"));
             testEntry2.setStatus(PubStatus.PUBLISHED);
@@ -99,7 +102,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry3.setAnchor("testEntryAnchor3");
             testEntry3.setPubTime(new Timestamp(new Date().getTime()));
             testEntry3.setUpdateTime(new Timestamp(new Date().getTime()));
-            testEntry3.setWebsite(testWeblog);
+            testEntry3.setWeblog(testWeblog);
             testEntry3.setCreatorUserName(testUser.getUserName());
             testEntry3.setCategory(testWeblog.getWeblogCategory("General"));
             testEntry3.setStatus(PubStatus.PUBLISHED);

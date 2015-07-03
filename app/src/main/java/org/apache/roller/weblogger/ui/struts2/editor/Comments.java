@@ -308,7 +308,7 @@ public class Comments extends UIAction {
 
                     // make sure comment is tied to action weblog
                     if (getActionWeblog().equals(
-                            deleteComment.getWeblogEntry().getWebsite())) {
+                            deleteComment.getWeblogEntry().getWeblog())) {
                         flushList.add(deleteComment);
                         reindexList.add(deleteComment.getWeblogEntry());
                         wmgr.removeComment(deleteComment);
@@ -340,7 +340,7 @@ public class Comments extends UIAction {
 
                 // make sure comment is tied to action weblog
                 if (getActionWeblog().equals(
-                        comment.getWeblogEntry().getWebsite())) {
+                        comment.getWeblogEntry().getWeblog())) {
                     // comment approvals and mark/unmark spam
                     if (approvedIds.contains(ids[i])) {
                         // if a comment was previously PENDING then this is
