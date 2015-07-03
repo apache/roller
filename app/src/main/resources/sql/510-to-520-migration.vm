@@ -24,6 +24,9 @@
 #renameColumn('weblogentry', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('roller_weblogentrytag', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('roller_weblogentrytagagg', 'websiteid', 'weblogid', 'varchar(48) not null')
+#renameColumn('roller_weblogentrytag', 'websiteid', 'weblogid', 'varchar(48) not null')
+#renameColumn('roller_mediafiledir', 'websiteid', 'weblogid', 'varchar(48) not null')
+
 
 -- bookmark folders removed
 

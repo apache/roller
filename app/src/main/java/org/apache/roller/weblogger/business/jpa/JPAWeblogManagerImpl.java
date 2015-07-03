@@ -460,7 +460,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List<WeblogPermission> perms = userManager.getWeblogPermissions(user);
         for (WeblogPermission perm : perms) {
             Weblog weblog = perm.getWeblog();
-            if ((!enabledOnly || weblog.getVisible()) && BooleanUtils.isTrue(weblog.getActive())) {
+            if ((!enabledOnly || weblog.getVisible()) && BooleanUtils.isTrue(weblog.isActive())) {
                 weblogs.add(weblog);
             }
         }

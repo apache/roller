@@ -219,7 +219,7 @@ public final class WeblogWrapper {
     }
 
     public Boolean getActive() {
-        return this.pojo.getActive();
+        return this.pojo.isActive();
     }
     
     

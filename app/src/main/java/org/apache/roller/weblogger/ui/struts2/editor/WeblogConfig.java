@@ -144,7 +144,7 @@ public class WeblogConfig extends UIAction {
                 }
 
                 // ROL-485: comments not allowed on inactive weblogs
-                if(!weblog.getActive()) {
+                if(!weblog.isActive()) {
                     weblog.setAllowComments(Boolean.FALSE);
                     addMessage("websiteSettings.commentsOffForInactiveWeblog");
                 }

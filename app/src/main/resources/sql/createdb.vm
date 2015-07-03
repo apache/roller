@@ -256,10 +256,10 @@ create index rtl_taskname_idx on roller_tasklock( name );
 
 create table roller_hitcounts (
     id              varchar(48) not null primary key,
-    websiteid       varchar(48) not null,
+    weblogid       varchar(48) not null,
     dailyhits	    integer
 );
-create index rhc_websiteid_idx on roller_hitcounts( websiteid );
+create index rhc_weblogid_idx on roller_hitcounts( weblogid );
 create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
 
 -- OAUTH SUPPORT
@@ -380,7 +380,7 @@ create table roller_mediafiledir (
     id               varchar(48) not null primary key,
     name             varchar(255) not null,
     description      varchar(255),
-    websiteid        varchar(48) not null
+    weblogid        varchar(48) not null
 );
 
 
@@ -427,7 +427,7 @@ alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
     foreign key (mediafile_id) references roller_mediafile(id) ;
 
 alter table roller_mediafiledir add constraint mf_weblogid_fk
-    foreign key ( websiteid ) references weblog( id ) ;
+    foreign key ( weblogid ) references weblog( id ) ;
 
 -- autoping
 

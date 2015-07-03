@@ -10,18 +10,15 @@
          hence reports can't-find-the-mapping-file errors -->
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogBookmark.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryComment.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/WeblogHitCount.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/PingTarget.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/RuntimeConfigProperty.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/TaskLock.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/User.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/UserWeblogRole.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/Weblog.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/OAuthConsumerRecord.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/OAuthAccessorRecord.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/MediaFile.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/MediaFileTag.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/MediaFileDirectory.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/CustomTemplateRendition.orm.xml</mapping-file>
 
     <mapping-file>org/apache/roller/planet/pojos/Planet.orm.xml</mapping-file>
@@ -30,11 +27,14 @@
     <mapping-file>org/apache/roller/planet/pojos/SubscriptionEntry.orm.xml</mapping-file>
 
     <class>org.apache.roller.weblogger.pojos.AutoPing</class>
+    <class>org.apache.roller.weblogger.pojos.MediaFileDirectory</class>
     <class>org.apache.roller.weblogger.pojos.PingQueueEntry</class>
+    <class>org.apache.roller.weblogger.pojos.Weblog</class>
     <class>org.apache.roller.weblogger.pojos.WeblogCategory</class>
     <class>org.apache.roller.weblogger.pojos.WeblogEntry</class>
     <class>org.apache.roller.weblogger.pojos.WeblogEntryTag</class>
     <class>org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate</class>
+    <class>org.apache.roller.weblogger.pojos.WeblogHitCount</class>
     <class>org.apache.roller.weblogger.pojos.WeblogTemplate</class>
   </persistence-unit>
 </persistence>
