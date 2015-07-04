@@ -29,6 +29,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -109,6 +111,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     }
 
     @Basic(optional=false)
+    @Enumerated(EnumType.STRING)
     public ComponentType getAction() {
         return action;
     }
@@ -185,7 +188,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private List<CustomTemplateRendition> templateRenditions = new ArrayList<CustomTemplateRendition>();
 
     @ManyToOne
-    @JoinColumn(name="weblogid",nullable=false)
+    @JoinColumn(name="weblogid", nullable=false)
     public Weblog getWeblog() {
         return this.weblog;
     }

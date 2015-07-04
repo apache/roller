@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.pojos;
 
@@ -35,10 +38,29 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.Utilities;
 
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 /**
  * Represents a media file
  * 
  */
+@Entity
+@Table(name="roller_mediafile")
+@NamedQueries({
+        @NamedQuery(name="MediaFile.getByWeblogAndOrigpath",
+                query="SELECT f FROM MediaFile f WHERE f.weblog = ?1 AND f.originalPath = ?2")
+})
 public class MediaFile implements Serializable {
 
     private static final long serialVersionUID = -6704258422169734004L;
@@ -81,25 +103,16 @@ public class MediaFile implements Serializable {
     public MediaFile() {
     }
 
-    /**
-     * Database surrogate key.
-     */
+    @Id
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id
-     *            the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * Name for the media file
-     * 
-     */
+    @Basic(optional=false)
     public String getName() {
         return name;
     }
@@ -124,6 +137,7 @@ public class MediaFile implements Serializable {
      * Copyright text for media file
      * 
      */
+    @Column(name="copyright_text")
     public String getCopyrightText() {
         return copyrightText;
     }
@@ -136,6 +150,7 @@ public class MediaFile implements Serializable {
      * Is media file shared for gallery
      * 
      */
+    @Column(name="is_public", nullable=false)
     public Boolean getSharedForGallery() {
         return isSharedForGallery;
     }
@@ -148,6 +163,7 @@ public class MediaFile implements Serializable {
      * Size of the media file
      * 
      */
+    @Column(name="size_in_bytes")
     public long getLength() {
         return length;
     }
@@ -156,10 +172,7 @@ public class MediaFile implements Serializable {
         this.length = length;
     }
 
-    /**
-     * Date uploaded
-     * 
-     */
+    @Column(name="date_uploaded", nullable=false)
     public Timestamp getDateUploaded() {
         return dateUploaded;
     }
@@ -168,14 +181,12 @@ public class MediaFile implements Serializable {
         this.dateUploaded = dateUploaded;
     }
 
+    @Transient
     public long getLastModified() {
         return getLastUpdated().getTime();
     }
 
-    /**
-     * Last updated timestamp
-     * 
-     */
+    @Column(name="last_updated")
     public Timestamp getLastUpdated() {
         return lastUpdated;
     }
@@ -184,6 +195,8 @@ public class MediaFile implements Serializable {
         this.lastUpdated = time;
     }
 
+    @ManyToOne
+    @JoinColumn(name="directoryid", nullable=false)
     public MediaFileDirectory getDirectory() {
         return directory;
     }
@@ -195,6 +208,8 @@ public class MediaFile implements Serializable {
     /**
      * Set of tags for this media file
      */
+    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.MediaFileTag.class,
+            cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy="mediaFile")
     public Set<MediaFileTag> getTags() {
         return tagSet;
     }
@@ -239,10 +254,12 @@ public class MediaFile implements Serializable {
         removedTags.add(name);
     }
 
+    @Transient
     public Set getAddedTags() {
         return addedTags;
     }
 
+    @Transient
     public Set getRemovedTags() {
         return removedTags;
     }
@@ -284,6 +301,7 @@ public class MediaFile implements Serializable {
         }
     }
 
+    @Transient
     public String getTagsAsString() {
         StringBuilder sb = new StringBuilder();
         for (MediaFileTag tag : getTags()) {
@@ -305,10 +323,7 @@ public class MediaFile implements Serializable {
         updateTags(Utilities.splitStringAsTags(tags));
     }
 
-    /**
-     * Content type of the media file
-     * 
-     */
+    @Column(name="content_type", nullable=false)
     public String getContentType() {
         return contentType;
     }
@@ -317,6 +332,7 @@ public class MediaFile implements Serializable {
         this.contentType = contentType;
     }
 
+    @Transient
     public String getPath() {
         return getDirectory().getName();
     }
@@ -326,6 +342,7 @@ public class MediaFile implements Serializable {
      * 
      * @return
      */
+    @Transient
     public InputStream getInputStream() {
         if (is != null) {
             return is;
@@ -347,6 +364,7 @@ public class MediaFile implements Serializable {
      * Indicates whether this is an image file.
      * 
      */
+    @Transient
     public boolean isImageFile() {
         if (getContentType() == null) {
             return false;
@@ -358,6 +376,7 @@ public class MediaFile implements Serializable {
     /**
      * Returns permalink URL for this media file resource.
      */
+    @Transient
     public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy()
                 .getMediaFileURL(getWeblog(), this.getId(), true);
@@ -367,11 +386,13 @@ public class MediaFile implements Serializable {
      * Returns thumbnail URL for this media file resource. Resulting URL will be
      * a 404 if media file is not an image.
      */
+    @Transient
     public String getThumbnailURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy()
                 .getMediaFileThumbnailURL(getWeblog(), this.getId(), true);
     }
 
+    @Column(name="creator")
     public String getCreatorUserName() {
         return creatorUserName;
     }
@@ -380,6 +401,7 @@ public class MediaFile implements Serializable {
         this.creatorUserName = creatorUserName;
     }
 
+    @Transient
     public User getCreator() {
         try {
             return WebloggerFactory.getWeblogger().getUserManager()
@@ -397,6 +419,7 @@ public class MediaFile implements Serializable {
      * 
      * @return the originalPath
      */
+    @Column(name="origpath")
     public String getOriginalPath() {
         return originalPath;
     }
@@ -412,47 +435,28 @@ public class MediaFile implements Serializable {
         this.originalPath = originalPath;
     }
 
-    /**
-     * @return the weblog
-     */
+    @ManyToOne
+    @JoinColumn(name="weblogid", nullable=false)
     public Weblog getWeblog() {
         return weblog;
     }
 
-    /**
-     * @param weblog
-     *            the weblog to set
-     */
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
 
-    /**
-     * @return the width
-     */
     public int getWidth() {
         return width;
     }
 
-    /**
-     * @param width
-     *            the width to set
-     */
     public void setWidth(int width) {
         this.width = width;
     }
 
-    /**
-     * @return the height
-     */
     public int getHeight() {
         return height;
     }
 
-    /**
-     * @param height
-     *            the height to set
-     */
     public void setHeight(int height) {
         this.height = height;
     }
@@ -463,6 +467,7 @@ public class MediaFile implements Serializable {
      * 
      * @return
      */
+    @Transient
     public InputStream getThumbnailInputStream() {
         if (thumbnail != null) {
             return thumbnail.getInputStream();
@@ -477,6 +482,7 @@ public class MediaFile implements Serializable {
     /**
      * @return the thumbnailHeight
      */
+    @Transient
     public int getThumbnailHeight() {
         if (isImageFile() && (thumbnailWidth == -1 || thumbnailHeight == -1)) {
             figureThumbnailSize();
@@ -487,6 +493,7 @@ public class MediaFile implements Serializable {
     /**
      * @return the thumbnailWidth
      */
+    @Transient
     public int getThumbnailWidth() {
         if (isImageFile() && (thumbnailWidth == -1 || thumbnailHeight == -1)) {
             figureThumbnailSize();
