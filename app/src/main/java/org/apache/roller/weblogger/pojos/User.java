@@ -33,10 +33,58 @@ import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.Utilities;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 
 /**
  * User bean.
  */
+@Entity
+@Table(name="roller_user")
+@NamedQueries({
+        @NamedQuery(name="User.getAll",
+                query="SELECT u FROM User u"),
+        @NamedQuery(name="User.getByEnabled",
+                query="SELECT u FROM User u WHERE u.enabled = ?1"),
+        @NamedQuery(name="User.getUserByActivationCode",
+                query="SELECT u FROM User u WHERE u.activationCode = ?1"),
+        @NamedQuery(name="User.getByEnabled&EndDateOrderByStartDateDesc",
+                query="SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated < ?2 ORDER BY u.dateCreated DESC"),
+        @NamedQuery(name="User.getByEnabled&EndDate&StartDateOrderByStartDateDesc",
+                query="SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated < ?2 AND u.dateCreated > ?3 ORDER BY u.dateCreated DESC"),
+        @NamedQuery(name="User.getByEnabled&UserNameOrEmailAddressStartsWith",
+                query="SELECT u FROM User u WHERE u.enabled = ?1 AND (u.userName LIKE ?2 OR u.emailAddress LIKE ?3)"),
+        @NamedQuery(name="User.getByEndDateOrderByStartDateDesc",
+                query="SELECT u FROM User u WHERE u.dateCreated < ?1 ORDER BY u.dateCreated DESC"),
+        @NamedQuery(name="User.getByUserName",
+                query="SELECT u FROM User u WHERE u.userName= ?1"),
+        @NamedQuery(name="User.getByUserName&Enabled",
+                query="SELECT u FROM User u WHERE u.userName= ?1 AND u.enabled = ?2"),
+        @NamedQuery(name="User.getByOpenIdUrl",
+                query="SELECT u FROM User u WHERE u.openIdUrl = ?1"),
+        @NamedQuery(name="User.getByUserNameOrEmailAddressStartsWith",
+                query="SELECT u FROM User u WHERE u.userName LIKE ?1 OR u.emailAddress LIKE ?1"),
+        @NamedQuery(name="User.getByUserNameOrderByUserName",
+                query="SELECT u FROM User u WHERE u.userName= ?1 ORDER BY u.userName"),
+        @NamedQuery(name="User.getByEndDate&StartDateOrderByStartDateDesc",
+                query="SELECT u FROM User u WHERE u.dateCreated < ?1 AND u.dateCreated > ?2 ORDER BY u.dateCreated DESC"),
+        @NamedQuery(name="User.getGlobalRole",
+                query="SELECT u.globalRole FROM User u WHERE u.userName = ?1"),
+        @NamedQuery(name="User.getCountByUserNameLike",
+                query="SELECT COUNT(u) FROM User u WHERE UPPER(u.userName) LIKE ?1"),
+        @NamedQuery(name="User.getCountEnabledDistinct",
+                query="SELECT COUNT(u) FROM User u WHERE u.enabled = ?1")
+})
 public class User implements Serializable {
     
     public static final long serialVersionUID = -6354583200913127874L;
@@ -77,9 +125,7 @@ public class User implements Serializable {
         this.enabled = isEnabled;
     }
 
-    /**
-     * Id of the User.
-     */
+    @Id
     public String getId() {
         return this.id;
     }
@@ -89,9 +135,7 @@ public class User implements Serializable {
     }
     
     
-    /**
-     * User name of the user.
-     */
+    @Basic(optional=false)
     public String getUserName() {
         return this.userName;
     }
@@ -104,6 +148,7 @@ public class User implements Serializable {
      * Get password.
      * If password encryption is enabled, will return encrypted password.
      */
+    @Column(name="passphrase", nullable=false)
     public String getPassword() {
         return this.password;
     }
@@ -116,6 +161,8 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    @Column(name="global_role", nullable=false)
+    @Enumerated(EnumType.STRING)
     public GlobalRole getGlobalRole() {
         return this.globalRole;
     }
@@ -148,9 +195,7 @@ public class User implements Serializable {
         }
     }
 
-    /**
-     * Open ID URL of the user, if provided.
-     */
+    @Column(name="openid_url", nullable=false)
     public String getOpenIdUrl() {
         return openIdUrl;
     }
@@ -159,9 +204,7 @@ public class User implements Serializable {
         this.openIdUrl = openIdUrl;
     }
 
-    /**
-     * Screen name of the user.
-     */
+    @Basic(optional=false)
     public String getScreenName() {
         return this.screenName;
     }
@@ -169,10 +212,8 @@ public class User implements Serializable {
     public void setScreenName( String screenName ) {
         this.screenName = screenName;
     }
-    
-    /**
-     * Full name of the user.
-     */
+
+    @Basic(optional=false)
     public String getFullName() {
         return this.fullName;
     }
@@ -181,9 +222,7 @@ public class User implements Serializable {
         this.fullName = fullName;
     }
 
-    /**
-     * E-mail address of the user.
-     */
+    @Basic(optional=false)
     public String getEmailAddress() {
         return this.emailAddress;
     }
@@ -191,11 +230,9 @@ public class User implements Serializable {
     public void setEmailAddress( String emailAddress ) {
         this.emailAddress = emailAddress;
     }
-    
-    
-    /**
-     * The date the user was created.
-     */
+
+    @Basic(optional=false)
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getDateCreated() {
         if (dateCreated == null) {
             return null;
@@ -212,9 +249,6 @@ public class User implements Serializable {
         }
     }
 
-    /**
-     * Locale of the user.
-     */
     public String getLocale() {
         return this.locale;
     }
@@ -223,9 +257,6 @@ public class User implements Serializable {
         this.locale = locale;
     }
 
-    /**
-     * Timezone of the user.
-     */
     public String getTimeZone() {
         return this.timeZone;
     }
@@ -238,6 +269,7 @@ public class User implements Serializable {
     /**
      * Is this user account enabled?  Disabled accounts cannot login.
      */
+    @Column(name="isenabled", nullable=false)
     public Boolean getEnabled() {
         return this.enabled;
     }

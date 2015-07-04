@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
@@ -24,10 +26,21 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 /**
  * Represents the tag for media files.
  * 
  */
+@Entity
+@Table(name="roller_mediafiletag")
 public class MediaFileTag implements Serializable {
 
     private static final long serialVersionUID = -1349427373511141841L;
@@ -44,6 +57,7 @@ public class MediaFileTag implements Serializable {
         this.mediaFile = mediaFile;
     }
 
+    @Id
     public String getId() {
         return id;
     }
@@ -52,6 +66,7 @@ public class MediaFileTag implements Serializable {
         this.id = id;
     }
 
+    @Basic(optional=false)
     public String getName() {
         return name;
     }
@@ -60,6 +75,8 @@ public class MediaFileTag implements Serializable {
         this.name = name;
     }
 
+    @ManyToOne
+    @JoinColumn(name="mediafile_id", nullable=false)
     public MediaFile getMediaFile() {
         return mediaFile;
     }

@@ -31,10 +31,41 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
 
 /**
  * WeblogRole that a user has for a specific weblog
  */
+@Entity(name="UserWeblogRole")
+@Table(name="user_weblog_role")
+@NamedQueries({
+        @NamedQuery(name="UserWeblogRole.getByUserName",
+                query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.pending <> TRUE"),
+        @NamedQuery(name="UserWeblogRole.getByUserName&Pending",
+                query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.pending = TRUE"),
+        @NamedQuery(name="UserWeblogRole.getByWeblogId",
+                query="SELECT p FROM UserWeblogRole p WHERE p.weblogId = ?1 AND p.pending <> TRUE"),
+        @NamedQuery(name="UserWeblogRole.getByWeblogId&Pending",
+                query="SELECT p FROM UserWeblogRole p WHERE p.weblogId = ?1 AND p.pending = TRUE"),
+        @NamedQuery(name="UserWeblogRole.getByWeblogIdIncludingPending",
+                query="SELECT p FROM UserWeblogRole p WHERE p.weblogId = ?1"),
+        @NamedQuery(name="UserWeblogRole.getByUserName&WeblogId",
+                query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.weblogId = ?2 AND p.pending <> true"),
+        @NamedQuery(name="UserWeblogRole.getByUserName&WeblogIdIncludingPending",
+                query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.weblogId = ?2")
+})
 public class WeblogPermission implements Serializable {
 
     protected String  id = UUIDGenerator.generateUUID();
@@ -51,8 +82,7 @@ public class WeblogPermission implements Serializable {
         return weblogRole.getWeight() >= roleToCheck.getWeight();
     }
 
-    private static Log log = LogFactory.getLog(WeblogPermission.class);
-
+    @Id
     public String getId() {
         return id;
     }
@@ -61,14 +91,17 @@ public class WeblogPermission implements Serializable {
         this.id = id;
     }
 
-    public void setWeblogRole(WeblogRole weblogRole) {
-        this.weblogRole = weblogRole;
-    }
-
+    @Column(name="weblog_role", nullable=false)
+    @Enumerated(EnumType.STRING)
     public WeblogRole getWeblogRole() {
         return weblogRole;
     }
 
+    public void setWeblogRole(WeblogRole weblogRole) {
+        this.weblogRole = weblogRole;
+    }
+
+    @Basic(optional=false)
     public String getUserName() {
         return userName;
     }
@@ -77,6 +110,7 @@ public class WeblogPermission implements Serializable {
         this.userName = username;
     }
 
+    @Basic(optional=false)
     public String getWeblogId() {
         return weblogId;
     }
@@ -85,6 +119,7 @@ public class WeblogPermission implements Serializable {
         this.weblogId = weblogId;
     }
 
+    @Temporal(TemporalType.DATE)
     public Date getDateCreated() {
         return dateCreated;
     }
@@ -93,6 +128,7 @@ public class WeblogPermission implements Serializable {
         this.dateCreated = dateCreated;
     }
 
+    @Basic(optional=false)
     public boolean isPending() {
         return pending;
     }
@@ -112,6 +148,7 @@ public class WeblogPermission implements Serializable {
         weblogId = weblog.getHandle();
     }
 
+    @Transient
     public Weblog getWeblog() throws WebloggerException {
         if (weblogId != null) {
             return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(weblogId, null);
@@ -119,6 +156,7 @@ public class WeblogPermission implements Serializable {
         return null;
     }
 
+    @Transient
     public User getUser() throws WebloggerException {
         if (userName != null) {
             return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(userName);
