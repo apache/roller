@@ -244,7 +244,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
         WebloggerStartup.prepare();
 
         // we need to use our own planet provider for integration
-        String springFile = WebloggerConfig.getProperty("planet.aggregator.spring.context.file");
+        String springFile = WebloggerConfig.getProperty("spring.context.file");
         WebloggerProvider provider = new SpringWebloggerProvider(springFile);
         WebloggerFactory.bootstrap(provider);
 

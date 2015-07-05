@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.util.rome;
@@ -40,7 +43,7 @@ public class DiskFeedInfoCacheTest extends TestCase {
         SyndFeedInfo info = new SyndFeedInfo();
         info.setUrl(url);
         
-        String testPlanetCache = WebloggerConfig.getProperty("cache.dir");
+        String testPlanetCache = WebloggerConfig.getProperty("planet.aggregator.cache.dir");
         assertNotNull("testPlanetCache not null", testPlanetCache);
         assertTrue("testPlanetCache not zero length", testPlanetCache.trim().length() > 0);
         
@@ -48,7 +51,7 @@ public class DiskFeedInfoCacheTest extends TestCase {
         if (!cacheDir.exists()) cacheDir.mkdirs();
         
         DiskFeedInfoCache cache =
-                new DiskFeedInfoCache(WebloggerConfig.getProperty("cache.dir"));
+                new DiskFeedInfoCache(WebloggerConfig.getProperty("planet.aggregator.cache.dir"));
         cache.setFeedInfo(info.getUrl(), info);
         
         SyndFeedInfo info2 = cache.getFeedInfo(url);
