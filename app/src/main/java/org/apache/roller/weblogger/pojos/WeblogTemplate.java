@@ -59,16 +59,12 @@ import java.util.Set;
 @NamedQueries({
     @NamedQuery(name="WeblogTemplate.getByWeblog",
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1"),
-
     @NamedQuery(name="WeblogTemplate.getByWeblogOrderByName",
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 ORDER BY w.name"),
-
     @NamedQuery(name="WeblogTemplate.getByWeblog&Link",
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.link = ?2"),
-
     @NamedQuery(name="WeblogTemplate.getByAction",
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.action = ?2"),
-
     @NamedQuery(name="WeblogTemplate.getByWeblog&Name",
         query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.name= ?2")
 })
