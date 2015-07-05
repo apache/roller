@@ -624,13 +624,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             Timestamp start = new Timestamp(startDate.getTime());
             Timestamp end = new Timestamp(endDate.getTime());
             query = strategy.getNamedQuery(
-                    "WeblogEntryComment.getMostCommentedWebsiteByEndDate&StartDate");
+                    "WeblogEntryComment.getMostCommentedWeblogByEndDate&StartDate");
             query.setParameter(1, end);
             query.setParameter(2, start);
         } else {
             Timestamp end = new Timestamp(endDate.getTime());
             query = strategy.getNamedQuery(
-                    "WeblogEntryComment.getMostCommentedWebsiteByEndDate");
+                    "WeblogEntryComment.getMostCommentedWeblogByEndDate");
             query.setParameter(1, end);
         }
         if (offset != 0) {

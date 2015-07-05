@@ -26,10 +26,25 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
- * <p>Represents a single URL for a weblog.</p>
+ * <p>Represents a single blogroll link for a weblog.</p>
  */
+@Entity
+@Table(name="bookmark")
+@NamedQueries({
+        @NamedQuery(name="Bookmark.getByWeblog",
+                query="SELECT b FROM WeblogBookmark b WHERE b.weblog = ?1 order by b.priority")
+})
 public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> {
     
     public static final long serialVersionUID = 2315131256728236003L;
@@ -64,7 +79,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         calculatePriority();
     }
 
-    //------------------------------------------------------------- Attributes
+    @Id
     public String getId() {
         return this.id;
     }
@@ -82,9 +97,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         }
     }
 
-    /**
-     * Name of bookmark.
-     */
+    @Basic(optional=false)
     public String getName() {
         return this.name;
     }
@@ -93,9 +106,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         this.name = name;
     }
     
-    /**
-     * Description of bookmark.
-     */
     public String getDescription() {
         return this.description;
     }
@@ -103,10 +113,8 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    /**
-     * URL of bookmark.
-     */
+
+    @Basic(optional=false)
     public String getUrl() {
         return this.url;
     }
@@ -118,6 +126,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     /**
      * Priority determines order of display
      */
+    @Basic(optional=false)
     public java.lang.Integer getPriority() {
         return this.priority;
     }
@@ -136,6 +145,8 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     //---------------------------------------------------------- Relationships
 
+    @ManyToOne(cascade={CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name="weblogid", nullable=false)
     public Weblog getWeblog() {
         return this.weblog;
     }

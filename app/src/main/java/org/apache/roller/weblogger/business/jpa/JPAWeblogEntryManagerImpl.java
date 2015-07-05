@@ -787,7 +787,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List<StatCount> getMostCommentedWeblogEntries(Weblog website,
+    public List<StatCount> getMostCommentedWeblogEntries(Weblog weblog,
             Date startDate, Date endDate, int offset,
             int length) throws WebloggerException {
         TypedQuery<WeblogEntryComment> query;
@@ -795,19 +795,19 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
         Timestamp end = new Timestamp(endDate != null? endDate.getTime() : new Date().getTime());
 
-        if (website != null) {
+        if (weblog != null) {
             if (startDate != null) {
                 Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
-                        "WeblogEntryComment.getMostCommentedWeblogEntryByWebsite&EndDate&StartDate",
+                        "WeblogEntryComment.getMostCommentedWeblogEntryByWeblog&EndDate&StartDate",
                         WeblogEntryComment.class);
-                query.setParameter(1, website);
+                query.setParameter(1, weblog);
                 query.setParameter(2, end);
                 query.setParameter(3, start);
             } else {
                 query = strategy.getNamedQuery(
-                        "WeblogEntryComment.getMostCommentedWeblogEntryByWebsite&EndDate", WeblogEntryComment.class);
-                query.setParameter(1, website);
+                        "WeblogEntryComment.getMostCommentedWeblogEntryByWeblog&EndDate", WeblogEntryComment.class);
+                query.setParameter(1, weblog);
                 query.setParameter(2, end);
             }
         } else {
@@ -1303,10 +1303,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public long getCommentCount(Weblog website) throws WebloggerException {
+    public long getCommentCount(Weblog weblog) throws WebloggerException {
         TypedQuery<Long> q = strategy.getNamedQuery(
-                "WeblogEntryComment.getCountDistinctByWebsite&Status", Long.class);
-        q.setParameter(1, website);
+                "WeblogEntryComment.getCountDistinctByWeblog&Status", Long.class);
+        q.setParameter(1, weblog);
         q.setParameter(2, ApprovalStatus.APPROVED);
         return q.getResultList().get(0);
     }

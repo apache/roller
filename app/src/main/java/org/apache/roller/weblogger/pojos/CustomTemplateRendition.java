@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -22,11 +25,24 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
  * A pojo that will maintain different template codes for one template
  */
+@Entity
+@Table(name="custom_template_rendition")
 public class CustomTemplateRendition implements Serializable, TemplateRendition {
 
 	private static final long serialVersionUID = -1497618963802805151L;
@@ -46,6 +62,8 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	public CustomTemplateRendition() {
 	}
 
+	@ManyToOne
+	@JoinColumn(name="templateid", nullable=false)
     public WeblogTemplate getWeblogTemplate() {
         return weblogTemplate;
     }
@@ -54,7 +72,8 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
         this.weblogTemplate = weblogTemplate;
     }
 
-    public String getId() {
+    @Id
+	public String getId() {
 		return id;
 	}
 
@@ -63,6 +82,7 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	}
 
 	@Override
+	@Basic(optional=false)
 	public String getTemplate() {
 		return template;
 	}
@@ -72,12 +92,12 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 		this.template = template;
 	}
 
-	// @Override
+	@Basic(optional=false)
+	@Enumerated(EnumType.STRING)
 	public RenditionType getType() {
 		return type;
 	}
 
-	// @Override
 	public void setType(RenditionType type) {
 		this.type = type;
 	}
@@ -108,12 +128,12 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 				.append(getTemplate()).toHashCode();
 	}
 
-	// @Override
+	@Column(name="templatelang")
+	@Enumerated(EnumType.STRING)
 	public TemplateLanguage getTemplateLanguage() {
 		return templateLanguage;
 	}
 
-	// @Override
 	public void setTemplateLanguage(TemplateLanguage templateLanguage) {
 		this.templateLanguage = templateLanguage;
 	}
