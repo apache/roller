@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business.fetcher;
@@ -241,7 +244,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
     // get a feed fetcher cache, if possible
     private FeedFetcherCache getRomeFetcherCache() {
         
-        String cacheDirPath = WebloggerConfig.getProperty("cache.dir");
+        String cacheDirPath = WebloggerConfig.getProperty("planet.aggregator.cache.dir");
         
         // can't continue without cache dir
         if (cacheDirPath == null) {
