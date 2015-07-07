@@ -105,7 +105,7 @@ public class PlanetGroups extends PlanetUIAction {
                 WebloggerFactory.getWeblogger().flush();
 
                 addMessage("planetGroups.success.saved");
-
+                getPlanet().getGroups().add(planetGroup);
             } catch(Exception ex) {
                 log.error("Error saving planet group - " + getBean().getId(), ex);
                 addError("planetGroups.error.saved");
@@ -126,8 +126,8 @@ public class PlanetGroups extends PlanetUIAction {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
                 pmgr.deleteGroup(getGroup());
                 WebloggerFactory.getWeblogger().flush();
-                
-                addMessage("planetSubscription.success.deleted");
+                getPlanet().getGroups().remove(getGroup());
+                addMessage("planetGroups.success.deleted");
             } catch(Exception ex) {
                 log.error("Error deleting planet group - "+getBean().getId());
                 addError("Error deleting planet group");
