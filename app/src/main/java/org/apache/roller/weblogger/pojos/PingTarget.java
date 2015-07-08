@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
@@ -24,12 +26,25 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 
 /**
  * Ping target.   Each instance represents a possible target of a weblog update ping that we send.
  * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
+@Entity
+@Table(name="pingtarget")
+@NamedQueries({
+        @NamedQuery(name="PingTarget.getPingTargetsOrderByName",
+                query="SELECT p FROM PingTarget p ORDER BY p.name")
+})
 public class PingTarget implements Serializable {
 
     public static final long serialVersionUID = -6354583200913127874L;
@@ -59,13 +74,11 @@ public class PingTarget implements Serializable {
     /**
      * Constructor.
      *
-     * @param id      the id (primary key) of this target
      * @param name    the descriptive name of this target
      * @param pingUrl the URL to which to send the ping
      * @param autoEnable if true, pings sent to target by default
      */
-    public PingTarget(String id, String name, String pingUrl, boolean autoEnable) {
-        //this.id = id;
+    public PingTarget(String name, String pingUrl, boolean autoEnable) {
         this.name = name;
         this.pingUrl = pingUrl;
         this.conditionCode = CONDITION_OK;
@@ -73,43 +86,28 @@ public class PingTarget implements Serializable {
         this.autoEnabled = autoEnable;
     }
 
-
-    /**
-     * Get the unique id of this ping target.
-     *
-     * @return the unique id of this ping target.
-     */
+    @Id
     public String getId() {
         return this.id;
     }
 
-
-    /**
-     * Set the unique id of this ping target
-     *
-     * @param id
-     */
     public void setId(String id) {
         this.id = id;
     }
 
 
     /**
-     * get the name of this ping target.  This is a name assigned by the administrator or a user (for custom) targets.
-     * It is descriptive and is not necessarily unique.
+     * Name is given by the administrator, it is descriptive and
+     * not necessarily unique.
      *
      * @return the name of this ping target
      */
+
+    @Basic(optional=false)
     public String getName() {
         return this.name;
     }
 
-
-    /**
-     * Set the name of this ping target.
-     *
-     * @param name the name of this ping target
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -120,37 +118,28 @@ public class PingTarget implements Serializable {
      *
      * @return the URL to ping.
      */
+    @Basic(optional=false)
     public String getPingUrl() {
         return pingUrl;
     }
 
-
-    /**
-     * Set the URL to ping.
-     *
-     * @param pingUrl
-     */
     public void setPingUrl(String pingUrl) {
         this.pingUrl = pingUrl;
     }
 
     /**
      * Get the condition code value.  This code, in combination with the last success timestamp, provides a status
-     * indicator on the ping target based on its  usage by the ping queue processor. It can be used to implement a
+     * indicator on the ping target based on its usage by the ping queue processor. It can be used to implement a
      * failure-based disabling policy.
      *
      * @return one of the condition codes {@link #CONDITION_OK}, {@link #CONDITION_FAILING}, {@link
      *         #CONDITION_DISABLED}.
      */
+    @Basic(optional=false)
     public int getConditionCode() {
         return conditionCode;
     }
 
-    /**
-     * Set the condition code value.
-     *
-     * @param conditionCode the condition code value to set
-     */
     public void setConditionCode(int conditionCode) {
         this.conditionCode = conditionCode;
     }
@@ -165,33 +154,20 @@ public class PingTarget implements Serializable {
         return lastSuccess;
     }
 
-
-    /**
-     * Set the timestamp of the last successful ping.
-     *
-     * @param lastSuccess the timestamp of the last successful ping.
-     */
     public void setLastSuccess(Timestamp lastSuccess) {
         this.lastSuccess = lastSuccess;
     }
 
-
     /**
      * Is this ping target enabled by default for new weblogs?
      *
-     * @return true if ping target is auto enabled. false otherwise.
+     * @return true if ping target is auto enabled. False otherwise.
      */
+    @Basic(optional=false)
     public boolean isAutoEnabled() {
         return autoEnabled;
     }
 
-
-    /**
-     * Set the auto enabled status for this ping target.  This field only
-     * applies for common ping targets.
-     *
-     * @param autoEnabled true if the ping target should be auto enabled.
-     */
     public void setAutoEnabled(boolean autoEnabled) {
         this.autoEnabled = autoEnabled;
     }
