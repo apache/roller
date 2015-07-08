@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business;
@@ -30,7 +33,7 @@ import org.apache.roller.planet.pojos.Subscription;
 /**
  * Manages Planets, Groups, Subscriptions, and Entries.
  */
-public interface PlanetManager extends Manager {
+public interface PlanetManager {
     
     
     void savePlanet(Planet planet) throws RollerException;

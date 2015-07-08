@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -22,10 +25,22 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 
 /**
- * This POJO represents a single property of the roller system.
+ * This POJO represents a single property of the blog server
  */
+@Entity
+@Table(name="roller_properties")
+@NamedQueries({
+        @NamedQuery(name="RuntimeConfigProperty.getAll",
+                query="SELECT r FROM RuntimeConfigProperty r")
+})
 public class RuntimeConfigProperty implements Serializable {
     
     public static final long serialVersionUID = 6913562779484028899L;
@@ -33,30 +48,23 @@ public class RuntimeConfigProperty implements Serializable {
     private String name;
     private String value;
     
-    
     public RuntimeConfigProperty() {}
-    
-    
+
     public RuntimeConfigProperty(String name, String value) {
         this.name = name;
         this.value = value;
     }
-    
     
     /**
      * Getter for property name.
      *
      * @return Value of property name.
      */
+    @Id
     public String getName() {
         return this.name;
     }
     
-    /**
-     * Setter for property name.
-     *
-     * @param name New value of property name.
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -70,11 +78,6 @@ public class RuntimeConfigProperty implements Serializable {
         return this.value;
     }
     
-    /**
-     * Setter for property value.
-     *
-     * @param value New value of property value.
-     */
     public void setValue(String value) {
         this.value = value;
     }

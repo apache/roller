@@ -39,7 +39,6 @@ import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
-import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
@@ -49,7 +48,7 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
  *
  * @author Dave Johnson
  */
-public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetManager {
+public class JPAPlanetManagerImpl implements PlanetManager {
     
     private static Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);
     

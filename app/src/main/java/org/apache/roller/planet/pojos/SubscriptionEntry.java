@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.pojos;
@@ -26,6 +29,17 @@ import java.util.List;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.util.UUIDGenerator;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 
 /**
  * Represents a planet entry, i.e. an entry that was parsed out of an RSS or 
@@ -35,6 +49,12 @@ import org.apache.roller.util.UUIDGenerator;
  * it should be replaced by more complete model that can fully represent all 
  * forms of RSS and Atom.
  */
+@Entity
+@Table(name="planet_subscription_entry")
+@NamedQueries({
+        @NamedQuery(name="SubscriptionEntry.getBySubscription",
+                query="SELECT p FROM SubscriptionEntry p WHERE p.subscription = ?1 ORDER BY p.pubTime DESC")
+})
 public class SubscriptionEntry implements Serializable, Comparable<SubscriptionEntry> {
     
     // attributes
@@ -55,36 +75,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     
     public SubscriptionEntry() {}
     
-    
-    /**
-     * Compare planet entries by comparing permalinks.
-     */
-    public int compareTo(SubscriptionEntry other) {
-        return getPermalink().compareTo(other.getPermalink());
-    }
-    
-    /**
-     * Compare planet entries by comparing permalinks.
-     */
-    public boolean equals(Object other) {        
-        if (this == other) {
-            return true;
-        }
-        if (!(other instanceof SubscriptionEntry)) {
-            return false;
-        }
-        final SubscriptionEntry that = (SubscriptionEntry) other;
-        return getPermalink().equals(that.getPermalink());
-    }
-    
-    /**
-     * Generate hash code based on permalink.
-     */
-    public int hashCode() {
-        return getPermalink().hashCode();
-    }
-    
-    
+    @Id
     public String getId() {
         return id;
     }
@@ -120,7 +111,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
         this.guid = guid;
     }
     
-    
+    @Basic(optional=false)
     public String getPermalink() {
         return permalink;
     }
@@ -137,8 +128,8 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     public void setAuthor(String author) {
         this.author = author;
     }
-    
-    
+
+    @Column(name="content")
     public String getText() {
         return text;
     }
@@ -146,8 +137,8 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     public void setText(String content) {
         this.text = content;
     }
-    
-    
+
+    @Column(name="published", nullable=false)
     public Timestamp getPubTime() {
         return published;
     }
@@ -155,8 +146,8 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     public void setPubTime(Timestamp published) {
         this.published = published;
     }
-    
-    
+
+    @Column(name="updated")
     public Timestamp getUpdateTime() {
         return updated;
     }
@@ -164,8 +155,9 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     public void setUpdateTime(Timestamp updated) {
         this.updated = updated;
     }
-    
-    
+
+
+    @Column(name="categories")
     public String getCategoriesString() {
         return categoriesString;
     }
@@ -173,8 +165,10 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     public void setCategoriesString(String categoriesString) {
         this.categoriesString = categoriesString;
     }
-    
-    
+
+
+    @ManyToOne
+    @JoinColumn(name="subscription_id", nullable=false)
     public Subscription getSubscription() {
         return subscription;
     }
@@ -205,6 +199,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Returns categories as list of WeblogCategoryData objects.
      */
+    @Transient
     public List<Category> getCategories() {
         List<Category> list = new ArrayList<Category>();
         if (getCategoriesString() != null) {
@@ -221,6 +216,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Return first entry in category collection.
      */
+    @Transient
     public Category getCategory() {
         Category cat = null;
         List cats = getCategories();
@@ -247,6 +243,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
      * Returns creator as a UserData object.
      * TODO: make planet model entry author name, email, and uri
      */
+    @Transient
     public Author getCreator() {
         Author user = null;
         if (getAuthor() != null) {
@@ -260,6 +257,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Returns summary (always null for planet entry)
      */
+    @Transient
     public String getSummary() {
         return null;
     } 
@@ -268,6 +266,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Read-only synomym for getSubscription()
      */
+    @Transient
     public Subscription getWebsite() {
         return getSubscription();
     }
@@ -278,6 +277,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Return text as content, to maintain compatibility with PlanetTool templates.
      */
+    @Transient
     public String getContent() {
         return getText();
     }
@@ -288,6 +288,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Return updateTime as updated, to maintain compatibility with PlanetTool templates.
      */
+    @Transient
     public Timestamp getUpdated() {
         return updated;
     }
@@ -298,6 +299,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Return pubTime as published, to maintain compatibility with PlanetTool templates.
      */
+    @Transient
     public Timestamp getPublished() {
         return published;
     }
@@ -305,4 +307,31 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
         // no-op
     }
 
+    /**
+     * Compare planet entries by comparing permalinks.
+     */
+    public int compareTo(SubscriptionEntry other) {
+        return getPermalink().compareTo(other.getPermalink());
+    }
+
+    /**
+     * Compare planet entries by comparing permalinks.
+     */
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof SubscriptionEntry)) {
+            return false;
+        }
+        final SubscriptionEntry that = (SubscriptionEntry) other;
+        return getPermalink().equals(that.getPermalink());
+    }
+
+    /**
+     * Generate hash code based on permalink.
+     */
+    public int hashCode() {
+        return getPermalink().hashCode();
+    }
 }

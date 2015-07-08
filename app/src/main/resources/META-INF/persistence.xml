@@ -8,22 +8,21 @@
 
     <!-- Don't put trailing spaces after the .orm.xml, Hibernate doesn't strip them and
          hence reports can't-find-the-mapping-file errors -->
-    <mapping-file>org/apache/roller/weblogger/pojos/PingTarget.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/RuntimeConfigProperty.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/OAuthConsumerRecord.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/OAuthAccessorRecord.orm.xml</mapping-file>
-
     <mapping-file>org/apache/roller/planet/pojos/Planet.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/planet/pojos/PlanetGroup.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/planet/pojos/Subscription.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/planet/pojos/SubscriptionEntry.orm.xml</mapping-file>
 
+    <class>org.apache.roller.planet.pojos.Subscription</class>
+    <class>org.apache.roller.planet.pojos.SubscriptionEntry</class>
     <class>org.apache.roller.weblogger.pojos.AutoPing</class>
     <class>org.apache.roller.weblogger.pojos.CustomTemplateRendition</class>
     <class>org.apache.roller.weblogger.pojos.MediaFile</class>
     <class>org.apache.roller.weblogger.pojos.MediaFileDirectory</class>
     <class>org.apache.roller.weblogger.pojos.MediaFileTag</class>
     <class>org.apache.roller.weblogger.pojos.PingQueueEntry</class>
+    <class>org.apache.roller.weblogger.pojos.PingTarget</class>
+    <class>org.apache.roller.weblogger.pojos.RuntimeConfigProperty</class>
     <class>org.apache.roller.weblogger.pojos.TaskLock</class>
     <class>org.apache.roller.weblogger.pojos.User</class>
     <class>org.apache.roller.weblogger.pojos.Weblog</class>

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.config;
@@ -196,7 +199,7 @@ public final class PingConfig {
                 String name = m.group(1).trim();
                 String url = m.group(2).trim();
                 LOGGER.info("Creating common ping target '" + name + "' from configuration properties.");
-                PingTarget pingTarget = new PingTarget(null, name, url, false);
+                PingTarget pingTarget = new PingTarget(name, url, false);
                 pingTargetMgr.savePingTarget(pingTarget);
             } else {
                 LOGGER.error("Unable to parse configured initial ping target '" + thisTarget + "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
