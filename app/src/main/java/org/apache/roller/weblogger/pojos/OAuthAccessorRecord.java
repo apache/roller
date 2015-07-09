@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -23,10 +26,25 @@ import java.sql.Timestamp;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 
 /**
  * Stores data for an OAuth accessor
  */
+@Entity
+@Table(name="roller_oauthaccessor")
+@NamedQueries({
+        @NamedQuery(name="OAuthAccessorRecord.getByKey",
+                query="SELECT p FROM OAuthAccessorRecord p WHERE p.consumerKey = ?1"),
+        @NamedQuery(name="OAuthAccessorRecord.getByToken",
+                query="SELECT p FROM OAuthAccessorRecord p WHERE p.requestToken = ?1 OR p.accessToken = ?1")
+})
 public class OAuthAccessorRecord implements Serializable {
     private String consumerKey;
     private String requestToken;
@@ -40,89 +58,73 @@ public class OAuthAccessorRecord implements Serializable {
     public OAuthAccessorRecord() {
     }
 
-    /**
-     * @return the consumerKey
-     */
+    @Id
     public String getConsumerKey() {
         return consumerKey;
     }
 
-    /**
-     * @param consumerKey the consumerKey to set
-     */
     public void setConsumerKey(String consumerKey) {
         this.consumerKey = consumerKey;
     }
 
-    /**
-     * @return the requestToken
-     */
     public String getRequestToken() {
         return requestToken;
     }
 
-    /**
-     * @param requestToken the requestToken to set
-     */
     public void setRequestToken(String requestToken) {
         this.requestToken = requestToken;
     }
 
-    /**
-     * @return the accessToken
-     */
     public String getAccessToken() {
         return accessToken;
     }
 
-    /**
-     * @param accessToken the accessToken to set
-     */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    /**
-     * @return the tokenSecret
-     */
     public String getTokenSecret() {
         return tokenSecret;
     }
 
-    /**
-     * @param tokenSecret the tokenSecret to set
-     */
     public void setTokenSecret(String tokenSecret) {
         this.tokenSecret = tokenSecret;
     }
 
-    /**
-     * @return the created
-     */
+    @Basic(optional=false)
     public Timestamp getCreated() {
         return created;
     }
 
-    /**
-     * @param created the created to set
-     */
     public void setCreated(Timestamp created) {
         this.created = created;
     }
 
-    /**
-     * @return the updated
-     */
+    @Basic(optional=false)
     public Timestamp getUpdated() {
         return updated;
     }
 
-    /**
-     * @param updated the updated to set
-     */
     public void setUpdated(Timestamp updated) {
         this.updated = updated;
     }
+
+    public Boolean getAuthorized() {
+        return authorized;
+    }
+
+    public void setAuthorized(Boolean authorized) {
+        this.authorized = authorized;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
 
     //------------------------------------------------------- Good citizenship
 
@@ -149,34 +151,6 @@ public class OAuthAccessorRecord implements Serializable {
 
     public int hashCode() {
         return new HashCodeBuilder().append(getConsumerKey()).toHashCode();
-    }
-
-    /**
-     * @return the authorized
-     */
-    public Boolean getAuthorized() {
-        return authorized;
-    }
-
-    /**
-     * @param authorized the authorized to set
-     */
-    public void setAuthorized(Boolean authorized) {
-        this.authorized = authorized;
-    }
-
-    /**
-     * @return the userName
-     */
-    public String getUserName() {
-        return userName;
-    }
-
-    /**
-     * @param userName the userName to set
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
 }

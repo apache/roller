@@ -32,8 +32,6 @@ import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.WeblogRole;
 
 /**
  * Manage planet group subscriptions, default group is "all".
@@ -68,7 +66,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
         }
         
         try {
-            setGroup(pmgr.getGroup(getPlanet(), getGroupHandle()));
+            setGroup(pmgr.getGroup(getGroupHandle()));
         } catch (RollerException ex) {
             LOGGER.error("Error looking up planet group - " + getGroupHandle(), ex);
         }

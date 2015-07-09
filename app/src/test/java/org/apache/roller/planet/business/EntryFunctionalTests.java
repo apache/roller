@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business;
@@ -20,7 +23,6 @@ import java.util.Date;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
@@ -35,7 +37,6 @@ public class EntryFunctionalTests extends TestCase {
     
     public static Log log = LogFactory.getLog(EntryFunctionalTests.class);
     
-    private Planet testPlanet = null;
     private PlanetGroup testGroup1 = null;
     private Subscription testSub1 = null;
     private Subscription testSub2 = null;
@@ -50,8 +51,7 @@ public class EntryFunctionalTests extends TestCase {
 
         log.info("ENTERED");
         
-        testPlanet = TestUtils.setupPlanet("entryFuncTestPlanet");
-        testGroup1 = TestUtils.setupGroup(testPlanet, "entryFuncTestGroup");
+        testGroup1 = TestUtils.setupGroup("entryFuncTestGroup");
         testSub1 = TestUtils.setupSubscription("entryFuncTestSub1");
         testSub2 = TestUtils.setupSubscription("entryFuncTestSub2");
         testEntry1 = TestUtils.setupEntry(testSub1, "entryFuncTestEntry1");
@@ -78,8 +78,7 @@ public class EntryFunctionalTests extends TestCase {
         TestUtils.teardownSubscription(testSub1.getId());
         TestUtils.teardownSubscription(testSub2.getId());
         TestUtils.teardownGroup(testGroup1.getId());
-        TestUtils.teardownPlanet(testPlanet.getId());
-        
+
         log.info("EXITED");
     }
     
