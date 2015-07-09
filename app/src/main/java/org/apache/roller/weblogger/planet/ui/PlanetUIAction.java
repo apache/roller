@@ -21,9 +21,6 @@ package org.apache.roller.weblogger.planet.ui;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -36,11 +33,6 @@ public abstract class PlanetUIAction extends UIAction {
     
     private static Log log = LogFactory.getLog(PlanetUIAction.class);
     
-    public static final String DEFAULT_PLANET_HANDLE = "default";
-    
-    // the planet used by all Planet actions
-    private Planet planet = null;
-    
     @Override
     public WeblogRole requiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
@@ -50,17 +42,4 @@ public abstract class PlanetUIAction extends UIAction {
     public GlobalRole requiredGlobalRole() {
         return GlobalRole.ADMIN;
     }
-
-    public Planet getPlanet() {
-        if(planet == null) {
-            try {
-                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                planet = pmgr.getWeblogger(DEFAULT_PLANET_HANDLE);
-            } catch(Exception ex) {
-                log.error("Error loading weblogger planet - "+DEFAULT_PLANET_HANDLE, ex);
-            }
-        }
-        return planet;
-    }
-    
 }

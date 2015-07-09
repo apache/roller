@@ -12,13 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business;
 
 import junit.framework.TestCase;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -29,7 +31,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  */
 public class SubscriptionFunctionalTests extends TestCase {
     
-    private Planet testPlanet = null;
     private PlanetGroup testGroup1 = null;
     private PlanetGroup testGroup2 = null;
     private Subscription testSub1 = null;
@@ -40,9 +41,8 @@ public class SubscriptionFunctionalTests extends TestCase {
         // setup planet
         TestUtils.setupWeblogger();
 
-        testPlanet = TestUtils.setupPlanet("subFuncTest");
-        testGroup1 = TestUtils.setupGroup(testPlanet, "subFuncTest1");
-        testGroup2 = TestUtils.setupGroup(testPlanet, "subFuncTest2");
+        testGroup1 = TestUtils.setupGroup("subFuncTest1");
+        testGroup2 = TestUtils.setupGroup("subFuncTest2");
         testSub1 = TestUtils.setupSubscription("subFuncTest1");
         testSub2 = TestUtils.setupSubscription("subFuncTest2");
     }
@@ -53,7 +53,6 @@ public class SubscriptionFunctionalTests extends TestCase {
         TestUtils.teardownSubscription(testSub2.getId());
         TestUtils.teardownGroup(testGroup1.getId());
         TestUtils.teardownGroup(testGroup2.getId());
-        TestUtils.teardownPlanet(testPlanet.getId());
     }
     
     

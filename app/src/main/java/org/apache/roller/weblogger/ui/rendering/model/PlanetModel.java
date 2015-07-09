@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.model;
@@ -21,12 +24,10 @@ package org.apache.roller.weblogger.ui.rendering.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -43,8 +44,6 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  * Model that provides access to planet aggregations, feeds and subscriptions.
  */
 public class PlanetModel implements Model {
-    
-    public static final String DEFAULT_PLANET_HANDLE = "default";   
     
     private static Log log = LogFactory.getLog(PlanetModel.class);
     
@@ -178,8 +177,7 @@ public class PlanetModel implements Model {
         List<Subscription> list = new ArrayList<Subscription>();
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
-            Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);
-            PlanetGroup planetGroup = planetManager.getGroup(defaultPlanet, groupHandle);
+            PlanetGroup planetGroup = planetManager.getGroup(groupHandle);
             List<Subscription> subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
             for (Subscription sub : subs) {
                 // TODO needs pojo wrapping from planet
@@ -197,19 +195,14 @@ public class PlanetModel implements Model {
      * @return List of Planet groups defined.
      */
     public List<PlanetGroup> getGroups() {
-        List list = new ArrayList<PlanetGroup>();
+        List<PlanetGroup> list = new ArrayList<>();
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
-            Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);
-            Set<PlanetGroup> groups = defaultPlanet.getGroups();
-            for (PlanetGroup group : groups) {
-                // TODO needs pojo wrapping from planet
-                list.add(group); 
-            }
+            list = planetManager.getPlanetGroups();
         } catch (Exception e) {
             log.error("ERROR: getting groups", e);
         }
-        return list;        
+        return list;
     }
     
     
@@ -222,9 +215,7 @@ public class PlanetModel implements Model {
         PlanetGroup group = null;
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
-            Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);            
-            // TODO needs pojo wrapping from planet
-            group = planetManager.getGroup(defaultPlanet, groupHandle);            
+            group = planetManager.getGroup(groupHandle);
         } catch (Exception e) {
             log.error("ERROR: getting group", e);
         }

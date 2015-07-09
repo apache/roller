@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
@@ -25,7 +28,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
@@ -90,17 +92,16 @@ public class PlanetEntriesPager extends AbstractPager {
             List<SubscriptionEntry> results = new ArrayList<SubscriptionEntry>();
             try {
                 PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
-                Planet planet = planetManager.getWeblogger("default");
-                
+
                 List<SubscriptionEntry> subEntries;
                 if (feedURL != null) {
                     Subscription sub = planetManager.getSubscription(feedURL);
                     subEntries = planetManager.getEntries(sub, offset, length+1);
                 } else if (groupHandle != null) {
-                    PlanetGroup group = planetManager.getGroup(planet, groupHandle);
+                    PlanetGroup group = planetManager.getGroup(groupHandle);
                     subEntries = planetManager.getEntries(group, startDate, null, offset, length + 1);
                 } else {
-                    PlanetGroup group = planetManager.getGroup(planet, "all");
+                    PlanetGroup group = planetManager.getGroup("all");
                     subEntries = planetManager.getEntries(group, startDate, null, offset, length + 1);
                 }
                 

@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business;
@@ -19,7 +22,7 @@ package org.apache.roller.planet.business;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -39,40 +42,37 @@ public class PlanetBasicTests extends TestCase {
 
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
-        Planet testPlanet = new Planet("testPlanet", "testPlanet", "testPlanet");
-        Planet planet = null;
+        PlanetGroup testPlanet = new PlanetGroup("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
+        PlanetGroup planet;
         
-        planet = mgr.getWeblogger("testPlanet");
+        planet = mgr.getGroup("testPlanetHandle");
         assertNull(planet);
         
         // add
-        mgr.savePlanet(testPlanet);
+        mgr.saveGroup(testPlanet);
         TestUtils.endSession(true);
-        
+
         // verify
-        planet = null;
-        planet = mgr.getWebloggerById(testPlanet.getId());
+        planet = mgr.getGroupById(testPlanet.getId());
         assertNotNull(planet);
-        assertEquals("testPlanet", planet.getHandle());
-        
+        assertEquals("testPlanetHandle", planet.getHandle());
+
         // modify
         planet.setTitle("foo");
-        mgr.savePlanet(planet);
+        mgr.saveGroup(planet);
         TestUtils.endSession(true);
-        
+
         // verify
-        planet = null;
-        planet = mgr.getWebloggerById(testPlanet.getId());
+        planet = mgr.getGroupById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("foo", planet.getTitle());
         
         // remove
-        mgr.deletePlanet(planet);
+        mgr.deleteGroup(planet);
         TestUtils.endSession(true);
         
         // verify
-        planet = null;
-        planet = mgr.getWeblogger(testPlanet.getId());
+        planet = mgr.getGroupById(testPlanet.getId());
         assertNull(planet);
     }
     

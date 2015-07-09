@@ -31,7 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.WebloggerException;
@@ -144,11 +143,9 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // first, make sure there is an "all" pmgr group
-            Planet planetObject = pmgr.getWebloggerById("zzz_default_planet_zzz");
-            PlanetGroup group = pmgr.getGroup(planetObject, "all");
+            PlanetGroup group = pmgr.getGroup("all");
             if (group == null) {
                 group = new PlanetGroup();
-                group.setPlanet(planetObject);
                 group.setHandle("all");
                 group.setTitle("all");
                 pmgr.saveGroup(group);

@@ -24,33 +24,20 @@ package org.apache.roller.planet.business;
 import java.util.Date;
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
-
 
 /**
  * Manages Planets, Groups, Subscriptions, and Entries.
  */
 public interface PlanetManager {
-    
-    
-    void savePlanet(Planet planet) throws RollerException;
-    
-    
-    void deletePlanet(Planet planet) throws RollerException;
-    
-    
-    Planet getWeblogger(String handle) throws RollerException;
-    
-    
-    Planet getWebloggerById(String id) throws RollerException;
-    
-    
-    List<Planet> getWebloggers() throws RollerException;
-    
-    
+
+    /**
+     * Retrieve all defined planet groups
+     */
+    List<PlanetGroup> getPlanetGroups() throws RollerException;
+
     /**
      * Save new or update existing a group
      */
@@ -63,7 +50,7 @@ public interface PlanetManager {
     void deleteGroup(PlanetGroup group) throws RollerException;
     
     
-    PlanetGroup getGroup(Planet planet, String handle) throws RollerException;
+    PlanetGroup getGroup(String handle) throws RollerException;
     
     
     /**

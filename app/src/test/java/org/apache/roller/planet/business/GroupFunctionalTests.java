@@ -12,13 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business;
 
-import java.util.Set;
+import java.util.List;
 import junit.framework.TestCase;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -29,7 +31,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  */
 public class GroupFunctionalTests extends TestCase {
     
-    private Planet testPlanet = null;
     private PlanetGroup testGroup1 = null;
     private PlanetGroup testGroup2 = null;
     
@@ -38,16 +39,14 @@ public class GroupFunctionalTests extends TestCase {
         // setup planet
         TestUtils.setupWeblogger();
 
-        testPlanet = TestUtils.setupPlanet("groupFuncTest");
-        testGroup1 = TestUtils.setupGroup(testPlanet, "groupFuncTest1");
-        testGroup2 = TestUtils.setupGroup(testPlanet, "groupFuncTest2");
+        testGroup1 = TestUtils.setupGroup("groupFuncTest1");
+        testGroup2 = TestUtils.setupGroup("groupFuncTest2");
     }
     
     
     protected void tearDown() throws Exception {
         TestUtils.teardownGroup(testGroup1.getId());
         TestUtils.teardownGroup(testGroup2.getId());
-        TestUtils.teardownPlanet(testPlanet.getId());
     }
     
     
@@ -62,13 +61,12 @@ public class GroupFunctionalTests extends TestCase {
         
         // lookup group by planet & handle
         group = null;
-        group = mgr.getGroup(testPlanet, testGroup1.getHandle());
+        group = mgr.getGroup(testGroup1.getHandle());
         assertNotNull(group);
         assertEquals("groupFuncTest1", group.getHandle());
         
         // lookup all groups in planet
-        Planet planet = mgr.getWebloggerById(testPlanet.getId());
-        Set groups = planet.getGroups();
+        List<PlanetGroup> groups = mgr.getPlanetGroups();
         assertNotNull(groups);
         assertEquals(2, groups.size());
     }

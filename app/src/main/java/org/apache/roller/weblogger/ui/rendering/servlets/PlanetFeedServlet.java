@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
@@ -35,7 +38,6 @@ import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
@@ -133,10 +135,9 @@ public class PlanetFeedServlet extends HttpServlet {
 
             // populate the rendering model
             if (request.getParameter("group") != null) {
-                Planet planetObject = planet.getWeblogger("default");
                 model.put(
                         "group",
-                        planet.getGroup(planetObject,
+                        planet.getGroup(
                                 request.getParameter("group")));
             }
 

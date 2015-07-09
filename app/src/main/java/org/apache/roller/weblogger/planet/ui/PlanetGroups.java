@@ -27,8 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.WeblogRole;
 
 /**
  * Manage planet groups.
@@ -53,7 +51,7 @@ public class PlanetGroups extends PlanetUIAction {
     @Override
     public void myPrepare() {
         
-        if(getPlanet() != null && getBean().getId() != null) {
+        if(getBean().getId() != null) {
             try {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
                 setGroup(pmgr.getGroupById(getBean().getId()));
@@ -91,7 +89,6 @@ public class PlanetGroups extends PlanetUIAction {
                 if(planetGroup == null) {
                     log.debug("Adding New Group");
                     planetGroup = new PlanetGroup();
-                    planetGroup.setPlanet(getPlanet());
                 } else {
                     log.debug("Updating Existing Group");
                 }
@@ -105,7 +102,6 @@ public class PlanetGroups extends PlanetUIAction {
                 WebloggerFactory.getWeblogger().flush();
 
                 addMessage("planetGroups.success.saved");
-                getPlanet().getGroups().add(planetGroup);
             } catch(Exception ex) {
                 log.error("Error saving planet group - " + getBean().getId(), ex);
                 addError("planetGroups.error.saved");
@@ -126,7 +122,6 @@ public class PlanetGroups extends PlanetUIAction {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
                 pmgr.deleteGroup(getGroup());
                 WebloggerFactory.getWeblogger().flush();
-                getPlanet().getGroups().remove(getGroup());
                 addMessage("planetGroups.success.deleted");
             } catch(Exception ex) {
                 log.error("Error deleting planet group - "+getBean().getId());
@@ -161,13 +156,20 @@ public class PlanetGroups extends PlanetUIAction {
     
     public List<PlanetGroup> getGroups() {
         List<PlanetGroup> displayGroups = new ArrayList<PlanetGroup>();
-        
-        for (PlanetGroup planetGroup : getPlanet().getGroups()) {
-            // The "all" group is considered a special group and cannot be
-            // managed independently
-            if (!planetGroup.getHandle().equals("all")) {
-                displayGroups.add(planetGroup);
+
+        PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+
+        try {
+            for (PlanetGroup planetGroup : pmgr.getPlanetGroups()) {
+                // The "all" group is considered a special group and cannot be
+                // managed independently
+                if (!planetGroup.getHandle().equals("all")) {
+                    displayGroups.add(planetGroup);
+                }
             }
+        } catch(Exception ex) {
+            log.error("Error getting planet groups - " + getBean().getId());
+            addError("Error getting planet groups");
         }
         return displayGroups;
     }
@@ -188,5 +190,4 @@ public class PlanetGroups extends PlanetUIAction {
     public void setGroup(PlanetGroup group) {
         this.group = group;
     }
-    
 }

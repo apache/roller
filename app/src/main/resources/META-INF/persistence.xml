@@ -5,14 +5,7 @@
          Avoiding DB configuration here to allow the same persistence.xml to be used between
          testing and prod (which have different DB configuration)
     -->
-
-    <!-- Don't put trailing spaces after the .orm.xml, Hibernate doesn't strip them and
-         hence reports can't-find-the-mapping-file errors -->
-    <mapping-file>org/apache/roller/weblogger/pojos/OAuthConsumerRecord.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/OAuthAccessorRecord.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/planet/pojos/Planet.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/planet/pojos/PlanetGroup.orm.xml</mapping-file>
-
+    <class>org.apache.roller.planet.pojos.PlanetGroup</class>
     <class>org.apache.roller.planet.pojos.Subscription</class>
     <class>org.apache.roller.planet.pojos.SubscriptionEntry</class>
     <class>org.apache.roller.weblogger.pojos.AutoPing</class>
@@ -20,6 +13,8 @@
     <class>org.apache.roller.weblogger.pojos.MediaFile</class>
     <class>org.apache.roller.weblogger.pojos.MediaFileDirectory</class>
     <class>org.apache.roller.weblogger.pojos.MediaFileTag</class>
+    <class>org.apache.roller.weblogger.pojos.OAuthAccessorRecord</class>
+    <class>org.apache.roller.weblogger.pojos.OAuthConsumerRecord</class>
     <class>org.apache.roller.weblogger.pojos.PingQueueEntry</class>
     <class>org.apache.roller.weblogger.pojos.PingTarget</class>
     <class>org.apache.roller.weblogger.pojos.RuntimeConfigProperty</class>

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -22,11 +25,28 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 
 /**
  * Stores data for an OAuth consumer key and secret.
  * There can be up to one for the whole site and up to one per user.
  */
+@Entity
+@Table(name="roller_oauthconsumer")
+@NamedQueries({
+        @NamedQuery(name="OAuthConsumerRecord.getByConsumerKey",
+                query="SELECT p FROM OAuthConsumerRecord p WHERE p.consumerKey = ?1"),
+        @NamedQuery(name="OAuthConsumerRecord.getByUsername",
+                query="SELECT p FROM OAuthConsumerRecord p WHERE p.userName = ?1"),
+        @NamedQuery(name="OAuthConsumerRecord.getSiteWideConsumer",
+                query="SELECT p FROM OAuthConsumerRecord p WHERE p.userName IS NULL")
+})
 public class OAuthConsumerRecord implements Serializable {
     private String consumerKey;
     private String consumerSecret;
@@ -35,44 +55,28 @@ public class OAuthConsumerRecord implements Serializable {
     public OAuthConsumerRecord() {
     }
 
-    /**
-     * @return the consumerKey
-     */
+    @Id
     public String getConsumerKey() {
         return consumerKey;
     }
 
-    /**
-     * @param consumerKey the consumerKey to set
-     */
     public void setConsumerKey(String consumerKey) {
         this.consumerKey = consumerKey;
     }
 
-    /**
-     * @return the consumerSecret
-     */
+    @Basic(optional = false)
     public String getConsumerSecret() {
         return consumerSecret;
     }
 
-    /**
-     * @param consumerSecret the consumerSecret to set
-     */
     public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
     
-    /**
-     * @return the username
-     */
     public String getUserName() {
         return userName;
     }
 
-    /**
-     * @param username the username to set
-     */
     public void setUserName(String username) {
         this.userName = username;
     }
@@ -80,11 +84,7 @@ public class OAuthConsumerRecord implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(this.getConsumerKey());
-        buf.append("}");
-        return buf.toString();
+        return "{" + this.getConsumerKey() + "}";
     }
 
     public boolean equals(Object other) {

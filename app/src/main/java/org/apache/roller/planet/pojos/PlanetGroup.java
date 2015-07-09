@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.pojos;
@@ -26,10 +29,30 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 
 /**
  * Planet Group.
  */
+@Entity
+@Table(name="planet")
+@NamedQueries({
+        @NamedQuery(name="PlanetGroup.getByHandle",
+                query="SELECT p FROM PlanetGroup p WHERE p.handle = ?1"),
+        @NamedQuery(name="PlanetGroup.getAll",
+                query="SELECT p FROM PlanetGroup p")
+})
 public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
 
     private transient String[] catArray = null;
@@ -46,14 +69,12 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     private String categoryRestriction = null;
     
     // associations
-    private Planet planet = null;
     private Set<Subscription> subscriptions = new TreeSet<Subscription>();
     
     
     public PlanetGroup() {}
     
-    public PlanetGroup(Planet planet, String handle, String title, String desc) {
-        this.planet = planet;
+    public PlanetGroup(String handle, String title, String desc) {
         this.handle = handle;
         this.title = title;
         this.description = desc;
@@ -66,6 +87,7 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
         return getTitle().compareTo(other.getTitle());
     }
     
+    @Id
     public String getId() {
         return id;
     }
@@ -74,6 +96,7 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
         this.id = id;
     }
     
+    @Basic(optional = false)
     public String getHandle() {
         return handle;
     }
@@ -81,7 +104,8 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     public void setHandle(String handle) {
         this.handle = handle;
     }
-    
+
+    @Basic(optional = false)
     public String getTitle() {
         return title;
     }
@@ -89,7 +113,7 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     public String getDescription() {
         return description;
     }
@@ -97,7 +121,8 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
+    @Column(name="max_feed_entries")
     public int getMaxFeedEntries() {
         return maxFeedEntries;
     }
@@ -105,7 +130,8 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     public void setMaxFeedEntries(int maxFeedEntries) {
         this.maxFeedEntries = maxFeedEntries;
     }
-    
+
+    @Column(name="max_page_entries")
     public int getMaxPageEntries() {
         return maxPageEntries;
     }
@@ -113,7 +139,8 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     public void setMaxPageEntries(int maxPageEntries) {
         this.maxPageEntries = maxPageEntries;
     }
-    
+
+    @Column(name="cat_restriction")
     public String getCategoryRestriction() {
         return categoryRestriction;
     }
@@ -122,15 +149,11 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
         this.categoryRestriction = categoryRestriction;
         catArray = null;
     }
-    
-    public Planet getPlanet() {
-        return planet;
-    }
-    
-    public void setPlanet(Planet planet) {
-        this.planet = planet;
-    }
-    
+
+    @ManyToMany
+    @JoinTable(name="planet_group_subscription",
+            joinColumns = { @JoinColumn(name="planet_id", nullable=false)},
+            inverseJoinColumns = { @JoinColumn(name="subscription_id", nullable=false)})
     public Set<Subscription> getSubscriptions() {
         return subscriptions;
     }
@@ -143,6 +166,7 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     /**
      * Return a list of the most recent 10 entries from this group.
      */
+    @Transient
     public List<SubscriptionEntry> getRecentEntries() {
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         try {

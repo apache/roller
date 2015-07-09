@@ -156,7 +156,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     @ManyToMany
     @JoinTable(name="planet_group_subscription",
             joinColumns = { @JoinColumn(name="subscription_id", nullable=false)},
-            inverseJoinColumns = { @JoinColumn(name="group_id", nullable=false)})
+            inverseJoinColumns = { @JoinColumn(name="planet_id", nullable=false)})
     public Set<PlanetGroup> getGroups() {
         return groups;
     }

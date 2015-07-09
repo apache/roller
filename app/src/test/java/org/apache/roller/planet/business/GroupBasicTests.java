@@ -12,12 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business;
 
 import junit.framework.TestCase;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -28,17 +30,9 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  */
 public class GroupBasicTests extends TestCase {
     
-    private Planet testPlanet = null;
-    
-    
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
-    }
-    
-    
-    protected void tearDown() throws Exception {
-        TestUtils.teardownPlanet(testPlanet.getId());
     }
     
     
@@ -50,10 +44,9 @@ public class GroupBasicTests extends TestCase {
         testGroup.setDescription("test_group_desc");
         testGroup.setHandle("test_handle");
         testGroup.setTitle("test_title");
-        testGroup.setPlanet(testPlanet);
         PlanetGroup group = null;
         
-        group = mgr.getGroup(testPlanet, "test_handle");
+        group = mgr.getGroup("test_handle");
         assertNull(group);
         
         // add
@@ -61,19 +54,16 @@ public class GroupBasicTests extends TestCase {
         TestUtils.endSession(true);
         
         // verify
-        group = null;
         group = mgr.getGroupById(testGroup.getId());
         assertNotNull(group);
         assertEquals("test_handle", group.getHandle());
-        assertEquals(testPlanet.getId(), group.getPlanet().getId());
-        
+
         // modify
         group.setTitle("foo");
         mgr.saveGroup(group);
         TestUtils.endSession(true);
         
         // verify
-        group = null;
         group = mgr.getGroupById(testGroup.getId());
         assertNotNull(group);
         assertEquals("foo", group.getTitle());
@@ -83,7 +73,6 @@ public class GroupBasicTests extends TestCase {
         TestUtils.endSession(true);
         
         // verify
-        group = null;
         group = mgr.getGroupById(testGroup.getId());
         assertNull(group);
     }

@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger;
 
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
@@ -640,60 +639,16 @@ public final class TestUtils {
     }
 
     /**
-     * Convenience method that creates a planet and stores it.
-     */
-    public static Planet setupPlanet(String handle) throws Exception {
-
-        Planet testPlanet = new Planet(handle, handle, handle);
-
-        // store
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        mgr.savePlanet(testPlanet);
-
-        // flush
-        WebloggerFactory.getWeblogger().flush();
-
-        // query to make sure we return the persisted object
-        Planet planet = mgr.getWeblogger(handle);
-
-        if (planet == null) {
-            throw new WebloggerException("error inserting new planet");
-        }
-
-        return planet;
-    }
-
-    /**
-     * Convenience method for removing a planet.
-     */
-    public static void teardownPlanet(String id) throws Exception {
-
-        // lookup
-        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        Planet planet = mgr.getWebloggerById(id);
-
-        // remove
-        mgr.deletePlanet(planet);
-
-        // flush
-        WebloggerFactory.getWeblogger().flush();
-    }
-
-    /**
      * Convenience method that creates a group and stores it.
      */
-    public static PlanetGroup setupGroup(Planet planet, String handle)
+    public static PlanetGroup setupGroup(String handle)
             throws Exception {
 
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
 
-        // make sure we are using a persistent object
-        Planet testPlanet = mgr.getWebloggerById(planet.getId());
-
         // store
-        PlanetGroup testGroup = new PlanetGroup(testPlanet, handle, handle,
+        PlanetGroup testGroup = new PlanetGroup(handle, handle,
                 handle);
-        testPlanet.getGroups().add(testGroup);
         mgr.saveGroup(testGroup);
 
         // flush
@@ -720,7 +675,6 @@ public final class TestUtils {
 
         // remove
         mgr.deleteGroup(group);
-        group.getPlanet().getGroups().remove(group);
 
         // flush
         WebloggerFactory.getWeblogger().flush();

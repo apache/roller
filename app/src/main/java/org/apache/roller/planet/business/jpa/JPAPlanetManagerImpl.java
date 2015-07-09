@@ -35,7 +35,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
@@ -160,7 +159,12 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
         return result;
     }
-    
+
+    public List<PlanetGroup> getPlanetGroups() throws RollerException {
+        TypedQuery<PlanetGroup> q = strategy.getNamedQuery("PlanetGroup.getAll", PlanetGroup.class);
+        return q.getResultList();
+    }
+
     public PlanetGroup getGroup(String handle) throws RollerException {
         TypedQuery<PlanetGroup> q = strategy.getNamedQuery("PlanetGroup.getByHandle", PlanetGroup.class);
         q.setParameter(1, handle);
@@ -176,59 +180,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }        
     
     public void release() {}
-    
-    
-    public void savePlanet(Planet planet) throws RollerException {
-        strategy.store(planet);
-    }
-    
-    public Planet getWeblogger(String handle) throws RollerException {
-        TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getByHandle", Planet.class);
-        q.setParameter(1, handle);
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-    
-    public Planet getWebloggerById(String id) throws RollerException {
-        return (Planet)strategy.load(Planet.class, id);
-    }
-    
-    public List<Planet> getWebloggers() throws RollerException {
-        return strategy.getNamedQuery("Planet.getAll", Planet.class).getResultList();
-    }
-    
-    public List<String> getGroupHandles(Planet planet) throws RollerException {
-        List<String> handles = new ArrayList<String>();
-        for (PlanetGroup group : getGroups(planet)) {
-            handles.add(group.getHandle());
-        }
-        return handles;
-    }
-    
-    public List<PlanetGroup> getGroups(Planet planet) throws RollerException {
-        TypedQuery<PlanetGroup> q = strategy.getNamedQuery("PlanetGroup.getByPlanet", PlanetGroup.class);
-        q.setParameter(1, planet.getHandle());
-        return q.getResultList();
-    }
-    
-    public PlanetGroup getGroup(Planet planet, String handle) throws RollerException {
-        TypedQuery<PlanetGroup> q = strategy.getNamedQuery("PlanetGroup.getByPlanetAndHandle", PlanetGroup.class);
-        q.setParameter(1, planet.getHandle());
-        q.setParameter(2, handle);
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-    
-    public void deletePlanet(Planet planet) throws RollerException {
-        strategy.remove(planet);
-    }
-    
+
     public void deleteEntries(Subscription sub) 
         throws RollerException {
         for (Object entry : sub.getEntries()) {
@@ -320,8 +272,3 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         return ret;
     }
 }
-
-
-
-
-

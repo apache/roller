@@ -28,7 +28,6 @@ import junit.textui.TestRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
@@ -130,24 +129,21 @@ public class PlanetManagerLocalTest extends TestCase {
     
     public void testRefreshEntries() {
         try {      
-            PlanetManager planet = WebloggerFactory.getWeblogger().getPlanetManager();
+            PlanetManager manager = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // run sync task to fill aggregator with websites created by super
             SyncWebsitesTask syncTask = new SyncWebsitesTask();
             syncTask.init();
             syncTask.runTask();
             
-            Planet planetObject = planet.getWebloggerById("zzz_default_planet_zzz");
-            assertNotNull(planetObject);
-            PlanetGroup group = planet.getGroup(planetObject, "all");
+            PlanetGroup group = manager.getGroup("all");
             assertEquals(1, group.getSubscriptions().size());
 
             RefreshRollerPlanetTask refreshTask = new RefreshRollerPlanetTask();
             refreshTask.runTask();
             
-            planetObject = planet.getWeblogger("default");
-            group = planet.getGroup(planetObject, "all");
-            List agg = planet.getEntries(group, 0, -1);
+            group = manager.getGroup("all");
+            List agg = manager.getEntries(group, 0, -1);
             assertEquals(3, agg.size());
         }
         catch (Exception e) {
