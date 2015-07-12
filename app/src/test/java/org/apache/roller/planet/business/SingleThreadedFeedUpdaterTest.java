@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business;
@@ -21,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.updater.FeedUpdater;
 import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -35,18 +39,27 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
     
     private Subscription testSub = null;
     
+    private Planet planet = null;
+
     private String feed_url = "http://rollerweblogger.org/roller/feed/entries/atom";
     
     
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
-        
-        // add test subscription
+
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
+
+        // add test planet
+        planet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
+
+        // add test subscription
         testSub = new Subscription();
         testSub.setTitle(feed_url);
         testSub.setFeedURL(feed_url);
+        testSub.setPlanet(planet);
+        planet.getSubscriptions().add(testSub);
+        mgr.savePlanet(planet);
         mgr.saveSubscription(testSub);
         WebloggerFactory.getWeblogger().flush();
     }
@@ -68,7 +81,7 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
         TestUtils.endSession(true);
         
         // verify the results
-        sub = mgr.getSubscription(feed_url);
+        sub = mgr.getSubscription(planet, feed_url);
         assertNotNull(sub);
         assertEquals(feed_url, sub.getFeedURL());
         assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());

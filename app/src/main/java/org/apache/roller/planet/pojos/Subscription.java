@@ -30,7 +30,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -53,9 +55,9 @@ import javax.persistence.Transient;
         @NamedQuery(name="Subscription.getAllOrderByInboundBlogsDesc",
                 query="SELECT p FROM Subscription p ORDER BY p.inboundblogs DESC"),
         @NamedQuery(name="Subscription.getByPlanetOrderByInboundBlogsDesc",
-                query="SELECT s FROM Subscription s JOIN s.planets p WHERE p.handle = ?1 ORDER BY s.inboundblogs DESC"),
-        @NamedQuery(name="Subscription.getByFeedURL",
-                query="SELECT p FROM Subscription p WHERE p.feedURL = ?1")
+                query="SELECT s FROM Subscription s WHERE s.planet.handle = ?1 ORDER BY s.inboundblogs DESC"),
+        @NamedQuery(name="Subscription.getByPlanetAndFeedURL",
+                query="SELECT s FROM Subscription s WHERE s.planet = ?1 AND s.feedURL = ?2")
 })
 public class Subscription implements Serializable, Comparable<Subscription> {
     
@@ -70,7 +72,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     private int inboundblogs = 0;
 
     // associations
-    private Set<Planet> groups = new HashSet<Planet>();
+    private Planet planet = new Planet();
     private Set<SubscriptionEntry> entries = new HashSet<SubscriptionEntry>();
     
     
@@ -149,14 +151,14 @@ public class Subscription implements Serializable, Comparable<Subscription> {
         this.inboundblogs = inboundblogs;
     }
 
-    @ManyToMany(mappedBy="subscriptions")
-    public Set<Planet> getPlanets() {
-        return groups;
+    @ManyToOne
+    @JoinColumn(name="planetid", nullable=false)
+    public Planet getPlanet() {
+        return planet;
     }
     
-    // private because there is no need for people to do this
-    private void setPlanets(Set<Planet> groups) {
-        this.groups = groups;
+    public void setPlanet(Planet planet) {
+        this.planet = planet;
     }
 
 

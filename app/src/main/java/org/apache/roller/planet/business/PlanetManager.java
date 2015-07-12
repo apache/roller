@@ -72,9 +72,9 @@ public interface PlanetManager {
     
     
     /**
-     * Get subscription by feedUrl.
+     * Get subscription by planet and feedUrl.
      */
-    Subscription getSubscription(String feedUrl) throws RollerException;
+    Subscription getSubscription(Planet planet, String feedUrl) throws RollerException;
     
     
     /**

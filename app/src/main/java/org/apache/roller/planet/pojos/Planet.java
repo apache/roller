@@ -30,6 +30,7 @@ import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -38,6 +39,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -150,10 +152,8 @@ public class Planet implements Serializable, Comparable<Planet> {
         catArray = null;
     }
 
-    @ManyToMany
-    @JoinTable(name="planet_group_subscription",
-            joinColumns = { @JoinColumn(name="planet_id", nullable=false)},
-            inverseJoinColumns = { @JoinColumn(name="subscription_id", nullable=false)})
+    @OneToMany(targetEntity=org.apache.roller.planet.pojos.Subscription.class,
+            cascade= CascadeType.ALL, mappedBy="planet")
     public Set<Subscription> getSubscriptions() {
         return subscriptions;
     }

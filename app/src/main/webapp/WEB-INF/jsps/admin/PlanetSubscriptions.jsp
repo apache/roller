@@ -14,35 +14,31 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script>
 function confirmSubDelete(subUrl) {
   if (window.confirm('Are you sure you want to remove this subscription?')) {
-    document.location.href='<s:url action="planetSubscriptions!delete" />?groupHandle=<s:property value="groupHandle"/>&subUrl='+encodeURIComponent(subUrl);
+    document.location.href='<s:url action="planetSubscriptions!delete" />?planetHandle=<s:property value="planetHandle"/>&subUrl='+encodeURIComponent(subUrl);
   }
 }
 </script>
         
       
-<s:if test="groupHandle == 'all'" >
-    <p class="subtitle"><s:text name="planetSubscriptions.subtitle.addMain" /></p>
-    <p><s:text name="planetSubscriptions.prompt.addMain" /></p>
-</s:if>
-<s:else>
-    <p class="subtitle">
-        <s:text name="planetSubscriptions.subtitle.add" >
-            <s:param value="groupHandle" />
-        </s:text>
-    </p>
-    <p><s:text name="planetSubscriptions.prompt.add" /></p>
-</s:else>
-
+<p class="subtitle">
+    <s:text name="planetSubscriptions.subtitle.add" >
+        <s:param value="planetHandle" />
+    </s:text>
+</p>
+<p><s:text name="planetSubscriptions.prompt.add" /></p>
 
 <s:form action="planetSubscriptions!save">
 	<s:hidden name="salt" />
-    <s:hidden name="groupHandle" />
+    <s:hidden name="planetHandle" />
     
     <div class="formrow">
         <label for="feedURL" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
@@ -55,8 +51,8 @@ function confirmSubDelete(subUrl) {
 
 <h2>
     <s:text name="planetSubscriptions.existingTitle" />
-    <s:if test="groupHandle != 'all'" >
-        &nbsp;[group: <s:property value="groupHandle" />]
+    <s:if test="planetHandle != 'all'" >
+        &nbsp;[planet: <s:property value="planetHandle" />]
     </s:if>
 </h2>
 

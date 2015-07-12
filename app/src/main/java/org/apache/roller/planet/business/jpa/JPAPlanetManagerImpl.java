@@ -69,7 +69,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     
     public void saveSubscription(Subscription sub)
     throws RollerException {
-        Subscription existing = getSubscription(sub.getFeedURL());
+        Subscription existing = getSubscription(sub.getPlanet(), sub.getFeedURL());
         if (existing == null || (existing.getId().equals(sub.getId()))) {
             strategy.store(sub);
         } else {
@@ -90,10 +90,11 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         strategy.remove(sub);
     }
     
-    public Subscription getSubscription(String feedUrl)
+    public Subscription getSubscription(Planet planet, String feedUrl)
     throws RollerException {
-        TypedQuery<Subscription> q = strategy.getNamedQuery("Subscription.getByFeedURL", Subscription.class);
-        q.setParameter(1, feedUrl);
+        TypedQuery<Subscription> q = strategy.getNamedQuery("Subscription.getByPlanetAndFeedURL", Subscription.class);
+        q.setParameter(1, planet);
+        q.setParameter(2, feedUrl);
         try {
             return q.getSingleResult();
         } catch (NoResultException e) {
@@ -230,10 +231,9 @@ public class JPAPlanetManagerImpl implements PlanetManager {
             List<Object> params = new ArrayList<>();
             int size = 0;
             sb.append("SELECT e FROM SubscriptionEntry e ");
-            sb.append("JOIN e.subscription.planets p ");
 
             params.add(size++, group.getHandle());
-            sb.append("WHERE p.handle = ?").append(size);
+            sb.append("WHERE e.subscription.planet.handle = ?").append(size);
             
             if (startDate != null) {
                 params.add(size++, new Timestamp(startDate.getTime()));

@@ -237,9 +237,9 @@
             <result name="list" type="tiles">.PlanetSubscriptions</result>
         </action>
         
-        <action name="planetGroups!*" method="{1}"
+        <action name="planets!*" method="{1}"
                 class="org.apache.roller.weblogger.planet.ui.PlanetGroups">
-            <result name="list" type="tiles">.PlanetGroups</result>
+            <result name="list" type="tiles">.Planets</result>
         </action>
     </package>
     

@@ -206,7 +206,7 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetSubscriptions.jsp" />
     </definition>
     
-    <definition name=".PlanetGroups" extends=".tiles-tabbedpage" >
+    <definition name=".Planets" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetGroups.jsp" />
     </definition>
 
