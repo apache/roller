@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.SpringWebloggerProvider;
@@ -143,12 +143,12 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // first, make sure there is an "all" pmgr group
-            PlanetGroup group = pmgr.getGroup("all");
+            Planet group = pmgr.getPlanet("all");
             if (group == null) {
-                group = new PlanetGroup();
+                group = new Planet();
                 group.setHandle("all");
                 group.setTitle("all");
-                pmgr.saveGroup(group);
+                pmgr.savePlanet(group);
                 WebloggerFactory.getWeblogger().flush();
             }
             
@@ -178,10 +178,10 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                     sub.setLastUpdated(new Date(0));
                     pmgr.saveSubscription(sub);
                     
-                    sub.getGroups().add(group);
+                    sub.getPlanets().add(group);
                     group.getSubscriptions().add(sub);
 
-                    pmgr.saveGroup(group);
+                    pmgr.savePlanet(group);
 
                 } else {
                     log.debug("UPDATING feed: "+feedUrl);
@@ -220,7 +220,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             }
             
             // all done, lets save
-            pmgr.saveGroup(group);
+            pmgr.savePlanet(group);
             WebloggerFactory.getWeblogger().flush();
             
         } catch (RollerException e) {

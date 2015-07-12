@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger;
 
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.business.DatabaseProvider;
@@ -641,21 +641,21 @@ public final class TestUtils {
     /**
      * Convenience method that creates a group and stores it.
      */
-    public static PlanetGroup setupGroup(String handle)
+    public static Planet setupGroup(String handle)
             throws Exception {
 
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
 
         // store
-        PlanetGroup testGroup = new PlanetGroup(handle, handle,
+        Planet testGroup = new Planet(handle, handle,
                 handle);
-        mgr.saveGroup(testGroup);
+        mgr.savePlanet(testGroup);
 
         // flush
         WebloggerFactory.getWeblogger().flush();
 
         // query to make sure we return the persisted object
-        PlanetGroup group = mgr.getGroupById(testGroup.getId());
+        Planet group = mgr.getPlanetById(testGroup.getId());
 
         if (group == null) {
             throw new WebloggerException("error inserting new group");
@@ -671,10 +671,10 @@ public final class TestUtils {
 
         // lookup
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        PlanetGroup group = mgr.getGroupById(id);
+        Planet group = mgr.getPlanetById(id);
 
         // remove
-        mgr.deleteGroup(group);
+        mgr.deletePlanet(group);
 
         // flush
         WebloggerFactory.getWeblogger().flush();

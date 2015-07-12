@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -66,7 +66,7 @@ public class StaticPlanetModel {
     }
        
     public List getAggregation(
-            PlanetGroup group, int maxEntries) throws RollerException {
+            Planet group, int maxEntries) throws RollerException {
         return planetManager.getEntries(group, 0, maxEntries);
     }
     

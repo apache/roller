@@ -23,8 +23,8 @@ import java.util.Date;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
-import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -37,7 +37,7 @@ public class EntryFunctionalTests extends TestCase {
     
     public static Log log = LogFactory.getLog(EntryFunctionalTests.class);
     
-    private PlanetGroup testGroup1 = null;
+    private Planet testGroup1 = null;
     private Subscription testSub1 = null;
     private Subscription testSub2 = null;
     private SubscriptionEntry testEntry1 = null;
@@ -60,12 +60,12 @@ public class EntryFunctionalTests extends TestCase {
         
         // now associate both subscriptions with the test group
         testGroup1.getSubscriptions().add(testSub1);
-        testSub1.getGroups().add(testGroup1);
+        testSub1.getPlanets().add(testGroup1);
         
         testGroup1.getSubscriptions().add(testSub2);
-        testSub2.getGroups().add(testGroup1);
+        testSub2.getPlanets().add(testGroup1);
         
-        WebloggerFactory.getWeblogger().getPlanetManager().saveGroup(testGroup1);
+        WebloggerFactory.getWeblogger().getPlanetManager().savePlanet(testGroup1);
         WebloggerFactory.getWeblogger().flush();
         
         log.info("EXITED");
@@ -100,7 +100,7 @@ public class EntryFunctionalTests extends TestCase {
         assertEquals(2, mgr.getEntries(sub, 0, 10).size());
         
         // by group
-        PlanetGroup group = mgr.getGroupById(testGroup1.getId());
+        Planet group = mgr.getPlanetById(testGroup1.getId());
         assertEquals(3, mgr.getEntries(group, 0, 10).size());
         
         // by group with timeframe constraint

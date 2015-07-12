@@ -24,39 +24,39 @@ package org.apache.roller.planet.business;
 import java.util.Date;
 import java.util.List;
 import org.apache.roller.RollerException;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
-import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 
 /**
- * Manages Planets, Groups, Subscriptions, and Entries.
+ * Manages Planets, Subscriptions, and Entries.
  */
 public interface PlanetManager {
 
     /**
-     * Retrieve all defined planet groups
+     * Retrieve all defined planets
      */
-    List<PlanetGroup> getPlanetGroups() throws RollerException;
+    List<Planet> getPlanets() throws RollerException;
 
     /**
-     * Save new or update existing a group
+     * Save new or update an existing planet
      */
-    void saveGroup(PlanetGroup sub) throws RollerException;
+    void savePlanet(Planet sub) throws RollerException;
     
     
     /** 
-     * Delete group and any subscriptions that are orphaned. 
+     * Delete planet and any subscriptions that are orphaned.
      */
-    void deleteGroup(PlanetGroup group) throws RollerException;
+    void deletePlanet(Planet planet) throws RollerException;
     
     
-    PlanetGroup getGroup(String handle) throws RollerException;
+    Planet getPlanet(String handle) throws RollerException;
     
     
     /**
-     * Get group by ID rather than handle.
+     * Get planet by ID rather than handle.
      */
-    PlanetGroup getGroupById(String id) throws RollerException;
+    Planet getPlanetById(String id) throws RollerException;
     
     
     /**
@@ -66,9 +66,9 @@ public interface PlanetManager {
     
     
     /** 
-     * Delete subscription, remove it from groups, cache, etc. 
+     * Delete subscription, remove it from planets, cache, etc.
      */
-    void deleteSubscription(Subscription group) throws RollerException;
+    void deleteSubscription(Subscription subscription) throws RollerException;
     
     
     /**
@@ -102,9 +102,9 @@ public interface PlanetManager {
     
     
     /**
-     * Get top X subscriptions, restricted by group.
+     * Get top X subscriptions, restricted by planet.
      */
-    List<Subscription> getTopSubscriptions(PlanetGroup group, int offset, int len)
+    List<Subscription> getTopSubscriptions(Planet planet, int offset, int len)
         throws RollerException;
     
     
@@ -143,27 +143,27 @@ public interface PlanetManager {
     
     
     /**
-     * Get Entries for a Group in reverse chronological order.
+     * Get Entries for a planet in reverse chronological order.
      *
-     * @param group Restrict to entries from one group.
+     * @param planet Restrict to entries from one planet.
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */
-    List<SubscriptionEntry> getEntries(PlanetGroup group, int offset, int len)
+    List<SubscriptionEntry> getEntries(Planet planet, int offset, int len)
         throws RollerException;
     
     
     /**
-     * Get Entries for a Group in reverse chronological order, optionally
+     * Get Entries for a planet in reverse chronological order, optionally
      * constrained to a certain timeframe.
      *
-     * @param group Restrict to entries from one group.
+     * @param planet Restrict to entries from one planet.
      * @param startDate The oldest date for entries to include.
      * @param endDate The newest date for entries to include.
      * @param offset Offset into results (for paging)
      * @param len Maximum number of results to return (for paging)
      */
-    List<SubscriptionEntry> getEntries(PlanetGroup group,
+    List<SubscriptionEntry> getEntries(Planet planet,
                            Date startDate, 
                            Date endDate,
                            int offset, 

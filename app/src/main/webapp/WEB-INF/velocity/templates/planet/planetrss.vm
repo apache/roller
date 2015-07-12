@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 *#<?xml version="1.0" encoding="utf-8"?>
 #if($feedStyle)<?xml-stylesheet type="text/xsl" href="$absoluteSite/roller-ui/styles/rss.xsl" media="screen"?>#end
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -31,7 +34,7 @@
   #if($group)
      #set($entries = $planet.getEntries($group, 0, $entryCount))
   #else
-     #set($all = $planet.getGroup($planet.getWeblogger("default"), "all"))
+     #set($all = $planet.getPlanet($planet.getWeblogger("default"), "all"))
      #set($entries = $planet.getEntries($all, 0, $entryCount))
   #end
   #foreach( $entry in $entries )

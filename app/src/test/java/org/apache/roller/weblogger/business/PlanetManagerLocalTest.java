@@ -28,7 +28,7 @@ import junit.textui.TestRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -136,13 +136,13 @@ public class PlanetManagerLocalTest extends TestCase {
             syncTask.init();
             syncTask.runTask();
             
-            PlanetGroup group = manager.getGroup("all");
+            Planet group = manager.getPlanet("all");
             assertEquals(1, group.getSubscriptions().size());
 
             RefreshRollerPlanetTask refreshTask = new RefreshRollerPlanetTask();
             refreshTask.runTask();
             
-            group = manager.getGroup("all");
+            group = manager.getPlanet("all");
             List agg = manager.getEntries(group, 0, -1);
             assertEquals(3, agg.size());
         }

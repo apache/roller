@@ -18,7 +18,7 @@
 
 package org.apache.roller.planet.business.updater;
 
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.Subscription;
 
 
@@ -60,6 +60,6 @@ public interface FeedUpdater {
      *
      * @throws UpdaterException If there is an error during the update and the operation cannot continue.
      */
-    void updateSubscriptions(PlanetGroup group) throws UpdaterException;
+    void updateSubscriptions(Planet group) throws UpdaterException;
     
 }

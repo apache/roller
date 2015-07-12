@@ -29,22 +29,22 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
- * Manage planet group subscriptions, default group is "all".
+ * Manage planet subscriptions, default planet is "all".
  */
 public class PlanetSubscriptions extends PlanetUIAction {
     
     private static final Log LOGGER = LogFactory.getLog(PlanetSubscriptions.class);
     
-    // id of the group we are working in
+    // id of the planet we are working in
     private String groupHandle = null;
     
-    // the planet group we are working in
-    private PlanetGroup group = null;
+    // the planet we are working in
+    private Planet group = null;
     
     // the subscription to deal with
     private String subUrl = null;
@@ -66,7 +66,7 @@ public class PlanetSubscriptions extends PlanetUIAction {
         }
         
         try {
-            setGroup(pmgr.getGroup(getGroupHandle()));
+            setGroup(pmgr.getPlanet(getGroupHandle()));
         } catch (RollerException ex) {
             LOGGER.error("Error looking up planet group - " + getGroupHandle(), ex);
         }
@@ -112,8 +112,8 @@ public class PlanetSubscriptions extends PlanetUIAction {
 
                 // add the sub to the group
                 group.getSubscriptions().add(sub);
-                sub.getGroups().add(group);
-                pmgr.saveGroup(group);
+                sub.getPlanets().add(group);
+                pmgr.savePlanet(group);
 
                 // flush changes
                 WebloggerFactory.getWeblogger().flush();
@@ -146,8 +146,8 @@ public class PlanetSubscriptions extends PlanetUIAction {
                 // remove subscription
                 Subscription sub = pmgr.getSubscription(getSubUrl());
                 getGroup().getSubscriptions().remove(sub);
-                sub.getGroups().remove(getGroup());
-                pmgr.saveGroup(getGroup());
+                sub.getPlanets().remove(getGroup());
+                pmgr.savePlanet(getGroup());
                 WebloggerFactory.getWeblogger().flush();
 
                 // clear field after success
@@ -204,11 +204,11 @@ public class PlanetSubscriptions extends PlanetUIAction {
         this.groupHandle = groupHandle;
     }
     
-    public PlanetGroup getGroup() {
+    public Planet getGroup() {
         return group;
     }
 
-    public void setGroup(PlanetGroup group) {
+    public void setGroup(Planet group) {
         this.group = group;
     }
 

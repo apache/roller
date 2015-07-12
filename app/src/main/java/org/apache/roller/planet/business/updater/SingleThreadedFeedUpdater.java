@@ -26,7 +26,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.fetcher.FetcherException;
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.util.RollerConstants;
@@ -153,7 +153,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     /**
      * @inheritDoc
      */
-    public void updateSubscriptions(PlanetGroup group) throws UpdaterException {
+    public void updateSubscriptions(Planet group) throws UpdaterException {
         
         if(group == null) {
             throw new IllegalArgumentException("cannot update null group");

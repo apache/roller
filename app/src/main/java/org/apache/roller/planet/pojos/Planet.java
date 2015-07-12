@@ -48,12 +48,12 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="planet")
 @NamedQueries({
-        @NamedQuery(name="PlanetGroup.getByHandle",
-                query="SELECT p FROM PlanetGroup p WHERE p.handle = ?1"),
-        @NamedQuery(name="PlanetGroup.getAll",
-                query="SELECT p FROM PlanetGroup p")
+        @NamedQuery(name="Planet.getByHandle",
+                query="SELECT p FROM Planet p WHERE p.handle = ?1"),
+        @NamedQuery(name="Planet.getAll",
+                query="SELECT p FROM Planet p")
 })
-public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
+public class Planet implements Serializable, Comparable<Planet> {
 
     private transient String[] catArray = null;
     
@@ -72,18 +72,18 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     private Set<Subscription> subscriptions = new TreeSet<Subscription>();
     
     
-    public PlanetGroup() {}
+    public Planet() {}
     
-    public PlanetGroup(String handle, String title, String desc) {
+    public Planet(String handle, String title, String desc) {
         this.handle = handle;
         this.title = title;
         this.description = desc;
     }
     
     /**
-     * For comparing groups and sorting, ordered by Title.
+     * For comparing planets and sorting, ordered by Title.
      */
-    public int compareTo(PlanetGroup other) {
+    public int compareTo(Planet other) {
         return getTitle().compareTo(other.getTitle());
     }
     
@@ -164,7 +164,7 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     
     
     /**
-     * Return a list of the most recent 10 entries from this group.
+     * Return a list of the most recent 10 entries from this planet.
      */
     @Transient
     public List<SubscriptionEntry> getRecentEntries() {
@@ -178,7 +178,7 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     
     
     /**
-     * Returns true if entry is qualified for inclusion in this group.
+     * Returns true if entry is qualified for inclusion in this planet.
      */
     public boolean qualified(SubscriptionEntry entry) {
         String[] cats = createCategoryRestrictionAsArray();

@@ -137,7 +137,7 @@ public class PlanetFeedServlet extends HttpServlet {
             if (request.getParameter("group") != null) {
                 model.put(
                         "group",
-                        planet.getGroup(
+                        planet.getPlanet(
                                 request.getParameter("group")));
             }
 
@@ -284,8 +284,8 @@ public class PlanetFeedServlet extends HttpServlet {
         }
 
         // add group
-        if (planetRequest.getGroup() != null) {
-            key.append("/group=").append(planetRequest.getGroup());
+        if (planetRequest.getPlanet() != null) {
+            key.append("/group=").append(planetRequest.getPlanet());
         }
 
         return key.toString();
