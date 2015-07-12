@@ -30,10 +30,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -55,8 +52,8 @@ import javax.persistence.Transient;
                 query="SELECT p FROM Subscription p ORDER BY p.feedURL DESC"),
         @NamedQuery(name="Subscription.getAllOrderByInboundBlogsDesc",
                 query="SELECT p FROM Subscription p ORDER BY p.inboundblogs DESC"),
-        @NamedQuery(name="Subscription.getByGroupOrderByInboundBlogsDesc",
-                query="SELECT p FROM Subscription p JOIN p.groups g WHERE g.handle = ?1 ORDER BY p.inboundblogs DESC"),
+        @NamedQuery(name="Subscription.getByPlanetOrderByInboundBlogsDesc",
+                query="SELECT s FROM Subscription s JOIN s.planets p WHERE p.handle = ?1 ORDER BY s.inboundblogs DESC"),
         @NamedQuery(name="Subscription.getByFeedURL",
                 query="SELECT p FROM Subscription p WHERE p.feedURL = ?1")
 })
@@ -73,7 +70,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     private int inboundblogs = 0;
 
     // associations
-    private Set<PlanetGroup> groups = new HashSet<PlanetGroup>();
+    private Set<Planet> groups = new HashSet<Planet>();
     private Set<SubscriptionEntry> entries = new HashSet<SubscriptionEntry>();
     
     
@@ -152,17 +149,13 @@ public class Subscription implements Serializable, Comparable<Subscription> {
         this.inboundblogs = inboundblogs;
     }
 
-
-    @ManyToMany
-    @JoinTable(name="planet_group_subscription",
-            joinColumns = { @JoinColumn(name="subscription_id", nullable=false)},
-            inverseJoinColumns = { @JoinColumn(name="planet_id", nullable=false)})
-    public Set<PlanetGroup> getGroups() {
+    @ManyToMany(mappedBy="subscriptions")
+    public Set<Planet> getPlanets() {
         return groups;
     }
     
     // private because there is no need for people to do this
-    private void setGroups(Set<PlanetGroup> groups) {
+    private void setPlanets(Set<Planet> groups) {
         this.groups = groups;
     }
 
@@ -243,11 +236,11 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     public String toString() {
         StringBuilder buf = new StringBuilder();
 
-        buf.append("{");
-        buf.append(getFeedURL()).append(", ");
-        buf.append(getSiteURL()).append(", ");
-        buf.append(getTitle()).append(", ");
-        buf.append(getAuthor()).append(", ");
+        buf.append("{ Feed URL:");
+        buf.append(getFeedURL()).append(", Site URL:");
+        buf.append(getSiteURL()).append(", Title:");
+        buf.append(getTitle()).append(", Author:");
+        buf.append(getAuthor()).append(", Last Updated:");
         buf.append(getLastUpdated());
         buf.append("}");
 

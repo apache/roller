@@ -22,7 +22,7 @@ package org.apache.roller.planet.business;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -42,37 +42,37 @@ public class PlanetBasicTests extends TestCase {
 
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
-        PlanetGroup testPlanet = new PlanetGroup("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
-        PlanetGroup planet;
+        Planet testPlanet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
+        Planet planet;
         
-        planet = mgr.getGroup("testPlanetHandle");
+        planet = mgr.getPlanet("testPlanetHandle");
         assertNull(planet);
         
         // add
-        mgr.saveGroup(testPlanet);
+        mgr.savePlanet(testPlanet);
         TestUtils.endSession(true);
 
         // verify
-        planet = mgr.getGroupById(testPlanet.getId());
+        planet = mgr.getPlanetById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("testPlanetHandle", planet.getHandle());
 
         // modify
         planet.setTitle("foo");
-        mgr.saveGroup(planet);
+        mgr.savePlanet(planet);
         TestUtils.endSession(true);
 
         // verify
-        planet = mgr.getGroupById(testPlanet.getId());
+        planet = mgr.getPlanetById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("foo", planet.getTitle());
         
         // remove
-        mgr.deleteGroup(planet);
+        mgr.deletePlanet(planet);
         TestUtils.endSession(true);
         
         // verify
-        planet = mgr.getGroupById(testPlanet.getId());
+        planet = mgr.getPlanetById(testPlanet.getId());
         assertNull(planet);
     }
     

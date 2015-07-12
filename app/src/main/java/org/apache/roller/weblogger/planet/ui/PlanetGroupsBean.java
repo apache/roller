@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.planet.ui;
 
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Planet;
 
 
 /**
@@ -56,14 +56,14 @@ public class PlanetGroupsBean {
     }
     
     
-    public void copyTo(PlanetGroup dataHolder) {
+    public void copyTo(Planet dataHolder) {
         
         dataHolder.setTitle(getTitle());
         dataHolder.setHandle(getHandle());
     }
     
     
-    public void copyFrom(PlanetGroup dataHolder) {
+    public void copyFrom(Planet dataHolder) {
         
         setId(dataHolder.getId());
         setTitle(dataHolder.getTitle());

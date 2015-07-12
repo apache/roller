@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util;
@@ -37,7 +40,7 @@ public class PlanetRequest extends ParsedRequest {
     private String flavor = null;
     private boolean excerpts = false;
     private String language = null;
-    private String group = null;
+    private String planet = null;
     
     
     /**
@@ -79,14 +82,14 @@ public class PlanetRequest extends ParsedRequest {
          *
          * the only params we currently care about are:
          *   excerpts - specifies the feed should only include excerpts
-         *   group - specifies the aggregation group to include
+         *   planet - specifies the planet to include
          */
         if (request.getParameter("excerpts") != null) {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts"));
         }
         
-        if (request.getParameter("group") != null) {
-            this.group = request.getParameter("group");
+        if (request.getParameter("planet") != null) {
+            this.planet = request.getParameter("planet");
         }
         
         
@@ -119,7 +122,7 @@ public class PlanetRequest extends ParsedRequest {
         this.language = language;
     }
     
-    public String getGroup() {
-        return group;
+    public String getPlanet() {
+        return planet;
     }    
 }

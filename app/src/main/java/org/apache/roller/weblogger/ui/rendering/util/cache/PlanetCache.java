@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util.cache;
@@ -219,8 +222,8 @@ public final class PlanetCache {
         }
         
         // add group
-        if (planetRequest.getGroup() != null) {
-            key.append("/group=").append(planetRequest.getGroup());
+        if (planetRequest.getPlanet() != null) {
+            key.append("/group=").append(planetRequest.getPlanet());
         }
 
         return key.toString();

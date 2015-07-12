@@ -35,8 +35,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
-import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
@@ -44,8 +44,6 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 /**
  * Manages Planet Roller objects and entry aggregations in a database.
- *
- * @author Dave Johnson
  */
 public class JPAPlanetManagerImpl implements PlanetManager {
     
@@ -61,7 +59,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
     
     
-    public void saveGroup(PlanetGroup group) throws RollerException {
+    public void savePlanet(Planet group) throws RollerException {
         strategy.store(group);
     }
     
@@ -83,7 +81,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         strategy.remove(entry);
     }
     
-    public void deleteGroup(PlanetGroup group) throws RollerException {
+    public void deletePlanet(Planet group) throws RollerException {
         strategy.remove(group);
     }
     
@@ -133,11 +131,11 @@ public class JPAPlanetManagerImpl implements PlanetManager {
      * Get top X subscriptions, restricted by group.
      */
     public List<Subscription> getTopSubscriptions(
-            PlanetGroup group, int offset, int len) throws RollerException {
+            Planet group, int offset, int len) throws RollerException {
         List<Subscription> result;
         if (group != null) {
             TypedQuery<Subscription> q = strategy.getNamedQuery(
-                    "Subscription.getByGroupOrderByInboundBlogsDesc", Subscription.class);
+                    "Subscription.getByPlanetOrderByInboundBlogsDesc", Subscription.class);
             q.setParameter(1, group);
             if (offset != 0) {
                 q.setFirstResult(offset);
@@ -160,13 +158,13 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         return result;
     }
 
-    public List<PlanetGroup> getPlanetGroups() throws RollerException {
-        TypedQuery<PlanetGroup> q = strategy.getNamedQuery("PlanetGroup.getAll", PlanetGroup.class);
+    public List<Planet> getPlanets() throws RollerException {
+        TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getAll", Planet.class);
         return q.getResultList();
     }
 
-    public PlanetGroup getGroup(String handle) throws RollerException {
-        TypedQuery<PlanetGroup> q = strategy.getNamedQuery("PlanetGroup.getByHandle", PlanetGroup.class);
+    public Planet getPlanet(String handle) throws RollerException {
+        TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getByHandle", Planet.class);
         q.setParameter(1, handle);
         try {
             return q.getSingleResult();
@@ -175,8 +173,8 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
     }
     
-    public PlanetGroup getGroupById(String id) throws RollerException {
-        return (PlanetGroup) strategy.load(PlanetGroup.class, id);
+    public Planet getPlanetById(String id) throws RollerException {
+        return (Planet) strategy.load(Planet.class, id);
     }        
     
     public void release() {}
@@ -214,28 +212,28 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         return q.getResultList();
     }
 
-    public List<SubscriptionEntry> getEntries(PlanetGroup group, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(Planet group, int offset, int len) throws RollerException {
         return getEntries(group, null, null, offset, len);
     }
 
-    public List<SubscriptionEntry> getEntries(PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(Planet group, Date startDate, Date endDate, int offset, int len) throws RollerException {
 
         if (group == null) {
             throw new WebloggerException("group cannot be null or empty");
         }
-        
+
         List<SubscriptionEntry> ret;
         try {
             long startTime = System.currentTimeMillis();
             
             StringBuilder sb = new StringBuilder();
-            List<Object> params = new ArrayList<Object>();
+            List<Object> params = new ArrayList<>();
             int size = 0;
             sb.append("SELECT e FROM SubscriptionEntry e ");
-            sb.append("JOIN e.subscription.groups g ");
-                        
+            sb.append("JOIN e.subscription.planets p ");
+
             params.add(size++, group.getHandle());
-            sb.append("WHERE g.handle = ?").append(size);
+            sb.append("WHERE p.handle = ?").append(size);
             
             if (startDate != null) {
                 params.add(size++, new Timestamp(startDate.getTime()));

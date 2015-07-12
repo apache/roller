@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -177,7 +177,7 @@ public class PlanetModel implements Model {
         List<Subscription> list = new ArrayList<Subscription>();
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
-            PlanetGroup planetGroup = planetManager.getGroup(groupHandle);
+            Planet planetGroup = planetManager.getPlanet(groupHandle);
             List<Subscription> subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
             for (Subscription sub : subs) {
                 // TODO needs pojo wrapping from planet
@@ -194,11 +194,11 @@ public class PlanetModel implements Model {
      * Get PlanetGroups defined.
      * @return List of Planet groups defined.
      */
-    public List<PlanetGroup> getGroups() {
-        List<PlanetGroup> list = new ArrayList<>();
+    public List<Planet> getPlanets() {
+        List<Planet> list = new ArrayList<>();
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
-            list = planetManager.getPlanetGroups();
+            list = planetManager.getPlanets();
         } catch (Exception e) {
             log.error("ERROR: getting groups", e);
         }
@@ -207,15 +207,15 @@ public class PlanetModel implements Model {
     
     
     /**
-     * Get PlanetGroup by handle.
-     * @param groupHandle Handle of PlanetGroup to fetch.
+     * Get Planet by handle.
+     * @param groupHandle Handle of Planet to fetch.
      * @return PlaneGroup specified by handle.
      */
-    public PlanetGroup getGroup(String groupHandle) {
-        PlanetGroup group = null;
+    public Planet getPlanet(String groupHandle) {
+        Planet group = null;
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
-            group = planetManager.getGroup(groupHandle);
+            group = planetManager.getPlanet(groupHandle);
         } catch (Exception e) {
             log.error("ERROR: getting group", e);
         }

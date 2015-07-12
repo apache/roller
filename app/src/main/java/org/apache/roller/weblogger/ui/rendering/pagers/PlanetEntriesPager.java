@@ -28,8 +28,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
-import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -98,10 +98,10 @@ public class PlanetEntriesPager extends AbstractPager {
                     Subscription sub = planetManager.getSubscription(feedURL);
                     subEntries = planetManager.getEntries(sub, offset, length+1);
                 } else if (groupHandle != null) {
-                    PlanetGroup group = planetManager.getGroup(groupHandle);
+                    Planet group = planetManager.getPlanet(groupHandle);
                     subEntries = planetManager.getEntries(group, startDate, null, offset, length + 1);
                 } else {
-                    PlanetGroup group = planetManager.getGroup("all");
+                    Planet group = planetManager.getPlanet("all");
                     subEntries = planetManager.getEntries(group, startDate, null, offset, length + 1);
                 }
                 
