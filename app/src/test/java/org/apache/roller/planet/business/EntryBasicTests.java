@@ -12,11 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business;
 
 import junit.framework.TestCase;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
@@ -29,13 +33,14 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 public class EntryBasicTests extends TestCase {
     
     private Subscription testSub = null;
-    
-    
+
+    private Planet testPlanet = null;
+
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
-        
-        testSub = TestUtils.setupSubscription("entryBasicTest");
+        testPlanet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
+        testSub = TestUtils.setupSubscription(testPlanet, "entryBasicTest");
     }
     
     

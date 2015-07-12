@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.planet.tasks;
 
@@ -46,14 +49,14 @@ public class StaticPlanetModel {
 //    }
        
        
-    public Subscription getSubscription(String feedUrl) throws Exception {
-        return planetManager.getSubscription(feedUrl); 
+    public Subscription getSubscription(Planet planet, String feedUrl) throws Exception {
+        return planetManager.getSubscription(planet, feedUrl);
     }
     
     
-    public List<SubscriptionEntry> getFeedEntries(String feedUrl, int maxEntries) throws Exception {
+    public List<SubscriptionEntry> getFeedEntries(Planet planet, String feedUrl, int maxEntries) throws Exception {
         try {
-            Subscription sub = planetManager.getSubscription(feedUrl);
+            Subscription sub = planetManager.getSubscription(planet, feedUrl);
             if(sub != null) {
                 return planetManager.getEntries(sub, 0, maxEntries);
             } else {

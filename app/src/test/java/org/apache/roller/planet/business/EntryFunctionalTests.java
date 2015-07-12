@@ -52,18 +52,11 @@ public class EntryFunctionalTests extends TestCase {
         log.info("ENTERED");
         
         testGroup1 = TestUtils.setupGroup("entryFuncTestGroup");
-        testSub1 = TestUtils.setupSubscription("entryFuncTestSub1");
-        testSub2 = TestUtils.setupSubscription("entryFuncTestSub2");
+        testSub1 = TestUtils.setupSubscription(testGroup1, "entryFuncTestSub1");
+        testSub2 = TestUtils.setupSubscription(testGroup1, "entryFuncTestSub2");
         testEntry1 = TestUtils.setupEntry(testSub1, "entryFuncTestEntry1");
         testEntry2 = TestUtils.setupEntry(testSub2, "entryFuncTestEntry2");
         testEntry3 = TestUtils.setupEntry(testSub2, "entryFuncTestEntry3");
-        
-        // now associate both subscriptions with the test group
-        testGroup1.getSubscriptions().add(testSub1);
-        testSub1.getPlanets().add(testGroup1);
-        
-        testGroup1.getSubscriptions().add(testSub2);
-        testSub2.getPlanets().add(testGroup1);
         
         WebloggerFactory.getWeblogger().getPlanetManager().savePlanet(testGroup1);
         WebloggerFactory.getWeblogger().flush();

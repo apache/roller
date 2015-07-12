@@ -297,9 +297,9 @@ create table planet (
 );
 alter table planet add constraint planet_handle_uq unique (handle);
 
-
 create table planet_subscription (
     id               varchar(48) not null primary key,
+    planetid         varchar(48) not null,
     title            varchar(255) not null,
     feed_url         varchar(255) not null,
     site_url         varchar(255),
@@ -309,15 +309,10 @@ create table planet_subscription (
     inbound_blogs    integer default -1
 );
 alter table planet_subscription add constraint plsb_feed_url_uq unique (feed_url);
+create index plnt_subs_idx on planet_subscription(planetid);
 
-
-create table planet_group_subscription (
-    planet_id        varchar(48) not null,
-    subscription_id  varchar(48) not null
-);
-create index planetsub_pid_idx on planet_group_subscription(planet_id);
-create index planetsub_sid_idx on planet_group_subscription(subscription_id);
-
+alter table planet_subscription add constraint ps_planetid_fk
+    foreign key (planetid) references planet(id);
 
 create table planet_subscription_entry (
     id               varchar(48) not null primary key,
@@ -333,6 +328,10 @@ create table planet_subscription_entry (
     updated          $db.TIMESTAMP_SQL_TYPE    
 );
 create index plntsbent_sid_idx on planet_subscription_entry(subscription_id);
+
+alter table planet_subscription_entry add constraint pse_subscriptionid_fk
+    foreign key (subscription_id) references planet_subscription(id);
+
 
 -- create a default planet and group
 insert into planet (id, handle, title) values ('zzz_all_group_zzz', 'all', 'Default Group');

@@ -38,12 +38,8 @@ See comments in editor-menu.xml for info about attributes.
                    name="tabbedmenu.admin.planetConfig" />
         
         <!-- globalPerms="admin" -->
-        <menu-item action="planetSubscriptions"
-                   name="tabbedmenu.admin.planetSubscriptions" />
-        
-        <!-- globalPerms="admin" -->
-        <menu-item action="planetGroups"
-                   name="tabbedmenu.admin.planetGroups" />
+        <menu-item action="planets"
+                   name="tabbedmenu.admin.planets" />
     </menu>
     
 </menu-bar>

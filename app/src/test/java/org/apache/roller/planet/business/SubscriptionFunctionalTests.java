@@ -43,8 +43,8 @@ public class SubscriptionFunctionalTests extends TestCase {
 
         testGroup1 = TestUtils.setupGroup("subFuncTest1");
         testGroup2 = TestUtils.setupGroup("subFuncTest2");
-        testSub1 = TestUtils.setupSubscription("subFuncTest1");
-        testSub2 = TestUtils.setupSubscription("subFuncTest2");
+        testSub1 = TestUtils.setupSubscription(testGroup1, "subFuncTest1");
+        testSub2 = TestUtils.setupSubscription(testGroup2, "subFuncTest2");
     }
     
     
@@ -59,7 +59,7 @@ public class SubscriptionFunctionalTests extends TestCase {
     public void testSubscriptionLookups() throws Exception {
         
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        
+
         // by id
         Subscription sub = mgr.getSubscriptionById(testSub1.getId());
         assertNotNull(sub);
@@ -67,7 +67,7 @@ public class SubscriptionFunctionalTests extends TestCase {
         
         // by feed url
         sub = null;
-        sub = mgr.getSubscription(testSub2.getFeedURL());
+        sub = mgr.getSubscription(testGroup2, testSub2.getFeedURL());
         assertNotNull(sub);
         assertEquals("subFuncTest2", sub.getFeedURL());
         
@@ -90,10 +90,10 @@ public class SubscriptionFunctionalTests extends TestCase {
         
         // add
         group.getSubscriptions().add(sub1);
-        sub1.getPlanets().add(group);
+        sub1.setPlanet(group);
 
         group.getSubscriptions().add(sub2);
-        sub2.getPlanets().add(group);
+        sub2.setPlanet(group);
         
         planet.savePlanet(group);
         TestUtils.endSession(true);
@@ -106,10 +106,8 @@ public class SubscriptionFunctionalTests extends TestCase {
         
         // remove
         group.getSubscriptions().remove(sub1);
-        sub1.getPlanets().remove(group);
-        
+
         group.getSubscriptions().remove(sub2);
-        sub2.getPlanets().remove(group);
 
         planet.savePlanet(group);
         TestUtils.endSession(true);

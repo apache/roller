@@ -94,8 +94,9 @@ public class PlanetEntriesPager extends AbstractPager {
                 PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
 
                 List<SubscriptionEntry> subEntries;
-                if (feedURL != null) {
-                    Subscription sub = planetManager.getSubscription(feedURL);
+                if (groupHandle != null && feedURL != null) {
+                    Planet planet = planetManager.getPlanet(groupHandle);
+                    Subscription sub = planetManager.getSubscription(planet, feedURL);
                     subEntries = planetManager.getEntries(sub, offset, length+1);
                 } else if (groupHandle != null) {
                     Planet group = planetManager.getPlanet(groupHandle);

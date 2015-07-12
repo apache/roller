@@ -43,7 +43,7 @@ public class PlanetGroups extends PlanetUIAction {
     
     
     public PlanetGroups() {
-        this.actionName = "planetGroups";
+        this.actionName = "planets";
         this.desiredMenu = "admin";
         this.pageTitle = "planetGroups.pagetitle";
     }

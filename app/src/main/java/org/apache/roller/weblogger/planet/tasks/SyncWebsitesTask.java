@@ -165,7 +165,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                 liveUserFeeds.add(feedUrl);
                 
                 // if sub already exists then update it, otherwise add it
-                Subscription sub = pmgr.getSubscription(feedUrl);
+                Subscription sub = pmgr.getSubscription(group, feedUrl);
                 if (sub == null) {
                     log.debug("ADDING feed: "+feedUrl);
                     
@@ -176,13 +176,11 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                         WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(weblog, null, true));
                     sub.setAuthor(weblog.getName());
                     sub.setLastUpdated(new Date(0));
+                    sub.setPlanet(group);
                     pmgr.saveSubscription(sub);
                     
-                    sub.getPlanets().add(group);
                     group.getSubscriptions().add(sub);
-
                     pmgr.savePlanet(group);
-
                 } else {
                     log.debug("UPDATING feed: "+feedUrl);
                     

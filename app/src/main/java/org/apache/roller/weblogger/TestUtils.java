@@ -683,7 +683,7 @@ public final class TestUtils {
     /**
      * Convenience method that creates a sub and stores it.
      */
-    public static Subscription setupSubscription(String feedUrl)
+    public static Subscription setupSubscription(Planet planet, String feedUrl)
             throws Exception {
 
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
@@ -692,7 +692,10 @@ public final class TestUtils {
         Subscription testSub = new Subscription();
         testSub.setFeedURL(feedUrl);
         testSub.setTitle(feedUrl);
+        testSub.setPlanet(planet);
         mgr.saveSubscription(testSub);
+
+        planet.getSubscriptions().add(testSub);
 
         // flush
         WebloggerFactory.getWeblogger().flush();
