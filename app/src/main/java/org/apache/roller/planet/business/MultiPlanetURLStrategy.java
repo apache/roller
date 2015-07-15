@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business;
@@ -34,15 +37,12 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
      * Get root url for a given weblog.  Optionally for a certain locale.
      */
     public String getPlanetURL(String planet) {
-        
         if(planet == null) {
             return null;
         }
-        
         StringBuilder url = new StringBuilder();
         url.append(WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
         url.append("/").append(planet).append("/");
-        
         return url.toString();
     }
     

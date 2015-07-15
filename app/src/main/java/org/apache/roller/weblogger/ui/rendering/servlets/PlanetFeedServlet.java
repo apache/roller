@@ -37,7 +37,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
@@ -146,17 +145,10 @@ public class PlanetFeedServlet extends HttpServlet {
             model.put("utils", new UtilitiesModel());
             model.put("lastModified", lastModified);
 
-            model.put("siteName",
-                    PlanetRuntimeConfig.getProperty("planet.site.name"));
-
-            model.put("siteDescription",
-                    PlanetRuntimeConfig.getProperty("planet.site.description"));
-
-
             if (StringUtils.isNotEmpty(WebloggerRuntimeConfig
                     .getProperty("planet.site.absoluteurl"))) {
                 model.put("absoluteSite",
-                        PlanetRuntimeConfig.getProperty("planet.site.absoluteurl"));
+                        WebloggerRuntimeConfig.getProperty("planet.site.absoluteurl"));
             } else {
                 model.put("absoluteSite",
                         WebloggerRuntimeConfig.getAbsoluteContextURL());
