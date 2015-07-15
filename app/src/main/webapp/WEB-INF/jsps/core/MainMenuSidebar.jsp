@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -42,11 +45,6 @@
                 <s:if test="userIsAdmin">               
                     <h3><a href="<s:url action="globalConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.globalAdmin" /></a></h3>          
                     <p><s:text name="yourWebsites.globalAdmin.desc" /></p>
-                    
-                    <s:if test="getBooleanProp('planet.aggregator.enabled')">               
-                        <h3><a href="<s:url action="planetConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.planetAdmin" /></a></h3>
-                        <p><s:text name="yourWebsites.planetAdmin.desc" /></p>
-                    </s:if>
                 </s:if>
                 
                 <br />

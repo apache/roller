@@ -24,6 +24,7 @@ package org.apache.roller.planet.pojos;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.roller.weblogger.util.Utilities;
@@ -185,9 +186,8 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
      * (case-insensitive comparison).
      */
     public boolean inCategory(String category) {
-        for (Category cat : getCategories()) {
-            String catName = cat.getName().toLowerCase();
-            if (catName.contains(category.toLowerCase())) {
+        for (String cat : getCategories()) {
+            if (cat.toLowerCase().contains(category.toLowerCase())) {
                 return true;
             }
         }
@@ -197,18 +197,14 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     //------------------------------------------------------------- implementation
     
     /**
-     * Returns categories as list of WeblogCategoryData objects.
+     * Returns categories as list of strings
      */
     @Transient
-    public List<Category> getCategories() {
-        List<Category> list = new ArrayList<Category>();
+    public List<String> getCategories() {
+        List<String> list = new ArrayList<>();
         if (getCategoriesString() != null) {
             String[] catArray = Utilities.stringToStringArray(getCategoriesString(),",");
-            for (String catName : catArray) {
-                Category cat = new Category();
-                cat.setName(catName);
-                list.add(cat);
-            }
+            list.addAll(Arrays.asList(catArray));
         }
         return list;
     }
@@ -217,13 +213,13 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
      * Return first entry in category collection.
      */
     @Transient
-    public Category getCategory() {
-        Category cat = null;
-        List cats = getCategories();
+    public String getCategory() {
+        List<String> cats = getCategories();
+        String firstCat = null;
         if (cats.size() > 0) {
-            cat = (Category)cats.get(0);
+            firstCat = cats.get(0);
         }
-        return cat;
+        return firstCat;
     }
 
     public void setCategoriesString(List<String> categoryNames) {
@@ -243,6 +239,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
      * Returns creator as a UserData object.
      * TODO: make planet model entry author name, email, and uri
      */
+/*
     @Transient
     public Author getCreator() {
         Author user = null;
@@ -253,7 +250,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
         }
         return user;
     } 
-    
+*/
     /**
      * Returns summary (always null for planet entry)
      */

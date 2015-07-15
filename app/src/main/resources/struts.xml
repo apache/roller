@@ -226,12 +226,6 @@
             <result name="success" type="tiles">.CacheInfo</result>
         </action>
         
-        
-        <action name="planetConfig!*" method="{1}"
-                class="org.apache.roller.weblogger.planet.ui.PlanetConfig">
-            <result name="input" type="tiles">.PlanetConfig</result>
-        </action>
-        
         <action name="planetSubscriptions!*" method="{1}"
                 class="org.apache.roller.weblogger.planet.ui.PlanetSubscriptions">
             <result name="list" type="tiles">.PlanetSubscriptions</result>
