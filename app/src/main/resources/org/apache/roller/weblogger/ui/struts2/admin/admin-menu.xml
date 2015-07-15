@@ -8,38 +8,25 @@ See comments in editor-menu.xml for info about attributes.
     
     <menu name="tabbedmenu.admin" globalRole="ADMIN" weblogRole="NOBLOGNEEDED">
         
-        <!-- globalPerms="admin" -->
         <menu-item action="globalConfig"
                    name="tabbedmenu.admin.config" />
         
-        <!-- globalPerms="admin" -->
         <menu-item action="userAdmin"
                    name="tabbedmenu.admin.userAdmin"
                    subactions="createUser,modifyUser" />
         
-        <!-- globalPerms="admin" -->
-        <menu-item action="globalCommentManagement" 
+        <menu-item action="globalCommentManagement"
                    name="tabbedmenu.admin.commentManagement" />
         
-        <!-- globalPerms="admin" -->
         <menu-item action="commonPingTargets"
                    name="tabbedmenu.admin.pingTargets"
                    subactions="commonPingTargetAdd,commonPingTargetEdit" />
-        
-        <!-- globalPerms="admin" -->
+
+        <menu-item action="planets"
+                   name="tabbedmenu.admin.planets" enabledProperty="planet.aggregator.enabled"/>
+
         <menu-item action="cacheInfo"
                    name="tabbedmenu.admin.cacheInfo" />
-    </menu>
-    
-    <menu name="tabbedmenu.planet" globalRole="ADMIN" weblogRole="NOBLOGNEEDED" enabledProperty="planet.aggregator.enabled">
-        
-        <!-- globalPerms="admin" -->
-        <menu-item action="planetConfig"
-                   name="tabbedmenu.admin.planetConfig" />
-        
-        <!-- globalPerms="admin" -->
-        <menu-item action="planets"
-                   name="tabbedmenu.admin.planets" />
     </menu>
     
 </menu-bar>
