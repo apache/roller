@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.tasks;
@@ -33,11 +36,10 @@ import org.apache.roller.weblogger.business.startup.WebloggerStartup;
  * - Calls Planet business layer to refresh entries
  * </pre>
  */
-public class RefreshPlanetTask extends PlanetTask {
+public class RefreshPlanetTask {
     
     private static Log log = LogFactory.getLog(RefreshPlanetTask.class);
-    
-    
+
     public void run() {
         try {            
             // Update all feeds in planet
@@ -53,10 +55,8 @@ public class RefreshPlanetTask extends PlanetTask {
     
     
     public static void main(String[] args) throws Exception {
-        
         RefreshPlanetTask task = new RefreshPlanetTask();
-        task.initialize();
-        
+
         // need to prepare and bootstrap Planet as well
         WebloggerStartup.prepare();
         WebloggerFactory.bootstrap();
