@@ -17,26 +17,16 @@
 
   Source file modified from the original ASF source; all changes made
   are also under Apache License.
-*#<?xml version="1.0" encoding="utf-8"?>
+*##if($group)<?xml version="1.0" encoding="utf-8"?>
 #if($feedStyle)<?xml-stylesheet type="text/xsl" href="$absoluteSite/roller-ui/styles/rss.xsl" media="screen"?>#end
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
-<channel>
-  #if($group)
+  <channel>
   <title>$utils.escapeXML($group.title)</title>
   <description>Aggregated feed for group [$utils.escapeXML($group.title)]</description>
-  #else
-  <title>$utils.escapeXML($siteName)</title>
-  <description>$utils.escapeXML($siteDescription)</description>
-  #end
   <link>$utils.escapeXML($absoluteSite)</link>
   <lastBuildDate>$utils.formatRfc822Date($lastModified)</lastBuildDate>
-  <generator>Roller</generator>
-  #if($group)
-     #set($entries = $planet.getEntries($group, 0, $entryCount))
-  #else
-     #set($all = $planet.getPlanet($planet.getWeblogger("default"), "all"))
-     #set($entries = $planet.getEntries($all, 0, $entryCount))
-  #end
+  <generator>TightBlog</generator>
+  #set($entries = $planet.getEntries($group, 0, $entryCount))
   #foreach( $entry in $entries )
   <item>
     #if($entry.title)<title>$utils.escapeXML($entry.title)</title> #end
@@ -66,3 +56,10 @@
   #end
 </channel>
 </rss>
+#else
+<html>
+<body>
+Error: Missing "planet" parameter in URL string
+</body>
+</html>
+#end

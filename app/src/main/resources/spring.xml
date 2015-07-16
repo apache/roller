@@ -39,7 +39,6 @@
         <beans:constructor-arg ref="oauthManager"/>
         <beans:constructor-arg ref="feedFetcher"/>
         <beans:constructor-arg ref="planetManager"/>
-        <beans:constructor-arg ref="planetUrlStrategy"/>
         <beans:constructor-arg ref="urlStrategy"/>
     </beans:bean>
 
@@ -126,8 +125,6 @@
     <beans:bean id="planetManager" class="org.apache.roller.planet.business.jpa.JPAPlanetManagerImpl">
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
-
-    <beans:bean id="planetUrlStrategy" class="org.apache.roller.planet.business.MultiPlanetURLStrategy"/>
 
     <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>
 

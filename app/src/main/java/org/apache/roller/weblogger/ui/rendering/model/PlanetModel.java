@@ -53,9 +53,7 @@ public class PlanetModel implements Model {
     private Weblog         weblog = null;
     
     private URLStrategy    urlStrategy = null;
-    private org.apache.roller.planet.business.PlanetURLStrategy planetUrlStrategy = null;
-    
-    
+
     public String getModelName() {
         return "planet";
     }
@@ -83,9 +81,7 @@ public class PlanetModel implements Model {
         if(urlStrategy == null) {
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
-        
-        planetUrlStrategy = WebloggerFactory.getWeblogger().getPlanetURLStrategy();
-        
+
         // extract weblog object
         weblog = weblogRequest.getWeblog();
     } 
@@ -204,8 +200,7 @@ public class PlanetModel implements Model {
         }
         return list;
     }
-    
-    
+
     /**
      * Get Planet by handle.
      * @param groupHandle Handle of Planet to fetch.
@@ -221,19 +216,14 @@ public class PlanetModel implements Model {
         }
         return group;        
     }
-    
-    
-    public String getWebloggerURL() {
-        return planetUrlStrategy.getPlanetURL("ignored");
+
+    /**
+     * Get RSS webpage of specified planet
+     * @param planet planet handle
+     * @return RSS webpage of planet
+     */
+    public String getPlanetURL(String planet) {
+        return urlStrategy.getPlanetURL(planet);
     }
 
-    
-    public String getWebloggerGroupURL(String group, int pageNum) {
-        return planetUrlStrategy.getPlanetGroupURL("ignored", group, pageNum);
-    }
-    
-    
-    public String getWebloggerFeedURL(String group, String format) {
-        return planetUrlStrategy.getPlanetGroupFeedURL("ignored", group, format);
-    }
 }
