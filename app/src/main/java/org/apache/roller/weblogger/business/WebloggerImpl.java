@@ -69,8 +69,7 @@ public abstract class WebloggerImpl implements Weblogger {
     
     // url strategy
     private final URLStrategy          urlStrategy;
-    private final org.apache.roller.planet.business.PlanetURLStrategy planetUrlStrategy;
-    
+
     // some simple attributes
     private final String version;
     private final String revision;
@@ -96,8 +95,7 @@ public abstract class WebloggerImpl implements Weblogger {
         OAuthManager         oauthManager,
         FeedFetcher          feedFetcher,
         PlanetManager        planetManager,
-        org.apache.roller.planet.business.PlanetURLStrategy planetUrlStrategy,
-        URLStrategy          urlStrategy) throws WebloggerException { 
+        URLStrategy          urlStrategy) throws WebloggerException {
                 
         this.autoPingManager     = autoPingManager;
         this.bookmarkManager     = bookmarkManager;
@@ -117,7 +115,6 @@ public abstract class WebloggerImpl implements Weblogger {
         this.urlStrategy         = urlStrategy;
         this.feedFetcher         = feedFetcher;
         this.planetManager       = planetManager;
-        this.planetUrlStrategy   = planetUrlStrategy;
 
         Properties props = new Properties();
         try {
@@ -156,7 +153,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getThemeManager()
+     * @see org.apache.roller.weblogger.modelWeblogger#getThemeManager()
      */
     public ThemeManager getThemeManager() {
         return themeManager;
@@ -297,9 +294,6 @@ public abstract class WebloggerImpl implements Weblogger {
         return planetManager;
     }
 
-	public org.apache.roller.planet.business.PlanetURLStrategy getPlanetURLStrategy() {
-		return planetUrlStrategy;
-	}
 
     /**
      * @inheritDoc

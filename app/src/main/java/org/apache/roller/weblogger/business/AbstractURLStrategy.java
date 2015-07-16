@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
@@ -230,5 +233,22 @@ public abstract class AbstractURLStrategy implements URLStrategy {
         
         return url.toString();
     }
-    
+
+    /**
+     * Get URL of a planet's newsfeed.
+     * @param planet URL for the desired planet
+     */
+    public String getPlanetURL(String planet) {
+        StringBuilder url = new StringBuilder();
+        String sep = "?";
+
+        url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
+        url.append("planetrss");
+
+        if (planet != null) {
+            url.append(sep);
+            url.append("planet=").append(planet);
+        }
+        return url.toString();
+    }
 }

@@ -21,7 +21,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.business.PlanetURLStrategy;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
@@ -74,7 +73,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         OAuthManager         oauthManager,
 		FeedFetcher          feedFetcher,
         PlanetManager        planetManager,
-        PlanetURLStrategy    planetUrlStrategy,
         URLStrategy          urlStrategy) throws WebloggerException {
         
         super(
@@ -95,7 +93,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
             oauthManager,
             feedFetcher,
             planetManager,
-            planetUrlStrategy,
             urlStrategy);
         
         this.strategy = strategy;
