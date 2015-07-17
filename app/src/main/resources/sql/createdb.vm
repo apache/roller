@@ -9,7 +9,6 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 -- *****************************************************
 -- Create the tables and indices
 
-
 create table roller_user (
     id              varchar(48) not null primary key,
     username        varchar(255) not null,
@@ -331,10 +330,6 @@ create index plntsbent_sid_idx on planet_subscription_entry(subscription_id);
 
 alter table planet_subscription_entry add constraint pse_subscriptionid_fk
     foreign key (subscription_id) references planet_subscription(id);
-
-
--- create a default planet and group
-insert into planet (id, handle, title) values ('zzz_all_group_zzz', 'all', 'Default Group');
 
 
 -- MEDIA BLOGGING

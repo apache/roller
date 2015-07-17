@@ -45,9 +45,9 @@ import org.apache.roller.weblogger.pojos.Weblog;
 
 
 /**
- * This tasks is responsible for ensuring that the planet group 'all' contains
+ * This task is responsible for ensuring that the planet group 'all' contains
  * a subscription for every weblogs in the Roller system. It also takes care 
- * of deleting subsctiptions for weblogs that no longer exist.
+ * of deleting subscriptions for weblogs that no longer exist.
  */
 public class SyncWebsitesTask extends RollerTaskWithLeasing {
     private static Log log = LogFactory.getLog(SyncWebsitesTask.class);
@@ -147,7 +147,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             if (group == null) {
                 group = new Planet();
                 group.setHandle("all");
-                group.setTitle("all");
+                group.setTitle("All Blogs");
                 pmgr.savePlanet(group);
                 WebloggerFactory.getWeblogger().flush();
             }

@@ -34,7 +34,7 @@ import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
- * Manage planet subscriptions, default planet is "all".
+ * Manage planet subscriptions
  */
 public class PlanetSubscriptions extends PlanetUIAction {
     

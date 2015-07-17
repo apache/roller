@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.planet.business.fetcher;
 
 import java.io.PrintStream;
@@ -38,7 +40,7 @@ public class FetcherException extends RollerException {
     
     
     /**
-     * Print stack trace for exception and for root cause exception if htere is one.
+     * Print stack trace for exception and for root cause exception if there is one.
      * @see java.lang.Throwable#printStackTrace()
      */
     @Override
@@ -54,7 +56,7 @@ public class FetcherException extends RollerException {
     
     
     /**
-     * Print stack trace for exception and for root cause exception if htere is one.
+     * Print stack trace for exception and for root cause exception if there is one.
      * @param s Stream to print to.
      */
     @Override
