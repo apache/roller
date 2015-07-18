@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.planet.business;
@@ -22,6 +25,7 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
+import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -34,11 +38,9 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
     
     public static Log log = LogFactory.getLog(WebloggerRomeFeedFetcherTest.class);
     
-    //User testUser = null;
-    //Weblog testWeblog = null;
-    String feed_url = "weblogger:webloggerFetcherTestWeblog";
-    
-    
+    String rollerFeedUrl = "weblogger:webloggerFetcherTestWeblog";
+    String externalFeedUrl = "http://rollerweblogger.org/roller/feed/entries/atom";
+
     /**
      * All tests in this suite require a user and a weblog.
      */
@@ -71,25 +73,66 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
             throw new Exception("Test teardown failed", ex);
         }
     }
-    
-    
-    public void testFetchSubscription() throws Exception {
+
+    public void testFetchFeed() throws FetcherException {
+        try {
+            FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
+
+            // fetch feed
+            Subscription sub = feedFetcher.fetchSubscription(externalFeedUrl);
+            assertNotNull(sub);
+            assertEquals(externalFeedUrl, sub.getFeedURL());
+            assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
+            assertEquals("Blogging Roller", sub.getTitle());
+            assertNotNull(sub.getLastUpdated());
+            assertTrue(sub.getEntries().size() > 0);
+
+        } catch (FetcherException ex) {
+            log.error("Error fetching feed", ex);
+            throw ex;
+        }
+    }
+
+
+    public void testFetchFeedConditionally() throws FetcherException {
+        try {
+            FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
+
+            // fetch feed
+            Subscription sub = feedFetcher.fetchSubscription(externalFeedUrl);
+            assertNotNull(sub);
+            assertEquals(externalFeedUrl, sub.getFeedURL());
+            assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
+            assertEquals("Blogging Roller", sub.getTitle());
+            assertNotNull(sub.getLastUpdated());
+            assertTrue(sub.getEntries().size() > 0);
+
+            // now do a conditional fetch and we should get back null
+            Subscription updatedSub = feedFetcher.fetchSubscription(externalFeedUrl, sub.getLastUpdated());
+            assertNull(updatedSub);
+
+        } catch (FetcherException ex) {
+            log.error("Error fetching feed", ex);
+            throw ex;
+        }
+    }
+
+    public void testFetchInternalSubscription() throws Exception {
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
 
             // first fetch non-conditionally so we know we should get a Sub
-            Subscription sub = feedFetcher.fetchSubscription(feed_url);
+            Subscription sub = feedFetcher.fetchSubscription(rollerFeedUrl);
             assertNotNull(sub);
-            assertEquals(feed_url, sub.getFeedURL());
+            assertEquals(rollerFeedUrl, sub.getFeedURL());
             assertNotNull(sub.getLastUpdated());
 
             // now do a conditional fetch and we should get back null
-            Subscription updatedSub = feedFetcher.fetchSubscription(feed_url, sub.getLastUpdated());
+            Subscription updatedSub = feedFetcher.fetchSubscription(rollerFeedUrl, sub.getLastUpdated());
             assertNull(updatedSub);
 
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
-    
 }

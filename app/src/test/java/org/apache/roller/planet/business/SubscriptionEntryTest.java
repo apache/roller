@@ -19,7 +19,10 @@
 
 package org.apache.roller.planet.business;
 
+import java.util.Date;
 import junit.framework.TestCase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.Subscription;
@@ -28,67 +31,115 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
- * Test Entry CRUD.
+ * Test planet Entry functionality.
  */
-public class EntryBasicTests extends TestCase {
+public class SubscriptionEntryTest extends TestCase {
     
-    private Subscription testSub = null;
-
+    public static Log log = LogFactory.getLog(SubscriptionEntryTest.class);
+    
     private Planet testPlanet = null;
+    private Subscription testSub = null;
+    private SubscriptionEntry testEntry = null;
 
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
-        testPlanet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
-        testSub = TestUtils.setupSubscription(testPlanet, "entryBasicTest");
+
+        testPlanet = TestUtils.setupPlanet("testPlanet");
+        testSub = TestUtils.setupSubscription(testPlanet, "testSubscription");
+        testEntry = TestUtils.setupEntry(testSub, "testEntry");
+        TestUtils.setupEntry(testSub, "testEntry2");
+
+        WebloggerFactory.getWeblogger().getPlanetManager().savePlanet(testPlanet);
+        WebloggerFactory.getWeblogger().flush();
     }
     
     
     protected void tearDown() throws Exception {
-        TestUtils.teardownSubscription(testSub.getId());
+        TestUtils.teardownPlanet(testPlanet.getHandle());
     }
-    
-    
+
+
     public void testEntryCRUD() throws Exception {
-        
+
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
-        
+
         SubscriptionEntry testEntry = new SubscriptionEntry();
         testEntry.setPermalink("entryBasics");
         testEntry.setTitle("entryBasics");
         testEntry.setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
         testEntry.setSubscription(sub);
-        
+
         // add
         mgr.saveEntry(testEntry);
         TestUtils.endSession(true);
-        
+
         // verify
-        SubscriptionEntry entry = null;
+        SubscriptionEntry entry;
         entry = mgr.getEntryById(testEntry.getId());
         assertNotNull(entry);
         assertEquals("entryBasics", entry.getPermalink());
-        
+
         // modify
         entry.setTitle("foo");
         mgr.saveEntry(entry);
         TestUtils.endSession(true);
-        
+
         // verify
-        entry = null;
         entry = mgr.getEntryById(testEntry.getId());
         assertNotNull(entry);
         assertEquals("foo", entry.getTitle());
-        
+
         // remove
         mgr.deleteEntry(entry);
         TestUtils.endSession(true);
-        
+
         // verify
-        entry = null;
         entry = mgr.getEntryById(testEntry.getId());
         assertNull(entry);
+    }
+
+    public void testEntryLookups() throws Exception {
+        
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
+        
+        // by id
+        SubscriptionEntry entry = mgr.getEntryById(testEntry.getId());
+        assertNotNull(entry);
+        assertEquals("testEntry", entry.getPermalink());
+        
+        // by subscription
+        Subscription sub = mgr.getSubscriptionById(testSub.getId());
+        assertEquals(2, sub.getEntries().size());
+        
+        // by subscription through manager
+        assertEquals(2, mgr.getEntries(sub, 0, 10).size());
+        
+        // by planet
+        Planet planet = mgr.getPlanetById(testPlanet.getId());
+        assertEquals(2, mgr.getEntries(planet, 0, 10).size());
+        
+        // by planet with timeframe constraint
+        assertEquals(0, mgr.getEntries(planet, new Date(), null, 0, 10).size());
+    }
+    
+    
+    public void testDeleteEntries() throws Exception {
+        
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
+        Subscription sub = mgr.getSubscriptionById(testSub.getId());
+        
+        // make sure entries are there
+        assertEquals(2, sub.getEntries().size());
+        
+        // purge entries
+        mgr.deleteEntries(sub);
+        TestUtils.endSession(true);
+        
+        // verify
+        sub = mgr.getSubscriptionById(testSub.getId());
+        assertEquals(0, sub.getEntries().size());
     }
     
 }

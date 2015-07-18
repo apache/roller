@@ -136,15 +136,17 @@ public class PlanetManagerLocalTest extends TestCase {
             syncTask.init();
             syncTask.runTask();
             
-            Planet group = manager.getPlanet("all");
-            assertEquals(1, group.getSubscriptions().size());
+            Planet planet = manager.getPlanet("all");
+            assertEquals(1, planet.getSubscriptions().size());
 
             RefreshRollerPlanetTask refreshTask = new RefreshRollerPlanetTask();
             refreshTask.runTask();
             
-            group = manager.getPlanet("all");
-            List agg = manager.getEntries(group, 0, -1);
+            planet = manager.getPlanet("all");
+            List agg = manager.getEntries(planet, 0, -1);
             assertEquals(3, agg.size());
+
+            TestUtils.teardownPlanet(planet.getHandle());
         }
         catch (Exception e) {
             e.printStackTrace();

@@ -27,58 +27,73 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
- * Test Subscription CRUD.
+ * Test Subscription functionality.
  */
-public class SubscriptionBasicTests extends TestCase {
+public class SubscriptionTest extends TestCase {
+    private Planet testPlanet1 = null;
+
+    protected void setUp() throws Exception {
+        // setup planet
+        TestUtils.setupWeblogger();
+        testPlanet1 = TestUtils.setupPlanet("subFuncPlanet1");
+    }
     
     
+    protected void tearDown() throws Exception {
+        TestUtils.teardownPlanet(testPlanet1.getHandle());
+    }
+
+
     public void testSubscriptionCRUD() throws Exception {
-        
+
         // setup planet
         TestUtils.setupWeblogger();
 
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
 
-        Planet testPlanet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
-        mgr.savePlanet(testPlanet);
-
-        Subscription testSub = new Subscription();
-        testSub.setFeedURL("test_title");
+        Subscription testSub = TestUtils.setupSubscription(testPlanet1, "feed_url");
         testSub.setTitle("test_title");
-        
-        Subscription sub = mgr.getSubscription(testPlanet, testSub.getFeedURL());
-        assertNull(sub);
-        
-        // add
-        mgr.saveSubscription(testSub);
-        TestUtils.endSession(true);
-        
+
         // verify
-        sub = null;
-        sub = mgr.getSubscriptionById(testSub.getId());
+        Subscription sub = mgr.getSubscriptionById(testSub.getId());
         assertNotNull(sub);
-        assertEquals("test_title", sub.getFeedURL());
-        
+        assertEquals("feed_url", sub.getFeedURL());
+
         // modify
         sub.setTitle("foo");
         mgr.saveSubscription(sub);
         TestUtils.endSession(true);
-        
+
         // verify
-        sub = null;
         sub = mgr.getSubscriptionById(testSub.getId());
         assertNotNull(sub);
         assertEquals("foo", sub.getTitle());
-        
+
         // remove
-        mgr.deleteSubscription(sub);
-        TestUtils.endSession(true);
-        
+        TestUtils.teardownSubscription(testSub.getId());
+
         // verify
-        sub = null;
         sub = mgr.getSubscriptionById(testSub.getId());
         assertNull(sub);
-        
     }
-    
+
+    public void testSubscriptionLookups() throws Exception {
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
+        Subscription testSub1 = TestUtils.setupSubscription(testPlanet1, "subFuncSub1");
+        Subscription testSub2 = TestUtils.setupSubscription(testPlanet1, "subFuncSub2");
+
+        // by id
+        Subscription sub = mgr.getSubscriptionById(testSub1.getId());
+        assertNotNull(sub);
+        assertEquals("subFuncSub1", sub.getFeedURL());
+        
+        // by feed url
+        sub = mgr.getSubscription(testPlanet1, testSub2.getFeedURL());
+        assertNotNull(sub);
+        assertEquals("subFuncSub2", sub.getFeedURL());
+        
+        // count
+        assertEquals(2, mgr.getSubscriptionCount());
+    }
+
 }

@@ -153,7 +153,7 @@ public class Planet implements Serializable, Comparable<Planet> {
     }
 
     @OneToMany(targetEntity=org.apache.roller.planet.pojos.Subscription.class,
-            cascade= CascadeType.ALL, mappedBy="planet")
+            cascade=CascadeType.ALL, mappedBy="planet")
     public Set<Subscription> getSubscriptions() {
         return subscriptions;
     }
