@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business.updater;
@@ -42,7 +45,7 @@ public interface FeedUpdater {
      * of the subscription.
      *
      * @param sub The PlanetSubscription to be updated.
-     * @throws org.apache.roller.planet.business.fetcher.FetcherException If there is an error updating the subscription.
+     * @throws org.apache.roller.planet.business.updater.UpdaterException If there is an error updating the subscription.
      */
     void updateSubscription(Subscription sub) throws UpdaterException;
     

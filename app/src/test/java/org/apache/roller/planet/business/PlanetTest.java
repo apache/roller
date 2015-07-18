@@ -19,41 +19,62 @@
 
 package org.apache.roller.planet.business;
 
+import java.util.List;
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
- * Test Planet CRUD.
+ * Test planet Group functionality.
  */
-public class PlanetBasicTests extends TestCase {
+public class PlanetTest extends TestCase {
     
-    public static Log log = LogFactory.getLog(PlanetBasicTests.class);
-    
-    
-    public void testPlanetCRUD() throws Exception {
-        
-        // setup planet
+    protected void setUp() throws Exception {
         TestUtils.setupWeblogger();
+    }
 
+    protected void tearDown() throws Exception {
+    }
+
+    public void testPlanetLookups() throws Exception {
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
+        Planet testPlanet = TestUtils.setupPlanet("planetFuncTest1");
+
+        // lookup planet by id
+        Planet planet = mgr.getPlanetById(testPlanet.getId());
+        assertNotNull(planet);
+        assertEquals("planetFuncTest1", planet.getHandle());
         
-        Planet testPlanet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
+        // lookup planet by handle
+        planet = mgr.getPlanet(testPlanet.getHandle());
+        assertNotNull(planet);
+        assertEquals("planetFuncTest1", planet.getHandle());
+        
+        // lookup all planets in system
+        List<Planet> planets = mgr.getPlanets();
+        assertNotNull(planets);
+        assertEquals(1, planets.size());
+
+        TestUtils.teardownPlanet(testPlanet.getHandle());
+    }
+
+    public void testPlanetCRUD() throws Exception {
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
+
+        Planet localPlanet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
         Planet planet;
-        
+
         planet = mgr.getPlanet("testPlanetHandle");
         assertNull(planet);
-        
+
         // add
-        mgr.savePlanet(testPlanet);
+        mgr.savePlanet(localPlanet);
         TestUtils.endSession(true);
 
         // verify
-        planet = mgr.getPlanetById(testPlanet.getId());
+        planet = mgr.getPlanetById(localPlanet.getId());
         assertNotNull(planet);
         assertEquals("testPlanetHandle", planet.getHandle());
 
@@ -63,17 +84,17 @@ public class PlanetBasicTests extends TestCase {
         TestUtils.endSession(true);
 
         // verify
-        planet = mgr.getPlanetById(testPlanet.getId());
+        planet = mgr.getPlanetById(localPlanet.getId());
         assertNotNull(planet);
         assertEquals("foo", planet.getTitle());
-        
+
         // remove
         mgr.deletePlanet(planet);
         TestUtils.endSession(true);
-        
+
         // verify
-        planet = mgr.getPlanetById(testPlanet.getId());
+        planet = mgr.getPlanetById(localPlanet.getId());
         assertNull(planet);
     }
-    
+
 }

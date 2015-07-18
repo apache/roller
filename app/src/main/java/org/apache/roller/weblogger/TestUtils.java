@@ -639,23 +639,22 @@ public final class TestUtils {
     }
 
     /**
-     * Convenience method that creates a group and stores it.
+     * Convenience method that creates a planet and stores it.
      */
-    public static Planet setupGroup(String handle)
+    public static Planet setupPlanet(String handle)
             throws Exception {
 
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
 
         // store
-        Planet testGroup = new Planet(handle, handle,
-                handle);
-        mgr.savePlanet(testGroup);
+        Planet testPlanet = new Planet(handle, handle, handle);
+        mgr.savePlanet(testPlanet);
 
         // flush
         WebloggerFactory.getWeblogger().flush();
 
         // query to make sure we return the persisted object
-        Planet group = mgr.getPlanetById(testGroup.getId());
+        Planet group = mgr.getPlanetById(testPlanet.getId());
 
         if (group == null) {
             throw new WebloggerException("error inserting new group");
@@ -665,16 +664,16 @@ public final class TestUtils {
     }
 
     /**
-     * Convenience method for removing a group.
+     * Convenience method for removing a planet.
      */
-    public static void teardownGroup(String id) throws Exception {
+    public static void teardownPlanet(String handle) throws Exception {
 
         // lookup
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        Planet group = mgr.getPlanetById(id);
+        Planet planet = mgr.getPlanet(handle);
 
         // remove
-        mgr.deletePlanet(group);
+        mgr.deletePlanet(planet);
 
         // flush
         WebloggerFactory.getWeblogger().flush();
