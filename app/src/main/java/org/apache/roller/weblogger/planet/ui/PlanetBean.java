@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.planet.ui;
@@ -22,9 +25,9 @@ import org.apache.roller.planet.pojos.Planet;
 
 
 /**
- * A simple bean for managing the form data used by the PlanetGroups.
+ * A simple bean for managing the form data used by the Planets.
  */
-public class PlanetGroupsBean {
+public class PlanetBean {
     
     private String id = null;
     private String title = null;
@@ -69,5 +72,5 @@ public class PlanetGroupsBean {
         setTitle(dataHolder.getTitle());
         setHandle(dataHolder.getHandle());
     }
-    
+
 }

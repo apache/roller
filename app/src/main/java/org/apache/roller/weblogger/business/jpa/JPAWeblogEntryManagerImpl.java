@@ -611,7 +611,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             whereClause.append("c.weblogEntry = ?").append(size);
         } else if (csc.getWeblog() != null) {
             params.add(size++, csc.getWeblog());
-            whereClause.append("c.weblogEntry.website = ?").append(size);
+            whereClause.append("c.weblogEntry.weblog = ?").append(size);
         }
         
         if (csc.getSearchText() != null) {
@@ -885,7 +885,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public void applyCommentDefaultsToEntries(Weblog website)
+    public void applyCommentDefaultsToEntries(Weblog weblog)
     throws WebloggerException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("applyCommentDefaults");
@@ -894,9 +894,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // TODO: Non-standard JPA bulk update, using parameter values in set clause
         Query q = strategy.getNamedUpdate(
                 "WeblogEntry.updateAllowComments&CommentDaysByWeblog");
-        q.setParameter(1, website.getDefaultAllowComments());
-        q.setParameter(2, website.getDefaultCommentDays());
-        q.setParameter(3, website);
+        q.setParameter(1, weblog.getDefaultAllowComments());
+        q.setParameter(2, weblog.getDefaultCommentDays());
+        q.setParameter(3, weblog);
         q.executeUpdate();
     }
     

@@ -29,23 +29,23 @@ import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
- * Manage planet groups.
+ * Manage planets.
  */
-public class PlanetGroups extends PlanetUIAction {
+public class Planets extends PlanetUIAction {
     
-    private static Log log = LogFactory.getLog(PlanetGroups.class);
+    private static Log log = LogFactory.getLog(Planets.class);
     
     // a bean to manage submitted data
-    private PlanetGroupsBean bean = new PlanetGroupsBean();
+    private PlanetBean bean = new PlanetBean();
     
-    // the planet group we are working on
-    private Planet group = null;
+    // the planet we are working on
+    private Planet planet = null;
     
     
-    public PlanetGroups() {
+    public Planets() {
         this.actionName = "planets";
         this.desiredMenu = "admin";
-        this.pageTitle = "planetGroups.pagetitle";
+        this.pageTitle = "planets.pagetitle";
     }
     
     @Override
@@ -54,57 +54,54 @@ public class PlanetGroups extends PlanetUIAction {
         if(getBean().getId() != null) {
             try {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                setGroup(pmgr.getPlanetById(getBean().getId()));
+                setPlanet(pmgr.getPlanetById(getBean().getId()));
             } catch(Exception ex) {
-                log.error("Error looking up planet group - " + getBean().getId(), ex);
+                log.error("Error looking up planet - " + getBean().getId(), ex);
             }
         }
     }
 
     
     /** 
-     * Show planet groups page.
+     * Show planets page.
      */
     public String execute() {
         
-        // if we are loading an existing group then populate the bean
-        if(getGroup() != null) {
-            getBean().copyFrom(getGroup());
+        // if we are loading an existing planet then populate the bean
+        if(getPlanet() != null) {
+            getBean().copyFrom(getPlanet());
         }
         
         return LIST;
     }
     
     
-    /** 
-     * Save group.
-     */
     public String save() {
         
         myValidate();
         
         if (!hasActionErrors()) {
             try {
-                Planet planetGroup = getGroup();
-                if(planetGroup == null) {
-                    log.debug("Adding New Group");
-                    planetGroup = new Planet();
+                Planet aPlanet = getPlanet();
+                if(aPlanet == null) {
+                    log.debug("Adding New Planet");
+                    aPlanet = new Planet();
                 } else {
-                    log.debug("Updating Existing Group");
+                    log.debug("Updating Existing Planet");
                 }
 
                 // copy in submitted data
-                getBean().copyTo(planetGroup);
+                getBean().copyTo(aPlanet);
 
                 // save and flush
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                pmgr.savePlanet(planetGroup);
+                pmgr.savePlanet(aPlanet);
                 WebloggerFactory.getWeblogger().flush();
 
-                addMessage("planetGroups.success.saved");
+                addMessage("planets.success.saved");
             } catch(Exception ex) {
-                log.error("Error saving planet group - " + getBean().getId(), ex);
-                addError("planetGroups.error.saved");
+                log.error("Error saving planet - " + getBean().getId(), ex);
+                addError("planets.error.saved");
             }
         }
         
@@ -113,19 +110,19 @@ public class PlanetGroups extends PlanetUIAction {
 
     
     /** 
-     * Delete group, reset form  
+     * Delete planet, reset form
      */
     public String delete() {
         
-        if(getGroup() != null) {
+        if(getPlanet() != null) {
             try {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                pmgr.deletePlanet(getGroup());
+                pmgr.deletePlanet(getPlanet());
                 WebloggerFactory.getWeblogger().flush();
-                addMessage("planetGroups.success.deleted");
+                addMessage("planets.success.deleted");
             } catch(Exception ex) {
-                log.error("Error deleting planet group - "+getBean().getId());
-                addError("Error deleting planet group");
+                log.error("Error deleting planet - "+getBean().getId());
+                addError("Error deleting planet");
             }
         }
         
@@ -134,60 +131,60 @@ public class PlanetGroups extends PlanetUIAction {
     
     
     /** 
-     * Validate posted group 
+     * Validate posted planet
      */
     private void myValidate() {
         
         if(StringUtils.isEmpty(getBean().getTitle())) {
-            addError("planetGroups.error.title");
+            addError("planets.error.title");
         }
         
         if(StringUtils.isEmpty(getBean().getHandle())) {
-            addError("planetGroups.error.handle");
+            addError("planets.error.handle");
         }
         
         if(getBean().getHandle() != null && "all".equals(getBean().getHandle())) {
-            addError("planetGroups.error.nameReserved");
+            addError("planets.error.nameReserved");
         }
         
-        // make sure duplicate group handles are prevented
+        // make sure duplicate planet handles are prevented
     }
     
     
-    public List<Planet> getGroups() {
-        List<Planet> displayGroups = new ArrayList<Planet>();
+    public List<Planet> getPlanets() {
+        List<Planet> displayPlanets = new ArrayList<Planet>();
 
         PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
 
         try {
-            for (Planet planetGroup : pmgr.getPlanets()) {
-                // The "all" group is considered a special group and cannot be
+            for (Planet planet : pmgr.getPlanets()) {
+                // The "all" planet is considered a special planet and cannot be
                 // managed independently
-                if (!planetGroup.getHandle().equals("all")) {
-                    displayGroups.add(planetGroup);
+                if (!planet.getHandle().equals("all")) {
+                    displayPlanets.add(planet);
                 }
             }
         } catch(Exception ex) {
-            log.error("Error getting planet groups - " + getBean().getId());
-            addError("Error getting planet groups");
+            log.error("Error getting planets - " + getBean().getId());
+            addError("Error getting planets");
         }
-        return displayGroups;
+        return displayPlanets;
     }
     
     
-    public PlanetGroupsBean getBean() {
+    public PlanetBean getBean() {
         return bean;
     }
 
-    public void setBean(PlanetGroupsBean bean) {
+    public void setBean(PlanetBean bean) {
         this.bean = bean;
     }
     
-    public Planet getGroup() {
-        return group;
+    public Planet getPlanet() {
+        return planet;
     }
 
-    public void setGroup(Planet group) {
-        this.group = group;
+    public void setPlanet(Planet planet) {
+        this.planet = planet;
     }
 }

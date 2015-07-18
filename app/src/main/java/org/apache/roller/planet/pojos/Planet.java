@@ -206,5 +206,9 @@ public class Planet implements Serializable, Comparable<Planet> {
         }
         return catArray;
     }
-    
+
+    @Transient
+    public String getAbsoluteURL() {
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getPlanetURL(getHandle());
+    }
 }

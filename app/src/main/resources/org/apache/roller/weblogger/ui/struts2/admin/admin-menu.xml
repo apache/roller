@@ -23,7 +23,9 @@ See comments in editor-menu.xml for info about attributes.
                    subactions="commonPingTargetAdd,commonPingTargetEdit" />
 
         <menu-item action="planets"
-                   name="tabbedmenu.admin.planets" enabledProperty="planet.aggregator.enabled"/>
+                   name="tabbedmenu.admin.planets" enabledProperty="planet.aggregator.enabled"
+                   subactions="planetSubscriptions"
+                   />
 
         <menu-item action="cacheInfo"
                    name="tabbedmenu.admin.cacheInfo" />

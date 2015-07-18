@@ -232,7 +232,7 @@
         </action>
         
         <action name="planets!*" method="{1}"
-                class="org.apache.roller.weblogger.planet.ui.PlanetGroups">
+                class="org.apache.roller.weblogger.planet.ui.Planets">
             <result name="list" type="tiles">.Planets</result>
         </action>
     </package>

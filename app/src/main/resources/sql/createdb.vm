@@ -307,7 +307,7 @@ create table planet_subscription (
     inbound_links    integer default -1,
     inbound_blogs    integer default -1
 );
-alter table planet_subscription add constraint plsb_feed_url_uq unique (feed_url);
+alter table planet_subscription add constraint plsb_feed_url_uq unique (planetid, feed_url);
 create index plnt_subs_idx on planet_subscription(planetid);
 
 alter table planet_subscription add constraint ps_planetid_fk

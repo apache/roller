@@ -243,7 +243,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
         String sep = "?";
 
         url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
-        url.append("planetrss");
+        url.append("/planetrss");
 
         if (planet != null) {
             url.append(sep);
