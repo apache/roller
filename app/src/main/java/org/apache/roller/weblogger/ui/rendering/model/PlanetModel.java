@@ -169,12 +169,12 @@ public class PlanetModel implements Model {
      * @param sinceDays   Only consider weblogs updated in the last sinceDays
      * @param length         Max number of results to return
      */
-    public List<Subscription> getRankedSubscriptions(String groupHandle, int sinceDays, int length) {
+    public List<Subscription> getRankedSubscriptions(String planetHandle, int sinceDays, int length) {
         List<Subscription> list = new ArrayList<Subscription>();
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
-            Planet planetGroup = planetManager.getPlanet(groupHandle);
-            List<Subscription> subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
+            Planet planet = planetManager.getPlanet(planetHandle);
+            List<Subscription> subs = planetManager.getTopSubscriptions(planet, 0, length);
             for (Subscription sub : subs) {
                 // TODO needs pojo wrapping from planet
                 list.add(sub);
@@ -187,7 +187,7 @@ public class PlanetModel implements Model {
     
     
     /**
-     * Get PlanetGroups defined.
+     * Get Planets defined.
      * @return List of Planet groups defined.
      */
     public List<Planet> getPlanets() {

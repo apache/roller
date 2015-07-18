@@ -203,7 +203,7 @@
     </definition>
     
     <definition name=".Planets" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetGroups.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/Planets.jsp" />
     </definition>
 
     <!-- weblog editor pages (and associates) -->

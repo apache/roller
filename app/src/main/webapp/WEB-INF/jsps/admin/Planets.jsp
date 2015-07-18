@@ -14,17 +14,20 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<p class="subtitle"><s:text name="planetGroups.subtitle" /></p>
+<p class="subtitle"><s:text name="planets.subtitle" /></p>
 
 <p>
-    <s:if test="group == null" >
-        <s:text name="planetGroups.prompt.add" />
+    <s:if test="planet == null" >
+        <s:text name="planets.prompt.add" />
     </s:if>
     <s:else>
-        <s:text name="planetGroups.prompt.edit" />
+        <s:text name="planets.prompt.edit" />
     </s:else>
 </p>
 
@@ -33,15 +36,15 @@
     <s:hidden name="bean.id" />
     
     <div class="formrow">
-        <label for="title" class="formrow" /><s:text name="planetGroups.title" /></label>
+        <label for="title" class="formrow" /><s:text name="planets.title" /></label>
         <s:textfield name="bean.title" size="40" maxlength="255" />
-        <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planetGroups.tip.title" />' />
+        <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planets.tip.title" />' />
     </div>
     
     <div class="formrow">
-        <label for="handle" class="formrow" /><s:text name="planetGroups.handle" /></label>
+        <label for="handle" class="formrow" /><s:text name="planets.handle" /></label>
         <s:textfield name="bean.handle" size="40" maxlength="255" />
-        <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planetGroups.tip.handle" />' />
+        <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planets.tip.handle" />' />
     </div>
     
     <p />
@@ -52,9 +55,9 @@
         &nbsp;
         <input type="button" 
                value='<s:text name="generic.cancel" />'
-               onclick="window.location='<s:url action="planetGroups"/>'"/>
+               onclick="window.location='<s:url action="planets"/>'"/>
         
-        <s:if test="group != null" >
+        <s:if test="planet != null" >
             &nbsp;&nbsp;
             <s:url var="deleteUrl" action="planets!delete">
                 <s:param name="bean.id" value="%{bean.id}" />
@@ -69,26 +72,29 @@
 
 <br style="clear:left" />
 
-<h2><s:text name="planetGroups.existingTitle" /></h2>
-<p><i><s:text name="planetGroups.existingPrompt" /></i></p>
+<h2><s:text name="planets.existingTitle" /></h2>
+<p><i><s:text name="planets.existingPrompt" /></i></p>
 
 <table class="rollertable">
 <tr class="rHeaderTr">
     <th class="rollertable" width="30%">
-        <s:text name="planetGroups.column.title" />
+        <s:text name="planets.column.title" />
     </th>
-    <th class="rollertable" width="50%">
-        <s:text name="planetGroups.column.handle" />
+    <th class="rollertable" width="45%">
+        <s:text name="planets.column.handle" />
     </th>
     <th class="rollertable" width="10%">
         <s:text name="generic.edit" />
     </th>
     <th class="rollertable" width="10%">
-        <s:text name="planetGroups.column.subscriptions" />
+        <s:text name="planets.column.subscriptions" />
+    </th>
+    <th class="rollertable" width="5%">
+        <s:text name="planets.column.viewFeed" />
     </th>
 </tr>
 
-<s:iterator id="group" value="groups" status="rowstatus">
+<s:iterator id="planet" value="planets" status="rowstatus">
     <s:if test="#rowstatus.odd == true">
         <tr class="rollertable_odd">
     </s:if>
@@ -97,29 +103,35 @@
     </s:else>
     
     <td class="rollertable">
-        <s:property value="#group.title" />
+        <s:property value="#planet.title" />
     </td>
     
     <td class="rollertable">
-        <s:property value="#group.handle" />
+        <s:property value="#planet.handle" />
     </td>
     
     <td class="rollertable">
-        <s:url var="groupUrl" action="planets">
-            <s:param name="bean.id" value="#group.id" />
+        <s:url var="planetUrl" action="planets">
+            <s:param name="bean.id" value="#planet.id" />
         </s:url>
-        <s:a href="%{groupUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
-                                     title="<s:text name='planetGroups.edit.tip' />" /></s:a>
+        <s:a href="%{planetUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
+                                     title="<s:text name='planets.edit.tip' />" /></s:a>
     </td>       
     
     <td class="rollertable">
         <s:url var="subUrl" action="planetSubscriptions">
-            <s:param name="planetHandle" value="#group.handle" />
+            <s:param name="planetHandle" value="#planet.handle" />
         </s:url>
         <s:a href="%{subUrl}"><img src='<s:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
-                                   title="<s:text name='planetGroups.subscriptions.tip' />" /></s:a>
+                                   title="<s:text name='planets.subscriptions.tip' />" /></s:a>
     </td>       
     
+    <td class="rollertable" align="center">
+        <a href='<s:property value="#planet.absoluteURL" />'>
+            <img src='<s:url value="/images/world_go.png"/>' border="0" alt="icon" title="<s:text name='planets.column.viewFeed.tip' />" />
+        </a>
+    </td>
+
     </tr>
 </s:iterator>
 </table>
