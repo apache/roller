@@ -98,7 +98,7 @@
 
                        <tr>
                            <td class="mm_subtable_label"><s:text name='yourWebsites.todaysHits' /></td>   
-                           <td><s:property value="#perms.weblog.todaysHits" /></td>
+                           <td><s:property value="#perms.weblog.hitsToday" /></td>
                        </tr>
                        
                    </table>

@@ -31,8 +31,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.pojos.WeblogHitCount;
-
 
 /**
  * Interface to weblog entry, category and comment management.
@@ -278,95 +276,6 @@ public interface WeblogEntryManager {
      */
     boolean getTagComboExists(List tags, Weblog weblog)
         throws WebloggerException;
-    
-    /**
-     * Get a HitCountData by id.
-     *
-     * @param id The HitCountData id.
-     * @return The HitCountData object, or null if it wasn't found.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    WeblogHitCount getHitCount(String id) throws WebloggerException;
-    
-    
-    /**
-     * Get a HitCountData by weblog.
-     *
-     * @param weblog The WebsiteData that you want the hit count for.
-     * @return The HitCountData object, or null if it wasn't found.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    WeblogHitCount getHitCountByWeblog(Weblog weblog)
-        throws WebloggerException;
-    
-    
-    /**
-     * Get HitCountData objects for the hotest weblogs.
-     *
-     * The results may be constrained to a certain number of days back from the
-     * current time, as well as pagable via the offset and length params.
-     *
-     * The results are ordered by highest counts in descending order, and any
-     * weblogs which are not active or enabled are not included.
-     *
-     * @param sinceDays Number of days in the past to consider.
-     * @param offset What index in the results to begin from.
-     * @param length The number of results to return.
-     * @return The list of HitCountData objects ranked by hit count, descending.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    List<WeblogHitCount> getHotWeblogs(int sinceDays, int offset, int length)
-        throws WebloggerException;
-    
-    
-    /**
-     * Save a HitCountData object.
-     *
-     * @param hitCount The HitCountData object to save.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    void saveHitCount(WeblogHitCount hitCount) throws WebloggerException;
-    
-    
-    /**
-     * Remove a HitCountData object.
-     *
-     * @param hitCount The HitCountData object to remove.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    void removeHitCount(WeblogHitCount hitCount) throws WebloggerException;
-    
-    
-    /**
-     * Increment the hit count for a weblog by a certain amount.
-     *
-     * This is basically a convenience method for doing a lookup, modify, save
-     * of a HitCountData object.
-     *
-     * @param weblog The WebsiteData object to increment the count for.
-     * @param amount How much to increment by.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    void incrementHitCount(Weblog weblog, int amount)
-        throws WebloggerException;
-    
-    
-    /**
-     * Reset the hit counts for all weblogs.  This sets the counts back to 0.
-     *
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    void resetAllHitCounts() throws WebloggerException;
-    
-    
-    /**
-     * Reset the hit counts for a single weblog.  This sets the count to 0.
-     *
-     * @param weblog The WebsiteData object to reset the count for.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    void resetHitCount(Weblog weblog) throws WebloggerException;
-
     
     /**
      * Get site-wide comment count 

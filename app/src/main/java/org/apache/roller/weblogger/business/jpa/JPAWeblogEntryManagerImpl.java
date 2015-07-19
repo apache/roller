@@ -45,7 +45,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
-import org.apache.roller.weblogger.pojos.WeblogHitCount;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -942,7 +941,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
         
-        List<TagStat> results = new ArrayList<TagStat>(limit >= 0 ? limit : 25);
+        List<TagStat> results = new ArrayList<>(limit >= 0 ? limit : 25);
         
         if (queryResults != null) {
             for (Object obj : queryResults) {
@@ -1162,132 +1161,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 "WeblogEntryTagAggregate.removeByTotalLessEqual");
         removeq.setParameter(1, 0);
         removeq.executeUpdate();
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public WeblogHitCount getHitCount(String id) throws WebloggerException {
-        
-        // do lookup
-        return (WeblogHitCount) strategy.load(WeblogHitCount.class, id);
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public WeblogHitCount getHitCountByWeblog(Weblog weblog)
-    throws WebloggerException {
-        TypedQuery<WeblogHitCount> q = strategy.getNamedQuery("WeblogHitCount.getByWeblog", WeblogHitCount.class);
-        q.setParameter(1, weblog);
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public List<WeblogHitCount> getHotWeblogs(int sinceDays, int offset, int length)
-    throws WebloggerException {
-        
-        // figure out start date
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
-
-        TypedQuery<WeblogHitCount> query = strategy.getNamedQuery(
-                "WeblogHitCount.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
-                WeblogHitCount.class);
-        query.setParameter(1, startDate);
-        
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }        
-        return query.getResultList();
-    }
-    
-    
-    /**
-     * @inheritDoc
-     */
-    public void saveHitCount(WeblogHitCount hitCount) throws WebloggerException {
-        this.strategy.store(hitCount);
-    }
-    
-    
-    /**
-     * @inheritDoc
-     */
-    public void removeHitCount(WeblogHitCount hitCount) throws WebloggerException {
-        this.strategy.remove(hitCount);
-    }
-    
-    
-    /**
-     * @inheritDoc
-     */
-    public void incrementHitCount(Weblog weblog, int amount)
-    throws WebloggerException {
-        
-        if(amount == 0) {
-            throw new WebloggerException("Tag increment amount cannot be zero.");
-        }
-        
-        if(weblog == null) {
-            throw new WebloggerException("Website cannot be NULL.");
-        }
-
-        TypedQuery<WeblogHitCount> q = strategy.getNamedQuery("WeblogHitCount.getByWeblog", WeblogHitCount.class);
-        q.setParameter(1, weblog);
-        WeblogHitCount hitCount;
-        try {
-            hitCount = q.getSingleResult();
-        } catch (NoResultException e) {
-            hitCount = null;
-        }
-        
-        // create it if it doesn't exist
-        if(hitCount == null && amount > 0) {
-            hitCount = new WeblogHitCount();
-            hitCount.setWeblog(weblog);
-            hitCount.setDailyHits(amount);
-            strategy.store(hitCount);
-        } else if(hitCount != null) {
-            hitCount.setDailyHits(hitCount.getDailyHits() + amount);
-            strategy.store(hitCount);
-        }
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public void resetAllHitCounts() throws WebloggerException {       
-        Query q = strategy.getNamedUpdate("WeblogHitCount.updateDailyHitCountZero");
-        q.executeUpdate();
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public void resetHitCount(Weblog weblog) throws WebloggerException {
-        TypedQuery<WeblogHitCount> q = strategy.getNamedQuery("WeblogHitCount.getByWeblog", WeblogHitCount.class);
-        q.setParameter(1, weblog);
-        WeblogHitCount hitCount;
-        try {
-            hitCount = q.getSingleResult();
-            hitCount.setDailyHits(0);
-            strategy.store(hitCount);
-        } catch (NoResultException e) {
-            // ignore: no hit count for weblog
-        }       
-
     }
     
     /**

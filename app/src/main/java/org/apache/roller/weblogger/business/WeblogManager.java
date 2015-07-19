@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
@@ -28,7 +29,6 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-
 
 /**
  * Interface to weblog and weblog custom template management.
@@ -199,5 +199,63 @@ public interface WeblogManager {
      * Release any resources held by manager.
      */
     void release();
+
+    /**
+     * Get a HitCountData by weblog.
+     *
+     * @param weblog The Weblog that you want the hit count for.
+     * @return The number of hits today stored for the weblog.
+     * @throws WebloggerException If weblog does not exist or other problem with the backend.
+     */
+    int getHitCount(Weblog weblog)
+            throws WebloggerException;
+
+    /**
+     * Get HitCountData objects for the hotest weblogs.
+     *
+     * The results may be constrained to a certain number of days back from the
+     * current time, as well as pagable via the offset and length params.
+     *
+     * The results are ordered by highest counts in descending order, and any
+     * weblogs which are not active or enabled are not included.
+     *
+     * @param sinceDays Number of days in the past to consider.
+     * @param offset What index in the results to begin from.
+     * @param length The number of results to return.
+     * @return A Map of Weblog ID, count ranked by hit count, descending.
+     * @throws WebloggerException If there was a problem with the backend.
+     */
+    LinkedHashMap<String, Integer> getHotWeblogs(int sinceDays, int offset, int length)
+            throws WebloggerException;
+
+
+    /**
+     * Reset the hit counts for all weblogs.  This sets the counts back to 0.
+     *
+     * @throws WebloggerException If there was a problem with the backend.
+     */
+    void resetAllHitCounts() throws WebloggerException;
+
+
+    /**
+     * Reset the hit counts for a single weblog.  This sets the count to 0.
+     *
+     * @param weblog The WebsiteData object to reset the count for.
+     * @throws WebloggerException If there was a problem with the backend.
+     */
+    void resetHitCount(Weblog weblog) throws WebloggerException;
+
+    /**
+     * Increment the hit count for a weblog by a certain amount.
+     *
+     * This is basically a convenience method for doing a lookup, modify, save
+     * of hit data
+     *
+     * @param weblog The weblog object to increment the count for.
+     * @param amount How much to increment by.
+     * @throws WebloggerException If there was a problem with the backend.
+     */
+    void incrementHitCount(Weblog weblog, int amount)
+            throws WebloggerException;
 
 }

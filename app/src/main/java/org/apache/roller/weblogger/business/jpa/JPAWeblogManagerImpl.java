@@ -57,10 +57,12 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -669,6 +671,72 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List<Long> results = strategy.getNamedQuery(
                 "Weblog.getCountAllDistinct", Long.class).getResultList();
         return results.get(0);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public int getHitCount(Weblog weblog)
+            throws WebloggerException {
+        Weblog copy = getWeblog(weblog.getId());
+        return copy.getHitsToday();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public LinkedHashMap<String, Integer> getHotWeblogs(int sinceDays, int offset, int length)
+            throws WebloggerException {
+
+        // figure out start date
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
+
+        TypedQuery<Object[]> query = strategy.getNamedQuery(
+                "Weblog.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
+                Object[].class);
+        query.setParameter(1, startDate);
+
+        if (offset != 0) {
+            query.setFirstResult(offset);
+        }
+        if (length != -1) {
+            query.setMaxResults(length);
+        }
+
+        List<Object[]> resultList = query.getResultList();
+        LinkedHashMap<String, Integer> resultMap = new LinkedHashMap<>(resultList.size());
+        for (Object[] result : resultList) {
+            resultMap.put((String) result[0], (Integer) result[1]);
+        }
+        return resultMap;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public void resetAllHitCounts() throws WebloggerException {
+        Query q = strategy.getNamedUpdate("Weblog.updateDailyHitCountZero");
+        q.executeUpdate();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public void resetHitCount(Weblog weblog) throws WebloggerException {
+        weblog.setHitsToday(0);
+        strategy.store(weblog);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public void incrementHitCount(Weblog weblog, int amount)
+            throws WebloggerException {
+        weblog.setHitsToday(getHitCount(weblog) + amount);
+        strategy.store(weblog);
     }
 
 }

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.runnable;
@@ -23,8 +26,8 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 
 
 /**
@@ -123,7 +126,7 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
         try {
             log.info("task started");
             
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
             mgr.resetAllHitCounts();
             WebloggerFactory.getWeblogger().flush();
             

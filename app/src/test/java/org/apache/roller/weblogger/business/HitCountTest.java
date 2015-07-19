@@ -14,19 +14,23 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashMap;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -63,6 +67,7 @@ public class HitCountTest extends TestCase {
         try {
             testUser = TestUtils.setupUser("hitCountTestUser");
             testWeblog = TestUtils.setupWeblog("hitCountTestWeblog", testUser);
+
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
@@ -87,148 +92,69 @@ public class HitCountTest extends TestCase {
      * Test basic persistence operations ... Create, Update, Delete.
      */
     public void testHitCountCRUD() throws Exception {
-        
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
-        WeblogHitCount testCount = new WeblogHitCount();
-        testCount.setWeblog(testWeblog);
-        testCount.setDailyHits(10);
-        
-        // create
-        mgr.saveHitCount(testCount);
-        String id = testCount.getId();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        Weblog aWeblog = mgr.getWeblog(testWeblog.getId());
+        int oldHits = aWeblog.getHitsToday();
+        aWeblog.setHitsToday(oldHits + 10);
+        mgr.saveWeblog(aWeblog);
         TestUtils.endSession(true);
         
-        // make sure it was created
-        WeblogHitCount hitCount;
-        hitCount = mgr.getHitCount(id);
-        assertNotNull(hitCount);
-        assertEquals(testCount, hitCount);
-        assertEquals(10, hitCount.getDailyHits());
-        
-        // update
-        hitCount.setDailyHits(25);
-        mgr.saveHitCount(hitCount);
-        TestUtils.endSession(true);
-        
-        // make sure it was updated
-        hitCount = mgr.getHitCount(id);
-        assertNotNull(hitCount);
-        assertEquals(testCount, hitCount);
-        assertEquals(25, hitCount.getDailyHits());
-        
-        // delete
-        mgr.removeHitCount(hitCount);
-        TestUtils.endSession(true);
-        
-        // make sure it was deleted
-        hitCount = mgr.getHitCount(id);
-        assertNull(hitCount);
-    }
-    
-    
-    public void testHitCountLookups() throws Exception {
-        
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogHitCount testCount = new WeblogHitCount();
-        testCount.setWeblog(testWeblog);
-        testCount.setDailyHits(10);
-        
-        // create
-        mgr.saveHitCount(testCount);
-        String id = testCount.getId();
-        TestUtils.endSession(true);
-        
-        // test lookup by id
-        WeblogHitCount hitCount;
-        hitCount = mgr.getHitCount(id);
-        assertNotNull(hitCount);
-        assertEquals(testCount, hitCount);
-        assertEquals(10, hitCount.getDailyHits());
-        
+        // make sure it was stored
+        aWeblog = mgr.getWeblog(testWeblog.getId());
+        assertNotNull(aWeblog);
+        assertEquals(aWeblog, testWeblog);
+        assertEquals(oldHits + 10, aWeblog.getHitsToday());
+
         // test lookup by weblog
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        hitCount = mgr.getHitCountByWeblog(testWeblog);
-        assertNotNull(hitCount);
-        assertEquals(testCount, hitCount);
-        assertEquals(10, hitCount.getDailyHits());
-        
-        // delete
-        mgr.removeHitCount(hitCount);
-        TestUtils.endSession(true);
-        
-        // make sure it was deleted
-        hitCount = mgr.getHitCount(id);
-        assertNull(hitCount);
+        int hitCount = mgr.getHitCount(testWeblog);
+        assertEquals(oldHits + 10, hitCount);
     }
-    
-    
+
     public void testIncrementHitCount() throws Exception {
-        
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
-        WeblogHitCount testCount = new WeblogHitCount();
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        testCount.setWeblog(testWeblog);
-        testCount.setDailyHits(10);
-        
-        // create
-        mgr.saveHitCount(testCount);
-        String id = testCount.getId();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        Weblog aWeblog = TestUtils.getManagedWebsite(testWeblog);
+        aWeblog.setHitsToday(10);
+        mgr.saveWeblog(aWeblog);
         TestUtils.endSession(true);
         
         // make sure it was created
-        WeblogHitCount hitCount;
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        hitCount = mgr.getHitCountByWeblog(testWeblog);
-        assertNotNull(hitCount);
-        assertEquals(10, hitCount.getDailyHits());
+        aWeblog = TestUtils.getManagedWebsite(testWeblog);
+        assertNotNull(aWeblog);
+        assertEquals(10, aWeblog.getHitsToday());
         
         // increment
-        mgr.incrementHitCount(testWeblog, 25);
+        mgr.incrementHitCount(aWeblog, 25);
         TestUtils.endSession(true);
         
         // make sure it was incremented properly
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        hitCount = mgr.getHitCountByWeblog(testWeblog);
-        assertNotNull(hitCount);
-        assertEquals(35, hitCount.getDailyHits());
-        
-        // delete
-        mgr.removeHitCount(hitCount);
-        TestUtils.endSession(true);
-        
-        // make sure it was deleted
-        hitCount = mgr.getHitCount(id);
-        assertNull(hitCount);
+        int hitCount = mgr.getHitCount(testWeblog);
+        assertEquals(35, hitCount);
     }
     
     
     public void testResetHitCounts() throws Exception {
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         testUser = TestUtils.getManagedUser(testUser);
         Weblog blog1 = TestUtils.setupWeblog("hitCntTest1", testUser);
         Weblog blog2 = TestUtils.setupWeblog("hitCntTest2", testUser);
         Weblog blog3 = TestUtils.setupWeblog("hitCntTest3", testUser);
         
-        WeblogHitCount cnt1 = TestUtils.setupHitCount(blog1, 10);
-        WeblogHitCount cnt2 = TestUtils.setupHitCount(blog2, 20);
-        WeblogHitCount cnt3 = TestUtils.setupHitCount(blog3, 30);
-        
+        blog1.setHitsToday(10);
+        blog2.setHitsToday(20);
+        blog3.setHitsToday(30);
+
         TestUtils.endSession(true);
         
         try {
             // make sure data was properly initialized
-            WeblogHitCount testCount;
-            testCount = mgr.getHitCount(cnt1.getId());
-            assertEquals(10, testCount.getDailyHits());
-            testCount = mgr.getHitCount(cnt2.getId());
-            assertEquals(20, testCount.getDailyHits());
-            testCount = mgr.getHitCount(cnt3.getId());
-            assertEquals(30, testCount.getDailyHits());
+            int testCount;
+            testCount = mgr.getHitCount(blog1);
+            assertEquals(10, testCount);
+            testCount = mgr.getHitCount(blog2);
+            assertEquals(20, testCount);
+            testCount = mgr.getHitCount(blog3);
+            assertEquals(30, testCount);
 
             // reset count for one weblog
             blog1 = TestUtils.getManagedWebsite(blog1);
@@ -236,30 +162,27 @@ public class HitCountTest extends TestCase {
             TestUtils.endSession(true);
 
             // make sure it reset only one weblog
-            testCount = mgr.getHitCount(cnt1.getId());
-            assertEquals(0, testCount.getDailyHits());
-            testCount = mgr.getHitCount(cnt2.getId());
-            assertEquals(20, testCount.getDailyHits());
-            testCount = mgr.getHitCount(cnt3.getId());
-            assertEquals(30, testCount.getDailyHits());
+            testCount = mgr.getHitCount(blog1);
+            assertEquals(0, testCount);
+            testCount = mgr.getHitCount(blog2);
+            assertEquals(20, testCount);
+            testCount = mgr.getHitCount(blog3);
+            assertEquals(30, testCount);
 
             // reset all counts
             mgr.resetAllHitCounts();
             TestUtils.endSession(true);
 
             // make sure it reset all counts
-            testCount = mgr.getHitCount(cnt1.getId());
-            assertEquals(0, testCount.getDailyHits());
-            testCount = mgr.getHitCount(cnt2.getId());
-            assertEquals(0, testCount.getDailyHits());
-            testCount = mgr.getHitCount(cnt3.getId());
-            assertEquals(0, testCount.getDailyHits());
+            testCount = mgr.getHitCount(blog1);
+            assertEquals(0, testCount);
+            testCount = mgr.getHitCount(blog2);
+            assertEquals(0, testCount);
+            testCount = mgr.getHitCount(blog3);
+            assertEquals(0, testCount);
         
         } finally {
             // cleanup
-            TestUtils.teardownHitCount(cnt1.getId());
-            TestUtils.teardownHitCount(cnt2.getId());
-            TestUtils.teardownHitCount(cnt3.getId());
             TestUtils.teardownWeblog(blog1.getId());
             TestUtils.teardownWeblog(blog2.getId());
             TestUtils.teardownWeblog(blog3.getId());
@@ -269,45 +192,43 @@ public class HitCountTest extends TestCase {
     
     public void testHotWeblogs() throws Exception {
         
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         testUser = TestUtils.getManagedUser(testUser);
         Weblog blog1 = TestUtils.setupWeblog("hitCntHotTest1", testUser);
         Weblog blog2 = TestUtils.setupWeblog("hitCntHotTest2", testUser);
         Weblog blog3 = TestUtils.setupWeblog("hitCntHotTest3", testUser);
         
-        WeblogHitCount cnt1 = TestUtils.setupHitCount(blog1, 10);
-        WeblogHitCount cnt2 = TestUtils.setupHitCount(blog2, 20);
-        WeblogHitCount cnt3 = TestUtils.setupHitCount(blog3, 30);
-        
+        blog1.setHitsToday(10);
+        blog2.setHitsToday(20);
+        blog3.setHitsToday(30);
+
         TestUtils.endSession(true);
         
         // make sure data was properly initialized
-        WeblogHitCount testCount;
-        testCount = mgr.getHitCount(cnt1.getId());
-        assertEquals(10, testCount.getDailyHits());
-        testCount = mgr.getHitCount(cnt2.getId());
-        assertEquals(20, testCount.getDailyHits());
-        testCount = mgr.getHitCount(cnt3.getId());
-        assertEquals(30, testCount.getDailyHits());
+        int testCount;
+        testCount = mgr.getHitCount(blog1);
+        assertEquals(10, testCount);
+        testCount = mgr.getHitCount(blog2);
+        assertEquals(20, testCount);
+        testCount = mgr.getHitCount(blog3);
+        assertEquals(30, testCount);
         
         // get hot weblogs
-        List hotBlogs = mgr.getHotWeblogs(1, 0, 5);
+        LinkedHashMap<String, Integer> hotBlogs = mgr.getHotWeblogs(1, 0, 5);
         assertNotNull(hotBlogs);
         assertEquals(3, hotBlogs.size());
         
         // also check ordering and values
-        WeblogHitCount hitCount;
-        Iterator it = hotBlogs.iterator();
+        int hitCount;
+        Collection<Integer> list = hotBlogs.values();
+        Iterator it = list.iterator();
         for (int i=3; it.hasNext(); i--) {
-            hitCount = (WeblogHitCount) it.next();
-            assertEquals(i*10, hitCount.getDailyHits());
+            hitCount = (Integer) it.next();
+            assertEquals(i*10, hitCount);
         }
         
         // cleanup
-        TestUtils.teardownHitCount(cnt1.getId());
-        TestUtils.teardownHitCount(cnt2.getId());
-        TestUtils.teardownHitCount(cnt3.getId());
         TestUtils.teardownWeblog(blog1.getId());
         TestUtils.teardownWeblog(blog2.getId());
         TestUtils.teardownWeblog(blog3.getId());

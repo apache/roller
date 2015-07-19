@@ -358,8 +358,8 @@ public final class WeblogWrapper {
         return wrappedCollection;
     }
 
-    public int getTodaysHits() {
-        return this.pojo.getTodaysHits();
+    public int getHitsToday() {
+        return this.pojo.getHitsToday();
     }
     
     public List<TagStat> getPopularTags(int sinceDays,int length) {
