@@ -19,9 +19,7 @@
 
 -- planet tables
 drop table planet_subscription_entry;
-drop table planet_group_subscription;
 drop table planet_subscription;
-drop table planet_group;
 drop table planet;
 
 -- non-associated tables
@@ -39,7 +37,6 @@ drop table roller_mediafiledir;
 
 
 -- core services tables
-drop table roller_hitcounts;
 drop table roller_comment;
 drop table roller_weblogentrytag;
 drop table roller_weblogentrytagagg;

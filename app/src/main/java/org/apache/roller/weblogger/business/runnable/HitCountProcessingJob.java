@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.runnable;
@@ -27,7 +30,6 @@ import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -53,8 +55,7 @@ public class HitCountProcessingJob implements Job {
     public void execute() {
         
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
+
         HitCountQueue hitCounter = HitCountQueue.getInstance();
         
         // first get the current set of hits
@@ -64,7 +65,7 @@ public class HitCountProcessingJob implements Job {
         hitCounter.resetHits();
         
         // tally the counts, grouped by weblog handle
-        Map<String, Long> hitsTally = new HashMap<String, Long>();
+        Map<String, Long> hitsTally = new HashMap<>();
         for (String weblogHandle : currentHits) {
             Long count = hitsTally.get(weblogHandle);
             if(count == null) {
@@ -83,7 +84,7 @@ public class HitCountProcessingJob implements Job {
             for (Map.Entry<String, Long> entry : hitsTally.entrySet()) {
                 try {
                     weblog = wmgr.getWeblogByHandle(entry.getKey());
-                    emgr.incrementHitCount(weblog, entry.getValue().intValue());
+                    wmgr.incrementHitCount(weblog, entry.getValue().intValue());
                 } catch (WebloggerException ex) {
                     log.error(ex);
                 }

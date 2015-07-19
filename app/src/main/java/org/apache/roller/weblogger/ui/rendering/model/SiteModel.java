@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -29,12 +31,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.TagStat;
-import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.User;
@@ -436,9 +438,17 @@ public class SiteModel implements Model {
         
         List<StatCount> results = new ArrayList<StatCount>();
         try {
-            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            List<WeblogHitCount> hotBlogs = mgr.getHotWeblogs(sinceDays, 0, length);
-            
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            LinkedHashMap<String, Integer> hotBlogs = mgr.getHotWeblogs(sinceDays, 0, length);
+
+            for (Map.Entry<String, Integer> item : hotBlogs.entrySet()) {
+                StatCount statCount = new StatCount(
+                  item.getKey(), item.getKey(), item.getKey(), "statCount.weblogDayHits", item.getValue()
+                );
+                statCount.setWeblogHandle(item.getKey());
+                results.add(statCount);
+            }
+/*
             for (WeblogHitCount hitCount : hotBlogs) {
                 StatCount statCount = new StatCount(
                     hitCount.getWeblog().getId(),
@@ -449,7 +459,7 @@ public class SiteModel implements Model {
                 statCount.setWeblogHandle(hitCount.getWeblog().getHandle());
                 results.add(statCount);              
             }
-            
+*/
         } catch (Exception e) {
             log.error("ERROR: fetching hot weblog list", e);
         }

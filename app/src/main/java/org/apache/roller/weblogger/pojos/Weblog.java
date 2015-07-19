@@ -73,7 +73,11 @@ import javax.persistence.Transient;
         @NamedQuery(name="Weblog.getCountAllDistinct",
                 query="SELECT COUNT(w) FROM Weblog w"),
         @NamedQuery(name="Weblog.getCountByHandleLike",
-                query="SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1")
+                query="SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1"),
+        @NamedQuery(name="Weblog.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
+                query="SELECT w.id, w.hitsToday FROM Weblog w WHERE w.visible = true AND w.active = true AND w.lastModified > ?1 AND w.hitsToday > 0 ORDER BY w.hitsToday DESC"),
+        @NamedQuery(name="Weblog.updateDailyHitCountZero",
+                query="UPDATE Weblog w SET w.hitsToday = 0")
 })
 public class Weblog implements Serializable {
     
@@ -112,6 +116,7 @@ public class Weblog implements Serializable {
     private String  about            = null;
     private String  creator          = null;
     private String  analyticsCode    = null;
+    private int     hitsToday        = 0;
 
     // Associated objects
     private WeblogCategory bloggerCategory = null;
@@ -196,7 +201,16 @@ public class Weblog implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
+    @Basic(optional=false)
+    public int getHitsToday() {
+        return hitsToday;
+    }
+
+    public void setHitsToday(int hitsToday) {
+        this.hitsToday = hitsToday;
+    }
+
     /**
      * Description
      *
@@ -427,14 +441,6 @@ public class Weblog implements Serializable {
         return TimeZone.getTimeZone(getTimeZone());
     }
 
-    /**
-     * Returns true if user has all permission action specified.
-     */
-/*    public boolean hasUserPermission(User user, String action) {
-        return hasUserPermissions(user, Collections.singletonList(action));
-    }
-*/
-    
     /**
      * Returns true if user has all permissions actions specified in the weblog.
      */
@@ -737,24 +743,6 @@ public class Weblog implements Serializable {
             log.error("ERROR: getting recent comments", e);
         }
         return recentComments;
-    }
-
-    /**
-     * Get number of hits counted today.
-     */
-    @Transient
-    public int getTodaysHits() {
-        try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager mgr = roller.getWeblogEntryManager();
-            WeblogHitCount hitCount = mgr.getHitCountByWeblog(this);
-            
-            return (hitCount != null) ? hitCount.getDailyHits() : 0;
-            
-        } catch (WebloggerException e) {
-            log.error("Error getting weblog hit count", e);
-        }
-        return 0;
     }
 
     /**

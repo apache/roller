@@ -64,7 +64,8 @@ create table weblog (
     showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null,
     about             varchar(255),
     icon              varchar(255),
-    analyticscode      $db.TEXT_SQL_TYPE
+    analyticscode      $db.TEXT_SQL_TYPE,
+    hitstoday	      integer default 0 not null
 );
 create index ws_visible_idx on weblog(visible);
 alter table weblog add constraint ws_handle_uq unique (handle);
@@ -252,14 +253,6 @@ alter table roller_tasklock add constraint rtl_name_uq unique (name);
 #if($db.DBTYPE != "ORACLE")
 create index rtl_taskname_idx on roller_tasklock( name );
 #end
-
-create table roller_hitcounts (
-    id              varchar(48) not null primary key,
-    weblogid       varchar(48) not null,
-    dailyhits	    integer
-);
-create index rhc_weblogid_idx on roller_hitcounts( weblogid );
-create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
 
 -- OAUTH SUPPORT
 
