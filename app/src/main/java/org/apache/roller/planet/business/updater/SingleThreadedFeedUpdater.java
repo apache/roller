@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business.updater;
@@ -25,11 +28,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
@@ -48,7 +51,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     /**
      * @inheritDoc
      */
-    public void updateSubscription(Subscription sub) throws UpdaterException {
+    public void updateSubscription(Subscription sub) throws WebloggerException {
         
         if (sub == null) {
             throw new IllegalArgumentException("cannot update null subscription");
@@ -68,8 +71,8 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
             log.debug("Using fetcher class: " + fetcher.getClass().getName());
             updatedSub = fetcher.fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
             
-        } catch (FetcherException ex) {
-            throw new UpdaterException("Error fetching updated subscription", ex);
+        } catch (WebloggerException ex) {
+            throw new WebloggerException("Error fetching updated subscription", ex);
         }
         
         log.debug("Got updatedSub = " + updatedSub);
@@ -114,7 +117,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
                 entries += newEntries.size();
 
             } catch(RollerException ex) {
-                throw new UpdaterException("Error persisting updated subscription", ex);
+                throw new WebloggerException("Error persisting updated subscription", ex);
             }
         }
         
@@ -128,7 +131,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     /**
      * @inheritDoc
      */
-    public void updateSubscriptions() throws UpdaterException {
+    public void updateSubscriptions() throws WebloggerException {
         
         updateProxySettings();
         
@@ -141,7 +144,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
             PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             updateSubscriptions(pmgr.getSubscriptions());
         } catch (RollerException ex) {
-            throw new UpdaterException("Error getting subscriptions list", ex);
+            throw new WebloggerException("Error getting subscriptions list", ex);
         }
         
         long endTime = System.currentTimeMillis();
@@ -153,7 +156,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     /**
      * @inheritDoc
      */
-    public void updateSubscriptions(Planet group) throws UpdaterException {
+    public void updateSubscriptions(Planet group) throws WebloggerException {
         
         if(group == null) {
             throw new IllegalArgumentException("cannot update null group");
@@ -188,7 +191,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
 			// this updates and saves
 			try {
 				updateSubscription(sub);
-			} catch(UpdaterException ex) {
+			} catch(WebloggerException ex) {
 				// do a little work to get at the source of the problem
 				Throwable cause = ex;
 				if(ex.getRootCause() != null) {

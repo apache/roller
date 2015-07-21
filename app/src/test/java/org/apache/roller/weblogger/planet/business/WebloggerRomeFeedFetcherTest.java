@@ -25,9 +25,9 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
@@ -74,7 +74,7 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
         }
     }
 
-    public void testFetchFeed() throws FetcherException {
+    public void testFetchFeed() throws WebloggerException {
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
 
@@ -87,14 +87,14 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
             assertNotNull(sub.getLastUpdated());
             assertTrue(sub.getEntries().size() > 0);
 
-        } catch (FetcherException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error fetching feed", ex);
             throw ex;
         }
     }
 
 
-    public void testFetchFeedConditionally() throws FetcherException {
+    public void testFetchFeedConditionally() throws WebloggerException {
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
 
@@ -111,7 +111,7 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
             Subscription updatedSub = feedFetcher.fetchSubscription(externalFeedUrl, sub.getLastUpdated());
             assertNull(updatedSub);
 
-        } catch (FetcherException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error fetching feed", ex);
             throw ex;
         }

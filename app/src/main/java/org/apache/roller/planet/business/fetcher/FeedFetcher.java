@@ -14,12 +14,16 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.planet.business.fetcher;
 
 import java.util.Date;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
@@ -44,9 +48,9 @@ public interface FeedFetcher {
      *
      * @param feedURL The feed url to use when fetching the subscription.
      * @return Subscription The fetched subscription.
-     * @throws FetcherException If there is an error fetching the subscription.
+     * @throws WebloggerException If there is an error fetching the subscription.
      */
-    Subscription fetchSubscription(String feedURL) throws FetcherException;
+    Subscription fetchSubscription(String feedURL) throws WebloggerException;
     
     
     /**
@@ -65,8 +69,8 @@ public interface FeedFetcher {
      *
      * @param feedURL The feed url to use when fetching the subscription.
      * @return Subscription The fetched subscription.
-     * @throws FetcherException If there is an error fetching the subscription.
+     * @throws WebloggerException If there is an error fetching the subscription.
      */
-    Subscription fetchSubscription(String feedURL, Date lastModified) throws FetcherException;
+    Subscription fetchSubscription(String feedURL, Date lastModified) throws WebloggerException;
 
 }
