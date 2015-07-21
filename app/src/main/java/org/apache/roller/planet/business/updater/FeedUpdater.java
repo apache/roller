@@ -23,6 +23,7 @@ package org.apache.roller.planet.business.updater;
 
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
@@ -45,24 +46,24 @@ public interface FeedUpdater {
      * of the subscription.
      *
      * @param sub The PlanetSubscription to be updated.
-     * @throws org.apache.roller.planet.business.updater.UpdaterException If there is an error updating the subscription.
+     * @throws org.apache.roller.weblogger.WebloggerException If there is an error updating the subscription.
      */
-    void updateSubscription(Subscription sub) throws UpdaterException;
+    void updateSubscription(Subscription sub) throws WebloggerException;
     
     
     /**
      * Update all Subscriptions in the system.
      *
-     * @throws UpdaterException If there is an error during the update and the operation cannot continue.
+     * @throws WebloggerException If there is an error during the update and the operation cannot continue.
      */
-    void updateSubscriptions() throws UpdaterException;
+    void updateSubscriptions() throws WebloggerException;
     
     
     /**
-     * Update all Subscriptions that are part of the specified group.
+     * Update all Subscriptions that are part of the specified planet.
      *
-     * @throws UpdaterException If there is an error during the update and the operation cannot continue.
+     * @throws WebloggerException If there is an error during the update and the operation cannot continue.
      */
-    void updateSubscriptions(Planet group) throws UpdaterException;
+    void updateSubscriptions(Planet planet) throws WebloggerException;
     
 }

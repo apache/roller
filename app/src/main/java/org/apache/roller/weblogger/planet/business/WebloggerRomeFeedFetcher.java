@@ -44,7 +44,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
@@ -78,7 +77,7 @@ public class WebloggerRomeFeedFetcher implements FeedFetcher {
      * @inheritDoc
      */
     public Subscription fetchSubscription(String feedURL)
-            throws FetcherException {
+            throws WebloggerException {
         return fetchSubscription(feedURL, null);
     }
 
@@ -87,7 +86,7 @@ public class WebloggerRomeFeedFetcher implements FeedFetcher {
      */
     @Override
     public Subscription fetchSubscription(String feedURL, Date lastModified)
-            throws FetcherException {
+            throws WebloggerException {
 
         if(feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
@@ -109,7 +108,7 @@ public class WebloggerRomeFeedFetcher implements FeedFetcher {
         try {
             feed = feedFetcher.retrieveFeed(new URL(feedURL));
         } catch (Exception ex) {
-            throw new FetcherException("Error fetching subscription - "+feedURL, ex);
+            throw new WebloggerException("Error fetching subscription - "+feedURL, ex);
         }
 
         log.debug("Feed pulled, extracting data into Subscription");
@@ -192,7 +191,7 @@ public class WebloggerRomeFeedFetcher implements FeedFetcher {
     }
 
     private Subscription fetchWebloggerSubscription(String feedURL, Date lastModified)
-            throws FetcherException {
+            throws WebloggerException {
 
         // extract blog handle from our special feed url
         String weblogHandle = null;
@@ -208,11 +207,11 @@ public class WebloggerRomeFeedFetcher implements FeedFetcher {
             localWeblog = WebloggerFactory.getWeblogger().getWeblogManager()
                     .getWeblogByHandle(weblogHandle);
             if (localWeblog == null) {
-                throw new FetcherException("Local feed - "+feedURL+" no longer exists in weblogger");
+                throw new WebloggerException("Local feed - "+feedURL+" no longer exists in weblogger");
             }
             
         } catch (WebloggerException ex) {
-            throw new FetcherException("Problem looking up local weblog - "+weblogHandle, ex);
+            throw new WebloggerException("Problem looking up local weblog - "+weblogHandle, ex);
         }
         
         // if weblog hasn't changed since last fetch then bail
@@ -275,7 +274,7 @@ public class WebloggerRomeFeedFetcher implements FeedFetcher {
             }
             
         } catch (WebloggerException ex) {
-            throw new FetcherException("Error processing entries for local weblog - "+weblogHandle, ex);
+            throw new WebloggerException("Error processing entries for local weblog - "+weblogHandle, ex);
         }
         
         // all done
