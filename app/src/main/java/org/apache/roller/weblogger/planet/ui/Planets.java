@@ -24,14 +24,16 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 /**
  * Manage planets.
  */
-public class Planets extends PlanetUIAction {
+public class Planets extends UIAction {
     
     private static Log log = LogFactory.getLog(Planets.class);
     
@@ -47,7 +49,12 @@ public class Planets extends PlanetUIAction {
         this.desiredMenu = "admin";
         this.pageTitle = "planets.pagetitle";
     }
-    
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
+    }
+
     @Override
     public void myPrepare() {
         

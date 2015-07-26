@@ -17,7 +17,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.planet.pojos;
+package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-import org.apache.roller.planet.business.PlanetManager;
+
+import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -34,9 +35,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -152,7 +150,7 @@ public class Planet implements Serializable, Comparable<Planet> {
         catArray = null;
     }
 
-    @OneToMany(targetEntity=org.apache.roller.planet.pojos.Subscription.class,
+    @OneToMany(targetEntity=Subscription.class,
             cascade=CascadeType.ALL, mappedBy="planet")
     public Set<Subscription> getSubscriptions() {
         return subscriptions;

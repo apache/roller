@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.planet.pojos;
+package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.util.UUIDGenerator;
 

@@ -27,16 +27,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.planet.business.FeedFetcher;
+import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 /**
  * Manage planet subscriptions
  */
-public class PlanetSubscriptions extends PlanetUIAction {
+public class PlanetSubscriptions extends UIAction {
     
     private static final Log LOGGER = LogFactory.getLog(PlanetSubscriptions.class);
     
@@ -53,6 +55,11 @@ public class PlanetSubscriptions extends PlanetUIAction {
         this.actionName = "planetSubscriptions";
         this.desiredMenu = "admin";
         this.pageTitle = "planetSubscriptions.title";
+    }
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.NOBLOGNEEDED;
     }
 
     @Override
