@@ -5,9 +5,9 @@
          Avoiding DB configuration here to allow the same persistence.xml to be used between
          testing and prod (which have different DB configuration)
     -->
-    <class>org.apache.roller.planet.pojos.Planet</class>
-    <class>org.apache.roller.planet.pojos.Subscription</class>
-    <class>org.apache.roller.planet.pojos.SubscriptionEntry</class>
+    <class>org.apache.roller.weblogger.pojos.Planet</class>
+    <class>org.apache.roller.weblogger.pojos.Subscription</class>
+    <class>org.apache.roller.weblogger.pojos.SubscriptionEntry</class>
     <class>org.apache.roller.weblogger.pojos.AutoPing</class>
     <class>org.apache.roller.weblogger.pojos.CustomTemplateRendition</class>
     <class>org.apache.roller.weblogger.pojos.MediaFile</class>

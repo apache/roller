@@ -17,17 +17,16 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.planet.business;
+package org.apache.roller.weblogger.planet.business;
 
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.updater.FeedUpdater;
-import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
-import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.planet.pojos.Subscription;
-import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.Subscription;
+import org.apache.roller.weblogger.TestUtils;
 
 
 /**

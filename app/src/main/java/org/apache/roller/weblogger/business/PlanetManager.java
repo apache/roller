@@ -19,14 +19,14 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.planet.business;
+package org.apache.roller.weblogger.business;
 
 import java.util.Date;
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.planet.pojos.SubscriptionEntry;
-import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.SubscriptionEntry;
+import org.apache.roller.weblogger.pojos.Subscription;
 
 /**
  * Manages Planets, Subscriptions, and Entries.

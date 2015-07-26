@@ -21,7 +21,7 @@
 
 package org.apache.roller.weblogger.planet.ui;
 
-import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.weblogger.pojos.Planet;
 
 
 /**
@@ -32,8 +32,7 @@ public class PlanetBean {
     private String id = null;
     private String title = null;
     private String handle = null;
-    
-    
+
     public String getId() {
         return id;
     }
@@ -57,20 +56,17 @@ public class PlanetBean {
     public void setHandle(String handle) {
         this.handle = handle;
     }
-    
-    
+
     public void copyTo(Planet dataHolder) {
         
         dataHolder.setTitle(getTitle());
         dataHolder.setHandle(getHandle());
     }
-    
-    
+
     public void copyFrom(Planet dataHolder) {
         
         setId(dataHolder.getId());
         setTitle(dataHolder.getTitle());
         setHandle(dataHolder.getHandle());
     }
-
 }

@@ -16,13 +16,14 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.planet.pojos;
+package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.apache.roller.util.UUIDGenerator;
 
 import javax.persistence.Basic;
@@ -31,7 +32,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -162,7 +162,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     }
 
 
-    @OneToMany(targetEntity=org.apache.roller.planet.pojos.SubscriptionEntry.class,
+    @OneToMany(targetEntity=SubscriptionEntry.class,
             cascade=CascadeType.ALL, mappedBy="subscription")
     public Set<SubscriptionEntry> getEntries() {
         return entries;

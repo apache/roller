@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.planet.business.jpa;
+package org.apache.roller.weblogger.business.jpa;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -34,13 +34,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.planet.pojos.SubscriptionEntry;
-import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.SubscriptionEntry;
+import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 /**
  * Manages Planet Roller objects and entry aggregations in a database.

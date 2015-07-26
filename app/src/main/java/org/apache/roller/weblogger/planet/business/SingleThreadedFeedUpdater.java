@@ -19,18 +19,17 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.planet.business.updater;
+package org.apache.roller.weblogger.planet.business;
 
 import java.util.Collection;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.planet.pojos.Subscription;
-import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.Subscription;
+import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;

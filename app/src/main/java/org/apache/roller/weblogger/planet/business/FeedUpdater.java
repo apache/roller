@@ -19,10 +19,10 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.planet.business.updater;
+package org.apache.roller.weblogger.planet.business;
 
-import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.pojos.Planet;
+import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.WebloggerException;
 
 

@@ -17,7 +17,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.planet.util.rome;
+package org.apache.roller.weblogger.business;
 
 import java.io.File;
 import java.net.URL;

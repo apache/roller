@@ -20,8 +20,8 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.business.fetcher.FeedFetcher;
+import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.planet.business.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileContentManager;
