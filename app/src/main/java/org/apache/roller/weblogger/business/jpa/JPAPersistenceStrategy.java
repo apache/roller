@@ -207,12 +207,25 @@ public class JPAPersistenceStrategy {
      * @return the object retrieved
      * @throws WebloggerException on any error retrieving object
      */
-    public Object load(Class clazz, String id)
+    public<R> R load(Class<R> clazz, String id)
     throws WebloggerException {
         EntityManager em = getEntityManager(false);
         return em.find(clazz, id);
     }
-    
+
+    /**
+     * Retrieve managed version of object
+     * @param clazz the class of object to retrieve
+     * @param id the id of the object to retrieve
+     * @return the object retrieved
+     * @throws WebloggerException on any error retrieving object
+     */
+    public<R> R merge(R entity)
+            throws WebloggerException {
+        EntityManager em = getEntityManager(false);
+        return em.merge(entity);
+    }
+
     /**
      * Return true if a transaction is active on the current EntityManager.
      * @param em the persistence manager

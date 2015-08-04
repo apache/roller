@@ -56,8 +56,7 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
 
     public PingQueueEntry getQueueEntry(String id) 
             throws WebloggerException {
-        return (PingQueueEntry)strategy.load(
-            PingQueueEntry.class, id);
+        return strategy.load(PingQueueEntry.class, id);
     }
 
     public void saveQueueEntry(PingQueueEntry pingQueueEntry) 

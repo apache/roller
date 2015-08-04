@@ -75,7 +75,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         this.description = desc;
         this.url = url;
         this.image = image;
-        weblog.addBookmark(this);
         calculatePriority();
     }
 
@@ -90,10 +89,10 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
 
     public void calculatePriority() {
         int size = weblog.getBookmarks().size();
-        if (size == 1) {
+        if (size == 0) {
             this.priority = 0;
         } else {
-            this.priority = weblog.getBookmarks().get(size - 2).getPriority() + 1;
+            this.priority = weblog.getBookmarks().get(size - 1).getPriority() + 1;
         }
     }
 
@@ -145,7 +144,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     //---------------------------------------------------------- Relationships
 
-    @ManyToOne(cascade={CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne
     @JoinColumn(name="weblogid", nullable=false)
     public Weblog getWeblog() {
         return this.weblog;

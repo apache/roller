@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.business.jpa;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.planet.business.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
@@ -57,7 +56,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
     protected JPAWebloggerImpl(
         JPAPersistenceStrategy strategy,
         AutoPingManager      autoPingManager,
-        BookmarkManager      bookmarkManager,
         IndexManager         indexManager,
         MediaFileManager     mediaFileManager,
         FileContentManager   fileContentManager,
@@ -77,7 +75,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         
         super(
             autoPingManager,
-            bookmarkManager,
             indexManager,
             mediaFileManager,
             fileContentManager,

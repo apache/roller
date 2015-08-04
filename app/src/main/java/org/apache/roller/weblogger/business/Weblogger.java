@@ -46,13 +46,6 @@ public interface Weblogger {
     
     
     /**
-     * 
-     * Get BookmarkManager associated with this Weblogger instance.
-     */
-    BookmarkManager getBookmarkManager();
-    
-    
-    /**
      *
      * Get OAuthManager associated with this Weblogger instance.
      */

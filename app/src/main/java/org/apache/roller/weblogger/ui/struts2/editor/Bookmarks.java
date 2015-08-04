@@ -24,7 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.BookmarkManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -78,7 +78,7 @@ public class Bookmarks extends UIAction {
      */
     public String delete() {
 
-        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+        WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
         try {
             WeblogBookmark bookmark;
@@ -92,9 +92,9 @@ public class Bookmarks extends UIAction {
                     if (log.isDebugEnabled()) {
                         log.debug("Deleting bookmark - " + bookmarks[j]);
                     }
-                    bookmark = bmgr.getBookmark(bookmarks[j]);
+                    bookmark = wmgr.getBookmark(bookmarks[j]);
                     if (bookmark != null) {
-                        bmgr.removeBookmark(bookmark);
+                        wmgr.removeBookmark(bookmark);
                     }
 
                 }

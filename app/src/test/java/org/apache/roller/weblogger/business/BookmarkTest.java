@@ -47,8 +47,6 @@ public class BookmarkTest extends TestCase {
      * All tests in this suite require a user and a weblog.
      */
     public void setUp() throws Exception {
-        
-        // setup weblogger
         TestUtils.setupWeblogger();
         
         try {
@@ -80,58 +78,61 @@ public class BookmarkTest extends TestCase {
     
     public void testBookmarkCRUD() throws Exception {
         
-        BookmarkManager bmgr = getRoller().getBookmarkManager();
         WeblogManager wmgr = getRoller().getWeblogManager();
 
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-
-        // Add bookmark by adding to folder
+        // Add bookmark
         WeblogBookmark bookmark1 = new WeblogBookmark(
                 testWeblog,
                 "TestBookmark1",
                 "created by testBookmarkCRUD()",
-                "http://www.example.com",
+                "http://www.example1.com",
                 "test.jpg");
-        bmgr.saveBookmark(bookmark1);
+        // Save via saveBookmark
+        wmgr.saveBookmark(bookmark1);
 
         // Add another bookmark
         WeblogBookmark bookmark2 = new WeblogBookmark(
                 testWeblog,
                 "TestBookmark2",
                 "created by testBookmarkCRUD()",
-                "http://www.example.com",
+                "http://www.example2.com",
                 "test.jpf");
-        bmgr.saveBookmark(bookmark2);
+        // Save via saving Weblog
+        testWeblog.addBookmark(bookmark2);
+        wmgr.saveWeblog(testWeblog);
 
         TestUtils.endSession(true);
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        WeblogBookmark bookmarkb, bookmarka;
 
-        WeblogBookmark bookmarkb = null, bookmarka = null;
-        
         // See that two bookmarks were stored
-        List<WeblogBookmark> bookmarks = bmgr.getBookmarks(testWeblog);
+        List<WeblogBookmark> bookmarks = testWeblog.getBookmarks();
         assertEquals(2, bookmarks.size());
         Iterator<WeblogBookmark> iter = bookmarks.iterator();
         bookmarka = iter.next();
         bookmarkb = iter.next();
-        
-        // Remove one bookmark via Bookmark Manager
-        bmgr.removeBookmark(bookmarka);
-        TestUtils.endSession(true);
-                
-        // Folder should now contain one bookmark
-        assertNull(bmgr.getBookmark(bookmarka.getId()));
-        assertNotNull(bmgr.getBookmark(bookmarkb.getId()));
-        Weblog weblogTest2 = wmgr.getWeblog(testWeblog.getId());
-        assertEquals(1, weblogTest2.getBookmarks().size());
 
-        // Remove other bookmark via Weblog Manager
-        weblogTest2.getBookmarks().remove(bookmarkb);
-        wmgr.saveWeblog(weblogTest2);
+        // Remove one bookmark directly
+        wmgr.removeBookmark(bookmarka);
+
+        TestUtils.endSession(true);
+        assertNull(wmgr.getBookmark(bookmarka.getId()));
+
+        // Weblog should now contain one bookmark
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        assertNotNull(testWeblog);
+        assertEquals(1, testWeblog.getBookmarks().size());
+        assertEquals(bookmarkb.getId(), testWeblog.getBookmarks().get(0).getId());
+
+        // Remove other bookmark via removing from weblog
+        testWeblog.getBookmarks().remove(bookmarkb);
+        wmgr.saveWeblog(testWeblog);
         TestUtils.endSession(true);
 
         // Last bookmark should be gone
-        weblogTest2 = wmgr.getWeblog(testWeblog.getId());
-        assertEquals(0, weblogTest2.getBookmarks().size());
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        assertEquals(0, testWeblog.getBookmarks().size());
+        assertNull(wmgr.getBookmark(bookmarkb.getId()));
     }
 
     /**
@@ -139,7 +140,6 @@ public class BookmarkTest extends TestCase {
      */
     public void testBookmarkLookups() throws Exception {
         
-        BookmarkManager bmgr = getRoller().getBookmarkManager();
         WeblogManager wmgr = getRoller().getWeblogManager();
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -149,28 +149,28 @@ public class BookmarkTest extends TestCase {
                 testWeblog, "b1", "testbookmark13",
                 "http://example.com",
                 "image.gif");
-        bmgr.saveBookmark(b1);
+        wmgr.saveBookmark(b1);
         WeblogBookmark b2 = new WeblogBookmark(
                 testWeblog, "b2", "testbookmark14",
                 "http://example.com",
                 "image.gif");
-        bmgr.saveBookmark(b2);
+        wmgr.saveBookmark(b2);
         WeblogBookmark b3 = new WeblogBookmark(
                 testWeblog, "b3", "testbookmark16",
                 "http://example.com",
                 "image.gif");
-        bmgr.saveBookmark(b3);
+        wmgr.saveBookmark(b3);
         
         TestUtils.endSession(true);
         
         // test lookup by id
-        WeblogBookmark testBookmark = bmgr.getBookmark(b1.getId());
+        WeblogBookmark testBookmark = wmgr.getBookmark(b1.getId());
         assertNotNull(testBookmark);
         assertEquals("b1", testBookmark.getName());
 
         // test lookup of all bookmarks for a website
         Weblog testWeblog2 = wmgr.getWeblog(testWeblog.getId());
-        List<WeblogBookmark> allBookmarks = bmgr.getBookmarks(testWeblog2);
+        List<WeblogBookmark> allBookmarks = testWeblog2.getBookmarks();
         assertNotNull(allBookmarks);
         assertEquals(3, allBookmarks.size());
         

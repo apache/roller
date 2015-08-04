@@ -77,9 +77,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         strategy.store(pingTarget);
     }
 
-    public PingTarget getPingTarget(String id)
-            throws WebloggerException {
-        return (PingTarget)strategy.load(PingTarget.class, id);
+    public PingTarget getPingTarget(String id) throws WebloggerException {
+        return strategy.load(PingTarget.class, id);
     }
 
     public boolean targetNameExists(String pingTargetName)

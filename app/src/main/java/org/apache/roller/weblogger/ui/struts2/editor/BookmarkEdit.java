@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.BookmarkManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -75,8 +75,8 @@ public class BookmarkEdit extends UIAction {
         } else {
             // existing bookmark, retrieve its info from DB
             try {
-                BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-                bookmark = bmgr.getBookmark(getBean().getId());
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                bookmark = wmgr.getBookmark(getBean().getId());
             } catch (WebloggerException ex) {
                 addError("generic.error.check.logs");
                 log.error("Error looking up bookmark" + getBean().getId(), ex);
@@ -101,8 +101,8 @@ public class BookmarkEdit extends UIAction {
         if(!hasActionErrors()) {
             try {
                 getBean().copyTo(bookmark);
-                BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-                bmgr.saveBookmark(bookmark);
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                wmgr.saveBookmark(bookmark);
                 WebloggerFactory.getWeblogger().flush();
                 CacheManager.invalidate(bookmark);
                 CacheManager.invalidate(bookmark.getWeblog());
