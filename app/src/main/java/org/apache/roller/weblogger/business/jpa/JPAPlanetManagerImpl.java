@@ -101,10 +101,8 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
     }
     
-    public Subscription getSubscriptionById(String id)
-    throws RollerException {
-        return (Subscription) strategy.load(
-                Subscription.class, id);
+    public Subscription getSubscriptionById(String id) throws RollerException {
+        return strategy.load(Subscription.class, id);
     }
     
     public Iterator getAllSubscriptions() {
@@ -174,7 +172,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
     
     public Planet getPlanetById(String id) throws RollerException {
-        return (Planet) strategy.load(Planet.class, id);
+        return strategy.load(Planet.class, id);
     }        
     
     public void release() {}
@@ -194,7 +192,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     public SubscriptionEntry getEntryById(String id) throws RollerException {
-        return (SubscriptionEntry) strategy.load(SubscriptionEntry.class, id);
+        return strategy.load(SubscriptionEntry.class, id);
     }
 
     public List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len) throws RollerException {

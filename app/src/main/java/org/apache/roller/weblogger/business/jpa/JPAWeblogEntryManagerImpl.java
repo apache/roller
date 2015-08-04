@@ -695,10 +695,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public WeblogCategory getWeblogCategory(String id)
-    throws WebloggerException {
-        return (WeblogCategory) this.strategy.load(
-                WeblogCategory.class, id);
+    public WeblogCategory getWeblogCategory(String id) throws WebloggerException {
+        return this.strategy.load(WeblogCategory.class, id);
     }
     
     //--------------------------------------------- WeblogCategory Queries
@@ -723,14 +721,14 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     public WeblogEntryComment getComment(String id) throws WebloggerException {
-        return (WeblogEntryComment) this.strategy.load(WeblogEntryComment.class, id);
+        return this.strategy.load(WeblogEntryComment.class, id);
     }
     
     /**
      * @inheritDoc
      */
     public WeblogEntry getWeblogEntry(String id) throws WebloggerException {
-        return (WeblogEntry)strategy.load(WeblogEntry.class, id);
+        return strategy.load(WeblogEntry.class, id);
     }
     
     /**

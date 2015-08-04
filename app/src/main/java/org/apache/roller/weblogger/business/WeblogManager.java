@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
@@ -28,6 +31,7 @@ import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 /**
@@ -257,5 +261,33 @@ public interface WeblogManager {
      */
     void incrementHitCount(Weblog weblog, int amount)
             throws WebloggerException;
+
+
+    /**
+     * Save a Bookmark.
+     *
+     * @param bookmark The bookmark to be saved.
+     * @throws WebloggerException If there is a problem.
+     */
+    void saveBookmark(WeblogBookmark bookmark) throws WebloggerException;
+
+
+    /**
+     * Remove a Bookmark.
+     *
+     * @param bookmark The bookmark to be removed.
+     * @throws WebloggerException If there is a problem.
+     */
+    void removeBookmark(WeblogBookmark bookmark) throws WebloggerException;
+
+
+    /**
+     * Lookup a Bookmark by ID.
+     *
+     * @param id The id of the bookmark to lookup.
+     * @return BookmarkData The bookmark, or null if not found.
+     * @throws WebloggerException If there is a problem.
+     */
+    WeblogBookmark getBookmark(String id) throws WebloggerException;
 
 }

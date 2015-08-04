@@ -108,7 +108,7 @@ public class JPAUserManagerImpl implements UserManager {
 
     @Override
     public User getUser(String id) throws WebloggerException {
-        return (User)this.strategy.load(User.class, id);
+        return this.strategy.load(User.class, id);
     }
 
     //------------------------------------------------------------ user queries

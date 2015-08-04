@@ -59,7 +59,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     }
 
     public AutoPing getAutoPing(String id) throws WebloggerException {
-        return (AutoPing) strategy.load(AutoPing.class, id);
+        return strategy.load(AutoPing.class, id);
     }
 
     public void saveAutoPing(AutoPing autoPing) throws WebloggerException {

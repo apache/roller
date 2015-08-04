@@ -838,7 +838,7 @@ public class Weblog implements Serializable {
     }
 
     @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.WeblogBookmark.class,
-            cascade={CascadeType.REMOVE, CascadeType.PERSIST}, mappedBy="weblog")
+            cascade={CascadeType.ALL}, mappedBy="weblog", orphanRemoval=true)
     public List<WeblogBookmark> getBookmarks() {
         return bookmarks;
     }

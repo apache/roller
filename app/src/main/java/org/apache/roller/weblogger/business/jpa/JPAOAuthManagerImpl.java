@@ -127,7 +127,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     public void markAsAuthorized(OAuthAccessor accessor, String userId)
             throws OAuthException {
         try {
-            OAuthAccessorRecord record = (OAuthAccessorRecord) strategy.load(
+            OAuthAccessorRecord record = strategy.load(
                 OAuthAccessorRecord.class, accessor.consumer.consumerKey);
             record.setUserName(userId);
             record.setAuthorized(Boolean.TRUE);
@@ -177,7 +177,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             // generate token and secret based on consumer_key
             String consumer_key = accessor.consumer.consumerKey;
 
-            OAuthAccessorRecord record = (OAuthAccessorRecord) strategy.load(
+            OAuthAccessorRecord record = strategy.load(
                 OAuthAccessorRecord.class, accessor.consumer.consumerKey);
             
             // for now use md5 of name + current time as token

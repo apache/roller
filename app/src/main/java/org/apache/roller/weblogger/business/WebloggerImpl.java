@@ -49,7 +49,6 @@ public abstract class WebloggerImpl implements Weblogger {
     
     // managers
     private final AutoPingManager      autoPingManager;
-    private final BookmarkManager      bookmarkManager;
     private final IndexManager         indexManager;
     private final MediaFileManager     mediaFileManager;
     private final FileContentManager   fileContentManager;
@@ -78,7 +77,6 @@ public abstract class WebloggerImpl implements Weblogger {
     
     protected WebloggerImpl(
         AutoPingManager      autoPingManager,
-        BookmarkManager      bookmarkManager,
         IndexManager         indexManager,
         MediaFileManager     mediaFileManager,
         FileContentManager   fileContentManager,
@@ -97,7 +95,6 @@ public abstract class WebloggerImpl implements Weblogger {
         URLStrategy          urlStrategy) throws WebloggerException {
                 
         this.autoPingManager     = autoPingManager;
-        this.bookmarkManager     = bookmarkManager;
         this.indexManager        = indexManager;
         this.mediaFileManager    = mediaFileManager;
         this.fileContentManager  = fileContentManager;
@@ -132,7 +129,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getThreadManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getThreadManager()
      */
     public ThreadManager getThreadManager() {
         return threadManager;
@@ -142,7 +139,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.model.Weblogger#getIndexManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getIndexManager()
      */
     public IndexManager getIndexManager() {
         return indexManager;
@@ -152,7 +149,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWeblogger#getThemeManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getThemeManager()
      */
     public ThemeManager getThemeManager() {
         return themeManager;
@@ -162,7 +159,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getUserManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getUserManager()
      */
     public UserManager getUserManager() {
         return userManager;
@@ -172,17 +169,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getBookmarkManager()
-     */
-    public BookmarkManager getBookmarkManager() {
-        return bookmarkManager;
-    }
-    
-    
-    /**
-     * 
-     * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getMediaFileManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getMediaFileManager()
      */
     public MediaFileManager getMediaFileManager() {
         return mediaFileManager;
@@ -191,7 +178,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getFileContentManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getFileContentManager()
      */
     public FileContentManager getFileContentManager() {
         return fileContentManager;
@@ -201,7 +188,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getWeblogEntryManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getWeblogEntryManager()
      */
     public WeblogEntryManager getWeblogEntryManager() {
         return weblogEntryManager;
@@ -211,7 +198,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getWeblogManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getWeblogManager()
      */
     public WeblogManager getWeblogManager() {
         return weblogManager;
@@ -221,7 +208,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPropertiesManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPropertiesManager()
      */
     public PropertiesManager getPropertiesManager() {
         return propertiesManager;
@@ -231,7 +218,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
     public PingQueueManager getPingQueueManager() {
         return pingQueueManager;
@@ -241,7 +228,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
     public AutoPingManager getAutopingManager() {
         return autoPingManager;
@@ -251,7 +238,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
     public PingTargetManager getPingTargetManager() {
         return pingTargetManager;
@@ -261,7 +248,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      *
      *
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPluginManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPluginManager()
      */
     public PluginManager getPluginManager() {
         return pluginManager;
@@ -271,7 +258,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      *
      *
-     * @see org.apache.roller.weblogger.modelWebloggerr#getOauthManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getOAuthManager()
      */
     public OAuthManager getOAuthManager() {
         return oauthManager;
@@ -300,7 +287,6 @@ public abstract class WebloggerImpl implements Weblogger {
     public void release() {
         try {
             autoPingManager.release();
-            bookmarkManager.release();
             mediaFileManager.release();
             fileContentManager.release();
             pingTargetManager.release();

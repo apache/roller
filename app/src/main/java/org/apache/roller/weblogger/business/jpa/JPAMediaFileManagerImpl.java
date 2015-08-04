@@ -302,8 +302,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public MediaFile getMediaFile(String id, boolean includeContent)
             throws WebloggerException {
-        MediaFile mediaFile = (MediaFile) this.strategy.load(MediaFile.class,
-                id);
+        MediaFile mediaFile = this.strategy.load(MediaFile.class, id);
         if (includeContent) {
             FileContentManager cmgr = WebloggerFactory.getWeblogger()
                     .getFileContentManager();
@@ -407,8 +406,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public MediaFileDirectory getMediaFileDirectory(String id)
             throws WebloggerException {
-        return (MediaFileDirectory) this.strategy.load(
-                MediaFileDirectory.class, id);
+        return this.strategy.load(MediaFileDirectory.class, id);
     }
 
     /**

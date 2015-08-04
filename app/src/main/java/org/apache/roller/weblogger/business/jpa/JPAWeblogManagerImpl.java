@@ -110,7 +110,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public void saveWeblog(Weblog weblog) throws WebloggerException {
         
         weblog.setLastModified(new java.util.Date());
-        strategy.store(weblog);
+        strategy.merge(weblog);
     }
     
     public void removeWeblog(Weblog weblog) throws WebloggerException {
@@ -334,7 +334,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     public Weblog getWeblog(String id) throws WebloggerException {
-        return (Weblog) this.strategy.load(Weblog.class, id);
+        return this.strategy.load(Weblog.class, id);
     }
     
     public Weblog getWeblogByHandle(String handle) throws WebloggerException {
@@ -491,7 +491,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             return null;
         }
         
-        return (WeblogTemplate)this.strategy.load(WeblogTemplate.class,id);
+        return this.strategy.load(WeblogTemplate.class,id);
     }
     
     /**
@@ -737,6 +737,20 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             throws WebloggerException {
         weblog.setHitsToday(getHitCount(weblog) + amount);
         strategy.store(weblog);
+    }
+
+    public void saveBookmark(WeblogBookmark bookmark) throws WebloggerException {
+        WeblogBookmark managedBookmark = this.strategy.merge(bookmark);
+        bookmark.getWeblog().getBookmarks().add(managedBookmark);
+    }
+
+    public WeblogBookmark getBookmark(String id) throws WebloggerException {
+        return strategy.load(WeblogBookmark.class, id);
+    }
+
+    public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException {
+        bookmark.getWeblog().getBookmarks().remove(bookmark);
+        this.strategy.remove(bookmark);
     }
 
 }

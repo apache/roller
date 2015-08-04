@@ -91,8 +91,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * Retrieve a single property by name.
      */
     public RuntimeConfigProperty getProperty(String name) throws WebloggerException {
-        return (RuntimeConfigProperty) strategy
-            .load(RuntimeConfigProperty.class,name);
+        return strategy.load(RuntimeConfigProperty.class, name);
     }
 
 
