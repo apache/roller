@@ -10,12 +10,7 @@ A) Some scripts that run against the Roller API
    examples/rollerapi/createblog.gy - Create a blog
 
 
-B) Some scripts that run against the Roller Admin Protocol
-
-   examples/adminprotocol
-
-
-C) A Roller GroovletRenderer that can evaluate a Roller template as Groovy code 
+B) A Roller GroovletRenderer that can evaluate a Roller template as Groovy code
    with Groovlet-style "out" and "html" bindings.
 
    The implementation:
@@ -48,7 +43,7 @@ C) A Roller GroovletRenderer that can evaluate a Roller template as Groovy code
             }
         }
 
-D) A Roller GSPRenderer that can evaluate a Roller template as a Groovy Template
+C) A Roller GSPRenderer that can evaluate a Roller template as a Groovy Template
    with GSP-style "out" and "html" bindings.
 
     The implementation:
@@ -85,7 +80,7 @@ D) A Roller GSPRenderer that can evaluate a Roller template as a Groovy Template
         </html>
 
 
-To use renderers (C) and (D) in Roller:
+To use renderers (B) and (C) in Roller:
 
 1) Put roller-groovy.jar and groovy-all-1.0.jar in WEB-INF/lib
 
