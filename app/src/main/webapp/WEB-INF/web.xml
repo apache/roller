@@ -261,11 +261,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>AtomServlet</servlet-name>
-        <servlet-class>com.rometools.propono.atom.server.AtomServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>CommentDataServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.CommentDataServlet</servlet-class>
     </servlet>
@@ -296,40 +291,6 @@
             <param-value>true</param-value>
         </init-param>
     </servlet>
-
-    <!-- BEGIN OAUTH -->
-
-    <servlet>
-        <servlet-name>RequestTokenServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.webservices.oauth.RequestTokenServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>AuthorizationServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.webservices.oauth.AuthorizationServlet</servlet-class>
-    </servlet>
-    
-    <servlet>
-        <servlet-name>AccessTokenServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.webservices.oauth.AccessTokenServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>RequestTokenServlet</servlet-name>
-        <url-pattern>/roller-services/oauth/requestToken</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AuthorizationServlet</servlet-name>
-        <url-pattern>/roller-services/oauth/authorize</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AccessTokenServlet</servlet-name>
-        <url-pattern>/roller-services/oauth/accessToken</url-pattern>
-    </servlet-mapping>
-
-    <!-- END OAUTH -->
 
     <!-- Rendering Servlets -->
     <servlet-mapping>
@@ -414,11 +375,6 @@
     <servlet-mapping>
         <servlet-name>XmlRpcServlet</servlet-name>
         <url-pattern>/roller-services/xmlrpc</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AtomServlet</servlet-name>
-        <url-pattern>/roller-services/app/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

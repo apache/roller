@@ -116,16 +116,6 @@
             <result name="success" type="tiles">.Profile</result>
         </action>
 
-        <action name="oauthKeys!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.OAuthKeys">
-            <result name="success" type="tiles">.OAuthKeys</result>
-        </action>
-
-        <action name="oauthAuthorize!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.OAuthAuthorize">
-            <result name="success" type="tiles">.OAuthAuthorize</result>
-        </action>
-
         <action name="createWeblog!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.core.CreateWeblog">
             <result name="input" type="tiles">.CreateWeblog</result>

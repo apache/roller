@@ -61,7 +61,6 @@ public abstract class WebloggerImpl implements Weblogger {
     private final UserManager          userManager;
     private final WeblogManager        weblogManager;
     private final WeblogEntryManager   weblogEntryManager;
-    private final OAuthManager         oauthManager;
     private final FeedFetcher          feedFetcher;
     private final PlanetManager        planetManager;
     
@@ -89,7 +88,6 @@ public abstract class WebloggerImpl implements Weblogger {
         UserManager          userManager,
         WeblogManager        weblogManager,
         WeblogEntryManager   weblogEntryManager,
-        OAuthManager         oauthManager,
         FeedFetcher          feedFetcher,
         PlanetManager        planetManager,
         URLStrategy          urlStrategy) throws WebloggerException {
@@ -107,7 +105,6 @@ public abstract class WebloggerImpl implements Weblogger {
         this.userManager         = userManager;
         this.weblogManager       = weblogManager;
         this.weblogEntryManager  = weblogEntryManager;
-        this.oauthManager        = oauthManager;
         this.urlStrategy         = urlStrategy;
         this.feedFetcher         = feedFetcher;
         this.planetManager       = planetManager;
@@ -252,16 +249,6 @@ public abstract class WebloggerImpl implements Weblogger {
      */
     public PluginManager getPluginManager() {
         return pluginManager;
-    }
-
-
-    /**
-     *
-     *
-     * @see org.apache.roller.weblogger.business.Weblogger#getOAuthManager()
-     */
-    public OAuthManager getOAuthManager() {
-        return oauthManager;
     }
 
 

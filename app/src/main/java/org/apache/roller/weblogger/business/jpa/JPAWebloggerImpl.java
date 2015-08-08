@@ -24,7 +24,6 @@ import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.planet.business.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileContentManager;
-import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -68,7 +67,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         UserManager          userManager,
         WeblogManager        weblogManager,
         WeblogEntryManager   weblogEntryManager,
-        OAuthManager         oauthManager,
 		FeedFetcher          feedFetcher,
         PlanetManager        planetManager,
         URLStrategy          urlStrategy) throws WebloggerException {
@@ -87,7 +85,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
             userManager,
             weblogManager,
             weblogEntryManager,
-            oauthManager,
             feedFetcher,
             planetManager,
             urlStrategy);
