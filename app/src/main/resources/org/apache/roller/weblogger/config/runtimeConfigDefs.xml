@@ -82,6 +82,10 @@
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
+      <property-def name="webservices.enableXmlRpc"  key="configForm.enableXmlRpc">
+         <type>boolean</type>
+         <default-value>false</default-value>
+      </property-def>
    </display-group >
 
    <!-- User Settings Group -->
@@ -111,26 +115,6 @@
       </property-def>
 
    </display-group >
-   
-   
-   <display-group name="webServicesSettings" key="configForm.webServicesSettings" >
-
-      <property-def name="webservices.enableXmlRpc"  key="configForm.enableXmlRpc">
-         <type>boolean</type>
-         <default-value>false</default-value>
-      </property-def>
-
-      <property-def name="webservices.enableAtomPub"  key="configForm.enableAtomPub">
-         <type>boolean</type>
-         <default-value>false</default-value>
-      </property-def>
-
-      <property-def name="webservices.atomPubAuth"  key="configForm.AtomPubAuth">
-         <type>string</type>
-         <default-value>basic</default-value>
-      </property-def>
-
-   </display-group>
 
    <!-- Weblog Rendering Settings Group -->
    <display-group name="weblogSettings" key="configForm.weblogSettings" >

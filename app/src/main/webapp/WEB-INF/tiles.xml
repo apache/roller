@@ -105,14 +105,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
     </definition>
 
-    <definition name=".OAuthKeys" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/OAuthKeys.jsp" />
-    </definition>
-
-    <definition name=".OAuthAuthorize" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/core/OAuthAuthorize.jsp" />
-    </definition>
-
     <definition name=".CreateWeblog" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/CreateWeblog.jsp" />
     </definition>

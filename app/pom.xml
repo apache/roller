@@ -16,9 +16,9 @@
     <packaging>war</packaging>
 
     <properties>
-        <lucene.version>5.1.0</lucene.version>
-        <spring.version>4.1.6.RELEASE</spring.version>
-        <spring.security.version>4.0.1.RELEASE</spring.security.version>
+        <lucene.version>5.2.1</lucene.version>
+        <spring.version>4.2.0.RELEASE</spring.version>
+        <spring.security.version>4.0.2.RELEASE</spring.security.version>
         <struts2.version>2.3.24</struts2.version>
     </properties>
 
@@ -130,13 +130,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>net.oauth.core</groupId>
-            <artifactId>oauth-provider</artifactId>
-            <scope>compile</scope>
-            <version>20100527</version>
-        </dependency>
-
         <!-- web -->
 
         <dependency>
@@ -149,25 +142,14 @@
         <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome-fetcher</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.rometools</groupId>
-            <artifactId>rome-propono</artifactId>
-            <version>1.5.0</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>xmlrpc</groupId>
-                    <artifactId>xmlrpc-common</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xmlrpc</groupId>
-                    <artifactId>xmlrpc-client</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
         </dependency>
 
         <dependency>
@@ -319,7 +301,7 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.9.4</version>
+            <version>1.9.6</version>
             <scope>test</scope>
         </dependency>
 

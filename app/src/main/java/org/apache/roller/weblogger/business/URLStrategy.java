@@ -223,31 +223,17 @@ public interface URLStrategy {
     /**
      * Get url to a resource on a given weblog.
      */
-    String getWeblogResourceURL(Weblog weblog,
-                                                    String filePath,
-                                                    boolean absolute);
-    
-    
+    String getWeblogResourceURL(Weblog weblog, String filePath, boolean absolute);
+
     /**
      * Get url to rsd file on a given weblog.
      */
     String getWeblogRsdURL(Weblog weblog, boolean absolute);
     
-    
     /**
      * Get url to JSON tags service url, optionally for a given weblog.
      */
     String getWeblogTagsJsonURL(Weblog weblog, boolean absolute, int pageNum);
-
-
-    /* Get URL for obtaining OAuth Request Token */
-    String getOAuthRequestTokenURL();
-
-    /* Get URL authorizing an OAuth Request Token */
-    String getOAuthAuthorizationURL();
-
-    /* Get URL for obtaining OAuth Access Token */
-    String getOAuthAccessTokenURL();
 
     /**
      * Get URL of a planet's newsfeed.

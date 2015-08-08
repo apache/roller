@@ -27,6 +27,11 @@
 #renameColumn('roller_weblogentrytag', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('roller_mediafiledir', 'websiteid', 'weblogid', 'varchar(48) not null')
 
+-- AtomPub gone
+
+#dropTableIfExists("roller_oauthconsumer")
+#dropTableIfExists("roller_oauthaccessor")
+
 -- bookmark folders removed
 
 #dropForeignKey("bookmark" "bm_folderid_fk")
@@ -183,8 +188,6 @@ alter table planet_subscription_entry add constraint pse_subscriptionid_fk
 #expandTimestampNotNull('roller_comment' 'posttime')
 #expandTimestampNotNull('roller_mediafile' 'date_uploaded')
 #expandTimestamp('roller_mediafile' 'last_updated')
-#expandTimestampNotNull('roller_oauthaccessor' 'created')
-#expandTimestampNotNull('roller_oauthaccessor' 'updated')
 #expandTimestampNotNull('user_weblog_role' 'datecreated')
 #expandTimestamp('roller_tasklock' 'timeacquired')
 #expandTimestamp('roller_tasklock' 'lastrun')

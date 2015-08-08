@@ -13,8 +13,6 @@
     <class>org.apache.roller.weblogger.pojos.MediaFile</class>
     <class>org.apache.roller.weblogger.pojos.MediaFileDirectory</class>
     <class>org.apache.roller.weblogger.pojos.MediaFileTag</class>
-    <class>org.apache.roller.weblogger.pojos.OAuthAccessorRecord</class>
-    <class>org.apache.roller.weblogger.pojos.OAuthConsumerRecord</class>
     <class>org.apache.roller.weblogger.pojos.PingQueueEntry</class>
     <class>org.apache.roller.weblogger.pojos.PingTarget</class>
     <class>org.apache.roller.weblogger.pojos.RuntimeConfigProperty</class>

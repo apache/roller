@@ -49,7 +49,3 @@ drop table custom_template_rendition;
 drop table user_weblog_role;
 drop table weblog;
 drop table roller_user;
-
--- oauth tables
-drop table roller_oauthconsumer;
-drop table roller_oauthaccessor;

@@ -35,7 +35,6 @@
         <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
-        <beans:constructor-arg ref="oauthManager"/>
         <beans:constructor-arg ref="feedFetcher"/>
         <beans:constructor-arg ref="planetManager"/>
         <beans:constructor-arg ref="urlStrategy"/>
@@ -104,14 +103,6 @@
     <beans:bean id="weblogEntryManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogEntryManagerImpl">
         <beans:constructor-arg ref="autoPingManager"/>
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
-    </beans:bean>
-
-    <beans:bean id="oauthManager" class="org.apache.roller.weblogger.business.jpa.JPAOAuthManagerImpl">
-        <beans:constructor-arg ref="urlStrategy"/>
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
-        <beans:constructor-arg>
-            <beans:bean class="net.oauth.SimpleOAuthValidator"/>
-        </beans:constructor-arg>
     </beans:bean>
 
     <beans:bean id="feedFetcher" class="org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher"/>
