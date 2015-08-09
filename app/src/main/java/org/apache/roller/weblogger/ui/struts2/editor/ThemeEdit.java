@@ -38,13 +38,18 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Action for controlling theme selection.
  */
+@RestController
 public class ThemeEdit extends UIAction {
 
     private static final long serialVersionUID = 4644653507344432426L;
@@ -294,4 +299,62 @@ public class ThemeEdit extends UIAction {
         return sharedThemeCustomStylesheet;
     }
 
+    @RequestMapping(value = "/themes", method = RequestMethod.GET)
+    public List<SharedThemeData> getSharedThemes() {
+        ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
+        List<SharedTheme> list = themeMgr.getEnabledThemesList();
+        List<SharedThemeData> to = new ArrayList<>();
+        for (SharedTheme item : list) {
+            SharedThemeData temp = new SharedThemeData();
+            temp.setId(item.getId());
+            temp.setName(item.getName());
+            temp.setDescription(item.getDescription());
+            temp.setPreviewPath("/themes/" + item.getId() + "/" + item.getPreviewImage().getPath());
+            to.add(temp);
+        }
+        return to;
+    }
+
+    private static class SharedThemeData {
+        public SharedThemeData() {}
+
+        private String id;
+        private String name;
+        private String description;
+        private String previewPath;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getPreviewPath() {
+            return previewPath;
+        }
+
+        public void setPreviewPath(String previewPath) {
+            this.previewPath = previewPath;
+        }
+    }
+
 }
+

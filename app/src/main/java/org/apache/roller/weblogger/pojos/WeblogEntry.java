@@ -596,7 +596,7 @@ public class WeblogEntry implements Serializable {
     public String getTagsAsString() {
         StringBuilder sb = new StringBuilder();
         // Sort by name
-        Set<WeblogEntryTag> tmp = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
+        Set<WeblogEntryTag> tmp = new TreeSet<>(WeblogEntryTag.Comparator);
         tmp.addAll(getTags());
         for (WeblogEntryTag entryTag : tmp) {
             sb.append(entryTag.getName()).append(" ");

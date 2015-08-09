@@ -22,6 +22,8 @@ package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Comparator;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
@@ -192,5 +194,11 @@ public class WeblogEntryTag implements Serializable {
         .append(getWeblogEntry())
         .toHashCode();
     }
+
+    public static Comparator<WeblogEntryTag> Comparator = new Comparator<WeblogEntryTag>() {
+        public int compare(WeblogEntryTag o1, WeblogEntryTag o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    };
 
 }

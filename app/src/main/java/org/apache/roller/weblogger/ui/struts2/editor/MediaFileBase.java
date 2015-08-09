@@ -28,8 +28,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
-import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -191,8 +189,7 @@ public class MediaFileBase extends UIAction {
             List<MediaFileDirectory> directories = mgr.getMediaFileDirectories(getActionWeblog());
             List<MediaFileDirectory> sortedDirList = new ArrayList<MediaFileDirectory>();
             sortedDirList.addAll(directories);
-            Collections.sort(sortedDirList, new MediaFileDirectoryComparator(
-                    DirectoryComparatorType.NAME));
+            Collections.sort(sortedDirList, MediaFileDirectory.Comparator);
             setAllDirectories(sortedDirList);
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directories", ex);

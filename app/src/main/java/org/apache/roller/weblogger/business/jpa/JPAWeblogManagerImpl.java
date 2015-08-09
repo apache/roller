@@ -18,8 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
-
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -38,7 +36,6 @@ import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
-import org.apache.roller.weblogger.pojos.StatCountCountComparator;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
@@ -59,7 +56,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -67,17 +63,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/*
- * JPAWeblogManagerImpl.java
- * Created on May 31, 2006, 4:08 PM
- */
 public class JPAWeblogManagerImpl implements WeblogManager {
     
     /** The logger instance for this class. */
     private static Log log = LogFactory.getLog(JPAWeblogManagerImpl.class);
-    
-    private static final Comparator<StatCount> STAT_COUNT_COUNT_REVERSE_COMPARATOR =
-            Collections.reverseOrder(StatCountCountComparator.getInstance());
     
     private final UserManager userManager;
     private final WeblogEntryManager weblogEntryManager;
@@ -659,7 +648,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // Original query ordered by desc # comments.
         // JPA QL doesn't allow queries to be ordered by aggregates; do it in memory
-        Collections.sort(results, STAT_COUNT_COUNT_REVERSE_COMPARATOR);
+        Collections.sort(results, StatCount.CountComparator);
         
         return results;
     }

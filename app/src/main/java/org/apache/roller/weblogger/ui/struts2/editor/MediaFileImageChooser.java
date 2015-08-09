@@ -26,11 +26,7 @@ import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileComparator;
-import org.apache.roller.weblogger.pojos.MediaFileComparator.MediaFileComparatorType;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
-import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -93,8 +89,7 @@ public class MediaFileImageChooser extends MediaFileBase {
                 this.childFiles.add(mf);
             }
 
-            Collections.sort(this.childFiles, new MediaFileComparator(
-                    MediaFileComparatorType.NAME));
+            Collections.sort(this.childFiles, MediaFile.NameComparator);
 
             this.currentDirectory = directory;
 
@@ -110,8 +105,7 @@ public class MediaFileImageChooser extends MediaFileBase {
                 }
             }
 
-            Collections.sort(sortedDirList, new MediaFileDirectoryComparator(
-                    DirectoryComparatorType.NAME));
+            Collections.sort(sortedDirList, MediaFileDirectory.Comparator);
             setAllDirectories(sortedDirList);
 
             return SUCCESS;

@@ -14,9 +14,14 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 package org.apache.roller.weblogger.pojos;
 
+
+import java.util.Comparator;
 
 /**
  * Tag bean.
@@ -70,4 +75,22 @@ public class TagStat implements java.io.Serializable {
         this.intensity = intensity;
     }
 
+    public static Comparator<TagStat> Comparator = new Comparator<TagStat>() {
+        public int compare(TagStat ts1, TagStat ts2) {
+            return ts1.getName().compareToIgnoreCase(ts2.getName());
+        }
+    };
+
+    public static Comparator<TagStat> CountComparator = new Comparator<TagStat>() {
+        public int compare(TagStat st1, TagStat st2) {
+            // higher numbers first for counts
+            int compVal = Integer.valueOf(st2.getCount()).compareTo(st1.getCount());
+
+            // still alpha order if tied
+            if (compVal == 0) {
+                compVal = st1.getName().compareTo(st2.getName());
+            }
+            return compVal;
+        }
+    };
 }

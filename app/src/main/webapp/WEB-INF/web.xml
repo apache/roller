@@ -271,8 +271,12 @@
     </servlet>
 
     <servlet>
-        <servlet-name>ThemeDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.ThemeDataServlet</servlet-class>
+        <servlet-name>SpringDispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/config/spring-servlet.xml</param-value>
+        </init-param>
     </servlet>
 
     <servlet>
@@ -367,8 +371,8 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>ThemeDataServlet</servlet-name>
-        <url-pattern>/roller-ui/authoring/themedata/*</url-pattern>
+        <servlet-name>SpringDispatcherServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/themes/*</url-pattern>
     </servlet-mapping>
 
     <!-- Web Service Servlets -->

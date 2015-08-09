@@ -14,7 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
@@ -43,7 +46,6 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntryWrapperComparator;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsPager;
@@ -240,7 +242,7 @@ public class SearchResultsModel extends PageModel {
 		TreeSet<WeblogEntryWrapper> set = this.results.get(midnight);
 		if (set == null) {
 			// date is not mapped yet, so we need a new Set
-			set = new TreeSet<WeblogEntryWrapper>(new WeblogEntryWrapperComparator());
+			set = new TreeSet<>(WeblogEntryWrapper.Comparator);
 			this.results.put(midnight, set);
 		}
 		set.add(entry);
