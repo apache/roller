@@ -14,11 +14,16 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
 package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Comparator;
 
 /**
  * Represents a statistical count.
@@ -130,4 +135,21 @@ public class StatCount {
             .append(getTypeKey())
             .toHashCode();
     }
+
+    public static Comparator<StatCount> CountComparator = new Comparator<StatCount>() {
+        public int compare(StatCount sc1, StatCount sc2) {
+            // higher numbers first for counts
+            int compVal = Long.valueOf(sc2.getCount()).compareTo(sc1.getCount());
+
+            // still alpha order if tied
+            if (compVal == 0) {
+                compVal = sc1.getSubjectId().compareTo(sc2.getSubjectId());
+                if (compVal == 0) {
+                    compVal = sc1.getTypeKey().compareTo(sc2.getTypeKey());
+                }
+            }
+            return compVal;
+        }
+    };
+
 }

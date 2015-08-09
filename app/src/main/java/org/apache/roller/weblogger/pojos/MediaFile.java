@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.pojos;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -543,5 +544,24 @@ public class MediaFile implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
+
+    public static Comparator<MediaFile> NameComparator = new Comparator<MediaFile>() {
+        public int compare(MediaFile file1, MediaFile file2) {
+            return file1.getName().compareTo(file2.getName());
+        }
+    };
+
+    public static Comparator<MediaFile> ContentTypeComparator = new Comparator<MediaFile>() {
+        public int compare(MediaFile file1, MediaFile file2) {
+            return file1.getContentType().compareTo(file2.getContentType());
+        }
+    };
+
+    public static Comparator<MediaFile> DateUploadedComparator = new Comparator<MediaFile>() {
+        public int compare(MediaFile file1, MediaFile file2) {
+            // Do last uploaded first comparison for date field
+            return file2.getDateUploaded().compareTo(file1.getDateUploaded());
+        }
+    };
 
 }

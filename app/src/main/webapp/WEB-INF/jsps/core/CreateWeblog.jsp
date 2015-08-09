@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
@@ -115,7 +118,7 @@ function handlePreview(handle) {
 
     angular.module('themeSelectModule', [])
         .controller('themeController', ['$scope', function($scope) {
-            $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata", async:false,
+            $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themes/themes", async:false,
                 success: function(data) { $scope.themes = data; }
             });
             $scope.selectedTheme = $scope.themes[0];

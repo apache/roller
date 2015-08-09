@@ -20,6 +20,7 @@
 */
 package org.apache.roller.weblogger.pojos;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -180,5 +181,11 @@ public class MediaFileDirectory {
         return new HashCodeBuilder().append(getId()).append(getName())
                 .append(getDescription()).toHashCode();
     }
+
+    public static Comparator<MediaFileDirectory> Comparator = new Comparator<MediaFileDirectory>() {
+        public int compare(MediaFileDirectory dir1, MediaFileDirectory dir2) {
+            return dir1.getName().compareTo(dir2.getName());
+        }
+    };
 
 }

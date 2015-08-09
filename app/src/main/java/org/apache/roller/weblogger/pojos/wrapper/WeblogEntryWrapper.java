@@ -21,8 +21,10 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +36,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
-import org.apache.roller.weblogger.pojos.WeblogEntryTagComparator;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 
@@ -189,13 +190,13 @@ public final class WeblogEntryWrapper {
     
     public List getTags() {
         // Sort by name
-        Set<WeblogEntryTag> initialCollection = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
+        Set<WeblogEntryTag> initialCollection = new TreeSet<>(WeblogEntryTag.Comparator);
         initialCollection.addAll(this.pojo.getTags());
         
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        ArrayList<WeblogEntryTagWrapper> wrappedCollection = new ArrayList<>(initialCollection.size());
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
@@ -336,5 +337,23 @@ public final class WeblogEntryWrapper {
     public WeblogEntry getPojo() {
         return this.pojo;
     }
-    
+
+    public static Comparator<WeblogEntryWrapper> Comparator = new Comparator<WeblogEntryWrapper>() {
+        public int compare(WeblogEntryWrapper val1, WeblogEntryWrapper val2) {
+
+            long pubTime1 = val1.getPubTime().getTime();
+            long pubTime2 = val2.getPubTime().getTime();
+
+            if (pubTime1 > pubTime2) {
+                return -1;
+            }
+            else if (pubTime1 < pubTime2) {
+                return 1;
+            }
+
+            // if pubTimes are the same, return results of String.compareTo() on Title
+            return val1.getTitle().compareTo(val2.getTitle());
+        }
+    };
+
 }

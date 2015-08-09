@@ -18,8 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
-
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,10 +30,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.StatCount;
-import org.apache.roller.weblogger.pojos.StatCountCountComparator;
 import org.apache.roller.weblogger.pojos.TagStat;
-import org.apache.roller.weblogger.pojos.TagStatComparator;
-import org.apache.roller.weblogger.pojos.TagStatCountComparator;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -54,10 +49,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -78,16 +71,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = new HashMap<String, String>();
-    
-    private static final Comparator<TagStat> TAG_STAT_NAME_COMPARATOR = new TagStatComparator();
-    
-    private static final Comparator<TagStat> TAG_STAT_COUNT_REVERSE_COMPARATOR =
-            Collections.reverseOrder(TagStatCountComparator.getInstance());
-    
-    private static final Comparator<StatCount> STAT_COUNT_COUNT_REVERSE_COMPARATOR =
-            Collections.reverseOrder(StatCountCountComparator.getInstance());
-    
-    
+
     protected JPAWeblogEntryManagerImpl(AutoPingManager apm, JPAPersistenceStrategy strategy) {
         LOG.debug("Instantiating JPA Weblog Manager");
         this.autoPingManager = apm;
@@ -843,7 +827,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         // Original query ordered by desc count.
         // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
-        Collections.sort(results, STAT_COUNT_COUNT_REVERSE_COMPARATOR);
+        Collections.sort(results, StatCount.CountComparator);
         
         return results;
     }
@@ -964,7 +948,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         // sort results by name, because query had to sort by total
-        Collections.sort(results, TAG_STAT_NAME_COMPARATOR);
+        Collections.sort(results, TagStat.Comparator);
         
         return results;
     }
@@ -1027,9 +1011,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         if (sortByName) {
-            Collections.sort(results, TAG_STAT_NAME_COMPARATOR);
+            Collections.sort(results, TagStat.Comparator);
         } else {
-            Collections.sort(results, TAG_STAT_COUNT_REVERSE_COMPARATOR);
+            Collections.sort(results, TagStat.CountComparator);
         }
         
         return results;

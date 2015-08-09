@@ -30,8 +30,6 @@ import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileComparator;
-import org.apache.roller.weblogger.pojos.MediaFileComparator.MediaFileComparatorType;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
@@ -214,18 +212,15 @@ public class MediaFileView extends MediaFileBase {
             this.childFiles.addAll(directory.getMediaFiles());
 
             if ("type".equals(sortBy)) {
-                Collections.sort(this.childFiles, new MediaFileComparator(
-                        MediaFileComparatorType.TYPE));
+                Collections.sort(this.childFiles, MediaFile.ContentTypeComparator);
 
             } else if ("date_uploaded".equals(sortBy)) {
-                Collections.sort(this.childFiles, new MediaFileComparator(
-                        MediaFileComparatorType.DATE_UPLOADED));
+                Collections.sort(this.childFiles, MediaFile.DateUploadedComparator);
 
             } else {
                 // default to sort by name
                 sortBy = "name";
-                Collections.sort(this.childFiles, new MediaFileComparator(
-                        MediaFileComparatorType.NAME));
+                Collections.sort(this.childFiles, MediaFile.NameComparator);
             }
 
             this.currentDirectory = directory;
