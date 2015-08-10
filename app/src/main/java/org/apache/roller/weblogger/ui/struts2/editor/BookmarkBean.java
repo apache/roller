@@ -67,19 +67,10 @@ public class BookmarkBean {
         this.url = url;
     }
     
-    public String getImage() {
-        return this.image;
-    }
-    
-    public void setImage( String image ) {
-        this.image = image;
-    }
-    
     public void copyTo(WeblogBookmark dataHolder) {
         dataHolder.setName(this.name);
         dataHolder.setDescription(this.description);
         dataHolder.setUrl(this.url);
-        dataHolder.setImage(this.image);
     }
 
     public void copyFrom(WeblogBookmark dataHolder) {
@@ -87,7 +78,6 @@ public class BookmarkBean {
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();
         this.url = dataHolder.getUrl();
-        this.image = dataHolder.getImage();
     }
     
 }

@@ -301,8 +301,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                             newWeblog,
                             rollitems[0],
                             "",
-                            rollitems[1].trim(),
-                            null);
+                            rollitems[1].trim());
                     this.strategy.store(b);
                 }
             }

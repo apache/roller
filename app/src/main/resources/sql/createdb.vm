@@ -100,8 +100,7 @@ create table bookmark (
     name             varchar(255) not null,
     description      varchar(255),
     url              varchar(255) not null,
-    priority         integer default 100 not null,
-    image            varchar(255)
+    priority         integer default 100 not null
 );
 create index bm_weblogid_idx on bookmark( weblogid );
 
