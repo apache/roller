@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.business;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
@@ -226,10 +227,10 @@ public interface WeblogManager {
      * @param sinceDays Number of days in the past to consider.
      * @param offset What index in the results to begin from.
      * @param length The number of results to return.
-     * @return A Map of Weblog ID, count ranked by hit count, descending.
+     * @return A List of Weblogs, ranked by descending hit count.
      * @throws WebloggerException If there was a problem with the backend.
      */
-    LinkedHashMap<String, Integer> getHotWeblogs(int sinceDays, int offset, int length)
+    List<Weblog> getHotWeblogs(int sinceDays, int offset, int length)
             throws WebloggerException;
 
 
