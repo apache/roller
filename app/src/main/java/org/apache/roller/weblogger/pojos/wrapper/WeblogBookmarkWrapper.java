@@ -69,8 +69,4 @@ public final class WeblogBookmarkWrapper {
         return this.pojo.getPriority();
     }
 
-    public String getImage() {
-        return this.pojo.getImage();
-    }
-    
 }

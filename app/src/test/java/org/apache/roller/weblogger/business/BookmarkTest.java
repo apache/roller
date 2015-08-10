@@ -85,8 +85,7 @@ public class BookmarkTest extends TestCase {
                 testWeblog,
                 "TestBookmark1",
                 "created by testBookmarkCRUD()",
-                "http://www.example1.com",
-                "test.jpg");
+                "http://www.example1.com");
         // Save via saveBookmark
         wmgr.saveBookmark(bookmark1);
 
@@ -95,8 +94,7 @@ public class BookmarkTest extends TestCase {
                 testWeblog,
                 "TestBookmark2",
                 "created by testBookmarkCRUD()",
-                "http://www.example2.com",
-                "test.jpf");
+                "http://www.example2.com");
         // Save via saving Weblog
         testWeblog.addBookmark(bookmark2);
         wmgr.saveWeblog(testWeblog);
@@ -147,18 +145,15 @@ public class BookmarkTest extends TestCase {
         // add some bookmarks
         WeblogBookmark b1 = new WeblogBookmark(
                 testWeblog, "b1", "testbookmark13",
-                "http://example.com",
-                "image.gif");
+                "http://example.com");
         wmgr.saveBookmark(b1);
         WeblogBookmark b2 = new WeblogBookmark(
                 testWeblog, "b2", "testbookmark14",
-                "http://example.com",
-                "image.gif");
+                "http://example.com");
         wmgr.saveBookmark(b2);
         WeblogBookmark b3 = new WeblogBookmark(
                 testWeblog, "b3", "testbookmark16",
-                "http://example.com",
-                "image.gif");
+                "http://example.com");
         wmgr.saveBookmark(b3);
         
         TestUtils.endSession(true);

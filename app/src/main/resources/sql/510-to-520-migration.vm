@@ -37,6 +37,7 @@
 #dropForeignKey("bookmark" "bm_folderid_fk")
 #dropIndex("bookmark", "bm_folderid_idx")
 #dropColumn("bookmark", "feedurl")
+#dropColumn("bookmark", "image")
 #addColumnNull("bookmark" "weblogid" "varchar48")
 update bookmark bm set weblogid = select websiteid from bookmark_folder bf where bf.id = bm.folderid;
 

@@ -69,11 +69,6 @@
             <td><s:textfield name="bean.description" maxlength="255" size="70" style="width:50%"/></td>
         </tr>
 
-        <tr>
-            <td><s:text name="bookmarkForm.image" /></td>
-            <td><s:textfield name="bean.image" maxlength="255" size="70" style="width:50%"/></td>
-        </tr>
-        
     </table>
     
     <p>

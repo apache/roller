@@ -27,7 +27,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -56,7 +55,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     private String description;
     private String url;
     private Integer priority;
-    private String image;
 
     //----------------------------------------------------------- Constructors
     
@@ -68,13 +66,11 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
             Weblog parent,
             String name,
             String desc,
-            String url,
-            String image) {
+            String url) {
         this.weblog = parent;
         this.name = name;
         this.description = desc;
         this.url = url;
-        this.image = image;
         calculatePriority();
     }
 
@@ -134,14 +130,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         this.priority = priority;
     }
     
-    public String getImage() {
-        return this.image;
-    }
-    
-    public void setImage(String image) {
-        this.image = image;
-    }
-    
+
     //---------------------------------------------------------- Relationships
 
     @ManyToOne
