@@ -21,9 +21,8 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -215,16 +214,15 @@ public class HitCountTest extends TestCase {
         assertEquals(30, testCount);
         
         // get hot weblogs
-        LinkedHashMap<String, Integer> hotBlogs = mgr.getHotWeblogs(1, 0, 5);
+        List<Weblog> hotBlogs = mgr.getHotWeblogs(1, 0, 5);
         assertNotNull(hotBlogs);
         assertEquals(3, hotBlogs.size());
         
         // also check ordering and values
         int hitCount;
-        Collection<Integer> list = hotBlogs.values();
-        Iterator it = list.iterator();
+        Iterator<Weblog> it = hotBlogs.iterator();
         for (int i=3; it.hasNext(); i--) {
-            hitCount = (Integer) it.next();
+            hitCount = it.next().getHitsToday();
             assertEquals(i*10, hitCount);
         }
         

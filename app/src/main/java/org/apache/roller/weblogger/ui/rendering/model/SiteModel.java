@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.model;
@@ -22,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -439,27 +440,15 @@ public class SiteModel implements Model {
         List<StatCount> results = new ArrayList<StatCount>();
         try {
             WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            LinkedHashMap<String, Integer> hotBlogs = mgr.getHotWeblogs(sinceDays, 0, length);
+            List<Weblog> hotBlogs = mgr.getHotWeblogs(sinceDays, 0, length);
 
-            for (Map.Entry<String, Integer> item : hotBlogs.entrySet()) {
+            for (Weblog weblog : hotBlogs) {
                 StatCount statCount = new StatCount(
-                  item.getKey(), item.getKey(), item.getKey(), "statCount.weblogDayHits", item.getValue()
+                  weblog.getId(), weblog.getHandle(), weblog.getName(), "statCount.weblogDayHits", weblog.getHitsToday()
                 );
-                statCount.setWeblogHandle(item.getKey());
+                statCount.setWeblogHandle(weblog.getHandle());
                 results.add(statCount);
             }
-/*
-            for (WeblogHitCount hitCount : hotBlogs) {
-                StatCount statCount = new StatCount(
-                    hitCount.getWeblog().getId(),
-                    hitCount.getWeblog().getHandle(),
-                    hitCount.getWeblog().getName(),
-                    "statCount.weblogDayHits",
-                    hitCount.getDailyHits());
-                statCount.setWeblogHandle(hitCount.getWeblog().getHandle());
-                results.add(statCount);              
-            }
-*/
         } catch (Exception e) {
             log.error("ERROR: fetching hot weblog list", e);
         }

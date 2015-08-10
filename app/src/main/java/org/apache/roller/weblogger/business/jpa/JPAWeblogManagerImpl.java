@@ -604,7 +604,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             int offset, int length)
             throws WebloggerException {
         
-        Query query;
+        TypedQuery<Object[]> query;
         
         if (endDate == null) {
             endDate = new Date();
@@ -614,13 +614,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             Timestamp start = new Timestamp(startDate.getTime());
             Timestamp end = new Timestamp(endDate.getTime());
             query = strategy.getNamedQuery(
-                    "WeblogEntryComment.getMostCommentedWeblogByEndDate&StartDate");
+                    "WeblogEntryComment.getMostCommentedWeblogByEndDate&StartDate", Object[].class);
             query.setParameter(1, end);
             query.setParameter(2, start);
         } else {
             Timestamp end = new Timestamp(endDate.getTime());
             query = strategy.getNamedQuery(
-                    "WeblogEntryComment.getMostCommentedWeblogByEndDate");
+                    "WeblogEntryComment.getMostCommentedWeblogByEndDate", Object[].class);
             query.setParameter(1, end);
         }
         if (offset != 0) {
@@ -629,20 +629,17 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (length != -1) {
             query.setMaxResults(length);
         }
-        List queryResults = query.getResultList();
-        List<StatCount> results = new ArrayList<StatCount>();
-        if (queryResults != null) {
-            for (Object obj : queryResults) {
-                Object[] row = (Object[]) obj;
-                StatCount sc = new StatCount(
-                        (String)row[1],                     // weblog id
-                        (String)row[2],                     // weblog handle
-                        (String)row[3],                     // weblog name
-                        "statCount.weblogCommentCountType", // stat type
-                        ((Long)row[0]));        // # comments
-                sc.setWeblogHandle((String)row[2]);
-                results.add(sc);
-            }
+        List<Object[]> queryResults = query.getResultList();
+        List<StatCount> results = new ArrayList<>();
+        for (Object[] row : queryResults) {
+            StatCount sc = new StatCount(
+                    (String)row[1],                     // weblog id
+                    (String)row[2],                     // weblog handle
+                    (String)row[3],                     // weblog name
+                    "statCount.weblogCommentCountType", // stat type
+                    ((Long)row[0]));        // # comments
+            sc.setWeblogHandle((String)row[2]);
+            results.add(sc);
         }
 
         // Original query ordered by desc # comments.
@@ -673,7 +670,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public LinkedHashMap<String, Integer> getHotWeblogs(int sinceDays, int offset, int length)
+    public List<Weblog> getHotWeblogs(int sinceDays, int offset, int length)
             throws WebloggerException {
 
         // figure out start date
@@ -682,25 +679,19 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         cal.add(Calendar.DATE, -1 * sinceDays);
         Date startDate = cal.getTime();
 
-        TypedQuery<Object[]> query = strategy.getNamedQuery(
+        TypedQuery<Weblog> query = strategy.getNamedQuery(
                 "Weblog.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
-                Object[].class);
+                Weblog.class);
         query.setParameter(1, startDate);
-
         if (offset != 0) {
             query.setFirstResult(offset);
         }
         if (length != -1) {
             query.setMaxResults(length);
         }
-
-        List<Object[]> resultList = query.getResultList();
-        LinkedHashMap<String, Integer> resultMap = new LinkedHashMap<>(resultList.size());
-        for (Object[] result : resultList) {
-            resultMap.put((String) result[0], (Integer) result[1]);
-        }
-        return resultMap;
+        return query.getResultList();
     }
+
 
     /**
      * @inheritDoc

@@ -75,7 +75,7 @@ import javax.persistence.Transient;
         @NamedQuery(name="Weblog.getCountByHandleLike",
                 query="SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1"),
         @NamedQuery(name="Weblog.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
-                query="SELECT w.id, w.hitsToday FROM Weblog w WHERE w.visible = true AND w.active = true AND w.lastModified > ?1 AND w.hitsToday > 0 ORDER BY w.hitsToday DESC"),
+                query="SELECT w FROM Weblog w WHERE w.visible = true AND w.active = true AND w.lastModified > ?1 AND w.hitsToday > 0 ORDER BY w.hitsToday DESC"),
         @NamedQuery(name="Weblog.updateDailyHitCountZero",
                 query="UPDATE Weblog w SET w.hitsToday = 0")
 })
