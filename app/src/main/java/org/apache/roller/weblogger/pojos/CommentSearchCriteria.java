@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.pojos;
 
@@ -34,8 +37,8 @@ public class CommentSearchCriteria {
     private Date endDate;
     // Comment status as defined in WeblogEntryComment, or null for any
     private ApprovalStatus status;
-    // True for results in reverse chrono order
-    private boolean reverseChrono = false;
+    // True for results in latest-first order
+    private boolean reverseChrono = true;
     // Offset into results for paging
     private int offset = 0;
     // Max comments to return (or -1 for no limit)

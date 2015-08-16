@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -52,9 +55,9 @@ public class CommentsBean {
     
     public void loadCheckboxes(List<WeblogEntryComment> comments) {
         
-        List<String> allComments = new ArrayList<String>();
-        List<String> approvedList = new ArrayList<String>();
-        List<String> spamList = new ArrayList<String>();
+        List<String> allComments = new ArrayList<>();
+        List<String> approvedList = new ArrayList<>();
+        List<String> spamList = new ArrayList<>();
         
         for (WeblogEntryComment comment : comments) {
             allComments.add(comment.getId());
@@ -130,14 +133,6 @@ public class CommentsBean {
         this.searchString = searchString;
     }
 
-    public String[] getApprovedComments() {
-        return approvedComments;
-    }
-
-    public void setApprovedComments(String[] approvedComments) {
-        this.approvedComments = approvedComments;
-    }
-    
     public String[] getSpamComments() {
         return spamComments;
     }
@@ -193,5 +188,13 @@ public class CommentsBean {
     public void setEntryId(String entryId) {
         this.entryId = entryId;
     }
-    
+
+    public String[] getApprovedComments() {
+        return approvedComments;
+    }
+
+    public void setApprovedComments(String[] approvedComments) {
+        this.approvedComments = approvedComments;
+    }
+
 }

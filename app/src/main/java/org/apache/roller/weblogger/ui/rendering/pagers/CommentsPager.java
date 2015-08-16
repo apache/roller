@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
@@ -99,7 +102,6 @@ public class CommentsPager extends AbstractPager {
                 csc.setWeblog(weblog);
                 csc.setStartDate(startDate);
                 csc.setStatus(ApprovalStatus.APPROVED);
-                csc.setReverseChrono(true);
                 csc.setOffset(offset);
                 csc.setMaxResults(length + 1);
 

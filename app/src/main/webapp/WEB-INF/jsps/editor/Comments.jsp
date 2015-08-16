@@ -97,16 +97,15 @@
     <s:hidden name="bean.ids" />
     <s:hidden name="bean.startDateString" />
     <s:hidden name="bean.endDateString" />
+    <s:hidden name="bean.approvedString" />
     <s:if test="actionName == 'comments'">
         <s:hidden name="bean.entryId" />
         <s:hidden name="bean.searchString" />
-        <s:hidden name="bean.approvedString" />
         <s:hidden name="weblog" />
     </s:if>
     <s:else>
         <s:hidden name="bean.offset" />
         <s:hidden name="bean.count" />
-        <s:hidden name="bean.pendingString" />
     </s:else>
 
 
