@@ -169,10 +169,6 @@
 
     <!-- Context Listeners -->
     <listener>
-        <listener-class>org.apache.roller.weblogger.ui.core.RollerSession</listener-class>
-    </listener>
-
-    <listener>
         <listener-class>org.apache.roller.weblogger.ui.core.RollerContext</listener-class>
     </listener>
     
@@ -275,7 +271,7 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/config/spring-servlet.xml</param-value>
+            <param-value>/WEB-INF/spring-servlet.xml</param-value>
         </init-param>
     </servlet>
 

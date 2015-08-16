@@ -137,10 +137,7 @@
             </beans:bean>
         </beans:constructor-arg>
         <beans:constructor-arg>
-            <beans:bean
-                    class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator">
-                <beans:property name="defaultRole" value="BLOGGER" />
-            </beans:bean>
+            <beans:bean class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator"/>
         </beans:constructor-arg>
     </beans:bean>
 

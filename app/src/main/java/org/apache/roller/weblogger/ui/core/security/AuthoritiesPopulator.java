@@ -40,6 +40,12 @@ import java.util.ArrayList;
 
 public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
 
+    /**
+     * The default global role which will be assigned to incoming users who have
+     * been successfully validated in LDAP but are not yet registered in Roller
+     */
+    private GlobalRole defaultRole = GlobalRole.BLOGGER;
+
     /* (non-Javadoc)
      * @see org.springframework.security.ldap.LdapAuthoritiesPopulator#getGrantedAuthorities(org.springframework.ldap.core.DirContextOperations, String)
      */
@@ -58,16 +64,20 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
             if (user != null) {
                 role = umgr.getGlobalRole(user);
             } else {
-                throw new UsernameNotFoundException("User " + username + " could not be found.");
+                role = defaultRole;
             }
         } catch (WebloggerException ex) {
             throw new DataRetrievalFailureException("ERROR in user lookup", ex);
         }
 
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(1);
+        List<GrantedAuthority> authorities = new ArrayList<>(1);
         authorities.add(new SimpleGrantedAuthority(role.name()));
 
         return authorities;
+    }
+
+    public void setDefaultRole(GlobalRole defaultRole) {
+        this.defaultRole = defaultRole;
     }
 
 }

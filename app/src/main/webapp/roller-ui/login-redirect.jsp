@@ -16,17 +16,20 @@
   directory of this distribution.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ page import="org.apache.roller.weblogger.business.*" %>
 <%@ page import="org.apache.roller.weblogger.pojos.*" %>
-<%@ page import="org.apache.roller.weblogger.ui.core.RollerSession" %>
+<%@ page import="org.apache.roller.weblogger.business.*" %>
+<%@ page import="org.springframework.security.core.Authentication" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
 <%@ page import="java.util.List" %>
 <%
-User user = RollerSession.getRollerSession(request).getAuthenticatedUser();
+Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+User user = mgr.getUserByUserName(auth.getName());
 List weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
 
 if (user == null) {
     response.sendRedirect(request.getContextPath()+"/roller-ui/register.rol");
-} else if (weblogs.size() == 1) {
+} else if (!user.isGlobalAdmin() && weblogs.size() == 1) {
     Weblog weblog = (Weblog) weblogs.get(0);
     response.sendRedirect(request.getContextPath()+"/roller-ui/authoring/entryAdd.rol?weblog="+weblog.getHandle());
 } else {

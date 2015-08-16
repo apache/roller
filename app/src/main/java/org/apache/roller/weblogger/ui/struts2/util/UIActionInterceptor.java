@@ -18,19 +18,18 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.struts2.StrutsStatics;
 
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * A struts2 interceptor for configuring specifics of the weblogger ui.
@@ -48,10 +47,6 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
         }
 
         final Object action = invocation.getAction();
-        final ActionContext context = invocation.getInvocationContext();
-
-        HttpServletRequest request = (HttpServletRequest) context
-                .get(HTTP_REQUEST);
 
         // is this one of our own UIAction classes?
         if (action instanceof UIAction) {
@@ -63,17 +58,16 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
             UIAction theAction = (UIAction) action;
 
             // extract the authenticated user and set it
-            RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses != null) {
-                theAction.setAuthenticatedUser(rses.getAuthenticatedUser());
-            }
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+            String name = auth.getName();
+            theAction.setAuthenticatedUser(mgr.getUserByUserName(name));
 
             // extract the work weblog and set it
             String weblogHandle = theAction.getWeblog();
             if (!StringUtils.isEmpty(weblogHandle)) {
-                Weblog weblog = null;
                 try {
-                    weblog = WebloggerFactory.getWeblogger().getWeblogManager()
+                    Weblog weblog = WebloggerFactory.getWeblogger().getWeblogManager()
                             .getWeblogByHandle(weblogHandle);
                     if (weblog != null) {
                         theAction.setActionWeblog(weblog);

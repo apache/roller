@@ -443,7 +443,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     public List<Weblog> getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException {
-        List<Weblog> weblogs = new ArrayList<Weblog>();
+        List<Weblog> weblogs = new ArrayList<>();
         if (user == null) {
             return weblogs;
         }

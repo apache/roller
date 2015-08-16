@@ -16,13 +16,11 @@
   directory of this distribution.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ page import="org.apache.roller.weblogger.ui.core.RollerSession" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ page import="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices" %>
 
 <%
-request.getSession().removeAttribute(RollerSession.ROLLER_SESSION);
-request.getSession().invalidate(); 
+request.getSession().invalidate();
 
 // Mimic exactly TokenBasedRememberMeServices.makeCancelCookie()
 Cookie terminate = new Cookie(TokenBasedRememberMeServices.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
