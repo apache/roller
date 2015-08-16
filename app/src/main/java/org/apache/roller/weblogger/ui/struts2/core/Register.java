@@ -38,7 +38,6 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
@@ -208,11 +207,9 @@ public class Register extends UIAction implements ServletRequestAware {
 
                     if (mgr.getUserByActivationCode(inActivationCode) != null) {
                         // In the *extremely* unlikely event that we generate an
-                        // activation code that is already use, we'll retry 3 times.
+                        // activation code that is already used, we'll retry 3 times.
                         int numOfRetries = 3;
-                        if (numOfRetries < 1) {
-                            numOfRetries = 1;
-                        }
+
                         for (int i = 0; i < numOfRetries; i++) {
                             inActivationCode = UUID.randomUUID().toString();
                             if (mgr.getUserByActivationCode(inActivationCode) == null) {
@@ -257,7 +254,6 @@ public class Register extends UIAction implements ServletRequestAware {
                 // Invalidate session, otherwise new user who was originally
                 // authenticated via LDAP/SSO will remain logged in but
                 // without a valid Roller role.
-                getServletRequest().getSession().removeAttribute(RollerSession.ROLLER_SESSION);
                 getServletRequest().getSession().invalidate();
 
                 // set a special page title

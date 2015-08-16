@@ -28,23 +28,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.util.Utilities;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 /**
  * Supports GET of comment data in JSON format and PUT of raw comment content.
  */
 public class CommentDataServlet extends HttpServlet {
-
-    public void checkAuth(HttpServletRequest request, Weblog weblog) {
-    }
 
     /**
      * Accepts request with comment 'id' parameter and returns comment id and
@@ -64,9 +64,11 @@ public class CommentDataServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to view comments
-                RollerSession rses = RollerSession.getRollerSession(request);
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                User authenticatedUser = mgr.getUserByUserName(auth.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
-                if (weblog.userHasWeblogRole(rses.getAuthenticatedUser(), WeblogRole.POST)) {
+                if (weblog.userHasWeblogRole(authenticatedUser, WeblogRole.POST)) {
                     String content = Utilities.escapeHTML(c.getContent());
                     content = WordUtils.wrap(content, 72);
                     content = StringEscapeUtils.escapeEcmaScript(content);
@@ -103,9 +105,11 @@ public class CommentDataServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to edit comments
-                RollerSession rses = RollerSession.getRollerSession(request);
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                User authenticatedUser = mgr.getUserByUserName(auth.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
-                if (weblog.userHasWeblogRole(rses.getAuthenticatedUser(), WeblogRole.POST)) {
+                if (weblog.userHasWeblogRole(authenticatedUser, WeblogRole.POST)) {
                     String content = Utilities.streamToString(request.getInputStream());
                     c.setContent(content);
                     // don't update the posttime when updating the comment
