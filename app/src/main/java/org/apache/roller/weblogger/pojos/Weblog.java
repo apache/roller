@@ -736,7 +736,6 @@ public class Weblog implements Serializable {
             CommentSearchCriteria csc = new CommentSearchCriteria();
             csc.setWeblog(this);
             csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
-            csc.setReverseChrono(true);
             csc.setMaxResults(length);
             recentComments = wmgr.getComments(csc);
         } catch (WebloggerException e) {
