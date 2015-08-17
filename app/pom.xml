@@ -397,21 +397,6 @@
                 </dependencies>
             </plugin>
 
-            <!-- Allow for standalone Tomcat deployment
-                 using mvn tomcat7:redeploy (See
-                 http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
-                 for necessary config info)
-            -->
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <server>myTomcat</server>
-                    <path>/${project.build.finalName}</path>
-                </configuration>
-            </plugin>
-
             <!-- Activates the Derby database for unit tests and mvn jetty:run -->
             <plugin>
                 <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
