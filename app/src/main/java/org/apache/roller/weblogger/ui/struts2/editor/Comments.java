@@ -21,16 +21,21 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -44,7 +49,16 @@ import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +71,7 @@ import java.util.Set;
 /**
  * Action for managing weblog comments.
  */
+@RestController
 public class Comments extends UIAction {
 
     private static final long serialVersionUID = -104973988372024709L;
@@ -518,6 +533,94 @@ public class Comments extends UIAction {
 
     public void setQueryEntry(WeblogEntry queryEntry) {
         this.queryEntry = queryEntry;
+    }
+
+    @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
+    public CommentData getComment(@PathVariable String id, Principal p, HttpServletResponse response)
+    throws ServletException {
+        try {
+            Weblogger roller = WebloggerFactory.getWeblogger();
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+            WeblogEntryComment c = wmgr.getComment(id);
+            if (c == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else {
+                // need post permission to view comments
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                User authenticatedUser = mgr.getUserByUserName(p.getName());
+                Weblog weblog = c.getWeblogEntry().getWeblog();
+                if (weblog.userHasWeblogRole(authenticatedUser, WeblogRole.POST)) {
+                    CommentData cd = new CommentData();
+                    cd.id = id;
+                    cd.content = Utilities.escapeHTML(c.getContent());
+                    cd.content = WordUtils.wrap(cd.content, 72);
+                    cd.content = StringEscapeUtils.escapeEcmaScript(cd.content);
+                    return cd;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/comment/{id}", method = RequestMethod.PUT)
+    public CommentData updateComment(@PathVariable String id, Principal p, HttpServletRequest request,
+                                     HttpServletResponse response)
+            throws ServletException {
+        try {
+            Weblogger roller = WebloggerFactory.getWeblogger();
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+            WeblogEntryComment c = wmgr.getComment(id);
+            if (c == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else {
+                // need post permission to edit comments
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                User authenticatedUser = mgr.getUserByUserName(p.getName());
+                Weblog weblog = c.getWeblogEntry().getWeblog();
+                if (weblog.userHasWeblogRole(authenticatedUser, WeblogRole.POST)) {
+                    String content = Utilities.streamToString(request.getInputStream());
+                    c.setContent(content);
+                    // don't update the posttime when updating the comment
+                    c.setPostTime(c.getPostTime());
+                    wmgr.saveComment(c);
+                    roller.flush();
+                    return getComment(id, p, response);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    private static class CommentData {
+        public CommentData() {
+        }
+
+        private String id;
+        private String content;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
     }
 
 }

@@ -257,11 +257,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>CommentDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.CommentDataServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>UserDataServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.UserDataServlet</servlet-class>
     </servlet>
@@ -357,18 +352,13 @@
 
     <!-- Servlets for supporting Ajax -->
     <servlet-mapping>
-        <servlet-name>CommentDataServlet</servlet-name>
-        <url-pattern>/roller-ui/authoring/commentdata/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>UserDataServlet</servlet-name>
         <url-pattern>/roller-ui/authoring/userdata/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>SpringDispatcherServlet</servlet-name>
-        <url-pattern>/roller-ui/authoring/themes/*</url-pattern>
+        <url-pattern>/roller-ui/authoring/rest/*</url-pattern>
     </servlet-mapping>
 
     <!-- Web Service Servlets -->
