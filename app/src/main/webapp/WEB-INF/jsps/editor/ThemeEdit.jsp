@@ -149,7 +149,7 @@ function updateThemeChooser(selected) {
 <script>
     angular.module('themeSelectModule', [])
         .controller('themeController', ['$scope', function($scope) {
-            $.ajax({ url: "<s:url value='themes/themes'/>", async:false,
+            $.ajax({ url: "<s:url value='rest/themes'/>", async:false,
                 success: function(data) { $scope.themes = data; }
             });
             <s:if test="customTheme">

@@ -118,7 +118,7 @@ function handlePreview(handle) {
 
     angular.module('themeSelectModule', [])
         .controller('themeController', ['$scope', function($scope) {
-            $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themes/themes", async:false,
+            $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/rest/themes", async:false,
                 success: function(data) { $scope.themes = data; }
             });
             $scope.selectedTheme = $scope.themes[0];
