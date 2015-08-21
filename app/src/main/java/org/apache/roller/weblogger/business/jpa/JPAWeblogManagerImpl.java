@@ -33,7 +33,6 @@ import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
-import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
@@ -147,14 +146,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 "WeblogEntryTagAggregate.removeByTotalLessEqual");
         removeCounts.setParameter(1, 0);
         removeCounts.executeUpdate();
-        
-        // Remove the weblog's ping queue entries
-        TypedQuery<PingQueueEntry> q = strategy.getNamedQuery("PingQueueEntry.getByWeblog", PingQueueEntry.class);
-        q.setParameter(1, weblog);
-        List queueEntries = q.getResultList();
-        for (Object obj : queueEntries) {
-            this.strategy.remove(obj);
-        }
         
         // Remove the weblog's auto ping configurations
         List<AutoPing> autopings = autoPingManager.getAutoPingsByWebsite(weblog);

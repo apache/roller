@@ -25,7 +25,6 @@ import org.apache.roller.weblogger.planet.business.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -67,12 +66,6 @@ public interface Weblogger {
      * Get the PingTargetManager associated with this Weblogger instance.
      */
     PingTargetManager getPingTargetManager();
-    
-    
-    /**
-     * Get the PingQueueManager associated with this Weblogger instance.
-     */
-    PingQueueManager getPingQueueManager();
     
     
     /**

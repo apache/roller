@@ -268,12 +268,6 @@ public final class EntryEdit extends UIAction {
                 // notify caches
                 CacheManager.invalidate(weblogEntry);
 
-                // Queue applicable pings for this update.
-                if (weblogEntry.isPublished()) {
-                    WebloggerFactory.getWeblogger().getAutopingManager()
-                            .queueApplicableAutoPings(weblogEntry);
-                }
-
                 if (weblogEntry.isPending() && MailUtil.isMailConfigured()) {
                     MailUtil.sendPendingEntryNotice(weblogEntry);
                 }

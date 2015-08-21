@@ -109,7 +109,8 @@ public class AutoPing implements Serializable {
     }
 
     public String toString() {
-        return "{" + getId() + "}";
+        return "{ weblog: " + getWeblog().getHandle()
+                + " ping target: " + getPingTarget().getPingUrl() + " }";
     }
     
     public boolean equals(Object other) {
@@ -121,8 +122,7 @@ public class AutoPing implements Serializable {
         }
         AutoPing o = (AutoPing)other;
         return new EqualsBuilder()
-            .append(getId(), o.getId())
-            .append(getPingTarget(), o.getPingTarget()) 
+            .append(getPingTarget(), o.getPingTarget())
             .append(getWeblog(), o.getWeblog())
             .isEquals();
     }

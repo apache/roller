@@ -110,7 +110,7 @@ public final class WeblogUpdatePinger {
         }
         params.add(websiteUrl);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Executing ping to '" + pingTargetUrl + "' for website '" + websiteUrl + "' (" + website.getName() + ")" + (variantOptions.isEmpty() ? "" : " with variant options " + variantOptions));
+            LOGGER.debug("Executing ping to '" + pingTargetUrl + "' for weblog '" + websiteUrl + "' (" + website.getName() + ")" + (variantOptions.isEmpty() ? "" : " with variant options " + variantOptions));
         }
 
         // Send the ping.

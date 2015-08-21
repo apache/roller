@@ -23,8 +23,8 @@ package org.apache.roller.weblogger.business.jpa;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -43,7 +43,6 @@ import javax.persistence.TypedQuery;
  */
 public class JPAAutoPingManagerImpl implements AutoPingManager {
 
-    private final PingQueueManager pingQueueManager;
     private final JPAPersistenceStrategy strategy;
     /**
      * The logger instance for this class.
@@ -53,8 +52,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     /**
      * Creates a new instance of JPAAutoPingManagerImpl
      */
-    protected JPAAutoPingManagerImpl(PingQueueManager pqm, JPAPersistenceStrategy strategy) {
-        this.pingQueueManager = pqm;
+    protected JPAAutoPingManagerImpl(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
     }
 
@@ -95,8 +93,10 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         }
 
         List<AutoPing> applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
+        OutgoingPingQueue queue = OutgoingPingQueue.getInstance();
+
         for (AutoPing autoPing : applicableAutopings) {
-            pingQueueManager.addQueueEntry(autoPing);
+            queue.addPing(autoPing);
         }
     }
 

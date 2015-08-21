@@ -18,7 +18,6 @@
 
 -- switch websiteid columns to weblogid
 #renameColumn('autoping', 'websiteid', 'weblogid', 'varchar(48) not null')
-#renameColumn('pingqueueentry', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('weblog_custom_template', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('weblog_category', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('weblogentry', 'websiteid', 'weblogid', 'varchar(48) not null')
@@ -31,6 +30,10 @@
 
 #dropTableIfExists("roller_oauthconsumer")
 #dropTableIfExists("roller_oauthaccessor")
+
+-- Pinging now handled in-memory
+
+#dropTableIfExists("pingqueueentry")
 
 -- bookmark folders removed
 
@@ -184,7 +187,6 @@ alter table planet_subscription_entry add constraint pse_subscriptionid_fk
 #end
 #end
 
-#expandTimestampNotNull('pingqueueentry' 'entrytime')
 #expandTimestamp('pingtarget' 'lastsuccess')
 #expandTimestampNotNull('roller_comment' 'posttime')
 #expandTimestampNotNull('roller_mediafile' 'date_uploaded')
