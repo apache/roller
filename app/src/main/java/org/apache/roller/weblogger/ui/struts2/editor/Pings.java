@@ -142,7 +142,7 @@ public class Pings extends UIAction {
                 autoPingMgr.removeAutoPing(getPingTarget(), getActionWeblog());
                 WebloggerFactory.getWeblogger().flush();
             } catch (Exception ex) {
-                log.error("Error removing auto ping for target - "+getPingTargetId(), ex);
+                log.error("Error removing auto ping for target - " + getPingTargetId(), ex);
                 addError("Error disabling auto ping");
             }
         }
@@ -172,14 +172,15 @@ public class Pings extends UIAction {
                             addError("ping.transmissionFailed");
                         }
                     } else {
-                        addMessage("ping.successful");
+                        if (pingResult.getMessage() != null) {
+                            addMessage("ping.successfulWithMessage", getPingTarget().getName());
+                            addMessage(pingResult.getMessage());
+                        } else {
+                            addMessage("ping.successful");
+                        }
                     }
                 }
-            } catch (IOException ex) {
-                log.debug(ex);
-                addError("ping.transmissionFailed");
-                addSpecificMessages(ex);
-            } catch (XmlRpcException ex) {
+            } catch (IOException|XmlRpcException ex) {
                 log.debug(ex);
                 addError("ping.transmissionFailed");
                 addSpecificMessages(ex);

@@ -26,7 +26,6 @@
         <beans:constructor-arg ref="indexManager"/>
         <beans:constructor-arg ref="mediaFileManager"/>
         <beans:constructor-arg ref="fileContentManager"/>
-        <beans:constructor-arg ref="pingQueueManager"/>
         <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="pluginManager"/>
         <beans:constructor-arg ref="propertiesManager"/>
@@ -47,7 +46,6 @@
     </beans:bean>
 
     <beans:bean id="autoPingManager" class="org.apache.roller.weblogger.business.jpa.JPAAutoPingManagerImpl">
-        <beans:constructor-arg ref="pingQueueManager"/>
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
@@ -62,10 +60,6 @@
     </beans:bean>
 
     <beans:bean id="fileContentManager" class="org.apache.roller.weblogger.business.FileContentManagerImpl"/>
-
-    <beans:bean id="pingQueueManager" class="org.apache.roller.weblogger.business.jpa.JPAPingQueueManagerImpl">
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
-    </beans:bean>
 
     <beans:bean id="pingTargetManager" class="org.apache.roller.weblogger.business.jpa.JPAPingTargetManagerImpl">
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>

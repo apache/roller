@@ -41,16 +41,14 @@ import org.apache.roller.weblogger.pojos.Weblog;
 public class HitCountProcessingJob implements Job {
     
     private static Log log = LogFactory.getLog(HitCountProcessingJob.class);
-    
-    
+
     public HitCountProcessingJob() {}
-    
-    
+
     /**
      * Execute the job.
      *
      * We want to extract the currently queued hits from the HitCounter and
-     * then propogate them to the db for persistent storage.
+     * then propagate them to the db for persistent storage.
      */
     public void execute() {
         

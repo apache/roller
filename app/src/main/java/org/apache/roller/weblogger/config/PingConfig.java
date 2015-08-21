@@ -39,25 +39,11 @@ import java.util.regex.Pattern;
 /**
  * Thin wrapper around WebloggerConfig and WebloggerRuntimeConfig for centralizing access to the many configurable
  * settings for pings.
- * 
- * 
+ *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public final class PingConfig {
     private static final Log LOGGER = LogFactory.getLog(PingConfig.class);
-
-
-    // Config property for maximum ping attempts.
-    static final String MAX_PING_ATTEMPTS_PROP = "pings.maxPingAttempts";
-    private static final int MAX_PING_ATTEMPTS_DEFAULT = 3;
-    private static final int MAX_PING_ATTEMPTS_MIN = 1;
-    private static final int MAX_PING_ATTEMPTS_MAX = 10;
-
-    // Config property for queue processing interval
-    private static final String QUEUE_PROCESSING_INTERVAL_PROP = "pings.queueProcessingIntervalMins";
-    private static final int QUEUE_PROCESSING_INTERVAL_DEFAULT = 5;
-    private static final int QUEUE_PROCESSING_INTERVAL_MIN = 0;
-    private static final int QUEUE_PROCESSING_INTERVAL_MAX = 120;
 
     // PingConfig property for logging pings (not actually performing them).  Used for debugging.
     private static final String PINGS_LOG_ONLY_PROP = "pings.logOnly";
@@ -83,12 +69,12 @@ public final class PingConfig {
     // commenting out this property in the config file.
     private static final String PINGS_INITIAL_COMMON_TARGETS_PROP = "pings.initialCommonTargets";
 
-
     // PingConfig property determining the known WeblogUpdates.ping variants/bugs
     // in popular ping targets, which we are used when invoking pings on those targets.
     // The value takes the form of a comma separated list of ping target urls and
     // variant options, where each one is in the form {{pingurl}{option[[,option]...]}}.
     private static final String PINGS_VARIANT_OPTIONS_PROP = "pings.variantOptions";
+
     // Map of configured ping variants.  Maps a ping target hostname to a set of
     // Strings representing variant options to be used when pinging this target.
     // This was introduced in order to support certain buggy (but popular) ping
@@ -101,31 +87,9 @@ public final class PingConfig {
     // Ping variants are also specified in a nested brace format {{url}{options}}
     private static final Pattern NESTED_BRACE_PAIR = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
 
-
     // Inhibit construction
     private PingConfig() {
     }
-
-    /**
-     * Get the maximum number of ping attempts that should be made for each ping queue entry before we give up. If we
-     * get apparently transient failures while trying to perform the ping, the entry is requeued for processing on later
-     * passes through the queue until this number of attempts has been reached.
-     *
-     * @return the configured (or default) maximum number of ping attempts
-     */
-    public static int getMaxPingAttempts() {
-        return getIntegerProperty(MAX_PING_ATTEMPTS_PROP, MAX_PING_ATTEMPTS_DEFAULT, MAX_PING_ATTEMPTS_MIN, MAX_PING_ATTEMPTS_MAX);
-    }
-
-    /**
-     * Get the ping queue processing interval in minutes.
-     *
-     * @return the configured (or default) queue processing interval in minutes.
-     */
-    public static int getQueueProcessingIntervalMins() {
-        return getIntegerProperty(QUEUE_PROCESSING_INTERVAL_PROP, QUEUE_PROCESSING_INTERVAL_DEFAULT, QUEUE_PROCESSING_INTERVAL_MIN, QUEUE_PROCESSING_INTERVAL_MAX);
-    }
-
 
     /**
      * Get the logs only setting.  Get configuration value determining whether pings are to be logged only (not sent).
@@ -317,6 +281,5 @@ public final class PingConfig {
         }
         return Boolean.valueOf(configuredVal);
     }
-
 
 }

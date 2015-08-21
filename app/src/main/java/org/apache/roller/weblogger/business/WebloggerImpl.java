@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.planet.business.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
@@ -52,7 +51,6 @@ public abstract class WebloggerImpl implements Weblogger {
     private final IndexManager         indexManager;
     private final MediaFileManager     mediaFileManager;
     private final FileContentManager   fileContentManager;
-    private final PingQueueManager     pingQueueManager;
     private final PingTargetManager    pingTargetManager;
     private final PluginManager        pluginManager;
     private final PropertiesManager    propertiesManager;
@@ -79,7 +77,6 @@ public abstract class WebloggerImpl implements Weblogger {
         IndexManager         indexManager,
         MediaFileManager     mediaFileManager,
         FileContentManager   fileContentManager,
-        PingQueueManager     pingQueueManager,
         PingTargetManager    pingTargetManager,
         PluginManager        pluginManager,
         PropertiesManager    propertiesManager,
@@ -96,7 +93,6 @@ public abstract class WebloggerImpl implements Weblogger {
         this.indexManager        = indexManager;
         this.mediaFileManager    = mediaFileManager;
         this.fileContentManager  = fileContentManager;
-        this.pingQueueManager    = pingQueueManager;
         this.pingTargetManager   = pingTargetManager;
         this.pluginManager       = pluginManager;
         this.propertiesManager   = propertiesManager;
@@ -211,17 +207,6 @@ public abstract class WebloggerImpl implements Weblogger {
         return propertiesManager;
     }
     
-    
-    /**
-     * 
-     * 
-     * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
-     */
-    public PingQueueManager getPingQueueManager() {
-        return pingQueueManager;
-    }
-    
-    
     /**
      * 
      * 
@@ -277,7 +262,6 @@ public abstract class WebloggerImpl implements Weblogger {
             mediaFileManager.release();
             fileContentManager.release();
             pingTargetManager.release();
-            pingQueueManager.release();
             pluginManager.release();
             threadManager.release();
             userManager.release();

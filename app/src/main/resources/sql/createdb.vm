@@ -219,21 +219,6 @@ create table autoping (
 create index ap_weblogid_idx on autoping( weblogid );
 create index ap_pingtid_idx on autoping( pingtargetid );
 
--- entrytime: timestamp of original entry onto the ping queue
--- pingtargetid: weak fk reference to ping target (not constrained)
--- weblogid: weak fk reference to weblog originating the ping (not constrained)
--- attempts:  number of ping attempts that have been made for this entry
-create table pingqueueentry (
-    id             varchar(48) not null primary key,
-    entrytime      $db.TIMESTAMP_SQL_TYPE not null, 
-    pingtargetid   varchar(48) not null,  
-    weblogid      varchar(48) not null,
-    attempts       integer not null
-);
-create index pqe_entrytime_idx on pingqueueentry( entrytime );
-create index pqe_pingtid_idx on pingqueueentry( pingtargetid );
-create index pqe_weblogid_idx on pingqueueentry( weblogid );
-
 create table roller_properties (
     name     varchar(255) not null primary key,
     value    $db.TEXT_SQL_TYPE

@@ -27,14 +27,12 @@ drop table roller_properties;
 drop table roller_tasklock;
 
 -- supplemental services tables
-drop table pingqueueentry;
 drop table autoping;
 drop table pingtarget;
 drop table bookmark;
 drop table roller_mediafiletag;
 drop table roller_mediafile;
 drop table roller_mediafiledir;
-
 
 -- core services tables
 drop table roller_comment;

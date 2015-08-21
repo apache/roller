@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
@@ -32,14 +35,11 @@ import org.apache.roller.weblogger.pojos.Weblog;
 
 
 /**
- * Queue's up incoming hit counts so that they can be recorded to the db in
- * an asynchronous manner at give intervals.
+ * Queues up incoming hit counts so that they can be recorded to the DB in
+ * an asynchronous manner at user-specified intervals.
  *
- * We also start up a single thread which runs continously to take the queued
+ * We also start up a single thread which runs continuously to take the queued
  * hit counts, tally them, and record them into the db.
- *
- * TODO: we may want to make this an interface that is pluggable if there is
- *   some indication that users want to override this implementation.
  */
 public final class HitCountQueue {
     
@@ -55,28 +55,28 @@ public final class HitCountQueue {
         instance = new HitCountQueue();
     }
     
-    
+
     // non-instantiable because we are a singleton
     private HitCountQueue() {
-        int sleepTime = 3 * RollerConstants.MIN_IN_MS;
-        String sleep = WebloggerConfig.getProperty("hitcount.queue.sleepTime", "180");
-        
+        int sleepTime = 3;
+        String sleep = WebloggerConfig.getProperty("hitcount.queue.sleepTime.min", "3");
+
         try {
             // convert input in seconds to ms
-            sleepTime = Integer.parseInt(sleep) * RollerConstants.SEC_IN_MS;
+            sleepTime = Integer.parseInt(sleep) * RollerConstants.MIN_IN_MS;
         } catch(NumberFormatException nfe) {
             log.warn("Invalid sleep time ["+sleep+"], using default");
         }
-        
+
         // create the hits queue
         this.queue = Collections.synchronizedList(new ArrayList<String>());
-        
+
         // start up a worker to process the hits at intervals
         HitCountProcessingJob job = new HitCountProcessingJob();
-        worker = new ContinuousWorkerThread("HitCountQueueProcessor", job, sleepTime);
+        worker = new ContinuousWorkerThread("HitCountProcessingJob", job, sleepTime);
         worker.start();
     }
-    
+
     
     public static HitCountQueue getInstance() {
         return instance;
@@ -94,7 +94,7 @@ public final class HitCountQueue {
     
     
     public List<String> getHits() {
-        return new ArrayList<String>(this.queue);
+        return new ArrayList<>(this.queue);
     }
     
     

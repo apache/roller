@@ -21,11 +21,11 @@ package org.apache.roller.weblogger.business.pings;
 import java.util.Collection;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-
 
 /**
  * Manages autoping storage/retrieval, queries and queue.
@@ -118,7 +118,7 @@ public interface AutoPingManager {
     
     /**
      * Queue the auto ping configurations that should be pinged upon change to the given weblog entry.  This calls the
-     * {@link PingQueueManager} to queue ping requests for each ping configuration that should be applied on change to
+     * {@link OutgoingPingQueue} to queue ping requests for each ping configuration that should be applied on change to
      * the given weblog entry.  If ping processing is suspended, this returns without doing anything.
      *
      * @param changedWeblogEntry the entry that has been created or changed
