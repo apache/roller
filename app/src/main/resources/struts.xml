@@ -223,12 +223,12 @@
         </action>
         
         <action name="planetSubscriptions!*" method="{1}"
-                class="org.apache.roller.weblogger.planet.ui.PlanetSubscriptions">
+                class="org.apache.roller.weblogger.ui.struts2.admin.PlanetSubscriptions">
             <result name="list" type="tiles">.PlanetSubscriptions</result>
         </action>
         
         <action name="planets!*" method="{1}"
-                class="org.apache.roller.weblogger.planet.ui.Planets">
+                class="org.apache.roller.weblogger.ui.struts2.admin.Planets">
             <result name="list" type="tiles">.Planets</result>
         </action>
     </package>

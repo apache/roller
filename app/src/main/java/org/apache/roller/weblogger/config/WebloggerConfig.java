@@ -33,7 +33,10 @@ import org.apache.roller.util.PropertyExpander;
 
 
 /**
- * This is the single entry point for accessing configuration properties in Roller.
+ * Class for accessing static configuration properties, those in roller.properties
+ * and its roller-custom.properties override file. These properties are
+ * read only at application startup, are not stored in any database table and
+ * require an application restart in order to read any changed values.
  */
 public final class WebloggerConfig {
     
@@ -193,7 +196,7 @@ public final class WebloggerConfig {
         // get the value first, then convert
         String value = WebloggerConfig.getProperty(name);
 
-        if(value == null) {
+        if (value == null) {
             return defaultValue;
         }
 

@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.pings.WeblogUpdatePinger;
-import org.apache.roller.weblogger.config.PingConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.xmlrpc.XmlRpcException;
@@ -52,8 +52,8 @@ public class PingProcessingJob implements Job {
         // reset queue for next execution
         opq.clearPings();
 
-        if (PingConfig.getSuspendPingProcessing()) {
-            log.info("Ping processing has been suspended.  Skipping current round of ping queue processing.");
+        if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
+            log.info("Ping processing suspended on admin settings page, no pings are being generated.");
             return;
         }
 
@@ -63,17 +63,20 @@ public class PingProcessingJob implements Job {
             return;
         }
 
-        if (PingConfig.getLogPingsOnly()) {
+        Boolean logOnly = WebloggerConfig.getBooleanProperty("pings.logOnly", false);
+
+        if (logOnly) {
             log.info("pings.logOnly set to true in properties file to no actual pinging will occur." +
                     " To see logged pings, make sure logging at DEBUG for this class.");
         }
 
         for (AutoPing ping : pings) {
             try {
-                if (PingConfig.getLogPingsOnly()) {
+                if (logOnly) {
                     log.debug("Would have pinged:" + ping);
+                } else {
+                    WeblogUpdatePinger.sendPing(ping.getPingTarget(), ping.getWeblog());
                 }
-                WeblogUpdatePinger.sendPing(ping.getPingTarget(), ping.getWeblog());
             } catch (IOException|XmlRpcException ex) {
                 log.debug(ex);
             }

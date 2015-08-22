@@ -99,7 +99,7 @@
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
-    <beans:bean id="feedFetcher" class="org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher"/>
+    <beans:bean id="feedFetcher" class="org.apache.roller.weblogger.business.WebloggerRomeFeedFetcher"/>
 
     <beans:bean id="planetManager" class="org.apache.roller.weblogger.business.jpa.JPAPlanetManagerImpl">
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>

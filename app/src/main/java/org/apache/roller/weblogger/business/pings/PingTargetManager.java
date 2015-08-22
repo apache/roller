@@ -14,12 +14,16 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.pings;
 
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.pojos.PingTarget;
 
 
@@ -97,8 +101,15 @@ public interface PingTargetManager {
      * @throws WebloggerException
      */
     boolean isHostnameKnown(String pingTargetUrl) throws WebloggerException;
-    
-    
+
+
+    /**
+     * Initialize ping targets.
+     *
+     * @throws InitializationException If there is a problem during initialization.
+     */
+    void initialize() throws InitializationException;
+
     /**
      * Release all resources associated with Roller session.
      */

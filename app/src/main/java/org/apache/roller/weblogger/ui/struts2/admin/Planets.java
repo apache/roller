@@ -17,7 +17,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.planet.ui;
+package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.ArrayList;
 import java.util.List;

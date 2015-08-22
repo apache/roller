@@ -60,7 +60,7 @@
       </property-def>
       <property-def  name="site.description"  key="configForm.siteDescription">
          <type>text</type>
-	 <default-value>A default install of the Roller Weblogger open source blog server</default-value>
+	     <default-value>A default install of the Roller Weblogger open source blog server</default-value>
       </property-def>      
       <property-def  name="site.frontpage.weblog.handle"  key="configForm.frontpageWeblogHandle">
          <type>string</type>
@@ -79,6 +79,9 @@
          <default-value></default-value>
       </property-def>
       <property-def name="pings.suspendPingProcessing" key="configForm.suspendPingProcessing">
+          <!-- If true, new auto ping requests are not queued, any existing queued requests
+          are not processed, and sending a manual ping results in a message saying pings
+          have been disabled. -->
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>

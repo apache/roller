@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.planet.business;
+package org.apache.roller.weblogger.business;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -48,8 +48,6 @@ import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;

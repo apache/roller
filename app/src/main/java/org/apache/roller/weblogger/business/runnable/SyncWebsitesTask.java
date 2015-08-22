@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.planet.tasks;
+package org.apache.roller.weblogger.business.runnable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,8 +37,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.SpringWebloggerProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerProvider;
-import org.apache.roller.weblogger.business.runnable.RollerTask;
-import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;

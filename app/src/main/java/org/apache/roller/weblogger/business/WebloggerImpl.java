@@ -26,14 +26,12 @@ import java.io.IOException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.planet.business.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.config.PingConfig;
 
 
 /**
@@ -279,33 +277,13 @@ public abstract class WebloggerImpl implements Weblogger {
         
         log.info("Initializing Roller Weblogger business tier");
         
-        // TODO: this should probably be done in a more uniform fashion, possibly
-        // using annotations?  biggest issue is controlling ordering
         getPropertiesManager().initialize();
         getThemeManager().initialize();
         getThreadManager().initialize();
         getIndexManager().initialize();
         getMediaFileManager().initialize();
-        
-        try {
-            // Initialize ping systems
-            // TODO: this should probably be moving inside ping manager initialize() methods?
-            
-            // Initialize common targets from the configuration
-            PingConfig.initializeCommonTargets();
-            
-            // Initialize ping variants
-            PingConfig.initializePingVariants();
-            
-            // Remove all autoping configurations if ping usage has been disabled.
-            if (PingConfig.getDisablePingUsage()) {
-                log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
-                WebloggerFactory.getWeblogger().getAutopingManager().removeAllAutoPings();
-            }
-        } catch (Exception e) {
-            throw new InitializationException("Error initializing ping systems", e);
-        }
-        
+        getPingTargetManager().initialize();
+
         // we always need to do a flush after initialization because it's
         // possible that some changes need to be persisted
         try {

@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.planet.business;
+package org.apache.roller.weblogger.business;
 
 import java.util.Date;
 import org.apache.roller.weblogger.pojos.Subscription;

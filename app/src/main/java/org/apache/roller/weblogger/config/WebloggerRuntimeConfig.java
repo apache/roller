@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.config;
 
 import java.io.InputStream;
@@ -32,6 +34,12 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
 /**
+ * This class is for reading the application's runtime properties.  At installation
+ * time, these properties are initially loaded from the runtimeConfigDefs.xml into the
+ * properties database table, from where they are subsequently read during runtime.
+ * In contrast to the static properties in WebloggerConfig, these values may be changed
+ * during runtime on the system administration page and take effect immediately.
+ *
  * This class acts as a convenience gateway for getting property values
  * via the PropertiesManager.  We do this because most calls to the
  * PropertiesManager are just to get the value of a specific property and

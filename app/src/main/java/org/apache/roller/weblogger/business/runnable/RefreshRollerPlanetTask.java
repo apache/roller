@@ -19,16 +19,15 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.planet.tasks;
+package org.apache.roller.weblogger.business.runnable;
 
 import java.util.Date;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.SpringWebloggerProvider;
-import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
-import org.apache.roller.weblogger.planet.business.FeedUpdater;
-import org.apache.roller.weblogger.planet.business.SingleThreadedFeedUpdater;
+import org.apache.roller.weblogger.business.FeedUpdater;
+import org.apache.roller.weblogger.business.SingleThreadedFeedUpdater;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WebloggerProvider;

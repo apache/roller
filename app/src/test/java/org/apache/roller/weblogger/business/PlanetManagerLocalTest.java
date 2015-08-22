@@ -33,8 +33,8 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask;
-import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
+import org.apache.roller.weblogger.business.runnable.RefreshRollerPlanetTask;
+import org.apache.roller.weblogger.business.runnable.SyncWebsitesTask;
 
 
 
