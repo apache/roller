@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.planet.business.FeedFetcher;
+import org.apache.roller.weblogger.business.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;

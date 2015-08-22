@@ -14,13 +14,15 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.pings;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.xmlrpc.XmlRpcException;
@@ -28,13 +30,10 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Utility for sending a weblog update ping.
@@ -100,17 +99,13 @@ public final class WeblogUpdatePinger {
     public static PingResult sendPing(PingTarget pingTarget, Weblog website) throws IOException, XmlRpcException {
         String websiteUrl = website.getAbsoluteURL();
         String pingTargetUrl = pingTarget.getPingUrl();
-        Set variantOptions = PingConfig.getVariantOptions(pingTargetUrl);
 
         // Set up the ping parameters.
-        List params = new ArrayList();
-        if (!variantOptions.contains("noname")) {
-            // ping variant for icerocket and anyone with similar bug, where we must omit the blog name.
-            params.add(website.getName());
-        }
+        List<String> params = new ArrayList<>();
+        params.add(website.getName());
         params.add(websiteUrl);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Executing ping to '" + pingTargetUrl + "' for weblog '" + websiteUrl + "' (" + website.getName() + ")" + (variantOptions.isEmpty() ? "" : " with variant options " + variantOptions));
+            LOGGER.debug("Executing ping to '" + pingTargetUrl + "' for weblog '" + websiteUrl + "' (" + website.getName() + ")");
         }
 
         // Send the ping.
@@ -144,25 +139,4 @@ public final class WeblogUpdatePinger {
             return new PingResult(null,obj.toString());
         }
     }
-
-    /**
-     * Decide if the given exception appears to warrant later retrial attempts.
-     *
-     * @param ex an exception thrown by the <coce>sendPing</code> operation
-     * @return true if the error warrants retrial
-     */
-    public static boolean shouldRetry(Exception ex) {
-        // Determine if error appears transient (warranting retrial)
-        // We give most errors the "benefit of the doubt" by considering them transient
-        // This picks out a few that we consider non-transient
-        if (ex instanceof UnknownHostException) {
-            // User probably mistyped the url in the custom target.
-            return false;
-        } else if (ex instanceof MalformedURLException) {
-            // This should never happen due to validations but if we get here, retrial won't fix it.
-            return false;
-        }
-        return true;
-    }
-
 }

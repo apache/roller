@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.config.PingConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -85,7 +85,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     }
 
     public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
-        if (PingConfig.getSuspendPingProcessing()) {
+        if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Ping processing is suspended." + " No auto pings will be queued.");
             }
