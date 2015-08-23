@@ -48,13 +48,11 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     /**
      * @inheritDoc
      */
-    public void updateSubscription(Subscription sub) throws WebloggerException {
+    private void updateSubscription(Subscription sub) throws WebloggerException {
         
         if (sub == null) {
             throw new IllegalArgumentException("cannot update null subscription");
         }
-        
-        updateProxySettings();
         
         log.debug("updating feed: "+sub.getFeedURL());
         
@@ -124,32 +122,6 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
                 " entries updated.");
     }
     
-    
-    /**
-     * @inheritDoc
-     */
-    public void updateSubscriptions() throws WebloggerException {
-        
-        updateProxySettings();
-        
-        log.debug("--- BEGIN --- Updating all subscriptions");
-        
-        long startTime = System.currentTimeMillis();
-        
-        try {
-            // update all subscriptions in the system
-            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-            updateSubscriptions(pmgr.getSubscriptions());
-        } catch (RollerException ex) {
-            throw new WebloggerException("Error getting subscriptions list", ex);
-        }
-        
-        long endTime = System.currentTimeMillis();
-        log.info("--- DONE --- Updated subscriptions in "
-                + ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
-    }
-    
-    
     /**
      * @inheritDoc
      */
@@ -172,10 +144,9 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
                 + ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
     }
     
-    
-    // convenience method which handles updating any arbitrary collection of subs
-    private void updateSubscriptions(Collection<Subscription> subscriptions) {
-        
+    public void updateSubscriptions(Collection<Subscription> subscriptions) {
+        updateProxySettings();
+
         PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
 		for (Subscription sub : subscriptions) {
 			try {

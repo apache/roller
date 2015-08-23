@@ -224,19 +224,6 @@ create table roller_properties (
     value    $db.TEXT_SQL_TYPE
 );
 
-create table roller_tasklock (
-    id              varchar(48)   not null primary key,
-    name            varchar(255)  not null,
-    islocked        $db.BOOLEAN_SQL_TYPE_FALSE,
-    timeacquired    $db.TIMESTAMP_SQL_TYPE_NULL,
-    timeleased	    integer,
-    lastrun         $db.TIMESTAMP_SQL_TYPE_NULL,
-    client          varchar(255)
-);
-alter table roller_tasklock add constraint rtl_name_uq unique (name);
-#if($db.DBTYPE != "ORACLE")
-create index rtl_taskname_idx on roller_tasklock( name );
-#end
 
 -- PLANET FEED AGGREGATOR
 

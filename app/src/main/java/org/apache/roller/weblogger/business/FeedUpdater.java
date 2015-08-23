@@ -25,6 +25,8 @@ import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.WebloggerException;
 
+import java.util.Collection;
+
 
 /**
  * A FeedUpdater is responsible for processing the updates of all Subscriptions
@@ -39,25 +41,15 @@ import org.apache.roller.weblogger.WebloggerException;
 public interface FeedUpdater {
     
     /**
-     * Update a single Subscription.
+     * Update a set of subscriptions in the system
      *
-     * This method takes in an existing Subscription and updates it with
-     * the data from the subscriptions source after fetching an updated version 
+     * This method takes in an set of Subscriptions and updates each one
+     * with the data from the its source after fetching an updated version
      * of the subscription.
      *
-     * @param sub The PlanetSubscription to be updated.
-     * @throws org.apache.roller.weblogger.WebloggerException If there is an error updating the subscription.
+     * @param subscriptions A set of subscriptions to be updated
      */
-    void updateSubscription(Subscription sub) throws WebloggerException;
-    
-    
-    /**
-     * Update all Subscriptions in the system.
-     *
-     * @throws WebloggerException If there is an error during the update and the operation cannot continue.
-     */
-    void updateSubscriptions() throws WebloggerException;
-    
+    void updateSubscriptions(Collection<Subscription> subscriptions);
     
     /**
      * Update all Subscriptions that are part of the specified planet.

@@ -15,7 +15,6 @@
     <class>org.apache.roller.weblogger.pojos.MediaFileTag</class>
     <class>org.apache.roller.weblogger.pojos.PingTarget</class>
     <class>org.apache.roller.weblogger.pojos.RuntimeConfigProperty</class>
-    <class>org.apache.roller.weblogger.pojos.TaskLock</class>
     <class>org.apache.roller.weblogger.pojos.User</class>
     <class>org.apache.roller.weblogger.pojos.Weblog</class>
     <class>org.apache.roller.weblogger.pojos.WeblogBookmark</class>

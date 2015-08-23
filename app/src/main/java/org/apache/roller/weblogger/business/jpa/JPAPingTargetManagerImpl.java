@@ -165,7 +165,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
      *
      * @see org.apache.roller.weblogger.ui.core.RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
      */
-    private static void initializeCommonTargets() throws WebloggerException {
+    private void initializeCommonTargets() throws WebloggerException {
         // Pattern used to parse common ping targets.
         // Each initial commmon ping target is specified in the format {{name}{url}}
         Pattern NESTED_BRACE_PAIR = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
@@ -178,8 +178,8 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             }
             return;
         }
-        PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-        if (!pingTargetMgr.getCommonPingTargets().isEmpty()) {
+
+        if (!getCommonPingTargets().isEmpty()) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Some common ping targets are present in the database already.  Skipping initialization.");
             }
@@ -201,7 +201,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
                 String url = m.group(2).trim();
                 LOGGER.info("Creating common ping target '" + name + "' from configuration properties.");
                 PingTarget pingTarget = new PingTarget(name, url, false);
-                pingTargetMgr.savePingTarget(pingTarget);
+                savePingTarget(pingTarget);
             } else {
                 LOGGER.error("Unable to parse configured initial ping target '" + thisTarget +
                         "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);

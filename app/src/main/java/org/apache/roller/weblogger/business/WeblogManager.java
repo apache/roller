@@ -241,6 +241,13 @@ public interface WeblogManager {
      */
     void resetAllHitCounts() throws WebloggerException;
 
+    /**
+     * Check for any scheduled weblog entries whose publication time has been
+     * reached and promote them.
+     *
+     * @throws WebloggerException If there was a problem with the backend.
+     */
+    void promoteScheduledEntries() throws WebloggerException;
 
     /**
      * Reset the hit counts for a single weblog.  This sets the count to 0.

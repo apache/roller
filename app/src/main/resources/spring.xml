@@ -15,10 +15,13 @@
     limitations under the License.
 -->
 <beans:beans xmlns="http://www.springframework.org/schema/security"
-       xmlns:beans="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:task="http://www.springframework.org/schema/task"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+          http://www.springframework.org/schema/task
+          http://www.springframework.org/schema/task/spring-task-4.2.xsd">
 
     <beans:bean id="webloggerBean" class="org.apache.roller.weblogger.business.jpa.JPAWebloggerImpl">
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
@@ -77,9 +80,7 @@
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
-    <beans:bean id="threadManager" class="org.apache.roller.weblogger.business.jpa.JPAThreadManagerImpl">
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
-    </beans:bean>
+    <beans:bean id="threadManager" class="org.apache.roller.weblogger.business.runnable.ThreadManagerImpl"/>
 
     <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
@@ -102,9 +103,22 @@
     <beans:bean id="feedFetcher" class="org.apache.roller.weblogger.business.WebloggerRomeFeedFetcher"/>
 
     <beans:bean id="planetManager" class="org.apache.roller.weblogger.business.jpa.JPAPlanetManagerImpl">
+        <beans:constructor-arg ref="weblogManager"/>
+        <beans:constructor-arg ref="urlStrategy"/>
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="urlStrategy" class="org.apache.roller.weblogger.business.MultiWeblogURLStrategy"/>
+
+    <task:scheduler id="blogTaskScheduler" pool-size="6"/>
+
+    <task:scheduled-tasks scheduler="blogTaskScheduler">
+        <!-- uncomment/comment and configure frequency of each task as desired -->
+        <task:scheduled ref="weblogManager" method="resetAllHitCounts" cron="0 0 0 * * *"/>
+        <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0/4 * * * *"/>
+        <task:scheduled ref="planetManager" method="syncAllBlogsPlanet" cron="0 0 0 * * *"/>
+        <task:scheduled ref="planetManager" method="updateSubscriptions" fixed-delay="3600000" initial-delay="300000"/>
+        <!--task:scheduled ref="beanB" method="methodB" fixed-rate="5000"/-->
+    </task:scheduled-tasks>
 
 </beans:beans>

@@ -112,9 +112,20 @@ public interface PlanetManager {
      * Save new or update existing entry
      */
     void saveEntry(SubscriptionEntry entry) throws RollerException;
-    
-    
-    /** 
+
+    /**
+     * Refresh subscription entries
+     */
+    void updateSubscriptions() throws RollerException;
+
+    /**
+     * Task that will update the weblogger "all" planet (creating it first if necessary) to
+     * consist of all blogs hosted by this weblogger instance, adding new and deleting old as
+     * necessary.
+     */
+    void syncAllBlogsPlanet() throws RollerException;
+
+    /**
      * Delete entry. 
      */
     void deleteEntry(SubscriptionEntry entry) throws RollerException;

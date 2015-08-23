@@ -98,8 +98,6 @@ public class IndexManagerImpl implements IndexManager {
      * Creating the index manager more than once will definately result in
      * errors. The preferred way of getting an index is through the
      * RollerContext.
-     * 
-     * @param roller - the weblogger instance
      */
     protected IndexManagerImpl(WeblogManager wm, WeblogEntryManager wem, ThreadManager tm) {
         this.weblogManager = wm;

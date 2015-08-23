@@ -33,9 +33,6 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.business.runnable.RefreshRollerPlanetTask;
-import org.apache.roller.weblogger.business.runnable.SyncWebsitesTask;
-
 
 
 /**
@@ -131,16 +128,13 @@ public class PlanetManagerLocalTest extends TestCase {
             PlanetManager manager = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // run sync task to fill aggregator with websites created by super
-            SyncWebsitesTask syncTask = new SyncWebsitesTask();
-            syncTask.init();
-            syncTask.runTask();
-            
+            manager.syncAllBlogsPlanet();;
+
             Planet planet = manager.getPlanet("all");
             assertEquals(1, planet.getSubscriptions().size());
 
-            RefreshRollerPlanetTask refreshTask = new RefreshRollerPlanetTask();
-            refreshTask.runTask();
-            
+            WebloggerFactory.getWeblogger().getPlanetManager().updateSubscriptions();
+
             planet = manager.getPlanet("all");
             List agg = manager.getEntries(planet, 0, -1);
             assertEquals(3, agg.size());

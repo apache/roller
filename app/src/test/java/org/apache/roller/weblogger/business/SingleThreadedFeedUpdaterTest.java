@@ -26,6 +26,9 @@ import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * Test feed updater.
@@ -74,7 +77,9 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
         
         // update the subscription
         FeedUpdater updater = new SingleThreadedFeedUpdater();
-        updater.updateSubscription(sub);
+        Set<Subscription> subscriptionSet = new HashSet<>();
+        subscriptionSet.add(sub);
+        updater.updateSubscriptions(subscriptionSet);
         TestUtils.endSession(true);
         
         // verify the results
