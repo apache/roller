@@ -14,22 +14,20 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.runnable;
 
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
-import org.apache.roller.weblogger.pojos.TaskLock;
 
 
 /**
  * Thread management for executing scheduled and asynchronous tasks.
  */
 public interface ThreadManager {
-    
-    long MIN_RATE_INTERVAL_MINS = 1;
-    
     
     /**
      * Initialize the thread management system.
@@ -41,7 +39,7 @@ public interface ThreadManager {
     
     /**
      * Execute runnable in background (asynchronously).
-     * @param runnable
+     * @param runnable runnable to run
      * @throws java.lang.InterruptedException
      */
     void executeInBackground(Runnable runnable)
@@ -53,44 +51,6 @@ public interface ThreadManager {
      */
     void executeInForeground(Runnable runnable)
         throws InterruptedException;
-    
-    
-    /**
-     * Lookup a TaskLock by name.
-     * 
-     * @param name The name of the task.
-     * @return The TaskLock for the task, or null if not found.
-     * @throws WebloggerException If there is an error looking up the TaskLock.
-     */
-    TaskLock getTaskLockByName(String name) throws WebloggerException;
-
-    
-    /**
-     * Save a TaskLock.
-     * 
-     * @param tasklock The TaskLock to save.
-     * @throws WebloggerException If there is an error saving the TaskLock.
-     */
-    void saveTaskLock(TaskLock tasklock) throws WebloggerException;
-
-
-    /**
-     * Try to register a lease for a given RollerTask.
-     *
-     * @param task The RollerTask to register the lease for.
-     * @return boolean True if lease was registered, False otherwise.
-     */
-    boolean registerLease(RollerTask task);
-    
-    
-    /**
-     * Try to unregister the lease for a given RollerTask.
-     *
-     * @param task The RollerTask to unregister the lease for.
-     * @return boolean True if lease was unregistered (or was not leased), False otherwise.
-     */
-    boolean unregisterLease(RollerTask task);
-    
     
     /**
      * Shutdown.

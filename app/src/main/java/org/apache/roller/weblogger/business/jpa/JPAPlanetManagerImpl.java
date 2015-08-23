@@ -24,8 +24,10 @@ package org.apache.roller.weblogger.business.jpa;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -34,12 +36,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
+import org.apache.roller.weblogger.business.FeedUpdater;
 import org.apache.roller.weblogger.business.PlanetManager;
+import org.apache.roller.weblogger.business.SingleThreadedFeedUpdater;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
  * Manages Planet Roller objects and entry aggregations in a database.
@@ -47,13 +54,16 @@ import org.apache.roller.weblogger.WebloggerException;
 public class JPAPlanetManagerImpl implements PlanetManager {
     
     private static Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);
-    
-    /** The strategy for this manager. */
+
+    private final WeblogManager weblogManager;
+    private final URLStrategy urlStrategy;
     private final JPAPersistenceStrategy strategy;
 
-    protected JPAPlanetManagerImpl(JPAPersistenceStrategy strategy) {
+    protected JPAPlanetManagerImpl(WeblogManager weblogManager, URLStrategy urlStrategy, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Planet Manager");
         
+        this.weblogManager = weblogManager;
+        this.urlStrategy = urlStrategy;
         this.strategy = strategy;
     }
     
@@ -265,5 +275,102 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
         
         return ret;
+    }
+
+    @Override
+    public void updateSubscriptions() throws RollerException {
+        log.debug("--- BEGIN --- Updating all subscriptions");
+        long startTime = System.currentTimeMillis();
+
+        FeedUpdater updater = new SingleThreadedFeedUpdater();
+        updater.updateSubscriptions(getSubscriptions());
+        long endTime = System.currentTimeMillis();
+        log.info("--- DONE --- Updated subscriptions in "
+                + ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
+    }
+
+    @Override
+    public void syncAllBlogsPlanet() throws RollerException {
+        log.info("Syncing local weblogs with planet subscriptions list");
+
+        try {
+            // first, make sure there is an "all" pmgr group
+            Planet planet = getPlanet("all");
+            if (planet == null) {
+                planet = new Planet();
+                planet.setHandle("all");
+                planet.setTitle("All Blogs");
+                savePlanet(planet);
+                strategy.flush();
+            }
+
+            // walk through all enable weblogs and add/update subs as needed
+            List<String> liveUserFeeds = new ArrayList<>();
+            List<Weblog> weblogs = weblogManager.getWeblogs(Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
+            for ( Weblog weblog : weblogs ) {
+
+                log.debug("processing weblog - " + weblog.getHandle());
+                String feedUrl = "weblogger:" + weblog.getHandle();
+
+                // add feed url to the "live" list
+                liveUserFeeds.add(feedUrl);
+
+                // if sub already exists then update it, otherwise add it
+                Subscription sub = getSubscription(planet, feedUrl);
+                if (sub == null) {
+                    log.info("ADDING feed: "+feedUrl);
+
+                    sub = new Subscription();
+                    sub.setTitle(weblog.getName());
+                    sub.setFeedURL(feedUrl);
+                    sub.setSiteURL(urlStrategy.getWeblogURL(weblog, null, true));
+                    sub.setAuthor(weblog.getName());
+                    sub.setLastUpdated(new Date(0));
+                    sub.setPlanet(planet);
+                    saveSubscription(sub);
+
+                    planet.getSubscriptions().add(sub);
+                    savePlanet(planet);
+                } else {
+                    log.debug("UPDATING feed: "+feedUrl);
+                    sub.setTitle(weblog.getName());
+                    sub.setAuthor(weblog.getName());
+                    saveSubscription(sub);
+                }
+
+                // save as we go
+                strategy.flush();
+            }
+
+            // new subs added, existing subs updated, now delete old subs
+            Set<Subscription> deleteSubs = new HashSet<>();
+            Set<Subscription> subs = planet.getSubscriptions();
+            for (Subscription sub : subs) {
+                // only delete subs from the group if ...
+                // 1. they are local
+                // 2. they are no longer listed as a weblog
+                if (sub.getFeedURL().startsWith("weblogger:") &&
+                        !liveUserFeeds.contains(sub.getFeedURL())) {
+                    deleteSubs.add(sub);
+                }
+            }
+
+            // now go back through deleteSubs and do actual delete
+            // this is required because deleting a sub in the loop above
+            // causes a ConcurrentModificationException because we can't
+            // modify a collection while we iterate over it
+            for (Subscription deleteSub : deleteSubs) {
+                log.info("DELETING feed: "+deleteSub.getFeedURL());
+                deleteSubscription(deleteSub);
+                planet.getSubscriptions().remove(deleteSub);
+            }
+
+            // all done, lets save
+            savePlanet(planet);
+            strategy.flush();
+
+        } catch (RollerException e) {
+            log.error("ERROR refreshing entries", e);
+        }
     }
 }

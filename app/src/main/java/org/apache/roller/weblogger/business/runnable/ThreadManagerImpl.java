@@ -21,26 +21,19 @@
 
 package org.apache.roller.weblogger.business.runnable;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.TaskLock;
 
 
 /**
  * Manage Roller's thread use.
  */
-public abstract class ThreadManagerImpl implements ThreadManager {
+public class ThreadManagerImpl implements ThreadManager {
     
     private static final Log LOG = LogFactory.getLog(ThreadManagerImpl.class);
     
@@ -49,8 +42,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     
     // a simple thread executor
     private final ExecutorService serviceScheduler;
-    
-    
+
     public ThreadManagerImpl() {
         
         LOG.info("Instantiating Thread Manager");
@@ -58,67 +50,10 @@ public abstract class ThreadManagerImpl implements ThreadManager {
         serviceScheduler = Executors.newCachedThreadPool();
     }
     
-    
     public void initialize() throws InitializationException {
                     
-        // initialize tasks, making sure that each task has a tasklock record in the db
-        List<RollerTask> webloggerTasks = new ArrayList<RollerTask>();
-        String tasksStr = WebloggerConfig.getProperty("tasks.enabled");
-        String[] tasks = StringUtils.stripAll(StringUtils.split(tasksStr, ","));
-        for ( String taskName : tasks ) {
-            
-            String taskClassName = WebloggerConfig.getProperty("tasks."+taskName+".class");
-            if(taskClassName != null) {
-                LOG.info("Initializing task: " + taskName);
-                
-                try {
-                    Class taskClass = Class.forName(taskClassName);
-                    RollerTask task = (RollerTask) taskClass.newInstance();
-                    task.init(taskName);
-                    
-                    // make sure there is a tasklock record in the db
-                    TaskLock taskLock = getTaskLockByName(task.getName());
-                    if (taskLock == null) {
-                        LOG.debug("Task record does not exist, inserting empty record to start with");
-
-                        // insert an empty record
-                        taskLock = new TaskLock();
-                        taskLock.setName(task.getName());
-                        taskLock.setLastRun(new Date(0));
-                        taskLock.setTimeAcquired(new Date(0));
-                        taskLock.setTimeLeased(0);
-
-                        // save it
-                        this.saveTaskLock(taskLock);
-                    }
-                    
-                    // add it to the list of configured tasks
-                    webloggerTasks.add(task);
-                    
-                } catch (ClassCastException ex) {
-                    LOG.warn("Task does not extend RollerTask class", ex);
-                } catch (WebloggerException ex) {
-                    LOG.error("Error scheduling task", ex);
-                } catch (Exception ex) {
-                    LOG.error("Error instantiating task", ex);
-                }
-            }
-        }
-        
-        // create scheduler
-        TaskScheduler scheduler = new TaskScheduler(webloggerTasks);
-        
-        // start scheduler thread, but only if it's not already running
-        if (schedulerThread == null) {
-            LOG.debug("Starting scheduler thread");
-            schedulerThread = new Thread(scheduler, "Roller Weblogger Task Scheduler");
-            // set thread priority between MAX and NORM so we get slightly preferential treatment
-            schedulerThread.setPriority((Thread.MAX_PRIORITY + Thread.NORM_PRIORITY)/2);
-            schedulerThread.start();
-        }
     }
-    
-    
+
     public void executeInBackground(Runnable runnable)
             throws InterruptedException {
         serviceScheduler.submit(runnable);
@@ -155,28 +90,6 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     
     public void release() {
         // no-op
-    }
-    
-    
-    /**
-     * Default implementation of lease registration, always returns true.
-     * 
-     * Subclasses should override this method if they plan to run in an
-     * environment that supports clustered deployments.
-     */
-    public boolean registerLease(RollerTask task) {
-        return true;
-    }
-    
-    
-    /**
-     * Default implementation of lease unregistration, always returns true.
-     * 
-     * Subclasses should override this method if they plan to run in an
-     * environment that supports clustered deployments.
-     */
-    public boolean unregisterLease(RollerTask task) {
-        return true;
     }
     
 }

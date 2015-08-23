@@ -24,7 +24,6 @@ drop table planet;
 
 -- non-associated tables
 drop table roller_properties;
-drop table roller_tasklock;
 
 -- supplemental services tables
 drop table autoping;

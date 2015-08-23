@@ -28,8 +28,10 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
@@ -42,11 +44,13 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -57,7 +61,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -688,8 +691,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      * @inheritDoc
      */
     public void resetAllHitCounts() throws WebloggerException {
+        log.info("daily hit counts getting reset...");
         Query q = strategy.getNamedUpdate("Weblog.updateDailyHitCountZero");
         q.executeUpdate();
+        strategy.flush();
+        log.info("finished resetting hit count");
     }
 
     /**
@@ -723,4 +729,46 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.remove(bookmark);
     }
 
+    @Override
+    public void promoteScheduledEntries() throws WebloggerException {
+        log.debug("promoting scheduled entries...");
+
+        try {
+            IndexManager searchMgr = WebloggerFactory.getWeblogger().getIndexManager();
+            Date now = new Date();
+
+            log.debug("looking up scheduled entries older than " + now);
+
+            // get all published entries older than current time
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setEndDate(now);
+            wesc.setStatus(WeblogEntry.PubStatus.SCHEDULED);
+            List<WeblogEntry> scheduledEntries = weblogEntryManager.getWeblogEntries(wesc);
+            log.info("promoting "+scheduledEntries.size() + " entries to PUBLISHED state");
+
+            for (WeblogEntry entry : scheduledEntries) {
+                entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+                entry.setRefreshAggregates(true);
+                weblogEntryManager.saveWeblogEntry(entry);
+            }
+
+            // commit the changes
+            strategy.flush();
+
+            // take a second pass to trigger reindexing and cache invalidations
+            // this is because we need the updated entries flushed first
+            for (WeblogEntry entry : scheduledEntries) {
+                // trigger a cache invalidation
+                CacheManager.invalidate(entry);
+                // trigger search index on entry
+                searchMgr.addEntryReIndexOperation(entry);
+            }
+
+        } catch (WebloggerException e) {
+            log.error("Error getting scheduled entries", e);
+        } catch(Exception e) {
+            log.error("Unexpected exception running task", e);
+        }
+        log.debug("finished promoting entries");
+    }
 }
