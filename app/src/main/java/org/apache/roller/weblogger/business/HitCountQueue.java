@@ -24,98 +24,44 @@ package org.apache.roller.weblogger.business;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
-import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
-import org.apache.roller.weblogger.business.runnable.HitCountProcessingJob;
-import org.apache.roller.weblogger.business.runnable.WorkerThread;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
-
 
 /**
  * Queues up incoming hit counts so that they can be recorded to the DB in
  * an asynchronous manner at user-specified intervals.
- *
- * We also start up a single thread which runs continuously to take the queued
- * hit counts, tally them, and record them into the db.
  */
 public final class HitCountQueue {
-    
-    private static Log log = LogFactory.getLog(HitCountQueue.class);
-    
     private static HitCountQueue instance = null;
-    
-    private WorkerThread worker = null;
-    private List<String> queue = null;
-    
-    
+    private List<String> queue = Collections.synchronizedList(new ArrayList<String>());
+
     static {
         instance = new HitCountQueue();
     }
-    
 
     // non-instantiable because we are a singleton
     private HitCountQueue() {
-        int sleepTime = 3;
-        String sleep = WebloggerConfig.getProperty("hitcount.queue.sleepTime.min", "3");
-
-        try {
-            // convert input in seconds to ms
-            sleepTime = Integer.parseInt(sleep) * RollerConstants.MIN_IN_MS;
-        } catch(NumberFormatException nfe) {
-            log.warn("Invalid sleep time ["+sleep+"], using default");
-        }
-
-        // create the hits queue
-        this.queue = Collections.synchronizedList(new ArrayList<String>());
-
-        // start up a worker to process the hits at intervals
-        HitCountProcessingJob job = new HitCountProcessingJob();
-        worker = new ContinuousWorkerThread("HitCountProcessingJob", job, sleepTime);
-        worker.start();
     }
 
-    
     public static HitCountQueue getInstance() {
         return instance;
     }
-    
-    
+
     public void processHit(Weblog weblog) {
-        
         // if the weblog isn't null then just drop its handle in the queue
         // each entry in the queue is a weblog handle and indicates a single hit
         if(weblog != null) {
             this.queue.add(weblog.getHandle());
         }
     }
-    
-    
+
     public List<String> getHits() {
         return new ArrayList<>(this.queue);
     }
-    
-    
+
     /**
      * Reset the queued hits.
      */
     public synchronized void resetHits() {
         this.queue = Collections.synchronizedList(new ArrayList<String>());
     }
-    
-    
-    /**
-     * clean up.
-     */
-    public void shutdown() {
-        
-        if(this.worker != null) {
-            log.info("stopping worker "+this.worker.getName());
-            worker.interrupt();
-        }
-        
-    }
-    
 }

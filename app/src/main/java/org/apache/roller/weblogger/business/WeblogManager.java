@@ -250,6 +250,14 @@ public interface WeblogManager {
     void promoteScheduledEntries() throws WebloggerException;
 
     /**
+     * Empty the {@link HitCountQueue}, updating individual blog counters
+     * with its data.
+     *
+     * @throws WebloggerException If there was a problem with the backend.
+     */
+    void updateHitCounters() throws WebloggerException;
+
+    /**
      * Reset the hit counts for a single weblog.  This sets the count to 0.
      *
      * @param weblog The WebsiteData object to reset the count for.

@@ -25,11 +25,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
+import org.apache.roller.weblogger.business.pings.WeblogUpdatePinger;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.xmlrpc.XmlRpcException;
+
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.Query;
@@ -114,6 +119,50 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
 
     public List<AutoPing> getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
         return getAutoPingsByWebsite(changedWeblogEntry.getWeblog());
+    }
+
+    @Override
+    public void sendPings() throws WebloggerException {
+        logger.debug("ping task started");
+
+        OutgoingPingQueue opq = OutgoingPingQueue.getInstance();
+
+        List<AutoPing> pings = opq.getPings();
+
+        // reset queue for next execution
+        opq.clearPings();
+
+        if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
+            logger.info("Ping processing suspended on admin settings page, no pings are being generated.");
+            return;
+        }
+
+        String absoluteContextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
+        if (absoluteContextUrl == null) {
+            logger.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
+            return;
+        }
+
+        Boolean logOnly = WebloggerConfig.getBooleanProperty("pings.logOnly", false);
+
+        if (logOnly) {
+            logger.info("pings.logOnly set to true in properties file to no actual pinging will occur." +
+                    " To see logged pings, make sure logging at DEBUG for this class.");
+        }
+
+        for (AutoPing ping : pings) {
+            try {
+                if (logOnly) {
+                    logger.debug("Would have pinged:" + ping);
+                } else {
+                    WeblogUpdatePinger.sendPing(ping.getPingTarget(), ping.getWeblog());
+                }
+            } catch (IOException |XmlRpcException ex) {
+                logger.debug(ex);
+            }
+        }
+
+        logger.info("ping task completed, pings processed = " + pings.size());
     }
 
     public void release() {

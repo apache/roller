@@ -118,7 +118,8 @@
         <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0/4 * * * *"/>
         <task:scheduled ref="planetManager" method="syncAllBlogsPlanet" cron="0 0 0 * * *"/>
         <task:scheduled ref="planetManager" method="updateSubscriptions" fixed-delay="3600000" initial-delay="300000"/>
-        <!--task:scheduled ref="beanB" method="methodB" fixed-rate="5000"/-->
+        <task:scheduled ref="autoPingManager" method="sendPings" fixed-delay="900000" initial-delay="300000"/>
+        <task:scheduled ref="weblogManager" method="updateHitCounters" fixed-delay="180000" initial-delay="300000"/>
     </task:scheduled-tasks>
 
 </beans:beans>

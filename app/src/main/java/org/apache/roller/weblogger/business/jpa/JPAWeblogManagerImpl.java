@@ -24,6 +24,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -60,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +80,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of weblogHandles -> weblogIds
-    private Map<String,String> weblogHandleToIdMap = new Hashtable<String,String>();
+    private Map<String,String> weblogHandleToIdMap = new Hashtable<>();
 
     protected JPAWeblogManagerImpl(UserManager um, WeblogEntryManager wem, MediaFileManager mfm,
                                    AutoPingManager apm, PingTargetManager ptm, JPAPersistenceStrategy strat) {
@@ -382,7 +384,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         //if (endDate == null) endDate = new Date();
                       
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         int size = 0;
         String queryString;
         StringBuilder whereClause = new StringBuilder();
@@ -452,7 +454,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     public List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
         List<WeblogPermission> perms = userManager.getWeblogPermissions(weblog);
         for (WeblogPermission perm : perms) {
             User user = perm.getUser();
@@ -567,7 +569,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     public Map<String, Long> getWeblogHandleLetterMap() throws WebloggerException {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Map<String, Long> results = new TreeMap<String, Long>();
+        Map<String, Long> results = new TreeMap<>();
         TypedQuery<Long> query = strategy.getNamedQuery(
                 "Weblog.getCountByHandleLike", Long.class);
         for (int i=0; i<26; i++) {
@@ -770,5 +772,54 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             log.error("Unexpected exception running task", e);
         }
         log.debug("finished promoting entries");
+    }
+
+    @Override
+    public void updateHitCounters() throws WebloggerException {
+        log.debug("updating blog hit counters...");
+
+        HitCountQueue hitCounter = HitCountQueue.getInstance();
+
+        // first get the current set of hits
+        List<String> currentHits = hitCounter.getHits();
+
+        // now reset the queued hits
+        hitCounter.resetHits();
+
+        // tally the counts, grouped by weblog handle
+        Map<String, Long> hitsTally = new HashMap<>();
+        long totalHitsProcessed = 0;
+        for (String weblogHandle : currentHits) {
+            Long count = hitsTally.get(weblogHandle);
+            if(count == null) {
+                count = 1L;
+            } else {
+                count = count + 1;
+            }
+            totalHitsProcessed += 1;
+            hitsTally.put(weblogHandle, count);
+        }
+
+        // iterate over the tallied hits and store them in the db
+        try {
+            Weblog weblog;
+            for (Map.Entry<String, Long> entry : hitsTally.entrySet()) {
+                try {
+                    weblog = getWeblogByHandle(entry.getKey());
+                    incrementHitCount(weblog, entry.getValue().intValue());
+                } catch (WebloggerException ex) {
+                    log.error(ex);
+                }
+            }
+
+            // flush the results to the db
+            strategy.flush();
+
+            log.debug("Added " + totalHitsProcessed + " hits to " + hitsTally.size() + " blogs");
+
+        } catch (WebloggerException ex) {
+            log.error("Error persisting updated hit counts", ex);
+        }
+
     }
 }

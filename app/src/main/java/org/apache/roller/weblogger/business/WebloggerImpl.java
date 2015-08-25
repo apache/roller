@@ -33,7 +33,6 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
-
 /**
  * The abstract version of the Weblogger implementation.
  * 
@@ -301,7 +300,6 @@ public abstract class WebloggerImpl implements Weblogger {
      */
     public void shutdown() {
         try {
-            HitCountQueue.getInstance().shutdown();
             if (indexManager != null) {
                 indexManager.shutdown();
             }
