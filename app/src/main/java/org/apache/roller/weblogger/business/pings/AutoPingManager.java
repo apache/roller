@@ -124,7 +124,14 @@ public interface AutoPingManager {
      * @param changedWeblogEntry the entry that has been created or changed
      */
     void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
-    
+
+
+    /**
+     * Send all pings currently in the {@link OutgoingPingQueue} to their various ping targets.
+     * If ping processing is suspended, this returns without doing anything.
+     */
+    void sendPings() throws WebloggerException;
+
     /**
      * Release all resources associated with Roller session.
      */
