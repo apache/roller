@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.util;
@@ -71,25 +74,6 @@ public final class RegexUtil {
             str = str.replaceFirst(dot, newDot);
         }
         return str;
-    }
-    
-    
-    /**
-     * Return the specified match "groups" from the pattern.
-     * For each group matched a String will be entered in the ArrayList.
-     *
-     * @param pattern The Pattern to use.
-     * @param match The String to match against.
-     * @param group The group number to return in case of a match.
-     * @return List of matched groups from the pattern.
-     */
-    public static List<String> getMatches(Pattern pattern, String match, int group) {
-        List<String> matches = new ArrayList<String>();
-        Matcher matcher = pattern.matcher(match);
-        while (matcher.find()) {
-            matches.add( matcher.group(group) );
-        }
-        return matches;
     }
     
     

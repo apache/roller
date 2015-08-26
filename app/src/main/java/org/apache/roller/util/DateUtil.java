@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.util;
@@ -244,13 +247,13 @@ public abstract class DateUtil {
         
         // set time to end of day
         cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
-        cal.set(Calendar.MINUTE,      cal.getMaximum(Calendar.MINUTE));
+        cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
         cal.set(Calendar.SECOND,      cal.getMaximum(Calendar.SECOND));
         cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
         
         // set time to first day of month
         cal.set(Calendar.DAY_OF_MONTH, 1);
-        
+
         // add one month
         cal.add(Calendar.MONTH, 1);
         
@@ -432,8 +435,8 @@ public abstract class DateUtil {
     public static String minimalDate(Date date) {
         return format(date, DateUtil.minimalDateFormat());
     }
-    
-    
+
+
     public static String fullDate(Date date) {
         return format(date, DateUtil.fullDateFormat());
     }
@@ -493,8 +496,8 @@ public abstract class DateUtil {
     public static String formatIso8601Day(Date date) {
         return format(date, getIso8601DayDateFormat());
     }
-    
-    
+
+
     public static String formatRfc822(Date date) {
         return format(date, getRfc822DateFormat());
     }
@@ -511,15 +514,10 @@ public abstract class DateUtil {
         
         String str = format(date, getIso8601DateFormat());
         StringBuilder sb = new StringBuilder();
-        sb.append( str.substring(0,str.length()-2) );
+        sb.append( str.substring(0,str.length()-2));
         sb.append( ":" );
         sb.append( str.substring(str.length()-2) );
         return sb.toString();
-    }
-    
-    
-    public static Date parseIso8601(String value) throws Exception {
-        return ISO8601DateParser.parse(value);
     }
     
     

@@ -326,18 +326,6 @@ public class UtilitiesModel implements Model {
         return Utilities.truncateText(str, lower, upper, appendToEnd);
     }    
     
-    public String hexEncode(String str) {
-        if (StringUtils.isEmpty(str)) {
-            return str;
-        }
-        
-        return RegexUtil.encode(str);
-    }
-    
-    public String encodeEmail(String str) {
-        return str!=null ? RegexUtil.encodeEmail(str) : null;
-    }
-    
     /**
      * URL encoding.
      * @param s a string to be URL-encoded
