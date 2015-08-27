@@ -22,12 +22,13 @@
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -186,16 +187,13 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
      */
     protected Date parseDate(String dateString) {
         Date ret = null;
-        SimpleDateFormat char8DateFormat = DateUtil.get8charDateFormat();
-        SimpleDateFormat char6DateFormat = DateUtil.get6charDateFormat();
-        Calendar cal = Calendar.getInstance(
-                weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
         if (   dateString!=null
                 && dateString.length()==8
                 && StringUtils.isNumeric(dateString) ) {
-        	char8DateFormat.setCalendar(cal);
+            FastDateFormat char8DateFormat = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS,
+                    weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             ParsePosition pos = new ParsePosition(0);
-            ret = char8DateFormat.parse( dateString, pos );
+            ret = char8DateFormat.parse(dateString, pos);
             
             // make sure the requested date is not in the future
             Date today = getToday();
@@ -206,7 +204,8 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         if (   dateString!=null
                 && dateString.length()==6
                 && StringUtils.isNumeric(dateString) ) {
-        	char6DateFormat.setCalendar(cal);
+            FastDateFormat char6DateFormat = FastDateFormat.getInstance(DateUtil.FORMAT_6CHARS,
+                    weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             ParsePosition pos = new ParsePosition(0);
             ret = char6DateFormat.parse( dateString, pos );
             

@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,12 +21,12 @@
 
 package org.apache.roller.weblogger.ui.core.tags.calendar;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -45,18 +45,14 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     
     private static Log mLogger = LogFactory.getLog(BigWeblogCalendarModel.class);
 
-    protected final SimpleDateFormat starDateFormat =
-            DateUtil.get8charDateFormat();
-
-    protected final SimpleDateFormat singleDayFormat =
-            new SimpleDateFormat("dd");
-
+    private FastDateFormat starDateFormat;
+    private FastDateFormat singleDayFormat;
 
     public BigWeblogCalendarModel(WeblogPageRequest pRequest, String cat) {
         super(pRequest, cat);
         TimeZone tz = weblog.getTimeZoneInstance();
-        starDateFormat.setTimeZone(tz);
-        singleDayFormat.setTimeZone(tz);
+        starDateFormat = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS, tz);
+        singleDayFormat = FastDateFormat.getInstance("dd", tz);
     }
     
     

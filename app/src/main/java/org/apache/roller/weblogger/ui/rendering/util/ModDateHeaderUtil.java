@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
@@ -82,13 +83,11 @@ public final class ModDateHeaderUtil {
 		lastModifiedTimeMillis -= (lastModifiedTimeMillis % DateUtils.MILLIS_PER_SECOND);
 
 		if (log.isDebugEnabled()) {
-			SimpleDateFormat dateFormat = new SimpleDateFormat(
-					"EEE MMM dd 'at' h:mm:ss a");
+            FastDateFormat format = FastDateFormat.getInstance("EEE MMM dd 'at' h:mm:ss a");
 			log.debug("since date = "
-					+ DateUtil.format(new Date(sinceDate), dateFormat));
-			log.debug("last mod date (trucated to seconds) = "
-					+ DateUtil.format(new Date(lastModifiedTimeMillis),
-							dateFormat));
+					+ format.format(new Date(sinceDate)));
+			log.debug("last mod date (truncated to seconds) = "
+                    + format.format(new Date(lastModifiedTimeMillis)));
 		}
 
 		// Set device type for device switching

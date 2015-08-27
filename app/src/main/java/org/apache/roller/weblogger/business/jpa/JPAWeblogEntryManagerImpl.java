@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
@@ -45,7 +46,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -266,7 +266,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         // remove entry from cache mapping
-        this.entryAnchorToIdMap.remove(entry.getWeblog().getHandle()+":"+entry.getAnchor());
+        this.entryAnchorToIdMap.remove(entry.getWeblog().getHandle() + ":" + entry.getAnchor());
     }
     
     public List getNextPrevEntries(WeblogEntry current, String catName,
@@ -750,11 +750,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat formatter = DateUtil.get8charDateFormat();
+        FastDateFormat formatter;
         if (wesc.getWeblog() != null) {
             TimeZone tz = wesc.getWeblog().getTimeZoneInstance();
-            cal.setTimeZone(tz);
-            formatter.setTimeZone(tz);
+            formatter = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS, tz);
+        } else {
+            formatter = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS);
         }
 
         for (WeblogEntry entry : entries) {

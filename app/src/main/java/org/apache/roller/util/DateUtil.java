@@ -22,8 +22,8 @@
 package org.apache.roller.util;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -32,8 +32,8 @@ import java.util.TimeZone;
  * General purpose date utilities.
  */
 public abstract class DateUtil {
-    private static final String FORMAT_6CHARS = "yyyyMM";
-    private static final String FORMAT_8CHARS = "yyyyMMdd";
+    public static final String FORMAT_6CHARS = "yyyyMM";
+    public static final String FORMAT_8CHARS = "yyyyMMdd";
 
     /**
      * Returns a Date set to the first possible millisecond of the day, just
@@ -77,39 +77,13 @@ public abstract class DateUtil {
         return DateUtils.addHours(DateUtils.truncate(cal, Calendar.DATE).getTime(), 12);
     }
     
-    /**
-     * Returns a string the represents the passed-in date parsed
-     * according to the passed-in format.  Returns an empty string
-     * if the date or the format is null.
-     **/
-    public static String format(Date aDate, SimpleDateFormat aFormat) {
-        if (aDate == null || aFormat == null ) { return ""; }
-        synchronized (aFormat) {
-            return aFormat.format(aDate);
-        }
-    }
-    
-    // convenience method returns minimal date format
-    public static SimpleDateFormat get8charDateFormat() {
-        return new SimpleDateFormat(FORMAT_8CHARS);
-    }
-
-    // convenience method returns minimal date format
-    public static SimpleDateFormat get6charDateFormat() {
-        return new SimpleDateFormat(FORMAT_6CHARS);
-    }
-
     // convenience method returns 8 char day stamp YYYYMMDD using time zone
     public static String format8chars(Date date, TimeZone tz) {
-        SimpleDateFormat formatter = get8charDateFormat();
-        formatter.setTimeZone(tz);
-        return format(date, formatter);
+        return FastDateFormat.getInstance(FORMAT_8CHARS, tz).format(date);
     }
 
     // convenience method returns 6 char month stamp YYYYMM using time zone
     public static String format6chars(Date date, TimeZone tz) {
-        SimpleDateFormat formatter = get6charDateFormat();
-        formatter.setTimeZone(tz);
-        return format(date, formatter);
+        return FastDateFormat.getInstance(FORMAT_6CHARS, tz).format(date);
     }
 }
