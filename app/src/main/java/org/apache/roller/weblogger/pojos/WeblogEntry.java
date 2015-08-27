@@ -862,7 +862,7 @@ public class WeblogEntry implements Serializable {
         // No title or text, so instead we will use the items date
         // in YYYYMMDD format as the base anchor
         else {
-            base = DateUtil.format8chars(getPubTime());
+            base = DateUtil.format8chars(getPubTime(), weblog.getTimeZoneInstance());
         }
         
         return base;

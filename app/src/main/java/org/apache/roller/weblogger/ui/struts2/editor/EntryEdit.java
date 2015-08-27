@@ -21,11 +21,11 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -170,7 +170,7 @@ public final class EntryEdit extends UIAction {
             Timestamp pubTime = getBean().getPubTime(getLocale(),
                     getActionWeblog().getTimeZoneInstance());
             if (pubTime != null && pubTime.after(
-                    new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
+                    new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE))) {
                 getBean().setStatus(PubStatus.SCHEDULED.name());
                 if (entry.isPublished()) {
                     // entry went from published to scheduled, need to reduce tag aggregates
@@ -326,7 +326,8 @@ public final class EntryEdit extends UIAction {
                 addMessage("weblogEdit.publishedEntry");
                 break;
             case SCHEDULED:
-                addMessage("weblogEdit.scheduledEntry", DateUtil.fullDate(getEntry().getPubTime()));
+                addMessage("weblogEdit.scheduledEntry",
+                        DateFormatUtils.ISO_DATE_FORMAT.format(getEntry().getPubTime()));
                 break;
             case PENDING:
                 addMessage("weblogEdit.submittedForReview");

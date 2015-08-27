@@ -33,6 +33,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -125,7 +126,7 @@ public class Trackback {
         
         // prepare http request
         HttpClient client = new HttpClient();
-        client.setConnectionTimeout(45 * RollerConstants.SEC_IN_MS);
+        client.setConnectionTimeout(new Long(45 * DateUtils.MILLIS_PER_SECOND).intValue());
         HttpMethod method = new PostMethod(trackbackURL);
         method.setQueryString(queryString);
         

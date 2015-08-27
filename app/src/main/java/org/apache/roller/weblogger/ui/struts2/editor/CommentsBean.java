@@ -24,6 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -111,7 +112,8 @@ public class CommentsBean {
             try {
                 DateFormat df = new SimpleDateFormat("MM/dd/yy");
                 Date day = df.parse(getEndDateString());
-                return DateUtil.getEndOfDay(day);
+                if (day == null) day = new Date();
+                return DateUtil.getEndOfDay(day, Calendar.getInstance());
             } catch (Exception e) {}
         }
         return null;

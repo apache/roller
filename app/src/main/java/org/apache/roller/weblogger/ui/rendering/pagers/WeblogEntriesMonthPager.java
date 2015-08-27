@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
@@ -105,7 +108,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         Date endDate = DateUtil.getEndOfMonth(date, cal);
         
         if (entries == null) {
-            entries = new TreeMap<Date, List<WeblogEntryWrapper>>(Collections.reverseOrder());
+            entries = new TreeMap<>(Collections.reverseOrder());
             try {
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 wesc.setWeblog(weblog);
@@ -124,7 +127,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
                 int count = 0;
                 for (Map.Entry<Date, List<WeblogEntry>> entry : mmap.entrySet()) {
                     // now we need to go through each entry in a day and wrap
-                    List<WeblogEntryWrapper> wrapped = new ArrayList<WeblogEntryWrapper>();
+                    List<WeblogEntryWrapper> wrapped = new ArrayList<>();
                     List<WeblogEntry> unwrapped = entry.getValue();
                     for (int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {

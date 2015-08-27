@@ -24,7 +24,7 @@ import java.sql.Timestamp;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.roller.util.RollerConstants;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
@@ -139,7 +139,7 @@ public class IndexManagerTest extends TestCase {
         imgr.executeIndexOperationNow(
             new AddEntryOperation(WebloggerFactory.getWeblogger().getWeblogEntryManager(), (IndexManagerImpl)imgr, wd2));
 
-        Thread.sleep(RollerConstants.SEC_IN_MS);
+        Thread.sleep(DateUtils.MILLIS_PER_SECOND);
 
         SearchOperation search = new SearchOperation(imgr);
         search.setTerm("Enterprise");
