@@ -22,7 +22,6 @@
 package org.apache.roller.weblogger.ui.core.tags.calendar;
 
 import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -174,13 +174,12 @@ public class WeblogCalendarModel implements CalendarModel {
             monthMap = mgr.getWeblogEntryStringMap(wesc);
         } catch (WebloggerException e) {
             log.error(e);
-            monthMap = new HashMap<Date, String>();
+            monthMap = new HashMap<>();
         }
     }
 
     public void setDay(String month) throws Exception {
-        SimpleDateFormat fmt = DateUtil.get8charDateFormat();
-        fmt.setCalendar(getCalendar());
+        FastDateFormat fmt = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS, getCalendar().getTimeZone());
         ParsePosition pos = new ParsePosition(0);
         initDay( fmt.parse( month, pos ) );
     }
@@ -189,25 +188,6 @@ public class WeblogCalendarModel implements CalendarModel {
         return (Date)day.clone();
     }
     
-    public String getParameterValue(Date day) {
-        return (String) monthMap.get(day);
-    }
-
-    // convenience method returns 8 char day stamp YYYYMMDD
-    public static String format8chars(Date date, Calendar cal) {
-    	SimpleDateFormat format = DateUtil.get8charDateFormat();
-    	format.setCalendar(cal);
-    	return DateUtil.format(date,format);
-    }
-    
-    
-    // convenience method returns 6 char month stamp YYYYMM
-    public static String format6chars(Date date, Calendar cal) {
-    	SimpleDateFormat format = DateUtil.get6charDateFormat();
-    	format.setCalendar(cal);
-    	return DateUtil.format(date,format);
-    }
-
     /**
      * Parse data as either 6-char or 8-char format.
      */
@@ -219,8 +199,7 @@ public class WeblogCalendarModel implements CalendarModel {
         if (dateString != null
                 && dateString.length()==8
                 && StringUtils.isNumeric(dateString) ) {
-            SimpleDateFormat char8DateFormat = DateUtil.get8charDateFormat();
-            char8DateFormat.setCalendar(cal);
+            FastDateFormat char8DateFormat = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS, cal.getTimeZone());
             ParsePosition pos = new ParsePosition(0);
             ret = char8DateFormat.parse(dateString, pos);
 
@@ -234,8 +213,7 @@ public class WeblogCalendarModel implements CalendarModel {
         } else if(dateString != null
                 && dateString.length()==6
                 && StringUtils.isNumeric(dateString)) {
-            SimpleDateFormat char6DateFormat = DateUtil.get6charDateFormat();
-            char6DateFormat.setCalendar(cal);
+            FastDateFormat char6DateFormat = FastDateFormat.getInstance(DateUtil.FORMAT_6CHARS, cal.getTimeZone());
             ParsePosition pos = new ParsePosition(0);
             ret = char6DateFormat.parse(dateString, pos);
             
@@ -263,9 +241,9 @@ public class WeblogCalendarModel implements CalendarModel {
             return null;
         }
         else if (dateString == null && !monthURL) {
-        	dateString = format8chars(day,getCalendar());
+        	dateString = DateUtil.format8chars(day, getCalendar().getTimeZone());
         } else if (dateString == null) {
-            dateString = format6chars(day,getCalendar());
+            dateString = DateUtil.format6chars(day, getCalendar().getTimeZone());
         }
         try {
             if (pageLink == null) {
