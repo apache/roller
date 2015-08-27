@@ -23,11 +23,11 @@ package org.apache.roller.weblogger.business.search.operations;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.FieldConstants;
@@ -108,7 +108,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         }
 
         Date end = new Date();
-        double length = (end.getTime() - start.getTime()) / (double) RollerConstants.SEC_IN_MS;
+        double length = (end.getTime() - start.getTime()) / (double) DateUtils.MILLIS_PER_SECOND;
 
         if (website != null) {
             mLogger.info("Completed deleting indices for website '"

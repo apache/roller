@@ -29,9 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -169,7 +170,7 @@ public final class SiteWideCache implements CacheHandler {
         // still null, we need to get a fresh value
         if(lastModified == null) {
             lastModified = new Date();
-            this.lastUpdateTime = new ExpiringCacheEntry(lastModified, RollerConstants.FIFTEEN_MIN_IN_MS);
+            this.lastUpdateTime = new ExpiringCacheEntry(lastModified, 15 * DateUtils.MILLIS_PER_MINUTE);
         }
         
         return lastModified;

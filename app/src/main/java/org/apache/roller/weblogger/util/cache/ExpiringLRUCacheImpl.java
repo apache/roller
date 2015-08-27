@@ -14,13 +14,16 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.util.cache;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 
 
 /**
@@ -36,7 +39,7 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
     protected ExpiringLRUCacheImpl(String id) {
         
         super(id);
-        this.timeout = RollerConstants.HOUR_IN_MS;
+        this.timeout = DateUtils.MILLIS_PER_HOUR;
     }
     
     
@@ -46,7 +49,7 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
         
         // timeout is specified in seconds; only positive values allowed
         if (timeout > 0) {
-            this.timeout = timeout * RollerConstants.SEC_IN_MS;
+            this.timeout = timeout * DateUtils.MILLIS_PER_SECOND;
         }
     }
     

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.core.tags.calendar;
@@ -150,9 +153,9 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             return null;
         }
         else if (dateString == null && !nextPrevMonthURL) {
-            dateString = DateUtil.format8chars(day);
+            dateString = DateUtil.format8chars(day, weblog.getTimeZoneInstance());
         } else if (dateString == null) {
-            dateString = DateUtil.format6chars(day);
+            dateString = DateUtil.format6chars(day, weblog.getTimeZoneInstance());
         }
         try {
             if (nextPrevMonthURL && pageLink != null) { 

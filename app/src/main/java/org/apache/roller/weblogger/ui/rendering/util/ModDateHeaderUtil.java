@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util;
@@ -24,9 +27,9 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
@@ -76,7 +79,7 @@ public final class ModDateHeaderUtil {
 		}
 
 		// truncate to seconds
-		lastModifiedTimeMillis -= (lastModifiedTimeMillis % RollerConstants.SEC_IN_MS);
+		lastModifiedTimeMillis -= (lastModifiedTimeMillis % DateUtils.MILLIS_PER_SECOND);
 
 		if (log.isDebugEnabled()) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat(

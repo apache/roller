@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
@@ -234,8 +235,10 @@ public class SearchResultsModel extends PageModel {
 
 	private void addEntryToResults(WeblogEntryWrapper entry) {
 
+        Calendar cal = Calendar.getInstance(entry.getWeblog().getTimeZoneInstance());
+
 		// convert entry's each date to midnight (00m 00h 00s)
-		Date midnight = DateUtil.getStartOfDay(entry.getPubTime());
+		Date midnight = DateUtil.getStartOfDay(entry.getPubTime(), cal);
 
 		// ensure we do not get duplicates from Lucene by
 		// using a Set Collection. Entries sorted by pubTime.

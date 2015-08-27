@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
@@ -22,9 +25,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RenderingException;
@@ -166,7 +169,7 @@ public class VelocityRenderer implements Renderer {
             }
 
             long endTime = System.currentTimeMillis();
-            long renderTime = (endTime - startTime) / RollerConstants.SEC_IN_MS;
+            long renderTime = (endTime - startTime) / DateUtils.MILLIS_PER_SECOND;
 
             log.debug("Rendered [" + renderTemplate.getId() + "] in "
                     + renderTime + " secs");

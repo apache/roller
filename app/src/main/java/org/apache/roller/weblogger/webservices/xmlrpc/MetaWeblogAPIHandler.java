@@ -28,10 +28,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -193,7 +193,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
-            Thread.sleep(RollerConstants.SEC_IN_MS);
+            Thread.sleep(DateUtils.MILLIS_PER_SECOND);
             
             return true;
         } catch (Exception e) {
@@ -307,7 +307,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
-            Thread.sleep(RollerConstants.SEC_IN_MS);
+            Thread.sleep(DateUtils.MILLIS_PER_SECOND);
             
             return entry.getId();
         } catch (Exception e) {

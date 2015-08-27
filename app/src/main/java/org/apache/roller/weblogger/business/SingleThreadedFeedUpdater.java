@@ -23,13 +23,14 @@ package org.apache.roller.weblogger.business;
 
 import java.util.Collection;
 import java.util.Set;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
@@ -118,7 +119,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         long subEndTime = System.currentTimeMillis();
         log.debug("updated feed -- "+sub.getFeedURL()+" -- in " +
-                ((subEndTime-subStartTime) / RollerConstants.SEC_IN_MS) + " seconds.  " + entries +
+                ((subEndTime-subStartTime) / DateUtils.MILLIS_PER_SECOND) + " seconds.  " + entries +
                 " entries updated.");
     }
     
@@ -141,7 +142,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
-                + ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
+                + ((endTime-startTime) / DateUtils.MILLIS_PER_SECOND) + " seconds");
     }
     
     public void updateSubscriptions(Collection<Subscription> subscriptions) {

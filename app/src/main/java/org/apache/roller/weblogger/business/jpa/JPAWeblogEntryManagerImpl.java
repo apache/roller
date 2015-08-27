@@ -20,11 +20,11 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
@@ -211,7 +211,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // we only consider an entry future published if it is scheduled
         // more than 1 minute into the future
         if (PubStatus.PUBLISHED.equals(entry.getStatus()) &&
-                entry.getPubTime().after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
+                entry.getPubTime().after(new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE))) {
             entry.setStatus(PubStatus.SCHEDULED);
         }
         
@@ -729,10 +729,11 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         for (WeblogEntry entry : entries) {
-            Date sDate = DateUtil.getNoonOfDay(entry.getPubTime(), cal);
+            Date sDate = DateUtil.getNoonOfDay(entry.getPubTime() == null ? new Date() : entry.getPubTime(),
+                    cal);
             List<WeblogEntry> dayEntries = map.get(sDate);
             if (dayEntries == null) {
-                dayEntries = new ArrayList<WeblogEntry>();
+                dayEntries = new ArrayList<>();
                 map.put(sDate, dayEntries);
             }
             dayEntries.add(entry);

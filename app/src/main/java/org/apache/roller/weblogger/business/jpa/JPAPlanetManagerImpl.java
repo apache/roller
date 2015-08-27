@@ -32,6 +32,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -44,7 +45,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.Subscription;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -268,7 +268,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
             long endTime = System.currentTimeMillis();
             
             log.debug("Generated aggregation of " + ret.size() + " in " +
-                    ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
+                    ((endTime-startTime) / DateUtils.MILLIS_PER_SECOND) + " seconds");
             
         } catch (Exception e) {
             throw new WebloggerException(e);
@@ -286,7 +286,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         updater.updateSubscriptions(getSubscriptions());
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
-                + ((endTime-startTime) / RollerConstants.SEC_IN_MS) + " seconds");
+                + ((endTime-startTime) / DateUtils.MILLIS_PER_SECOND) + " seconds");
     }
 
     @Override

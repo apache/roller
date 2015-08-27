@@ -29,16 +29,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
-import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.RegexUtil;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.ParsedRequest;
 import org.apache.roller.weblogger.util.URLUtilities;
@@ -192,30 +190,15 @@ public class UtilitiesModel implements Model {
      * Format date in ISO-8601 format.
      */
     public String formatIso8601Date(Date d) {
-        return DateUtil.formatIso8601(d);
-    }
-    
-    /**
-     * Format date in ISO-8601 format.
-     */
-    public String formatIso8601Day(Date d) {
-        return DateUtil.formatIso8601Day(d);
+        return DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(d);
     }
     
     /**
      * Return a date in RFC-822 format.
      */
     public String formatRfc822Date(Date date) {
-        return DateUtil.formatRfc822(date);
+        return DateFormatUtils.SMTP_DATETIME_FORMAT.format(date);
     }
-    
-    /**
-     * Return a date in 8 character format YYYYMMDD.
-     */
-    public String format8charsDate(Date date) {
-        return DateUtil.format8chars(date);
-    }
-
     
     //------------------------------------------------------------ String utils
     

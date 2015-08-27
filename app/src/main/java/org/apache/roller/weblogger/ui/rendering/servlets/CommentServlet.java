@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -119,12 +120,12 @@ public class CommentServlet extends HttpServlet {
                         e);
             }
 
-            int interval = RollerConstants.MIN_IN_MS;
+            long interval = DateUtils.MILLIS_PER_MINUTE;
             try {
                 interval = Integer.parseInt(WebloggerConfig
                         .getProperty("comment.throttle.interval"));
                 // convert from seconds to milliseconds
-                interval = interval * RollerConstants.SEC_IN_MS;
+                interval = interval * DateUtils.MILLIS_PER_SECOND;
             } catch (Exception e) {
                 log.warn(
                         "bad input for config property comment.throttle.interval",
@@ -141,7 +142,7 @@ public class CommentServlet extends HttpServlet {
                         e);
             }
 
-            commentThrottle = new GenericThrottle(threshold, interval,
+            commentThrottle = new GenericThrottle(threshold, new Long(interval).intValue(),
                     maxEntries);
 
             log.info("Comment Throttling ENABLED");

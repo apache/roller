@@ -24,9 +24,10 @@ package org.apache.roller.weblogger.business.runnable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.InitializationException;
 
 
@@ -68,7 +69,7 @@ public class ThreadManagerImpl implements ThreadManager {
         // thread, here we can add a little code here to loop until it realizes 
         // the task is done
         while(!task.isDone()) {
-            Thread.sleep(RollerConstants.HALF_SEC_IN_MS);
+            Thread.sleep(DateUtils.MILLIS_PER_SECOND / 2);
         }
     }
     

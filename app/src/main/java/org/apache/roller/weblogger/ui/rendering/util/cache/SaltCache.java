@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util.cache;
@@ -21,9 +24,10 @@ package org.apache.roller.weblogger.ui.rendering.util.cache;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -98,7 +102,7 @@ public final class SaltCache {
     
     public void put(String key, Object value) {
 		// expire after 60 minutes
-        contentCache.put(key, new ExpiringCacheEntry(value, RollerConstants.HOUR_IN_MS));
+        contentCache.put(key, new ExpiringCacheEntry(value, DateUtils.MILLIS_PER_HOUR));
         log.debug("PUT "+key);
     }
     

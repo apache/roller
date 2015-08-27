@@ -14,34 +14,30 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
-package org.apache.roller.util;
+package org.apache.roller.weblogger.business.plugins.entry;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 
 /**
  * Test regex utils.
  */
-public class RegexUtilTest extends TestCase {
+public class ObfuscateEmailPluginTest extends TestCase {
     
     /**
      *
      */
-    public RegexUtilTest() {
+    public ObfuscateEmailPluginTest() {
         super();
     }
-    
-    /**
-     * @param arg0
-     */
-    public RegexUtilTest(String arg0) {
-        super(arg0);
-    }
-    
+
+    ObfuscateEmailPlugin oep = new ObfuscateEmailPlugin();
+
     /**
      * @see TestCase#setUp()
      */
@@ -60,7 +56,7 @@ public class RegexUtilTest extends TestCase {
         // test mailto: escaping
         String test = "test <a href='mailto:this@email.com'>email</a> string";
         String expect = "test <a href='mailto:%74%68%69%73%40%65%6d%61%69%6c%2e%63%6f%6d'>email</a> string";
-        String result = RegexUtil.encodeEmail(test) ;
+        String result = oep.encodeEmail(test) ;
         //System.out.println(result);
         assertEquals(expect, result);
     }
@@ -69,7 +65,7 @@ public class RegexUtilTest extends TestCase {
         // test "plaintext" escaping
         String test = "this@email.com";
         String expect = "this-AT-email-DOT-com";
-        String result = RegexUtil.encodeEmail(test);
+        String result = oep.encodeEmail(test) ;
         assertEquals(expect, result);
     }
     
@@ -77,13 +73,9 @@ public class RegexUtilTest extends TestCase {
         // test hex & obfuscate together
         String test = "test <a href='mailto:this@email.com'>this@email.com</a> string, and this@email.com";
         String expect = "test <a href='mailto:%74%68%69%73%40%65%6d%61%69%6c%2e%63%6f%6d'>this-AT-email-DOT-com</a> string, and this-AT-email-DOT-com";
-        String result = RegexUtil.encodeEmail(test);
+        String result = oep.encodeEmail(test) ;
         //System.out.println(result);
         assertEquals(expect, result);
     }
     
-    public static Test suite() {
-        return new TestSuite(RegexUtilTest.class);
-    }
-
 }

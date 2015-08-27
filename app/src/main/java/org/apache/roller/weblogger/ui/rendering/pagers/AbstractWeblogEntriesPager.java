@@ -14,7 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
@@ -221,8 +224,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
      * Return today based on current blog's timezone/locale.
      */
     protected Date getToday() {
-        Calendar todayCal = Calendar.getInstance();
-        todayCal = Calendar.getInstance(
+        Calendar todayCal = Calendar.getInstance(
                 weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
         todayCal.setTime(new Date());
         return todayCal.getTime();
