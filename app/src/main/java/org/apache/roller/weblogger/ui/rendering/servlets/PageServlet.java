@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -439,7 +439,7 @@ public class PageServlet extends HttpServlet {
         try {
             PageContext pageContext = JspFactory.getDefaultFactory()
                     .getPageContext(this, request, response, "", false,
-                            RollerConstants.EIGHT_KB_IN_BYTES, true);
+                            WebloggerUtils.EIGHT_KB_IN_BYTES, true);
 
             // special hack for menu tag
             request.setAttribute("pageRequest", pageRequest);
@@ -501,7 +501,7 @@ public class PageServlet extends HttpServlet {
 
         // render content
         CachedContent rendererOutput = new CachedContent(
-                RollerConstants.TWENTYFOUR_KB_IN_BYTES, contentType);
+                WebloggerUtils.TWENTYFOUR_KB_IN_BYTES, contentType);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

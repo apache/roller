@@ -25,11 +25,9 @@ import java.io.Serializable;
 import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -68,7 +66,7 @@ import javax.persistence.Transient;
 })
 public class WeblogPermission implements Serializable {
 
-    protected String  id = UUIDGenerator.generateUUID();
+    protected String  id = WebloggerUtils.generateUUID();
     protected String  userName;
     protected String  weblogId;
     protected boolean pending = false;

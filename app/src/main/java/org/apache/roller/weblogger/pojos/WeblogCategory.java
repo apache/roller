@@ -26,10 +26,10 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.util.UUIDGenerator;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -62,7 +62,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     public static final long serialVersionUID = 1435782148712018954L;
     
     // unique internal ID of object
-    private String id = UUIDGenerator.generateUUID();
+    private String id = WebloggerUtils.generateUUID();
     // category name
     private String name = null;
     // category description

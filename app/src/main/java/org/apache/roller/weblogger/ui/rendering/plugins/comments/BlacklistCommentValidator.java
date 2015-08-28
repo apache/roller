@@ -14,13 +14,16 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.ResourceBundle;
 
-import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.BlacklistChecker;
@@ -40,7 +43,7 @@ public class BlacklistCommentValidator implements CommentValidator {
             messages.addError("comment.validator.blacklistMessage");
             return 0;
         }
-        return RollerConstants.PERCENT_100;
+        return WebloggerUtils.PERCENT_100;
     }
     
 }
