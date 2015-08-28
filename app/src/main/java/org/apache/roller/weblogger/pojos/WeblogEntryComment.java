@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.WebloggerUtils;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -67,7 +67,7 @@ public class WeblogEntryComment implements Serializable {
     public enum ApprovalStatus {APPROVED, DISAPPROVED, SPAM, PENDING}
 
     // attributes
-    private String    id = UUIDGenerator.generateUUID();
+    private String    id = WebloggerUtils.generateUUID();
     private String    name = null;
     private String    email = null;
     private String    url = null;

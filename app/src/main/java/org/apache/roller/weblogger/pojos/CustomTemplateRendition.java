@@ -23,7 +23,7 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.WebloggerUtils;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -33,8 +33,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -46,7 +44,7 @@ import java.io.Serializable;
 public class CustomTemplateRendition implements Serializable, TemplateRendition {
 
 	private static final long serialVersionUID = -1497618963802805151L;
-	private String id = UUIDGenerator.generateUUID();
+	private String id = WebloggerUtils.generateUUID();
     private WeblogTemplate weblogTemplate = null;
 	// template contents
 	private String template = null;

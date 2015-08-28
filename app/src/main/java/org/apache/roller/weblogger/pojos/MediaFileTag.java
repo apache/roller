@@ -24,15 +24,13 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.WebloggerUtils;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -45,7 +43,7 @@ public class MediaFileTag implements Serializable {
 
     private static final long serialVersionUID = -1349427373511141841L;
 
-    private String id = UUIDGenerator.generateUUID();
+    private String id = WebloggerUtils.generateUUID();
     private String name;
     private MediaFile mediaFile;
 

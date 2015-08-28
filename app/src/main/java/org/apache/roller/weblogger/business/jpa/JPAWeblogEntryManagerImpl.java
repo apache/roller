@@ -25,7 +25,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
@@ -753,9 +753,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         FastDateFormat formatter;
         if (wesc.getWeblog() != null) {
             TimeZone tz = wesc.getWeblog().getTimeZoneInstance();
-            formatter = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, tz);
+            formatter = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS, tz);
         } else {
-            formatter = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS);
+            formatter = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS);
         }
 
         for (WeblogEntry entry : entries) {

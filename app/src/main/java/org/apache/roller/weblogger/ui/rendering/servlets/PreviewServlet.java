@@ -14,11 +14,14 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
-import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -209,7 +212,7 @@ public class PreviewServlet extends HttpServlet {
         Map model = new HashMap();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", false, RollerConstants.EIGHT_KB_IN_BYTES, true);
+                    this, request, response,"", false, WebloggerUtils.EIGHT_KB_IN_BYTES, true);
             
             // special hack for menu tag
             request.setAttribute("pageRequest", previewRequest);
@@ -260,7 +263,7 @@ public class PreviewServlet extends HttpServlet {
         }
         
         // render content
-        CachedContent rendererOutput = new CachedContent(RollerConstants.TWENTYFOUR_KB_IN_BYTES);
+        CachedContent rendererOutput = new CachedContent(WebloggerUtils.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

@@ -37,7 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -331,13 +331,13 @@ public class CommentServlet extends HttpServlet {
 
         if (!preview) {
 
-            if (validationScore == RollerConstants.PERCENT_100
+            if (validationScore == WebloggerUtils.PERCENT_100
                     && weblog.getCommentModerationRequired()) {
                 // Valid comments go into moderation if required
                 comment.setStatus(ApprovalStatus.PENDING);
                 message = messageUtils
                         .getString("commentServlet.submittedToModerator");
-            } else if (validationScore == RollerConstants.PERCENT_100) {
+            } else if (validationScore == WebloggerUtils.PERCENT_100) {
                 // else they're approved
                 comment.setStatus(ApprovalStatus.APPROVED);
                 message = messageUtils
@@ -387,7 +387,7 @@ public class CommentServlet extends HttpServlet {
 
                     // Send email notifications only to subscribers if comment
                     // is 100% valid
-                    boolean notifySubscribers = (validationScore == RollerConstants.PERCENT_100);
+                    boolean notifySubscribers = (validationScore == WebloggerUtils.PERCENT_100);
                     MailUtil.sendEmailNotification(comment, messages,
                             messageUtils, notifySubscribers);
 

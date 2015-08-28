@@ -35,7 +35,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -185,7 +185,7 @@ public class WeblogCalendarModel implements CalendarModel {
     }
 
     public void setDay(String month) throws Exception {
-        FastDateFormat fmt = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, getCalendar().getTimeZone());
+        FastDateFormat fmt = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS, getCalendar().getTimeZone());
         ParsePosition pos = new ParsePosition(0);
         initDay( fmt.parse( month, pos ) );
     }
@@ -205,7 +205,7 @@ public class WeblogCalendarModel implements CalendarModel {
         if (dateString != null
                 && dateString.length()==8
                 && StringUtils.isNumeric(dateString) ) {
-            FastDateFormat char8DateFormat = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, cal.getTimeZone());
+            FastDateFormat char8DateFormat = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS, cal.getTimeZone());
             ParsePosition pos = new ParsePosition(0);
             ret = char8DateFormat.parse(dateString, pos);
 
@@ -219,7 +219,7 @@ public class WeblogCalendarModel implements CalendarModel {
         } else if(dateString != null
                 && dateString.length()==6
                 && StringUtils.isNumeric(dateString)) {
-            FastDateFormat char6DateFormat = FastDateFormat.getInstance(RollerConstants.FORMAT_6CHARS, cal.getTimeZone());
+            FastDateFormat char6DateFormat = FastDateFormat.getInstance(WebloggerUtils.FORMAT_6CHARS, cal.getTimeZone());
             ParsePosition pos = new ParsePosition(0);
             ret = char6DateFormat.parse(dateString, pos);
             
@@ -247,9 +247,9 @@ public class WeblogCalendarModel implements CalendarModel {
             return null;
         }
         else if (dateString == null && !monthURL) {
-            dateString = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, getCalendar().getTimeZone()).format(day);
+            dateString = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS, getCalendar().getTimeZone()).format(day);
         } else if (dateString == null) {
-            dateString = FastDateFormat.getInstance(RollerConstants.FORMAT_6CHARS, getCalendar().getTimeZone()).format(day);
+            dateString = FastDateFormat.getInstance(WebloggerUtils.FORMAT_6CHARS, getCalendar().getTimeZone()).format(day);
         }
         try {
             if (pageLink == null) {

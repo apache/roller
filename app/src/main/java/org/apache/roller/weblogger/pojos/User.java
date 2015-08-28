@@ -22,15 +22,13 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.util.UUIDGenerator;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
@@ -89,7 +87,7 @@ public class User implements Serializable {
     
     public static final long serialVersionUID = -6354583200913127874L;
 
-    private String  id = UUIDGenerator.generateUUID();
+    private String  id = WebloggerUtils.generateUUID();
     private String  userName;
     private String  password;
     private GlobalRole globalRole;

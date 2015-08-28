@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.roller.util.UUIDGenerator;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -60,7 +60,7 @@ import javax.persistence.Transient;
 public class SubscriptionEntry implements Serializable, Comparable<SubscriptionEntry> {
     
     // attributes
-    private String id = UUIDGenerator.generateUUID();
+    private String id = WebloggerUtils.generateUUID();
     private String handle;
     private String title;
     private String guid;

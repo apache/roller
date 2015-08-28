@@ -22,8 +22,8 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.WebloggerUtils;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -76,7 +76,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private static Set<String> requiredTemplates = null;
     
     // attributes
-    private String id = UUIDGenerator.generateUUID();
+    private String id = WebloggerUtils.generateUUID();
     private ComponentType action = null;
     private String  name = null;
     private String  description = null;

@@ -28,7 +28,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -197,7 +197,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getNextCollectionLink() {
         if (nextMonth != null) {
-            String next = FastDateFormat.getInstance(RollerConstants.FORMAT_6CHARS, weblog.getTimeZoneInstance()).format(nextMonth);
+            String next = FastDateFormat.getInstance(WebloggerUtils.FORMAT_6CHARS, weblog.getTimeZoneInstance()).format(nextMonth);
             return createURL(0, 0, weblog, locale, pageLink, null, next, catName, tags);
         }
         return null;
@@ -214,7 +214,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getPrevCollectionLink() {
         if (prevMonth != null) {
-            String prev = FastDateFormat.getInstance(RollerConstants.FORMAT_6CHARS, weblog.getTimeZoneInstance()).format(prevMonth);
+            String prev = FastDateFormat.getInstance(WebloggerUtils.FORMAT_6CHARS, weblog.getTimeZoneInstance()).format(prevMonth);
             return createURL(0, 0, weblog, locale, pageLink, null, prev, catName, tags);
         }
         return null;

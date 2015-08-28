@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.WebloggerUtils;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -56,7 +56,7 @@ public class PingTarget implements Serializable {
     // disabled by failure policy after failures - editing resets
     public static final int CONDITION_DISABLED = 2;
 
-    private String id = UUIDGenerator.generateUUID();
+    private String id = WebloggerUtils.generateUUID();
     private String name = null;
     private String pingUrl = null;
     private int conditionCode = -1;

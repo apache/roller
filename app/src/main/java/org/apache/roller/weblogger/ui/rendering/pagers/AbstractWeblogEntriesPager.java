@@ -30,7 +30,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -190,7 +190,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         if (   dateString!=null
                 && dateString.length()==8
                 && StringUtils.isNumeric(dateString) ) {
-            FastDateFormat char8DateFormat = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS,
+            FastDateFormat char8DateFormat = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS,
                     weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             ParsePosition pos = new ParsePosition(0);
             ret = char8DateFormat.parse(dateString, pos);
@@ -204,7 +204,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         if (   dateString!=null
                 && dateString.length()==6
                 && StringUtils.isNumeric(dateString) ) {
-            FastDateFormat char6DateFormat = FastDateFormat.getInstance(RollerConstants.FORMAT_6CHARS,
+            FastDateFormat char6DateFormat = FastDateFormat.getInstance(WebloggerUtils.FORMAT_6CHARS,
                     weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             ParsePosition pos = new ParsePosition(0);
             ret = char6DateFormat.parse( dateString, pos );

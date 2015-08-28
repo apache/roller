@@ -18,9 +18,11 @@
 * Source file modified from the original ASF source; all changes made
 * are also under Apache License.
 */
-package org.apache.roller.util;
+package org.apache.roller.weblogger;
 
-public final class RollerConstants {
+import java.util.UUID;
+
+public final class WebloggerUtils {
 
     public static final String FORMAT_6CHARS = "yyyyMM";
     public static final String FORMAT_8CHARS = "yyyyMMdd";
@@ -34,8 +36,15 @@ public final class RollerConstants {
     public static final int ONE_MB_IN_BYTES = ONE_KB_IN_BYTES * ONE_KB_IN_BYTES;
     public static final int TEXTWIDTH_255 = 255;
 
-    private RollerConstants() {
+    private WebloggerUtils() {
         // never instantiable
         throw new AssertionError();
+    }
+
+    /**
+     * Generate a new UUID.
+     */
+    public static String generateUUID() {
+        return UUID.randomUUID().toString();
     }
 }

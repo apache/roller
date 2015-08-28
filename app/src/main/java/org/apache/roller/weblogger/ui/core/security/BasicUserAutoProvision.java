@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -54,7 +54,7 @@ public class BasicUserAutoProvision implements AutoProvision {
 
 				// need to give an id to the new user if none exist
 				if (ud.getId() == null) {
-					ud.setId(UUIDGenerator.generateUUID());
+					ud.setId(WebloggerUtils.generateUUID());
 				}
 
                 ud.setGlobalRole(GlobalRole.BLOGGER);
