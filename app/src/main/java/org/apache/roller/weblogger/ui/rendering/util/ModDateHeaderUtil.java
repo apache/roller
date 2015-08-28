@@ -21,17 +21,13 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 
 /**

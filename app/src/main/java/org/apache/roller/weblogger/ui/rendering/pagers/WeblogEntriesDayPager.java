@@ -30,14 +30,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TimeZone;
+
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
-import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.business.URLStrategy;
 
 
@@ -102,8 +105,10 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
         prevDay = cal.getTime();
+        // one millisecond before start of the next day
+        Date endOfPrevDay = new Date(DateUtils.ceiling(cal, Calendar.DATE).getTimeInMillis() - 1);
         Date weblogInitialDate = weblog.getDateCreated() != null ? weblog.getDateCreated() : new Date(0);
-        if (DateUtil.getEndOfDay(prevDay,cal).before(weblogInitialDate)) {
+        if (endOfPrevDay.before(weblogInitialDate)) {
             prevDay = null;
         }
     }
@@ -112,11 +117,10 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         Date date = parseDate(dateString);
         Calendar cal = Calendar.getInstance(weblog.getTimeZoneInstance());
-        Date startDate;
-        Date endDate = date;
-        startDate = DateUtil.getStartOfDay(endDate, cal);
-        endDate = DateUtil.getEndOfDay(endDate, cal);
-        
+        cal.setTime(date);
+        Date startDate = DateUtils.truncate(cal, Calendar.DATE).getTime();
+        Date endDate = DateUtils.addMilliseconds(DateUtils.ceiling(cal, Calendar.DATE).getTime(), -1);
+
         if (entries == null) {
             entries = new TreeMap<>(Collections.reverseOrder());
             try {
@@ -137,7 +141,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                 int count = 0;
                 for (Map.Entry<Date, List<WeblogEntry>> entry : mmap.entrySet()) {
                     // now we need to go through each entry in a day and wrap
-                    List<WeblogEntryWrapper> wrapped = new ArrayList<WeblogEntryWrapper>();
+                    List<WeblogEntryWrapper> wrapped = new ArrayList<>();
                     List<WeblogEntry> unwrapped = entry.getValue();
                     for (int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
@@ -206,7 +210,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getNextCollectionLink() {
         if (nextDay != null) {
-            String next = DateUtil.format8chars(nextDay, weblog.getTimeZoneInstance());
+            String next = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(nextDay);
             return createURL(0, 0, weblog, locale, pageLink, null, next, catName, tags);
         }
         return null;
@@ -223,7 +227,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getPrevCollectionLink() {
         if (prevDay != null) {
-            String prev = DateUtil.format8chars(prevDay, weblog.getTimeZoneInstance());
+            String prev = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(prevDay);
             return createURL(0, 0, weblog, locale, pageLink, null, prev, catName, tags);
         }
         return null;

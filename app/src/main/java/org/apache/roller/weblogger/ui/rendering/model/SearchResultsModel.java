@@ -33,10 +33,10 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
-import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -234,11 +234,11 @@ public class SearchResultsModel extends PageModel {
 	}
 
 	private void addEntryToResults(WeblogEntryWrapper entry) {
-
         Calendar cal = Calendar.getInstance(entry.getWeblog().getTimeZoneInstance());
+        cal.setTime(entry.getPubTime());
 
 		// convert entry's each date to midnight (00m 00h 00s)
-		Date midnight = DateUtil.getStartOfDay(entry.getPubTime(), cal);
+		Date midnight = DateUtils.truncate(cal, Calendar.DATE).getTime();
 
 		// ensure we do not get duplicates from Lucene by
 		// using a Set Collection. Entries sorted by pubTime.

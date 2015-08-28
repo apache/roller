@@ -14,10 +14,16 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
 package org.apache.roller.util;
 
 public final class RollerConstants {
+
+    public static final String FORMAT_6CHARS = "yyyyMM";
+    public static final String FORMAT_8CHARS = "yyyyMMdd";
 
     public static final int PERCENT_100 = 100;
 

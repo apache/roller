@@ -31,9 +31,11 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -42,7 +44,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.util.DateUtil;
 
 
 /**
@@ -101,9 +102,10 @@ public class WeblogCalendarModel implements CalendarModel {
                 weblog.getLocaleInstance());
         
         Calendar cal = (Calendar)calendar.clone();
-        Date startDate = DateUtil.getStartOfMonth(month,cal);
-        Date endDate = DateUtil.getEndOfMonth(month,cal);
-        
+        cal.setTime(month);
+        Date startDate = DateUtils.truncate(cal, Calendar.MONTH).getTime();
+        Date endDate = new Date(DateUtils.ceiling(cal, Calendar.MONTH).getTimeInMillis() - 1);
+
         // Determine previous non-empty month
         // Get entries before startDate, using category restriction limit 1
         // Use entry's date as previous month
@@ -122,7 +124,9 @@ public class WeblogCalendarModel implements CalendarModel {
 
             if (prevEntries.size() > 0) {
                 WeblogEntry prevEntry = (WeblogEntry)prevEntries.get(0);
-                prevMonth = DateUtil.getStartOfMonth(new Date(prevEntry.getPubTime().getTime()),getCalendar());
+                Calendar calPrev = getCalendar();
+                calPrev.setTime(new Date(prevEntry.getPubTime().getTime()));
+                prevMonth = DateUtils.truncate(calPrev, Calendar.MONTH).getTime();
             }
         } catch (WebloggerException e) {
             log.error("ERROR determining previous non-empty month");
@@ -145,13 +149,15 @@ public class WeblogCalendarModel implements CalendarModel {
             List nextEntries = mgr.getWeblogEntries(wesc);
             if (nextEntries.size() > 0) {
                 WeblogEntry nextEntry = (WeblogEntry)nextEntries.get(0);
-                nextMonth = DateUtil.getStartOfMonth(new Date(nextEntry.getPubTime().getTime()),getCalendar());
+                Calendar calNext = getCalendar();
+                calNext.setTime(new Date(nextEntry.getPubTime().getTime()));
+                nextMonth = DateUtils.truncate(calNext, Calendar.MONTH).getTime();
             }
         } catch (WebloggerException e) {
             log.error("ERROR determining next non-empty month");
         }  
         
-        // Fix for ROL-840 Don't include future entries
+        // Don't include future entries
         Date now = new Date();
         if (endDate.after(now)) {
         	endDate = now;
@@ -179,7 +185,7 @@ public class WeblogCalendarModel implements CalendarModel {
     }
 
     public void setDay(String month) throws Exception {
-        FastDateFormat fmt = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS, getCalendar().getTimeZone());
+        FastDateFormat fmt = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, getCalendar().getTimeZone());
         ParsePosition pos = new ParsePosition(0);
         initDay( fmt.parse( month, pos ) );
     }
@@ -199,7 +205,7 @@ public class WeblogCalendarModel implements CalendarModel {
         if (dateString != null
                 && dateString.length()==8
                 && StringUtils.isNumeric(dateString) ) {
-            FastDateFormat char8DateFormat = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS, cal.getTimeZone());
+            FastDateFormat char8DateFormat = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, cal.getTimeZone());
             ParsePosition pos = new ParsePosition(0);
             ret = char8DateFormat.parse(dateString, pos);
 
@@ -213,7 +219,7 @@ public class WeblogCalendarModel implements CalendarModel {
         } else if(dateString != null
                 && dateString.length()==6
                 && StringUtils.isNumeric(dateString)) {
-            FastDateFormat char6DateFormat = FastDateFormat.getInstance(DateUtil.FORMAT_6CHARS, cal.getTimeZone());
+            FastDateFormat char6DateFormat = FastDateFormat.getInstance(RollerConstants.FORMAT_6CHARS, cal.getTimeZone());
             ParsePosition pos = new ParsePosition(0);
             ret = char6DateFormat.parse(dateString, pos);
             
@@ -241,9 +247,9 @@ public class WeblogCalendarModel implements CalendarModel {
             return null;
         }
         else if (dateString == null && !monthURL) {
-        	dateString = DateUtil.format8chars(day, getCalendar().getTimeZone());
+            dateString = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, getCalendar().getTimeZone()).format(day);
         } else if (dateString == null) {
-            dateString = DateUtil.format6chars(day, getCalendar().getTimeZone());
+            dateString = FastDateFormat.getInstance(RollerConstants.FORMAT_6CHARS, getCalendar().getTimeZone()).format(day);
         }
         try {
             if (pageLink == null) {

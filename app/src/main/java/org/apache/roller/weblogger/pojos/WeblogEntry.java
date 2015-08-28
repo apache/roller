@@ -42,9 +42,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
@@ -862,7 +862,7 @@ public class WeblogEntry implements Serializable {
         // No title or text, so instead we will use the items date
         // in YYYYMMDD format as the base anchor
         else {
-            base = DateUtil.format8chars(getPubTime(), weblog.getTimeZoneInstance());
+            base = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(getPubTime());
         }
         
         return base;
