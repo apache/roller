@@ -20,12 +20,12 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
@@ -719,7 +719,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     public Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc) throws WebloggerException {
-        TreeMap<Date, List<WeblogEntry>> map = new TreeMap<Date, List<WeblogEntry>>(Collections.reverseOrder());
+        TreeMap<Date, List<WeblogEntry>> map = new TreeMap<>(Collections.reverseOrder());
 
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
@@ -729,8 +729,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         for (WeblogEntry entry : entries) {
-            Date sDate = DateUtil.getNoonOfDay(entry.getPubTime() == null ? new Date() : entry.getPubTime(),
-                    cal);
+            cal.setTime(entry.getPubTime() == null ? new Date() : entry.getPubTime());
+            Date sDate = DateUtils.truncate(cal, Calendar.DATE).getTime();
             List<WeblogEntry> dayEntries = map.get(sDate);
             if (dayEntries == null) {
                 dayEntries = new ArrayList<>();
@@ -753,13 +753,14 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         FastDateFormat formatter;
         if (wesc.getWeblog() != null) {
             TimeZone tz = wesc.getWeblog().getTimeZoneInstance();
-            formatter = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS, tz);
+            formatter = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS, tz);
         } else {
-            formatter = FastDateFormat.getInstance(DateUtil.FORMAT_8CHARS);
+            formatter = FastDateFormat.getInstance(RollerConstants.FORMAT_8CHARS);
         }
 
         for (WeblogEntry entry : entries) {
-            Date sDate = DateUtil.getNoonOfDay(entry.getPubTime(), cal);
+            cal.setTime(entry.getPubTime());
+            Date sDate = DateUtils.truncate(cal, Calendar.DATE).getTime();
             if (map.get(sDate) == null) {
                 map.put(sDate, formatter.format(sDate));
             }

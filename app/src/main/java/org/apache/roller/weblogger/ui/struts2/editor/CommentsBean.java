@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.text.DateFormat;
@@ -28,7 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.util.DateUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.util.Utilities;
@@ -52,8 +51,7 @@ public class CommentsBean {
     
     // Limit updates to just this set of comma-separated IDs
     private String ids = null;
-    
-    
+
     public void loadCheckboxes(List<WeblogEntryComment> comments) {
         
         List<String> allComments = new ArrayList<>();
@@ -113,7 +111,10 @@ public class CommentsBean {
                 DateFormat df = new SimpleDateFormat("MM/dd/yy");
                 Date day = df.parse(getEndDateString());
                 if (day == null) day = new Date();
-                return DateUtil.getEndOfDay(day, Calendar.getInstance());
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(day);
+                // one millisecond before start of next day
+                return DateUtils.addMilliseconds(DateUtils.ceiling(cal, Calendar.DATE).getTime(), -1);
             } catch (Exception e) {}
         }
         return null;

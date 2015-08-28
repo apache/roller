@@ -14,14 +14,16 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.core.tags.calendar;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.DateUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -77,22 +79,6 @@ public class CalendarTag extends TagSupport {
         }
     }
 
-    // not a tag attribute
-    /*
-    private TimeZone mTimeZone = TimeZone.getDefault();
-    public void setTimeZone(TimeZone zone) {
-        if (zone != null)
-            mTimeZone = zone;
-    }
-    private TimeZone getTimeZone()
-    {
-        // I've seen TimeZone.getDefault() return null. -Lance
-        if (mTimeZone == null)
-            mTimeZone = TimeZone.getTimeZone("America/New_York");
-        return mTimeZone;
-    }
-     */
-    
     private String[] mDayNames = null;
     
     public CalendarTag() {
@@ -160,7 +146,8 @@ public class CalendarTag extends TagSupport {
             
             // go back to first day in month
             cal = model.getCalendar();
-            day = DateUtil.getNoonOfDay(day, cal);
+            cal.setTime(day);
+            day = DateUtils.truncate(cal, Calendar.DATE).getTime();
             cal.set( Calendar.DAY_OF_MONTH, cal.getMinimum(Calendar.DAY_OF_MONTH) );
             
             // Go back to first day of week before that (Sunday in US, Monday in France, e.g.)
