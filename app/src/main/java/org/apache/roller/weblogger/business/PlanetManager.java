@@ -23,7 +23,7 @@ package org.apache.roller.weblogger.business;
 
 import java.util.Date;
 import java.util.List;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.pojos.Subscription;
@@ -36,121 +36,121 @@ public interface PlanetManager {
     /**
      * Retrieve all defined planets
      */
-    List<Planet> getPlanets() throws RollerException;
+    List<Planet> getPlanets() throws WebloggerException;
 
     /**
      * Save new or update an existing planet
      */
-    void savePlanet(Planet sub) throws RollerException;
+    void savePlanet(Planet sub) throws WebloggerException;
     
     
     /** 
      * Delete planet and any subscriptions that are orphaned.
      */
-    void deletePlanet(Planet planet) throws RollerException;
+    void deletePlanet(Planet planet) throws WebloggerException;
     
     
-    Planet getPlanet(String handle) throws RollerException;
+    Planet getPlanet(String handle) throws WebloggerException;
     
     
     /**
      * Get planet by ID rather than handle.
      */
-    Planet getPlanetById(String id) throws RollerException;
+    Planet getPlanetById(String id) throws WebloggerException;
     
     
     /**
      * Save or update a subscription
      */
-    void saveSubscription(Subscription sub) throws RollerException;
+    void saveSubscription(Subscription sub) throws WebloggerException;
     
     
     /** 
      * Delete subscription, remove it from planets, cache, etc.
      */
-    void deleteSubscription(Subscription subscription) throws RollerException;
+    void deleteSubscription(Subscription subscription) throws WebloggerException;
     
     
     /**
      * Get subscription by planet and feedUrl.
      */
-    Subscription getSubscription(Planet planet, String feedUrl) throws RollerException;
+    Subscription getSubscription(Planet planet, String feedUrl) throws WebloggerException;
     
     
     /**
      * Get subscription by ID rather than feedUrl.
      */
-    Subscription getSubscriptionById(String id) throws RollerException;
+    Subscription getSubscriptionById(String id) throws WebloggerException;
     
     
     /**
      * Get all subscriptions.
      */
-    List<Subscription> getSubscriptions() throws RollerException;
+    List<Subscription> getSubscriptions() throws WebloggerException;
     
     
     /**
      * Get total number of subscriptions.
      */
-    int getSubscriptionCount() throws RollerException;
+    int getSubscriptionCount() throws WebloggerException;
     
     
     /**
      * Get top X subscriptions.
      */
-    List<Subscription> getTopSubscriptions(int offset, int len) throws RollerException;
+    List<Subscription> getTopSubscriptions(int offset, int len) throws WebloggerException;
     
     
     /**
      * Get top X subscriptions, restricted by planet.
      */
     List<Subscription> getTopSubscriptions(Planet planet, int offset, int len)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
      * Save new or update existing entry
      */
-    void saveEntry(SubscriptionEntry entry) throws RollerException;
+    void saveEntry(SubscriptionEntry entry) throws WebloggerException;
 
     /**
      * Refresh subscription entries
      */
-    void updateSubscriptions() throws RollerException;
+    void updateSubscriptions() throws WebloggerException;
 
     /**
      * Task that will update the weblogger "all" planet (creating it first if necessary) to
      * consist of all blogs hosted by this weblogger instance, adding new and deleting old as
      * necessary.
      */
-    void syncAllBlogsPlanet() throws RollerException;
+    void syncAllBlogsPlanet() throws WebloggerException;
 
     /**
      * Delete entry. 
      */
-    void deleteEntry(SubscriptionEntry entry) throws RollerException;
+    void deleteEntry(SubscriptionEntry entry) throws WebloggerException;
     
     
     /**
      * Delete all entries for a subscription.
      *
      * @param sub The subscription to delete entries from.
-     * @throws RollerException If there is a problem doing the delete.
+     * @throws WebloggerException If there is a problem doing the delete.
      */
-    void deleteEntries(Subscription sub) throws RollerException;
+    void deleteEntries(Subscription sub) throws WebloggerException;
     
     
     /**
      * Lookup an entry by id.
      */
-    SubscriptionEntry getEntryById(String id) throws RollerException;
+    SubscriptionEntry getEntryById(String id) throws WebloggerException;
     
     
     /**
      * Get entries in a single feed as list of SubscriptionEntry objects.
      */
     List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
@@ -161,7 +161,7 @@ public interface PlanetManager {
      * @param len Maximum number of results to return (for paging)
      */
     List<SubscriptionEntry> getEntries(Planet planet, int offset, int len)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
@@ -178,6 +178,6 @@ public interface PlanetManager {
                            Date startDate, 
                            Date endDate,
                            int offset, 
-                           int len) throws RollerException;
+                           int len) throws WebloggerException;
     
 }

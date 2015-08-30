@@ -35,7 +35,6 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 
 import org.apache.roller.weblogger.business.FeedUpdater;
 import org.apache.roller.weblogger.business.PlanetManager;
@@ -68,16 +67,16 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
     
     
-    public void savePlanet(Planet group) throws RollerException {
+    public void savePlanet(Planet group) throws WebloggerException {
         strategy.store(group);
     }
     
-    public void saveEntry(SubscriptionEntry entry) throws RollerException {
+    public void saveEntry(SubscriptionEntry entry) throws WebloggerException {
         strategy.store(entry);
     }
     
     public void saveSubscription(Subscription sub)
-    throws RollerException {
+    throws WebloggerException {
         Subscription existing = getSubscription(sub.getPlanet(), sub.getFeedURL());
         if (existing == null || (existing.getId().equals(sub.getId()))) {
             strategy.store(sub);
@@ -86,21 +85,21 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
     }
     
-    public void deleteEntry(SubscriptionEntry entry) throws RollerException {
+    public void deleteEntry(SubscriptionEntry entry) throws WebloggerException {
         strategy.remove(entry);
     }
     
-    public void deletePlanet(Planet group) throws RollerException {
+    public void deletePlanet(Planet group) throws WebloggerException {
         strategy.remove(group);
     }
     
     public void deleteSubscription(Subscription sub)
-    throws RollerException {
+    throws WebloggerException {
         strategy.remove(sub);
     }
     
     public Subscription getSubscription(Planet planet, String feedUrl)
-    throws RollerException {
+    throws WebloggerException {
         TypedQuery<Subscription> q = strategy.getNamedQuery("Subscription.getByPlanetAndFeedURL", Subscription.class);
         q.setParameter(1, planet);
         q.setParameter(2, feedUrl);
@@ -111,7 +110,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
     }
     
-    public Subscription getSubscriptionById(String id) throws RollerException {
+    public Subscription getSubscriptionById(String id) throws WebloggerException {
         return strategy.load(Subscription.class, id);
     }
     
@@ -125,13 +124,13 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
     }
     
-    public int getSubscriptionCount() throws RollerException {
+    public int getSubscriptionCount() throws WebloggerException {
         Query q = strategy.getNamedQuery("Subscription.getAll", Subscription.class);
         return q.getResultList().size();
     }
     
     public List<Subscription> getTopSubscriptions(int offset, int length)
-    throws RollerException {
+    throws WebloggerException {
         return getTopSubscriptions(null, offset, length);
     }
     
@@ -139,7 +138,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
      * Get top X subscriptions, restricted by group.
      */
     public List<Subscription> getTopSubscriptions(
-            Planet group, int offset, int len) throws RollerException {
+            Planet group, int offset, int len) throws WebloggerException {
         List<Subscription> result;
         if (group != null) {
             TypedQuery<Subscription> q = strategy.getNamedQuery(
@@ -166,12 +165,12 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         return result;
     }
 
-    public List<Planet> getPlanets() throws RollerException {
+    public List<Planet> getPlanets() throws WebloggerException {
         TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getAll", Planet.class);
         return q.getResultList();
     }
 
-    public Planet getPlanet(String handle) throws RollerException {
+    public Planet getPlanet(String handle) throws WebloggerException {
         TypedQuery<Planet> q = strategy.getNamedQuery("Planet.getByHandle", Planet.class);
         q.setParameter(1, handle);
         try {
@@ -181,14 +180,14 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         }
     }
     
-    public Planet getPlanetById(String id) throws RollerException {
+    public Planet getPlanetById(String id) throws WebloggerException {
         return strategy.load(Planet.class, id);
     }        
     
     public void release() {}
 
     public void deleteEntries(Subscription sub) 
-        throws RollerException {
+        throws WebloggerException {
         for (Object entry : sub.getEntries()) {
             strategy.remove(entry);
         }
@@ -196,16 +195,16 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         sub.getEntries().clear();
     }
     
-    public List<Subscription> getSubscriptions() throws RollerException {
+    public List<Subscription> getSubscriptions() throws WebloggerException {
         TypedQuery<Subscription> q = strategy.getNamedQuery("Subscription.getAllOrderByFeedURL", Subscription.class);
         return q.getResultList();
     }
 
-    public SubscriptionEntry getEntryById(String id) throws RollerException {
+    public SubscriptionEntry getEntryById(String id) throws WebloggerException {
         return strategy.load(SubscriptionEntry.class, id);
     }
 
-    public List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(Subscription sub, int offset, int len) throws WebloggerException {
         if (sub == null) {
             throw new WebloggerException("subscription cannot be null");
         }
@@ -220,11 +219,11 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         return q.getResultList();
     }
 
-    public List<SubscriptionEntry> getEntries(Planet group, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(Planet group, int offset, int len) throws WebloggerException {
         return getEntries(group, null, null, offset, len);
     }
 
-    public List<SubscriptionEntry> getEntries(Planet group, Date startDate, Date endDate, int offset, int len) throws RollerException {
+    public List<SubscriptionEntry> getEntries(Planet group, Date startDate, Date endDate, int offset, int len) throws WebloggerException {
 
         if (group == null) {
             throw new WebloggerException("group cannot be null or empty");
@@ -278,7 +277,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     @Override
-    public void updateSubscriptions() throws RollerException {
+    public void updateSubscriptions() throws WebloggerException {
         log.debug("--- BEGIN --- Updating all subscriptions");
         long startTime = System.currentTimeMillis();
 
@@ -290,7 +289,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
     }
 
     @Override
-    public void syncAllBlogsPlanet() throws RollerException {
+    public void syncAllBlogsPlanet() throws WebloggerException {
         log.info("Syncing local weblogs with planet subscriptions list");
 
         try {
@@ -369,7 +368,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
             savePlanet(planet);
             strategy.flush();
 
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR refreshing entries", e);
         }
     }

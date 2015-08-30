@@ -27,7 +27,6 @@ import java.util.Set;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
@@ -112,7 +111,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
                 log.debug("Added entries");
                 entries += newEntries.size();
 
-            } catch(RollerException ex) {
+            } catch(WebloggerException ex) {
                 throw new WebloggerException("Error persisting updated subscription", ex);
             }
         }
@@ -153,7 +152,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
 			try {
 				// reattach sub.  sub gets detached as we iterate
 				sub = pmgr.getSubscriptionById(sub.getId());
-			} catch (RollerException ex) {
+			} catch (WebloggerException ex) {
 				log.warn("Subscription went missing while doing update: "+ex.getMessage());
 			}
 			

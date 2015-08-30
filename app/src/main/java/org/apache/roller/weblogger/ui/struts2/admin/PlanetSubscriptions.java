@@ -26,7 +26,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.FeedFetcher;
 import org.apache.roller.weblogger.pojos.Planet;
@@ -68,7 +68,7 @@ public class PlanetSubscriptions extends UIAction {
         
         try {
             setPlanet(pmgr.getPlanet(getPlanetHandle()));
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             LOGGER.error("Error looking up planet group - " + getPlanetHandle(), ex);
         }
     }
@@ -122,7 +122,7 @@ public class PlanetSubscriptions extends UIAction {
                     addError("planetSubscriptions.subscriptionAlreadyExists");
                     return LIST;
                 }
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 LOGGER.error("Unexpected error saving subscription", ex);
                 addError("planetSubscriptions.error.duringSave", ex.getRootCauseMessage());
             }
@@ -154,7 +154,7 @@ public class PlanetSubscriptions extends UIAction {
 
                 addMessage("planetSubscription.success.deleted");
 
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 LOGGER.error("Error removing planet subscription", ex);
                 addError("planetSubscription.error.deleting");
             }
