@@ -231,11 +231,6 @@ public interface URLStrategy {
     String getWeblogRsdURL(Weblog weblog, boolean absolute);
     
     /**
-     * Get url to JSON tags service url, optionally for a given weblog.
-     */
-    String getWeblogTagsJsonURL(Weblog weblog, boolean absolute, int pageNum);
-
-    /**
      * Get URL of a planet's newsfeed.
      */
     String getPlanetURL(String planet);
