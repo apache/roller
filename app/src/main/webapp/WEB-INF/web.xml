@@ -271,11 +271,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>TagDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.webservices.tagdata.TagDataServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
         <servlet-class>org.apache.xmlrpc.webserver.XmlRpcServlet</servlet-class>
         <init-param>
@@ -365,11 +360,6 @@
     <servlet-mapping>
         <servlet-name>XmlRpcServlet</servlet-name>
         <url-pattern>/roller-services/xmlrpc</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>TagDataServlet</servlet-name>
-        <url-pattern>/roller-services/tagdata/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

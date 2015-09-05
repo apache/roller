@@ -27,15 +27,23 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.TagStat;
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.core.RollerContext;
@@ -50,9 +58,18 @@ import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Trackback;
 import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,9 +82,13 @@ import java.util.Map;
 /**
  * Edit a new or existing entry.
  */
+@RestController
 public final class EntryEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryEdit.class);
+
+    // Max Tags to show for autocomplete
+    private static final int MAX_TAGS = WebloggerConfig.getIntProperty("services.tagdata.max", 20);
 
     // bean for managing form data
     private EntryBean bean = new EntryBean();
@@ -454,11 +475,6 @@ public final class EntryEdit extends UIAction {
                 WeblogRole.POST);
     }
 
-    public String getJsonAutocompleteUrl() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy()
-                .getWeblogTagsJsonURL(getActionWeblog(), false, 0);
-    }
-
     /**
      * Get recent published weblog entries
      * @return List of published WeblogEntry objects sorted by publication time.
@@ -507,4 +523,59 @@ public final class EntryEdit extends UIAction {
         return entries;
     }
 
+    @RequestMapping(value = "/tagdata/{handle}", method = RequestMethod.GET)
+    public WeblogTagData getWeblogTagData(@PathVariable String handle, @RequestParam("prefix") String prefix)
+            throws ServletException {
+
+        List<TagStat> tags;
+
+        try {
+            Weblogger roller = WebloggerFactory.getWeblogger();
+            WeblogManager wmgr = roller.getWeblogManager();
+            WeblogEntryManager emgr = roller.getWeblogEntryManager();
+            Weblog weblog = wmgr.getWeblogByHandle(handle);
+            tags = emgr.getTags(weblog, null, prefix, 0, MAX_TAGS);
+
+            WeblogTagData wtd = new WeblogTagData();
+            wtd.setWeblog(handle);
+            wtd.setPrefix(prefix);
+            wtd.setTagcounts(tags);
+            return wtd;
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    private static class WeblogTagData {
+        public WeblogTagData() {}
+
+        private String prefix;
+        private String weblog;
+        private List<TagStat> tagcounts;
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String getWeblog() {
+            return weblog;
+        }
+
+        public void setWeblog(String weblog) {
+            this.weblog = weblog;
+        }
+
+        public List<TagStat> getTagcounts() {
+            return tagcounts;
+        }
+
+        public void setTagcounts(List<TagStat> tagcounts) {
+            this.tagcounts = tagcounts;
+        }
+
+    }
 }

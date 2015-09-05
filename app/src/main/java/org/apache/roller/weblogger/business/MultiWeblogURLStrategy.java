@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.HashMap;
@@ -366,41 +368,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         
         return getWeblogURL(weblog, null, absolute)+"rsd";
     }
-    
-    
-    /**
-     * Get url to JSON tags service url, optionally for a given weblog.
-     */
-    public String getWeblogTagsJsonURL(Weblog weblog,
-                                                    boolean absolute,
-                                                    int pageNum) {
-        
-        StringBuilder url = new StringBuilder();
-        
-        if (absolute) {
-            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
-        } else {
-            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
-        }
-        
-        // json tags service base
-        url.append("/roller-services/tagdata/");
-        
-        // is this for a specific weblog or site-wide?
-        if (weblog != null) {
-            url.append("weblog/");
-            url.append(weblog.getHandle());
-            url.append("/");
-        }
-        
-        if (pageNum > 0) {
-            url.append("?page=").append(pageNum);
-        }
-        
-        return url.toString();
-    }
 
-    
     public String getWeblogSearchFeedURLTemplate(Weblog weblog) {
         if(weblog == null) {
             return null;
@@ -418,7 +386,6 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         return url.toString() + URLUtilities.getQueryString(params);
     }
 
-    
     public String getWeblogSearchPageURLTemplate(Weblog weblog) {
         if(weblog == null) {
             return null;
@@ -447,5 +414,3 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     }
 
 }
-
-

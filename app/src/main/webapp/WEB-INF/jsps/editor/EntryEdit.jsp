@@ -342,11 +342,12 @@ $( "#tagAutoComplete" )
     .autocomplete({
         delay: 500,
         source: function(request, response) {
-            $.getJSON("<s:property value='jsonAutocompleteUrl' />", { format: 'json', prefix: extractLast( request.term ) },
+            $.getJSON("<%= request.getContextPath()%>/roller-ui/authoring/rest/tagdata/<s:text name='actionWeblog.handle'/>",
+            { prefix: extractLast( request.term ) },
             function(data) {
                 response($.map(data.tagcounts, function (dataValue) {
                     return {
-                        value: dataValue.tag
+                        value: dataValue.name
                     };
                 }))
             })
