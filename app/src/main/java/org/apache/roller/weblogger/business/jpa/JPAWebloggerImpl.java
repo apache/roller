@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.business.WebloggerImpl;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.runnable.ThreadManager;
+import org.apache.roller.weblogger.business.ThreadManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;

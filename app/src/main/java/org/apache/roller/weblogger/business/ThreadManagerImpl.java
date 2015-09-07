@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.business.runnable;
+package org.apache.roller.weblogger.business;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +28,6 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.InitializationException;
 
 
 /**

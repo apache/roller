@@ -90,30 +90,6 @@ public interface URLStrategy {
                                                   boolean absolute);
     
     
-    /**
-     * URL for OpenSearch descriptor file for site.
-     */
-    String getOpenSearchSiteURL();
-    
-
-    /**
-     * URL for OpenSearch descriptor file for weblog.
-     */
-    String getOpenSearchWeblogURL(String weblogHandle);
-
-    
-    /**
-     * Get OpenSearch compatible search URL template for weblog search feed.
-     */
-    String getWeblogSearchFeedURLTemplate(Weblog weblog);
-
-    
-    /**
-     * Get OpenSearch compatible search URL template for weblog search page.
-     */
-    String getWeblogSearchPageURLTemplate(Weblog weblog);
-
-    
     String getXmlrpcURL(boolean absolute);
     
     

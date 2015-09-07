@@ -80,7 +80,7 @@
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
-    <beans:bean id="threadManager" class="org.apache.roller.weblogger.business.runnable.ThreadManagerImpl"/>
+    <beans:bean id="threadManager" class="org.apache.roller.weblogger.business.ThreadManagerImpl"/>
 
     <beans:bean id="userManager" class="org.apache.roller.weblogger.business.jpa.JPAUserManagerImpl">
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
