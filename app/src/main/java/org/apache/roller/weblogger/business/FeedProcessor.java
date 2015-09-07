@@ -21,18 +21,20 @@
 
 package org.apache.roller.weblogger.business;
 
+import java.util.Collection;
 import java.util.Date;
+
+import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
- * A FeedFetcher is what is responsible for actually pulling subscriptions from
- * their source and transforming them into Roller Planet Subscriptions and Entries.
- * 
- * It does not perform any persistence of feeds.
+ * A FeedProcessor is responsible for actually pulling subscriptions from
+ * their source and transforming them into Roller Planet Subscriptions and Entries,
+ * as well as saving them to the DB.
  */
-public interface FeedFetcher {
+public interface FeedProcessor {
     
     /**
      * Fetch a single subscription.
@@ -73,4 +75,21 @@ public interface FeedFetcher {
      */
     Subscription fetchSubscription(String feedURL, Date lastModified) throws WebloggerException;
 
+    /**
+     * Update a set of subscriptions in the system
+     *
+     * This method takes in an set of Subscriptions and updates each one
+     * with the data from the its source after fetching an updated version
+     * of the subscription.
+     *
+     * @param subscriptions A set of subscriptions to be updated
+     */
+    void updateSubscriptions(Collection<Subscription> subscriptions);
+
+    /**
+     * Update all Subscriptions that are part of the specified planet.
+     *
+     * @throws WebloggerException If there is an error during the update and the operation cannot continue.
+     */
+    void updateSubscriptions(Planet planet) throws WebloggerException;
 }

@@ -24,57 +24,66 @@ package org.apache.roller.weblogger.business;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
 
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Test custom weblogger feed fetcher.
  */
-public class WebloggerRomeFeedFetcherTest extends TestCase {
+public class FeedProcessorImplTest extends TestCase {
     
-    public static Log log = LogFactory.getLog(WebloggerRomeFeedFetcherTest.class);
+    public static Log log = LogFactory.getLog(FeedProcessorImplTest.class);
     
     String rollerFeedUrl = "weblogger:webloggerFetcherTestWeblog";
     String externalFeedUrl = "http://rollerweblogger.org/roller/feed/entries/atom";
+    private Subscription testSub = null;
+    private Planet planet = null;
+    private User testUser = null;
+    private Weblog testWeblog = null;
 
     /**
      * All tests in this suite require a user and a weblog.
      */
     @Override
     public void setUp() throws Exception {
-        
-        // setup weblogger
         TestUtils.setupWeblogger();
-        
-        try {
-            //testUser = TestUtils.setupUser("webloggerFetcherTestUser");
-            //testWeblog = TestUtils.setupWeblog("webloggerFetcherTestWeblog", testUser);
-            //TestUtils.endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test setup failed", ex);
-        }
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
+
+        testUser = TestUtils.setupUser("webloggerFetcherTestUser");
+        testWeblog = TestUtils.setupWeblog("webloggerFetcherTestWeblog", testUser);
+
+        // add test planet
+        planet = new Planet("testPlanetHandle", "testPlanetTitle", "testPlanetDesc");
+
+        // add test subscription
+        testSub = new Subscription();
+        testSub.setTitle(externalFeedUrl);
+        testSub.setFeedURL(externalFeedUrl);
+        testSub.setPlanet(planet);
+        planet.getSubscriptions().add(testSub);
+        mgr.savePlanet(planet);
+        mgr.saveSubscription(testSub);
+        TestUtils.endSession(true);
     }
     
     @Override
     public void tearDown() throws Exception {
-        
-        try {
-            //TestUtils.teardownWeblog(testWeblog.getId());
-            //TestUtils.teardownUser(testUser.getUserName());
-            //TestUtils.endSession(true);
-            
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test teardown failed", ex);
-        }
+        TestUtils.teardownSubscription(testSub.getId());
+        TestUtils.teardownPlanet("testPlanetHandle");
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
 
     public void testFetchFeed() throws WebloggerException {
         try {
-            FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
+            FeedProcessor feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
 
             // fetch feed
             Subscription sub = feedFetcher.fetchSubscription(externalFeedUrl);
@@ -94,7 +103,7 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
 
     public void testFetchFeedConditionally() throws WebloggerException {
         try {
-            FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
+            FeedProcessor feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
 
             // fetch feed
             Subscription sub = feedFetcher.fetchSubscription(externalFeedUrl);
@@ -117,7 +126,7 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
 
     public void testFetchInternalSubscription() throws Exception {
         try {
-            FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
+            FeedProcessor feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
 
             // first fetch non-conditionally so we know we should get a Sub
             Subscription sub = feedFetcher.fetchSubscription(rollerFeedUrl);
@@ -133,4 +142,26 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
             e.printStackTrace();
         }
     }
+
+    public void testUpdateSubscription() throws Exception {
+        PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
+        Subscription sub = mgr.getSubscriptionById(testSub.getId());
+
+        // update the subscription
+        FeedProcessor updater = new FeedProcessorImpl();
+        Set<Subscription> subscriptionSet = new HashSet<>();
+        subscriptionSet.add(sub);
+        updater.updateSubscriptions(subscriptionSet);
+        TestUtils.endSession(true);
+
+        // verify the results
+        sub = mgr.getSubscription(planet, externalFeedUrl);
+        assertNotNull(sub);
+        assertEquals(externalFeedUrl, sub.getFeedURL());
+        assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
+        assertEquals("Blogging Roller", sub.getTitle());
+        assertNotNull(sub.getLastUpdated());
+        assertTrue(sub.getEntries().size() > 0);
+    }
+
 }

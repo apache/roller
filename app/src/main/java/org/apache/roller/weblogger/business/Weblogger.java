@@ -155,7 +155,7 @@ public interface Weblogger {
      */
     String getBuildUser();
 
-	FeedFetcher getFeedFetcher();
+	FeedProcessor getFeedFetcher();
 
 	PlanetManager getPlanetManager();
 

@@ -27,9 +27,11 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.rometools.fetcher.impl.DiskFeedInfoCache;
 import com.rometools.fetcher.impl.FeedFetcherCache;
@@ -40,10 +42,12 @@ import com.rometools.rome.feed.synd.SyndCategory;
 import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.WebloggerException;
@@ -55,18 +59,11 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 
-
-/**
- * Extends Roller Planet's feed fetcher to fetch local feeds directly from 
- * Weblogger so we don't waste time with lots of feed processing.
- *
- * We expect local feeds to have urls of the style ... weblogger:<blog handle>
- */
-public class WebloggerRomeFeedFetcher implements FeedFetcher {
+public class FeedProcessorImpl implements FeedProcessor {
     
-    private static Log log = LogFactory.getLog(WebloggerRomeFeedFetcher.class); 
+    private static Log log = LogFactory.getLog(FeedProcessorImpl.class);
     
-    public WebloggerRomeFeedFetcher() {
+    public FeedProcessorImpl() {
         // no-op
     }
 
@@ -187,6 +184,11 @@ public class WebloggerRomeFeedFetcher implements FeedFetcher {
         return newSub;
     }
 
+    /**
+     * Fetch local feeds directly from Weblogger so we don't waste time with lots of
+     * feed processing.
+     * We expect local feeds to have urls of the style ... weblogger:<blog handle>
+     */
     private Subscription fetchWebloggerSubscription(String feedURL, Date lastModified)
             throws WebloggerException {
 
@@ -408,5 +410,161 @@ public class WebloggerRomeFeedFetcher implements FeedFetcher {
         return feedFetcher;
     }
 
+    /**
+     * @inheritDoc
+     */
+    private void updateSubscription(Subscription sub) throws WebloggerException {
+
+        if (sub == null) {
+            throw new IllegalArgumentException("cannot update null subscription");
+        }
+
+        log.debug("updating feed: "+sub.getFeedURL());
+
+        long subStartTime = System.currentTimeMillis();
+
+        Subscription updatedSub;
+        try {
+            // fetch the latest version of the subscription
+            log.debug("Getting fetcher");
+            FeedProcessor fetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
+            log.debug("Using fetcher class: " + fetcher.getClass().getName());
+            updatedSub = fetcher.fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
+
+        } catch (WebloggerException ex) {
+            throw new WebloggerException("Error fetching updated subscription", ex);
+        }
+
+        log.debug("Got updatedSub = " + updatedSub);
+
+        // if sub was unchanged then we are done
+        if (updatedSub == null) {
+            return;
+        }
+
+        // if this subscription hasn't changed since last update then we're done
+        if (sub.getLastUpdated() != null && updatedSub.getLastUpdated() != null &&
+                !updatedSub.getLastUpdated().after(sub.getLastUpdated())) {
+            log.debug("Skipping update, feed hasn't changed - "+sub.getFeedURL());
+        }
+
+        // update subscription attributes
+        sub.setSiteURL(updatedSub.getSiteURL());
+        sub.setTitle(updatedSub.getTitle());
+        sub.setAuthor(updatedSub.getAuthor());
+        sub.setLastUpdated(updatedSub.getLastUpdated());
+
+        // update subscription entries
+        int entries = 0;
+        Set<SubscriptionEntry> newEntries = updatedSub.getEntries();
+        log.debug("newEntries.size() = " + newEntries.size());
+        if (newEntries.size() > 0) {
+            try {
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+
+                // clear out old entries
+                pmgr.deleteEntries(sub);
+
+                // add fresh entries
+                sub.getEntries().clear();
+                sub.addEntries(newEntries);
+
+                // save and flush
+                pmgr.saveSubscription(sub);
+                WebloggerFactory.getWeblogger().flush();
+
+                log.debug("Added entries");
+                entries += newEntries.size();
+
+            } catch(WebloggerException ex) {
+                throw new WebloggerException("Error persisting updated subscription", ex);
+            }
+        }
+
+        long subEndTime = System.currentTimeMillis();
+        log.debug("updated feed -- "+sub.getFeedURL()+" -- in " +
+                ((subEndTime-subStartTime) / DateUtils.MILLIS_PER_SECOND) + " seconds.  " + entries +
+                " entries updated.");
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public void updateSubscriptions(Planet group) throws WebloggerException {
+
+        if(group == null) {
+            throw new IllegalArgumentException("cannot update null group");
+        }
+
+        updateProxySettings();
+
+        log.debug("--- BEGIN --- Updating subscriptions in group = "+group.getHandle());
+
+        long startTime = System.currentTimeMillis();
+
+        updateSubscriptions(group.getSubscriptions());
+
+        long endTime = System.currentTimeMillis();
+        log.info("--- DONE --- Updated subscriptions in "
+                + ((endTime-startTime) / DateUtils.MILLIS_PER_SECOND) + " seconds");
+    }
+
+    public void updateSubscriptions(Collection<Subscription> subscriptions) {
+        updateProxySettings();
+
+        PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+        for (Subscription sub : subscriptions) {
+            try {
+                // reattach sub.  sub gets detached as we iterate
+                sub = pmgr.getSubscriptionById(sub.getId());
+            } catch (WebloggerException ex) {
+                log.warn("Subscription went missing while doing update: "+ex.getMessage());
+            }
+
+            // this updates and saves
+            try {
+                updateSubscription(sub);
+            } catch(WebloggerException ex) {
+                // do a little work to get at the source of the problem
+                Throwable cause = ex;
+                if(ex.getRootCause() != null) {
+                    cause = ex.getRootCause();
+                }
+                if(cause.getCause() != null) {
+                    cause = cause.getCause();
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Error updating subscription - "+sub.getFeedURL(), cause);
+                } else {
+                    log.warn("Error updating subscription - "+sub.getFeedURL()
+                            + " turn on debug logging for more info");
+                }
+
+            } catch(Exception ex) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Error updating subscription - "+sub.getFeedURL(), ex);
+                } else {
+                    log.warn("Error updating subscription - "+sub.getFeedURL()
+                            + " turn on debug logging for more info");
+                }
+            }
+        }
+    }
+
+
+    // upate proxy settings for jvm based on planet configuration
+    private void updateProxySettings() {
+        String proxyHost = WebloggerRuntimeConfig.getProperty("planet.site.proxyhost");
+        int proxyPort = WebloggerRuntimeConfig.getIntProperty("planet.site.proxyport");
+        if (proxyHost != null && proxyPort > 0) {
+            System.setProperty("proxySet", "true");
+            System.setProperty("http.proxyHost", proxyHost);
+            System.setProperty("http.proxyPort", Integer.toString(proxyPort));
+        }
+        /** a hack to set 15 sec timeouts for java.net.HttpURLConnection */
+        System.setProperty("sun.net.client.defaultConnectTimeout", "15000");
+        System.setProperty("sun.net.client.defaultReadTimeout", "15000");
+    }
 
 }
