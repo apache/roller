@@ -19,10 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.business.runnable;
-
-import org.apache.roller.weblogger.business.InitializationException;
-
+package org.apache.roller.weblogger.business;
 
 /**
  * Thread management for executing scheduled and asynchronous tasks.

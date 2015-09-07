@@ -209,12 +209,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>OpenSearchServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.webservices.opensearch.OpenSearchServlet</servlet-class>
-        <load-on-startup>10</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>CommentServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.CommentServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
@@ -360,11 +354,6 @@
     <servlet-mapping>
         <servlet-name>XmlRpcServlet</servlet-name>
         <url-pattern>/roller-services/xmlrpc</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>OpenSearchServlet</servlet-name>
-        <url-pattern>/roller-services/opensearch/*</url-pattern>
     </servlet-mapping>
 
     <session-config>

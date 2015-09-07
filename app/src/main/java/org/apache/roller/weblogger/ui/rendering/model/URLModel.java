@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.model;
@@ -98,14 +101,14 @@ public class URLModel implements Model {
             return WebloggerRuntimeConfig.getAbsoluteContextURL();
         }
     }
-    
-    
+
+
     /** URL for logging in */  
     public String getLogin() {
         return urlStrategy.getLoginURL(false);
     }
-    
-    
+
+
     /** URL for logging out */
     public String getLogout() {
         return urlStrategy.getLogoutURL(false);
@@ -161,27 +164,27 @@ public class URLModel implements Model {
     public String home(String customLocale) {
         return urlStrategy.getWeblogCollectionURL(weblog, customLocale, null, null, null, -1, true);
     }
-    
-    
+
+
     public String home(String customLocale, int pageNum) {
         return urlStrategy.getWeblogCollectionURL(weblog, customLocale, null, null, null, pageNum, true);
     }
-    
-    
+
+
     public String entry(String anchor) {
         return urlStrategy.getWeblogEntryURL(weblog, locale, anchor, true);
     }
-    
+
     public String comment(String anchor, String timeStamp) {
         return urlStrategy.getWeblogCommentURL(weblog, locale, anchor, timeStamp, true);
     }
-    
-    
+
+
     public String comments(String anchor) {
         return urlStrategy.getWeblogCommentsURL(weblog, locale, anchor, true);
     }
-    
-    
+
+
     public String trackback(String anchor) {
         return urlStrategy.getWeblogEntryURL(weblog, locale, anchor, true);
     }
@@ -254,14 +257,6 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogSearchURL(weblog, locale, query, catName, pageNum, true);
     }        
     
-    public String getOpenSearchSite() {
-        return urlStrategy.getOpenSearchSiteURL();
-    }
-        
-    public String getOpenSearchWeblog() {
-        return urlStrategy.getOpenSearchWeblogURL(weblog.getHandle());
-    }
-        
     public String page(String pageLink) {
         return urlStrategy.getWeblogPageURL(weblog, locale, pageLink, null, null, null, null, -1, true);
     }

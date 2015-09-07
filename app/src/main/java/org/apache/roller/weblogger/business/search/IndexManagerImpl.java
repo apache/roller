@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.runnable.ThreadManager;
+import org.apache.roller.weblogger.business.ThreadManager;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
 import org.apache.roller.weblogger.business.search.operations.ReIndexEntryOperation;

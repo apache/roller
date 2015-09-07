@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
@@ -222,15 +225,7 @@ public class FeedServlet extends HttpServlet {
             // determine what template to render with
             boolean siteWide = WebloggerRuntimeConfig.isSiteWideWeblog(weblog
                     .getHandle());
-            if (siteWide && "entries".equals(feedRequest.getType())
-                    && feedRequest.getTerm() != null) {
-                pageId = "site-search-atom.vm";
-
-            } else if ("entries".equals(feedRequest.getType())
-                    && feedRequest.getTerm() != null) {
-                pageId = "feeds/weblog-search-atom.vm";
-
-            } else if (siteWide) {
+            if (siteWide) {
                 pageId = "site-" + feedRequest.getType() + "-"
                         + feedRequest.getFormat() + ".vm";
 

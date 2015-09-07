@@ -369,48 +369,4 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         return getWeblogURL(weblog, null, absolute)+"rsd";
     }
 
-    public String getWeblogSearchFeedURLTemplate(Weblog weblog) {
-        if(weblog == null) {
-            return null;
-        }
-        
-        StringBuilder url = new StringBuilder();
-        
-        url.append(getWeblogURL(weblog, null, true));
-        url.append("feed/entries/atom");
-        
-        Map params = new HashMap();
-        params.put("q", "{searchTerms}");
-        params.put("page", "{startPage}");
-        
-        return url.toString() + URLUtilities.getQueryString(params);
-    }
-
-    public String getWeblogSearchPageURLTemplate(Weblog weblog) {
-        if(weblog == null) {
-            return null;
-        }
-        
-        StringBuilder url = new StringBuilder();
-        
-        url.append(getWeblogURL(weblog, null, true));
-        url.append("search");
-        
-        Map params = new HashMap();
-        params.put("q", "{searchTerms}");
-        params.put("page", "{startPage}");
-        
-        return url.toString() + URLUtilities.getQueryString(params);
-    }
-
-
-    public String getOpenSearchSiteURL() {
-        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/opensearch/";
-    }
-
-
-    public String getOpenSearchWeblogURL(String weblogHandle) {
-        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/opensearch/" + weblogHandle;
-    }
-
 }
