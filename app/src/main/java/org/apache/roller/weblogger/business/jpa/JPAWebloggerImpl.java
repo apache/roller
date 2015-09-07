@@ -21,7 +21,7 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.business.FeedFetcher;
+import org.apache.roller.weblogger.business.FeedProcessor;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
@@ -65,7 +65,7 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         UserManager          userManager,
         WeblogManager        weblogManager,
         WeblogEntryManager   weblogEntryManager,
-		FeedFetcher          feedFetcher,
+		FeedProcessor feedFetcher,
         PlanetManager        planetManager,
         URLStrategy          urlStrategy) throws WebloggerException {
         

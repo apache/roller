@@ -36,9 +36,9 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.roller.weblogger.business.FeedUpdater;
+import org.apache.roller.weblogger.business.FeedProcessor;
+import org.apache.roller.weblogger.business.FeedProcessorImpl;
 import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.business.SingleThreadedFeedUpdater;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Planet;
@@ -281,7 +281,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         log.debug("--- BEGIN --- Updating all subscriptions");
         long startTime = System.currentTimeMillis();
 
-        FeedUpdater updater = new SingleThreadedFeedUpdater();
+        FeedProcessor updater = new FeedProcessorImpl();
         updater.updateSubscriptions(getSubscriptions());
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "

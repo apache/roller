@@ -55,7 +55,7 @@ public abstract class WebloggerImpl implements Weblogger {
     private final UserManager          userManager;
     private final WeblogManager        weblogManager;
     private final WeblogEntryManager   weblogEntryManager;
-    private final FeedFetcher          feedFetcher;
+    private final FeedProcessor feedFetcher;
     private final PlanetManager        planetManager;
     
     // url strategy
@@ -81,7 +81,7 @@ public abstract class WebloggerImpl implements Weblogger {
         UserManager          userManager,
         WeblogManager        weblogManager,
         WeblogEntryManager   weblogEntryManager,
-        FeedFetcher          feedFetcher,
+        FeedProcessor feedFetcher,
         PlanetManager        planetManager,
         URLStrategy          urlStrategy) throws WebloggerException {
                 
@@ -240,7 +240,7 @@ public abstract class WebloggerImpl implements Weblogger {
         return urlStrategy;
     }
 	
-    public FeedFetcher getFeedFetcher() {
+    public FeedProcessor getFeedFetcher() {
         return feedFetcher;
     }
 

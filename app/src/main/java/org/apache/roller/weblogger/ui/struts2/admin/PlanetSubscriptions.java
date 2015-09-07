@@ -27,8 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.FeedProcessor;
 import org.apache.roller.weblogger.business.PlanetManager;
-import org.apache.roller.weblogger.business.FeedFetcher;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -100,7 +100,7 @@ public class PlanetSubscriptions extends UIAction {
                     LOGGER.debug("Adding New Subscription - " + getSubUrl());
 
                     // sub doesn't exist yet, so we need to fetch it
-                    FeedFetcher fetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
+                    FeedProcessor fetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
                     sub = fetcher.fetchSubscription(getSubUrl());
                     sub.setPlanet(planet);
 
