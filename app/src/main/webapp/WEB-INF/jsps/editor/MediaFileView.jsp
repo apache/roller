@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
@@ -230,8 +233,7 @@
     <div class="control">
         <span style="padding-left:7px">
             <s:text name="mediaFileView.sortBy" />:
-            <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key"
-                  listValue="value"
+            <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="left" listValue="right"
                   onchange="document.mediaFileViewForm.submit();" />
         </span>
 

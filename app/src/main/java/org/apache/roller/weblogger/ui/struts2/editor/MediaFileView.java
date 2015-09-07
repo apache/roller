@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
@@ -23,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -33,7 +37,6 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
-import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -54,16 +57,16 @@ public class MediaFileView extends MediaFileBase {
     private MediaFileDirectory currentDirectory;
 
     // Search criteria - drop-down for file type
-    private static List<KeyValueObject> FILE_TYPES = null;
+    private static List<Pair<String, String>> FILE_TYPES = null;
 
     // Search criteria - drop-down for size filter
-    private static List<KeyValueObject> SIZE_FILTER_TYPES = null;
+    private static List<Pair<String, String>> SIZE_FILTER_TYPES = null;
 
     // Search criteria - drop-down for size unit
-    private static List<KeyValueObject> SIZE_UNITS = null;
+    private static List<Pair<String, String>> SIZE_UNITS = null;
 
     // Sort options for search results.
-    private static List<KeyValueObject> SORT_OPTIONS = null;
+    private static List<Pair<String, String>> SORT_OPTIONS = null;
 
     // Pager for displaying search results.
     private MediaFilePager pager;
@@ -89,35 +92,29 @@ public class MediaFileView extends MediaFileBase {
 
         if (SIZE_FILTER_TYPES == null) {
 
-            SIZE_FILTER_TYPES = Arrays.asList(new KeyValueObject(
-                    "mediaFileView.gt", getText("mediaFileView.gt")),
-                    new KeyValueObject("mediaFileView.ge",
-                            getText("mediaFileView.ge")), new KeyValueObject(
-                            "mediaFileView.eq", getText("mediaFileView.eq")),
-                    new KeyValueObject("mediaFileView.le",
-                            getText("mediaFileView.le")), new KeyValueObject(
-                            "mediaFileView.lt", getText("mediaFileView.lt")));
+            SIZE_FILTER_TYPES = Arrays.asList(
+                    Pair.of("mediaFileView.gt", getText("mediaFileView.gt")),
+                    Pair.of("mediaFileView.ge", getText("mediaFileView.ge")),
+                    Pair.of("mediaFileView.eq", getText("mediaFileView.eq")),
+                    Pair.of("mediaFileView.le", getText("mediaFileView.le")),
+                    Pair.of("mediaFileView.lt", getText("mediaFileView.lt")));
 
-            FILE_TYPES = Arrays.asList(new KeyValueObject("mediaFileView.any",
-                    getText("mediaFileView.any")), new KeyValueObject(
-                    "mediaFileView.others", getText("mediaFileView.others")),
-                    new KeyValueObject("mediaFileView.image",
-                            getText("mediaFileView.image")),
-                    new KeyValueObject("mediaFileView.video",
-                            getText("mediaFileView.video")),
-                    new KeyValueObject("mediaFileView.audio",
-                            getText("mediaFileView.audio")));
+            FILE_TYPES = Arrays.asList(
+                    Pair.of("mediaFileView.any", getText("mediaFileView.any")),
+                    Pair.of("mediaFileView.others", getText("mediaFileView.others")),
+                    Pair.of("mediaFileView.image", getText("mediaFileView.image")),
+                    Pair.of("mediaFileView.video", getText("mediaFileView.video")),
+                    Pair.of("mediaFileView.audio", getText("mediaFileView.audio")));
 
-            SIZE_UNITS = Arrays.asList(new KeyValueObject(
-                    "mediaFileView.bytes", getText("mediaFileView.bytes")),
-                    new KeyValueObject("mediaFileView.kb",
-                            getText("mediaFileView.kb")), new KeyValueObject(
-                            "mediaFileView.mb", getText("mediaFileView.mb")));
+            SIZE_UNITS = Arrays.asList(
+                    Pair.of("mediaFileView.bytes", getText("mediaFileView.bytes")),
+                    Pair.of("mediaFileView.kb", getText("mediaFileView.kb")),
+                    Pair.of("mediaFileView.mb", getText("mediaFileView.mb")));
 
-            SORT_OPTIONS = Arrays.asList(new KeyValueObject("name",
-                    getText("generic.name")), new KeyValueObject(
-                    "date_uploaded", getText("mediaFileView.date")),
-                    new KeyValueObject("type", getText("mediaFileView.type")));
+            SORT_OPTIONS = Arrays.asList(
+                    Pair.of("name", getText("generic.name")),
+                    Pair.of("date_uploaded", getText("mediaFileView.date")),
+                    Pair.of("type", getText("mediaFileView.type")));
         }
 
         refreshAllDirectories();
@@ -443,19 +440,19 @@ public class MediaFileView extends MediaFileBase {
         this.bean = b;
     }
 
-    public List<KeyValueObject> getFileTypes() {
+    public List<Pair<String, String>> getFileTypes() {
         return FILE_TYPES;
     }
 
-    public List<KeyValueObject> getSizeFilterTypes() {
+    public List<Pair<String, String>> getSizeFilterTypes() {
         return SIZE_FILTER_TYPES;
     }
 
-    public List<KeyValueObject> getSizeUnits() {
+    public List<Pair<String, String>> getSizeUnits() {
         return SIZE_UNITS;
     }
 
-    public List<KeyValueObject> getSortOptions() {
+    public List<Pair<String, String>> getSortOptions() {
         return SORT_OPTIONS;
     }
 

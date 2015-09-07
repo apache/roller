@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -120,7 +123,7 @@
                             <br />
                         </label>
                         <div>
-                            <s:radio theme="roller" name="bean.status" list="statusOptions" listKey="key" listValue="value" />
+                            <s:radio theme="roller" name="bean.status" list="statusOptions" listKey="left" listValue="right" />
                         </div>
                     </div>
 
@@ -134,7 +137,7 @@
                             <br />
                         </label>
                         <div>
-                            <s:radio theme="roller" name="bean.sortBy" list="sortByOptions" listKey="key" listValue="value" />
+                            <s:radio theme="roller" name="bean.sortBy" list="sortByOptions" listKey="left" listValue="right" />
                         </div>
                     </div>
 

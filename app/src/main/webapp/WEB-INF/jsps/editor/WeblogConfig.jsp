@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -166,7 +169,7 @@
      <tr>
         <td class="label"><s:text name="websiteSettings.defaultCommentDays" /></td>
         <td class="field">
-            <s:select name="bean.defaultCommentDays" list="commentDaysList" size="1" listKey="key" listValue="value" />
+            <s:select name="bean.defaultCommentDays" list="commentDaysList" size="1" listKey="left" listValue="right" />
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     

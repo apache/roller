@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -69,10 +72,10 @@
         <s:text name="mediaFileView.folderName"/> /
         <s:iterator id="directory" value="currentDirectoryHierarchy">
             <s:url var="getDirectoryByPathUrl" action="mediaFileImageChooser">
-                <s:param name="directoryName" value="#directory.key" />
+                <s:param name="directoryName" value="#directory.left" />
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
             </s:url>
-            <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.value" /></s:a> /
+            <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.right" /></s:a> /
         </s:iterator>
     </p>
     <p class="pagetip">

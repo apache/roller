@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
@@ -84,7 +87,7 @@
                             </td>
                             <td>
                                 <s:select id="beanType" name="bean.type"
-                                    list="fileTypes" listKey="key" listValue="value" />
+                                    list="fileTypes" listKey="left" listValue="right" />
                             </td>
                         </tr>
 
@@ -94,11 +97,11 @@
                             </td>
                             <td width="80%">
                                 <s:select name="bean.sizeFilterType" id="sizeFilterTypeCombo"
-                                    list="sizeFilterTypes" listKey="key" listValue="value" />
+                                    list="sizeFilterTypes" listKey="left" listValue="right" />
                                 <s:textfield id="beanSize" name="bean.size"
                                     size="3" maxlength="10" />
                                 <s:select name="bean.sizeUnit"
-                                    list="sizeUnits" listKey="key" listValue="value" />
+                                    list="sizeUnits" listKey="left" listValue="right" />
                             </td>
                         </tr>
 
