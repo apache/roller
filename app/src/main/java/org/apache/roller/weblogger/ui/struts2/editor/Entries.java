@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -34,7 +35,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
-import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -183,30 +183,24 @@ public class Entries extends UIAction {
         
         return cats;
     }
-    
-    
-    public List<KeyValueObject> getSortByOptions() {
-        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
-        
-        opts.add(new KeyValueObject(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(), getText("weblogEntryQuery.label.pubTime")));
-        opts.add(new KeyValueObject(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(), getText("weblogEntryQuery.label.updateTime")));
-        
+
+    public List<Pair<String, String>> getSortByOptions() {
+        List<Pair<String, String>> opts = new ArrayList<>();
+        opts.add(Pair.of(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(), getText("weblogEntryQuery.label.pubTime")));
+        opts.add(Pair.of(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(), getText("weblogEntryQuery.label.updateTime")));
         return opts;
     }
     
-    public List<KeyValueObject> getStatusOptions() {
-        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
-        
-        opts.add(new KeyValueObject("ALL", getText("weblogEntryQuery.label.allEntries")));
-        opts.add(new KeyValueObject("DRAFT", getText("weblogEntryQuery.label.draftOnly")));
-        opts.add(new KeyValueObject("PUBLISHED", getText("weblogEntryQuery.label.publishedOnly")));
-        opts.add(new KeyValueObject("PENDING", getText("weblogEntryQuery.label.pendingOnly")));
-        opts.add(new KeyValueObject("SCHEDULED", getText("weblogEntryQuery.label.scheduledOnly")));
-        
+    public List<Pair<String, String>> getStatusOptions() {
+        List<Pair<String, String>> opts = new ArrayList<>();
+        opts.add(Pair.of("ALL", getText("weblogEntryQuery.label.allEntries")));
+        opts.add(Pair.of("DRAFT", getText("weblogEntryQuery.label.draftOnly")));
+        opts.add(Pair.of("PUBLISHED", getText("weblogEntryQuery.label.publishedOnly")));
+        opts.add(Pair.of("PENDING", getText("weblogEntryQuery.label.pendingOnly")));
+        opts.add(Pair.of("SCHEDULED", getText("weblogEntryQuery.label.scheduledOnly")));
         return opts;
     }
-    
-    
+
     public EntriesBean getBean() {
         return bean;
     }

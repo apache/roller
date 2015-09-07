@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.ui.struts2.util;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -356,19 +357,16 @@ public abstract class UIAction extends ActionSupport
     public List getSecondsList() {
         return getMinutesList();
     }
-    
-    public List<KeyValueObject> getCommentDaysList() {
-        
-        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
-        
-        opts.add(new KeyValueObject(0, getText("weblogEdit.unlimitedCommentDays")));
-        opts.add(new KeyValueObject(3, getText("weblogEdit.days3")));
-        opts.add(new KeyValueObject(7, getText("weblogEdit.days7")));
-        opts.add(new KeyValueObject(14, getText("weblogEdit.days14")));
-        opts.add(new KeyValueObject(30, getText("weblogEdit.days30")));
-        opts.add(new KeyValueObject(60, getText("weblogEdit.days60")));
-        opts.add(new KeyValueObject(90, getText("weblogEdit.days90")));
-        
+
+    public List<Pair<Integer, String>> getCommentDaysList() {
+        List<Pair<Integer, String>> opts = new ArrayList<>();
+        opts.add(Pair.of(0, getText("weblogEdit.unlimitedCommentDays")));
+        opts.add(Pair.of(3, getText("weblogEdit.days3")));
+        opts.add(Pair.of(7, getText("weblogEdit.days7")));
+        opts.add(Pair.of(14, getText("weblogEdit.days14")));
+        opts.add(Pair.of(30, getText("weblogEdit.days30")));
+        opts.add(Pair.of(60, getText("weblogEdit.days60")));
+        opts.add(Pair.of(90, getText("weblogEdit.days90")));
         return opts;
     }
 

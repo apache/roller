@@ -24,6 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -42,7 +43,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
-import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.MailUtil;
@@ -474,15 +474,13 @@ public class Comments extends UIAction {
         return LIST;
     }
 
-    public List<KeyValueObject> getCommentStatusOptions() {
-
-        List<KeyValueObject> opts = new ArrayList<>();
-
-        opts.add(new KeyValueObject("ALL", getText("generic.all")));
-        opts.add(new KeyValueObject("ONLY_PENDING", getText("commentManagement.onlyPending")));
-        opts.add(new KeyValueObject("ONLY_APPROVED", getText("commentManagement.onlyApproved")));
-        opts.add(new KeyValueObject("ONLY_DISAPPROVED", getText("commentManagement.onlyDisapproved")));
-        opts.add(new KeyValueObject("ONLY_SPAM", getText("commentManagement.onlySpam")));
+    public List<Pair<String, String>> getCommentStatusOptions() {
+        List<Pair<String, String>> opts = new ArrayList<>();
+        opts.add(Pair.of("ALL", getText("generic.all")));
+        opts.add(Pair.of("ONLY_PENDING", getText("commentManagement.onlyPending")));
+        opts.add(Pair.of("ONLY_APPROVED", getText("commentManagement.onlyApproved")));
+        opts.add(Pair.of("ONLY_DISAPPROVED", getText("commentManagement.onlyDisapproved")));
+        opts.add(Pair.of("ONLY_SPAM", getText("commentManagement.onlySpam")));
         return opts;
     }
 

@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.FileIOException;
@@ -27,7 +28,6 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.ArrayList;
@@ -125,8 +125,8 @@ public class MediaFileImageChooser extends MediaFileBase {
      * Returns the hierarchy of the current directory. This is useful in
      * displaying path information as breadcrumb.
      */
-    public List<KeyValueObject> getCurrentDirectoryHierarchy() {
-        List<KeyValueObject> directoryHierarchy = new ArrayList<KeyValueObject>();
+    public List<Pair<String, String>> getCurrentDirectoryHierarchy() {
+        List<Pair<String, String>> directoryHierarchy = new ArrayList<>();
 
         String fullPath = "/" + this.currentDirectory.getName();
         if (fullPath.length() > 1) {
@@ -134,7 +134,7 @@ public class MediaFileImageChooser extends MediaFileBase {
             String dirPath = "";
             for (String directoryName : directoryNames) {
                 dirPath = dirPath + "/" + directoryName;
-                directoryHierarchy.add(new KeyValueObject(dirPath,
+                directoryHierarchy.add(Pair.of(dirPath,
                         directoryName));
             }
         }
