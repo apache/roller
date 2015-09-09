@@ -355,6 +355,8 @@ public class Comments extends UIAction {
             }
 
             // loop through IDs of all comments displayed on page
+            // approvedIds will always be empty for global comment management, as the JSP
+            // which populates this value doesn't display approved checkboxes
             List<String> approvedIds = Arrays.asList(getBean().getApprovedComments());
 
             List<String> spamIds = Arrays.asList(getBean().getSpamComments());
@@ -374,41 +376,37 @@ public class Comments extends UIAction {
                     continue;
                 }
 
-                // Global administrator can't alter approved IDs.
-                if (isGlobalCommentManagement() && approvedIds.contains(id)) {
-                    continue;
-                }
-
                 WeblogEntryComment comment = wmgr.getComment(id);
 
                 // for non-Global, make sure comment is tied to action weblog
                 if (isGlobalCommentManagement() || getActionWeblog().equals(comment.getWeblogEntry().getWeblog())) {
                     // comment approvals and mark/unmark spam
                     if (approvedIds.contains(id)) {
-                        // if a comment was previously PENDING then this is
-                        // its first approval, so track it for notification
-                        if (ApprovalStatus.PENDING.equals(comment
-                                .getStatus())) {
-                            approvedComments.add(comment);
+                        if (!ApprovalStatus.APPROVED.equals(comment.getStatus())) {
+                            // if a comment was previously PENDING then this is
+                            // its first approval, so track it for notification
+                            if (ApprovalStatus.PENDING.equals(comment.getStatus())) {
+                                approvedComments.add(comment);
+                            }
+
+                            log.debug("Marking as approved - " + comment.getId());
+                            comment.setStatus(ApprovalStatus.APPROVED);
+                            wmgr.saveComment(comment);
+
+                            flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
+                            reindexList.add(comment.getWeblogEntry());
                         }
-
-                        log.debug("Marking as approved - " + comment.getId());
-                        comment.setStatus(ApprovalStatus.APPROVED);
-                        wmgr.saveComment(comment);
-
-                        flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
-                        reindexList.add(comment.getWeblogEntry());
-
                     } else if (spamIds.contains(id)) {
-                        log.debug("Marking as spam - " + comment.getId());
-                        comment.setStatus(ApprovalStatus.SPAM);
-                        wmgr.saveComment(comment);
+                        if (!ApprovalStatus.SPAM.equals(comment.getStatus())) {
+                            log.debug("Marking as spam - " + comment.getId());
+                            comment.setStatus(ApprovalStatus.SPAM);
+                            wmgr.saveComment(comment);
 
-                        flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
-                        reindexList.add(comment.getWeblogEntry());
-
-                    } else if (!ApprovalStatus.DISAPPROVED.equals(comment
-                            .getStatus())) {
+                            flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
+                            reindexList.add(comment.getWeblogEntry());
+                        }
+                    } else if (!ApprovalStatus.DISAPPROVED.equals(comment.getStatus())
+                            && !(isGlobalCommentManagement() && ApprovalStatus.APPROVED.equals(comment.getStatus()))) {
                         log.debug("Marking as disapproved - " + comment.getId());
                         comment.setStatus(ApprovalStatus.DISAPPROVED);
                         wmgr.saveComment(comment);
