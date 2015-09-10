@@ -21,13 +21,11 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.Collections;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.ui.core.util.menu.Menu;
 import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
