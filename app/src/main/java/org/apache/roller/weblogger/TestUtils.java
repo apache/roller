@@ -45,7 +45,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 
 import java.io.InputStream;
 import java.sql.Connection;
@@ -287,12 +287,12 @@ public final class TestUtils {
     /**
      * Convenience method for removing a permission.
      */
-    public static void teardownPermissions(WeblogPermission perm)
+    public static void teardownPermissions(UserWeblogRole perm)
             throws Exception {
 
         // remove all permissions
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        mgr.revokeWeblogRole(perm.getWeblog(), perm.getUser());
+        mgr.revokeWeblogRole(perm.getUser(), perm.getWeblog());
 
         // flush to db
         WebloggerFactory.getWeblogger().flush();

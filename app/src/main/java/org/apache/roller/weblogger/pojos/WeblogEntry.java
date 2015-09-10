@@ -952,11 +952,11 @@ public class WeblogEntry implements Serializable {
             return true;
         }
         
-        WeblogPermission perm = null;
+        UserWeblogRole perm = null;
         try {
             // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            perm = umgr.getWeblogPermission(getWeblog(), user);
+            perm = umgr.getWeblogRole(user, getWeblog());
             
         } catch (WebloggerException ex) {
             // security interceptor should ensure this never happens

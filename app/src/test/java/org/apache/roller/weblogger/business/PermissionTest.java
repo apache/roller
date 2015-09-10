@@ -20,16 +20,14 @@
 */
 package org.apache.roller.weblogger.business;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 
 import java.util.List;
@@ -43,18 +41,11 @@ public class PermissionTest extends TestCase {
     
     User testUser = null;
     Weblog testWeblog = null;
-    
-    
+
     public PermissionTest(String name) {
         super(name);
     }
-    
-    
-    public static Test suite() {
-        return new TestSuite(PermissionTest.class);
-    }
-    
-    
+
     /**
      * All tests in this suite require a user and a weblog.
      */
@@ -103,44 +94,44 @@ public class PermissionTest extends TestCase {
         
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
         
-        WeblogPermission p1 = new WeblogPermission(testWeblog, testUser, 
+        UserWeblogRole p1 = new UserWeblogRole(testWeblog, testUser,
             WeblogRole.POST);
         assertTrue(p1.getWeblogRole() == WeblogRole.POST);
 
-        WeblogPermission perm = null;
+        UserWeblogRole perm = null;
          
         // delete permissions
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        perm = mgr.getWeblogPermission(testWeblog, testUser);
+        perm = mgr.getWeblogRole(testUser, testWeblog);
         assertNotNull(perm);
-        mgr.revokeWeblogRole(testWeblog, testUser);
+        mgr.revokeWeblogRole(testUser, testWeblog);
         TestUtils.endSession(true);
         
         // check that delete was successful
-        perm = mgr.getWeblogPermission(testWeblog, testUser);
+        perm = mgr.getWeblogRole(testUser, testWeblog);
         assertNull(perm);
         
         // create permissions
-        mgr.grantWeblogRole(testWeblog, testUser, WeblogRole.OWNER);
+        mgr.grantWeblogRole(testUser, testWeblog, WeblogRole.OWNER);
         TestUtils.endSession(true);
         
         // check that create was successful
-        perm = mgr.getWeblogPermission(testWeblog, testUser);
+        perm = mgr.getWeblogRole(testUser, testWeblog);
         assertNotNull(perm);
         assertTrue(perm.getWeblogRole() == WeblogRole.OWNER);
         TestUtils.endSession(true);
         
         // revoke role
-        mgr.revokeWeblogRole(perm.getWeblog(), perm.getUser());
+        mgr.revokeWeblogRole(perm.getUser(), perm.getWeblog());
         TestUtils.endSession(true);
         
         // add only draft role
-        mgr.grantWeblogRole(testWeblog, testUser, WeblogRole.EDIT_DRAFT);
+        mgr.grantWeblogRole(testUser, testWeblog, WeblogRole.EDIT_DRAFT);
         TestUtils.endSession(true);
 
         // check that user has draft permission only
-        perm = mgr.getWeblogPermission(testWeblog, testUser);
+        perm = mgr.getWeblogRole(testUser, testWeblog);
         assertNotNull(perm);
         assertTrue(perm.getWeblogRole() == WeblogRole.EDIT_DRAFT);
 
@@ -160,48 +151,48 @@ public class PermissionTest extends TestCase {
         TestUtils.endSession(true);
 
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        WeblogPermission perm = null;
-        List<WeblogPermission> perms = null;
+        UserWeblogRole perm = null;
+        List<UserWeblogRole> perms = null;
 
         // get all permissions for a user
-        perms = mgr.getWeblogPermissions(TestUtils.getManagedUser(user));
+        perms = mgr.getWeblogRoles(TestUtils.getManagedUser(user));
         assertEquals(0, perms.size());
-        perms = mgr.getWeblogPermissions(TestUtils.getManagedUser(testUser));
+        perms = mgr.getWeblogRoles(TestUtils.getManagedUser(testUser));
         assertEquals(1, perms.size());
 
         // get all permissions for a weblog
-        perms = mgr.getWeblogPermissions(TestUtils.getManagedWebsite(testWeblog));
+        perms = mgr.getWeblogRoles(TestUtils.getManagedWebsite(testWeblog));
         assertEquals(1, perms.size());
 
-        mgr.grantPendingWeblogRole(testWeblog, user, WeblogRole.POST);
+        mgr.grantPendingWeblogRole(user, testWeblog, WeblogRole.POST);
         TestUtils.endSession(true);
 
         // get pending permissions for a user
-        perms = mgr.getPendingWeblogPermissions(TestUtils.getManagedUser(testUser));
+        perms = mgr.getPendingWeblogRoles(TestUtils.getManagedUser(testUser));
         assertEquals(0, perms.size());
-        perms = mgr.getPendingWeblogPermissions(TestUtils.getManagedUser(user));
+        perms = mgr.getPendingWeblogRoles(TestUtils.getManagedUser(user));
         assertEquals(1, perms.size());
 
         // get pending permissions for a weblog
-        perms = mgr.getPendingWeblogPermissions(TestUtils.getManagedWebsite(testWeblog));
+        perms = mgr.getPendingWeblogRoles(TestUtils.getManagedWebsite(testWeblog));
         assertEquals(1, perms.size());            
 
         // get permissions for a specific user/weblog
         perm = null;
-        perm = mgr.getWeblogPermission(
-                TestUtils.getManagedWebsite(testWeblog), 
-                TestUtils.getManagedUser(testUser));
+        perm = mgr.getWeblogRole(
+                TestUtils.getManagedUser(testUser), TestUtils.getManagedWebsite(testWeblog)
+        );
         assertNotNull(perm);
         assertTrue(perm.getWeblogRole() == WeblogRole.OWNER);
 
         // pending permissions should not be visible
         perm = null;
-        perm = mgr.getWeblogPermission(
-                TestUtils.getManagedWebsite(testWeblog), 
-                TestUtils.getManagedUser(user));
+        perm = mgr.getWeblogRole(
+                TestUtils.getManagedUser(user), TestUtils.getManagedWebsite(testWeblog)
+        );
         assertNull(perm);
         
-        List<WeblogPermission> pendings = mgr.getPendingWeblogPermissions(user);
+        List<UserWeblogRole> pendings = mgr.getPendingWeblogRoles(user);
 
         // cleanup
         TestUtils.teardownPermissions(pendings.get(0));
@@ -225,15 +216,15 @@ public class PermissionTest extends TestCase {
 
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-        WeblogPermission perm = null;
+        UserWeblogRole perm = null;
         List perms = null;
 
         // invite user to weblog
-        umgr.grantPendingWeblogRole(testWeblog, user, WeblogRole.EDIT_DRAFT);
+        umgr.grantPendingWeblogRole(user, testWeblog, WeblogRole.EDIT_DRAFT);
         TestUtils.endSession(true);
 
         // accept invitation
-        umgr.confirmWeblogPermission(testWeblog, user);
+        umgr.acceptWeblogInvitation(user, testWeblog);
         TestUtils.endSession(true);
 
         // re-query now that we have changed things
@@ -243,11 +234,11 @@ public class PermissionTest extends TestCase {
         // assert that invitation list is empty
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         user = TestUtils.getManagedUser(user);
-        assertTrue(umgr.getPendingWeblogPermissions(user).isEmpty());
-        assertTrue(umgr.getPendingWeblogPermissions(testWeblog).isEmpty());
+        assertTrue(umgr.getPendingWeblogRoles(user).isEmpty());
+        assertTrue(umgr.getPendingWeblogRoles(testWeblog).isEmpty());
 
         // assert that user is member of weblog
-        assertNotNull(umgr.getWeblogPermission(testWeblog, user));
+        assertNotNull(umgr.getWeblogRole(user, testWeblog));
         List weblogs = wmgr.getUserWeblogs(TestUtils.getManagedUser(user), true);
         assertEquals(1, weblogs.size());
         assertEquals(testWeblog.getId(), ((Weblog)weblogs.get(0)).getId());
@@ -257,7 +248,7 @@ public class PermissionTest extends TestCase {
         assertEquals(2, users.size());
 
         // test user can be retired from website
-        umgr.revokeWeblogRole(testWeblog, user);
+        umgr.revokeWeblogRole(user, testWeblog);
         TestUtils.endSession(true);
 
         //user = umgr.getUser(user.getId());
@@ -278,11 +269,8 @@ public class PermissionTest extends TestCase {
     public void testPermissionChecks() throws Exception {
         
         log.info("BEGIN");
-       
-        WeblogPermission perm = 
-            new WeblogPermission(testWeblog, testUser, WeblogRole.POST);
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-        assertTrue(umgr.checkPermission(perm, testUser));
+        assertTrue(umgr.checkWeblogRole(testUser, testWeblog, WeblogRole.POST));
         
         // we need a second user for this test
         User adminUser = TestUtils.setupUser("adminUser");
@@ -290,9 +278,7 @@ public class PermissionTest extends TestCase {
         TestUtils.endSession(true);
 
         // because adminUser is a global admin, they should have POST perm
-        WeblogPermission perm2 = 
-            new WeblogPermission(testWeblog, testUser, WeblogRole.POST);
-        assertTrue(umgr.checkPermission(perm, testUser));
+        assertTrue(umgr.checkWeblogRole(adminUser, testWeblog, WeblogRole.POST));
 
         // cleanup the extra test user
         TestUtils.teardownUser(adminUser.getUserName());

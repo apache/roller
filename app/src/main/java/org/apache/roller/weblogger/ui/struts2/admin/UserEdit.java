@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -249,13 +249,13 @@ public class UserEdit extends UIAction {
         return user.equals(getAuthenticatedUser());
     }
 
-    public List<WeblogPermission> getPermissions() {
+    public List<UserWeblogRole> getPermissions() {
         try {
-            return WebloggerFactory.getWeblogger().getUserManager().getWeblogPermissions(user);
+            return WebloggerFactory.getWeblogger().getUserManager().getWeblogRoles(user);
         } catch (WebloggerException ex) {
             log.error("ERROR getting permissions for user " + user.getUserName(), ex);
         }
-        return new ArrayList<WeblogPermission>();
+        return new ArrayList<UserWeblogRole>();
     }
 
     public String getAuthMethod() {

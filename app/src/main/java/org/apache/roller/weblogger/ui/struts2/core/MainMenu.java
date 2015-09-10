@@ -30,8 +30,8 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -74,7 +74,7 @@ public class MainMenu extends UIAction {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             Weblog weblog = wmgr.getWeblog(getInviteId());      
-            umgr.confirmWeblogPermission(weblog, getAuthenticatedUser());
+            umgr.acceptWeblogInvitation(getAuthenticatedUser(), weblog);
             WebloggerFactory.getWeblogger().flush();
 
         } catch (WebloggerException ex) {
@@ -95,7 +95,7 @@ public class MainMenu extends UIAction {
             String handle = weblog.getHandle();                       
             // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
             // TODO EXCEPTIONS: better exception handling here
-            umgr.declineWeblogPermission(weblog, getAuthenticatedUser());
+            umgr.declineWeblogInvitation(getAuthenticatedUser(), weblog);
             WebloggerFactory.getWeblogger().flush();
             addMessage("yourWebsites.declined", handle);
 
@@ -107,19 +107,19 @@ public class MainMenu extends UIAction {
         return SUCCESS;
     }
 
-    public List<WeblogPermission> getExistingPermissions() {
+    public List<UserWeblogRole> getExistingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            return mgr.getWeblogPermissions(getAuthenticatedUser());
+            return mgr.getWeblogRoles(getAuthenticatedUser());
         } catch(Exception e) {
             return Collections.emptyList();
         }
     }
     
-    public List<WeblogPermission> getPendingPermissions() {
+    public List<UserWeblogRole> getPendingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            return mgr.getPendingWeblogPermissions(getAuthenticatedUser());
+            return mgr.getPendingWeblogRoles(getAuthenticatedUser());
         } catch(Exception e) {
             return Collections.emptyList();
         }

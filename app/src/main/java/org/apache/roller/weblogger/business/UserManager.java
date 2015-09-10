@@ -24,8 +24,8 @@ package org.apache.roller.weblogger.business;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 
 import java.util.Date;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interface to user, role and permissions management.
+ * Interface to User and WeblogRole management.
  */
 public interface UserManager {
     
@@ -183,108 +183,111 @@ public interface UserManager {
         throws WebloggerException;
     
 
-    //-------------------------------------------------------- permissions CRUD
+    //-------------------------------------------------------- WeblogRoles CRUD
 
     
     /**
-     * Return true if user has permission specified.
+     * Check user's rights for a specified weblog
+     * @param user    User whose role is being checked
+     * @param weblog  Target weblog of the role
+     * @param role    Minimum WeblogRole being checked for
+     * @return true if user has WeblogRole or a more powerful one
      */
-    boolean checkPermission(WeblogPermission perm, User user)
+    boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role)
             throws WebloggerException;
     
     
     /**
-     * Grant to user specific WeblogRole for a weblog
-     * (will create new permission record if none already exists)
-     * @param weblog  Weblog to grant permissions in
-     * @param user    User to grant permissions to
-     * @param weblogRole Role to grant user
-     */
-    void grantWeblogRole(Weblog weblog, User user, WeblogRole weblogRole)
-            throws WebloggerException;
-
-    
-    /**
-     * Grant to user a specific WeblogRole for a weblog, but pending confirmation.
-     * @param weblog  Weblog to grant permissions in
-     * @param user    User to grant permissions to
+     * Grant user specific WeblogRole for a weblog
+     * @param user    User to grant weblog role to
+     * @param weblog  Weblog being granted access to
      * @param role    WeblogRole to grant
      */
-    void grantPendingWeblogRole(Weblog weblog, User user, WeblogRole role)
+    void grantWeblogRole(User user, Weblog weblog, WeblogRole role)
             throws WebloggerException;
 
     
     /**
-     * Confirm user's permission within specified weblog or throw exception if no pending permission exists.
-     * (changes state of permission record to pending = true)
-     * @param weblog  Weblog to grant permissions in
-     * @param user    User to grant permissions to
+     * Grant user a specific WeblogRole for a weblog, but pending user's acceptance of it
+     * @param user    User to grant weblog role to
+     * @param weblog  Weblog being granted access to
+     * @param role    WeblogRole to grant
      */
-    void confirmWeblogPermission(Weblog weblog, User user)
+    void grantPendingWeblogRole(User user, Weblog weblog, WeblogRole role)
             throws WebloggerException;
 
     
     /**
-     * Decline permissions within specified weblog or throw exception if no pending permission exists.
-     * (removes permission record)
-     * @param weblog  Weblog to grant permissions in
-     * @param user    User to grant permissions to
+     * Confirm user's participation with the specified weblog or throw exception if no pending invitation exists.
+     * (changes state of WeblogRole record to pending = false)
+     * @param user    User granted invitation
+     * @param weblog  Weblog granted invitation to
      */
-    void declineWeblogPermission(Weblog weblog, User user)
+    void acceptWeblogInvitation(User user, Weblog weblog)
+            throws WebloggerException;
+
+    
+    /**
+     * Decline participation within specified weblog or throw exception if no pending invitation exists.
+     * (removes WeblogRole record)
+     * @param user    User granted invitation
+     * @param weblog  Weblog granted invitation to
+     */
+    void declineWeblogInvitation(User user, Weblog weblog)
             throws WebloggerException;
 
     
     /**
      * Revoke from user his WeblogRole for a given weblog.
-     * @param weblog  Weblog to revoke WeblogRole from
      * @param user    User to remove WeblogRole from
+     * @param weblog  Weblog to revoke WeblogRole from
      */
-    void revokeWeblogRole(Weblog weblog, User user)
+    void revokeWeblogRole(User user, Weblog weblog)
             throws WebloggerException;
 
     
     /**
-     * Get all of user's weblog permissions.
+     * Get all of user's WeblogRoles.
      */
-    List<WeblogPermission> getWeblogPermissions(User user)
+    List<UserWeblogRole> getWeblogRoles(User user)
             throws WebloggerException;
     
     
     /**
-     * Get all of user's pending weblog permissions.
+     * Get all of user's pending WeblogRoles.
      */
-    List<WeblogPermission> getPendingWeblogPermissions(User user)
+    List<UserWeblogRole> getPendingWeblogRoles(User user)
             throws WebloggerException;
 
     /**
-     * Get all active permissions associated with a weblog.
+     * Get all active User WeblogRoles associated with a weblog.
      */
-    List<WeblogPermission> getWeblogPermissions(Weblog weblog)
+    List<UserWeblogRole> getWeblogRoles(Weblog weblog)
             throws WebloggerException;
 
     /**
-     * Get all pending permissions associated with a weblog.
+     * Get all pending User WeblogRoles associated with a weblog.
      */
-    List<WeblogPermission> getPendingWeblogPermissions(Weblog weblog)
+    List<UserWeblogRole> getPendingWeblogRoles(Weblog weblog)
             throws WebloggerException;
 
     /**
-     * Get all permissions (pending or actual) for a weblog.
+     * Get all User WeblogRoles (pending or actual) for a weblog.
      */
-    List<WeblogPermission> getWeblogPermissionsIncludingPending(Weblog weblog)
+    List<UserWeblogRole> getWeblogRolesIncludingPending(Weblog weblog)
             throws WebloggerException;
 
 
     /**
-     * Get user's permission within a weblog or null if none.
+     * Get user's WeblogRole within a weblog or null if none.
      */
-    WeblogPermission getWeblogPermission(Weblog weblog, User user)
+    UserWeblogRole getWeblogRole(User user, Weblog weblog)
             throws WebloggerException;
 
     /**
-     * Get user's permission (pending or actual) for a weblog
+     * Get user's WeblogRole (pending or actual) for a weblog
      */
-    WeblogPermission getWeblogPermissionIncludingPending(Weblog weblog, User user)
+    UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog)
             throws WebloggerException;
 
 

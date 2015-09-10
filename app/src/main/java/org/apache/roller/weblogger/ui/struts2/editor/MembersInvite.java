@@ -21,8 +21,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.Collections;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -31,7 +29,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
@@ -112,7 +110,7 @@ public class MembersInvite extends UIAction {
         
         // check for existing permissions or invitation
         try {
-            WeblogPermission perm = umgr.getWeblogPermissionIncludingPending(getActionWeblog(), user);
+            UserWeblogRole perm = umgr.getWeblogRoleIncludingPending(user, getActionWeblog());
 
             if (perm != null && perm.isPending()) {
                 addError("inviteMember.error.userAlreadyInvited");
@@ -128,8 +126,8 @@ public class MembersInvite extends UIAction {
         // if no errors then send the invitation
         if(!hasActionErrors()) {
             try {
-                umgr.grantPendingWeblogRole(getActionWeblog(), user,
-                    WeblogRole.valueOf(getPermissionString()));
+                umgr.grantPendingWeblogRole(user, getActionWeblog(),
+                        WeblogRole.valueOf(getPermissionString()));
                 WebloggerFactory.getWeblogger().flush();
 
                 addMessage("inviteMember.userInvited");

@@ -448,9 +448,7 @@ public class Weblog implements Serializable {
         try {
             // look for user in website's permissions
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogPermission userPerms = new WeblogPermission(this, weblogRole);
-            return umgr.checkPermission(userPerms, user);
-            
+            return umgr.checkWeblogRole(user, this, weblogRole);
         } catch (WebloggerException ex) {
             // something is going seriously wrong, not much we can do here
             log.error("ERROR checking user permssion", ex);
