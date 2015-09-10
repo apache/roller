@@ -71,7 +71,7 @@ function save() {
                <s:text name="memberPermissions.remove" />
            </th>
         </tr>
-        <s:iterator id="perm" value="weblogPermissions" status="rowstatus">
+        <s:iterator id="perm" value="weblogRoles" status="rowstatus">
             <s:if test="#perm.pending">
                 <tr class="rollertable_pending">
             </s:if>

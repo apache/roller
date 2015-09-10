@@ -31,7 +31,6 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.util.Utilities;
@@ -179,8 +178,7 @@ public final class MenuHelper {
 
             // weblog role check
             if (includeTab && weblog != null) {
-                WeblogPermission perm = new WeblogPermission(weblog, configTab.getRequiredWeblogRole());
-                includeTab = umgr.checkPermission(perm, user);
+                includeTab = umgr.checkWeblogRole(user, weblog, configTab.getRequiredWeblogRole());
             }
 
             if (includeTab) {
@@ -215,8 +213,7 @@ public final class MenuHelper {
 
                     // weblog role check
                     if (includeItem && weblog != null && (configTabItem.getRequiredWeblogRole() != null)) {
-                        WeblogPermission perm = new WeblogPermission(weblog, configTabItem.getRequiredWeblogRole());
-                        includeItem = umgr.checkPermission(perm, user);
+                        includeItem = umgr.checkWeblogRole(user, weblog, configTabItem.getRequiredWeblogRole());
                     }
 
                     if (includeItem) {

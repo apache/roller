@@ -41,9 +41,9 @@ import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
@@ -322,8 +322,8 @@ public class SiteModel implements Model {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             User user = umgr.getUserByUserName(userName);
-            List<WeblogPermission> perms = umgr.getWeblogPermissions(user);
-            for (WeblogPermission perm : perms) {
+            List<UserWeblogRole> perms = umgr.getWeblogRoles(user);
+            for (UserWeblogRole perm : perms) {
                 results.add(WeblogWrapper.wrap(perm.getWeblog(), urlStrategy));
             }
         } catch (Exception e) {
@@ -342,8 +342,8 @@ public class SiteModel implements Model {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
-            List<WeblogPermission> perms = umgr.getWeblogPermissions(website);
-            for (WeblogPermission perm : perms) {
+            List<UserWeblogRole> perms = umgr.getWeblogRoles(website);
+            for (UserWeblogRole perm : perms) {
                 results.add(UserWrapper.wrap(perm.getUser()));
             }
         } catch (Exception e) {

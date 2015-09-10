@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -48,7 +49,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -201,8 +201,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         removeCategories.executeUpdate();
 
         // remove permissions
-        for (WeblogPermission perm : userManager.getWeblogPermissions(weblog)) {
-            userManager.revokeWeblogRole(perm.getWeblog(), perm.getUser());
+        for (UserWeblogRole perm : userManager.getWeblogRoles(weblog)) {
+            userManager.revokeWeblogRole(perm.getUser(), perm.getWeblog());
         }
         
         // flush the changes before returning. This is required as there is a
@@ -258,7 +258,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // grant weblog creator OWNER permission
         userManager.grantWeblogRole(
-                newWeblog, newWeblog.getCreator(), WeblogRole.OWNER);
+                newWeblog.getCreator(), newWeblog, WeblogRole.OWNER);
         
         String cats = WebloggerConfig.getProperty("newuser.categories");
         WeblogCategory firstCat = null;
@@ -443,8 +443,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (user == null) {
             return weblogs;
         }
-        List<WeblogPermission> perms = userManager.getWeblogPermissions(user);
-        for (WeblogPermission perm : perms) {
+        List<UserWeblogRole> perms = userManager.getWeblogRoles(user);
+        for (UserWeblogRole perm : perms) {
             Weblog weblog = perm.getWeblog();
             if ((!enabledOnly || weblog.getVisible()) && BooleanUtils.isTrue(weblog.isActive())) {
                 weblogs.add(weblog);
@@ -455,8 +455,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     public List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
         List<User> users = new ArrayList<>();
-        List<WeblogPermission> perms = userManager.getWeblogPermissions(weblog);
-        for (WeblogPermission perm : perms) {
+        List<UserWeblogRole> perms = userManager.getWeblogRoles(weblog);
+        for (UserWeblogRole perm : perms) {
             User user = perm.getUser();
             if (user == null) {
                 log.error("ERROR user is null, userName:" + perm.getUserName());

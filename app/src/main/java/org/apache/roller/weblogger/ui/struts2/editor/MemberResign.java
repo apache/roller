@@ -21,15 +21,12 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.Collections;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -69,7 +66,7 @@ public class MemberResign extends UIAction {
     public String resign() {
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            umgr.revokeWeblogRole(getActionWeblog(), getAuthenticatedUser());
+            umgr.revokeWeblogRole(getAuthenticatedUser(), getActionWeblog());
             WebloggerFactory.getWeblogger().flush();
             addMessage("yourWebsites.resigned", getWeblog());
         } catch (WebloggerException ex) {

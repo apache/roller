@@ -32,10 +32,9 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.ParameterAware;
 
 
@@ -70,14 +69,14 @@ public class Members extends UIAction implements ParameterAware {
         int numAdmins = 0; // make sure at least one admin
         int removed = 0;
         int changed = 0;
-        List<WeblogPermission> permsList = new ArrayList<WeblogPermission>();
+        List<UserWeblogRole> permsList = new ArrayList<UserWeblogRole>();
         try {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();   
-            List<WeblogPermission> permsFromDB = userMgr.getWeblogPermissionsIncludingPending(getActionWeblog());
+            List<UserWeblogRole> permsFromDB = userMgr.getWeblogRolesIncludingPending(getActionWeblog());
 
             // we have to copy the permissions list so that when we remove permissions
             // below we don't get ConcurrentModificationExceptions
-            for (WeblogPermission perm : permsFromDB) {
+            for (UserWeblogRole perm : permsFromDB) {
                 permsList.add(perm);
             }
 
@@ -91,7 +90,7 @@ public class Members extends UIAction implements ParameterAware {
              */
             User user = getAuthenticatedUser();
             boolean error = false;
-            for (WeblogPermission perms : permsList) {
+            for (UserWeblogRole perms : permsList) {
                 String sval = getParameter("perm-" + perms.getUser().getId());
                 if (sval != null) {
                     if (sval.equals(WeblogRole.OWNER.name()) && !perms.isPending()) {
@@ -111,20 +110,20 @@ public class Members extends UIAction implements ParameterAware {
                 error = true;
             }
             // one iteration for each line (user) in the members table
-            for (WeblogPermission perms : permsList) {
+            for (UserWeblogRole perms : permsList) {
 
                 String sval = getParameter("perm-" + perms.getUser().getId());
                 if (sval != null) {
                     if (!error && !perms.getWeblogRole().name().equals(sval)) {
                         if ("-1".equals(sval)) {
                              userMgr.revokeWeblogRole(
-                                    perms.getWeblog(), perms.getUser());
+                                     perms.getUser(), perms.getWeblog());
                             removed++;
                         } else {
                             userMgr.revokeWeblogRole(
-                                    perms.getWeblog(), perms.getUser());
+                                    perms.getUser(), perms.getWeblog());
                             userMgr.grantWeblogRole(
-                                    perms.getWeblog(), perms.getUser(), WeblogRole.valueOf(sval));
+                                    perms.getUser(), perms.getWeblog(), WeblogRole.valueOf(sval));
                             changed++;
                         }
                     }
@@ -183,13 +182,13 @@ public class Members extends UIAction implements ParameterAware {
     }
 
 
-    public List<WeblogPermission> getWeblogPermissions() {
+    public List<UserWeblogRole> getWeblogRoles() {
         try {
-            return WebloggerFactory.getWeblogger().getUserManager().getWeblogPermissionsIncludingPending(getActionWeblog());
+            return WebloggerFactory.getWeblogger().getUserManager().getWeblogRolesIncludingPending(getActionWeblog());
         } catch (WebloggerException ex) {
             // serious problem, but not much we can do here
-            log.error("ERROR getting weblog permissions", ex);
+            log.error("ERROR getting weblog roles", ex);
         }
-        return new ArrayList<WeblogPermission>();
+        return new ArrayList<UserWeblogRole>();
     }
 }

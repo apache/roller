@@ -23,7 +23,7 @@
     <class>org.apache.roller.weblogger.pojos.WeblogEntryComment</class>
     <class>org.apache.roller.weblogger.pojos.WeblogEntryTag</class>
     <class>org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate</class>
-    <class>org.apache.roller.weblogger.pojos.WeblogPermission</class>
+    <class>org.apache.roller.weblogger.pojos.UserWeblogRole</class>
     <class>org.apache.roller.weblogger.pojos.WeblogTemplate</class>
   </persistence-unit>
 </persistence>

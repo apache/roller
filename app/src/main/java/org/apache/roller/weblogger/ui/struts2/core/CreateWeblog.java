@@ -30,8 +30,8 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
@@ -79,7 +79,7 @@ public class CreateWeblog extends UIAction {
         try {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                List<WeblogPermission> permissions = mgr.getWeblogPermissions(user);
+                List<UserWeblogRole> permissions = mgr.getWeblogRoles(user);
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled
@@ -108,7 +108,7 @@ public class CreateWeblog extends UIAction {
         try {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                List<WeblogPermission> permissions = mgr.getWeblogPermissions(user);
+                List<UserWeblogRole> permissions = mgr.getWeblogRoles(user);
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled

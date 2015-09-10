@@ -30,7 +30,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 
 /**
@@ -93,12 +92,10 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                     }
 
                     // are we also enforcing a specific weblog permission?
-                    WeblogPermission required = new WeblogPermission(
-                            actionWeblog, theAction.requiredWeblogRole());
-
-                    if (!umgr.checkPermission(required, authenticatedUser)) {
+                    if (!umgr.checkWeblogRole(authenticatedUser, actionWeblog, theAction.requiredWeblogRole())) {
                         if (log.isDebugEnabled()) {
-                            log.debug("DENIED: user does not have required weblog permissions = " + required);
+                            log.debug("DENIED: user " + authenticatedUser + " does not have "
+                                    + theAction.requiredWeblogRole() + " on weblog " + actionWeblog.getHandle());
                         }
                         return "access-denied";
                     }

@@ -64,7 +64,7 @@ import javax.persistence.Transient;
         @NamedQuery(name="UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 query="SELECT p FROM UserWeblogRole p WHERE p.userName = ?1 AND p.weblogId = ?2")
 })
-public class WeblogPermission implements Serializable {
+public class UserWeblogRole implements Serializable {
 
     protected String  id = WebloggerUtils.generateUUID();
     protected String  userName;
@@ -73,7 +73,7 @@ public class WeblogPermission implements Serializable {
     protected Date dateCreated = new Date();
     protected WeblogRole weblogRole;
 
-    public WeblogPermission() {
+    public UserWeblogRole() {
     }
 
     public boolean hasEffectiveWeblogRole(WeblogRole roleToCheck) {
@@ -135,15 +135,10 @@ public class WeblogPermission implements Serializable {
         this.pending = pending;
     }
 
-    public WeblogPermission(Weblog weblog, User user, WeblogRole weblogRole) {
+    public UserWeblogRole(Weblog weblog, User user, WeblogRole weblogRole) {
         setWeblogRole(weblogRole);
         weblogId = weblog.getHandle();
         userName = user.getUserName();
-    }
-
-    public WeblogPermission(Weblog weblog, WeblogRole weblogRole) {
-        setWeblogRole(weblogRole);
-        weblogId = weblog.getHandle();
     }
 
     @Transient
@@ -163,7 +158,7 @@ public class WeblogPermission implements Serializable {
     }
 
     public String toString() {
-        String sb = "WeblogPermission: ";
+        String sb = "UserWeblogRole: ";
         sb += "Weblog ID = " + getWeblogId();
         sb += "; User Name = " + getUserName();
         sb += "; WeblogRole = " + getWeblogRole().name();
@@ -174,10 +169,10 @@ public class WeblogPermission implements Serializable {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof WeblogPermission)) {
+        if (!(other instanceof UserWeblogRole)) {
             return false;
         }
-        WeblogPermission o = (WeblogPermission)other;
+        UserWeblogRole o = (UserWeblogRole)other;
         return new EqualsBuilder()
                 .append(getUserName(), o.getUserName())
                 .append(getWeblogId(), o.getWeblogId())
