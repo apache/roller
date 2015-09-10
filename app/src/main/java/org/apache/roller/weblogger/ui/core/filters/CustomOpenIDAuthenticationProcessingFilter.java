@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.core.filters;
@@ -29,10 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.security.openid.OpenIDAuthenticationFilter;
-//import org.springframework.security.userdetails.openid.OpenIDUserAttribute;
 
 
 /**
@@ -51,34 +52,12 @@ public class CustomOpenIDAuthenticationProcessingFilter
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
         OpenIDAuthenticationToken auth;
 
-        // Processing standard OpenId user authentication    
+        // Processing standard OpenId user authentication
+        // Note from auth object can sometimes obtain additional user attributes
+        // that can be used to fill in some of the user reg form fields.
         auth = (OpenIDAuthenticationToken) super.attemptAuthentication(req, rsp);
 
         // auth will be null on the first pass of super.attemptAuthentication()
-        if (auth != null) {
-            GrantedAuthority ga = (GrantedAuthority) auth.getAuthorities().toArray()[0];
-
-            if (ga.getAuthority().equals("rollerOpenidLogin")) {
-
-                /* TODO: when Spring Security 2.1 is released, we can uncomment
-                 * this code, which will allow us to pre-populate the new user
-                 * registration form with information from the OpenID Provider.
-                 *
-                Collection<OpenIDUserAttribute> sREGAttributesList = auth.getAttributes();
-                OpenIDUserAttribute openidName = new OpenIDUserAttribute(
-                    OpenIDUserAttribute.Attributes.openidname.toString(), "");
-                openidName.setValue(auth.getIdentityUrl());
-                sREGAttributesList.add(openidName);
-
-                // TODO: find a better place to stash attributes
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                mgr.userAttributes.put(
-                    UserAttribute.Attributes.openidUrl.toString(),
-                    sREGAttributesList);
-                */
-
-            }
-        }
         return auth;
     }
 

@@ -109,38 +109,7 @@ public class Register extends UIAction implements ServletRequestAware {
         
         // For new user default to timezone of server
         bean.setTimeZone(TimeZone.getDefault().getID());
-        
-        /* TODO: when Spring Security 2.1 is release comment out this stuff, 
-         * which pre-populates the user bean with info from OpenID provider.
-         *
-        Collection attrsCollect = (Collection)WebloggerFactory.getWeblogger()
-                .getUserManager().userAttributes.get(UserAttribute.Attributes.openidUrl.toString());
-        
-        if (attrsCollect != null) {
-            ArrayList attrs = new ArrayList(attrsCollect);
-            for (OpenIDUserAttribute attr : attrs) {
-                if (attr.getName().equals(OpenIDUserAttribute.Attributes.country.toString())) {
-                    getBean().setLocale(UIUtils.getLocale(attr.getValue()));
-                }                
-               if (attr.getName().equals(OpenIDUserAttribute.Attributes.email.toString())) {
-                    getBean().setEmailAddress(attr.getValue());
-                }
-                if (attr.getName().equals(OpenIDUserAttribute.Attributes.fullname.toString())) {
-                    getBean().setFullName(attr.getValue());
-                }
-                if (attr.getName().equals(OpenIDUserAttribute.Attributes.nickname.toString())) {
-                    getBean().setUserName(attr.getValue());
-                }
-                if (attr.getName().equals(OpenIDUserAttribute.Attributes.timezone.toString())) {
-                    getBean().setTimeZone(UIUtils.getTimeZone(attr.getValue()));
-                }
-                if (attr.getName().equals(OpenIDUserAttribute.Attributes.openidname.toString())) {
-                    getBean().setOpenidUrl(attr.getValue());
-                }
-                
-            }
-        }*/
-            
+
         try {
             if (WebloggerConfig.getAuthMethod() == AuthMethod.LDAP) {
                 // See if user is already logged in via Spring Security
@@ -328,13 +297,17 @@ public class Register extends UIAction implements ServletRequestAware {
                 getBean().setUserName(fromSSOUser.getUserName());
             }
         }
-        
+
+        // Blocking "anonymousUser" as Spring Security uses it for an unauthenticated user
+        if ("anonymousUser".equalsIgnoreCase(getBean().getUserName())) {
+            addError("error.add.user.badUserName");
+        }
+
+        // check that username only contains safe characters
         String allowed = WebloggerConfig.getProperty("username.allowedChars");
         if (allowed == null || allowed.trim().length() == 0) {
             allowed = DEFAULT_ALLOWED_CHARS;
         }
-        
-        // check that username only contains safe characters
         String safe = CharSetUtils.keep(getBean().getUserName(), allowed);
         if (!safe.equals(getBean().getUserName()) ) {
             addError("error.add.user.badUserName");
