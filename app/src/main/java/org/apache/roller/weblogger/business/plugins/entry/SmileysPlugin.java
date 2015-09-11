@@ -14,7 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 
 package org.apache.roller.weblogger.business.plugins.entry;
 
@@ -88,14 +91,11 @@ public class SmileysPlugin implements WeblogEntryPlugin {
             Enumeration enum1 = SmileysPlugin.smileyDefs.propertyNames();
             while(enum1.hasMoreElements()) {
                 String smiley = (String)enum1.nextElement();
-                String smileyAlt = htmlEscape(smiley);
+                String gifName = smileyDefs.getProperty(smiley, "smile.gif");
+                String smileyName = gifName.substring(0, gifName.length() - 4);
                 tempP[count] = Pattern.compile(regexEscape(smiley));
-                tempS[count] = "<img src=\"" +
-                        baseURL + "/images/smileys/" +
-                        smileyDefs.getProperty(smiley, "smile.gif") +
-                        "\" class=\"smiley\"" +
-                        " alt=\"" + smileyAlt + "\"" +
-                        " title=\"" + smileyAlt +"\" />";
+                tempS[count] = "<img src='" +  baseURL + "/images/smileys/" + gifName +
+                        "' class='smiley' alt='" + smileyName + "' />";
                 log.debug(smiley + "=" + tempS[count]);
                 count++;
             }
@@ -140,7 +140,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     }
     
     /**
-     * Some characters have to escaped with a backslash before
+     * Some characters have to be escaped with a backslash before
      * being compiled into a Regular Expression.
      *
      * @param smiley
