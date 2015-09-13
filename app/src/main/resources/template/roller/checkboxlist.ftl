@@ -1,9 +1,5 @@
 <#--
 /*
- * Roller Modifications
- * ====================
- *   Add <br/> to the end
- *
  * $Id: checkboxlist.ftl 1366934 2012-07-29 20:10:06Z jogep $
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,6 +18,16 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+ *
+ * Struts2 customization: https://struts.apache.org/docs/struts-2-themes.html
+ *
+ * Roller Modifications
+ * ====================
+ *   Add <br/> to the end
+ *
  */
 -->
 <#assign itemCount = 0/>
