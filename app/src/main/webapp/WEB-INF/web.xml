@@ -75,12 +75,6 @@
 		<filter-class>org.apache.roller.weblogger.ui.core.filters.ValidateSaltFilter</filter-class>
 	</filter>
 
-    <!-- Development purposes only, not activated in a filter-mapping by default -->
-    <filter>
-        <filter-name>DebugFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.core.filters.DebugFilter</filter-class>
-    </filter>
-
     <!-- ******************************************
          Filter mappings - order IS important here.
          ****************************************** -->
@@ -251,11 +245,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>UserDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.UserDataServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>SpringDispatcherServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
@@ -337,12 +326,6 @@
     <servlet-mapping>
         <servlet-name>PreviewResourceServlet</servlet-name>
         <url-pattern>/roller-ui/authoring/previewresource/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- Servlets for supporting Ajax -->
-    <servlet-mapping>
-        <servlet-name>UserDataServlet</servlet-name>
-        <url-pattern>/roller-ui/authoring/userdata/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
