@@ -534,14 +534,14 @@ public class Comments extends UIAction {
     public CommentData getComment(@PathVariable String id, Principal p, HttpServletResponse response)
     throws ServletException {
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+            Weblogger weblogger = WebloggerFactory.getWeblogger();
+            WeblogEntryManager wmgr = weblogger.getWeblogEntryManager();
             WeblogEntryComment c = wmgr.getComment(id);
             if (c == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to view comments
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                UserManager mgr = weblogger.getUserManager();
                 User authenticatedUser = mgr.getUserByUserName(p.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
                 if (weblog.userHasWeblogRole(authenticatedUser, WeblogRole.POST)) {

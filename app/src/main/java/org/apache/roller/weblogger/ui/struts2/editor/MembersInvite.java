@@ -24,6 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -33,13 +34,22 @@ import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * Allows website admin to invite new members to website.
- *
- * TODO: handle 'disabled' result
+ * Allows weblog owner to invite other members to edit the website.
  */
+@RestController
 public class MembersInvite extends UIAction {
     
     private static Log log = LogFactory.getLog(MembersInvite.class);
@@ -49,8 +59,10 @@ public class MembersInvite extends UIAction {
     
     // permissions being given to user
     private String permissionString = null;
-    
-    
+
+    // max length of users to display in select box
+    private static final int MAX_LENGTH = 50;
+
     public MembersInvite() {
         this.actionName = "invite";
         this.desiredMenu = "editor";
@@ -182,5 +194,57 @@ public class MembersInvite extends UIAction {
     public void setPermissionString(String permission) {
         this.permissionString = permission;
     }
-    
+
+    @RequestMapping(value = "/userlist", method = RequestMethod.GET)
+    public void getUserList(Principal p, HttpServletRequest request,
+                                      HttpServletResponse response) throws ServletException {
+        try {
+            Weblogger weblogger = WebloggerFactory.getWeblogger();
+            UserManager mgr = weblogger.getUserManager();
+            User authenticatedUser = mgr.getUserByUserName(p.getName());
+            if (authenticatedUser.hasEffectiveGlobalRole(GlobalRole.BLOGGER)) {
+                String startsWith = request.getParameter("startsWith");
+                Boolean enabledOnly = null;
+                int offset = 0;
+                int length = MAX_LENGTH;
+                if ("true".equals(request.getParameter("enabled"))) {
+                    enabledOnly = Boolean.TRUE;
+                }
+                if ("false".equals(request.getParameter("enabled"))) {
+                    enabledOnly = Boolean.FALSE;
+                }
+                try {
+                    offset = Integer.parseInt(request.getParameter("offset"));
+                } catch (Exception ignored) {
+                }
+                try {
+                    length = Integer.parseInt(request.getParameter("length"));
+                } catch (Exception ignored) {
+                }
+
+                try {
+                    UserManager umgr = weblogger.getUserManager();
+                    List<User> users = umgr.getUsersStartingWith(startsWith,
+                            enabledOnly, offset, length);
+                    for (User user : users) {
+                        response.getWriter().print(user.getUserName());
+                        if (authenticatedUser.isGlobalAdmin()) {
+                            response.getWriter().print(",");
+                            response.getWriter().println(user.getEmailAddress());
+                        } else{
+                            response.getWriter().print(",");
+                            response.getWriter().println(user.getScreenName());
+                        }
+                    }
+                    response.flushBuffer();
+                } catch (WebloggerException e) {
+                    throw new ServletException(e.getMessage());
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            }
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
 }
