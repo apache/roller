@@ -38,7 +38,7 @@
                 
                   <%-- special condition for comment plugins --%>
                   <s:if test="#pd.name == 'users.comments.plugins'">
-                      <td class="field"><s:checkboxlist theme="roller" list="pluginsList"
+                      <td class="field"><s:checkboxlist theme="strutsoverride" list="pluginsList"
                         name="commentPlugins" listKey="id" listValue="name" /></td>
                   </s:if>
 

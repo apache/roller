@@ -123,7 +123,7 @@
                             <br />
                         </label>
                         <div>
-                            <s:radio theme="roller" name="bean.status" list="statusOptions" listKey="left" listValue="right" />
+                            <s:radio theme="strutsoverride" name="bean.status" list="statusOptions" listKey="left" listValue="right" />
                         </div>
                     </div>
 
@@ -137,7 +137,7 @@
                             <br />
                         </label>
                         <div>
-                            <s:radio theme="roller" name="bean.sortBy" list="sortByOptions" listKey="left" listValue="right" />
+                            <s:radio theme="strutsoverride" name="bean.sortBy" list="sortByOptions" listKey="left" listValue="right" />
                         </div>
                     </div>
 
