@@ -97,7 +97,7 @@
             <br />
         </label> 
         <div>
-            <s:radio theme="roller" name="bean.approvedString" list="commentStatusOptions" listKey="left" listValue="right" />
+            <s:radio theme="strutsoverride" name="bean.approvedString" list="commentStatusOptions" listKey="left" listValue="right" />
         </div>
     </div> 
     <br />
