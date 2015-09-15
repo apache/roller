@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2015 Glen Mazza
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:task="http://www.springframework.org/schema/task"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+          http://www.springframework.org/schema/task
+          http://www.springframework.org/schema/task/spring-task-4.2.xsd">
+
+    <!-- spring-beans.xml split out to allow it to be used as the unit test context
+      file (so the tasks below won't activate during them) while allowing this file
+      which includes spring-beans to be used in the normal runtime properties file. -->
+    <beans:import resource="spring-beans.xml"/>
+
+    <task:scheduler id="blogTaskScheduler" pool-size="6"/>
+
+    <task:scheduled-tasks scheduler="blogTaskScheduler">
+        <!-- uncomment/comment and configure frequency of each task as desired -->
+        <task:scheduled ref="weblogManager" method="resetAllHitCounts" cron="0 0 0 * * *"/>
+        <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0/4 * * * *"/>
+        <task:scheduled ref="planetManager" method="syncAllBlogsPlanet" cron="0 0 0 * * *"/>
+        <task:scheduled ref="planetManager" method="updateSubscriptions" fixed-delay="3600000" initial-delay="300000"/>
+        <task:scheduled ref="autoPingManager" method="sendPings" fixed-delay="900000" initial-delay="300000"/>
+        <task:scheduled ref="weblogManager" method="updateHitCounters" fixed-delay="180000" initial-delay="300000"/>
+    </task:scheduled-tasks>
+
+</beans:beans>
