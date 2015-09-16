@@ -56,11 +56,6 @@
     </filter>
 
     <filter>
-        <filter-name>SchemeEnforcementFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.core.filters.SchemeEnforcementFilter</filter-class>
-    </filter>
-
-    <filter>
         <filter-name>CharEncodingFilter</filter-name>
         <filter-class>org.apache.roller.weblogger.ui.core.filters.CharEncodingFilter</filter-class>
     </filter>
@@ -96,13 +91,6 @@
         <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
         <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-
-    <!-- Scheme enforcement.  Only here until we get Spring Security scheme enforcement working -->
-    <filter-mapping>
-        <filter-name>SchemeEnforcementFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <!-- Spring Security filters - controls secure access to different parts of Roller -->
@@ -389,10 +377,15 @@
          weblog.absoluteurl.myblog=https://localhost:8443/roller
          Servlet container-specific SSL configuration must also be done,
          see your servlet container's documentation for details.
+
+         As an alternative, can instead modify the security.xml file to
+         enforce SSL on specified pages, see here:
+         http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#ns-requires-channel
     -->
     <!--security-constraint>
         <web-resource-collection>
             <web-resource-name>HTTPS resources</web-resource-name>
+            <url-pattern>/roller_j_security_check</url-pattern>
             <url-pattern>/roller-ui/login.rol</url-pattern>
             <url-pattern>/roller-ui/register.rol</url-pattern>
             <url-pattern>/roller-ui/register!save.rol</url-pattern>
