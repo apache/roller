@@ -201,8 +201,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         removeCategories.executeUpdate();
 
         // remove permissions
-        for (UserWeblogRole perm : userManager.getWeblogRoles(weblog)) {
-            userManager.revokeWeblogRole(perm.getUser(), perm.getWeblog());
+        for (UserWeblogRole role : userManager.getWeblogRoles(weblog)) {
+            userManager.revokeWeblogRole(role.getUser(), role.getWeblog());
         }
         
         // flush the changes before returning. This is required as there is a

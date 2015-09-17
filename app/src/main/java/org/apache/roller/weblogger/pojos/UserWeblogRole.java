@@ -76,6 +76,12 @@ public class UserWeblogRole implements Serializable {
     public UserWeblogRole() {
     }
 
+    public UserWeblogRole(Weblog weblog, User user, WeblogRole weblogRole) {
+        setWeblogRole(weblogRole);
+        weblogId = weblog.getId();
+        userName = user.getUserName();
+    }
+
     public boolean hasEffectiveWeblogRole(WeblogRole roleToCheck) {
         return weblogRole.getWeight() >= roleToCheck.getWeight();
     }
@@ -135,16 +141,10 @@ public class UserWeblogRole implements Serializable {
         this.pending = pending;
     }
 
-    public UserWeblogRole(Weblog weblog, User user, WeblogRole weblogRole) {
-        setWeblogRole(weblogRole);
-        weblogId = weblog.getHandle();
-        userName = user.getUserName();
-    }
-
     @Transient
     public Weblog getWeblog() throws WebloggerException {
         if (weblogId != null) {
-            return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(weblogId, null);
+            return WebloggerFactory.getWeblogger().getWeblogManager().getWeblog(weblogId);
         }
         return null;
     }

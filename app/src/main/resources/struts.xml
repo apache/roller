@@ -136,6 +136,7 @@
     
         <action name="install"
                 class="org.apache.roller.weblogger.ui.struts2.core.Install">
+            <param name="actionName">install</param>
             <result name="database_error" type="tiles">.DatabaseError</result>
             <result name="create_database" type="tiles">.CreateDatabase</result>
             <result name="upgrade_database" type="tiles">.UpgradeDatabase</result>
