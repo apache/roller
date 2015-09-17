@@ -42,7 +42,9 @@ public class FeedProcessorImplTest extends TestCase {
     public static Log log = LogFactory.getLog(FeedProcessorImplTest.class);
     
     String rollerFeedUrl = "weblogger:webloggerFetcherTestWeblog";
-    String externalFeedUrl = "http://rollerweblogger.org/roller/feed/entries/atom";
+    String expectedTitle = "Slashdot";
+    String expectedSiteUrl = "http://slashdot.org/";
+    String externalFeedUrl = "http://rss.slashdot.org/Slashdot/slashdotMainatom";
     private Subscription testSub = null;
     private Planet planet = null;
     private User testUser = null;
@@ -89,8 +91,8 @@ public class FeedProcessorImplTest extends TestCase {
             Subscription sub = feedFetcher.fetchSubscription(externalFeedUrl);
             assertNotNull(sub);
             assertEquals(externalFeedUrl, sub.getFeedURL());
-            assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
-            assertEquals("Blogging Roller", sub.getTitle());
+            assertEquals(expectedSiteUrl, sub.getSiteURL());
+            assertEquals(expectedTitle, sub.getTitle());
             assertNotNull(sub.getLastUpdated());
             assertTrue(sub.getEntries().size() > 0);
 
@@ -109,8 +111,8 @@ public class FeedProcessorImplTest extends TestCase {
             Subscription sub = feedFetcher.fetchSubscription(externalFeedUrl);
             assertNotNull(sub);
             assertEquals(externalFeedUrl, sub.getFeedURL());
-            assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
-            assertEquals("Blogging Roller", sub.getTitle());
+            assertEquals(expectedSiteUrl, sub.getSiteURL());
+            assertEquals(expectedTitle, sub.getTitle());
             assertNotNull(sub.getLastUpdated());
             assertTrue(sub.getEntries().size() > 0);
 
@@ -158,8 +160,8 @@ public class FeedProcessorImplTest extends TestCase {
         sub = mgr.getSubscription(planet, externalFeedUrl);
         assertNotNull(sub);
         assertEquals(externalFeedUrl, sub.getFeedURL());
-        assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());
-        assertEquals("Blogging Roller", sub.getTitle());
+        assertEquals(expectedSiteUrl, sub.getSiteURL());
+        assertEquals(expectedTitle, sub.getTitle());
         assertNotNull(sub.getLastUpdated());
         assertTrue(sub.getEntries().size() > 0);
     }
