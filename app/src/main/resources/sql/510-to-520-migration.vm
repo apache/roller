@@ -16,6 +16,15 @@
 #renameColumn('roller_permission', 'actions', 'weblog_role', 'varchar(48)')
 #renameTable('roller_permission', 'user_weblog_role')
 
+update user_weblog_role uwr set weblogid = (select id
+from weblog w where w.handle = uwr.weblogid)
+
+alter table user_weblog_role add constraint uwr_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+alter table user_weblog_role add constraint uwr_userid_fk
+    foreign key ( username ) references roller_user( username ) ;
+
 -- switch websiteid columns to weblogid
 #renameColumn('autoping', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('weblog_custom_template', 'websiteid', 'weblogid', 'varchar(48) not null')

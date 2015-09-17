@@ -356,7 +356,7 @@ public class JPAUserManagerImpl implements UserManager {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogId"
                 , UserWeblogRole.class);
         q.setParameter(1, user.getUserName());
-        q.setParameter(2, weblog.getHandle());
+        q.setParameter(2, weblog.getId());
         try {
             return q.getSingleResult();
         } catch (NoResultException ignored) {
@@ -368,7 +368,7 @@ public class JPAUserManagerImpl implements UserManager {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getUserName());
-        q.setParameter(2, weblog.getHandle());
+        q.setParameter(2, weblog.getId());
         try {
             return q.getSingleResult();
         } catch (NoResultException ignored) {
@@ -382,7 +382,7 @@ public class JPAUserManagerImpl implements UserManager {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getUserName());
-        q.setParameter(2, weblog.getHandle());
+        q.setParameter(2, weblog.getId());
         UserWeblogRole existingPerm = null;
         try {
             existingPerm = q.getSingleResult();
@@ -407,7 +407,7 @@ public class JPAUserManagerImpl implements UserManager {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getUserName());
-        q.setParameter(2, weblog.getHandle());
+        q.setParameter(2, weblog.getId());
         UserWeblogRole existingPerm = null;
         try {
             existingPerm = q.getSingleResult();
@@ -431,7 +431,7 @@ public class JPAUserManagerImpl implements UserManager {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getUserName());
-        q.setParameter(2, weblog.getHandle());
+        q.setParameter(2, weblog.getId());
         UserWeblogRole existingPerm;
         try {
             existingPerm = q.getSingleResult();
@@ -451,7 +451,7 @@ public class JPAUserManagerImpl implements UserManager {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getUserName());
-        q.setParameter(2, weblog.getHandle());
+        q.setParameter(2, weblog.getId());
         UserWeblogRole existingPerm;
         try {
             existingPerm = q.getSingleResult();
@@ -468,7 +468,7 @@ public class JPAUserManagerImpl implements UserManager {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByUserName&WeblogIdIncludingPending",
                 UserWeblogRole.class);
         q.setParameter(1, user.getUserName());
-        q.setParameter(2, weblog.getHandle());
+        q.setParameter(2, weblog.getId());
         UserWeblogRole oldperm;
         try {
             oldperm = q.getSingleResult();
@@ -490,14 +490,14 @@ public class JPAUserManagerImpl implements UserManager {
     public List<UserWeblogRole> getWeblogRoles(Weblog weblog) throws WebloggerException {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByWeblogId",
                 UserWeblogRole.class);
-        q.setParameter(1, weblog.getHandle());
+        q.setParameter(1, weblog.getId());
         return q.getResultList();
     }
 
     public List<UserWeblogRole> getWeblogRolesIncludingPending(Weblog weblog) throws WebloggerException {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByWeblogIdIncludingPending",
                 UserWeblogRole.class);
-        q.setParameter(1, weblog.getHandle());
+        q.setParameter(1, weblog.getId());
         return q.getResultList();
     }
 
@@ -511,7 +511,7 @@ public class JPAUserManagerImpl implements UserManager {
     public List<UserWeblogRole> getPendingWeblogRoles(Weblog weblog) throws WebloggerException {
         TypedQuery<UserWeblogRole> q = strategy.getNamedQuery("UserWeblogRole.getByWeblogId&Pending",
                 UserWeblogRole.class);
-        q.setParameter(1, weblog.getHandle());
+        q.setParameter(1, weblog.getId());
         return q.getResultList();
     }
 

@@ -58,10 +58,13 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
             UIAction theAction = (UIAction) action;
 
             // extract the authenticated user and set it
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            String name = auth.getName();
-            theAction.setAuthenticatedUser(mgr.getUserByUserName(name));
+            // exception: no user on initial install
+            if (!"install".equals(theAction.actionName)) {
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                String name = auth.getName();
+                theAction.setAuthenticatedUser(mgr.getUserByUserName(name));
+            }
 
             // extract the work weblog and set it
             String weblogHandle = theAction.getWeblog();
