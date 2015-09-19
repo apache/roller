@@ -572,10 +572,8 @@ public class WeblogEntry implements Serializable {
 
         WeblogEntryTag tag = new WeblogEntryTag();
         tag.setName(name);
-        tag.setCreatorUserName(getCreatorUserName());
         tag.setWeblog(getWeblog());
         tag.setWeblogEntry(this);
-        tag.setTime(getUpdateTime());
         tagSet.add(tag);
         
         addedTags.add(tag);

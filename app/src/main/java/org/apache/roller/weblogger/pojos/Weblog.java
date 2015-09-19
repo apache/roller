@@ -745,23 +745,15 @@ public class Weblog implements Serializable {
     /**
      * Get a list of TagStats objects for the most popular tags
      *
-     * @param sinceDays Number of days into past (or -1 for all days)
      * @param length    Max number of tags to return.
      * @return          Collection of WeblogEntryTag objects
      */
-    public List<TagStat> getPopularTags(int sinceDays, int length) {
-        List<TagStat> results = new ArrayList<TagStat>();
-        Date startDate = null;
-        if(sinceDays > 0) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1 * sinceDays);        
-            startDate = cal.getTime();     
-        }        
-        try {            
+    public List<TagStat> getPopularTags(int length) {
+        List<TagStat> results = new ArrayList<>();
+        try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            results = wmgr.getPopularTags(this, startDate, 0, length);
+            results = wmgr.getPopularTags(this, 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
         }

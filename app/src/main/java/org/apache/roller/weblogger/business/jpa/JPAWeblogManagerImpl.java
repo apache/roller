@@ -38,7 +38,6 @@ import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
-import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
@@ -48,7 +47,6 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
-import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -136,22 +134,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             this.strategy.remove(tagData);
         }
         
-        // remove site tag aggregates
-        List<TagStat> tags = weblogEntryManager.getTags(weblog, null, null, 0, -1);
-        updateTagAggregates(tags);
-        
-        // delete all weblog tag aggregates
-        Query removeAggs= strategy.getNamedUpdate(
-                "WeblogEntryTagAggregate.removeByWeblog");
-        removeAggs.setParameter(1, weblog);
-        removeAggs.executeUpdate();
-        
-        // delete all bad counts
-        Query removeCounts = strategy.getNamedUpdate(
-                "WeblogEntryTagAggregate.removeByTotalLessEqual");
-        removeCounts.setParameter(1, 0);
-        removeCounts.executeUpdate();
-        
         // Remove the weblog's auto ping configurations
         List<AutoPing> autopings = autoPingManager.getAutoPingsByWebsite(weblog);
         for (AutoPing autoPing : autopings) {
@@ -209,21 +191,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // circular dependency between WeblogCategory and Weblog
         this.strategy.flush();        
     }
-    
-    protected void updateTagAggregates(List<TagStat> tags) throws WebloggerException {
-        for (TagStat stat : tags) {
-            TypedQuery<WeblogEntryTagAggregate> query = strategy.getNamedQueryCommitFirst(
-                    "WeblogEntryTagAggregate.getByName&WeblogNullOrderByLastUsedDesc", WeblogEntryTagAggregate.class);
-            query.setParameter(1, stat.getName());
-            try {
-                WeblogEntryTagAggregate agg = query.getSingleResult();
-                agg.setTotal(agg.getTotal() - stat.getCount());
-            } catch (NoResultException ignored) {
-                // nothing to update
-            }
-        }
-    }
-    
+
     /**
      * @see org.apache.roller.weblogger.business.WeblogManager#saveTemplate(WeblogTemplate)
      */

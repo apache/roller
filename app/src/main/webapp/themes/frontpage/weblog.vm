@@ -169,7 +169,7 @@
             </div>	
 
             <div id="tagbin" class="sidebarBody">  
-                #set($sitetags = $site.getPopularTags(-1, 100))
+                #set($sitetags = $site.getPopularTags(100))
                 #foreach ($tag in $sitetags)
                     #if ($tag.count > 4)
                         <a class="tag s${tag.intensity}" href="$url.tag($tag.name)"

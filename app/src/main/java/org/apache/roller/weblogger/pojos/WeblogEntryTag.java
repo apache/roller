@@ -21,18 +21,13 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Comparator;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerUtils;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -40,30 +35,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 
 /**
  * Tag bean.
  */
 @Entity
-@Table(name="roller_weblogentrytag")
+@Table(name="weblog_entry_tag")
 @NamedQueries({
         @NamedQuery(name="WeblogEntryTag.getByWeblog",
                 query="SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1")
 })
 public class WeblogEntryTag implements Serializable {
-    private static Log log = LogFactory.getLog(WeblogEntryTag.class);    
-    
     private static final long serialVersionUID = -2602052289337573384L;
     
     private String id = WebloggerUtils.generateUUID();
     private Weblog website = null;
     private WeblogEntry weblogEntry = null;
-    private String userName = null;
     private String name = null;
-    private Timestamp time = null;
-    
+
     
     public WeblogEntryTag() {
     }
@@ -71,14 +60,10 @@ public class WeblogEntryTag implements Serializable {
     public WeblogEntryTag(
             Weblog website,
             WeblogEntry weblogEntry,
-            User user, 
-            String name,
-            Timestamp time) {
+            String name) {
         this.website = website;
         this.weblogEntry = weblogEntry;
-        this.userName = user.getUserName();
         this.name = name;
-        this.time = time;
     }
     
     //------------------------------------------------------- Simple properties
@@ -121,26 +106,6 @@ public class WeblogEntryTag implements Serializable {
     }
     
     
-    @Transient
-    public User getUser() {
-        try {
-            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
-        } catch (Exception e) {
-            log.error("ERROR fetching user object for username: " + getCreatorUserName(), e);
-        }
-        return null;
-    }
-
-
-    @Column(name="creator", nullable=false)
-    public String getCreatorUserName() {
-        return userName;
-    }
-
-    public void setCreatorUserName(String userName) {
-        this.userName = userName;
-    }
-    
     /**
      * Tag value.
      */
@@ -153,25 +118,10 @@ public class WeblogEntryTag implements Serializable {
         this.name = name;
     }
 
-    @Basic(optional=false)
-    public java.sql.Timestamp getTime() {
-        return this.time;
-    }
-    
-    public void setTime(java.sql.Timestamp tagTime) {
-        this.time = tagTime;
-    }
-    
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getName());
-        buf.append(", ").append(getTime());
-        buf.append("}");
-        return buf.toString();
+        return ("{" + getId() + ", " + getName() + "}");
     }
     
     public boolean equals(Object other) {

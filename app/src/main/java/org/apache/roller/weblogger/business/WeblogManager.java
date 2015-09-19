@@ -258,7 +258,7 @@ public interface WeblogManager {
     void updateHitCounters() throws WebloggerException;
 
     /**
-     * Reset the hit counts for a single weblog.  This sets the count to 0.
+     * Reset the hit counts for a single weblog.  This sets the count to 03.
      *
      * @param weblog The WebsiteData object to reset the count for.
      * @throws WebloggerException If there was a problem with the backend.
