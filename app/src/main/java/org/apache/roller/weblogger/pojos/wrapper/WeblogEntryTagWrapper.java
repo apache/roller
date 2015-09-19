@@ -14,13 +14,13 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import java.sql.Timestamp;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
-
 
 /**
  * Pojo safety wrapper for WeblogEntryTag objects.
@@ -35,29 +35,16 @@ public final class WeblogEntryTagWrapper {
     private WeblogEntryTagWrapper(WeblogEntryTag toWrap) {
         this.pojo = toWrap;
     }
-    
-    
+
     // wrap the given pojo if it is not null
     public static WeblogEntryTagWrapper wrap(WeblogEntryTag toWrap) {
         if (toWrap != null) {
             return new WeblogEntryTagWrapper(toWrap);
         }
-        
         return null;
     }
-    
-    public UserWrapper getUser() {
-        return UserWrapper.wrap(this.pojo.getUser());
-    }
-    
-    
+
     public String getName() {
         return this.pojo.getName();
     }
-    
-    
-    public Timestamp getTime() {
-        return this.pojo.getTime();
-    }
-    
 }

@@ -148,32 +148,25 @@ create index we_locale_idx on weblogentry(locale);
 create index we_combo1_idx on weblogentry(status, pubtime, weblogid);
 create index we_combo2_idx on weblogentry(weblogid, pubtime, status);
 
-create table roller_weblogentrytag (
+-- weblogid available via entryid but duplicated for performance purposes
+create table weblog_entry_tag (
     id              varchar(48)   not null primary key,
-    entryid         varchar(48)   not null,
     weblogid        varchar(48)   not null,
-    creator	        varchar(255)   not null,
-    name            varchar(255)  not null,
-    time            $db.TIMESTAMP_SQL_TYPE 	not null
+    entryid         varchar(48)   not null,
+    name            varchar(255)  not null
 );
 
-create index wet_entryid_idx on roller_weblogentrytag( entryid );
-create index wet_weblogid_idx on roller_weblogentrytag( weblogid );
-create index wet_creator_idx on roller_weblogentrytag( creator );
-create index wet_name_idx on roller_weblogentrytag( name );
+-- below index for single-blog tag clouds
+create index wtag_tagsearch_idx on weblog_entry_tag( weblogid, name, entryid );
+-- if you plan on having a combined tag cloud for all blogs in your system
+-- create index wtag_sitetagsearch_idx on weblog_entry_tag( name, entryid );
 
-create table roller_weblogentrytagagg (
-    id              varchar(48)   not null primary key,
-    weblogid        varchar(48) ,
-    name            varchar(255)  not null,
-    total           integer		  not null,
-    lastused        $db.TIMESTAMP_SQL_TYPE 	not null
-);
-
-create index weta_weblogid_idx on roller_weblogentrytagagg( weblogid );
-create index weta_name_idx on roller_weblogentrytagagg( name );
-create index weta_lastused_idx on roller_weblogentrytagagg( lastused );
-alter table roller_weblogentrytagagg add constraint weta_weblog_tag_uq unique ( weblogid, name );
+-- View below should work fine for most installations.  For super-large sites view can be
+-- redefined to point to a data warehouse table updated via triggers or a cron job.
+create view weblog_entry_tag_agg as
+select weblogid, name, count(*) as total
+from weblog_entry_tag
+group by weblogid, name;
 
 create table roller_comment (
     id         varchar(48) not null primary key,
@@ -335,7 +328,7 @@ alter table weblogentry add constraint we_weblogid_fk
 alter table weblogentry add constraint we_categoryid_fk
     foreign key ( categoryid ) references weblogcategory( id ) ;
 
-alter table roller_weblogentrytag add constraint rwtg_entryid_fk
+alter table weblog_entry_tag add constraint wtag_entryid_fk
     foreign key ( entryid ) references weblogentry( id ) ;
 
 alter table weblogcategory add constraint wc_weblogid_fk

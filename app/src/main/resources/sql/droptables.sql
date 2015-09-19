@@ -35,8 +35,8 @@ drop table roller_mediafiledir;
 
 -- core services tables
 drop table roller_comment;
-drop table roller_weblogentrytag;
-drop table roller_weblogentrytagagg;
+drop view weblog_entry_tag_agg;
+drop table weblog_entry_tag;
 drop table weblogentry;
 drop table weblogcategory;
 drop table weblog_custom_template;

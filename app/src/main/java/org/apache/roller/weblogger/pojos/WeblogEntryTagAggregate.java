@@ -41,24 +41,12 @@ import javax.persistence.Table;
  * Tag aggregate data.
  */
 @Entity
-@Table(name="roller_weblogentrytagagg")
+@Table(name="weblog_entry_tag_agg")
 @NamedQueries({
-        @NamedQuery(name="WeblogEntryTagAggregate.getByName&WeblogOrderByLastUsedDesc",
-                query="SELECT w FROM WeblogEntryTagAggregate w WHERE w.name = ?1 AND w.weblog = ?2 ORDER BY w.lastUsed DESC"),
         @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblog",
-                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 GROUP BY w.name, w.total ORDER BY w.total DESC"),
-        @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblog&StartDate",
-                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 AND w.lastUsed >= ?2 GROUP BY w.name, w.total ORDER BY w.total DESC"),
-        @NamedQuery(name="WeblogEntryTagAggregate.removeByTotalLessEqual",
-                query="DELETE FROM WeblogEntryTagAggregate w WHERE w.total <= ?1"),
-        @NamedQuery(name="WeblogEntryTagAggregate.removeByWeblog",
-                query="DELETE FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1"),
-        @NamedQuery(name="WeblogEntryTagAggregate.getByName&WeblogNullOrderByLastUsedDesc",
-                query="SELECT w FROM WeblogEntryTagAggregate w WHERE w.name = ?1 AND w.weblog IS NULL ORDER BY w.lastUsed DESC"),
+                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 GROUP BY w.name ORDER BY w.total DESC"),
         @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblogNull",
-                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL GROUP BY w.name, w.total ORDER BY w.total DESC"),
-        @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblogNull&StartDate",
-                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL AND w.lastUsed >= ?1 GROUP BY w.name, w.total ORDER BY w.total DESC")
+                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w GROUP BY w.name ORDER BY w.total DESC"),
 })
 public class WeblogEntryTagAggregate implements Serializable {
     
@@ -67,20 +55,12 @@ public class WeblogEntryTagAggregate implements Serializable {
     private String id = WebloggerUtils.generateUUID();
     private String name = null;
     private Weblog weblog = null;
-    private Timestamp lastUsed = null;
     private int total = 0;
     
     
     public WeblogEntryTagAggregate() {
     }
-    
-    public WeblogEntryTagAggregate(Weblog weblog,
-            String name, int total) {
-        this.weblog = weblog;
-        this.name = name;
-        this.total = total;
-    }
-    
+
     //------------------------------------------------------- Simple properties
     
     @Id
@@ -120,19 +100,10 @@ public class WeblogEntryTagAggregate implements Serializable {
         this.total = total;
     }
 
-    @Basic(optional=false)
-    public Timestamp getLastUsed() {
-        return this.lastUsed;
-    }
-    
-    public void setLastUsed(Timestamp lastUsed) {
-        this.lastUsed = lastUsed;
-    }
-    
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        return "{" + getId() + ", " + getName() + ", " + getTotal() + ", " + getLastUsed() + "}";
+        return "{" + getId() + ", " + getName() + ", " + getTotal() + "}";
     }
     
     public boolean equals(Object other) {

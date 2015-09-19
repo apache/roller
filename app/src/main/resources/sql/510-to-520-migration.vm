@@ -25,6 +25,26 @@ alter table user_weblog_role add constraint uwr_weblogid_fk
 alter table user_weblog_role add constraint uwr_userid_fk
     foreign key ( username ) references roller_user( username ) ;
 
+-- weblog entry tag changes
+#renameTable('roller_weblogentrytag', 'weblog_entry_tag')
+#dropIndex("weblog_entry_tag" "wet_entryid_idx")
+#dropIndex("weblog_entry_tag" "wet_weblogid_idx")
+#dropIndex("weblog_entry_tag" "wet_creator_idx")
+#dropIndex("weblog_entry_tag" "wet_name_idx")
+#dropColumn('roller_weblogentrytag', 'creator')
+#dropColumn('roller_weblogentrytag', 'time')
+
+create index wtag_tagsearch_idx on weblog_entry_tag( weblogid, name, entryid );
+
+-- roller_weblogentrytagagg replaced by a view
+
+#dropTableIfExists("roller_weblogentrytagagg")
+
+create view weblog_entry_tag_agg as
+select weblogid, name, count(*) as total
+from weblog_entry_tag
+group by weblogid, name;
+
 -- switch websiteid columns to weblogid
 #renameColumn('autoping', 'websiteid', 'weblogid', 'varchar(48) not null')
 #renameColumn('weblog_custom_template', 'websiteid', 'weblogid', 'varchar(48) not null')
