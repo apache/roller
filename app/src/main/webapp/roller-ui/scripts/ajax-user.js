@@ -66,19 +66,11 @@ function handleUserResponse() {
         for (i = userList.options.length; i >= 0; i--) {
             userList.options[i] = null;
         }   
-        //userList.onchange = null;
-        data = http.responseText;  
-        if (data.indexOf("\n") != -1) {
-            lines = data.split('\n');
-            for (i = 0; i < lines.length; i++) {
-                if (lines[i].indexOf(',') != -1) {
-                   userArray = lines[i].split(',');
-                   userList.options[userList.length] = 
-                      new Option(userArray[0] + " (" + userArray[1] + ")", userArray[0]);
-                }
-            }
-        }  
-
+        var jsonUserList = JSON.parse(http.responseText);
+        for (i = 0; i < jsonUserList.length; i++) {
+           userList.options[userList.length] =
+              new Option(jsonUserList[i].username + " (" + jsonUserList[i].additionalInfo + ")", jsonUserList[i].username);
+        }
     }
     isBusy = false;
 }
