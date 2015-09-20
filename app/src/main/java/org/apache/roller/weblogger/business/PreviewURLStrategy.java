@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
@@ -42,10 +45,9 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     
     /**
      * Get root url for a given *preview* weblog.  
-     * Optionally for a certain locale.
      */
     @Override
-    public String getWeblogURL(Weblog weblog, String locale, boolean absolute) {
+    public String getWeblogURL(Weblog weblog, boolean absolute) {
         
         if(weblog == null) {
             return null;
@@ -61,11 +63,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         
         url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
         
-        if(locale != null) {
-            url.append(locale).append("/");
-        }
-        
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         if(previewTheme != null) {
             params.put("theme", URLUtilities.encode(previewTheme));
         }
@@ -76,13 +74,9 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     
     /**
      * Get url for a given *preview* weblog entry.  
-     * Optionally for a certain locale.
      */
     @Override
-    public String getWeblogEntryURL(Weblog weblog,
-                                    String locale,
-                                    String previewAnchor,
-                                    boolean absolute) {
+    public String getWeblogEntryURL(Weblog weblog, String previewAnchor, boolean absolute) {
         
         if(weblog == null) {
             return null;
@@ -98,11 +92,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         
         url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
         
-        if(locale != null) {
-            url.append(locale).append("/");
-        }
-        
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         if(previewTheme != null) {
             params.put("theme", URLUtilities.encode(previewTheme));
         }
@@ -117,20 +107,15 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     /**
      * Get url for a collection of entries on a given weblog.
      */
-    public String getWeblogCollectionURL(Weblog weblog,
-                                                      String locale,
-                                                      String category,
-                                                      String dateString,
-                                                      List tags,
-                                                      int pageNum,
-                                                      boolean absolute) {
+    public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, List tags,
+                                  int pageNum, boolean absolute) {
         
         if(weblog == null) {
             return null;
         }
 
         StringBuilder pathinfo = new StringBuilder();
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         
         if(absolute) {
         	pathinfo.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -140,10 +125,6 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         
         pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
         
-        if(locale != null) {
-        	pathinfo.append(locale).append("/");
-        }
-
         String cat;
         if("root".equals(category)) {
             cat = null;
@@ -184,22 +165,15 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
      * Get url for a custom page on a given weblog.
      */
     @Override
-    public String getWeblogPageURL(Weblog weblog,
-                                                String locale,
-                                                String pageLink,
-                                                String entryAnchor,
-                                                String category,
-                                                String dateString,
-                                                List tags,
-                                                int pageNum,
-                                                boolean absolute) {
+    public String getWeblogPageURL(Weblog weblog, String pageLink, String entryAnchor, String category,
+                            String dateString, List tags, int pageNum, boolean absolute) {
         
         if(weblog == null) {
             return null;
         }
         
         StringBuilder pathinfo = new StringBuilder();
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         
         if(absolute) {
             pathinfo.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -208,10 +182,6 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         }
         
         pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
-        
-        if(locale != null) {
-            pathinfo.append(locale).append("/");
-        }
         
         if(previewTheme != null) {
             params.put("theme", URLUtilities.encode(previewTheme));
@@ -235,7 +205,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             }
         } else {
             // if there is no page link then this is just a typical collection url
-            return getWeblogCollectionURL(weblog, locale, category, dateString, tags, pageNum, absolute);
+            return getWeblogCollectionURL(weblog, category, dateString, tags, pageNum, absolute);
         }
         
         return pathinfo.toString() + URLUtilities.getQueryString(params);
@@ -268,7 +238,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             url.append(filePath);
         }
         
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         if(previewTheme != null && !WeblogTheme.CUSTOM.equals(previewTheme)) {
             params.put("theme", URLUtilities.encode(previewTheme));
         }

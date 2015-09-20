@@ -261,7 +261,6 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             WeblogEntry entry = new WeblogEntry();
             entry.setTitle(title);
             entry.setText(description);
-            entry.setLocale(website.getLocale());
             entry.setPubTime(new Timestamp(dateCreated.getTime()));
             entry.setUpdateTime(current);
             entry.setWeblog(website);
@@ -501,11 +500,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         URLStrategy strategy = roller.getUrlStrategy();
         
         String catUrl = strategy.getWeblogCollectionURL(category.getWeblog(),
-        		null, category.getName(), null, null, 0, true);
+        		category.getName(), null, null, 0, true);
         struct.put("htmlUrl", catUrl);
         
         String rssUrl = strategy.getWeblogFeedURL(category.getWeblog(),
-               null, "entries", "rss", category.getName(), null, null, false, true);
+               "entries", "rss", category.getName(), null, null, false, true);
         struct.put("rssUrl",rssUrl);
         
         return struct;

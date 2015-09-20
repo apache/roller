@@ -116,7 +116,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     /**
      * convenience method for removing contents of a weblog.
-     * TODO BACKEND: use manager methods instead of queries here
      */
     private void removeWeblogContents(Weblog weblog)
     throws  WebloggerException {

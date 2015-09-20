@@ -237,15 +237,11 @@ public final class SiteWideCache implements CacheHandler {
             if("tags".equals(pageRequest.getContext())) {
                 key.append("/tags/");
                 if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
-                    Set ordered = new TreeSet(pageRequest.getTags());
+                    Set ordered = new TreeSet<>(pageRequest.getTags());
                     String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
                     key.append(Utilities.stringArrayToString(tags,"+"));
                 }
             }
-        }
-        
-        if(pageRequest.getLocale() != null) {
-            key.append("/").append(pageRequest.getLocale());
         }
         
         // add page number when applicable
@@ -310,17 +306,13 @@ public final class SiteWideCache implements CacheHandler {
             key.append("/").append(cat);
         }
         
-        if(feedRequest.getLocale() != null) {
-            key.append("/").append(feedRequest.getLocale());
-        }
-        
         if(feedRequest.isExcerpts()) {
             key.append("/excerpts");
         }
         
         if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
           String[] tags = new String[feedRequest.getTags().size()];
-          new TreeSet(feedRequest.getTags()).toArray(tags);
+          new TreeSet<>(feedRequest.getTags()).toArray(tags);
           key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
         }       
         

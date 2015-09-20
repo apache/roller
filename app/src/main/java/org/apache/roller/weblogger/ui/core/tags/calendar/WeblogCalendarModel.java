@@ -57,7 +57,6 @@ public class WeblogCalendarModel implements CalendarModel {
     protected Date              day;
     protected String            cat = null;
     protected String            pageLink = null;
-    protected String            locale = null;
     protected Calendar          calendar = null;
     protected Weblog            weblog = null;
     protected Date              prevMonth = null;
@@ -77,8 +76,7 @@ public class WeblogCalendarModel implements CalendarModel {
             pageLink = pageRequest.getWeblogPageName();            
             day = parseWeblogURLDateString(pageRequest.getWeblogDate(),
                   weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
-            locale = pageRequest.getLocale();
-            
+
             // Category method argument overrides category from URL
             if (catArgument != null) {
                 cat = catArgument;
@@ -118,7 +116,6 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setCatName(cat);
             wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.DESCENDING);
-            wesc.setLocale(locale);
             wesc.setMaxResults(1);
             List prevEntries = mgr.getWeblogEntries(wesc);
 
@@ -144,7 +141,6 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setCatName(cat);
             wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.ASCENDING);
-            wesc.setLocale(locale);
             wesc.setMaxResults(1);
             List nextEntries = mgr.getWeblogEntries(wesc);
             if (nextEntries.size() > 0) {
@@ -176,7 +172,6 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setEndDate(endDate);
             wesc.setCatName(catName);
             wesc.setStatus(PubStatus.PUBLISHED);
-            wesc.setLocale(locale);
             monthMap = mgr.getWeblogEntryStringMap(wesc);
         } catch (WebloggerException e) {
             log.error(e);
@@ -254,10 +249,10 @@ public class WeblogCalendarModel implements CalendarModel {
         try {
             if (pageLink == null) {
                 // create date URL
-                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
+                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
             } else {
                 // create page URL
-                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
+                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, pageLink, null, cat, dateString, null, -1, false);
             }
         } catch (Exception e) {
             log.error("ERROR: creating URL",e);
@@ -293,10 +288,10 @@ public class WeblogCalendarModel implements CalendarModel {
     	String url;
         if (pageLink == null) {
             // create default URL
-            url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, null, null, -1, false);
+            url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, cat, null, null, -1, false);
         } else {
             // create page URL
-            url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, locale, pageLink, null, cat, null, null, -1, false);
+            url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, pageLink, null, cat, null, null, -1, false);
         }
     	return url;
     }

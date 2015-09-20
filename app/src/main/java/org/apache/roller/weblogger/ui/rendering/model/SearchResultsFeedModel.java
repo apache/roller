@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.model;
@@ -67,7 +70,7 @@ public class SearchResultsFeedModel implements Model {
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsFeedPager pager = null;
 
-	private List<WeblogEntryWrapper> results = new LinkedList<WeblogEntryWrapper>();
+	private List<WeblogEntryWrapper> results = new LinkedList<>();
 
 	private Set categories = new TreeSet();
 
@@ -111,7 +114,7 @@ public class SearchResultsFeedModel implements Model {
 		weblog = feedRequest.getWeblog();
 
 		String pagerUrl = urlStrategy.getWeblogFeedURL(weblog,
-				feedRequest.getLocale(), feedRequest.getType(),
+				feedRequest.getType(),
 				// cat and term below null but added to URL in pager
                 feedRequest.getFormat(), null, null,
 				null, false, true);
@@ -193,7 +196,7 @@ public class SearchResultsFeedModel implements Model {
 		}
 
 		try {
-			TreeSet<String> categorySet = new TreeSet<String>();
+			TreeSet<String> categorySet = new TreeSet<>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 

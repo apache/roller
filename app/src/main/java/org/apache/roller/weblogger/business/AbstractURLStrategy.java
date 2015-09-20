@@ -96,11 +96,8 @@ public abstract class AbstractURLStrategy implements URLStrategy {
      * Get a url to a UI action in a given namespace, optionally specifying
      * a weblogHandle parameter if that is needed by the action.
      */
-    public String getActionURL(String action,
-                                            String namespace,
-                                            String weblogHandle,
-                                            Map<String, String> parameters,
-                                            boolean absolute) {
+    public String getActionURL(String action, String namespace, String weblogHandle, Map<String, String> parameters,
+                        boolean absolute) {
 
         StringBuilder url = new StringBuilder();
         
@@ -114,7 +111,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
         url.append("/").append(action).append(".rol");
         
         // put weblog handle parameter, if necessary
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         if(weblogHandle != null) {
             params.put("weblog", weblogHandle);
         }
@@ -135,8 +132,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     /**
      * Get a url to add a new weblog entry.
      */
-    public String getEntryAddURL(String weblogHandle,
-                                              boolean absolute) {
+    public String getEntryAddURL(String weblogHandle, boolean absolute) {
 
         StringBuilder url = new StringBuilder();
         
@@ -148,7 +144,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
         
         url.append("/roller-ui/authoring/entryAdd.rol");
         
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         params.put("weblog", weblogHandle);
         
         return url.toString() + URLUtilities.getQueryString(params);
@@ -158,9 +154,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     /**
      * Get a url to edit a specific weblog entry.
      */
-    public String getEntryEditURL(String weblogHandle,
-                                               String entryId,
-                                               boolean absolute) {
+    public String getEntryEditURL(String weblogHandle, String entryId, boolean absolute) {
 
         StringBuilder url = new StringBuilder();
         
@@ -172,7 +166,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
         
         url.append("/roller-ui/authoring/entryEdit.rol");
         
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         params.put("weblog", weblogHandle);
         params.put("bean.id", entryId);
         
@@ -183,8 +177,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     /**
      * Get a url to weblog config page.
      */
-    public String getWeblogConfigURL(String weblogHandle,
-                                                  boolean absolute) {
+    public String getWeblogConfigURL(String weblogHandle, boolean absolute) {
 
         StringBuilder url = new StringBuilder();
         
@@ -196,7 +189,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
         
         url.append("/roller-ui/authoring/weblogConfig.rol");
         
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         params.put("weblog", weblogHandle);
         
         return url.toString() + URLUtilities.getQueryString(params);

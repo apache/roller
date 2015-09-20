@@ -124,10 +124,6 @@ public class SearchResultsModel extends PageModel {
 			search.setCategory(searchRequest.getWeblogCategoryName());
 		}
 
-		if (searchRequest.getLocale() != null) {
-			search.setLocale(searchRequest.getLocale());
-		}
-
 		// execute search
 		indexMgr.executeIndexOperationNow(search);
 
@@ -195,7 +191,7 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		try {
-			TreeSet<String> categorySet = new TreeSet<String>();
+			TreeSet<String> categorySet = new TreeSet<>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 

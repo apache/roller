@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.model;
@@ -101,7 +104,6 @@ public class PreviewPageModel extends PageModel {
             return new WeblogEntriesPreviewPager(
                     urlStrategy,
                     previewRequest.getWeblog(),
-                    previewRequest.getLocale(),
                     previewRequest.getWeblogPageName(),
                     anchor,
                     previewRequest.getWeblogDate(),
@@ -112,7 +114,6 @@ public class PreviewPageModel extends PageModel {
             return new WeblogEntriesLatestPager(
                     urlStrategy,
                     previewRequest.getWeblog(),
-                    previewRequest.getLocale(),
                     previewRequest.getWeblogPageName(),
                     previewRequest.getWeblogAnchor(),
                     previewRequest.getWeblogDate(),

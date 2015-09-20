@@ -65,7 +65,6 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             wesc.setEndDate(endDate);
             wesc.setCatName(catName);
             wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-            wesc.setLocale(locale);
             monthMap = mgr.getWeblogEntryObjectMap(wesc);
         } catch (WebloggerException e) {
             mLogger.error(e);
@@ -88,7 +87,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                         ((WeblogEntry)entries.get(0)).getPubTime());
                 
                 // append 8 char date string on end of selfurl
-                String dayUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
+                String dayUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
                               
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
                 sb.append("<a href=\"");
@@ -156,10 +155,10 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         try {
             if (nextPrevMonthURL && pageLink != null) { 
                 // next/prev month URLs point to current page
-                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
+                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, pageLink, null, cat, dateString, null, -1, false);
             } else { 
                 // all other URLs point back to main weblog page
-                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
+                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, cat, dateString, null, -1, false);
             }
         } catch (Exception e) {
             mLogger.error("ERROR: creating URL",e);

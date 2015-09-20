@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.model; 
@@ -117,7 +120,7 @@ public class PageModel implements Model {
      * Get the weblog locale used to render this page, null if no locale.
      */
     public String getLocale() {
-        return pageRequest.getLocale();
+        return null;
     }
     
     
@@ -243,9 +246,9 @@ public class PageModel implements Model {
             cat = catArgument;
         }
         
-        List tags = pageRequest.getTags();
+        List<String> tags = pageRequest.getTags();
         if (tagArgument != null && !StringUtils.isEmpty(tagArgument) && !"nil".equals(tagArgument)) {
-            tags = new ArrayList();
+            tags = new ArrayList<>();
             tags.add(tagArgument);
         }
         
@@ -256,7 +259,6 @@ public class PageModel implements Model {
             return new WeblogEntriesPermalinkPager(
                     urlStrategy,
                     weblog,
-                    pageRequest.getLocale(),
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
@@ -267,7 +269,6 @@ public class PageModel implements Model {
             return new WeblogEntriesDayPager(
                     urlStrategy,
                     weblog,
-                    pageRequest.getLocale(),
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
@@ -278,7 +279,6 @@ public class PageModel implements Model {
             return new WeblogEntriesMonthPager(
                     urlStrategy,
                     weblog,
-                    pageRequest.getLocale(),
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
@@ -290,7 +290,6 @@ public class PageModel implements Model {
             return new WeblogEntriesLatestPager(
                     urlStrategy,
                     weblog,
-                    pageRequest.getLocale(),
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),

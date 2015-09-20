@@ -170,11 +170,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             entry.setCategory(cat);
         }
 
-        // Entry is invalid without local. if missing use weblog default
-        if (entry.getLocale() == null) {
-            entry.setLocale(entry.getWeblog().getLocale());
-        }
-        
         if (entry.getAnchor() == null || entry.getAnchor().trim().equals("")) {
             entry.setAnchor(this.createAnchor(entry));
         }
@@ -246,7 +241,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     }
     
     public List getNextPrevEntries(WeblogEntry current, String catName,
-            String locale, int maxEntries, boolean next)
+            int maxEntries, boolean next)
             throws WebloggerException {
 
 		if (current == null) {
@@ -287,11 +282,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             } else {
                 throw new WebloggerException("Cannot find category: " + catName);
             } 
-        }
-        
-        if(locale != null) {
-            params.add(size++, locale + '%');
-            whereClause.append(" AND e.locale like ?").append(size);
         }
         
         if (next) {
@@ -386,11 +376,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         if (wesc.getStatus() != null) {
             params.add(size++, wesc.getStatus());
             queryString.append(" AND e.status = ?").append(size);
-        }
-        
-        if (wesc.getLocale() != null) {
-            params.add(size++, wesc.getLocale() + '%');
-            queryString.append(" AND e.locale like ?").append(size);
         }
         
         if (StringUtils.isNotEmpty(wesc.getText())) {
@@ -812,9 +797,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     public WeblogEntry getNextEntry(WeblogEntry current,
-            String catName, String locale) throws WebloggerException {
+            String catName) throws WebloggerException {
         WeblogEntry entry = null;
-        List entryList = getNextPrevEntries(current, catName, locale, 1, true);
+        List entryList = getNextPrevEntries(current, catName, 1, true);
         if (entryList != null && entryList.size() > 0) {
             entry = (WeblogEntry)entryList.get(0);
         }
@@ -825,9 +810,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     public WeblogEntry getPreviousEntry(WeblogEntry current,
-            String catName, String locale) throws WebloggerException {
+            String catName) throws WebloggerException {
         WeblogEntry entry = null;
-        List entryList = getNextPrevEntries(current, catName, locale, 1, false);
+        List entryList = getNextPrevEntries(current, catName, 1, false);
         if (entryList != null && entryList.size() > 0) {
             entry = (WeblogEntry)entryList.get(0);
         }

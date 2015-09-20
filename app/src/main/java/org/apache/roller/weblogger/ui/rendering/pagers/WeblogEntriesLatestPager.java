@@ -54,7 +54,6 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     public WeblogEntriesLatestPager(
             URLStrategy        strat,
             Weblog             weblog,
-            String             locale,
             String             pageLink,
             String             entryAnchor,
             String             dateString,
@@ -62,7 +61,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
             List               tags,
             int                page) {
         
-        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
+        super(strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
         
         // initialize the pager collection
         getEntries();
@@ -80,7 +79,6 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                 wesc.setCatName(catName);
                 wesc.setTags(tags);
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-                wesc.setLocale(locale);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(length+1);
                 Map<Date, List<WeblogEntry>> mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(wesc);

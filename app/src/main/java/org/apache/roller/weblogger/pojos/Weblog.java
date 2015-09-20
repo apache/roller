@@ -110,8 +110,6 @@ public class Weblog implements Serializable {
     private Boolean moderateComments = Boolean.FALSE;
     private int     entryDisplayCount = 15;
     private Date    lastModified     = new Date();
-    private boolean enableMultiLang  = false;
-    private boolean showAllLangs     = true;
     private String  iconPath         = null;
     private String  about            = null;
     private String  creator          = null;
@@ -123,11 +121,11 @@ public class Weblog implements Serializable {
 
     private Map<String, WeblogEntryPlugin> initializedPlugins = null;
 
-    private List<WeblogCategory> weblogCategories = new ArrayList<WeblogCategory>();
+    private List<WeblogCategory> weblogCategories = new ArrayList<>();
 
-    private List<WeblogBookmark> bookmarks = new ArrayList<WeblogBookmark>();
+    private List<WeblogBookmark> bookmarks = new ArrayList<>();
 
-    private List<MediaFileDirectory> mediaFileDirectories = new ArrayList<MediaFileDirectory>();
+    private List<MediaFileDirectory> mediaFileDirectories = new ArrayList<>();
 
     public Weblog() {
     }
@@ -520,46 +518,15 @@ public class Weblog implements Serializable {
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
-  
-    
-    /**
-     * Is multi-language blog support enabled for this weblog?
-     *
-     * If false then urls with various locale restrictions should fail.
-     */
-    @Basic(optional=false)
-    public boolean isEnableMultiLang() {
-        return enableMultiLang;
-    }
-
-    public void setEnableMultiLang(boolean enableMultiLang) {
-        this.enableMultiLang = enableMultiLang;
-    }
-    
-    
-    /**
-     * Should the default weblog view show entries from all languages?
-     *
-     * If false then the default weblog view only shows entry from the
-     * default locale chosen for this weblog.
-     */
-    @Basic(optional=false)
-    public boolean isShowAllLangs() {
-        return showAllLangs;
-    }
-
-    public void setShowAllLangs(boolean showAllLangs) {
-        this.showAllLangs = showAllLangs;
-    }
 
     @Transient
     public String getURL() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, false);
     }
 
     @Transient
     public String getAbsoluteURL() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, true);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, true);
     }
 
     /**
@@ -663,7 +630,7 @@ public class Weblog implements Serializable {
         if (length > MAX_ENTRIES) {
             length = MAX_ENTRIES;
         }
-        List<WeblogEntry> recentEntries = new ArrayList<WeblogEntry>();
+        List<WeblogEntry> recentEntries = new ArrayList<>();
         if (length < 1) {
             return recentEntries;
         }
@@ -694,8 +661,8 @@ public class Weblog implements Serializable {
         if (length > MAX_ENTRIES) {
             length = MAX_ENTRIES;
         }
-        List<WeblogEntry> recentEntries = new ArrayList<WeblogEntry>();
-        List<String> tags = new ArrayList<String>();
+        List<WeblogEntry> recentEntries = new ArrayList<>();
+        List<String> tags = new ArrayList<>();
         if (tag != null) {
             tags.add(tag);
         }
@@ -725,7 +692,7 @@ public class Weblog implements Serializable {
         if (length > MAX_ENTRIES) {
             length = MAX_ENTRIES;
         }
-        List<WeblogEntryComment> recentComments = new ArrayList<WeblogEntryComment>();
+        List<WeblogEntryComment> recentComments = new ArrayList<>();
         if (length < 1) {
             return recentComments;
         }

@@ -139,11 +139,6 @@ public class PreviewServlet extends HttpServlet {
             previewRequest.setWeblog(tmpWebsite);
         }
         
-        // do we need to force a specific locale for the request?
-        if(previewRequest.getLocale() == null && !weblog.isShowAllLangs()) {
-            previewRequest.setLocale(weblog.getLocale());
-        }
-        
         Template page = null;
         if("page".equals(previewRequest.getContext())) {
             page = previewRequest.getWeblogPage();
@@ -209,7 +204,7 @@ public class PreviewServlet extends HttpServlet {
         }
         
         // looks like we need to render content
-        Map model = new HashMap();
+        Map<String, Object> model = new HashMap<>();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", false, WebloggerUtils.EIGHT_KB_IN_BYTES, true);
@@ -218,7 +213,7 @@ public class PreviewServlet extends HttpServlet {
             request.setAttribute("pageRequest", previewRequest);
             
             // populate the rendering model
-            Map initData = new HashMap();
+            Map<String, Object> initData = new HashMap<>();
             initData.put("parsedRequest", previewRequest);
             initData.put("pageContext", pageContext);
             

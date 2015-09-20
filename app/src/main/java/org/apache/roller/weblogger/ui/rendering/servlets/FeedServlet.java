@@ -180,10 +180,7 @@ public class FeedServlet extends HttpServlet {
 
         // validation. make sure that request input makes sense.
         boolean invalid = false;
-        if (feedRequest.getLocale() != null
-                && !feedRequest.getWeblog().isEnableMultiLang()) {
-            invalid = true;
-        }
+
         if (feedRequest.getWeblogCategoryName() != null) {
 
             // category specified. category must exist.
@@ -211,11 +208,6 @@ public class FeedServlet extends HttpServlet {
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
-        }
-
-        // do we need to force a specific locale for the request?
-        if (feedRequest.getLocale() == null && !weblog.isShowAllLangs()) {
-            feedRequest.setLocale(weblog.getLocale());
         }
 
         // looks like we need to render content

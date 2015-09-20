@@ -151,7 +151,6 @@ public final class EntryEdit extends UIAction {
             getBean().copyFrom(getEntry(), getLocale());
         } else {
             // set weblog defaults
-            getBean().setLocale(getActionWeblog().getLocale());
             getBean().setAllowComments(getActionWeblog().getDefaultAllowComments());
             getBean().setCommentDays(getActionWeblog().getDefaultCommentDays());
             // apply weblog default plugins
@@ -361,7 +360,7 @@ public final class EntryEdit extends UIAction {
                 .getWeblogger()
                 .getUrlStrategy()
                 .getPreviewURLStrategy(null)
-                .getWeblogEntryURL(getActionWeblog(), null,
+                .getWeblogEntryURL(getActionWeblog(),
                         getEntry().getAnchor(), true);
     }
 

@@ -49,7 +49,6 @@ public class WeblogEntrySearchCriteria {
     // Order of sort
     private SortOrder sortOrder = SortOrder.DESCENDING;
 
-    private String locale;
     // Offset into results for paging
     private int offset = 0;
 
@@ -133,14 +132,6 @@ public class WeblogEntrySearchCriteria {
 
     public void setSortOrder(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
-    }
-
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
     }
 
     public int getOffset() {

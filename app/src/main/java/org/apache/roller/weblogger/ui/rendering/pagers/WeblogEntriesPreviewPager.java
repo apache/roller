@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
@@ -49,15 +52,14 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
     public WeblogEntriesPreviewPager(
             URLStrategy        strat,
             Weblog             weblog,
-            String             locale,
             String             pageLink,
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
-        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
+        super(strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
     }
     
     
@@ -79,7 +81,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
                     }
 
                     // store the entry in the collection
-                    entries = new TreeMap();
+                    entries = new TreeMap<>();
                     entries.put(tmpEntry.getPubTime(),Collections.singletonList(WeblogEntryWrapper.wrap(tmpEntry, urlStrategy)));
                 }
             } catch (Exception e) {

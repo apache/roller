@@ -111,8 +111,7 @@ public interface WeblogEntryManager {
      * @param current The "current" WeblogEntryData
      * @param catName The value of the requested Category Name
      */
-    WeblogEntry getNextEntry(WeblogEntry current,
-            String catName, String locale) throws WebloggerException;    
+    WeblogEntry getNextEntry(WeblogEntry current, String catName) throws WebloggerException;
     
     /**
      * Get the WeblogEntry prior to, chronologically, the current entry.
@@ -120,8 +119,7 @@ public interface WeblogEntryManager {
      * @param current The "current" WeblogEntryData.
      * @param catName The value of the requested Category Name.
      */
-    WeblogEntry getPreviousEntry(WeblogEntry current,
-            String catName, String locale) throws WebloggerException;
+    WeblogEntry getPreviousEntry(WeblogEntry current, String catName) throws WebloggerException;
       
     
     /**

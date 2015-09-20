@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
@@ -66,17 +69,7 @@ public class SearchResultsFeedPager extends AbstractPager {
         this.moreResults = more;
         
         // get a message utils instance to handle i18n of messages
-        Locale viewLocale = null;
-        if(feedRequest.getLocale() != null) {
-            String[] langCountry = feedRequest.getLocale().split("_");
-            if(langCountry.length == 1) {
-                viewLocale = new Locale(langCountry[0]);
-            } else if(langCountry.length == 2) {
-                viewLocale = new Locale(langCountry[0], langCountry[1]);
-            }
-        } else {
-            viewLocale = weblog.getLocaleInstance();
-        }
+        Locale viewLocale = weblog.getLocaleInstance();
         this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
     
@@ -89,7 +82,7 @@ public class SearchResultsFeedPager extends AbstractPager {
     }
     
     public String getHomeLink() {
-        return urlStrategy.getWeblogURL(weblog, weblog.getLocale(), false);
+        return urlStrategy.getWeblogURL(weblog, false);
     }
 
     public String getHomeName() {

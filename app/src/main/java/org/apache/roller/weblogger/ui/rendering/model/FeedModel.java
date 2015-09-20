@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.model;
@@ -81,15 +84,6 @@ public class FeedModel implements Model {
         return "model";
     }
     
-    
-    /**
-     * Get the weblog locale used to render this page, null if no locale.
-     */
-    public String getLocale() {
-        return feedRequest.getLocale();
-    }
-    
-    
     /**
      * Get weblog being displayed.
      */
@@ -152,10 +146,10 @@ public class FeedModel implements Model {
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
             super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
-                    feedRequest.getLocale(), feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, null, false, true), 
+                    feedRequest.getType(),
+                    feedRequest.getFormat(), null, null, null, false, true),
                     feedRequest.getWeblog(), null, feedRequest.getWeblogCategoryName(), feedRequest.getTags(),
-                    feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+                    -1, feedRequest.getPage(), DEFAULT_ENTRIES);
             this.feedRequest = feedRequest;
         }
         
@@ -185,7 +179,7 @@ public class FeedModel implements Model {
         
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
             super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
-                    feedRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
                     null, false, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
             this.feedRequest = feedRequest;
@@ -217,7 +211,7 @@ public class FeedModel implements Model {
         
         public FeedFilesPager(WeblogFeedRequest feedRequest) {            
             super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
-                    feedRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
                     null, false, true), feedRequest.getPage(), 10);
             this.feedRequest = feedRequest;

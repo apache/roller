@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
@@ -39,7 +42,6 @@ public class SearchResultsPager implements WeblogEntriesPager {
     private Map entries = null;
     
     private Weblog weblog = null;
-    private String      locale = null;
     private String      query = null;
     private String      category = null;
     private int         page = 0;
@@ -60,24 +62,13 @@ public class SearchResultsPager implements WeblogEntriesPager {
         this.weblog = searchRequest.getWeblog();
         this.query = searchRequest.getQuery();
         this.category = searchRequest.getWeblogCategoryName();
-        this.locale = searchRequest.getLocale();
         this.page = searchRequest.getPageNum();
         
         // does this pager have more results?
         this.moreResults = more;
         
         // get a message utils instance to handle i18n of messages
-        Locale viewLocale = null;
-        if(locale != null) {
-            String[] langCountry = locale.split("_");
-            if(langCountry.length == 1) {
-                viewLocale = new Locale(langCountry[0]);
-            } else if(langCountry.length == 2) {
-                viewLocale = new Locale(langCountry[0], langCountry[1]);
-            }
-        } else {
-            viewLocale = weblog.getLocaleInstance();
-        }
+        Locale viewLocale = weblog.getLocaleInstance();
         this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
     
@@ -88,7 +79,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return urlStrategy.getWeblogURL(weblog, locale, false);
+        return urlStrategy.getWeblogURL(weblog, false);
     }
 
     public String getHomeName() {
@@ -98,7 +89,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     public String getNextLink() {
         if(moreResults) {
-            return urlStrategy.getWeblogSearchURL(weblog, locale, query, category, page + 1, false);
+            return urlStrategy.getWeblogSearchURL(weblog, query, category, page + 1, false);
         }
         return null;
     }
@@ -112,7 +103,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
 
     public String getPrevLink() {
         if(page > 0) {
-            return urlStrategy.getWeblogSearchURL(weblog, locale, query, category, page - 1, false);
+            return urlStrategy.getWeblogSearchURL(weblog, query, category, page - 1, false);
         }
         return null;
     }

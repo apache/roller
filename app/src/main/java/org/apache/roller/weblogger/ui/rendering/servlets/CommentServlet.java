@@ -224,9 +224,6 @@ public class CommentServlet extends HttpServlet {
 
             // we know what the weblog entry is, so setup our urls
             dispatch_url = "/roller-ui/rendering/page/" + weblog.getHandle();
-            if (commentRequest.getLocale() != null) {
-                dispatch_url += "/" + commentRequest.getLocale();
-            }
             dispatch_url += "/entry/"
                     + URLUtilities.encode(commentRequest.getWeblogAnchor());
 

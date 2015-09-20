@@ -99,7 +99,7 @@ public class MailUtil {
             String content;
             
             // list of enabled website authors and admins
-            List<String> reviewers = new ArrayList<String>();
+            List<String> reviewers = new ArrayList<>();
             List<User> websiteUsers = wmgr.getWeblogUsers(entry.getWeblog(), true);
             
             // build list of reviewers (website users with author permission)
@@ -111,7 +111,7 @@ public class MailUtil {
                 }
             }
 
-            to = (String[])reviewers.toArray(new String[reviewers.size()]);
+            to = reviewers.toArray(new String[reviewers.size()]);
             
             // Figure URL to entry edit page
             String editURL = WebloggerFactory.getWeblogger().getUrlStrategy().getEntryEditURL(entry.getWeblog().getHandle(), entry.getId(), true);
@@ -281,7 +281,7 @@ public class MailUtil {
         }
 
         // build list of email addresses to send notification to
-        Set<String> subscribers = new TreeSet<String>();
+        Set<String> subscribers = new TreeSet<>();
         
         // If we are to notify subscribers, then...
         if (commentObject.getApproved() && notifySubscribers) {
@@ -344,7 +344,7 @@ public class MailUtil {
         
         // Build link back to comment
         String commentURL = WebloggerFactory.getWeblogger()
-            .getUrlStrategy().getWeblogCommentsURL(weblog, null, entry.getAnchor(), true);
+            .getUrlStrategy().getWeblogCommentsURL(weblog, entry.getAnchor(), true);
         
         if (escapeHtml) {
             msg.append(commentURL);
@@ -405,7 +405,7 @@ public class MailUtil {
             ownermsg.append(resources.getString("email.comment.management.link") + ": ");
             ownermsg.append((escapeHtml) ? "\n" : "<br/>");
 
-            Map<String, String> parameters = new HashMap<String, String>();
+            Map<String, String> parameters = new HashMap<>();
             parameters.put("bean.entryId", entry.getId());
             String deleteURL = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL(
                     "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);
@@ -538,7 +538,7 @@ public class MailUtil {
         msg.append(resources.getString("email.comment.commentApproved"));
         msg.append("\n\n");
         msg.append(WebloggerFactory.getWeblogger().getUrlStrategy()
-            .getWeblogCommentsURL(weblog, null, entry.getAnchor(), true));
+            .getWeblogCommentsURL(weblog, entry.getAnchor(), true));
         
         // send message to author of approved comment
         try {
@@ -629,7 +629,7 @@ public class MailUtil {
         
         // First collect all the addresses together.
         Address[] remainingAddresses = message.getAllRecipients();
-        int nAddresses = remainingAddresses.length;
+        int nAddresses;
         boolean bFailedToSome = false;
         
         SendFailedException sendex = new SendFailedException("Unable to send message to some recipients");

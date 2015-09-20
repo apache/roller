@@ -40,12 +40,10 @@ public interface URLStrategy {
      */
     URLStrategy getPreviewURLStrategy(String previewTheme);
     
-    
     /**
      * Url to login page.
      */
     String getLoginURL(boolean absolute);
-    
     
     /**
      * Url to logout page.
@@ -61,140 +59,81 @@ public interface URLStrategy {
      * Get a url to a UI action in a given namespace, optionally specifying
      * a weblogHandle parameter if that is needed by the action.
      */
-    String getActionURL(String action,
-                                            String namespace,
-                                            String weblogHandle,
-                                            Map<String, String> parameters,
-                                            boolean absolute);
-    
+    String getActionURL(String action, String namespace, String weblogHandle, Map<String, String> parameters,
+                        boolean absolute);
     
     /**
      * Get a url to add a new weblog entry.
      */
-    String getEntryAddURL(String weblogHandle,
-                                              boolean absolute);
-    
-    
+    String getEntryAddURL(String weblogHandle, boolean absolute);
+
     /**
      * Get a url to edit a specific weblog entry.
      */
-    String getEntryEditURL(String weblogHandle,
-                                               String entryId,
-                                               boolean absolute);
-    
-    
+    String getEntryEditURL(String weblogHandle, String entryId, boolean absolute);
+
     /**
      * Get a url to weblog config page.
      */
-    String getWeblogConfigURL(String weblogHandle,
-                                                  boolean absolute);
-    
-    
+    String getWeblogConfigURL(String weblogHandle, boolean absolute);
+
     String getXmlrpcURL(boolean absolute);
-    
     
     String getAtomProtocolURL(boolean absolute);
     
-    
     /**
-     * Get root url for a given weblog.  Optionally for a certain locale.
+     * Get root url for a given weblog.
      */
-    String getWeblogURL(Weblog weblog,
-                                            String locale,
-                                            boolean absolute);
-    
-    
+    String getWeblogURL(Weblog weblog, boolean absolute);
+
     /**
      * Get url for a single weblog entry on a given weblog.
      */
-    String getWeblogEntryURL(Weblog weblog,
-                                                 String locale,
-                                                 String entryAnchor,
-                                                 boolean absolute);
-    
-    
+    String getWeblogEntryURL(Weblog weblog, String entryAnchor, boolean absolute);
+
     /**
      * Get url for a single weblog entry comments on a given weblog.
      */
-    String getWeblogCommentsURL(Weblog weblog,
-                                                    String locale,
-                                                    String entryAnchor,
-                                                    boolean absolute);
-    
-    
+    String getWeblogCommentsURL(Weblog weblog, String entryAnchor, boolean absolute);
+
     /**
      * Get url for a single weblog entry comment on a given weblog.
      */
-    String getWeblogCommentURL(Weblog weblog,
-                                                   String locale,
-                                                   String entryAnchor,
-                                                   String timeStamp,
-                                                   boolean absolute);
-    
-    
+    String getWeblogCommentURL(Weblog weblog, String entryAnchor, String timeStamp,
+                               boolean absolute);
+
     /**
      * Get url for a single mediafile on a given weblog.
      */
-    String getMediaFileURL(Weblog weblog, String fileAnchor,
-                                                 boolean absolute);
+    String getMediaFileURL(Weblog weblog, String fileAnchor, boolean absolute);
 
     /**
      * Get url for a single mediafile thumbnail on a given weblog.
      */
-    String getMediaFileThumbnailURL(Weblog weblog,
-                                                String fileAnchor,
-                                                boolean absolute);
+    String getMediaFileThumbnailURL(Weblog weblog, String fileAnchor, boolean absolute);
 
     /**
      * Get url for a collection of entries on a given weblog.
      */
-    String getWeblogCollectionURL(Weblog weblog,
-                                                      String locale,
-                                                      String category,
-                                                      String dateString,
-                                                      List tags,
-                                                      int pageNum,
-                                                      boolean absolute);
-    
-    
+    String getWeblogCollectionURL(Weblog weblog, String category, String dateString, List tags,
+                                  int pageNum, boolean absolute);
+
     /**
      * Get url for a custom page on a given weblog.
      */
-    String getWeblogPageURL(Weblog weblog,
-                                                String locale,
-                                                String pageLink,
-                                                String entryAnchor,
-                                                String category,
-                                                String dateString,
-                                                List tags,
-                                                int pageNum,
-                                                boolean absolute);
-    
-    
+    String getWeblogPageURL(Weblog weblog, String pageLink, String entryAnchor, String category,
+                            String dateString, List tags, int pageNum, boolean absolute);
+
     /**
      * Get url for a feed on a given weblog.
      */
-    String getWeblogFeedURL(Weblog weblog,
-                                                String locale,
-                                                String type,
-                                                String format,
-                                                String category,
-                                                String term,
-                                                List tags,
-                                                boolean excerpts,
-                                                boolean absolute);
-    
+    String getWeblogFeedURL(Weblog weblog, String type, String format, String category,
+                            String term, List tags, boolean excerpts, boolean absolute);
     
     /**
      * Get url to search endpoint on a given weblog.
      */
-    String getWeblogSearchURL(Weblog weblog,
-                                                  String locale,
-                                                  String query,
-                                                  String category,
-                                                  int pageNum,
-                                                  boolean absolute);
-    
+    String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum, boolean absolute);
     
     /**
      * Get url to a resource on a given weblog.
