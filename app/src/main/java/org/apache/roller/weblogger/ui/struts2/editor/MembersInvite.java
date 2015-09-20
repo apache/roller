@@ -196,8 +196,8 @@ public class MembersInvite extends UIAction {
     }
 
     @RequestMapping(value = "/userlist", method = RequestMethod.GET)
-    public void getUserList(Principal p, HttpServletRequest request,
-                                      HttpServletResponse response) throws ServletException {
+    public List<UserData> getUserList(Principal p, HttpServletRequest request,
+                            HttpServletResponse response) throws ServletException {
         try {
             Weblogger weblogger = WebloggerFactory.getWeblogger();
             UserManager mgr = weblogger.getUserManager();
@@ -226,25 +226,50 @@ public class MembersInvite extends UIAction {
                     UserManager umgr = weblogger.getUserManager();
                     List<User> users = umgr.getUsersStartingWith(startsWith,
                             enabledOnly, offset, length);
+                    List<UserData> userDataList = new ArrayList<>();
                     for (User user : users) {
-                        response.getWriter().print(user.getUserName());
+                        UserData ud = new UserData();
+                        ud.setUsername(user.getUserName());
                         if (authenticatedUser.isGlobalAdmin()) {
-                            response.getWriter().print(",");
-                            response.getWriter().println(user.getEmailAddress());
+                            ud.setAdditionalInfo(user.getEmailAddress());
                         } else{
-                            response.getWriter().print(",");
-                            response.getWriter().println(user.getScreenName());
+                            ud.setAdditionalInfo(user.getScreenName());
                         }
+                        userDataList.add(ud);
                     }
-                    response.flushBuffer();
+                    return userDataList;
                 } catch (WebloggerException e) {
                     throw new ServletException(e.getMessage());
                 }
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return null;
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private static class UserData {
+        public UserData() {}
+
+        private String username;
+        private String additionalInfo;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getAdditionalInfo() {
+            return additionalInfo;
+        }
+
+        public void setAdditionalInfo(String additionalInfo) {
+            this.additionalInfo = additionalInfo;
         }
     }
 }
