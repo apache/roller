@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util.cache;
@@ -58,10 +61,10 @@ public final class WeblogFeedCache {
         
         cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
         
-        Map cacheProps = new HashMap();
+        Map<String, String> cacheProps = new HashMap<>();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
+        String prop;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
             
@@ -164,7 +167,7 @@ public final class WeblogFeedCache {
         
         StringBuilder key = new StringBuilder();
         
-        key.append(this.CACHE_ID).append(":");
+        key.append(CACHE_ID).append(":");
         key.append(feedRequest.getWeblogHandle());
         
         key.append("/").append(feedRequest.getType());
@@ -186,14 +189,10 @@ public final class WeblogFeedCache {
         }
         
         if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
-          Set ordered = new TreeSet(feedRequest.getTags());
-          String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);  
+          Set<String> ordered = new TreeSet<>(feedRequest.getTags());
+          String[] tags = ordered.toArray(new String[ordered.size()]);
           key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
         }        
-        
-        if(feedRequest.getLocale() != null) {
-            key.append("/").append(feedRequest.getLocale());
-        }
         
         if(feedRequest.isExcerpts()) {
             key.append("/excerpts");

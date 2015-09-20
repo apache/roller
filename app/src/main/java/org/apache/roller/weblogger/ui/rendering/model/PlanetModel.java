@@ -95,7 +95,7 @@ public class PlanetModel implements Model {
     public Pager getAggregationPager(int sinceDays, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), pageLink, 
+                pageLink,
                 null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
@@ -117,7 +117,7 @@ public class PlanetModel implements Model {
     public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), pageLink, 
+                pageLink,
                 null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
@@ -139,7 +139,7 @@ public class PlanetModel implements Model {
     public Pager getFeedPager(String feedURL, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), pageLink, 
+                pageLink,
                 null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
@@ -165,7 +165,7 @@ public class PlanetModel implements Model {
     
     /**
      * Get PlanetSubscription objects in descending order by Planet ranking.
-     * @param groupHandle Only consider weblogs updated in the last sinceDays
+     * @param planetHandle Only consider weblogs updated in the last sinceDays
      * @param sinceDays   Only consider weblogs updated in the last sinceDays
      * @param length         Max number of results to return
      */

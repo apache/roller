@@ -68,6 +68,13 @@ group by weblogid, name;
 
 #dropTableIfExists("roller_tasklock")
 
+-- enable multilangs, show all langs removed from weblog
+
+#dropColumn('weblog', 'enablemultilang')
+#dropColumn('weblog', 'showalllangs')
+#dropIndex("weblogentry", "we_locale_idx")
+#dropColumn('weblogentry', 'locale')
+
 
 -- bookmark folders removed
 

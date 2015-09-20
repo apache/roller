@@ -120,12 +120,11 @@ public class SiteModel implements Model {
         
         if (feedRequest != null) {
             pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
-                    weblogRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getType(),
                     feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), null,
                     feedRequest.getTags(), feedRequest.isExcerpts(), true);
         } else {        
-            pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), pageLink, 
+            pagerUrl = urlStrategy.getWeblogPageURL(weblog, pageLink,
                 null, null, null, tags, 0, false);
         }
         
@@ -133,7 +132,6 @@ public class SiteModel implements Model {
             urlStrategy,
             pagerUrl, null, null, null,
             tags,
-            weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
             length);
@@ -177,12 +175,12 @@ public class SiteModel implements Model {
         String pagerUrl;
         if (feedRequest != null) {
             pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
-                    weblogRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getType(),
                     feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), null,
                     feedRequest.getTags(), feedRequest.isExcerpts(), true);
         } else {
             pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), pageLink, 
+                pageLink,
                 null, null, null, tags, 0, false);
         }
        
@@ -190,7 +188,6 @@ public class SiteModel implements Model {
             urlStrategy,
             pagerUrl, queryWeblog.getPojo(), user, cat,
             tags,
-            weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
             length);
@@ -208,12 +205,12 @@ public class SiteModel implements Model {
         String pagerUrl;
         if (feedRequest != null) {
             pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
-                    weblogRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getType(),
                     feedRequest.getFormat(), null, null, null,
                     feedRequest.isExcerpts(), true);
         } else {        
             pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), pageLink, 
+                pageLink,
                 null, null, null, null, 0, false);
         }
         
@@ -233,11 +230,11 @@ public class SiteModel implements Model {
         String pagerUrl;
         if (feedRequest != null) {
             pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
-                    weblogRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getType(),
                     feedRequest.getFormat(), null, null, null, feedRequest.isExcerpts(), true);
         } else {        
             pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), pageLink, 
+                pageLink,
                 null, null, null, null, 0, false);
         }        
         
@@ -249,7 +246,6 @@ public class SiteModel implements Model {
             urlStrategy,
             pagerUrl,
             letter,
-            weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
             length);
@@ -260,7 +256,7 @@ public class SiteModel implements Model {
     public Pager getWeblogsByLetterPager(String letter, int sinceDays, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), pageLink, 
+                pageLink,
                 null, null, null, null, 0, false);
         
         if(letter != null && StringUtils.isEmpty(letter)) {
@@ -271,7 +267,6 @@ public class SiteModel implements Model {
             urlStrategy,
             pagerUrl,
             letter,
-            weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
             length);

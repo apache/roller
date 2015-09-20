@@ -60,8 +60,6 @@ create table weblog (
     commentmod           $db.BOOLEAN_SQL_TYPE_FALSE not null,
     displaycnt           integer default 15 not null,
     lastmodified         $db.TIMESTAMP_SQL_TYPE,
-    enablemultilang   $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null,
     about             varchar(255),
     icon              varchar(255),
     analyticscode      $db.TEXT_SQL_TYPE,
@@ -131,7 +129,6 @@ create table weblogentry (
     commentdays     integer default 7 not null,
     rightToLeft     $db.BOOLEAN_SQL_TYPE_FALSE not null,
     pinnedtomain    $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    locale          varchar(20),
     status          varchar(20) not null,
     summary         $db.TEXT_SQL_TYPE,
     search_description varchar(255),
@@ -144,7 +141,6 @@ create index we_categoryid_idx on weblogentry( categoryid );
 create index we_pinnedtom_idx on weblogentry(pinnedtomain);
 create index we_creator_idx on weblogentry(creator);
 create index we_status_idx on weblogentry(status);
-create index we_locale_idx on weblogentry(locale);
 create index we_combo1_idx on weblogentry(status, pubtime, weblogid);
 create index we_combo2_idx on weblogentry(weblogid, pubtime, status);
 

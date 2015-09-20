@@ -183,11 +183,6 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public String getLocale() {
-        return this.pojo.getLocale();
-    }
-    
-    
     public List getTags() {
         // Sort by name
         Set<WeblogEntryTag> initialCollection = new TreeSet<>(WeblogEntryTag.Comparator);

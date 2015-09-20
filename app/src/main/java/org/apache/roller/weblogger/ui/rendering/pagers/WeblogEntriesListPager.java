@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
@@ -41,7 +44,6 @@ public class WeblogEntriesListPager extends AbstractPager {
     
     private static Log log = LogFactory.getLog(WeblogEntriesListPager.class);
     
-    private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
     
@@ -67,7 +69,6 @@ public class WeblogEntriesListPager extends AbstractPager {
             User           queryUser,
             String         queryCat,
             List<String>   queryTags,
-            String         locale,
             int            sinceDays,
             int            pageNum,
             int            length) {
@@ -79,7 +80,6 @@ public class WeblogEntriesListPager extends AbstractPager {
         this.queryUser = queryUser;
         this.queryCat = queryCat;
         this.queryTags = queryTags;
-        this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
         
@@ -94,7 +94,7 @@ public class WeblogEntriesListPager extends AbstractPager {
             // calculate offset
             int offset = getPage() * length;
 
-            List<WeblogEntryWrapper> results = new ArrayList<WeblogEntryWrapper>();
+            List<WeblogEntryWrapper> results = new ArrayList<>();
             
             Date startDate = null;
             if(sinceDays > 0) {
@@ -112,7 +112,6 @@ public class WeblogEntriesListPager extends AbstractPager {
                 wesc.setCatName(queryCat);
                 wesc.setTags(queryTags);
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-                wesc.setLocale(locale);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(length+1);
                 List<WeblogEntry> rawEntries = WebloggerFactory.getWeblogger()

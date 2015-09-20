@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util;
@@ -32,14 +35,13 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * 
  * This is a fairly generic parsed request which is only trying to figure out
  * the elements of a weblog request which apply to all weblogs.  We try to 
- * determine the weblogHandle, if a locale was specified, and then what extra 
+ * determine the weblogHandle, and then what extra
  * path info remains.  The basic format is like this ...
  * 
- * /<weblogHandle>[/locale][/extra/path/info]
+ * /<weblogHandle>[/extra/path/info]
  * 
  * All weblog urls require a weblogHandle, so we ensure that part of the url is
- * properly specified.  locale is always optional, so we do our best to see
- * if a locale is specified.  and path info is always optional.
+ * properly specified, and path info is always optional.
  *
  * NOTE: this class purposely exposes a getPathInfo() method which provides the
  * path info specified by the request that has not been parsed by this
@@ -52,17 +54,14 @@ public class WeblogRequest extends ParsedRequest {
     
     // lightweight attributes
     private String weblogHandle = null;
-    private String locale = null;
     private String pathInfo = null;
     
     // heavyweight attributes
     private Weblog weblog = null;
     private Locale localeInstance = null;
-    
-    
+
     public WeblogRequest() {}
-    
-    
+
     public WeblogRequest(HttpServletRequest request) 
             throws InvalidRequestException {
         
@@ -101,26 +100,12 @@ public class WeblogRequest extends ParsedRequest {
             }
         }
         
-        // second, check if we have a locale, everything else is extra path info
         if(path != null && path.trim().length() > 0) {
-            
-            String[] pathElements = path.split("/", 2);
-            if(this.isLocale(pathElements[0])) {
-                this.locale = pathElements[0];
-                
-                // everything else is path info
-                if(pathElements.length == 2) {
-                    this.pathInfo = pathElements[1];
-                }
-            } else {
-                // no locale, just extra path info
-                this.pathInfo = path;
-            }
+            this.pathInfo = path;
         }
         
         if(log.isDebugEnabled()) {
             log.debug("handle = "+this.weblogHandle);
-            log.debug("locale = "+this.locale);
             log.debug("pathInfo = "+this.pathInfo);
         }
     }
@@ -165,14 +150,6 @@ public class WeblogRequest extends ParsedRequest {
         this.weblogHandle = weblogHandle;
     }
     
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-
     public String getPathInfo() {
         return pathInfo;
     }
@@ -208,18 +185,9 @@ public class WeblogRequest extends ParsedRequest {
      *   2. if no locale is specified, then use the weblog default locale
      */
     public Locale getLocaleInstance() {
-        
-        if(localeInstance == null && locale != null) {
-            String[] langCountry = locale.split("_");
-            if(langCountry.length == 1) {
-                localeInstance = new Locale(langCountry[0]);
-            } else if(langCountry.length == 2) {
-                localeInstance = new Locale(langCountry[0], langCountry[1]);
-            }
-        } else if(localeInstance == null) {
+        if (localeInstance == null) {
             localeInstance = getWeblog().getLocaleInstance();
         }
-        
         return localeInstance;
     }
 

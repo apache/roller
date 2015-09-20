@@ -52,12 +52,11 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     URLStrategy urlStrategy = null;
     
     Weblog weblog = null;
-    String locale = null;
     String pageLink = null;
     String entryAnchor = null;
     String dateString = null;
     String catName = null;
-    List tags = new ArrayList();
+    List<String> tags = new ArrayList<>();
     int offset = 0;
     int page = 0;
     int length = 0;
@@ -66,18 +65,16 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     public AbstractWeblogEntriesPager(
             URLStrategy        strat,
             Weblog             weblog,
-            String             locale,
             String             pageLink,
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
         this.urlStrategy = strat;
         
         this.weblog = weblog;
-        this.locale = locale;
         this.pageLink = pageLink;
         this.entryAnchor = entryAnchor;
         this.dateString = dateString;
@@ -100,17 +97,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         this.offset = length * page;
         
         // get a message utils instance to handle i18n of messages
-        Locale viewLocale = null;
-        if(locale != null) {
-            String[] langCountry = locale.split("_");
-            if(langCountry.length == 1) {
-                viewLocale = new Locale(langCountry[0]);
-            } else if(langCountry.length == 2) {
-                viewLocale = new Locale(langCountry[0], langCountry[1]);
-            }
-        } else {
-            viewLocale = weblog.getLocaleInstance();
-        }
+        Locale viewLocale = weblog.getLocaleInstance();
         this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
     
@@ -121,7 +108,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return createURL(0, 0, weblog, locale, pageLink, entryAnchor, dateString, catName, tags);
+        return createURL(0, 0, weblog, pageLink, entryAnchor, dateString, catName, tags);
     }
     
     
@@ -132,7 +119,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     public String getNextLink() {
         if (hasMoreEntries()) {
-            return createURL(page, 1, weblog, locale, pageLink, entryAnchor, dateString, catName, tags);
+            return createURL(page, 1, weblog, pageLink, entryAnchor, dateString, catName, tags);
         }
         return null;
     }
@@ -148,7 +135,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     public String getPrevLink() {
         if (page > 0) {
-            return createURL(page, -1, weblog, locale, pageLink, entryAnchor, dateString, catName, tags);
+            return createURL(page, -1, weblog, pageLink, entryAnchor, dateString, catName, tags);
         }
         return null;
     }
@@ -238,7 +225,6 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             int                page,
             int                pageAdd,
             Weblog        website,
-            String             locale,
             String             pageLink,
             String             entryAnchor,
             String             dateString,
@@ -248,12 +234,12 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         int pageNum = page + pageAdd;
         
         if (pageLink != null) {
-            return urlStrategy.getWeblogPageURL(website, locale, pageLink, entryAnchor, catName, dateString, tags, pageNum, false);
+            return urlStrategy.getWeblogPageURL(website, pageLink, entryAnchor, catName, dateString, tags, pageNum, false);
         } else if (entryAnchor != null) {
-            return urlStrategy.getWeblogEntryURL(website, locale, entryAnchor, true);
+            return urlStrategy.getWeblogEntryURL(website, entryAnchor, true);
         }
         
-        return urlStrategy.getWeblogCollectionURL(website, locale, catName, dateString, tags, pageNum, false);
+        return urlStrategy.getWeblogCollectionURL(website, catName, dateString, tags, pageNum, false);
     }
     
 }

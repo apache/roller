@@ -88,26 +88,6 @@
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
 
-    
-    <%-- ***** Language/i18n settings ***** --%>
-    
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.languageSettings" /></h2></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.enableMultiLang" /></td>
-        <td class="field"><s:checkbox name="bean.enableMultiLang" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.showAllLangs" /></td>
-        <td class="field"><s:checkbox name="bean.showAllLangs" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
     <tr>
         <td class="label"><s:text name="createWebsite.locale" />
         <td class="field">

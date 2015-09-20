@@ -59,7 +59,6 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
                     comment.getUrl(),
                     WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(
                     comment.getWeblogEntry().getWeblog(),
-                    null,
                     comment.getWeblogEntry().getAnchor(),
                     true));
         } catch (MalformedURLException ignored1) {

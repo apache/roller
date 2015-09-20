@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util.cache;
@@ -213,11 +216,7 @@ public final class WeblogPageCache {
                 }
             }
         }
-        
-        if(pageRequest.getLocale() != null) {
-            key.append("/").append(pageRequest.getLocale());
-        }
-        
+
         // add page number when applicable
         if(pageRequest.getWeblogAnchor() == null) {
             key.append("/page=").append(pageRequest.getPageNum());

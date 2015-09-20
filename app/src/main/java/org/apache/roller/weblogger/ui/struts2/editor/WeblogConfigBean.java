@@ -48,8 +48,6 @@ public class WeblogConfigBean {
     private int entryDisplayCount = 15;
     private boolean active = true;
     private boolean commentModerationRequired = false;
-    private boolean enableMultiLang = false;
-    private boolean showAllLangs = true;
     private String icon = null;
     private String about = null;
 
@@ -188,22 +186,6 @@ public class WeblogConfigBean {
         this.commentModerationRequired = commentModerationRequired;
     }
     
-    public boolean isEnableMultiLang() {
-        return this.enableMultiLang;
-    }
-    
-    public void setEnableMultiLang( boolean enableMultiLang ) {
-        this.enableMultiLang = enableMultiLang;
-    }
-    
-    public boolean isShowAllLangs() {
-        return this.showAllLangs;
-    }
-    
-    public void setShowAllLangs( boolean showAllLangs ) {
-        this.showAllLangs = showAllLangs;
-    }
-    
     public String getIcon() {
         return icon;
     }
@@ -279,8 +261,6 @@ public class WeblogConfigBean {
         this.entryDisplayCount = dataHolder.getEntryDisplayCount();
         setActive(dataHolder.isActive());
         this.commentModerationRequired = dataHolder.getCommentModerationRequired();
-        this.enableMultiLang = dataHolder.isEnableMultiLang();
-        this.showAllLangs = dataHolder.isShowAllLangs();
         this.analyticsCode = dataHolder.getAnalyticsCode();
         setIcon(dataHolder.getIconPath());
         setAbout(dataHolder.getAbout());
@@ -310,8 +290,6 @@ public class WeblogConfigBean {
         dataHolder.setEntryDisplayCount(this.entryDisplayCount);
         dataHolder.setActive(this.isActive());
         dataHolder.setCommentModerationRequired(this.commentModerationRequired);
-        dataHolder.setEnableMultiLang(this.enableMultiLang);
-        dataHolder.setShowAllLangs(this.showAllLangs);
         dataHolder.setIconPath(getIcon());
         dataHolder.setAbout(getAbout());
         dataHolder.setAnalyticsCode(this.analyticsCode);

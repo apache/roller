@@ -109,7 +109,6 @@
             </td>
         </tr>
 
-
         <s:if test="actionName == 'entryEdit'">
             <tr>
                 <td class="entryEditFormLabel">
@@ -144,23 +143,7 @@
                 <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" style="width:30%"/>
             </td>
         </tr>
-
-        <s:if test="actionWeblog.enableMultiLang">
-                <tr>
-                    <td class="entryEditFormLabel">
-                        <label for="locale"><s:text name="weblogEdit.locale" /></label>
-                    </td>
-                    <td>
-                        <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-                    </td>
-                </tr>
-            </table>
-        </s:if>
-        <s:else>
-            </table>
-            <s:hidden name="bean.locale"/>
-        </s:else>
-
+    </table>
 
     <%-- ================================================================== --%>
     <%-- Weblog editor --%>

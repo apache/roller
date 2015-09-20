@@ -14,7 +14,11 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
+
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
@@ -205,9 +209,7 @@ public class PageServlet extends HttpServlet {
         // Development only. Reload if theme has been modified
         if (themeReload
                 && !weblog.getEditorTheme().equals(WeblogTheme.CUSTOM)
-                && (pageRequest.getPathInfo() == null || pageRequest
-                        .getPathInfo() != null
-                        && !pageRequest.getPathInfo().endsWith(".css"))) {
+                && (pageRequest.getPathInfo() == null || !pageRequest.getPathInfo().endsWith(".css"))) {
             try {
                 ThemeManager manager = WebloggerFactory.getWeblogger()
                         .getThemeManager();
@@ -352,21 +354,12 @@ public class PageServlet extends HttpServlet {
         if (pageRequest.getWeblogPageName() != null && page.isHidden()) {
             invalid = true;
         }
-        // locale view allowed only if weblog has enabled it
-        if (pageRequest.getLocale() != null
-                && !pageRequest.getWeblog().isEnableMultiLang()) {
-            invalid = true;
-        }
         if (pageRequest.getWeblogAnchor() != null) {
 
             // permalink specified.
-            // entry must exist, be published before current time, and locale
-            // must match
+            // entry must exist and be published before current time
             WeblogEntry entry = pageRequest.getWeblogEntry();
             if (entry == null) {
-                invalid = true;
-            } else if (pageRequest.getLocale() != null
-                    && !entry.getLocale().startsWith(pageRequest.getLocale())) {
                 invalid = true;
             } else if (!entry.isPublished()) {
                 invalid = true;
@@ -402,11 +395,6 @@ public class PageServlet extends HttpServlet {
             return;
         }
 
-        // do we need to force a specific locale for the request?
-        if (pageRequest.getLocale() == null && !weblog.isShowAllLangs()) {
-            pageRequest.setLocale(weblog.getLocale());
-        }
-
         // allow for hit counting
         if (!isSiteWide
                 && (pageRequest.isWebsitePageHit() || pageRequest
@@ -435,7 +423,7 @@ public class PageServlet extends HttpServlet {
             }
         }
 
-        HashMap<String, Object> model = new HashMap<String, Object>();
+        HashMap<String, Object> model = new HashMap<>();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory()
                     .getPageContext(this, request, response, "", false,
@@ -445,7 +433,7 @@ public class PageServlet extends HttpServlet {
             request.setAttribute("pageRequest", pageRequest);
 
             // populate the rendering model
-            Map<String, Object> initData = new HashMap<String, Object>();
+            Map<String, Object> initData = new HashMap<>();
             initData.put("requestParameters", request.getParameterMap());
             initData.put("parsedRequest", pageRequest);
             initData.put("pageContext", pageContext);

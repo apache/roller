@@ -38,7 +38,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Set;
 import java.util.TimeZone;
 
 
@@ -51,7 +50,6 @@ public class EntryBean {
     
     private String id = null;
     private String title = null;
-    private String locale = null;
     private String categoryId = null;
     private String tagsString = null;
     private String summary = null;
@@ -112,14 +110,6 @@ public class EntryBean {
     
     public void setStatus( String status ) {
         this.status = status;
-    }
-    
-    public String getLocale() {
-        return this.locale;
-    }
-    
-    public void setLocale( String locale ) {
-        this.locale = locale;
     }
     
     public String getTagsAsString() {
@@ -309,7 +299,6 @@ public class EntryBean {
         
         entry.setTitle(getTitle());
         entry.setStatus(PubStatus.valueOf(getStatus()));
-        entry.setLocale(getLocale());
         entry.setSummary(getSummary());
         entry.setText(getText());
         entry.setTagsAsString(getTagsAsString());
@@ -358,7 +347,6 @@ public class EntryBean {
         
         setId(entry.getId());
         setTitle(entry.getTitle());
-        setLocale(entry.getLocale());
         setStatus(entry.getStatus().name());
         setSummary(entry.getSummary());
         setText(entry.getText());
@@ -412,7 +400,6 @@ public class EntryBean {
         
         //title,locale,catId,tags,text,summary,dateString,status,comments,plugins
         buf.append("title = ").append(getTitle()).append("\n");
-        buf.append("locale = ").append(getLocale()).append("\n");
         buf.append("status = ").append(getStatus()).append("\n");
         buf.append("catId = ").append(getCategoryId()).append("\n");
         buf.append("tags = ").append(getTagsAsString()).append("\n");

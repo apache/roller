@@ -123,10 +123,6 @@ public abstract class IndexOperation implements Runnable {
         doc.add(new TextField(FieldConstants.TITLE, data.getTitle(),
                 Field.Store.YES));
 
-        // keyword needs to be in lower case as we are used in a term
-        doc.add(new StringField(FieldConstants.LOCALE, data.getLocale()
-                .toLowerCase(), Field.Store.YES));
-
         // index the entry text, but don't store it
         doc.add(new TextField(FieldConstants.CONTENT, data.getText(),
                 Field.Store.NO));

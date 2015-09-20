@@ -53,8 +53,7 @@ public class PreviewURLModel extends URLModel {
         }
         
         this.weblog = weblogRequest.getWeblog();
-        this.locale = weblogRequest.getLocale();
-        
+
         // look for url strategy
         urlStrategy = (URLStrategy) initData.get("urlStrategy");
         if(urlStrategy == null) {

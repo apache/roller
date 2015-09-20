@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
@@ -93,7 +95,7 @@ public class WeblogConfig extends UIAction {
             // set plugins list
             PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
             Map<String, WeblogEntryPlugin> pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
-            List<WeblogEntryPlugin> plugins = new ArrayList<WeblogEntryPlugin>();
+            List<WeblogEntryPlugin> plugins = new ArrayList<>();
             for (WeblogEntryPlugin entryPlugin : pluginsMap.values()) {
                 plugins.add(entryPlugin);
             }
@@ -149,13 +151,6 @@ public class WeblogConfig extends UIAction {
                     addMessage("websiteSettings.commentsOffForInactiveWeblog");
                 }
 
-                // if blog has unchecked 'show all langs' then we must make sure
-                // the multi-language blogging option is enabled.
-                // TODO: this should be properly reflected via the UI
-                if(!weblog.isShowAllLangs() && !weblog.isEnableMultiLang()) {
-                    weblog.setEnableMultiLang(true);
-                }
-
                 // save config
                 WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
 
@@ -192,8 +187,8 @@ public class WeblogConfig extends UIAction {
         }
         
         // check blacklist
-        List regexRules = new ArrayList();
-        List stringRules = new ArrayList();
+        List<Pattern> regexRules = new ArrayList<>();
+        List<String> stringRules = new ArrayList<>();
         try {
             // just for testing/counting, this does not persist rules in any way
             Blacklist.populateSpamRules(getBean().getBlacklist(), stringRules, regexRules, null);

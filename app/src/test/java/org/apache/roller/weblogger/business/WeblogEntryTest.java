@@ -177,12 +177,10 @@ public class WeblogEntryTest extends TestCase {
         WeblogEntry entry5 = TestUtils.setupWeblogEntry("entry5", testWeblog, testUser);
         
         // make a couple changes
-        entry1.setLocale("en_US");
         entry1.setStatus(PubStatus.PUBLISHED);
         entry1.setPinnedToMain(Boolean.TRUE);
         mgr.saveWeblogEntry(entry1);
         
-        entry2.setLocale("ja_JP");
         entry2.setStatus(PubStatus.PUBLISHED);
         entry2.setUpdateTime(new java.sql.Timestamp(entry2.getUpdateTime().getTime()+8822384));
         entry2.setPubTime(entry2.getUpdateTime());
@@ -281,16 +279,7 @@ public class WeblogEntryTest extends TestCase {
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
-        
-        // get all entries, limited by locale
-        WeblogEntrySearchCriteria wesc7 = new WeblogEntrySearchCriteria();
-        wesc7.setWeblog(testWeblog);
-        wesc7.setLocale("en_US");
-        entries = mgr.getWeblogEntries(wesc7);
-        assertNotNull(entries);
-        assertEquals(4, entries.size());
-        assertEquals(entry3, entries.get(0));
-        
+
         // get pinned entries only
         entries = mgr.getWeblogEntriesPinnedToMain(5);
         assertNotNull(entries);
@@ -298,12 +287,12 @@ public class WeblogEntryTest extends TestCase {
         assertEquals(entry1, entries.get(0));
         
         // get next entry
-        entry = mgr.getNextEntry(entry4, null, null);
+        entry = mgr.getNextEntry(entry4, null);
         assertNotNull(entry);
         assertEquals(entry5, entry);
         
         // get previous entry
-        entry = mgr.getPreviousEntry(entry5, null, null);
+        entry = mgr.getPreviousEntry(entry5, null);
         assertNotNull(entry);
         assertEquals(entry4, entry);
         
@@ -524,10 +513,10 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
         
         // we'll need these
-        List<String> tags1 = new ArrayList<String>();
+        List<String> tags1 = new ArrayList<>();
         tags1.add("nonExistTag");
         
-        List<String> tags2 = new ArrayList<String>();
+        List<String> tags2 = new ArrayList<>();
         tags2.add("blahtag");
         
         // test site-wide
@@ -643,7 +632,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         entry = mgr.getWeblogEntry(id);
-        HashSet<String> tagNames = new HashSet<String>();
+        HashSet<String> tagNames = new HashSet<>();
         for (WeblogEntryTag tagData : entry.getTags()) {
             tagNames.add(tagData.getName());
         }
@@ -700,7 +689,7 @@ public class WeblogEntryTest extends TestCase {
             tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(3, tags.size());
 
-            HashMap<String,Integer> expectedWeblogTags = new HashMap<String,Integer>();
+            HashMap<String,Integer> expectedWeblogTags = new HashMap<>();
             expectedWeblogTags.put("one", 2);
             expectedWeblogTags.put("two", 2);
             expectedWeblogTags.put("three", 1);
@@ -728,7 +717,7 @@ public class WeblogEntryTest extends TestCase {
             tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(4, tags.size());
 
-            HashMap<String, Integer> expectedSiteTags = new HashMap<String, Integer>();
+            HashMap<String, Integer> expectedSiteTags = new HashMap<>();
             expectedSiteTags.put("one", 3);
             expectedSiteTags.put("two", 2);
             expectedSiteTags.put("three", 2);
@@ -755,7 +744,7 @@ public class WeblogEntryTest extends TestCase {
             tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(4, tags.size());
 
-            expectedWeblogTags = new HashMap<String, Integer>();
+            expectedWeblogTags = new HashMap<>();
             expectedWeblogTags.put("one", 2);
             expectedWeblogTags.put("two", 1);
             expectedWeblogTags.put("three", 1);
@@ -774,7 +763,7 @@ public class WeblogEntryTest extends TestCase {
             tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(5, tags.size());
 
-            expectedSiteTags = new HashMap<String, Integer>();
+            expectedSiteTags = new HashMap<>();
             expectedSiteTags.put("one", 3);
             expectedSiteTags.put("two", 1);
             expectedSiteTags.put("three", 2);
@@ -838,7 +827,7 @@ public class WeblogEntryTest extends TestCase {
         tags = mgr.getTags(testWeblog, null, null, 0, -1);
         assertEquals(2, tags.size());
 
-        HashMap<String, Integer> expectedWeblogTags = new HashMap<String, Integer>();
+        HashMap<String, Integer> expectedWeblogTags = new HashMap<>();
         expectedWeblogTags.put("one", 1);
         expectedWeblogTags.put("two", 1);
 
@@ -862,7 +851,7 @@ public class WeblogEntryTest extends TestCase {
         tags = mgr.getTags(null, null, null, 0, -1);
         assertEquals(3, tags.size());
 
-        HashMap<String, Integer> expectedSiteTags = new HashMap<String, Integer>();
+        HashMap<String, Integer> expectedSiteTags = new HashMap<>();
         expectedSiteTags.put("one", 2);
         expectedSiteTags.put("two", 1);
         expectedSiteTags.put("three", 1);

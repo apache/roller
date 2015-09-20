@@ -67,15 +67,14 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     public WeblogEntriesDayPager(
             URLStrategy        strat,
             Weblog             weblog,
-            String             locale,
             String             pageLink,
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
-        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
+        super(strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
 
         TimeZone tz = weblog.getTimeZoneInstance();
 
@@ -131,7 +130,6 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                 wesc.setCatName(catName);
                 wesc.setTags(tags);
                 wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-                wesc.setLocale(locale);
                 wesc.setOffset(offset);
                 wesc.setMaxResults(length+1);
                 Map<Date, List<WeblogEntry>> mmap =
@@ -167,7 +165,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return createURL(0, 0, weblog, locale, pageLink, null, null, catName, tags);
+        return createURL(0, 0, weblog, pageLink, null, null, catName, tags);
     }
     
     
@@ -178,7 +176,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getNextLink() {
         if (more) {
-            return createURL(page, 1, weblog, locale, pageLink, null, dateString, catName, tags);
+            return createURL(page, 1, weblog, pageLink, null, dateString, catName, tags);
         }
         return null;
     }
@@ -194,7 +192,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getPrevLink() {
         if (page > 0) {
-            return createURL(page, -1, weblog, locale, pageLink, null, dateString, catName, tags);
+            return createURL(page, -1, weblog, pageLink, null, dateString, catName, tags);
         }
         return null;
     }
@@ -211,7 +209,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     public String getNextCollectionLink() {
         if (nextDay != null) {
             String next = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(nextDay);
-            return createURL(0, 0, weblog, locale, pageLink, null, next, catName, tags);
+            return createURL(0, 0, weblog, pageLink, null, next, catName, tags);
         }
         return null;
     }
@@ -228,7 +226,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     public String getPrevCollectionLink() {
         if (prevDay != null) {
             String prev = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(prevDay);
-            return createURL(0, 0, weblog, locale, pageLink, null, prev, catName, tags);
+            return createURL(0, 0, weblog, pageLink, null, prev, catName, tags);
         }
         return null;
     }

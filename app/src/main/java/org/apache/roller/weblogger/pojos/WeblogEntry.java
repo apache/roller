@@ -125,8 +125,7 @@ public class WeblogEntry implements Serializable {
     private Boolean   rightToLeft   = Boolean.FALSE;
     private Boolean   pinnedToMain  = Boolean.FALSE;
     private PubStatus status        = PubStatus.DRAFT;
-    private String    locale        = null;
-    private String    creatorUserName = null;      
+    private String    creatorUserName = null;
     private String    searchDescription = null;
 
     // set to true when switching between pending/draft/scheduled and published
@@ -199,7 +198,6 @@ public class WeblogEntry implements Serializable {
         this.setCommentDays(other.getCommentDays());
         this.setRightToLeft(other.getRightToLeft());
         this.setPinnedToMain(other.getPinnedToMain());
-        this.setLocale(other.getLocale());
     }
     
     //------------------------------------------------------- Good citizenship
@@ -526,17 +524,6 @@ public class WeblogEntry implements Serializable {
         this.pinnedToMain = pinnedToMain;
     }
 
-    /**
-     * The locale string that defines the i18n approach for this entry.
-     */
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-
     @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.WeblogEntryTag.class,
             cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy="weblogEntry")
     @OrderBy("name")
@@ -764,7 +751,7 @@ public class WeblogEntry implements Serializable {
      */
     @Transient
     public String getPermalink() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWeblog(), null, getAnchor(), true);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWeblog(), getAnchor(), true);
     }
     
     /**

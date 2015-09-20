@@ -227,21 +227,10 @@ public final class WeblogWrapper {
         return this.pojo.getLastModified();
     }
     
-    
-    public boolean isEnableMultiLang() {
-        return this.pojo.isEnableMultiLang();
-    }
-    
-    
-    public boolean isShowAllLangs() {
-        return this.pojo.isShowAllLangs();
-    }
-    
-    
     public String getStylesheet() throws WebloggerException {
         // custom stylesheet comes from the weblog theme
         if(this.pojo.getTheme().getStylesheet() != null) {
-            return urlStrategy.getWeblogPageURL(this.pojo, null, this.pojo.getTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
+            return urlStrategy.getWeblogPageURL(this.pojo, this.pojo.getTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
         }
         return null;
     }

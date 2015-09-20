@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.util;
@@ -57,7 +60,7 @@ public class WeblogPageRequest extends WeblogRequest {
     private String weblogPageName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
-    private List tags = null;
+    private List<String> tags = null;
     private int pageNum = 0;
     private Map customParams = new HashMap();
 
@@ -332,11 +335,11 @@ public class WeblogPageRequest extends WeblogRequest {
         this.customParams = customParams;
     }
 
-    public List getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(List tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

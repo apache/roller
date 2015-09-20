@@ -222,7 +222,7 @@ public class FeedProcessorImpl implements FeedProcessor {
         // build planet subscription from weblog
         Subscription newSub = new Subscription();
         newSub.setFeedURL(feedURL);
-        newSub.setSiteURL(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(localWeblog, null, true));
+        newSub.setSiteURL(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(localWeblog, true));
         newSub.setTitle(localWeblog.getName());
         newSub.setAuthor(localWeblog.getName());
         newSub.setLastUpdated(localWeblog.getLastModified());

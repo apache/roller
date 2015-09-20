@@ -143,11 +143,6 @@ public class SearchServlet extends HttpServlet {
                     : MobileDeviceRepository.DeviceType.mobile;
         }
 
-        // do we need to force a specific locale for the request?
-        if (searchRequest.getLocale() == null && !weblog.isShowAllLangs()) {
-            searchRequest.setLocale(weblog.getLocale());
-        }
-
         // lookup template to use for rendering
         ThemeTemplate page = null;
         try {
@@ -198,7 +193,6 @@ public class SearchServlet extends HttpServlet {
             pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
             pageRequest.setWeblogCategoryName(searchRequest
                     .getWeblogCategoryName());
-            pageRequest.setLocale(searchRequest.getLocale());
             pageRequest.setDeviceType(searchRequest.getDeviceType());
             initData.put("parsedRequest", pageRequest);
             initData.put("searchRequest", searchRequest);

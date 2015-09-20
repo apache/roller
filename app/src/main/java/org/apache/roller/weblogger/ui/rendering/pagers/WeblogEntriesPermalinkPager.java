@@ -14,7 +14,11 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
+
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
@@ -49,21 +53,20 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     WeblogEntry prevEntry = null;
     
     // collection for the pager
-    Map entries = null;
+    Map<Date, List<WeblogEntryWrapper>> entries = null;
     
     
     public WeblogEntriesPermalinkPager(
             URLStrategy        strat,
             Weblog             weblog,
-            String             locale,
             String             pageLink,
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
-        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
+        super(strat, weblog, pageLink, entryAnchor, dateString, catName, tags, page);
         
         getEntries();
     }
@@ -76,7 +79,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
                 currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
                 if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
-                    entries = new TreeMap();
+                    entries = new TreeMap<>();
                     entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry, urlStrategy)));
                 }
             } catch (Exception e) {
@@ -91,7 +94,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return createURL(0, 0, weblog, locale, pageLink, null, dateString, catName, tags);
+        return createURL(0, 0, weblog, pageLink, null, dateString, catName, tags);
     }
     
     
@@ -102,7 +105,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public String getNextLink() {
         if (getNextEntry() != null) {
-            return createURL(0, 0, weblog, locale, pageLink, nextEntry.getAnchor(), dateString, catName, tags);
+            return createURL(0, 0, weblog, pageLink, nextEntry.getAnchor(), dateString, catName, tags);
         }
         return null;
     }
@@ -119,7 +122,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public String getPrevLink() {
         if (getPrevEntry() != null) {
-            return createURL(0, 0, weblog, locale, pageLink, prevEntry.getAnchor(), dateString, catName, tags);
+            return createURL(0, 0, weblog, pageLink, prevEntry.getAnchor(), dateString, catName, tags);
         }
         return null;
     }
@@ -139,7 +142,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                nextEntry = wmgr.getNextEntry(currEntry, null, locale);
+                nextEntry = wmgr.getNextEntry(currEntry, null);
                 // make sure that entry is published and not to future
                 if (nextEntry != null && nextEntry.getPubTime().after(new Date())
                         && nextEntry.getStatus().equals(PubStatus.PUBLISHED)) {
@@ -159,7 +162,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-                prevEntry = wmgr.getPreviousEntry(currEntry, null, locale);
+                prevEntry = wmgr.getPreviousEntry(currEntry, null);
                 // make sure that entry is published and not to future
                 if (prevEntry != null && prevEntry.getPubTime().after(new Date())
                         && prevEntry.getStatus().equals(PubStatus.PUBLISHED)) {
