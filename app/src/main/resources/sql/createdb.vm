@@ -1,15 +1,11 @@
 #** 
-createdb.vm: Velocity template that generates vendor-specific database scripts 
-
+createdb.vm: Velocity template that generates vendor-specific database scripts
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
-
 -- Run this script to create the Roller database tables in your database.
-
 -- *****************************************************
--- Create the tables and indices
 
-create table roller_user (
+create table weblogger_user (
     id              varchar(48) not null primary key,
     username        varchar(255) not null,
     passphrase      varchar(255) not null,
@@ -24,16 +20,7 @@ create table roller_user (
     timezone        varchar(50),    
     isenabled       $db.BOOLEAN_SQL_TYPE_TRUE not null
 );
-alter table roller_user add constraint ru_username_uq unique (username);
-
-create table user_weblog_role (
-   id              varchar(48) not null primary key,
-   username        varchar(255) not null,
-   weblogid        varchar(48) not null,
-   weblog_role     varchar(48) not null,
-   pending         $db.BOOLEAN_SQL_TYPE_TRUE not null,
-   datecreated     $db.TIMESTAMP_SQL_TYPE not null
-);
+alter table weblogger_user add constraint wu_username_uq unique (username);
 
 create table weblog (
     id                varchar(48) not null primary key,
@@ -68,6 +55,21 @@ create table weblog (
 create index ws_visible_idx on weblog(visible);
 alter table weblog add constraint ws_handle_uq unique (handle);
 
+create table user_weblog_role (
+   id              varchar(48) not null primary key,
+   username        varchar(255) not null,
+   weblogid        varchar(48) not null,
+   weblog_role     varchar(48) not null,
+   pending         $db.BOOLEAN_SQL_TYPE_TRUE not null,
+   datecreated     $db.TIMESTAMP_SQL_TYPE not null
+);
+
+alter table user_weblog_role add constraint uwr_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+alter table user_weblog_role add constraint uwr_userid_fk
+    foreign key ( username ) references weblogger_user( username ) ;
+
 create table weblog_custom_template (
     id              varchar(48)  not null primary key,
     name            varchar(255)  not null,
@@ -82,7 +84,10 @@ create table weblog_custom_template (
 );
 create index wp_name_idx on weblog_custom_template(name);
 create index wp_link_idx on weblog_custom_template(link);
-create index wp_id_idx on weblog_custom_template(weblogid);
+
+create index wct_weblogid_idx on weblog_custom_template(weblogid);
+alter table weblog_custom_template add constraint wct_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
 
 create table custom_template_rendition (
     id           varchar(48)  not null primary key,
@@ -92,7 +97,10 @@ create table custom_template_rendition (
     #columnNotNullWithDefault('type' 'varchar(16)' 'STANDARD')
 );
 
-create table bookmark (
+alter table custom_template_rendition add constraint ctr_templateid_fk
+    foreign key ( templateid ) references weblog_custom_template( id ) ;
+
+create table blogroll_link (
     id               varchar(48) not null primary key,
     weblogid         varchar(48) not null,
     name             varchar(255) not null,
@@ -100,19 +108,24 @@ create table bookmark (
     url              varchar(255) not null,
     priority         integer default 100 not null
 );
-create index bm_weblogid_idx on bookmark( weblogid );
 
+create index bl_weblogid_idx on blogroll_link( weblogid );
+alter table blogroll_link add constraint bl_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
 
-create table weblogcategory (
+create table weblog_category (
     id               varchar(48) not null primary key,
     name             varchar(255) not null,
     description      varchar(255),
     weblogid        varchar(48) not null,
     position         integer default 0 not null
 );
-create index wc_weblogid_idx on weblogcategory( weblogid );
 
-create table weblogentry (
+create index wc_weblogid_idx on weblog_category( weblogid );
+alter table weblog_category add constraint wc_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+create table weblog_entry (
     id              varchar(48)  not null primary key,
     anchor          varchar(255)  not null,
     creator         varchar(255)  not null,
@@ -136,13 +149,20 @@ create table weblogentry (
     enclosure_type  varchar(48),
     enclosure_length integer
 );
-create index we_weblogid_idx on weblogentry( weblogid );
-create index we_categoryid_idx on weblogentry( categoryid );
-create index we_pinnedtom_idx on weblogentry(pinnedtomain);
-create index we_creator_idx on weblogentry(creator);
-create index we_status_idx on weblogentry(status);
-create index we_combo1_idx on weblogentry(status, pubtime, weblogid);
-create index we_combo2_idx on weblogentry(weblogid, pubtime, status);
+
+create index we_weblogid_idx on weblog_entry( weblogid );
+alter table weblog_entry add constraint we_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+create index we_categoryid_idx on weblog_entry( categoryid );
+alter table weblog_entry add constraint we_categoryid_fk
+    foreign key ( categoryid ) references weblog_category( id ) ;
+
+create index we_pinnedtom_idx on weblog_entry(pinnedtomain);
+create index we_creator_idx on weblog_entry(creator);
+create index we_status_idx on weblog_entry(status);
+create index we_combo1_idx on weblog_entry(status, pubtime, weblogid);
+create index we_combo2_idx on weblog_entry(weblogid, pubtime, status);
 
 -- weblogid available via entryid but duplicated for performance purposes
 create table weblog_entry_tag (
@@ -151,6 +171,9 @@ create table weblog_entry_tag (
     entryid         varchar(48)   not null,
     name            varchar(255)  not null
 );
+
+alter table weblog_entry_tag add constraint wtag_entryid_fk
+    foreign key ( entryid ) references weblog_entry( id ) ;
 
 -- below index for single-blog tag clouds
 create index wtag_tagsearch_idx on weblog_entry_tag( weblogid, name, entryid );
@@ -164,7 +187,7 @@ select weblogid, name, count(*) as total
 from weblog_entry_tag
 group by weblogid, name;
 
-create table roller_comment (
+create table weblog_entry_comment (
     id         varchar(48) not null primary key,
     entryid    varchar(48) not null,
     name       varchar(255),
@@ -180,15 +203,19 @@ create table roller_comment (
     plugins    varchar(255),
     contenttype varchar(128) default 'text/plain' not null
 );
-create index co_entryid_idx on roller_comment( entryid );
-create index co_status_idx on roller_comment( status );
+
+create index co_entryid_idx on weblog_entry_comment( entryid );
+alter table weblog_entry_comment add constraint co_entryid_fk
+    foreign key ( entryid ) references weblog_entry( id ) ;
+
+create index co_status_idx on weblog_entry_comment( status );
 
 -- Ping Feature Tables
 -- name: short descriptive name of the ping target
 -- pingurl: URL to receive the ping
 -- conditioncode:
 -- lastsuccess:
-create table pingtarget (
+create table ping_target (
     id           varchar(48) not null primary key,
     name         varchar(255) not null,
     pingurl      varchar(255) not null,
@@ -197,18 +224,22 @@ create table pingtarget (
     autoenabled  $db.BOOLEAN_SQL_TYPE_FALSE not null
 );
 
--- auto ping configurations
--- weblogid:  fk reference to weblog for which this auto ping configuration applies
--- pingtargetid: fk reference to the ping target to be pinged when the weblog changes
-create table autoping (
+-- ping targets configured to be pinged for each weblog
+create table weblog_ping_target (
     id            varchar(48) not null primary key,
-    weblogid     varchar(48) not null,
+    weblogid      varchar(48) not null,
     pingtargetid  varchar(48) not null 
 );
-create index ap_weblogid_idx on autoping( weblogid );
-create index ap_pingtid_idx on autoping( pingtargetid );
 
-create table roller_properties (
+create index ap_weblogid_idx on weblog_ping_target( weblogid );
+alter table weblog_ping_target add constraint ap_weblogid_fk
+    foreign key (weblogid) references weblog(id);
+
+create index ap_pingtargetid_idx on weblog_ping_target( pingtargetid );
+alter table weblog_ping_target add constraint ap_pingtargetid_fk
+    foreign key (pingtargetid) references ping_target(id);
+
+create table weblogger_properties (
     name     varchar(255) not null primary key,
     value    $db.TEXT_SQL_TYPE
 );
@@ -266,7 +297,17 @@ alter table planet_subscription_entry add constraint pse_subscriptionid_fk
 
 -- MEDIA BLOGGING
 
-create table roller_mediafile (
+create table media_directory (
+    id               varchar(48) not null primary key,
+    name             varchar(255) not null,
+    description      varchar(255),
+    weblogid        varchar(48) not null
+);
+
+alter table media_directory add constraint md_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+create table media_file (
     id              varchar(48) not null primary key,
     name            varchar(255) not null,
     description     varchar(255),
@@ -285,75 +326,15 @@ create table roller_mediafile (
     is_public       $db.BOOLEAN_SQL_TYPE_FALSE not null
 );
 
-create table roller_mediafiletag (
+alter table media_file add constraint mf_mdir_id_fk
+    foreign key (directoryid) references media_directory(id) ;
+
+
+create table media_file_tag (
     id              varchar(48) not null primary key,
     mediafile_id    varchar(48) not null,
     name            varchar(30) not null
 );
 
-create table roller_mediafiledir (
-    id               varchar(48) not null primary key,
-    name             varchar(255) not null,
-    description      varchar(255),
-    weblogid        varchar(48) not null
-);
-
-
--- *****************************************************
--- Now add the foreign key relationships
-
--- user, role, weblog, and permissions
-
-alter table user_weblog_role add constraint uwr_weblogid_fk
-    foreign key ( weblogid ) references weblog( id ) ;
-
-alter table user_weblog_role add constraint uwr_userid_fk
-    foreign key ( username ) references roller_user( username ) ;
-
--- page, entry, category, comment
-
-alter table weblog_custom_template add constraint wct_weblogid_fk
-    foreign key ( weblogid ) references weblog( id ) ;
-
-alter table custom_template_rendition add constraint ctr_templateid_fk
-    foreign key ( templateid ) references weblog_custom_template( id ) ;
-
-alter table weblogentry add constraint we_weblogid_fk
-    foreign key ( weblogid ) references weblog( id ) ;
-
-alter table weblogentry add constraint we_categoryid_fk
-    foreign key ( categoryid ) references weblogcategory( id ) ;
-
-alter table weblog_entry_tag add constraint wtag_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) ;
-
-alter table weblogcategory add constraint wc_weblogid_fk
-    foreign key ( weblogid ) references weblog( id ) ;
-
-alter table roller_comment add constraint co_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) ;
-
--- blogroll_item must link to an existing weblog
-
-alter table bookmark add constraint bm_weblogid_fk
-    foreign key ( weblogid ) references weblog( id ) ;
-
-
--- media file foreign key constraints
-
-alter table roller_mediafile add constraint roller_mediafiledir_id_fk
-    foreign key (directoryid) references roller_mediafiledir(id) ;
-
-alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
-    foreign key (mediafile_id) references roller_mediafile(id) ;
-
-alter table roller_mediafiledir add constraint mf_weblogid_fk
-    foreign key ( weblogid ) references weblog( id ) ;
-
--- autoping
-
-alter table autoping add constraint ap_weblogid_fk
-    foreign key (weblogid) references weblog(id) ;
-
-alter table autoping add constraint ap_pingtargetid_fk
-    foreign key (pingtargetid) references pingtarget(id) ;
+alter table media_file_tag add constraint mft_mftag_fk
+    foreign key (mediafile_id) references media_file(id) ;

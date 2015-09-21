@@ -46,7 +46,7 @@ import javax.persistence.Transient;
  * Weblog Category.
  */
 @Entity
-@Table(name="weblogcategory")
+@Table(name="weblog_category")
 @NamedQueries({
         @NamedQuery(name="WeblogCategory.getByWeblog",
                 query="SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 order by w.position"),

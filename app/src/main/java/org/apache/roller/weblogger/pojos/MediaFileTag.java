@@ -38,7 +38,7 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name="roller_mediafiletag")
+@Table(name="media_file_tag")
 public class MediaFileTag implements Serializable {
 
     private static final long serialVersionUID = -1349427373511141841L;

@@ -361,18 +361,18 @@ public class DatabaseInstaller {
             con = db.getConnection();
             Statement stmt = con.createStatement();
             
-            // just check in the roller_properties table
+            // just check in the weblogger_properties table
             ResultSet rs = stmt.executeQuery(
-                    "select value from roller_properties where name = '"+DBVERSION_PROP+"'");
+                    "select value from weblogger_properties where name = '"+DBVERSION_PROP+"'");
             
             if(rs.next()) {
                 dbversion = Integer.parseInt(rs.getString(1));
                 
             } else {
                 // tough to know if this is an upgrade with no db version :/
-                // however, if roller_properties is not empty then we at least
+                // however, if weblogger_properties is not empty then we at least
                 // we have someone upgrading from 1.2.x
-                rs = stmt.executeQuery("select count(*) from roller_properties");
+                rs = stmt.executeQuery("select count(*) from weblogger_properties");
                 if (rs.next() && rs.getInt(1) > 0) {
                     dbversion = 120;
                 }
@@ -437,7 +437,7 @@ public class DatabaseInstaller {
         
         try {
             Statement stmt = con.createStatement();
-            stmt.executeUpdate("insert into roller_properties "+
+            stmt.executeUpdate("insert into weblogger_properties "+
                     "values('"+DBVERSION_PROP+"', '"+version+"')");
             
             log.debug("Set database verstion to "+version);
@@ -455,11 +455,11 @@ public class DatabaseInstaller {
         
         try {
             Statement stmt = con.createStatement();
-            stmt.executeUpdate("update roller_properties "+
+            stmt.executeUpdate("update weblogger_properties "+
                     "set value = '"+version+"'"+
                     "where name = '"+DBVERSION_PROP+"'");
             
-            log.debug("Updated database verstion to "+version);
+            log.debug("Updated database version to "+version);
         } catch(SQLException se) {
             throw new StartupException("Error setting database version.", se);
         } 

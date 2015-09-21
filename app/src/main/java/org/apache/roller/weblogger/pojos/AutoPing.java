@@ -41,7 +41,7 @@ import javax.persistence.Table;
  * when the corresponding weblog is changed.
  */
 @Entity
-@Table(name="autoping")
+@Table(name="weblog_ping_target")
 @NamedQueries({
     @NamedQuery(name="AutoPing.getAll",
         query="SELECT a FROM AutoPing a"),

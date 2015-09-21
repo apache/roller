@@ -614,7 +614,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         // TODO dynamic bulk delete query: I'd MUCH rather use a bulk delete,
         // but MySQL says "General error, message from server: "You can't
-        // specify target table 'roller_comment' for update in FROM clause"
+        // specify target table 'weblog_entry_comment' for update in FROM clause"
         
         CommentSearchCriteria csc = new CommentSearchCriteria();
         csc.setWeblog(weblog);

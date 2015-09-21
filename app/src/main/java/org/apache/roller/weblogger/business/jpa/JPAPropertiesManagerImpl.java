@@ -179,7 +179,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
                         props.put(propDef.getName(), newprop);
 
                         log.info("Property " + propDef.getName() +
-                            " not yet in roller_properties database table, will store with " +
+                            " not yet in weblogger_properties database table, will store with " +
                             "default value of [" + propDef.getDefaultValue() + "`]");
                     }
                 }

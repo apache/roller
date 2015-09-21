@@ -40,7 +40,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="roller_comment")
+@Table(name="weblog_entry_comment")
 @NamedQueries({
         @NamedQuery(name="WeblogEntryComment.getCountAllDistinctByStatus",
                 query="SELECT COUNT(c) FROM WeblogEntryComment c where c.status = ?1"),

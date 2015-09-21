@@ -42,7 +42,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="roller_mediafiledir")
+@Table(name="media_directory")
 @NamedQueries({
         @NamedQuery(name="MediaFileDirectory.getByWeblog",
                 query="SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1"),
