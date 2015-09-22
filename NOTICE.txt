@@ -31,7 +31,7 @@ OTHER NOTICES
 
 * Roller includes icons by Mark James (http://www.famfamfam.com/lab/icons)
 
-* Roller uses JavaMail for Selenium testcase
+* Roller uses JavaMail
      COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1
      Copyright (c) 1997-2011 Oracle and/or its affiliates. All rights reserved.
      https://glassfish.java.net/public/CDDL+GPL_1_1.html
