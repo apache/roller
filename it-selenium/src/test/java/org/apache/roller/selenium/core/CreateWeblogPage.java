@@ -44,6 +44,7 @@ public class CreateWeblogPage extends AbstractRollerPage {
         setName(name);
         setHandle(handle);
         setEmail(email);
+        setLocale("English");
         return createWeblog();
     }
 
@@ -61,6 +62,10 @@ public class CreateWeblogPage extends AbstractRollerPage {
 
     public void setEmail(String value) {
         setFieldValue("createWeblog_bean_emailAddress", value);
+    }
+
+    public void setLocale(String value) {
+        selectOptionByVisibleText("createWeblog_bean_locale", value);
     }
 
 }

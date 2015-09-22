@@ -21,6 +21,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * Abstract class holding functionality common to Selenium Page Objects
@@ -72,5 +73,10 @@ public abstract class AbstractRollerPage {
 
     protected String getTextById(String fieldId) {
         return driver.findElement(By.id(fieldId)).getText();
+    }
+
+    protected void selectOptionByVisibleText(String selectId, String visibleText) {
+        Select select = new Select(driver.findElement(By.id(selectId)));
+        select.selectByVisibleText(visibleText);
     }
 }

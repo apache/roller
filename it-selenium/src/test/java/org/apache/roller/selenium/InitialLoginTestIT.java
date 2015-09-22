@@ -35,6 +35,7 @@ import org.apache.roller.selenium.editor.EntryAddPage;
 import org.apache.roller.selenium.editor.EntryEditPage;
 import org.apache.roller.selenium.view.BlogHomePage;
 import org.apache.roller.selenium.view.SingleBlogEntryPage;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
 public class InitialLoginTestIT {
     private WebDriver driver;
@@ -44,7 +45,9 @@ public class InitialLoginTestIT {
 
     @Before
     public void setUp() throws Exception {
-        driver = new FirefoxDriver();
+        FirefoxProfile profile = new FirefoxProfile();
+        profile.setPreference("intl.accept_languages", "en_US");
+        driver = new FirefoxDriver(profile);
         baseUrl = "http://localhost:8080/roller/";
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
