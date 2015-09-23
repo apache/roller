@@ -39,7 +39,6 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-import org.apache.roller.weblogger.business.search.IndexUtil;
 
 /**
  * An operation that searches the index.
@@ -69,7 +68,6 @@ public class SearchOperation extends ReadFromIndexOperation {
     private String websiteHandle;
     private String category;
     private String locale;
-    private String parseError;
 
     // ~ Constructors
     // ===========================================================
@@ -114,7 +112,7 @@ public class SearchOperation extends ReadFromIndexOperation {
             // Create a query object out of our term
             Query query = multiParser.parse(term);
 
-            Term tUsername = IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE,
+            Term tUsername = IndexOperation.getTerm(FieldConstants.WEBSITE_HANDLE,
                     websiteHandle);
 
             if (tUsername != null) {
@@ -132,7 +130,7 @@ public class SearchOperation extends ReadFromIndexOperation {
                 query = bQuery;
             }
 
-            Term tLocale = IndexUtil.getTerm(FieldConstants.LOCALE,
+            Term tLocale = IndexOperation.getTerm(FieldConstants.LOCALE,
                     locale);
 
             if (tLocale != null) {
@@ -147,11 +145,9 @@ public class SearchOperation extends ReadFromIndexOperation {
 
         } catch (IOException e) {
             mLogger.error("Error searching index", e);
-            parseError = e.getMessage();
-
         } catch (ParseException e) {
             // who cares?
-            parseError = e.getMessage();
+            mLogger.error("Parser error searching index", e);
         }
         // don't need to close the reader, since we didn't do any writing!
     }
@@ -163,16 +159,6 @@ public class SearchOperation extends ReadFromIndexOperation {
      */
     public IndexSearcher getSearcher() {
         return searcher;
-    }
-
-    /**
-     * Sets the searcher.
-     * 
-     * @param searcher
-     *            the new searcher
-     */
-    public void setSearcher(IndexSearcher searcher) {
-        this.searcher = searcher;
     }
 
     /**
@@ -194,15 +180,6 @@ public class SearchOperation extends ReadFromIndexOperation {
             return -1;
         }
         return searchresults.totalHits;
-    }
-
-    /**
-     * Gets the parses the error.
-     *
-     * @return the parses the error
-     */
-    public String getParseError() {
-        return parseError;
     }
 
     /**

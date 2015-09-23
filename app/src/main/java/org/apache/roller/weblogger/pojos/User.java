@@ -48,7 +48,7 @@ import javax.persistence.TemporalType;
  * User bean.
  */
 @Entity
-@Table(name="roller_user")
+@Table(name="weblogger_user")
 @NamedQueries({
         @NamedQuery(name="User.getAll",
                 query="SELECT u FROM User u"),

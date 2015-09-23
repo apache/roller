@@ -40,7 +40,6 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.BootstrapException;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -150,12 +149,10 @@ public class RollerContext extends ContextLoaderListener
             try {
                 // trigger bootstrapping process
                 WebloggerFactory.bootstrap();
-                
+
                 // trigger initialization process
                 WebloggerFactory.getWeblogger().initialize();
-                
-            } catch (BootstrapException ex) {
-                log.fatal("Roller Weblogger bootstrap failed", ex);
+
             } catch (WebloggerException ex) {
                 log.fatal("Roller Weblogger initialization failed", ex);
             }

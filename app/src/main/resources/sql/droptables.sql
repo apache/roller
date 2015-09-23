@@ -23,22 +23,22 @@ drop table planet_subscription;
 drop table planet;
 
 -- non-associated tables
-drop table roller_properties;
+drop table weblogger_properties;
 
 -- supplemental services tables
-drop table autoping;
-drop table pingtarget;
-drop table bookmark;
-drop table roller_mediafiletag;
-drop table roller_mediafile;
-drop table roller_mediafiledir;
+drop table weblog_ping_target;
+drop table ping_target;
+drop table blogroll_link;
+drop table media_file_tag;
+drop table media_file;
+drop table media_directory;
 
 -- core services tables
-drop table roller_comment;
+drop table weblog_entry_comment;
 drop view weblog_entry_tag_agg;
 drop table weblog_entry_tag;
-drop table weblogentry;
-drop table weblogcategory;
+drop table weblog_entry;
+drop table weblog_category;
 drop table weblog_custom_template;
 drop table custom_template_rendition;
 

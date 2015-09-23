@@ -77,10 +77,6 @@ public interface URLStrategy {
      */
     String getWeblogConfigURL(String weblogHandle, boolean absolute);
 
-    String getXmlrpcURL(boolean absolute);
-    
-    String getAtomProtocolURL(boolean absolute);
-    
     /**
      * Get root url for a given weblog.
      */

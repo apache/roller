@@ -23,8 +23,6 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
@@ -52,12 +50,6 @@ public interface Weblogger {
      * Get WeblogManager associated with this Weblogger instance.
      */
     WeblogEntryManager getWeblogEntryManager();
-    
-    
-    /**
-     * Get the AutoPingManager associated with this Weblogger instance.
-     */
-    AutoPingManager getAutopingManager();
     
     
     /**
@@ -126,7 +118,7 @@ public interface Weblogger {
     /**
      * Initialize any resources necessary for this instance of Weblogger.
      */
-    void initialize() throws InitializationException;
+    void initialize() throws WebloggerException;
     
     
     /**

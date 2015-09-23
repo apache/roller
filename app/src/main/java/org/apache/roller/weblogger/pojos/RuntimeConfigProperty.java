@@ -36,7 +36,7 @@ import javax.persistence.Table;
  * This POJO represents a single property of the blog server
  */
 @Entity
-@Table(name="roller_properties")
+@Table(name="weblogger_properties")
 @NamedQueries({
         @NamedQuery(name="RuntimeConfigProperty.getAll",
                 query="SELECT r FROM RuntimeConfigProperty r")

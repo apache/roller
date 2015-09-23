@@ -28,6 +28,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
@@ -50,7 +51,7 @@ public class ThreadManagerImpl implements ThreadManager {
         serviceScheduler = Executors.newCachedThreadPool();
     }
     
-    public void initialize() throws InitializationException {
+    public void initialize() throws WebloggerException {
                     
     }
 

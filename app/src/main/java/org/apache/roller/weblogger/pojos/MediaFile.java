@@ -57,7 +57,7 @@ import javax.persistence.Transient;
  * 
  */
 @Entity
-@Table(name="roller_mediafile")
+@Table(name="media_file")
 @NamedQueries({
         @NamedQuery(name="MediaFile.getByWeblogAndOrigpath",
                 query="SELECT f FROM MediaFile f WHERE f.weblog = ?1 AND f.originalPath = ?2")

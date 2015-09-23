@@ -152,7 +152,7 @@ public final class WebloggerStartup {
      * @throws IllegalStateException If the database provider has not been properly setup yet.
      */
     private static DatabaseInstaller getDatabaseInstaller() {
-        return new DatabaseInstaller(getDatabaseProvider(), new ClasspathDatabaseScriptProvider());
+        return new DatabaseInstaller(getDatabaseProvider());
     }
     
     

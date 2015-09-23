@@ -26,16 +26,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 /**
  * An operation that removes the weblog from the index.
- * 
- * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class RemoveEntryOperation extends WriteToIndexOperation {
 
@@ -48,38 +43,24 @@ public class RemoveEntryOperation extends WriteToIndexOperation {
     // ~ Instance fields
     // ========================================================
 
-    private WeblogEntry data;
-    private WeblogEntryManager weblogEntryManager;
+    private String weblogEntryId;
 
     // ~ Constructors
     // ===========================================================
 
-    public RemoveEntryOperation(WeblogEntryManager wem, IndexManagerImpl mgr,
-            WeblogEntry data) {
+    public RemoveEntryOperation(IndexManagerImpl mgr, String weblogEntryId) {
         super(mgr);
-        this.weblogEntryManager = wem;
-        this.data = data;
+        this.weblogEntryId = weblogEntryId;
     }
 
     // ~ Methods
     // ================================================================
 
     public void doRun() {
-
-        // since this operation can be run on a separate thread we must treat
-        // the weblog object passed in as a detached object which is proned to
-        // lazy initialization problems, so requery for the object now
-        try {
-            this.data = weblogEntryManager.getWeblogEntry(this.data.getId());
-        } catch (WebloggerException ex) {
-            mLogger.error("Error getting weblogentry object", ex);
-            return;
-        }
-
         IndexWriter writer = beginWriting();
         try {
             if (writer != null) {
-                Term term = new Term(FieldConstants.ID, data.getId());
+                Term term = new Term(FieldConstants.ID, weblogEntryId);
                 writer.deleteDocuments(term);
             }
         } catch (IOException e) {

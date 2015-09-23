@@ -19,13 +19,13 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.business.pings;
+package org.apache.roller.weblogger.business;
 
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
-
+import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
  * Manages ping targets.
@@ -102,13 +102,89 @@ public interface PingTargetManager {
      */
     boolean isHostnameKnown(String pingTargetUrl) throws WebloggerException;
 
+    /**
+     * Store an auto ping configuration.
+     *
+     * @param autoPing the auto ping configuration
+     * @throws WebloggerException
+     */
+    void saveAutoPing(AutoPing autoPing) throws WebloggerException;
+
+
+    /**
+     * Remove the auto ping configuration with given id.
+     *
+     * @param autoPing the auto ping configuration to remove
+     * @throws WebloggerException
+     */
+    void removeAutoPing(AutoPing autoPing) throws WebloggerException;
+
+
+    /**
+     * Remove the auto ping configuration for the given ping target and weblog, if one exists.  Returns silently if it
+     * doesn't exist.
+     *
+     * @param pingTarget the ping target
+     * @param weblog the weblog
+     * @throws WebloggerException
+     */
+    void removeAutoPing(PingTarget pingTarget, Weblog weblog) throws WebloggerException;
+
+
+    /**
+     * Remove all auto ping configurations for all websites.
+     *
+     * @throws WebloggerException
+     */
+    void removeAllAutoPings() throws WebloggerException;
+
+
+    /**
+     * Retrieve an auto ping configuration by id.
+     *
+     * @param id the id of the auto ping configuration to retrieve.
+     * @return the auto ping configuration with specified id or null if not found
+     * @throws WebloggerException
+     */
+    AutoPing getAutoPing(String id) throws WebloggerException;
+
+
+    /**
+     * Get all of the auto ping configurations for the given website.
+     *
+     * @return a list of auto ping configurations for the given website as <code>AuAutoPingcode> objects.
+     */
+    List<AutoPing> getAutoPingsByWeblog(Weblog website) throws WebloggerException;
+
+
+    /**
+     * Get all of the auto ping configurations for a given target (across all websites).
+     *
+     * @return a list of auto ping configurations for the given target as <code>AuAutoPingcode> objects.
+     */
+    List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
+
+    /**
+     * Queue the auto ping configurations that should be pinged upon change to an entry in the given weblog.  This calls
+     * {@link OutgoingPingQueue} to queue ping requests for each ping configuration that should be applied on change to
+     * the given weblog.  If ping processing is suspended, this returns without doing anything.
+     *
+     * @param changedWeblog the weblog that has been changed
+     */
+    void queueApplicableAutoPings(Weblog changedWeblog) throws WebloggerException;
+
+    /**
+     * Send all pings currently in the {@link OutgoingPingQueue} to their various ping targets.
+     * If ping processing is suspended, this returns without doing anything.
+     */
+    void sendPings() throws WebloggerException;
 
     /**
      * Initialize ping targets.
      *
-     * @throws InitializationException If there is a problem during initialization.
+     * @throws WebloggerException If there is a problem during initialization.
      */
-    void initialize() throws InitializationException;
+    void initialize() throws WebloggerException;
 
     /**
      * Release all resources associated with Roller session.

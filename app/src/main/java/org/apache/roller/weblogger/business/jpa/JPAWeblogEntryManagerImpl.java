@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
+import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
@@ -64,16 +64,16 @@ import java.util.TimeZone;
 public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     private static final Log LOG = LogFactory.getLog(JPAWeblogEntryManagerImpl.class);
-    
-    private final AutoPingManager autoPingManager;
+
+    private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = new HashMap<>();
 
-    protected JPAWeblogEntryManagerImpl(AutoPingManager apm, JPAPersistenceStrategy strategy) {
+    protected JPAWeblogEntryManagerImpl(PingTargetManager mgr, JPAPersistenceStrategy strategy) {
         LOG.debug("Instantiating JPA Weblog Manager");
-        this.autoPingManager = apm;
+        this.pingTargetManager = mgr;
         this.strategy = strategy;
     }
     
@@ -198,7 +198,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         if(entry.isPublished()) {
             // Queue applicable pings for this update.
-            autoPingManager.queueApplicableAutoPings(entry);
+            pingTargetManager.queueApplicableAutoPings(entry.getWeblog());
         }
     }
     
@@ -614,7 +614,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         // TODO dynamic bulk delete query: I'd MUCH rather use a bulk delete,
         // but MySQL says "General error, message from server: "You can't
-        // specify target table 'roller_comment' for update in FROM clause"
+        // specify target table 'weblog_entry_comment' for update in FROM clause"
         
         CommentSearchCriteria csc = new CommentSearchCriteria();
         csc.setWeblog(weblog);

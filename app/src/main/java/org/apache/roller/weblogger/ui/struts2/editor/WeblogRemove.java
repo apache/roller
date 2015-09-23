@@ -61,7 +61,6 @@ public class WeblogRemove extends UIAction {
     public String remove() {
 
         try {
-
             // remove website
             WebloggerFactory.getWeblogger().getWeblogManager().removeWeblog(getActionWeblog());
             WebloggerFactory.getWeblogger().flush();

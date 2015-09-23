@@ -77,7 +77,7 @@ import javax.persistence.Transient;
  * Represents a Weblog Entry.
  */
 @Entity
-@Table(name="weblogentry")
+@Table(name="weblog_entry")
 @NamedQueries({
         @NamedQuery(name="WeblogEntry.getByCategory",
                 query="SELECT w FROM WeblogEntry w WHERE w.category = ?1"),

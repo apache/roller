@@ -19,6 +19,8 @@
 package org.apache.roller.weblogger.business;
 
 
+import org.apache.roller.weblogger.WebloggerException;
+
 /**
  * Provides access to a Weblogger instance.
  */
@@ -27,7 +29,7 @@ public interface WebloggerProvider {
     /**
      * Trigger bootstrapping.
      */
-    void bootstrap() throws BootstrapException;
+    void bootstrap() throws WebloggerException;
     
     
     /**

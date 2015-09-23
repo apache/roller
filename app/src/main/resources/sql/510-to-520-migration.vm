@@ -4,17 +4,31 @@
  DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
--- Roles consolidated into the roller_user table.
-#addColumnNull("roller_user" "role"  "varchar(16)")
+-- table renames
+#renameTable("roller_user", "weblogger_user")
+#renameTable("autoping", "weblog_ping_target")
+#renameTable("bookmark", "blogroll_link")
+#renameTable("pingtarget", "ping_target")
+#renameTable("roller_comment", "weblog_entry_comment")
+#renameTable("roller_mediafile", "media_file")
+#renameTable("roller_mediafiledir", "media_directory")
+#renameTable("roller_mediafiletag", "media_file_tag")
+#renameTable("roller_properties", "weblogger_properties")
+#renameTable("roller_user", "weblogger_user")
+#renameTable("weblogcategory", "weblog_category")
+
+
+-- Roles consolidated into the weblogger_user table.
+#addColumnNull("weblogger_user" "role"  "varchar(16)")
 
 -- images removed from categories
-#dropColumn('weblogcategory' 'image')
+#dropColumn("weblog_category" "image")
 
 -- roller_permission revamped to user_weblog_role
-#dropColumn('roller_permission', 'objecttype')
-#renameColumn('roller_permission', 'objectid', 'weblogid', 'varchar(48)')
-#renameColumn('roller_permission', 'actions', 'weblog_role', 'varchar(48)')
-#renameTable('roller_permission', 'user_weblog_role')
+#dropColumn("roller_permission", "objecttype")
+#renameColumn("roller_permission", "objectid", "weblogid", "varchar(48)")
+#renameColumn("roller_permission", "actions", "weblog_role", "varchar(48)")
+#renameTable("roller_permission", "user_weblog_role")
 
 update user_weblog_role uwr set weblogid = (select id
 from weblog w where w.handle = uwr.weblogid)
@@ -23,16 +37,16 @@ alter table user_weblog_role add constraint uwr_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
 
 alter table user_weblog_role add constraint uwr_userid_fk
-    foreign key ( username ) references roller_user( username ) ;
+    foreign key ( username ) references weblogger_user( username ) ;
 
 -- weblog entry tag changes
-#renameTable('roller_weblogentrytag', 'weblog_entry_tag')
+#renameTable("roller_weblogentrytag", "weblog_entry_tag")
 #dropIndex("weblog_entry_tag" "wet_entryid_idx")
 #dropIndex("weblog_entry_tag" "wet_weblogid_idx")
 #dropIndex("weblog_entry_tag" "wet_creator_idx")
 #dropIndex("weblog_entry_tag" "wet_name_idx")
-#dropColumn('roller_weblogentrytag', 'creator')
-#dropColumn('roller_weblogentrytag', 'time')
+#dropColumn("roller_weblogentrytag", "creator")
+#dropColumn("roller_weblogentrytag", "time")
 
 create index wtag_tagsearch_idx on weblog_entry_tag( weblogid, name, entryid );
 
@@ -46,14 +60,14 @@ from weblog_entry_tag
 group by weblogid, name;
 
 -- switch websiteid columns to weblogid
-#renameColumn('autoping', 'websiteid', 'weblogid', 'varchar(48) not null')
-#renameColumn('weblog_custom_template', 'websiteid', 'weblogid', 'varchar(48) not null')
-#renameColumn('weblog_category', 'websiteid', 'weblogid', 'varchar(48) not null')
-#renameColumn('weblogentry', 'websiteid', 'weblogid', 'varchar(48) not null')
-#renameColumn('roller_weblogentrytag', 'websiteid', 'weblogid', 'varchar(48) not null')
-#renameColumn('roller_weblogentrytagagg', 'websiteid', 'weblogid', 'varchar(48) not null')
-#renameColumn('roller_weblogentrytag', 'websiteid', 'weblogid', 'varchar(48) not null')
-#renameColumn('roller_mediafiledir', 'websiteid', 'weblogid', 'varchar(48) not null')
+#renameColumn("weblog_ping_target", "websiteid", "weblogid", "varchar(48) not null")
+#renameColumn("weblog_custom_template", "websiteid", "weblogid", "varchar(48) not null")
+#renameColumn("weblog_category", "websiteid", "weblogid", "varchar(48) not null")
+#renameColumn("weblog_entry", "websiteid", "weblogid", "varchar(48) not null")
+#renameColumn("roller_weblogentrytag", "websiteid", "weblogid", "varchar(48) not null")
+#renameColumn("roller_weblogentrytagagg", "websiteid", "weblogid", "varchar(48) not null")
+#renameColumn("roller_weblogentrytag", "websiteid", "weblogid", "varchar(48) not null")
+#renameColumn("media_filedir", "websiteid", "weblogid", "varchar(48) not null")
 
 -- AtomPub gone
 
@@ -70,32 +84,31 @@ group by weblogid, name;
 
 -- enable multilangs, show all langs removed from weblog
 
-#dropColumn('weblog', 'enablemultilang')
-#dropColumn('weblog', 'showalllangs')
-#dropIndex("weblogentry", "we_locale_idx")
-#dropColumn('weblogentry', 'locale')
-
+#dropColumn("weblog", "enablemultilang")
+#dropColumn("weblog", "showalllangs")
+#dropIndex("weblog_entry", "we_locale_idx")
+#dropColumn("weblog_entry", "locale")
 
 -- bookmark folders removed
 
-#dropForeignKey("bookmark" "bm_folderid_fk")
-#dropIndex("bookmark", "bm_folderid_idx")
-#dropColumn("bookmark", "feedurl")
-#dropColumn("bookmark", "image")
-#addColumnNull("bookmark" "weblogid" "varchar48")
+#dropForeignKey("blogroll_link" "bm_folderid_fk")
+#dropIndex("blogroll_link", "bm_folderid_idx")
+#dropColumn("blogroll_link", "feedurl")
+#dropColumn("blogroll_link", "image")
+#addColumnNull("blogroll_link" "weblogid" "varchar48")
 update bookmark bm set weblogid = select websiteid from bookmark_folder bf where bf.id = bm.folderid;
 
-#dropColumn("bookmark", "folderid")
+#dropColumn("blogroll_link", "folderid")
 #dropTableIfExists("bookmark_folder")
 alter table bookmark add constraint bm_weblogid_fk foreign key ( weblogid ) references weblog( id ) ;
 
 -- entry attributes moved into weblogentry table
 
-#dropColumn("weblogentry", "content_type")
-#dropColumn("weblogentry", "content_src")
-#addColumnNull("weblogentry" "enclosure_url" "varchar(255)")
-#addColumnNull("weblogentry" "enclosure_type" "varchar(48)")
-#addColumnNull("weblogentry" "enclosure_length" "integer")
+#dropColumn("weblog_entry", "content_type")
+#dropColumn("weblog_entry", "content_src")
+#addColumnNull("weblog_entry" "enclosure_url" "varchar(255)")
+#addColumnNull("weblog_entry" "enclosure_type" "varchar(48)")
+#addColumnNull("weblog_entry" "enclosure_length" "integer")
 
 update weblogentry we set enclosure_url =
 (select value from entryattribute where name = "att_mediacast_url" and entryid = we.id)
@@ -114,13 +127,13 @@ where we.id in
 
 
 -- Set new global roles from the now-unused userrole table:
-update roller_user ru
+update weblogger_user ru
 set role = 'BLOGGER'
 where ru.username in (select ur.username
 from userrole ur
 where role = 'editor');
 
-update roller_user ru
+update weblogger_user ru
 set role = 'ADMIN'
 where ru.username in (select ur.username
 from userrole ur
@@ -146,7 +159,7 @@ where actions = 'edit_draft'
 
 
 -- planet changes
-insert into roller_properties select * from rag_properties;
+insert into weblogger_properties select * from rag_properties;
 #dropTable('rag_properties')
 #dropTable('rag_entry')
 #dropTable('rag_group_subscription')
@@ -210,34 +223,33 @@ alter table planet_subscription_entry add constraint pse_subscriptionid_fk
  **#
 #macro(expandTimestamp $tableName $columnName)
 #if($db.DBTYPE == "MYSQL")
-#alterColumnType($tableName $columnName 'datetime(3)')
+#alterColumnType($tableName $columnName "datetime(3)")
 #elseif ($db.DBTYPE == "ORACLE")
-#alterColumnType($tableName $columnName 'timestamp(3)')
+#alterColumnType($tableName $columnName "timestamp(3)")
 #elseif ($db.DBTYPE == "POSTGRESQL")
-#alterColumnType($tableName $columnName 'timestamp(3) with time zone')
+#alterColumnType($tableName $columnName "timestamp(3) with time zone")
 #end
 #end
 
 #macro(expandTimestampNotNull $tableName $columnName)
 #if($db.DBTYPE == "MYSQL")
-#alterColumnType($tableName $columnName 'datetime(3) not null')
+#alterColumnType($tableName $columnName "datetime(3) not null")
 #elseif ($db.DBTYPE == "ORACLE")
-#alterColumnType($tableName $columnName 'timestamp(3) not null')
+#alterColumnType($tableName $columnName "timestamp(3) not null")
 #elseif ($db.DBTYPE == "POSTGRESQL")
-#alterColumnType($tableName $columnName 'timestamp(3) with time zone')
+#alterColumnType($tableName $columnName "timestamp(3) with time zone")
 #end
 #end
 
-#expandTimestamp('pingtarget' 'lastsuccess')
-#expandTimestampNotNull('roller_comment' 'posttime')
-#expandTimestampNotNull('roller_mediafile' 'date_uploaded')
-#expandTimestamp('roller_mediafile' 'last_updated')
-#expandTimestampNotNull('user_weblog_role' 'datecreated')
-#expandTimestampNotNull('roller_user' 'datecreated')
-#expandTimestampNotNull('roller_weblogentrytag' 'time')
-#expandTimestampNotNull('roller_weblogentrytagagg' 'lastused')
-#expandTimestampNotNull('weblog' 'datecreated')
-#expandTimestamp('weblog' 'lastmodified')
-#expandTimestampNotNull('weblog_custom_template' 'updatetime')
-#expandTimestamp('weblogentry' 'pubtime')
-#expandTimestampNotNull('weblogentry' 'updatetime')
+#expandTimestamp("ping_target" "lastsuccess")
+#expandTimestampNotNull("weblog_entry_comment" "posttime")
+#expandTimestampNotNull("media_file" "date_uploaded")
+#expandTimestamp("media_file" "last_updated")
+#expandTimestampNotNull("user_weblog_role" "datecreated")
+#expandTimestampNotNull("weblogger_user" "datecreated")
+#expandTimestampNotNull("weblog_entry_tag" "time")
+#expandTimestampNotNull("weblog" "datecreated")
+#expandTimestamp("weblog" "lastmodified")
+#expandTimestampNotNull("weblog_custom_template" "updatetime")
+#expandTimestamp("weblog_entry" "pubtime")
+#expandTimestampNotNull("weblog_entry" "updatetime")

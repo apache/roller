@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
@@ -70,9 +71,9 @@ public final class WebloggerFactory {
      * ready to run.
      *
      * @throws IllegalStateException If the app has not been properly prepared yet.
-     * @throws BootstrapException If an error happens during the bootstrap process.
+     * @throws WebloggerException If an error happens during the bootstrap process.
      */
-    public static void bootstrap() throws BootstrapException {
+    public static void bootstrap() throws WebloggerException {
         
         // if the app hasn't been properly started so far then bail
         if (!WebloggerStartup.isPrepared()) {
@@ -87,7 +88,7 @@ public final class WebloggerFactory {
                 Class providerClass = Class.forName(providerClassname);
                 defaultProvider = (WebloggerProvider) providerClass.newInstance();
             } catch (Exception ex) {
-                throw new BootstrapException("Error instantiating default provider: " + providerClassname + "; exception message: " + ex.getMessage(), ex);
+                throw new WebloggerException("Error instantiating default provider: " + providerClassname + "; exception message: " + ex.getMessage(), ex);
             }
         } else {
             throw new NullPointerException("No provider specified in config property 'weblogger.provider.class'");
@@ -107,10 +108,10 @@ public final class WebloggerFactory {
      *
      * @param provider A WebloggerProvider to use for bootstrapping.
      * @throws IllegalStateException If the app has not been properly prepared yet.
-     * @throws BootstrapException If an error happens during the bootstrap process.
+     * @throws WebloggerException If an error happens during the bootstrap process.
      */
     public static void bootstrap(WebloggerProvider provider)
-            throws BootstrapException {
+            throws WebloggerException {
         
         // if the app hasn't been properly started so far then bail
         if (!WebloggerStartup.isPrepared()) {
@@ -133,7 +134,7 @@ public final class WebloggerFactory {
         
         // make sure we are all set
         if(webloggerProvider.getWeblogger() == null) {
-            throw new BootstrapException("Bootstrapping failed, Weblogger instance is null");
+            throw new WebloggerException("Bootstrapping failed, Weblogger instance is null");
         }
         
         LOG.info("Roller Weblogger business tier successfully bootstrapped");

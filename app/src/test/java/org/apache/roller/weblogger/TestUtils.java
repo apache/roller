@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,17 +24,12 @@ import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Planet;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.SubscriptionEntry;
-import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.startup.ClasspathDatabaseScriptProvider;
-import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
+import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -46,11 +41,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.UserWeblogRole;
-
-import java.io.InputStream;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Utility class for unit test classes.
@@ -72,31 +62,10 @@ public final class TestUtils {
 
             // always initialize the properties manager and flush
             WebloggerFactory.getWeblogger().initialize();
-
-            // Reset data for local tests see
-            // docs/testing/roller-junit.properties for howto
-            Boolean local = WebloggerConfig.getBooleanProperty(
-                    "junit.testdata.reset", false);
-
-            if (local) {
-
-                System.out
-                        .println("Reseting tables for local tests: junit.testdata.reset="
-                                + local);
-
-                try {
-                    clearTestData();
-                } catch (Exception e) {
-                    System.out.println("Error reseting tables : "
-                            + e.getMessage());
-                }
-            }
-
         }
     }
 
     public static void shutdownWeblogger() throws Exception {
-
         // trigger shutdown
         WebloggerFactory.getWeblogger().shutdown();
     }
@@ -115,68 +84,6 @@ public final class TestUtils {
             WebloggerFactory.getWeblogger().flush();
         }
         WebloggerFactory.getWeblogger().release();
-    }
-
-    /**
-     * Clear test data.
-     * 
-     * @throws Exception
-     *             the exception
-     */
-    private static void clearTestData() throws Exception {
-
-        String scriptFile = "junit-cleartables-mysql.sql";
-
-        ClasspathDatabaseScriptProvider scriptProvider = new ClasspathDatabaseScriptProvider();
-        InputStream script = scriptProvider.getDatabaseScript(scriptFile);
-
-        if (script == null) {
-
-            System.out.println("File /dbscripts/" + scriptFile
-                    + " not found on class path.");
-            return;
-
-        }
-
-        // Run script to remove the junit test user
-        try {
-
-            DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
-            Connection con = dbp.getConnection();
-
-            SQLScriptRunner runner = new SQLScriptRunner(script);
-
-            if (runner != null) {
-
-                System.out.println("Clearing files using script file : "
-                        + scriptProvider.getScriptURL(scriptFile));
-
-                // Loop script and remove invalid lines
-                List<String> updatedCommands = new ArrayList<String>();
-                List<String> commands = runner.getCommands();
-                for (String command : commands) {
-                    if (!command.startsWith("--")) {
-                        updatedCommands.add(command);
-                    }
-                }
-
-                // Run script
-                runner.setCommands(updatedCommands);
-                runner.runScript(con, true);
-
-                // Flush for this update
-                WebloggerFactory.getWeblogger().flush();
-                WebloggerFactory.getWeblogger().release();
-
-            }
-
-        } finally {
-            try {
-                script.close();
-            } catch (Exception e) {
-                // ignored
-            }
-        }
     }
 
     /**
@@ -520,8 +427,8 @@ public final class TestUtils {
     public static AutoPing setupAutoPing(PingTarget ping, Weblog weblog)
             throws Exception {
 
-        AutoPingManager mgr = WebloggerFactory.getWeblogger()
-                .getAutopingManager();
+        PingTargetManager mgr = WebloggerFactory.getWeblogger()
+                .getPingTargetManager();
 
         // store auto ping
         AutoPing autoPing = new AutoPing(ping, getManagedWebsite(weblog));
@@ -538,23 +445,6 @@ public final class TestUtils {
         }
 
         return autoPing;
-    }
-
-    /**
-     * Convenience method for removing an auto ping.
-     */
-    public static void teardownAutoPing(String id) throws Exception {
-
-        // query for it
-        AutoPingManager mgr = WebloggerFactory.getWeblogger()
-                .getAutopingManager();
-        AutoPing autoPing = mgr.getAutoPing(id);
-
-        // remove the auto ping
-        mgr.removeAutoPing(autoPing);
-
-        // flush to db
-        WebloggerFactory.getWeblogger().flush();
     }
 
     /**
@@ -728,9 +618,5 @@ public final class TestUtils {
 
         // flush
         WebloggerFactory.getWeblogger().flush();
-    }
-
-    public void testNothing() {
-        // TODO: remove this method
     }
 }

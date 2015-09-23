@@ -71,7 +71,7 @@ public class Maintenance extends UIAction {
         try {
             IndexManager manager = WebloggerFactory.getWeblogger()
                     .getIndexManager();
-            manager.rebuildWebsiteIndex(getActionWeblog());
+            manager.rebuildWeblogIndex(getActionWeblog());
 
             addMessage("maintenance.message.indexed");
         } catch (Exception ex) {

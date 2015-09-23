@@ -29,12 +29,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-import org.apache.roller.weblogger.business.search.IndexUtil;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -45,19 +42,18 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
  * 
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
-public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
+public class RebuildWeblogIndexOperation extends WriteToIndexOperation {
 
     // ~ Static fields/initializers
     // =============================================
 
     private static Log mLogger = LogFactory.getFactory().getInstance(
-            RebuildWebsiteIndexOperation.class);
+            RebuildWeblogIndexOperation.class);
 
     // ~ Instance fields
     // ========================================================
 
     private Weblog website;
-    private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
 
     // ~ Constructors
@@ -69,10 +65,9 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
      * @param website
      *            The website to rebuild the index for, or null for all users.
      */
-    public RebuildWebsiteIndexOperation(WeblogManager wm, WeblogEntryManager wem, IndexManagerImpl mgr,
-            Weblog website) {
+    public RebuildWeblogIndexOperation(IndexManagerImpl mgr, WeblogEntryManager wem,
+                                       Weblog website) {
         super(mgr);
-        this.weblogManager = wm;
         this.weblogEntryManager = wem;
         this.website = website;
     }
@@ -81,21 +76,10 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
     // ================================================================
 
     public void doRun() {
-
         Date start = new Date();
 
-        // since this operation can be run on a separate thread we must treat
-        // the weblog object passed in as a detached object which is proned to
-        // lazy initialization problems, so requery for the object now
         if (this.website != null) {
             mLogger.debug("Reindexining weblog " + website.getHandle());
-            try {
-                this.website = weblogManager.getWeblog(
-                        this.website.getId());
-            } catch (WebloggerException ex) {
-                mLogger.error("Error getting website object", ex);
-                return;
-            }
         } else {
             mLogger.debug("Reindexining entire site");
         }
@@ -108,13 +92,13 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                 // Delete Doc
                 Term tWebsite = null;
                 if (website != null) {
-                    tWebsite = IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE,
+                    tWebsite = IndexOperation.getTerm(FieldConstants.WEBSITE_HANDLE,
                             website.getHandle());
                 }
                 if (tWebsite != null) {
                     writer.deleteDocuments(tWebsite);
                 } else {
-                    Term all = IndexUtil.getTerm(FieldConstants.CONSTANT,
+                    Term all = IndexOperation.getTerm(FieldConstants.CONSTANT,
                             FieldConstants.CONSTANT_V);
                     writer.deleteDocuments(all);
                 }

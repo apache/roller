@@ -20,6 +20,7 @@
  */
 package org.apache.roller.weblogger.business;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -102,9 +103,9 @@ public class FileContentManagerTest extends TestCase {
         // File should not exist initially
         try {
             FileContent fileContent = fmgr.getFileContent(testWeblog, "bookmarks-file-id");
-            assertTrue("Non-existant file retrieved without any exception", false);
+            assertTrue("Non-existent file retrieved without any exception", false);
         } catch (FileNotFoundException e) {
-            assertTrue("Exception thrown for non-existant file as expected", true);
+            assertTrue("Exception thrown for non-existent file as expected", true);
         }
 
         // store a file

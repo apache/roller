@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
@@ -98,9 +97,6 @@ public class MediaFileEdit extends MediaFileBase {
             MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
             this.bean.copyFrom(mediaFile);
 
-        } catch (FileIOException ex) {
-            addError("uploadFiles.error.upload", bean.getName());
-
         } catch (Exception e) {
             log.error("Error uploading file " + bean.getName(), e);
             addError("uploadFiles.error.upload", bean.getName());
@@ -145,9 +141,6 @@ public class MediaFileEdit extends MediaFileBase {
 
                 addMessage("mediaFile.update.success");
                 return SUCCESS;
-
-            } catch (FileIOException ex) {
-                addError("uploadFiles.error.upload", bean.getName());
 
             } catch (Exception e) {
                 log.error("Error uploading file " + bean.getName(), e);

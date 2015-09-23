@@ -39,7 +39,7 @@ import javax.persistence.Table;
  * <p>Represents a single blogroll link for a weblog.</p>
  */
 @Entity
-@Table(name="bookmark")
+@Table(name="blogroll_link")
 @NamedQueries({
         @NamedQuery(name="Bookmark.getByWeblog",
                 query="SELECT b FROM WeblogBookmark b WHERE b.weblog = ?1 order by b.priority")

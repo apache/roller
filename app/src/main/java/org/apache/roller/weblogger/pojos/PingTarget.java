@@ -40,7 +40,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 @Entity
-@Table(name="pingtarget")
+@Table(name="ping_target")
 @NamedQueries({
         @NamedQuery(name="PingTarget.getPingTargetsOrderByName",
                 query="SELECT p FROM PingTarget p ORDER BY p.name")

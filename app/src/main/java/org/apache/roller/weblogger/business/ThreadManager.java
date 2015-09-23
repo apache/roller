@@ -21,6 +21,8 @@
 
 package org.apache.roller.weblogger.business;
 
+import org.apache.roller.weblogger.WebloggerException;
+
 /**
  * Thread management for executing scheduled and asynchronous tasks.
  */
@@ -29,9 +31,9 @@ public interface ThreadManager {
     /**
      * Initialize the thread management system.
      *
-     * @throws InitializationException If there is a problem during initialization.
+     * @throws WebloggerException If there is a problem during initialization.
      */
-    void initialize() throws InitializationException;
+    void initialize() throws WebloggerException;
     
     
     /**

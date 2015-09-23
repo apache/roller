@@ -23,7 +23,6 @@ package org.apache.roller.weblogger.business.startup;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,18 +43,16 @@ public class DatabaseInstaller {
     private static Log log = LogFactory.getLog(DatabaseInstaller.class);
     
     private final DatabaseProvider db;
-    private final DatabaseScriptProvider scripts;
     private final String version;
-    private List<String> messages = new ArrayList<String>();
+    private List<String> messages = new ArrayList<>();
     
     // the name of the property which holds the dbversion value
     private static final String DBVERSION_PROP = "roller.database.version";
     
     
-    public DatabaseInstaller(DatabaseProvider dbProvider, DatabaseScriptProvider scriptProvider) {
+    public DatabaseInstaller(DatabaseProvider dbProvider) {
         db = dbProvider;
-        scripts = scriptProvider;
-        
+
         Properties props = new Properties();
         try {
             props.load(getClass().getResourceAsStream("/roller-version.properties"));
@@ -76,8 +73,9 @@ public class DatabaseInstaller {
             con = db.getConnection();
             
             // just check for a couple key Roller tables
-            // roller_user table called rolleruser before Roller 5.1
-            if (tableExists(con, "weblog") && (tableExists(con, "roller_user") || tableExists(con, "rolleruser"))) {
+            // weblogger_user table had different names in the past
+            if (tableExists(con, "weblog") && (tableExists(con, "weblogger_user")
+                    || tableExists(con, "roller_user") || tableExists(con, "rolleruser"))) {
                 return false;
             }
             
@@ -167,7 +165,7 @@ public class DatabaseInstaller {
         try {
             con = db.getConnection();
             String handle = getDatabaseHandle(con);
-            create = new SQLScriptRunner(scripts.getDatabaseScript(handle + "/createdb.sql"));
+            create = new SQLScriptRunner(handle + "/createdb.sql", true);
             create.runScript(con, true);
             messages.addAll(create.getMessages());
             
@@ -239,7 +237,6 @@ public class DatabaseInstaller {
             }
             if(dbversion < 520) {
                 upgradeTo520(con, runScripts);
-                dbversion = 520;
             }
             
             // make sure the database version is the exact version
@@ -269,7 +266,7 @@ public class DatabaseInstaller {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/500-to-510-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
-                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scriptPath, true);
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
@@ -296,7 +293,7 @@ public class DatabaseInstaller {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/510-to-520-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);
-                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scriptPath, true);
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
@@ -361,18 +358,18 @@ public class DatabaseInstaller {
             con = db.getConnection();
             Statement stmt = con.createStatement();
             
-            // just check in the roller_properties table
+            // just check in the weblogger_properties table
             ResultSet rs = stmt.executeQuery(
-                    "select value from roller_properties where name = '"+DBVERSION_PROP+"'");
+                    "select value from weblogger_properties where name = '"+DBVERSION_PROP+"'");
             
             if(rs.next()) {
                 dbversion = Integer.parseInt(rs.getString(1));
                 
             } else {
                 // tough to know if this is an upgrade with no db version :/
-                // however, if roller_properties is not empty then we at least
+                // however, if weblogger_properties is not empty then we at least
                 // we have someone upgrading from 1.2.x
-                rs = stmt.executeQuery("select count(*) from roller_properties");
+                rs = stmt.executeQuery("select count(*) from weblogger_properties");
                 if (rs.next() && rs.getInt(1) > 0) {
                     dbversion = 120;
                 }
@@ -437,7 +434,7 @@ public class DatabaseInstaller {
         
         try {
             Statement stmt = con.createStatement();
-            stmt.executeUpdate("insert into roller_properties "+
+            stmt.executeUpdate("insert into weblogger_properties "+
                     "values('"+DBVERSION_PROP+"', '"+version+"')");
             
             log.debug("Set database verstion to "+version);
@@ -455,11 +452,11 @@ public class DatabaseInstaller {
         
         try {
             Statement stmt = con.createStatement();
-            stmt.executeUpdate("update roller_properties "+
+            stmt.executeUpdate("update weblogger_properties "+
                     "set value = '"+version+"'"+
                     "where name = '"+DBVERSION_PROP+"'");
             
-            log.debug("Updated database verstion to "+version);
+            log.debug("Updated database version to "+version);
         } catch(SQLException se) {
             throw new StartupException("Error setting database version.", se);
         } 
