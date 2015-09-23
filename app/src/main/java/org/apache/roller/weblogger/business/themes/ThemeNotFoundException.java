@@ -25,22 +25,7 @@ import org.apache.roller.weblogger.WebloggerException;
  * Thrown when the ThemeManager has a problem finding a named theme.
  */
 public class ThemeNotFoundException extends WebloggerException {
-    
-    
-    public ThemeNotFoundException(String s,Throwable t) {
-        super(s, t);
-    }
-    
-    public ThemeNotFoundException(Throwable t) {
-        super(t);
-    }
-    
     public ThemeNotFoundException(String s) {
         super(s);
     }
-    
-    public ThemeNotFoundException() {
-        super();
-    }
-    
 }

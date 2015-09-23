@@ -21,6 +21,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
@@ -28,9 +29,9 @@ import java.util.Map;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
-import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
@@ -125,7 +126,7 @@ public class VelocityRenderer implements Renderer {
      *      java.io.Writer)
      */
     public void render(Map<String, Object> model, Writer out)
-            throws RenderingException {
+            throws WebloggerException {
 
         try {
 
@@ -203,7 +204,7 @@ public class VelocityRenderer implements Renderer {
 
         } catch (Exception ex) {
             // wrap and rethrow so caller can deal with it
-            throw new RenderingException("Error during rendering", ex);
+            throw new WebloggerException("Error during rendering", ex);
         }
     }
 
@@ -217,11 +218,11 @@ public class VelocityRenderer implements Renderer {
      * @param template
      *            the template. Null if using existing template name
      * 
-     * @throws RenderingException
+     * @throws WebloggerException
      *             the rendering exception
      */
     private void renderException(Map<String, Object> model, Writer out,
-            String template) throws RenderingException {
+            String template) throws WebloggerException {
 
         try {
 
@@ -242,7 +243,7 @@ public class VelocityRenderer implements Renderer {
 
         } catch (Exception e) {
             // wrap and rethrow so caller can deal with it
-            throw new RenderingException("Error during rendering", e);
+            throw new WebloggerException("Error during rendering", e);
         }
 
     }

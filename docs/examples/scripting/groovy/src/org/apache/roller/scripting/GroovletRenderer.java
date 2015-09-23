@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
-import org.apache.roller.weblogger.ui.rendering.RenderingException;
 
 /**
  * Renderer that evaluates Roller Template as Groovy script.
@@ -50,7 +49,7 @@ public class GroovletRenderer implements Renderer {
         this.template = template;
     }
     
-    public void render(Map model, Writer writer) throws RenderingException {
+    public void render(Map model, Writer writer) throws WebloggerException {
         try {
             long startTime = System.currentTimeMillis();            
             Binding binding = new GroovyRollerBinding(model, writer);

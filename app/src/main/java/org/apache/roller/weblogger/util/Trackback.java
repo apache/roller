@@ -60,7 +60,7 @@ public class Trackback {
     
     
     public Trackback(WeblogEntry tEntry, String tURL)
-            throws TrackbackNotAllowedException {
+            throws IllegalArgumentException, WebloggerException {
         
         // Make sure trackback to URL is allowed
         boolean allowTrackback = true;
@@ -70,8 +70,8 @@ public class Trackback {
             // for only specific URLs, set it to false by default
             allowTrackback = false;
             String[] splitURLs = allowedURLs.split("\\|\\|");
-            for (int i=0; i < splitURLs.length; i++) {
-                Matcher m = Pattern.compile(splitURLs[i]).matcher(tURL);
+            for (String urlEntry : splitURLs) {
+                Matcher m = Pattern.compile(urlEntry).matcher(tURL);
                 if (m.matches()) {
                     allowTrackback = true;
                     break;
@@ -80,14 +80,14 @@ public class Trackback {
         }
         
         if(!allowTrackback) {
-            throw new TrackbackNotAllowedException(tURL);
+            throw new IllegalArgumentException("Did not send trackback, " +
+                    "URL not in trackback.allowedURLs list: " + tURL);
         } else {
             // test url
             try {
                 new URL(tURL);
             } catch(MalformedURLException ex) {
-                // bad url
-                throw new IllegalArgumentException("bad url: "+tURL);
+                throw new WebloggerException("malformed url: "+tURL);
             }
             
             entry = tEntry;
@@ -115,7 +115,7 @@ public class Trackback {
         String blog_name = entry.getWeblog().getName();
         
         // build trackback post parameters as query string
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         params.put("title", URLUtilities.encode(title));
         params.put("excerpt", URLUtilities.encode(excerpt));
         params.put("url", URLUtilities.encode(url));
@@ -202,5 +202,5 @@ public class Trackback {
         
         return messages;
     }
-    
+
 }

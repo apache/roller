@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.rendering;
 
+import org.apache.roller.weblogger.WebloggerException;
+
 import java.io.Writer;
 import java.util.Map;
 
@@ -34,6 +36,6 @@ public interface Renderer {
      *
      * Throws an exception if there is a problem during rendering.
      */
-    void render(Map<String, Object> model, Writer writer) throws RenderingException;
+    void render(Map<String, Object> model, Writer writer) throws WebloggerException;
     
 }

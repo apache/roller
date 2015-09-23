@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
@@ -239,5 +240,11 @@ public class ThemeMetadataParser {
 
         return template;
     }
-    
+
+    public static class ThemeParsingException extends WebloggerException {
+        public ThemeParsingException(String s) {
+            super(s);
+        }
+    }
+
 }

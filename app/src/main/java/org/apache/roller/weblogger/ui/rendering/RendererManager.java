@@ -19,6 +19,7 @@ package org.apache.roller.weblogger.ui.rendering;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Template;
 
@@ -38,7 +39,7 @@ public final class RendererManager {
 
     private static Log log = LogFactory.getLog(RendererManager.class);
     // a set of all renderer factories we are consulting
-    private static Set<RendererFactory> rendererFactories = new HashSet<RendererFactory>();
+    private static Set<RendererFactory> rendererFactories = new HashSet<>();
 
     static {
         // lookup set of renderer factories we are going to use
@@ -104,7 +105,7 @@ public final class RendererManager {
      * can be found then we throw an exception.
      */
     public static Renderer getRenderer(Template template, MobileDeviceRepository.DeviceType deviceType)
-            throws RenderingException {
+            throws WebloggerException {
 
         Renderer renderer;
 
@@ -117,7 +118,7 @@ public final class RendererManager {
             }
         }
 
-        throw new RenderingException("No renderer found for template "
+        throw new WebloggerException("No renderer found for template "
                 + template.getId() + "!");
     }
 }

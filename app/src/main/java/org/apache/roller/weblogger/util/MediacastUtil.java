@@ -52,7 +52,7 @@ public final class MediacastUtil {
             return null;
         }
         
-        MediacastResource resource = null;
+        MediacastResource resource;
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
             con.setRequestMethod("HEAD");
