@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
-import org.apache.roller.weblogger.ui.rendering.RenderingException;
 
 /**
  * Renderer that compiles/executes Roller Template as a Groovy Template.
@@ -60,7 +59,7 @@ public class GSPRenderer implements Renderer {
         }
     }
     
-    public void render(Map model, Writer writer) throws RenderingException {
+    public void render(Map model, Writer writer) throws WebloggerException {
         try {
             if (parseException == null) {                
 

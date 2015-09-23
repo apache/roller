@@ -259,7 +259,7 @@ public class MailUtil {
                                              RollerMessages messages, 
                                              I18nMessages resources,
                                              boolean notifySubscribers) 
-            throws MailingException {
+            throws WebloggerException {
 
         // TODO: Factor out email notification from moderate message to owner.
 
@@ -501,7 +501,7 @@ public class MailUtil {
 
     public static void sendEmailApprovalNotifications(List<WeblogEntryComment> comments,
                                                I18nMessages resources) 
-            throws MailingException {
+            throws WebloggerException {
         
         RollerMessages messages = new RollerMessages();
         for (WeblogEntryComment comment : comments) {
@@ -519,7 +519,7 @@ public class MailUtil {
      * Send message to author of approved comment
      */
     public static void sendEmailApprovalNotification(WeblogEntryComment cd, I18nMessages resources)
-            throws MailingException {
+            throws WebloggerException {
         
         WeblogEntry entry = cd.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
@@ -695,12 +695,4 @@ public class MailUtil {
         sendMessage(from, to, cc, bcc, subject, content, "text/html; charset=utf-8");
     }
 
-    /**
-     * An exception thrown if there is a problem sending an email.
-     */
-    public class MailingException extends WebloggerException {
-        public MailingException(Throwable t) {
-            super(t);
-        }
-    }
 }

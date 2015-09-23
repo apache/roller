@@ -27,6 +27,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -64,7 +66,7 @@ public class SharedThemeFromDir extends SharedTheme {
     private Map<String, ThemeResource> resources = new HashMap<String, ThemeResource>();
 
     public SharedThemeFromDir(String themeDirPath)
-            throws ThemeInitializationException {
+            throws WebloggerException {
 
         this.themeDir = themeDirPath;
 
@@ -163,7 +165,7 @@ public class SharedThemeFromDir extends SharedTheme {
     /**
      * Load all the elements of this theme from disk and cache them.
      */
-    private void loadThemeFromDisk() throws ThemeInitializationException {
+    private void loadThemeFromDisk() throws WebloggerException {
 
         log.debug("Parsing theme descriptor for " + this.themeDir);
 
@@ -175,7 +177,7 @@ public class SharedThemeFromDir extends SharedTheme {
                     + "theme.xml");
             themeMetadata = parser.unmarshall(is);
         } catch (Exception ex) {
-            throw new ThemeInitializationException(
+            throw new WebloggerException(
                     "Unable to parse theme.xml for theme " + this.themeDir, ex);
         }
 
@@ -225,8 +227,8 @@ public class SharedThemeFromDir extends SharedTheme {
 
             // standardTemplateCode required
             if (standardTemplateCode == null) {
-                throw new ThemeInitializationException(
-                        "Error in getting template codes for template");
+                throw new WebloggerException(
+                        "Cannot retrieve required standard rendition for template's stylesheet");
             } else if (mobileTemplateCode == null && themeMetadata.getDualTheme()) {
                 // clone the standard template code if no mobile is present
                 mobileTemplateCode = new ThemeMetadataTemplateRendition();
@@ -327,8 +329,8 @@ public class SharedThemeFromDir extends SharedTheme {
 
             // If no template code present for any type
             if (standardTemplateCode == null) {
-                throw new ThemeInitializationException(
-                        "Error in getting template codes for template");
+                throw new WebloggerException(
+                        "Cannot retrieve required standard rendition for template");
             } else if (mobileTemplateCode == null && themeMetadata.getDualTheme()) {
                 // cloning the standard template code if no mobile is present
                 mobileTemplateCode = new ThemeMetadataTemplateRendition();
@@ -348,7 +350,7 @@ public class SharedThemeFromDir extends SharedTheme {
             String contents = loadTemplateFile(templateFile);
             if (contents == null) {
                 // if we don't have any contents then skip this one
-                throw new ThemeInitializationException("Couldn't load theme ["
+                throw new WebloggerException("Couldn't load theme ["
                         + this.getName() + "] template file [" + templateFile
                         + "]");
             }
