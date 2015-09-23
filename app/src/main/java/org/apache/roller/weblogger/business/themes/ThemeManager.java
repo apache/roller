@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.business.themes;
 import java.util.List;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -33,10 +32,10 @@ public interface ThemeManager {
     /**
      * Initialize the theme system.
      *
-     * @throws InitializationException
+     * @throws WebloggerException
      *             If there is a problem during initialization.
      */
-    void initialize() throws InitializationException;
+    void initialize() throws WebloggerException;
 
     /**
      * Get the Theme object with the given id.

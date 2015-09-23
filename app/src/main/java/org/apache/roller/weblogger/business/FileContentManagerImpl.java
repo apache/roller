@@ -14,11 +14,15 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +32,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -78,14 +83,14 @@ public class FileContentManagerImpl implements FileContentManager {
      *      String)
      */
     public FileContent getFileContent(Weblog weblog, String fileId)
-            throws FileNotFoundException, FilePathException {
+            throws FileNotFoundException, IOException {
 
         // get a reference to the file, checks that file exists & is readable
         File resourceFile = this.getRealFile(weblog, fileId);
 
         // make sure file is not a directory
         if (resourceFile.isDirectory()) {
-            throw new FilePathException("Invalid file id [" + fileId + "], "
+            throw new IOException("Invalid file id [" + fileId + "], "
                     + "path is a directory.");
         }
 
@@ -98,7 +103,7 @@ public class FileContentManagerImpl implements FileContentManager {
      *      String, java.io.InputStream)
      */
     public void saveFileContent(Weblog weblog, String fileId, InputStream is)
-            throws FileNotFoundException, FilePathException, FileIOException {
+            throws IOException {
 
         // make sure uploads area exists for this weblog
         File dirPath = this.getRealFile(weblog, null);
@@ -119,7 +124,7 @@ public class FileContentManagerImpl implements FileContentManager {
             log.debug("The file has been written to ["
                     + saveFile.getAbsolutePath() + "]");
         } catch (Exception e) {
-            throw new FileIOException("ERROR uploading file", e);
+            throw new IOException("ERROR uploading file", e);
         } finally {
             try {
                 if (bos != null) {
@@ -137,7 +142,7 @@ public class FileContentManagerImpl implements FileContentManager {
      *      String)
      */
     public void deleteFile(Weblog weblog, String fileId)
-            throws FileNotFoundException, FilePathException, FileIOException {
+            throws FileNotFoundException, IOException {
 
         // get path to delete file, checks that path exists and is readable
         File delFile = this.getRealFile(weblog, fileId);
@@ -150,7 +155,7 @@ public class FileContentManagerImpl implements FileContentManager {
     /**
      * @inheritDoc
      */
-    public void deleteAllFiles(Weblog weblog) throws FileIOException {
+    public void deleteAllFiles(Weblog weblog) throws IOException {
         // TODO: Implement
     }
 
@@ -390,7 +395,7 @@ public class FileContentManagerImpl implements FileContentManager {
      * Construct the full real path to a resource in a weblog's uploads area.
      */
     private File getRealFile(Weblog weblog, String fileId)
-            throws FileNotFoundException, FilePathException {
+            throws IOException {
 
         // make sure uploads area exists for this weblog
         File weblogDir = new File(this.storageDir + weblog.getHandle());
@@ -410,20 +415,15 @@ public class FileContentManagerImpl implements FileContentManager {
             throw new FileNotFoundException("Invalid path [" + filePath + "], "
                     + "file does not exist.");
         } else if (!file.canRead()) {
-            throw new FilePathException("Invalid path [" + filePath + "], "
+            throw new IOException("Invalid path [" + filePath + "], "
                     + "cannot read from path.");
         }
 
-        try {
-            // make sure someone isn't trying to sneek outside the uploads dir
-            if (!file.getCanonicalPath().startsWith(
-                    weblogDir.getCanonicalPath())) {
-                throw new FilePathException("Invalid path " + filePath + "], "
-                        + "trying to get outside uploads dir.");
-            }
-        } catch (IOException ex) {
-            // rethrow as FilePathException
-            throw new FilePathException(ex);
+        // make sure someone isn't trying to sneak outside the uploads dir
+        if (!file.getCanonicalPath().startsWith(
+                weblogDir.getCanonicalPath())) {
+            throw new IllegalArgumentException("Invalid path " + filePath + "], "
+                    + "access attempt outside defined uploads dir.");
         }
 
         return file;

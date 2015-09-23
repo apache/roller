@@ -56,9 +56,8 @@ public class SQLScriptRunnerTest extends TestCase {
         
         String scriptPath = System.getProperty("project.build.directory")
                 + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-"+dbname+".sql";
-        SQLScriptRunner runner = new SQLScriptRunner(scriptPath);
-        assertTrue(runner != null);
-        assertTrue(runner.getCommandCount() == 5);        
+        SQLScriptRunner runner = new SQLScriptRunner(scriptPath, false);
+        assertTrue(runner.getCommandCount() == 5);
     }    
     
     public void testSimpleRun() throws Exception {
@@ -76,7 +75,7 @@ public class SQLScriptRunnerTest extends TestCase {
         // run script to create tables
         SQLScriptRunner create = 
             new SQLScriptRunner(System.getProperty("project.build.directory")
-                    + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-"+dbname+".sql");
+                    + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-"+dbname+".sql", false);
         create.runScript(con, true);
         
         // check to ensure tables were created
@@ -85,7 +84,7 @@ public class SQLScriptRunnerTest extends TestCase {
         
         // drop tables
         SQLScriptRunner drop = 
-            new SQLScriptRunner(System.getProperty("project.build.directory") + "/test-classes/WEB-INF/dbscripts/dummydb/droptables.sql");
+            new SQLScriptRunner(System.getProperty("project.build.directory") + "/test-classes/WEB-INF/dbscripts/dummydb/droptables.sql", false);
         drop.runScript(con, false);
 
         // check to ensure tables were dropped
@@ -94,7 +93,6 @@ public class SQLScriptRunnerTest extends TestCase {
     }
         
     public static boolean tableExists(Connection con, String tableName) throws SQLException {
-        String[] types = {"TABLE"};
         ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
         while (rs.next()) {
             if (tableName.toLowerCase().equals(rs.getString("TABLE_NAME").toLowerCase())) {

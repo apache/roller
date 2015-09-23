@@ -124,7 +124,7 @@ public class PlanetSubscriptions extends UIAction {
                 }
             } catch (WebloggerException ex) {
                 LOGGER.error("Unexpected error saving subscription", ex);
-                addError("planetSubscriptions.error.duringSave", ex.getRootCauseMessage());
+                addError("planetSubscriptions.error.duringSave", ex.getErrorMessageChain());
             }
         }
         

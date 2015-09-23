@@ -89,7 +89,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
-        WeblogCategory testCat = new WeblogCategory(testWeblog, "root", "desc");
+        WeblogCategory testCat = new WeblogCategory(testWeblog, null, "desc");
         WeblogCategory testCat2 = new WeblogCategory(testWeblog, "root2", "desc2");
         assertFalse(testCat2.equals(testCat));
         mgr.removeWeblogCategory(testCat);

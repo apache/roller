@@ -28,46 +28,38 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-import org.apache.roller.weblogger.business.search.IndexUtil;
-import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
  * An index operation that rebuilds a given users index (or all indexes).
  * 
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
-public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
+public class RemoveWeblogIndexOperation extends WriteToIndexOperation {
 
     // ~ Static fields/initializers
     // =============================================
 
     private static Log mLogger = LogFactory.getFactory().getInstance(
-            RemoveWebsiteIndexOperation.class);
+            RemoveWeblogIndexOperation.class);
 
     // ~ Instance fields
     // ========================================================
 
-    private Weblog website;
-    private WeblogManager weblogManager;
+    private String weblogHandle;
 
     // ~ Constructors
     // ===========================================================
 
     /**
-     * Create a new operation that will recreate an index.
+     * Create a operation that remove the index data for a weblog.
      * 
-     * @param website
-     *            The website to rebuild the index for, or null for all sites.
+     * @param weblogHandle The weblog whose index data is to be removed.
      */
-    public RemoveWebsiteIndexOperation(WeblogManager wm, IndexManagerImpl mgr,
-            Weblog website) {
+    public RemoveWeblogIndexOperation(IndexManagerImpl mgr, String weblogHandle) {
         super(mgr);
-        this.weblogManager = wm;
-        this.website = website;
+        this.weblogHandle = weblogHandle;
     }
 
     // ~ Methods
@@ -76,26 +68,11 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
     public void doRun() {
         Date start = new Date();
 
-        // since this operation can be run on a separate thread we must treat
-        // the weblog object passed in as a detached object which is proned to
-        // lazy initialization problems, so requery for the object now
-        try {
-            this.website = weblogManager.getWeblog(
-                    this.website.getId());
-        } catch (WebloggerException ex) {
-            mLogger.error("Error getting website object", ex);
-            return;
-        }
-
         IndexWriter writer = beginWriting();
         try {
             if (writer != null) {
-                String handle = null;
-                if (website != null) {
-                    handle = website.getHandle();
-                }
-                Term tHandle = IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE,
-                        handle);
+                Term tHandle = IndexOperation.getTerm(FieldConstants.WEBSITE_HANDLE,
+                        weblogHandle);
 
                 if (tHandle != null) {
                     writer.deleteDocuments(tHandle);
@@ -110,9 +87,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         Date end = new Date();
         double length = (end.getTime() - start.getTime()) / (double) DateUtils.MILLIS_PER_SECOND;
 
-        if (website != null) {
-            mLogger.info("Completed deleting indices for website '"
-                    + website.getName() + "' in '" + length + "' seconds");
-        }
+        mLogger.info("Completed deleting indices for weblog with handle '"
+                + weblogHandle + "' in '" + length + "' seconds");
     }
 }

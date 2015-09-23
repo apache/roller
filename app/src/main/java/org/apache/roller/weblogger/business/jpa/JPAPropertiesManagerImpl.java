@@ -29,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.config.runtime.ConfigDef;
@@ -66,7 +65,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     /**
      * @inheritDoc
      */
-    public void initialize() throws InitializationException {
+    public void initialize() throws WebloggerException {
         
         Map<String, RuntimeConfigProperty> props;
         try {

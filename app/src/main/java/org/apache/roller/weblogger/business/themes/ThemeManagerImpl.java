@@ -39,7 +39,6 @@ import javax.activation.MimetypesFileTypeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
@@ -115,7 +114,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		}
 	}
 
-	public void initialize() throws InitializationException {
+	public void initialize() throws WebloggerException {
 
 		log.debug("Initializing Theme Manager");
 

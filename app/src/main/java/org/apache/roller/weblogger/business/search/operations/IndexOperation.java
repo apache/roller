@@ -21,11 +21,15 @@
 package org.apache.roller.weblogger.business.search.operations;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.SortedDocValuesField;
@@ -33,6 +37,7 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.util.BytesRef;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
@@ -42,11 +47,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 /**
- * This is the base class for all index operation. These operations include:<br>
- * SearchOperation<br>
- * AddWeblogOperation<br>
- * RemoveWeblogOperation<br>
- * RebuildUserIndexOperation
+ * This is the base class for all index operations.
  */
 public abstract class IndexOperation implements Runnable {
 
@@ -207,4 +208,36 @@ public abstract class IndexOperation implements Runnable {
     }
 
     protected abstract void doRun();
+
+    /**
+     * Create a lucene term from the first token of the input string.
+     *
+     * @param field
+     *            The lucene document field to create a term with
+     * @param input
+     *            The input you wish to convert into a term
+     *
+     * @return Lucene search term
+     */
+    public static Term getTerm(String field, String input) {
+        if (input == null || field == null) {
+            return null;
+        }
+        Analyzer analyzer = IndexManagerImpl.getAnalyzer();
+        Term term = null;
+        try {
+            TokenStream tokens = analyzer.tokenStream(field, new StringReader(input));
+            CharTermAttribute termAtt = tokens.addAttribute(CharTermAttribute.class);
+            tokens.reset();
+
+            if (tokens.incrementToken()) {
+                String termt = termAtt.toString();
+                term = new Term(field, termt);
+            }
+        } catch (IOException e) {
+            // ignored
+        }
+        return term;
+    }
+
 }

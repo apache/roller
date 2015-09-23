@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.startup;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,26 +43,46 @@ public class SQLScriptRunner {
     private boolean      errors = false;
         
     
-    /** Creates a new instance of SQLScriptRunner */
+    /** Creates a new instance of SQLScriptRunner from an InputStream */
     public SQLScriptRunner(InputStream is) throws IOException {
-        
+        getCommands(is);
+    }
+    
+    /** Creates a new instance of SQLScriptRunner from a file-based reference
+     * @param scriptPath reference to the file
+     * @param isClasspath, if true, classpath reference relative to /classes/dbscripts folder;
+     *                     if false, reference is an absolute file-based reference
+     */
+    public SQLScriptRunner(String scriptPath, boolean isClasspath) throws IOException {
+        InputStream is;
+        if (isClasspath) {
+            String resourcePath = "/dbscripts/" + scriptPath;
+            is = SQLScriptRunner.class.getResourceAsStream(resourcePath);
+        } else {
+            is = new FileInputStream(scriptPath);
+        }
+        getCommands(is);
+        is.close();
+    }
+
+    private void getCommands(InputStream is) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
-        String command = ""; 
+        String command = "";
         String line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
 
             // ignore lines starting with "--"
             if (!line.startsWith("--")) {
-                
+
                 if (line.indexOf("--") > 0) {
                     // trim comment off end of line
                     line = line.substring(0, line.indexOf("--")).trim();
                 }
-                
+
                 // add line to current command
                 command += line.trim();
-                if (command.endsWith(";")) { 
+                if (command.endsWith(";")) {
                     // ";" is end of command, so add completed command to list
                     String cmd = command.substring(0, command.length() - 1);
                     String[] cmdArray = StringUtils.split(cmd);
@@ -71,18 +93,11 @@ public class SQLScriptRunner {
                     // still more command coming so add space
                     command += " ";
                 }
-            } 
+            }
         }
-        in.close();    
+        in.close();
     }
-    
-    
-    /** Creates a new instance of SQLScriptRunner */
-    public SQLScriptRunner(String scriptPath) throws IOException {
-        this(new FileInputStream(scriptPath));
-    }
-    
-    
+
     /** Number of SQL commands in script */
     public int getCommandCount() {
         return commands.size();
@@ -153,25 +168,5 @@ public class SQLScriptRunner {
     
     private void successMessage(String msg) {
         messages.add(msg);
-    }
-    
-    
-    /**
-     * Gets the commands.
-     * 
-     * @return the commands
-     */
-    public List<String> getCommands() {
-        return commands;
-    }
-
-    /**
-     * Sets the commands.
-     * 
-     * @param commands
-     *            the new commands
-     */
-    public void setCommands(List<String> commands) {
-        this.commands = commands;
     }
 }

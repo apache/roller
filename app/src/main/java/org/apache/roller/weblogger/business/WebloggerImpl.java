@@ -27,8 +27,6 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
@@ -43,7 +41,6 @@ public abstract class WebloggerImpl implements Weblogger {
     private static Log log = LogFactory.getLog(WebloggerImpl.class);
     
     // managers
-    private final AutoPingManager      autoPingManager;
     private final IndexManager         indexManager;
     private final MediaFileManager     mediaFileManager;
     private final FileContentManager   fileContentManager;
@@ -69,7 +66,6 @@ public abstract class WebloggerImpl implements Weblogger {
     
     
     protected WebloggerImpl(
-        AutoPingManager      autoPingManager,
         IndexManager         indexManager,
         MediaFileManager     mediaFileManager,
         FileContentManager   fileContentManager,
@@ -85,7 +81,6 @@ public abstract class WebloggerImpl implements Weblogger {
         PlanetManager        planetManager,
         URLStrategy          urlStrategy) throws WebloggerException {
                 
-        this.autoPingManager     = autoPingManager;
         this.indexManager        = indexManager;
         this.mediaFileManager    = mediaFileManager;
         this.fileContentManager  = fileContentManager;
@@ -208,16 +203,6 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
-    public AutoPingManager getAutopingManager() {
-        return autoPingManager;
-    }
-    
-    
-    /**
-     * 
-     * 
-     * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
-     */
     public PingTargetManager getPingTargetManager() {
         return pingTargetManager;
     }
@@ -254,7 +239,6 @@ public abstract class WebloggerImpl implements Weblogger {
      */
     public void release() {
         try {
-            autoPingManager.release();
             mediaFileManager.release();
             fileContentManager.release();
             pingTargetManager.release();
@@ -271,7 +255,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * @inheritDoc
      */
-    public void initialize() throws InitializationException {
+    public void initialize() throws WebloggerException {
         
         log.info("Initializing Roller Weblogger business tier");
         
@@ -287,7 +271,7 @@ public abstract class WebloggerImpl implements Weblogger {
         try {
             flush();
         } catch(WebloggerException ex) {
-            throw new InitializationException("Error flushing after initialization", ex);
+            throw new WebloggerException("Error flushing after initialization", ex);
         } 
         
         log.info("Roller Weblogger business tier successfully initialized");

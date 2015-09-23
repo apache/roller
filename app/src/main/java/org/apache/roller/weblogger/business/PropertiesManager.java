@@ -31,9 +31,9 @@ public interface PropertiesManager {
     /**
      * Initialize the properties manager.
      *
-     * @throws InitializationException If there is a problem during initialization.
+     * @throws WebloggerException If there is a problem during initialization.
      */
-    void initialize() throws InitializationException;
+    void initialize() throws WebloggerException;
     
     
     /**

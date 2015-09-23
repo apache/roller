@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,6 @@ package org.apache.roller.weblogger.business;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.util.URLUtilities;
@@ -42,110 +41,57 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         previewTheme = theme;
     }
     
-    
     /**
      * Get root url for a given *preview* weblog.  
      */
     @Override
     public String getWeblogURL(Weblog weblog, boolean absolute) {
-        
-        if(weblog == null) {
-            return null;
-        }
-        
-        StringBuilder url = new StringBuilder();
-        
-        if(absolute) {
-            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
-        } else {
-            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
-        }
-        
-        url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
-        
+        String url = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
-        if(previewTheme != null) {
+        if (previewTheme != null) {
             params.put("theme", URLUtilities.encode(previewTheme));
         }
-        
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url + URLUtilities.getQueryString(params);
     }
-    
-    
+
     /**
-     * Get url for a given *preview* weblog entry.  
+     * Get url for a given *preview* weblog entry.
      */
     @Override
     public String getWeblogEntryURL(Weblog weblog, String previewAnchor, boolean absolute) {
-        
-        if(weblog == null) {
-            return null;
-        }
-
-        StringBuilder url = new StringBuilder();
-        
-        if(absolute) {
-            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
-        } else {
-            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
-        }
-        
-        url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
+        String url = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         
         Map<String, String> params = new HashMap<>();
-        if(previewTheme != null) {
+        if (previewTheme != null) {
             params.put("theme", URLUtilities.encode(previewTheme));
         }
-        if(previewAnchor != null) {
+        if (previewAnchor != null) {
             params.put("previewEntry", URLUtilities.encode(previewAnchor));
         }
         
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url + URLUtilities.getQueryString(params);
     }
-    
-    
+
     /**
      * Get url for a collection of entries on a given weblog.
      */
     public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, List tags,
                                   int pageNum, boolean absolute) {
         
-        if(weblog == null) {
-            return null;
-        }
-
-        StringBuilder pathinfo = new StringBuilder();
+        String pathinfo = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
-        
-        if(absolute) {
-        	pathinfo.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
-        } else {
-        	pathinfo.append(WebloggerRuntimeConfig.getRelativeContextURL());
-        }
-        
-        pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
-        
-        String cat;
-        if("root".equals(category)) {
-            cat = null;
-        } else {
-            cat = category;
-        }
-        
-        if(cat != null && dateString == null) {
-            pathinfo.append("category/").append(URLUtilities.encodePath(cat));
-            
-        } else if(dateString != null && cat == null) {
-            pathinfo.append("date/").append(dateString);  
-        
+        if(category != null && dateString == null) {
+            pathinfo += "category/" + URLUtilities.encodePath(category);
+        } else if(dateString != null && category == null) {
+            pathinfo += "date/" + dateString;
         } else if(tags != null && tags.size() > 0) {
-            pathinfo.append("tags/").append(URLUtilities.getEncodedTagsString(tags));
+            pathinfo += "tags/" + URLUtilities.getEncodedTagsString(tags);
         } else {
             if (dateString != null) {
                 params.put("date", dateString);
             }
-            if (cat != null) {
-                params.put("cat", URLUtilities.encode(cat));
+            if (category != null) {
+                params.put("cat", URLUtilities.encode(category));
             }
         }
 
@@ -157,9 +103,8 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             params.put("theme", URLUtilities.encode(previewTheme));
         }
 
-        return pathinfo.toString() + URLUtilities.getQueryString(params);
+        return pathinfo + URLUtilities.getQueryString(params);
     }
-    
 
     /**
      * Get url for a custom page on a given weblog.
@@ -167,28 +112,16 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     @Override
     public String getWeblogPageURL(Weblog weblog, String pageLink, String entryAnchor, String category,
                             String dateString, List tags, int pageNum, boolean absolute) {
-        
-        if(weblog == null) {
-            return null;
-        }
-        
-        StringBuilder pathinfo = new StringBuilder();
+
+        String pathinfo = getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         Map<String, String> params = new HashMap<>();
-        
-        if(absolute) {
-            pathinfo.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
-        } else {
-            pathinfo.append(WebloggerRuntimeConfig.getRelativeContextURL());
-        }
-        
-        pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
-        
+
         if(previewTheme != null) {
             params.put("theme", URLUtilities.encode(previewTheme));
         }
         
         if(pageLink != null) {
-            pathinfo.append("page/").append(pageLink);
+            pathinfo += "page/" + pageLink;
             
             // for custom pages we only allow query params
             if(dateString != null) {
@@ -208,42 +141,28 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return getWeblogCollectionURL(weblog, category, dateString, tags, pageNum, absolute);
         }
         
-        return pathinfo.toString() + URLUtilities.getQueryString(params);
+        return pathinfo + URLUtilities.getQueryString(params);
     }
-    
     
     /**
      * Get a url to a *preview* resource on a given weblog.
      */
     @Override
     public String getWeblogResourceURL(Weblog weblog, String filePath, boolean absolute) {
+        String url = getRootURL(absolute) + "/roller-ui/authoring/previewresource/"
+                + weblog.getHandle();
         
-        if(weblog == null) {
-            return null;
+        if (!filePath.startsWith("/")) {
+            url += "/";
         }
-        
-        StringBuilder url = new StringBuilder();
-        
-        if(absolute) {
-            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
-        } else {
-            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
-        }
-        
-        url.append("/roller-ui/authoring/previewresource/").append(weblog.getHandle()).append("/");
-        
-        if(filePath.startsWith("/")) {
-            url.append(filePath.substring(1));
-        } else {
-            url.append(filePath);
-        }
+        url += filePath;
         
         Map<String, String> params = new HashMap<>();
         if(previewTheme != null && !WeblogTheme.CUSTOM.equals(previewTheme)) {
             params.put("theme", URLUtilities.encode(previewTheme));
         }
         
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url + URLUtilities.getQueryString(params);
     }
     
 }

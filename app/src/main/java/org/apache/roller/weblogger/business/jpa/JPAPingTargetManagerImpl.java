@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
@@ -21,6 +20,7 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,16 +34,20 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.InitializationException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.business.OutgoingPingQueue;
+import org.apache.roller.weblogger.business.PingTargetManager;
+import org.apache.roller.weblogger.business.WeblogUpdatePinger;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.xmlrpc.XmlRpcException;
 
 public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     private final JPAPersistenceStrategy strategy;
-    private static final Log LOGGER = LogFactory.getLog(JPAPingTargetManagerImpl.class);
+    private static final Log logger = LogFactory.getLog(JPAPingTargetManagerImpl.class);
 
     protected JPAPingTargetManagerImpl(JPAPersistenceStrategy strategy) {
         this.strategy = strategy;
@@ -140,18 +144,18 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     @Override
-    public void initialize() throws InitializationException {
+    public void initialize() throws WebloggerException {
         try {
             // Initialize common targets from the configuration
             initializeCommonTargets();
 
             // Remove all autoping configurations if ping usage has been disabled.
             if (WebloggerConfig.getBooleanProperty("pings.disablePingUsage", false)) {
-                LOGGER.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
-                WebloggerFactory.getWeblogger().getAutopingManager().removeAllAutoPings();
+                logger.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
+                removeAllAutoPings();
             }
         } catch (Exception e) {
-            throw new InitializationException("Error initializing ping systems", e);
+            throw new WebloggerException("Error initializing ping systems", e);
         }
     }
 
@@ -173,15 +177,15 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
         String configuredVal = WebloggerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
         if (configuredVal == null || configuredVal.trim().length() == 0) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
+            if (logger.isDebugEnabled()) {
+                logger.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
             }
             return;
         }
 
         if (!getCommonPingTargets().isEmpty()) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Some common ping targets are present in the database already.  Skipping initialization.");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Some common ping targets are present in the database already.  Skipping initialization.");
             }
             return;
         }
@@ -199,16 +203,111 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             if (m.matches() && m.groupCount() == 2) {
                 String name = m.group(1).trim();
                 String url = m.group(2).trim();
-                LOGGER.info("Creating common ping target '" + name + "' from configuration properties.");
+                logger.info("Creating common ping target '" + name + "' from configuration properties.");
                 PingTarget pingTarget = new PingTarget(name, url, false);
                 savePingTarget(pingTarget);
             } else {
-                LOGGER.error("Unable to parse configured initial ping target '" + thisTarget +
+                logger.error("Unable to parse configured initial ping target '" + thisTarget +
                         "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
             }
         }
     }
 
+    public AutoPing getAutoPing(String id) throws WebloggerException {
+        return strategy.load(AutoPing.class, id);
+    }
+
+    public void saveAutoPing(AutoPing autoPing) throws WebloggerException {
+        strategy.store(autoPing);
+    }
+
+    public void removeAutoPing(AutoPing autoPing) throws WebloggerException {
+        strategy.remove(autoPing);
+    }
+
+    public void removeAutoPing(PingTarget pingTarget, Weblog website) throws WebloggerException {
+        Query q = strategy.getNamedUpdate("AutoPing.removeByPingTarget&Weblog");
+        q.setParameter(1, pingTarget);
+        q.setParameter(2, website);
+        q.executeUpdate();
+    }
+
+    public void removeAllAutoPings() throws WebloggerException {
+        TypedQuery<AutoPing> q = strategy.getNamedQueryCommitFirst("AutoPing.getAll", AutoPing.class);
+        strategy.removeAll(q.getResultList());
+    }
+
+    public void queueApplicableAutoPings(Weblog changedWeblog) throws WebloggerException {
+        if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Ping processing is suspended." + " No auto pings will be queued.");
+            }
+            return;
+        }
+
+        List<AutoPing> applicableAutopings = getAutoPingsByWeblog(changedWeblog);
+        OutgoingPingQueue queue = OutgoingPingQueue.getInstance();
+
+        for (AutoPing autoPing : applicableAutopings) {
+            queue.addPing(autoPing);
+        }
+    }
+
+    public List<AutoPing> getAutoPingsByWeblog(Weblog weblog) throws WebloggerException {
+        TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByWeblog", AutoPing.class);
+        q.setParameter(1, weblog);
+        return q.getResultList();
+    }
+
+    public List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException {
+        TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByPingTarget", AutoPing.class);
+        q.setParameter(1, pingTarget);
+        return q.getResultList();
+    }
+
+    @Override
+    public void sendPings() throws WebloggerException {
+        logger.debug("ping task started");
+
+        OutgoingPingQueue opq = OutgoingPingQueue.getInstance();
+
+        List<AutoPing> pings = opq.getPings();
+
+        // reset queue for next execution
+        opq.clearPings();
+
+        if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
+            logger.info("Ping processing suspended on admin settings page, no pings are being generated.");
+            return;
+        }
+
+        String absoluteContextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
+        if (absoluteContextUrl == null) {
+            logger.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
+            return;
+        }
+
+        Boolean logOnly = WebloggerConfig.getBooleanProperty("pings.logOnly", false);
+
+        if (logOnly) {
+            logger.info("pings.logOnly set to true in properties file to no actual pinging will occur." +
+                    " To see logged pings, make sure logging at DEBUG for this class.");
+        }
+
+        for (AutoPing ping : pings) {
+            try {
+                if (logOnly) {
+                    logger.debug("Would have pinged:" + ping);
+                } else {
+                    WeblogUpdatePinger.sendPing(ping.getPingTarget(), ping.getWeblog());
+                }
+            } catch (IOException |XmlRpcException ex) {
+                logger.debug(ex);
+            }
+        }
+
+        logger.info("ping task completed, pings processed = " + pings.size());
+    }
+
     public void release() {}
-    
 }

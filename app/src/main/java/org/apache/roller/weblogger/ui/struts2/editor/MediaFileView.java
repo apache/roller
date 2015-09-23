@@ -30,7 +30,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
@@ -229,9 +228,6 @@ public class MediaFileView extends MediaFileBase {
 
             return SUCCESS;
 
-        } catch (FileIOException ex) {
-            log.error("Error viewing media file directory ", ex);
-            addError("MediaFile.error.view");
         } catch (Exception e) {
             log.error("Error viewing media file directory ", e);
             addError("MediaFile.error.view");

@@ -28,43 +28,38 @@ import java.io.PrintWriter;
  */
 public class WebloggerException extends Exception {
 
-    private final Throwable mRootCause;
-
     public WebloggerException() {
         super();
-        mRootCause = null;
     }
     
     /**
      * Construct WebloggerException with message string.
      *
-     * @param s Error message string.
+     * @param message Error message string.
      */
-    public WebloggerException(String s) {
-        super(s);
-        mRootCause = null;
+    public WebloggerException(String message) {
+        super(message);
     }
     
     
     /**
      * Construct WebloggerException, wrapping existing throwable.
      *
-     * @param s Error message
-     * @param t Existing connection to wrap.
+     * @param message Error message
+     * @param throwable Existing connection to wrap.
      */
-    public WebloggerException(String s, Throwable t) {
-        super(s, t);
-        mRootCause = t;
+    public WebloggerException(String message, Throwable throwable) {
+        super(message, throwable);
     }
     
     
     /**
      * Construct WebloggerException, wrapping existing throwable.
      *
-     * @param t Existing exception to be wrapped.
+     * @param throwable Existing exception to be wrapped.
      */
-    public WebloggerException(Throwable t) {
-        mRootCause = t;
+    public WebloggerException(Throwable throwable) {
+        super(throwable);
     }
 
     /**
@@ -72,22 +67,20 @@ public class WebloggerException extends Exception {
      * @return Root cause or null if none.
      */
     public Throwable getRootCause() {
-        return mRootCause;
+        return getCause();
     }
 
     /**
      * Get root cause message.
      * @return Root cause message.
      */
-    public String getRootCauseMessage() {
-        String rcmessage = null;
-        if (getRootCause()!=null) {
-            if (getRootCause().getCause()!=null) {
-                rcmessage = getRootCause().getCause().getMessage();
+    public String getErrorMessageChain() {
+        String rcmessage = "Top level: " + getMessage();
+        if (getCause() != null) {
+            rcmessage += "; 2nd level: " + getCause().getMessage();
+            if (getCause().getCause() != null) {
+                rcmessage += "; 3rd level: " + getCause().getCause().getMessage();
             }
-            rcmessage = (rcmessage == null) ? getRootCause().getMessage() : rcmessage;
-            rcmessage = (rcmessage == null) ? super.getMessage() : rcmessage;
-            rcmessage = (rcmessage == null) ? "NONE" : rcmessage;
         }
         return rcmessage;
     }
@@ -98,9 +91,9 @@ public class WebloggerException extends Exception {
      */
     public void printStackTrace() {
         super.printStackTrace();
-        if (mRootCause != null) {
+        if (getCause() != null) {
             System.out.println("--- ROOT CAUSE ---");
-            mRootCause.printStackTrace();
+            getCause().printStackTrace();
         }
     }
 
@@ -111,9 +104,9 @@ public class WebloggerException extends Exception {
      */
     public void printStackTrace(PrintStream s) {
         super.printStackTrace(s);
-        if (mRootCause != null) {
+        if (getCause() != null) {
             s.println("--- ROOT CAUSE ---");
-            mRootCause.printStackTrace(s);
+            getCause().printStackTrace(s);
         }
     }
 
@@ -124,9 +117,9 @@ public class WebloggerException extends Exception {
      */
     public void printStackTrace(PrintWriter s) {
         super.printStackTrace(s);
-        if (null != mRootCause) {
+        if (getCause() != null) {
             s.println("--- ROOT CAUSE ---");
-            mRootCause.printStackTrace(s);
+            getCause().printStackTrace(s);
         }
     }
 

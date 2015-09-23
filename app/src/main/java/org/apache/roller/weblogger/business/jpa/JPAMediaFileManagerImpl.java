@@ -25,20 +25,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileContentManager;
-import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.MediaFileTag;
 import org.apache.roller.weblogger.pojos.MediaFileType;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.Utilities;
 
 import javax.imageio.ImageIO;
 import javax.persistence.NoResultException;
@@ -47,9 +43,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -58,7 +51,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 public class JPAMediaFileManagerImpl implements MediaFileManager {
@@ -66,7 +58,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     private final JPAPersistenceStrategy strategy;
     private static Log log = LogFactory.getFactory().getInstance(
             JPAMediaFileManagerImpl.class);
-    public static final String MIGRATION_STATUS_FILENAME = "migration-status.properties";
 
     /**
      * Creates a new instance of MediaFileManagerImpl
@@ -93,7 +84,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public void moveMediaFiles(Collection<MediaFile> mediaFiles,
             MediaFileDirectory targetDirectory) throws WebloggerException {
 
-        List<MediaFile> moved = new ArrayList<MediaFile>();
+        List<MediaFile> moved = new ArrayList<>();
         moved.addAll(mediaFiles);
 
         for (MediaFile mediaFile : moved) {
@@ -183,25 +174,29 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public void createMediaFile(Weblog weblog, MediaFile mediaFile,
             RollerMessages errors) throws WebloggerException {
 
-        FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                .getFileContentManager();
-        if (!cmgr.canSave(weblog, mediaFile.getName(),
-                mediaFile.getContentType(), mediaFile.getLength(), errors)) {
-            return;
-        }
-        strategy.store(mediaFile);
+        try {
+            FileContentManager cmgr = WebloggerFactory.getWeblogger()
+                    .getFileContentManager();
+            if (!cmgr.canSave(weblog, mediaFile.getName(),
+                    mediaFile.getContentType(), mediaFile.getLength(), errors)) {
+                return;
+            }
+            strategy.store(mediaFile);
 
-        // Refresh associated parent for changes
-        strategy.flush();
-        strategy.refresh(mediaFile.getDirectory());
+            // Refresh associated parent for changes
+            strategy.flush();
+            strategy.refresh(mediaFile.getDirectory());
 
-        updateWeblogLastModifiedDate(weblog);
+            updateWeblogLastModifiedDate(weblog);
 
-        cmgr.saveFileContent(weblog, mediaFile.getId(),
-                mediaFile.getInputStream());
+            cmgr.saveFileContent(weblog, mediaFile.getId(),
+                    mediaFile.getInputStream());
 
-        if (mediaFile.isImageFile()) {
-            updateThumbnail(mediaFile);
+            if (mediaFile.isImageFile()) {
+                updateThumbnail(mediaFile);
+            }
+        } catch (IOException e) {
+            throw new WebloggerException(e);
         }
     }
 
@@ -267,26 +262,30 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public void updateMediaFile(Weblog weblog, MediaFile mediaFile,
             InputStream is) throws WebloggerException {
-        mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
-        strategy.store(mediaFile);
+        try {
+            mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
+            strategy.store(mediaFile);
 
-        strategy.flush();
-        // Refresh associated parent for changes
-        strategy.refresh(mediaFile.getDirectory());
+            strategy.flush();
+            // Refresh associated parent for changes
+            strategy.refresh(mediaFile.getDirectory());
 
-        updateWeblogLastModifiedDate(weblog);
+            updateWeblogLastModifiedDate(weblog);
 
-        FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                .getFileContentManager();
-        RollerMessages msgs = new RollerMessages();
-        if (!cmgr.canSave(weblog, mediaFile.getName(),
-                mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
-            throw new FileIOException(msgs.toString());
-        }
-        cmgr.saveFileContent(weblog, mediaFile.getId(), is);
+            FileContentManager cmgr = WebloggerFactory.getWeblogger()
+                    .getFileContentManager();
+            RollerMessages msgs = new RollerMessages();
+            if (!cmgr.canSave(weblog, mediaFile.getName(),
+                    mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
+                throw new IOException(msgs.toString());
+            }
+            cmgr.saveFileContent(weblog, mediaFile.getId(), is);
 
-        if (mediaFile.isImageFile()) {
-            updateThumbnail(mediaFile);
+            if (mediaFile.isImageFile()) {
+                updateThumbnail(mediaFile);
+            }
+        } catch (IOException e) {
+            throw new WebloggerException(e);
         }
     }
 
@@ -302,29 +301,35 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public MediaFile getMediaFile(String id, boolean includeContent)
             throws WebloggerException {
-        MediaFile mediaFile = this.strategy.load(MediaFile.class, id);
-        if (includeContent) {
-            FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                    .getFileContentManager();
 
-            FileContent content = cmgr.getFileContent(mediaFile.getDirectory()
-                    .getWeblog(), id);
-            mediaFile.setContent(content);
+        try {
+            MediaFile mediaFile = this.strategy.load(MediaFile.class, id);
+            if (includeContent) {
+                FileContentManager cmgr = WebloggerFactory.getWeblogger()
+                        .getFileContentManager();
 
-            try {
-                FileContent thumbnail = cmgr.getFileContent(mediaFile
-                        .getDirectory().getWeblog(), id + "_sm");
-                mediaFile.setThumbnailContent(thumbnail);
+                FileContent content = cmgr.getFileContent(mediaFile.getDirectory()
+                        .getWeblog(), id);
+                mediaFile.setContent(content);
 
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Cannot load thumbnail for image " + id, e);
-                } else {
-                    log.warn("Cannot load thumbnail for image " + id);
+                try {
+                    FileContent thumbnail = cmgr.getFileContent(mediaFile
+                            .getDirectory().getWeblog(), id + "_sm");
+                    mediaFile.setThumbnailContent(thumbnail);
+
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cannot load thumbnail for image " + id, e);
+                    } else {
+                        log.warn("Cannot load thumbnail for image " + id);
+                    }
                 }
             }
+            return mediaFile;
+        } catch (IOException e) {
+            throw new WebloggerException(e);
         }
-        return mediaFile;
+
     }
 
     /**
@@ -375,30 +380,34 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
             throws WebloggerException {
 
-        if (null == origpath) {
-            return null;
-        }
-
-        if (!origpath.startsWith("/")) {
-            origpath = "/" + origpath;
-        }
-
-        TypedQuery<MediaFile> q = this.strategy
-                .getNamedQuery("MediaFile.getByWeblogAndOrigpath", MediaFile.class);
-        q.setParameter(1, weblog);
-        q.setParameter(2, origpath);
-        MediaFile mf;
         try {
-            mf = q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
+            if (null == origpath) {
+                return null;
+            }
+
+            if (!origpath.startsWith("/")) {
+                origpath = "/" + origpath;
+            }
+
+            TypedQuery<MediaFile> q = this.strategy
+                    .getNamedQuery("MediaFile.getByWeblogAndOrigpath", MediaFile.class);
+            q.setParameter(1, weblog);
+            q.setParameter(2, origpath);
+            MediaFile mf;
+            try {
+                mf = q.getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            }
+            FileContentManager cmgr = WebloggerFactory.getWeblogger()
+                    .getFileContentManager();
+            FileContent content = cmgr.getFileContent(
+                    mf.getDirectory().getWeblog(), mf.getId());
+            mf.setContent(content);
+            return mf;
+        } catch (IOException e) {
+            throw new WebloggerException(e);
         }
-        FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                .getFileContentManager();
-        FileContent content = cmgr.getFileContent(
-                mf.getDirectory().getWeblog(), mf.getId());
-        mf.setContent(content);
-        return mf;
     }
 
     /**
@@ -472,7 +481,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public List<MediaFile> searchMediaFiles(Weblog weblog,
             MediaFileFilter filter) throws WebloggerException {
 
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         int size = 0;
         String queryString = "SELECT m FROM MediaFile m WHERE ";
         StringBuilder whereClause = new StringBuilder();

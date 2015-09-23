@@ -25,7 +25,6 @@
 
     <beans:bean id="webloggerBean" class="org.apache.roller.weblogger.business.jpa.JPAWebloggerImpl">
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
-        <beans:constructor-arg ref="autoPingManager"/>
         <beans:constructor-arg ref="indexManager"/>
         <beans:constructor-arg ref="mediaFileManager"/>
         <beans:constructor-arg ref="fileContentManager"/>
@@ -48,12 +47,7 @@
         </beans:constructor-arg>
     </beans:bean>
 
-    <beans:bean id="autoPingManager" class="org.apache.roller.weblogger.business.jpa.JPAAutoPingManagerImpl">
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
-    </beans:bean>
-
     <beans:bean id="indexManager" class="org.apache.roller.weblogger.business.search.IndexManagerImpl">
-        <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
         <beans:constructor-arg ref="threadManager"/>
     </beans:bean>
@@ -90,13 +84,13 @@
         <beans:constructor-arg ref="userManager"/>
         <beans:constructor-arg ref="weblogEntryManager"/>
         <beans:constructor-arg ref="mediaFileManager"/>
-        <beans:constructor-arg ref="autoPingManager"/>
+        <beans:constructor-arg ref="indexManager"/>
         <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="weblogEntryManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogEntryManagerImpl">
-        <beans:constructor-arg ref="autoPingManager"/>
+        <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 

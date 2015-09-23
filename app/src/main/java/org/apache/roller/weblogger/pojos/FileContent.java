@@ -14,12 +14,16 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 
@@ -71,7 +75,7 @@ public class FileContent {
     public InputStream getInputStream() {
         try {
             return new FileInputStream(resourceFile);
-        } catch (java.io.FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             // should never happen, rethrow as runtime exception
             throw new RuntimeException("Error constructing input stream", ex);
         }

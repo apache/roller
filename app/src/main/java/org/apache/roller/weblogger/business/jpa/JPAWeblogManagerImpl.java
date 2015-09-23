@@ -29,9 +29,7 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
@@ -73,7 +71,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private final UserManager userManager;
     private final WeblogEntryManager weblogEntryManager;
     private final MediaFileManager mediaFileManager;
-    private final AutoPingManager autoPingManager;
+    private final IndexManager indexManager;
     private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
     
@@ -81,12 +79,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private Map<String,String> weblogHandleToIdMap = new Hashtable<>();
 
     protected JPAWeblogManagerImpl(UserManager um, WeblogEntryManager wem, MediaFileManager mfm,
-                                   AutoPingManager apm, PingTargetManager ptm, JPAPersistenceStrategy strat) {
+                                   IndexManager im, PingTargetManager ptm, JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA Weblog Manager");
         this.userManager = um;
         this.weblogEntryManager = wem;
         this.mediaFileManager = mfm;
-        this.autoPingManager = apm;
+        this.indexManager = im;
         this.pingTargetManager = ptm;
         this.strategy = strat;
     }
@@ -134,11 +132,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // Remove the weblog's auto ping configurations
-        List<AutoPing> autopings = autoPingManager.getAutoPingsByWebsite(weblog);
-        for (AutoPing autoPing : autopings) {
-            this.strategy.remove(autoPing);
-        }
-        
+        List<AutoPing> autopings = pingTargetManager.getAutoPingsByWeblog(weblog);
+        this.strategy.removeAll(autopings);
+
         // remove associated templates
         TypedQuery<WeblogTemplate> templateQuery = strategy.getNamedQuery("WeblogTemplate.getByWeblog",
                 WeblogTemplate.class);
@@ -185,7 +181,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         for (UserWeblogRole role : userManager.getWeblogRoles(weblog)) {
             userManager.revokeWeblogRole(role.getUser(), role.getWeblog());
         }
-        
+
+        // remove indexing
+        indexManager.removeWeblogIndexOperation(weblog);
+
         // flush the changes before returning. This is required as there is a
         // circular dependency between WeblogCategory and Weblog
         this.strategy.flush();        
@@ -278,7 +277,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         for (PingTarget pingTarget : pingTargetManager.getCommonPingTargets()) {
             if(pingTarget.isAutoEnabled()) {
                 AutoPing autoPing = new AutoPing(pingTarget, newWeblog);
-                autoPingManager.saveAutoPing(autoPing);
+                pingTargetManager.saveAutoPing(autoPing);
             }
         }
 
@@ -703,7 +702,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         log.debug("promoting scheduled entries...");
 
         try {
-            IndexManager searchMgr = WebloggerFactory.getWeblogger().getIndexManager();
             Date now = new Date();
 
             log.debug("looking up scheduled entries older than " + now);
@@ -730,7 +728,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 // trigger a cache invalidation
                 CacheManager.invalidate(entry);
                 // trigger search index on entry
-                searchMgr.addEntryReIndexOperation(entry);
+                indexManager.addEntryReIndexOperation(entry);
             }
 
         } catch (WebloggerException e) {

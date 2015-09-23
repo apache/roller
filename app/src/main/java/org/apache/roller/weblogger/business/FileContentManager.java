@@ -14,9 +14,14 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.roller.weblogger.pojos.FileContent;
@@ -32,16 +37,16 @@ public interface FileContentManager {
      * Get a reference to the content of a specific file in a weblog's uploads area.
      * 
      * This method always returns a valid file content object or will throw an exception
-     * if the specificed path doesn't exist, or can't be read.
+     * if the specified path doesn't exist, or can't be read.
      * 
      * @param weblog The weblog we are working on.
      * @param fileId file identifier from database.
      *
-     * @throws FileNotFoundException If path does not exist.
-     * @throws FilePathException If path is invalid, or can't be read.
+     * @throws FileNotFoundException If file does not exist.
+     * @throws IOException Some other problem accessing or reading file.
      */
     FileContent getFileContent(Weblog weblog, String fileId)
-            throws FileNotFoundException, FilePathException;
+            throws IOException;
 
     /**
      * Save a file's content to weblog's uploads area.
@@ -51,13 +56,12 @@ public interface FileContentManager {
      * @param is InputStream to read the file from.
      *
      * @throws FileNotFoundException If path to save location does not exist.
-     * @throws FilePathException If path is invalid, is not a directory, or can't be read.
-     * @throws FileIOException If there is an unexpected error during the save.
+     * @throws IOException If there is an unexpected error during the save.
      */
     void saveFileContent(Weblog weblog,
             String fileId,
             InputStream is)
-            throws FileNotFoundException, FilePathException, FileIOException;
+            throws IOException;
 
     /**
      * Delete file content from weblog's uploads area.
@@ -66,11 +70,10 @@ public interface FileContentManager {
      * @param fileId file identifier from database.
      *
      * @throws FileNotFoundException If path does not exist.
-     * @throws FilePathException If path is invalid, or can't be read.
-     * @throws FileIOException If there is an unexpected error during the delete.
+     * @throws IOException If there is an unexpected error during the delete.
      */
     void deleteFile(Weblog weblog, String fileId)
-            throws FileNotFoundException, FilePathException, FileIOException;
+            throws IOException;
 
     /**
      * Delete all files associated with a given weblog.
@@ -78,10 +81,10 @@ public interface FileContentManager {
      * The only real use of this method is for when a weblog is being deleted.
      *
      * @param weblog The weblog to delete all files from.
-     * @throws FileIOException If there is an unexpected error during the delete.
+     * @throws IOException If there is an unexpected error during the delete.
      */
     void deleteAllFiles(Weblog weblog)
-            throws FileIOException;
+            throws IOException;
 
     /** 
      * Is the given weblog over the file-upload quota limit?
