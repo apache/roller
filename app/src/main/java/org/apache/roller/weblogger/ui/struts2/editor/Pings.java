@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.business.WeblogUpdatePinger;
+import org.apache.roller.weblogger.business.PingResult;
 import org.apache.xmlrpc.XmlRpcException;
 import java.io.IOException;
 import java.net.SocketException;
@@ -55,7 +55,7 @@ public class Pings extends UIAction {
     // ping target object we are working on, if available
     private PingTarget pingTarget = null;
     
-    // commong ping targets list
+    // common ping targets list
     private List<PingTarget> commonPingTargets = Collections.emptyList();
     
     // track the enabled/disabled status for pings
@@ -155,12 +155,13 @@ public class Pings extends UIAction {
     public String pingNow() {
         
         if(getPingTarget() != null) {
+            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             try {
                 if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
                     log.debug("Ping processing is disabled.");
                     addError("ping.pingProcessingIsSuspended");
                 } else {
-                    WeblogUpdatePinger.PingResult pingResult = WeblogUpdatePinger.sendPing(getPingTarget(), getActionWeblog());
+                    PingResult pingResult = pingTargetMgr.sendPing(getPingTarget(), getActionWeblog());
                     if (pingResult.isError()) {
                         log.debug("Ping Result: " + pingResult);
                         if (pingResult.getMessage() != null && pingResult.getMessage().trim().length() > 0) {

@@ -21,11 +21,13 @@
 
 package org.apache.roller.weblogger.business;
 
+import java.io.IOException;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.xmlrpc.XmlRpcException;
 
 /**
  * Manages ping targets.
@@ -178,6 +180,20 @@ public interface PingTargetManager {
      * If ping processing is suspended, this returns without doing anything.
      */
     void sendPings() throws WebloggerException;
+
+    /**
+     * Send a weblog update ping.
+     *
+     * This implements the <code>WeblogUpdates.ping<code> XML-RPC call
+     * described at <a href="http://www.xmlrpc.com/weblogsCom">www.xmlrpc.com</a>
+     *
+     * @param pingTarget         the target site to ping
+     * @param website            the website that changed (from which the ping originates)
+     * @return a PingResult encapsulating the result message sent by the ping target.
+     * @throws IOException if an IOException occurs during the ping
+     * @throws XmlRpcException if the XML RPC client throws one
+     */
+    PingResult sendPing(PingTarget pingTarget, Weblog website) throws IOException, XmlRpcException;
 
     /**
      * Initialize ping targets.

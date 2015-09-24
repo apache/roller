@@ -49,17 +49,9 @@ public class PingTarget implements Serializable {
 
     public static final long serialVersionUID = -6354583200913127874L;
 
-    // last use (after possible retrials) was successful
-    public static final int CONDITION_OK = 0;
-    // last use failed after retrials
-    public static final int CONDITION_FAILING = 1;
-    // disabled by failure policy after failures - editing resets
-    public static final int CONDITION_DISABLED = 2;
-
     private String id = WebloggerUtils.generateUUID();
     private String name = null;
     private String pingUrl = null;
-    private int conditionCode = -1;
     private Timestamp lastSuccess = null;
     private boolean autoEnabled = false;
 
@@ -81,7 +73,6 @@ public class PingTarget implements Serializable {
     public PingTarget(String name, String pingUrl, boolean autoEnable) {
         this.name = name;
         this.pingUrl = pingUrl;
-        this.conditionCode = CONDITION_OK;
         this.lastSuccess = null;
         this.autoEnabled = autoEnable;
     }
@@ -128,24 +119,6 @@ public class PingTarget implements Serializable {
     }
 
     /**
-     * Get the condition code value.  This code, in combination with the last success timestamp, provides a status
-     * indicator on the ping target based on its usage by the ping queue processor. It can be used to implement a
-     * failure-based disabling policy.
-     *
-     * @return one of the condition codes {@link #CONDITION_OK}, {@link #CONDITION_FAILING}, {@link
-     *         #CONDITION_DISABLED}.
-     */
-    @Basic(optional=false)
-    public int getConditionCode() {
-        return conditionCode;
-    }
-
-    public void setConditionCode(int conditionCode) {
-        this.conditionCode = conditionCode;
-    }
-
-
-    /**
      * Get the timestamp of the last successful ping (UTC/GMT).
      *
      * @return the timestamp of the last successful ping; <code>null</code> if the target has not yet been used.
@@ -176,15 +149,12 @@ public class PingTarget implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("{");
-        buf.append(getId());
-        buf.append(", ").append(getName());
-        buf.append(", ").append(getPingUrl());
-        buf.append(", ").append(getLastSuccess());
-        buf.append(", ").append(isAutoEnabled());
-        buf.append("}");
-        return buf.toString();
+        String buf = "{" + getId();
+        buf += ", " + getName();
+        buf += ", " + getPingUrl();
+        buf += ", " + getLastSuccess();
+        buf += ", " + isAutoEnabled() + "}";
+        return buf;
     }
 
     public boolean equals(Object other) {
