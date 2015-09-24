@@ -213,13 +213,12 @@ create index co_status_idx on weblog_entry_comment( status );
 -- Ping Feature Tables
 -- name: short descriptive name of the ping target
 -- pingurl: URL to receive the ping
--- conditioncode:
--- lastsuccess:
+-- lastsuccess: last day that a success ping response was received
+-- autoenabled: whether all new blogs will have this target enabled by default
 create table ping_target (
     id           varchar(48) not null primary key,
     name         varchar(255) not null,
     pingurl      varchar(255) not null,
-    conditioncode    integer default 0 not null,
     lastsuccess  $db.TIMESTAMP_SQL_TYPE,
     autoenabled  $db.BOOLEAN_SQL_TYPE_FALSE not null
 );

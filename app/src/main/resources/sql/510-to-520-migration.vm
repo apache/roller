@@ -24,6 +24,9 @@
 -- images removed from categories
 #dropColumn("weblog_category" "image")
 
+-- ping target condition codes no longer stored
+#dropColumn("ping_target" "conditioncode")
+
 -- roller_permission revamped to user_weblog_role
 #dropColumn("roller_permission", "objecttype")
 #renameColumn("roller_permission", "objectid", "weblogid", "varchar(48)")

@@ -25,24 +25,32 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.PingTargetManager;
-import org.apache.roller.weblogger.business.WeblogUpdatePinger;
+import org.apache.roller.weblogger.business.PingResult;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 public class JPAPingTargetManagerImpl implements PingTargetManager {
 
@@ -290,23 +298,79 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         Boolean logOnly = WebloggerConfig.getBooleanProperty("pings.logOnly", false);
 
         if (logOnly) {
-            logger.info("pings.logOnly set to true in properties file to no actual pinging will occur." +
+            logger.info("pings.logOnly set to true in properties file so no actual pinging will occur." +
                     " To see logged pings, make sure logging at DEBUG for this class.");
         }
 
+        Timestamp startOfDay = new Timestamp(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH).getTime());
+        Boolean hadDateUpdate = false;
         for (AutoPing ping : pings) {
             try {
                 if (logOnly) {
                     logger.debug("Would have pinged:" + ping);
                 } else {
-                    WeblogUpdatePinger.sendPing(ping.getPingTarget(), ping.getWeblog());
+                    PingTarget pingTarget = ping.getPingTarget();
+                    PingResult pr = sendPing(pingTarget, ping.getWeblog());
+                    // for performance reasons, limit updates to daily
+                    if (!pr.isError() && pingTarget.getLastSuccess().before(startOfDay)) {
+                        pingTarget.setLastSuccess(startOfDay);
+                        savePingTarget(pingTarget);
+                        hadDateUpdate = true;
+                    }
                 }
-            } catch (IOException |XmlRpcException ex) {
+            } catch (IOException|XmlRpcException ex) {
                 logger.debug(ex);
             }
         }
+        if (hadDateUpdate) {
+            strategy.flush();
+        }
 
         logger.info("ping task completed, pings processed = " + pings.size());
+    }
+
+    public PingResult sendPing(PingTarget pingTarget, Weblog website) throws IOException, XmlRpcException {
+        String websiteUrl = website.getAbsoluteURL();
+        String pingTargetUrl = pingTarget.getPingUrl();
+
+        // Set up the ping parameters.
+        List<String> params = new ArrayList<>();
+        params.add(website.getName());
+        params.add(websiteUrl);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Executing ping to '" + pingTargetUrl + "' for weblog '" + websiteUrl + "' (" + website.getName() + ")");
+        }
+
+        // Send the ping.
+        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+        config.setServerURL(new URL(pingTargetUrl));
+        XmlRpcClient client = new XmlRpcClient();
+        client.setConfig(config);
+        PingResult pingResult = parseResult(client.execute("weblogUpdates.ping", params.toArray()));
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Ping result is: " + pingResult);
+        }
+        return pingResult;
+    }
+
+    private PingResult parseResult(Object obj) {
+        // Deal with the fact that some buggy ping targets may not respond with the proper struct type.
+        if (obj == null) {
+            return new PingResult(null,null);
+        }
+        try {
+            // normal case: response is a struct (represented as a Map) with Boolean flerror and String fields.
+            Map result = (Map) obj;
+            return new PingResult((Boolean) result.get("flerror"), (String) result.get("message"));
+        } catch (Exception ex) {
+            // exception case:  The caller responded with an unexpected type, though parsed at the basic XML RPC level.
+            // This effectively assumes flerror = false, and sets message = obj.toString();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Invalid ping result of type: " + obj.getClass().getName() + "; proceeding with stand-in representative.");
+            }
+            return new PingResult(null,obj.toString());
+        }
     }
 
     public void release() {}

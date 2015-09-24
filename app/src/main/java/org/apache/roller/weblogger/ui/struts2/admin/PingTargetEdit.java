@@ -74,7 +74,6 @@ public class PingTargetEdit extends UIAction {
         } else {
             // add case
             pingTarget = new PingTarget();
-            pingTarget.setConditionCode(PingTarget.CONDITION_OK);
             pingTarget.setAutoEnabled(false);
         }
     }
