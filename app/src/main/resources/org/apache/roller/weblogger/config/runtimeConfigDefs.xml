@@ -161,7 +161,7 @@
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
-      <property-def  name="users.comments.plugins"  key="configForm.commentPlugins">
+      <property-def  name="enabled.comment.plugins"  key="configForm.commentPlugins">
          <type>string</type>
          <default-value>HTMLSubset</default-value>
       </property-def>

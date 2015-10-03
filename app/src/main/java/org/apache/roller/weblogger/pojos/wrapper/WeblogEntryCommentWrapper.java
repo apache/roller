@@ -98,16 +98,15 @@ public final class WeblogEntryCommentWrapper {
     
     
     /**
-     * Get the comment contents.
-     *
-     * Any configured comment plugins are applied first, then the value is 
-     * always html escaped.
+     * Get the comment contents.  Escapes text comments and applies any configured
+     * comment plugins to the content.
      */
     public String getContent() {
         
         String content = this.pojo.getContent();
         
-        // escape content if content-type is text/plain
+        // escape content (e.g., " -> &quot;) if content-type is text/plain
+        // html content has to remain as-is so the HTML subset plugin can render it.
         if("text/plain".equals(this.pojo.getContentType())) {
             content = StringEscapeUtils.escapeHtml4(content);
         }
