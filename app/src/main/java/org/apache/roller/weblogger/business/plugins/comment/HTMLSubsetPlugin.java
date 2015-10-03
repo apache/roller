@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.plugins.comment;
@@ -59,14 +62,14 @@ public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
         
         // only do this if comment is HTML
         if ("text/html".equals(comment.getContentType())) {
-            LOG.debug("ending value:\n" + output);
+            LOG.debug("starting value:\n" + output);
             	        
 	        // escape html
 	        output = Utilities.escapeHTML(output);
 	        
 	        // just use old utilities method
 	        output = Utilities.transformToHTMLSubset(output);
-	        LOG.debug("starting value:\n" + text);
+	        LOG.debug("ending value:\n" + text);
         }
                 
         return output;

@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.plugins;
@@ -42,10 +45,10 @@ public class PluginManagerImpl implements PluginManager {
     private static Log log = LogFactory.getLog(PluginManagerImpl.class);
     
     // Plugin classes keyed by plugin name
-    static Map<String, Class> mPagePlugins = new LinkedHashMap<String, Class>();
+    static Map<String, Class> mPagePlugins = new LinkedHashMap<>();
     
     // Comment plugins
-    private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList<WeblogEntryCommentPlugin>();
+    private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList<>();
     
     
     /**
@@ -70,7 +73,7 @@ public class PluginManagerImpl implements PluginManager {
      * Create and init plugins for processing entries in a specified website.
      */
     public Map<String, WeblogEntryPlugin> getWeblogEntryPlugins(Weblog website) {
-        Map<String, WeblogEntryPlugin> ret = new LinkedHashMap<String, WeblogEntryPlugin>();
+        Map<String, WeblogEntryPlugin> ret = new LinkedHashMap<>();
         for (Class pluginClass : PluginManagerImpl.mPagePlugins.values()) {
             try {
                 WeblogEntryPlugin plugin = (WeblogEntryPlugin)pluginClass.newInstance();
@@ -128,7 +131,7 @@ public class PluginManagerImpl implements PluginManager {
                 if(comment.getPlugins() != null &&
                         comment.getPlugins().contains(plugin.getId())) {
                     log.debug("Invoking comment plugin "+plugin.getId());
-                    content = plugin.render(comment, content);
+                    content = plugin.render(comment, content);ML
                 }
             }
         }
@@ -184,7 +187,7 @@ public class PluginManagerImpl implements PluginManager {
         
         log.debug("Initializing comment plugins");
         
-        String pluginStr = WebloggerConfig.getProperty("comment.formatter.classnames");
+        String pluginStr = WebloggerConfig.getProperty("comment.available.plugins");
         if (pluginStr != null) {
             String[] plugins = StringUtils.stripAll(StringUtils.split(pluginStr, ","));
             for (int i=0; i < plugins.length; i++) {

@@ -273,9 +273,9 @@ public class CommentServlet extends HttpServlet {
             comment.setContentType("text/plain");
         }
 
-        // set whatever comment plugins are configured
+        // add all enabled content plugins
         comment.setPlugins(WebloggerRuntimeConfig
-                .getProperty("users.comments.plugins"));
+                .getProperty("enabled.comment.plugins"));
 
         WeblogEntryCommentForm cf = new WeblogEntryCommentForm();
         cf.setData(comment);
@@ -297,7 +297,7 @@ public class CommentServlet extends HttpServlet {
                 && !Utilities.isValidEmailAddress(commentRequest.getEmail())) {
             error = messageUtils
                     .getString("error.commentPostFailedEmailAddress");
-            log.debug("Email Adddress is invalid : "
+            log.debug("Email Address is invalid : "
                     + commentRequest.getEmail());
             // if there is an URL it must be valid
         } else if (StringUtils.isNotEmpty(comment.getUrl())

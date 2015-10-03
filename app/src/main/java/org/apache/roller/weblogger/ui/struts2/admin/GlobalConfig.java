@@ -132,8 +132,8 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public String execute() {
         
         // setup array of configured plugins
-        if (!StringUtils.isEmpty(WebloggerRuntimeConfig.getProperty("users.comments.plugins"))) {
-            setCommentPlugins(StringUtils.split(WebloggerRuntimeConfig.getProperty("users.comments.plugins"), ","));
+        if (!StringUtils.isEmpty(WebloggerRuntimeConfig.getProperty("enabled.comment.plugins"))) {
+            setCommentPlugins(StringUtils.split(WebloggerRuntimeConfig.getProperty("enabled.comment.plugins"), ","));
         }
         
         return SUCCESS;
@@ -188,7 +188,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         if(getCommentPlugins().length > 0) {
             enabledPlugins = StringUtils.join(getCommentPlugins(), ",");
         }
-        RuntimeConfigProperty prop = getProperties().get("users.comments.plugins");
+        RuntimeConfigProperty prop = getProperties().get("enabled.comment.plugins");
         prop.setValue(enabledPlugins);
             
         try {
