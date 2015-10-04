@@ -21,7 +21,6 @@
 
 package org.apache.roller.weblogger.util;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -38,9 +37,8 @@ public class BlacklistTest extends TestCase {
     public static Log log =    
         LogFactory.getLog(BlacklistTest.class);  
     
-    private Blacklist blacklist;
-    private List<String> blacklistStr = new LinkedList<String>();
-    private List<Pattern> blacklistRegex = new LinkedList<Pattern>();
+    private List<String> blacklistStr = new LinkedList<>();
+    private List<Pattern> blacklistRegex = new LinkedList<>();
 
       
     public BlacklistTest() {
@@ -48,20 +46,11 @@ public class BlacklistTest extends TestCase {
     }
     
     /**
-     * @param arg0
-     */
-    public BlacklistTest(String arg0) {
-        super(arg0);
-    }
-    
-    /**
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
         super.setUp();
-        blacklist = Blacklist.getBlacklist();
-        Blacklist.populateSpamRules("www.myblacklistedsite.com", blacklistStr,
-                blacklistRegex, null);
+        Blacklist.populateSpamRules("www.myblacklistedsite.com", null, blacklistStr, blacklistRegex);
     }
     
     /**
@@ -69,16 +58,15 @@ public class BlacklistTest extends TestCase {
      */
     protected void tearDown() throws Exception {
         super.tearDown();
-        //System.out.println(blacklist);
     }
     
     public void testIsBlacklisted0() {
-        assertFalse(blacklist.isBlacklisted("four score and seven years ago.com", blacklistStr, blacklistRegex));
+        assertFalse(Blacklist.isBlacklisted("four score and seven years ago.com", blacklistStr, blacklistRegex));
     }
     
     // test non-regex
     public void testIsBlacklisted1() {
-        assertTrue(blacklist.isBlacklisted("www.myblacklistedsite.com", blacklistStr, blacklistRegex));
+        assertTrue(Blacklist.isBlacklisted("www.myblacklistedsite.com", blacklistStr, blacklistRegex));
     }
 
     public static Test suite() {

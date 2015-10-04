@@ -191,7 +191,7 @@ public class WeblogConfig extends UIAction {
         List<String> stringRules = new ArrayList<>();
         try {
             // just for testing/counting, this does not persist rules in any way
-            Blacklist.populateSpamRules(getBean().getBlacklist(), stringRules, regexRules, null);
+            Blacklist.populateSpamRules(getBean().getBlacklist(), null, stringRules, regexRules);
             addMessage("websiteSettings.acceptedBlacklist",
                     Arrays.asList(new String[] {""+stringRules.size(), ""+regexRules.size()}));
         } catch (Exception e) {
