@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
@@ -33,7 +36,7 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class CommentValidationManager {
     private static Log log = LogFactory.getLog(CommentValidationManager.class);
-    private List<CommentValidator> validators = new ArrayList<CommentValidator>();
+    private List<CommentValidator> validators = new ArrayList<>();
 
     public CommentValidationManager() {
         
@@ -50,7 +53,7 @@ public class CommentValidationManager {
                 } catch (ClassNotFoundException cnfe) {
                     log.warn("Error finding comment validator: " + arrayVal);
                 } catch (InstantiationException ie) {
-                    log.warn("Error insantiating comment validator: " + arrayVal);
+                    log.warn("Error instantiating comment validator: " + arrayVal);
                 } catch (IllegalAccessException iae) {
                     log.warn("Error accessing comment validator: " + arrayVal);
                 }

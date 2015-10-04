@@ -50,7 +50,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
-import org.apache.roller.weblogger.util.BlacklistChecker;
+import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
@@ -62,8 +62,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -104,7 +106,7 @@ public class PageServlet extends HttpServlet {
 
         // see if built-in referrer spam check is enabled
         this.processReferrers = WebloggerConfig
-                .getBooleanProperty("site.blacklist.enable.referrers");
+                .getBooleanProperty("site.blacklist.check.referrers");
 
         log.info("Referrer spam check enabled = " + this.processReferrers);
 
@@ -643,7 +645,7 @@ public class PageServlet extends HttpServlet {
                     String requestSite = requestUrl.substring(0, lastSlash);
 
                     if (!referrerUrl.matches(requestSite + ".*\\.rol.*") &&
-                            BlacklistChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
+                            checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
                         return true;
                     }
                 }
@@ -655,4 +657,13 @@ public class PageServlet extends HttpServlet {
 
         return false;
     }
+
+    private boolean checkReferrer(Weblog weblog, String referrerURL) {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Blacklist.populateSpamRules(
+                weblog.getBlacklist(), WebloggerRuntimeConfig.getProperty("spam.blacklist"), stringRules, regexRules);
+        return Blacklist.isBlacklisted(referrerURL, stringRules, regexRules);
+    }
+
 }

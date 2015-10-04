@@ -131,7 +131,7 @@ public class PluginManagerImpl implements PluginManager {
                 if(comment.getPlugins() != null &&
                         comment.getPlugins().contains(plugin.getId())) {
                     log.debug("Invoking comment plugin "+plugin.getId());
-                    content = plugin.render(comment, content);ML
+                    content = plugin.render(comment, content);
                 }
             }
         }

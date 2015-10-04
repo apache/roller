@@ -20,8 +20,6 @@
  */
 package org.apache.roller.weblogger.util;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -44,79 +42,20 @@ public final class Blacklist {
     
     private static Log mLogger = LogFactory.getLog(Blacklist.class);
 
-    private static Blacklist blacklist;
-    private List<String> blacklistStr = new LinkedList<String>();
-    private List<Pattern> blacklistRegex = new LinkedList<Pattern>();
-
-    // setup our singleton at class loading time
-    static {
-        blacklist = new Blacklist();
-    }
-
     /** Hide constructor */
     private Blacklist() {
     }
 
-    /** Singleton factory method. */
-    public static Blacklist getBlacklist() {
-        return blacklist;
-    }
-
     /**
-     * Does the String argument match any of the rules in the built-in blacklist? 
-     */
-/*
-    public boolean isBlacklisted(String str) {
-        return isBlacklisted(str, null, null);
-    }
-*/
-    /** 
-     * Does the String argument match any of the rules in the blacklists
-     * provided by caller?
-     * @param str             String to be checked against blacklist
-     * @param moreStringRules Additional string rules to consider
-     * @param moreRegexRules  Additional regex rules to consider 
-     */
-    public boolean isBlacklisted(
-         String str, List<String> moreStringRules, List<Pattern> moreRegexRules) {
-        if (str == null || StringUtils.isEmpty(str)) {
-            return false;
-        }
-
-        // First iterate over blacklist, doing indexOf.
-        // Then iterate over blacklistRegex and test.
-        // As soon as there is a hit in either case return true
-        
-        // test plain String.indexOf
-        List<String> stringRules = blacklistStr;
-        if (moreStringRules != null && moreStringRules.size() > 0) {
-            stringRules = new ArrayList<String>();
-            stringRules.addAll(moreStringRules);
-        }
-        if (testStringRules(str, stringRules)) {
-            return true;
-        }
-        
-        // test regex blacklisted
-        List<Pattern> regexRules = blacklistRegex;
-        if (moreRegexRules != null && moreRegexRules.size() > 0) {
-            regexRules = new ArrayList<Pattern>();
-            regexRules.addAll(moreRegexRules);
-        }
-        return testRegExRules(str, regexRules);
-    }      
-
-    /** 
-     * Test string only against rules provided by caller, NOT against built-in blacklist.
-     * @param str             String to be checked against rules
+     * Does the String argument match any of the rules in the blacklists provided by caller?
+     * @param str String to be checked against blacklist
      * @param stringRules String rules to consider
      * @param regexRules  Regex rules to consider
      */
-    public static boolean matchesRulesOnly(
-        String str, List<String> stringRules, List<Pattern> regexRules) {
-        return testStringRules(str, stringRules) || testRegExRules(str, regexRules);
+    public static boolean isBlacklisted(String str, List<String> stringRules, List<Pattern> regexRules) {
+        return !StringUtils.isEmpty(str) && (testStringRules(str, stringRules) || testRegExRules(str, regexRules));
     }
-        
+
     /** Test String against the RegularExpression rules. */
     private static boolean testRegExRules(String str, List<Pattern> regexRules) {
         for (Pattern testPattern : regexRules) {
@@ -124,8 +63,7 @@ public final class Blacklist {
             if (mLogger.isDebugEnabled()) {
                 Matcher matcher = testPattern.matcher(str);
                 if (matcher.find()) {
-                    mLogger.debug(matcher.group()
-                            + " matched by " + testPattern.pattern());
+                    mLogger.debug(matcher.group() + " matched by " + testPattern.pattern());
                     return true;
                 }
             } else {
@@ -171,19 +109,15 @@ public final class Blacklist {
 
                 matches = matcher.find();
                 if (matches) {
+                    mLogger.debug("matched:" + rule + ":");
                     break;
                 }
             }
             catch (PatternSyntaxException e) {
                 matches = source.contains(rule);
                 if (matches) {
-                    break;
-                }
-            }
-            finally {
-                if (matches && mLogger.isDebugEnabled()) {
-                    // Log the matched rule in debug mode
                     mLogger.debug("matched:" + rule + ":");
+                    break;
                 }
             }
         }
@@ -191,13 +125,17 @@ public final class Blacklist {
         return matches;
     }   
     
-    /** Utility method to populate lists based a blacklist in string form */
+    /** Utility method to populate lists based a blacklist in string form
+     * @param source1 String of string and/or regEx rules (e.g., weblog list), can be null
+     * @param source2 Another string of string and/or regEx rules (e.g., site-wide list), can be null
+     * @param stringRules List (can be non-empty) to append found string rules to.
+     * @param regexRules List (can be non-empty) to append regex rules to.
+     **/
     public static void populateSpamRules(
-        String blacklist, List<String> stringRules, List<Pattern> regexRules, String addendum) {
-        String weblogWords = blacklist;
-        weblogWords = (weblogWords == null) ? "" : weblogWords;
-        String siteWords = (addendum != null) ? addendum : "";
-        StringTokenizer toker = new StringTokenizer(siteWords + "\n" + weblogWords, "\n");
+            String source1, String source2, List<String> stringRules, List<Pattern> regexRules) {
+        String source1words = (source1 != null) ? source1 : "";
+        String source2words = (source2 != null) ? source2 : "";
+        StringTokenizer toker = new StringTokenizer(source2words + "\n" + source1words, "\n");
         while (toker.hasMoreTokens()) {
             String token = toker.nextToken().trim();
             if (token.startsWith("#")) {
@@ -211,10 +149,4 @@ public final class Blacklist {
         }        
     }
         
-    /** Return pretty list of String and RegEx rules. */
-    public String toString() {
-        String val = "blacklist " + blacklistStr;
-        val += "\nRegex blacklist " + blacklistRegex;
-        return val;
-    }
 }

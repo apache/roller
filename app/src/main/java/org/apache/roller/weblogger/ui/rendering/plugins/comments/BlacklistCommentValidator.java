@@ -21,12 +21,17 @@
 
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.util.Blacklist;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.BlacklistChecker;
 
 /**
  * Validates comment if comment does not contain blacklisted words.
@@ -39,11 +44,31 @@ public class BlacklistCommentValidator implements CommentValidator {
     }
 
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
-        if (BlacklistChecker.checkComment(comment)) {
+        if (checkComment(comment)) {
             messages.addError("comment.validator.blacklistMessage");
             return 0;
         }
         return WebloggerUtils.PERCENT_100;
     }
-    
+
+    /**
+     * Test comment, applying both site and weblog blacklists, if configured
+     * @return True if comment matches a blacklist term
+     */
+    private boolean checkComment(WeblogEntryComment comment) {
+        boolean isBlacklisted = false;
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Weblog weblog = comment.getWeblogEntry().getWeblog();
+        Blacklist.populateSpamRules(
+                weblog.getBlacklist(), WebloggerRuntimeConfig.getProperty("spam.blacklist"), stringRules, regexRules
+        );
+        if (Blacklist.isBlacklisted(comment.getUrl(), stringRules, regexRules)
+                || Blacklist.isBlacklisted(comment.getEmail(), stringRules, regexRules)
+                || Blacklist.isBlacklisted(comment.getName(), stringRules, regexRules)
+                || Blacklist.isBlacklisted(comment.getContent(), stringRules, regexRules)) {
+            isBlacklisted = true;
+        }
+        return isBlacklisted;
+    }
 }
