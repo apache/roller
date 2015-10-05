@@ -742,7 +742,7 @@ public class Utilities {
     }
 
     /**
-     * Need need to get rid of any user-visible HTML tags once all text has been
+     * Need to get rid of any user-visible HTML tags once all text has been
      * removed such as &lt;BR&gt;. This sounds like a better approach than
      * removing all HTML tags and taking the chance to leave some tags
      * un-closed.
