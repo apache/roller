@@ -14,12 +14,6 @@
         </field-validator>
     </field>
     
-    <field name="bean.locale">
-        <field-validator type="requiredstring">
-            <message key="Entry.error.localeNull">unspecified key</message>
-        </field-validator>
-    </field>
-    
     <field name="bean.categoryId">
         <field-validator type="requiredstring">
             <message key="Entry.error.categoryNull">unspecified key</message>

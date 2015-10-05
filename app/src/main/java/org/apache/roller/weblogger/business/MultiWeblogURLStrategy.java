@@ -84,7 +84,10 @@ public class MultiWeblogURLStrategy implements URLStrategy {
         if(weblogHandle != null) {
             params.put("weblog", weblogHandle);
         }
-        params.putAll(parameters);
+
+        if (parameters != null) {
+            params.putAll(parameters);
+        }
         return url + URLUtilities.getQueryString(params);
     }
 
