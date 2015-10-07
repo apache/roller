@@ -49,7 +49,7 @@ public class MediaFileImageChooser extends MediaFileBase {
     public MediaFileImageChooser() {
         this.actionName = "mediaFileImageChooser";
         this.desiredMenu = "editor";
-        this.pageTitle = "mediaFileImaegChooser.title";
+        this.pageTitle = "mediaFileImageChooser.title";
     }
 
     /**

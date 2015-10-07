@@ -126,14 +126,6 @@
 </script>
 
 
-<s:form id="createPostForm" action='entryAddWithMediaFile'>
-	<s:hidden name="salt" />
-    <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />' />
-    <input type="hidden" name="selectedImage" id="selectedImage" />
-    <input type="hidden" name="type" id="type" />
-</s:form>
-
-
 <%-- ********************************************************************* --%>
 
 <%-- Subtitle and folder path --%>
