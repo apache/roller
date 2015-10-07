@@ -241,7 +241,7 @@
         <action name="mediaFileAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
             <result name="input" type="tiles">.MediaFileAdd</result>
-            <result name="success" type="tiles">.MediaFileAddSuccess</result>
+            <result name="success" type="chain">mediaFileView</result>
             <result name="error" type="tiles">.MediaFileAdd</result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">mediaFileView</param>
@@ -255,13 +255,6 @@
             <result name="success" type="tiles">.MediaFileEditSuccess</result>
         </action>
 
-        <action name="mediaFileAddExternalInclude!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
-            <result name="input" type="tiles">.MediaFileAddExternalInclude</result>
-            <result name="success" type="tiles">.MediaFileAddExternalInclude</result>
-            <result name="error" type="tiles">.MediaFileAddExternalInclude</result>
-        </action>
-
 	    <action name="mediaFileView!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
             <result name="success" type="tiles">.MediaFileView</result>
@@ -271,11 +264,6 @@
 	    <action name="mediaFileImageDim!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
             <result name="success" type="tiles">.MediaFileImageDimension</result>
-        </action>
-
-        <action name="entryAddWithMediaFile!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile">
-            <result name="success" type="chain">entryAdd</result>
         </action>
 
         <action name="entryAdd!*" method="{1}"
@@ -496,14 +484,6 @@
     <!-- Weblogger Authoring UI - overlay pages-->
     
     <package name="weblogger-authoring-overlay" namespace="/roller-ui/authoring/overlay" extends="weblogger-authoring">
-
-        <action name="mediaFileAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
-            <param name="overlayMode">true</param>
-            <result name="input" type="tiles">.MediaFileAddInclude</result>
-            <result name="success" type="tiles">.MediaFileAddSuccessInclude</result>
-            <result name="error" type="tiles">.MediaFileAddInclude</result>
-        </action>
 
 	    <action name="mediaFileImageChooser!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageChooser">
