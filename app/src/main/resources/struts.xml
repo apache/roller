@@ -261,11 +261,6 @@
             <result name="success.json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileViewLight.jsp</result>
         </action>
 
-	    <action name="mediaFileImageDim!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
-            <result name="success" type="tiles">.MediaFileImageDimension</result>
-        </action>
-
         <action name="entryAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
             <param name="actionName">entryAdd</param>
