@@ -96,7 +96,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             targetDirectory.getMediaFiles().add(mediaFile);
             this.strategy.store(targetDirectory);
         }
-        updateWeblogLastModifiedDate(targetDirectory.getWeblog());
 
         // Refresh associated parent for changes
         strategy.flush();
@@ -122,11 +121,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public void createMediaFileDirectory(MediaFileDirectory directory)
             throws WebloggerException {
         this.strategy.store(directory);
-
-        updateWeblogLastModifiedDate(directory.getWeblog());
-
-        // Refresh associated parent for changes
-        // strategy.refresh(directory.getParent());
     }
 
     /**
@@ -151,9 +145,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             newDirectory = new MediaFileDirectory(weblog, requestedName, null);
             log.debug("Created new Directory " + requestedName);
         }
-
-        updateWeblogLastModifiedDate(weblog);
-
         return newDirectory;
     }
 
@@ -186,8 +177,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             // Refresh associated parent for changes
             strategy.flush();
             strategy.refresh(mediaFile.getDirectory());
-
-            updateWeblogLastModifiedDate(weblog);
 
             cmgr.saveFileContent(weblog, mediaFile.getId(),
                     mediaFile.getInputStream());
@@ -450,8 +439,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         // Refresh associated parent for changes
         strategy.refresh(mediaFile.getDirectory());
-
-        updateWeblogLastModifiedDate(weblog);
 
         try {
             cmgr.deleteFile(weblog, mediaFile.getId());
