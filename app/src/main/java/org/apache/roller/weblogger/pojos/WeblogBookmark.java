@@ -83,6 +83,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         this.id = id;
     }
 
+    // algorithm assumes bookmark not yet added to the weblog's list
     public void calculatePriority() {
         int size = weblog.getBookmarks().size();
         if (size == 0) {

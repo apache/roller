@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 /**
@@ -305,5 +306,53 @@ public interface WeblogManager {
      * @throws WebloggerException If there is a problem.
      */
     WeblogBookmark getBookmark(String id) throws WebloggerException;
+
+    /**
+     * Save weblog category.
+     */
+    void saveWeblogCategory(WeblogCategory cat) throws WebloggerException;
+
+    /**
+     * Remove weblog category.
+     */
+    void removeWeblogCategory(WeblogCategory cat) throws WebloggerException;
+
+    /**
+     * Get category by id.
+     */
+    WeblogCategory getWeblogCategory(String id) throws WebloggerException;
+
+
+    /**
+     * Recategorize all entries with one category to another.
+     */
+    void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat)
+            throws WebloggerException;
+
+    /**
+     * Get category specified by website and name.
+     * @param website      Website of WeblogCategory.
+     * @param categoryName Name of WeblogCategory
+     */
+    WeblogCategory getWeblogCategoryByName(Weblog website,
+                                           String categoryName) throws WebloggerException;
+
+    /**
+     * Get WebLogCategory objects for a website.
+     */
+    List<WeblogCategory> getWeblogCategories(Weblog website)
+            throws WebloggerException;
+
+    /**
+     * Check for duplicate category name.
+     */
+    boolean isDuplicateWeblogCategoryName(WeblogCategory data)
+            throws WebloggerException;
+
+    /**
+     * Check if weblog category is in use.
+     */
+    boolean isWeblogCategoryInUse(WeblogCategory data)
+            throws WebloggerException;
 
 }

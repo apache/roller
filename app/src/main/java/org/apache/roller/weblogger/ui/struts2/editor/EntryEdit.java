@@ -426,8 +426,7 @@ public final class EntryEdit extends UIAction {
      */
     public List<WeblogCategory> getCategories() {
         try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                    .getWeblogEntryManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             return wmgr.getWeblogCategories(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error(

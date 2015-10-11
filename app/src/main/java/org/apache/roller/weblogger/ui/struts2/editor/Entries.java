@@ -31,6 +31,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.*;
@@ -173,7 +174,7 @@ public class Entries extends UIAction {
         
         List<WeblogCategory> weblogCats = Collections.emptyList();
         try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             weblogCats = wmgr.getWeblogCategories(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - " + getWeblog(), ex);

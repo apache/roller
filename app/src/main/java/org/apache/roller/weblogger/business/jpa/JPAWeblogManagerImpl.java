@@ -241,6 +241,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 if (firstCat == null) {
                     firstCat = c;
                 }
+                newWeblog.addCategory(c);
                 this.strategy.store(c);
             }
         }
@@ -264,6 +265,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                             rollitems[0],
                             "",
                             rollitems[1].trim());
+                    newWeblog.addBookmark(b);
                     this.strategy.store(b);
                 }
             }
@@ -684,8 +686,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     public void saveBookmark(WeblogBookmark bookmark) throws WebloggerException {
-        WeblogBookmark managedBookmark = this.strategy.merge(bookmark);
-        bookmark.getWeblog().getBookmarks().add(managedBookmark);
+        this.strategy.store(bookmark);
     }
 
     public WeblogBookmark getBookmark(String id) throws WebloggerException {
@@ -786,5 +787,123 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             log.error("Error persisting updated hit counts", ex);
         }
 
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public void saveWeblogCategory(WeblogCategory cat) throws WebloggerException {
+        boolean exists = getWeblogCategory(cat.getId()) != null;
+        if (!exists && isDuplicateWeblogCategoryName(cat)) {
+            throw new WebloggerException("Duplicate category name, cannot save category");
+        }
+        this.strategy.store(cat);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public void removeWeblogCategory(WeblogCategory cat)
+            throws WebloggerException {
+        if(cat.retrieveWeblogEntries(false).size() > 0) {
+            throw new WebloggerException("Cannot remove category with entries");
+        }
+
+        cat.getWeblog().getWeblogCategories().remove(cat);
+
+        // remove cat
+        this.strategy.remove(cat);
+
+        if(cat.equals(cat.getWeblog().getBloggerCategory())) {
+            cat.getWeblog().setBloggerCategory(null);
+            this.strategy.store(cat.getWeblog());
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public void moveWeblogCategoryContents(WeblogCategory srcCat,
+                                           WeblogCategory destCat)
+            throws WebloggerException {
+
+        // get all entries in category and subcats
+        List<WeblogEntry> results = srcCat.retrieveWeblogEntries(false);
+
+        // Loop through entries in src cat, assign them to dest cat
+        Weblog website = destCat.getWeblog();
+        for (WeblogEntry entry : results) {
+            entry.setCategory(destCat);
+            entry.setWeblog(website);
+            this.strategy.store(entry);
+        }
+
+        // Update Blogger API category if applicable
+        WeblogCategory bloggerCategory = srcCat.getWeblog().getBloggerCategory();
+        if (bloggerCategory != null && bloggerCategory.getId().equals(srcCat.getId())) {
+            srcCat.getWeblog().setBloggerCategory(destCat);
+            this.strategy.store(srcCat.getWeblog());
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public List<WeblogCategory> getWeblogCategories(Weblog weblog)
+            throws WebloggerException {
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
+                "WeblogCategory.getByWeblog", WeblogCategory.class);
+        q.setParameter(1, weblog);
+        return q.getResultList();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public WeblogCategory getWeblogCategory(String id) throws WebloggerException {
+        return this.strategy.load(WeblogCategory.class, id);
+    }
+
+    //--------------------------------------------- WeblogCategory Queries
+
+    /**
+     * @inheritDoc
+     */
+    public WeblogCategory getWeblogCategoryByName(Weblog weblog,
+                                                  String categoryName) throws WebloggerException {
+        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
+                "WeblogCategory.getByWeblog&Name", WeblogCategory.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, categoryName);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public boolean isDuplicateWeblogCategoryName(WeblogCategory cat)
+            throws WebloggerException {
+        return (getWeblogCategoryByName(
+                cat.getWeblog(), cat.getName()) != null);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public boolean isWeblogCategoryInUse(WeblogCategory cat)
+            throws WebloggerException {
+        if (cat.getWeblog().getBloggerCategory().equals(cat)) {
+            return true;
+        }
+        TypedQuery<WeblogEntry> q = strategy.getNamedQuery("WeblogEntry.getByCategory", WeblogEntry.class);
+        q.setParameter(1, cat);
+        int entryCount = q.getResultList().size();
+        return entryCount > 0;
     }
 }

@@ -28,6 +28,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.commons.logging.Log;
@@ -604,7 +605,7 @@ public class Weblog implements Serializable {
         WeblogCategory category = null;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+            WeblogManager wmgr = roller.getWeblogManager();
             if (categoryName != null && !categoryName.equals("nil")) {
                 category = wmgr.getWeblogCategoryByName(this, categoryName);
             } else {

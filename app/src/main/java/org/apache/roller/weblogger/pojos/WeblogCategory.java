@@ -79,21 +79,19 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
             Weblog weblog,
             String name,
             String description) {
-        
         this.name = name;
         this.description = description;
-
         this.weblog = weblog;
-        weblog.getWeblogCategories().add(this);
         calculatePosition();
     }
 
+    // algorithm assumes category not yet added to the weblog's list
     public void calculatePosition() {
         int size = weblog.getWeblogCategories().size();
-        if (size == 1) {
+        if (size == 0) {
             this.position = 0;
         } else {
-            this.position = weblog.getWeblogCategories().get(size - 2).getPosition() + 1;
+            this.position = weblog.getWeblogCategories().get(size - 1).getPosition() + 1;
         }
     }
 
@@ -174,7 +172,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     @Transient
     public boolean isInUse() {
         try {
-            return WebloggerFactory.getWeblogger().getWeblogEntryManager().isWeblogCategoryInUse(this);
+            return WebloggerFactory.getWeblogger().getWeblogManager().isWeblogCategoryInUse(this);
         } catch (WebloggerException e) {
             throw new RuntimeException(e);
         }

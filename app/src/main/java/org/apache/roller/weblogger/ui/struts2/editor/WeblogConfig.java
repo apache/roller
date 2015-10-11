@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -80,7 +81,7 @@ public class WeblogConfig extends UIAction {
     public void myPrepare() {
         
         try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             // set categories list
             setWeblogCategories(wmgr.getWeblogCategories(getActionWeblog()));
@@ -129,7 +130,8 @@ public class WeblogConfig extends UIAction {
         
         if(!hasActionErrors()) {
             try {
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                WeblogEntryManager wemgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
                 Weblog weblog = getActionWeblog();
 
@@ -156,7 +158,7 @@ public class WeblogConfig extends UIAction {
 
                 // ROL-1050: apply comment defaults to existing entries
                 if(getBean().getApplyCommentDefaults()) {
-                    wmgr.applyCommentDefaultsToEntries(weblog);
+                    wemgr.applyCommentDefaultsToEntries(weblog);
                 }
 
                 // flush

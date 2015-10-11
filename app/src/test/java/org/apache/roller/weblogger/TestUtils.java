@@ -211,10 +211,10 @@ public final class TestUtils {
     public static WeblogCategory setupWeblogCategory(Weblog weblog, String name)
             throws Exception {
 
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
-                .getWeblogEntryManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
         WeblogCategory testCat = new WeblogCategory(weblog, name, null);
+        weblog.addCategory(testCat);
         mgr.saveWeblogCategory(testCat);
 
         // flush to db
@@ -236,8 +236,7 @@ public final class TestUtils {
     public static void teardownWeblogCategory(String id) throws Exception {
 
         // lookup the cat
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
-                .getWeblogEntryManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogCategory cat = mgr.getWeblogCategory(id);
 
         // remove the cat
@@ -313,8 +312,7 @@ public final class TestUtils {
     public static void teardownWeblogEntry(String id) throws Exception {
 
         // lookup the entry
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
-                .getWeblogEntryManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry entry = mgr.getWeblogEntry(id);
 
         // remove the entry
@@ -478,7 +476,7 @@ public final class TestUtils {
      */
     public static WeblogCategory getManagedWeblogCategory(WeblogCategory cat)
             throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogEntryManager()
+        return WebloggerFactory.getWeblogger().getWeblogManager()
                 .getWeblogCategory(cat.getId());
     }
 
