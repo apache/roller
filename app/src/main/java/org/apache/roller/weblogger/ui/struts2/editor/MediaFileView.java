@@ -179,7 +179,7 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
-     * Fetches and displays list of media file for the given directory. The
+     * Fetches and displays list of media files for the given directory. The
      * directory could be chosen by ID or path.
      * 
      * @return String The result of the action.
@@ -204,7 +204,7 @@ public class MediaFileView extends MediaFileBase {
             this.directoryId = directory.getId();
             this.directoryName = directory.getName();
 
-            this.childFiles = new ArrayList<MediaFile>();
+            this.childFiles = new ArrayList<>();
             this.childFiles.addAll(directory.getMediaFiles());
 
             if ("type".equals(sortBy)) {

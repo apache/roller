@@ -187,7 +187,7 @@ public class MediaFileBase extends UIAction {
             MediaFileManager mgr = WebloggerFactory.getWeblogger()
                     .getMediaFileManager();
             List<MediaFileDirectory> directories = mgr.getMediaFileDirectories(getActionWeblog());
-            List<MediaFileDirectory> sortedDirList = new ArrayList<MediaFileDirectory>();
+            List<MediaFileDirectory> sortedDirList = new ArrayList<>();
             sortedDirList.addAll(directories);
             Collections.sort(sortedDirList, MediaFileDirectory.Comparator);
             setAllDirectories(sortedDirList);

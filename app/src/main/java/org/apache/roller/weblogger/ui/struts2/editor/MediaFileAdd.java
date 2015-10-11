@@ -57,10 +57,6 @@ public class MediaFileAdd extends MediaFileBase {
     // an array of filenames for uploaded files
     private String[] uploadedFilesFileName = null;
 
-    private List<MediaFile> newImages = new ArrayList<MediaFile>();
-
-    private List<MediaFile> newFiles = new ArrayList<MediaFile>();
-
     private String directoryName = null;
 
     public MediaFileAdd() {
@@ -133,7 +129,7 @@ public class MediaFileAdd extends MediaFileBase {
                     .getMediaFileManager();
 
             RollerMessages errors = new RollerMessages();
-            List<MediaFile> uploaded = new ArrayList();
+            List<MediaFile> uploaded = new ArrayList<>();
             File[] uploads = getUploadedFiles();
 
             if (uploads != null && uploads.length > 0) {
@@ -196,12 +192,9 @@ public class MediaFileAdd extends MediaFileBase {
                         manager.createMediaFile(getActionWeblog(), mediaFile,
                                 errors);
                         WebloggerFactory.getWeblogger().flush();
-
-                        if (mediaFile.isImageFile()) {
-                            newImages.add(mediaFile);
-                        } else {
-                            newFiles.add(mediaFile);
-                        }
+                        // below should not be necessary as createMediaFile refreshes the directory's
+                        // file listing but caching of directory's old file listing occurring somehow.
+                        mediaFile.getDirectory().getMediaFiles().add(mediaFile);
 
                         uploaded.add(mediaFile);
 
@@ -220,7 +213,7 @@ public class MediaFileAdd extends MediaFileBase {
                     addMessage("uploadFiles.uploadedFiles");
                     for (MediaFile upload : uploaded) {
                         addMessage("uploadFiles.uploadedFile",
-                                upload.getPermalink());
+                                upload.getName());
                     }
 
                 } else {
@@ -287,36 +280,6 @@ public class MediaFileAdd extends MediaFileBase {
 
     public void setUploadedFilesFileName(String[] uploadedFilesFileName) {
         this.uploadedFilesFileName = uploadedFilesFileName;
-    }
-
-    /**
-     * @return the newImages
-     */
-    public List<MediaFile> getNewImages() {
-        return newImages;
-    }
-
-    /**
-     * @param newImages
-     *            the newImages to set
-     */
-    public void setNewImages(List<MediaFile> newImages) {
-        this.newImages = newImages;
-    }
-
-    /**
-     * @return the newFiles
-     */
-    public List<MediaFile> getNewFiles() {
-        return newFiles;
-    }
-
-    /**
-     * @param newFiles
-     *            the newFiles to set
-     */
-    public void setNewFiles(List<MediaFile> newFiles) {
-        this.newFiles = newFiles;
     }
 
     /**

@@ -286,7 +286,6 @@ public class JPAPersistenceStrategy {
 
     /**
      * Get named TypedQuery that won't commit changes to DB first (FlushModeType.COMMIT)
-     * Preferred over getNamedQuery(String) due to it being typesafe.
      * @param queryName the name of the query
      * @param resultClass return type of query
      * @throws org.apache.roller.weblogger.WebloggerException on any error
