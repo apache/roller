@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -89,7 +90,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             Hashtable result = new Hashtable();
-            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
+            WeblogManager weblogMgr = roller.getWeblogManager();
             List<WeblogCategory> cats = weblogMgr.getWeblogCategories(website);
             for (WeblogCategory category : cats) {
                 result.put(category.getName(),
@@ -131,8 +132,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("    Publish: " + publish);
         
         Weblogger roller = WebloggerFactory.getWeblogger();
-        WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-        WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
+        WeblogManager weblogMgr = roller.getWeblogManager();
+        WeblogEntryManager weblogEntryMgr = roller.getWeblogEntryManager();
+        WeblogEntry entry = weblogEntryMgr.getWeblogEntry(postid);
         
         validate(entry.getWeblog().getHandle(), userid,password);
         
@@ -185,7 +187,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             }
             
             // save the entry
-            weblogMgr.saveWeblogEntry(entry);
+            weblogEntryMgr.saveWeblogEntry(entry);
             roller.flush();
             
             // notify cache
@@ -254,7 +256,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
+            WeblogManager weblogMgr = roller.getWeblogManager();
+            WeblogEntryManager weblogEntryMgr = roller.getWeblogEntryManager();
             User user = roller.getUserManager().getUserByUserName(userid);
             Timestamp current = new Timestamp(System.currentTimeMillis());
             
@@ -298,7 +301,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             }
             
             // save the entry
-            weblogMgr.saveWeblogEntry(entry);
+            weblogEntryMgr.saveWeblogEntry(entry);
             roller.flush();
             
             // notify cache

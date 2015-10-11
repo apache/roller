@@ -90,6 +90,7 @@ public class IndexManagerTest extends TestCase {
     }
         
     public void testSearch() throws Exception {
+        WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         WeblogEntryManager wem = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         WeblogEntry wd1 = new WeblogEntry();            
@@ -105,7 +106,7 @@ public class IndexManagerTest extends TestCase {
         wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd1.setWeblog(TestUtils.getManagedWebsite(testWeblog));
 
-        WeblogCategory cat = wem.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
+        WeblogCategory cat = wmgr.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
         wd1.setCategory(cat);
 
         wem.saveWeblogEntry(wd1);
@@ -129,7 +130,7 @@ public class IndexManagerTest extends TestCase {
         wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd2.setWeblog(TestUtils.getManagedWebsite(testWeblog));
 
-        cat = wem.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
+        cat = wmgr.getWeblogCategory(testWeblog.getWeblogCategory("General").getId());
         wd2.setCategory(cat);
 
         wem.saveWeblogEntry(wd2);

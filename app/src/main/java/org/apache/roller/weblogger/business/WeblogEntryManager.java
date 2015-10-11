@@ -26,7 +26,6 @@ import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
@@ -130,42 +129,6 @@ public interface WeblogEntryManager {
     List<WeblogEntry> getWeblogEntriesPinnedToMain(Integer max) throws WebloggerException;
 
     /**
-     * Save weblog category.
-     */
-    void saveWeblogCategory(WeblogCategory cat) throws WebloggerException;
-    
-    /**
-     * Remove weblog category.
-     */
-    void removeWeblogCategory(WeblogCategory cat) throws WebloggerException;
-        
-    /**
-     * Get category by id.
-     */
-    WeblogCategory getWeblogCategory(String id) throws WebloggerException;
-    
-    
-    /**
-     * Recategorize all entries with one category to another.
-     */
-    void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat)
-            throws WebloggerException;
-    
-    /**
-     * Get category specified by website and name.
-     * @param website      Website of WeblogCategory.
-     * @param categoryName Name of WeblogCategory
-     */
-    WeblogCategory getWeblogCategoryByName(Weblog website,
-            String categoryName) throws WebloggerException;
-
-    /**
-     * Get WebLogCategory objects for a website. 
-     */
-    List<WeblogCategory> getWeblogCategories(Weblog website)
-            throws WebloggerException;
-
-    /**
      * Save comment.
      */
     void saveComment(WeblogEntryComment comment) throws WebloggerException;
@@ -212,19 +175,7 @@ public interface WeblogEntryManager {
      */
     String createAnchor(WeblogEntry data) throws WebloggerException;
     
-    /**
-     * Check for duplicate category name.
-     */
-    boolean isDuplicateWeblogCategoryName(WeblogCategory data)
-            throws WebloggerException;  
-    
-    /**
-     * Check if weblog category is in use.
-     */
-    boolean isWeblogCategoryInUse(WeblogCategory data)
-            throws WebloggerException;    
-    
-    
+
     /**
      * Apply comment default settings from website to all of website's entries.
      */

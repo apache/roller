@@ -29,6 +29,8 @@ import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
+import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
@@ -76,74 +78,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         this.pingTargetManager = mgr;
         this.strategy = strategy;
     }
-    
-    /**
-     * @inheritDoc
-     */
-    public void saveWeblogCategory(WeblogCategory cat) throws WebloggerException {
-        boolean exists = getWeblogCategory(cat.getId()) != null;
-        if (!exists && isDuplicateWeblogCategoryName(cat)) {
-            throw new WebloggerException("Duplicate category name, cannot save category");
-        }
 
-        updateWeblogLastModifiedDate(cat.getWeblog());
-        this.strategy.store(cat);
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public void removeWeblogCategory(WeblogCategory cat)
-    throws WebloggerException {
-        if(cat.retrieveWeblogEntries(false).size() > 0) {
-            throw new WebloggerException("Cannot remove category with entries");
-        }
-
-        cat.getWeblog().getWeblogCategories().remove(cat);
-
-        // remove cat
-        this.strategy.remove(cat);
-
-        if(cat.equals(cat.getWeblog().getBloggerCategory())) {
-            cat.getWeblog().setBloggerCategory(null);
-            this.strategy.store(cat.getWeblog());
-        }
-
-        updateWeblogLastModifiedDate(cat.getWeblog());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public void moveWeblogCategoryContents(WeblogCategory srcCat,
-            WeblogCategory destCat)
-            throws WebloggerException {
-        
-        // get all entries in category and subcats
-        List<WeblogEntry> results = srcCat.retrieveWeblogEntries(false);
-        
-        // Loop through entries in src cat, assign them to dest cat
-        Weblog website = destCat.getWeblog();
-        for (WeblogEntry entry : results) {
-            entry.setCategory(destCat);
-            entry.setWeblog(website);
-            this.strategy.store(entry);
-        }
-        
-        // Update Blogger API category if applicable
-        WeblogCategory bloggerCategory = srcCat.getWeblog().getBloggerCategory();
-        if (bloggerCategory != null && bloggerCategory.getId().equals(srcCat.getId())) {
-            srcCat.getWeblog().setBloggerCategory(destCat);
-            this.strategy.store(srcCat.getWeblog());
-        }
-    }
-    
     /**
      * @inheritDoc
      */
     public void saveComment(WeblogEntryComment comment) throws WebloggerException {
         this.strategy.store(comment);
-        updateWeblogLastModifiedDate(comment.getWeblogEntry().getWeblog());
     }
     
     /**
@@ -151,7 +91,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public void removeComment(WeblogEntryComment comment) throws WebloggerException {
         this.strategy.remove(comment);
-        updateWeblogLastModifiedDate(comment.getWeblogEntry().getWeblog());
     }
     
     /**
@@ -191,9 +130,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         this.strategy.store(entry);
         
-        // update weblog last modified date.  date updated by saveWebsite()
+        // update weblog last modified date.
         if(entry.isPublished()) {
-            updateWeblogLastModifiedDate(entry.getWeblog());
+            entry.getWeblog().setLastModified(new java.util.Date());
+            strategy.store(entry.getWeblog());
         }
         
         if(entry.isPublished()) {
@@ -202,17 +142,10 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
     }
     
-    private void updateWeblogLastModifiedDate(Weblog weblog) throws WebloggerException {
-        weblog.setLastModified(new java.util.Date());
-        strategy.store(weblog);
-    }
-
     /**
      * @inheritDoc
      */
     public void removeWeblogEntry(WeblogEntry entry) throws WebloggerException {
-        Weblog weblog = entry.getWeblog();
-        
         CommentSearchCriteria csc = new CommentSearchCriteria();
         csc.setEntry(entry);
 
@@ -232,10 +165,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         // remove entry
         this.strategy.remove(entry);
         
-        if (entry.isPublished()) {
-            updateWeblogLastModifiedDate(weblog);
-        }
-        
         // remove entry from cache mapping
         this.entryAnchorToIdMap.remove(entry.getWeblog().getHandle() + ":" + entry.getAnchor());
     }
@@ -243,6 +172,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public List getNextPrevEntries(WeblogEntry current, String catName,
             int maxEntries, boolean next)
             throws WebloggerException {
+
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
 		if (current == null) {
 			LOG.debug("current WeblogEntry cannot be null");
@@ -275,7 +206,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         if (catName != null) {
-            category = getWeblogCategoryByName(current.getWeblog(), catName);
+            category = mgr.getWeblogCategoryByName(current.getWeblog(), catName);
             if (category != null) {
                 params.add(size++, category);
                 whereClause.append(" AND e.category = ?").append(size);
@@ -301,27 +232,13 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    @Override
-    public List<WeblogCategory> getWeblogCategories(Weblog weblog)
-    throws WebloggerException {
-        if (weblog == null) {
-            throw new WebloggerException("weblog is null");
-        }
-        
-        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
-                "WeblogCategory.getByWeblog", WeblogCategory.class);
-        q.setParameter(1, weblog);
-        return q.getResultList();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc) throws WebloggerException {
+
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
         WeblogCategory cat = null;
         if (StringUtils.isNotEmpty(wesc.getCatName()) && wesc.getWeblog() != null) {
-            cat = getWeblogCategoryByName(wesc.getWeblog(), wesc.getCatName());
+            cat = mgr.getWeblogCategoryByName(wesc.getWeblog(), wesc.getCatName());
         }
 
         List<Object> params = new ArrayList<>();
@@ -512,30 +429,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         return name;
     }
-    
-    /**
-     * @inheritDoc
-     */
-    public boolean isDuplicateWeblogCategoryName(WeblogCategory cat)
-    throws WebloggerException {
-        return (getWeblogCategoryByName(
-                cat.getWeblog(), cat.getName()) != null);
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public boolean isWeblogCategoryInUse(WeblogCategory cat)
-    throws WebloggerException {
-        if (cat.getWeblog().getBloggerCategory().equals(cat)) {
-            return true;
-        }
-        TypedQuery<WeblogEntry> q = strategy.getNamedQuery("WeblogEntry.getByCategory", WeblogEntry.class);
-        q.setParameter(1, cat);
-        int entryCount = q.getResultList().size();
-        return entryCount > 0;
-    }
-    
+
     /**
      * @inheritDoc
      */
@@ -633,32 +527,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         return count;
     }
     
-    
-    /**
-     * @inheritDoc
-     */
-    public WeblogCategory getWeblogCategory(String id) throws WebloggerException {
-        return this.strategy.load(WeblogCategory.class, id);
-    }
-    
-    //--------------------------------------------- WeblogCategory Queries
-    
-    /**
-     * @inheritDoc
-     */
-    public WeblogCategory getWeblogCategoryByName(Weblog weblog,
-            String categoryName) throws WebloggerException {
-        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
-                "WeblogCategory.getByWeblog&Name", WeblogCategory.class);
-        q.setParameter(1, weblog);
-        q.setParameter(2, categoryName);
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
     /**
      * @inheritDoc
      */

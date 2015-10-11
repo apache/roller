@@ -28,8 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -75,7 +75,7 @@ public class CategoryRemove extends UIAction {
 
     public void myPrepare() {
         try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             if(!StringUtils.isEmpty(getRemoveId())) {
                 setCategory(wmgr.getWeblogCategory(getRemoveId()));
             }
@@ -91,7 +91,7 @@ public class CategoryRemove extends UIAction {
     public String execute() {
         try {
             // Build list of categories that the removed category's blog entries (if any) can be moved to
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog());
             for (WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getRemoveId())) {
@@ -112,7 +112,7 @@ public class CategoryRemove extends UIAction {
         
         if(getCategory() != null) {
             try {
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
                 if (getTargetCategoryId() != null) {
                     WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());

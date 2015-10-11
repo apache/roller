@@ -85,7 +85,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
@@ -106,8 +106,8 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        WeblogCategory cat = null;
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogCategory cat;
 
         // root category is always available
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -117,11 +117,11 @@ public class WeblogCategoryCRUDTest extends TestCase {
 
         // add a new category
         WeblogCategory newCat = new WeblogCategory(testWeblog, "catTestCategory", null);
+        testWeblog.addCategory(newCat);
         mgr.saveWeblogCategory(newCat);
         TestUtils.endSession(true);
         
         // make sure category was added
-        cat = null;
         cat = mgr.getWeblogCategory(newCat.getId());
         assertNotNull(cat);
         assertEquals(newCat, cat);
@@ -136,7 +136,6 @@ public class WeblogCategoryCRUDTest extends TestCase {
         TestUtils.endSession(true);
 
         // verify category was updated
-        cat = null;
         cat = mgr.getWeblogCategory(newCat.getId());
         assertNotNull(cat);
         assertEquals("testtest", cat.getName());
@@ -147,7 +146,6 @@ public class WeblogCategoryCRUDTest extends TestCase {
         TestUtils.endSession(true);
 
         // make sure cat was removed
-        cat = null;
         cat = mgr.getWeblogCategory(newCat.getId());
         assertNull(cat);
         
@@ -166,13 +164,14 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         // root category is always available
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
         // add a category above default one
         WeblogCategory testCat = new WeblogCategory(testWeblog, "SampleCategory", null);
+        testWeblog.addCategory(testCat);
         mgr.saveWeblogCategory(testCat);
         TestUtils.endSession(true);
         

@@ -113,9 +113,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     public void testLookupCategoryById() throws Exception {
         
         log.info("BEGIN");
-        
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
+
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+
         WeblogCategory cat = mgr.getWeblogCategory(testCat.getId());
         assertNotNull(cat);
         assertEquals(cat, testCat);
@@ -130,9 +130,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     public void testLookupCategoryByName() throws Exception {
         
         log.info("BEGIN");
-        
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
+
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogCategory cat = mgr.getWeblogCategoryByName(testWeblog, "catTest-cat1");
         assertNotNull(cat);
@@ -157,9 +157,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     public void testLookupAllCategoriesByWeblog() throws Exception {
         
         log.info("BEGIN");
-        
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        
+
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List cats = mgr.getWeblogCategories(testWeblog);
         assertNotNull(cats);
@@ -173,7 +173,8 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
      */
     public void testMoveWeblogCategoryContents() throws Exception {
         log.info("BEGIN");
-        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager wemgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry e1 = null;
         WeblogEntry e2 = null; 
         try {
@@ -183,9 +184,11 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
 
             // add some categories and entries to test with
             WeblogCategory c1 = new WeblogCategory(testWeblog, "c1", null);
+            testWeblog.addCategory(c1);
             mgr.saveWeblogCategory(c1);
 
             WeblogCategory dest = new WeblogCategory(testWeblog, "dest", null);
+            testWeblog.addCategory(dest);
             mgr.saveWeblogCategory(dest);
 
             TestUtils.endSession(true);
@@ -227,8 +230,8 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             assertEquals(0, c1.retrieveWeblogEntries(false).size());
 
         } finally {
-            mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e1));
-            mgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e2));
+            wemgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e1));
+            wemgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(e2));
         }
         
         log.info("END");

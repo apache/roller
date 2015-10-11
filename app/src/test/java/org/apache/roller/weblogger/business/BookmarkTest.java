@@ -86,7 +86,8 @@ public class BookmarkTest extends TestCase {
                 "TestBookmark1",
                 "created by testBookmarkCRUD()",
                 "http://www.example1.com");
-        // Save via saveBookmark
+        testWeblog.addBookmark(bookmark1);
+        bookmark1.calculatePriority();
         wmgr.saveBookmark(bookmark1);
 
         // Add another bookmark
@@ -95,8 +96,8 @@ public class BookmarkTest extends TestCase {
                 "TestBookmark2",
                 "created by testBookmarkCRUD()",
                 "http://www.example2.com");
-        // Save via saving Weblog
         testWeblog.addBookmark(bookmark2);
+        bookmark2.calculatePriority();
         wmgr.saveWeblog(testWeblog);
 
         TestUtils.endSession(true);
@@ -145,15 +146,18 @@ public class BookmarkTest extends TestCase {
         // add some bookmarks
         WeblogBookmark b1 = new WeblogBookmark(
                 testWeblog, "b1", "testbookmark13",
-                "http://example.com");
+                "http://example1.com");
+        testWeblog.addBookmark(b1);
         wmgr.saveBookmark(b1);
         WeblogBookmark b2 = new WeblogBookmark(
                 testWeblog, "b2", "testbookmark14",
-                "http://example.com");
+                "http://example2.com");
+        testWeblog.addBookmark(b2);
         wmgr.saveBookmark(b2);
         WeblogBookmark b3 = new WeblogBookmark(
                 testWeblog, "b3", "testbookmark16",
-                "http://example.com");
+                "http://example3.com");
+        testWeblog.addBookmark(b3);
         wmgr.saveBookmark(b3);
         
         TestUtils.endSession(true);

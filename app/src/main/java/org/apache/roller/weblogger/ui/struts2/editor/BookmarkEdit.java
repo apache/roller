@@ -102,6 +102,10 @@ public class BookmarkEdit extends UIAction {
             try {
                 getBean().copyTo(bookmark);
                 WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                if (isAdd()) {
+                    bookmark.calculatePriority();
+                    getActionWeblog().addBookmark(bookmark);
+                }
                 wmgr.saveBookmark(bookmark);
                 WebloggerFactory.getWeblogger().flush();
                 CacheManager.invalidate(bookmark);
