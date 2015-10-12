@@ -32,10 +32,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
+import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -43,7 +46,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * View media files.
  */
 @SuppressWarnings("serial")
-public class MediaFileView extends MediaFileBase {
+public class MediaFileView extends UIAction {
 
     private static Log log = LogFactory.getLog(MediaFileView.class);
 
@@ -54,6 +57,12 @@ public class MediaFileView extends MediaFileBase {
 
     private List<MediaFile> childFiles;
     private MediaFileDirectory currentDirectory;
+    private String selectedDirectory;
+    private String[] selectedMediaFiles;
+
+    private List<MediaFileDirectory> allDirectories;
+
+    private String mediaFileId;
 
     // Search criteria - drop-down for file type
     private static List<Pair<String, String>> FILE_TYPES = null;
@@ -84,13 +93,21 @@ public class MediaFileView extends MediaFileBase {
         this.pageTitle = "mediaFileView.title";
     }
 
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
+    }
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.POST;
+    }
+
     /**
      * Prepares view action
      */
     public void myPrepare() {
-
         if (SIZE_FILTER_TYPES == null) {
-
             SIZE_FILTER_TYPES = Arrays.asList(
                     Pair.of("mediaFileView.gt", getText("mediaFileView.gt")),
                     Pair.of("mediaFileView.ge", getText("mediaFileView.ge")),
@@ -116,27 +133,27 @@ public class MediaFileView extends MediaFileBase {
                     Pair.of("type", getText("mediaFileView.type")));
         }
 
-        refreshAllDirectories();
+        try {
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            allDirectories = manager.getMediaFileDirectories(getActionWeblog());
+        } catch (WebloggerException ex) {
+            log.error("Error getting directory list", ex);
+        }
     }
 
     /**
      * Create a new directory by name. All folders placed at the root.
      */
     public String createNewDirectory() {
-        boolean dirCreated = false;
         if (StringUtils.isEmpty(this.newDirectoryName)) {
             addError("mediaFile.error.view.dirNameEmpty");
         } else if (this.newDirectoryName.contains("/")) {
             addError("mediaFile.error.view.dirNameInvalid");
         } else {
             try {
-
+                MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
                 log.debug("Creating new directory - " + this.newDirectoryName);
-                MediaFileManager manager = WebloggerFactory.getWeblogger()
-                        .getMediaFileManager();
-
-                if (!getActionWeblog().hasMediaFileDirectory(
-                        this.newDirectoryName)) {
+                if (!getActionWeblog().hasMediaFileDirectory(this.newDirectoryName)) {
                     // Create
                     MediaFileDirectory dir = manager.createMediaFileDirectory(
                             getActionWeblog(), this.newDirectoryName);
@@ -147,8 +164,7 @@ public class MediaFileView extends MediaFileBase {
 
                     // Switch to folder
                     setDirectoryId(dir.getId());
-
-                    dirCreated = true;
+                    allDirectories = manager.getMediaFileDirectories(getActionWeblog());
                 } else {
                     // already exists
                     addMessage("mediaFile.directoryCreate.error.exists",
@@ -160,14 +176,7 @@ public class MediaFileView extends MediaFileBase {
                 addError("Error creating new directory");
             }
         }
-
-        if (dirCreated) {
-            // Refresh list of directories so the newly created directory is
-            // included.
-            refreshAllDirectories();
-        }
         return execute();
-
     }
 
     /**
@@ -232,8 +241,7 @@ public class MediaFileView extends MediaFileBase {
      */
     public String view() {
         try {
-            MediaFileManager manager = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             if (!StringUtils.isEmpty(viewDirectoryId)) {
                 setDirectoryId(viewDirectoryId);
                 setCurrentDirectory(manager
@@ -288,7 +296,35 @@ public class MediaFileView extends MediaFileBase {
      * 
      */
     public String deleteSelected() {
-        doDeleteSelected();
+        String[] fileIds = getSelectedMediaFiles();
+        try {
+            MediaFileManager manager = WebloggerFactory.getWeblogger()
+                    .getMediaFileManager();
+
+            if (fileIds != null && fileIds.length > 0) {
+                log.debug("Processing delete of " + fileIds.length
+                        + " media files.");
+                for (String fileId : fileIds) {
+                    log.debug("Deleting media file - " + fileId);
+                    MediaFile mediaFile = manager.getMediaFile(fileId);
+                    if (mediaFile != null) {
+                        manager.removeMediaFile(getActionWeblog(), mediaFile);
+                    }
+                }
+            }
+
+            WebloggerFactory.getWeblogger().getWeblogManager()
+                    .saveWeblog(this.getActionWeblog());
+
+            // flush changes
+            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.getWeblogger().release();
+            addMessage("mediaFile.delete.success");
+
+        } catch (WebloggerException e) {
+            log.error("Error deleting selected media files", e);
+            addError("mediaFile.delete.error");
+        }
         return execute();
     }
 
@@ -297,7 +333,20 @@ public class MediaFileView extends MediaFileBase {
      * 
      */
     public String delete() {
-        doDeleteMediaFile();
+        try {
+            log.debug("Processing delete of file id - " + getMediaFileId());
+            MediaFileManager manager = WebloggerFactory.getWeblogger()
+                    .getMediaFileManager();
+            MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+            manager.removeMediaFile(getActionWeblog(), mediaFile);
+            // flush changes
+            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.getWeblogger().release();
+            addMessage("mediaFile.delete.success");
+        } catch (WebloggerException e) {
+            log.error("Error deleting media file", e);
+            addError("mediaFile.delete.error", getMediaFileId());
+        }
         return execute();
     }
 
@@ -315,7 +364,7 @@ public class MediaFileView extends MediaFileBase {
                 MediaFileDirectory mediaFileDir = manager
                         .getMediaFileDirectory(directoryId);
                 manager.removeMediaFileDirectory(mediaFileDir);
-                refreshAllDirectories();
+                allDirectories = manager.getMediaFileDirectories(getActionWeblog());
                 WebloggerFactory.getWeblogger().getWeblogManager()
                         .saveWeblog(this.getActionWeblog());
 
@@ -342,20 +391,40 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
-     * Include selected media file in gallery
-     * 
-     */
-    public String includeInGallery() {
-        doIncludeMediaFileInGallery();
-        return execute();
-    }
-
-    /**
      * Move selected media files to a different directory
      * 
      */
     public String moveSelected() {
-        doMoveSelected();
+        String[] fileIds = getSelectedMediaFiles();
+        try {
+            int movedFiles = 0;
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+
+            if (fileIds != null && fileIds.length > 0) {
+                log.debug("Processing move of " + fileIds.length
+                        + " media files.");
+                MediaFileDirectory targetDirectory = manager.getMediaFileDirectory(getSelectedDirectory());
+                for (String fileId : fileIds) {
+                    log.debug("Moving media file - " + fileId + " to directory - " + getSelectedDirectory());
+                    MediaFile mediaFile = manager.getMediaFile(fileId);
+                    if (mediaFile != null && !mediaFile.getDirectory().getId().equals(targetDirectory.getId())) {
+                        manager.moveMediaFile(mediaFile, targetDirectory);
+                        movedFiles++;
+                    }
+                }
+            }
+
+            // flush changes
+            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.getWeblogger().release();
+            if (movedFiles > 0) {
+                addMessage("mediaFile.move.success");
+            }
+
+        } catch (WebloggerException e) {
+            log.error("Error moving selected media files", e);
+            addError("mediaFile.move.errors");
+        }
         return execute();
     }
 
@@ -468,4 +537,31 @@ public class MediaFileView extends MediaFileBase {
         this.viewDirectoryId = viewDirectoryId;
     }
 
+    public String getSelectedDirectory() {
+        return selectedDirectory;
+    }
+
+    public void setSelectedDirectory(String selectedDirectory) {
+        this.selectedDirectory = selectedDirectory;
+    }
+
+    public String[] getSelectedMediaFiles() {
+        return selectedMediaFiles;
+    }
+
+    public void setSelectedMediaFiles(String[] selectedMediaFiles) {
+        this.selectedMediaFiles = selectedMediaFiles;
+    }
+
+    public List<MediaFileDirectory> getAllDirectories() {
+        return allDirectories;
+    }
+
+    public String getMediaFileId() {
+        return mediaFileId;
+    }
+
+    public void setMediaFileId(String mediaFileId) {
+        this.mediaFileId = mediaFileId;
+    }
 }

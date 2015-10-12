@@ -260,6 +260,13 @@
             <result name="success" type="tiles">.MediaFileView</result>
         </action>
 
+        <action name="mediaFileImageChooser!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageChooser">
+            <result name="input" type="tiles">.MediaFileImageChooser</result>
+            <result name="error" type="tiles">.MediaFileImageChooser</result>
+            <result name="success" type="tiles">.MediaFileImageChooser</result>
+        </action>
+
         <action name="entryAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
             <param name="actionName">entryAdd</param>
@@ -471,20 +478,6 @@
         <action name="maintenance!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Maintenance">
             <result name="success" type="tiles">.Maintenance</result>
-        </action>
-
-    </package>
-
-    <!-- Weblogger Authoring UI - overlay pages-->
-    
-    <package name="weblogger-authoring-overlay" namespace="/roller-ui/authoring/overlay" extends="weblogger-authoring">
-
-	    <action name="mediaFileImageChooser!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageChooser">
-            <param name="overlayMode">true</param>
-            <result name="input" type="tiles">.MediaFileImageChooser</result>
-            <result name="error" type="tiles">.MediaFileImageChooser</result>
-            <result name="success" type="tiles">.MediaFileImageChooser</result>
         </action>
 
     </package>

@@ -31,8 +31,11 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
@@ -42,7 +45,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Adds a new media file.
  */
 @SuppressWarnings("serial")
-public class MediaFileAdd extends MediaFileBase {
+public class MediaFileAdd extends UIAction {
 
     private static Log log = LogFactory.getLog(MediaFileAdd.class);
     private MediaFileBean bean = new MediaFileBean();
@@ -65,15 +68,27 @@ public class MediaFileAdd extends MediaFileBase {
         this.pageTitle = "mediaFileAdd.title";
     }
 
+    private List<MediaFileDirectory> allDirectories;
+
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
+    }
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.POST;
+    }
+
     /**
      * Prepares action class
      */
     public void myPrepare() {
         log.debug("Into myprepare");
-        refreshAllDirectories();
         try {
-            MediaFileManager mgr = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
+            MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+            allDirectories = mgr.getMediaFileDirectories(getActionWeblog());
+
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
 
@@ -296,4 +311,9 @@ public class MediaFileAdd extends MediaFileBase {
     public void setDirectoryName(String directoryName) {
         this.directoryName = directoryName;
     }
+
+    public List<MediaFileDirectory> getAllDirectories() {
+        return allDirectories;
+    }
+
 }

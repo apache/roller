@@ -415,7 +415,7 @@ public class MediaFile implements Serializable {
     }
 
     /**
-     * For old migrated files and theme resource files, orignal path of file can
+     * For old migrated files and theme resource files, original path of file can
      * never change.
      * 
      * @return the originalPath
