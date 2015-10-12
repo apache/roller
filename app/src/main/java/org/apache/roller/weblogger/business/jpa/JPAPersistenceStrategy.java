@@ -142,15 +142,22 @@ public class JPAPersistenceStrategy {
      * Release database session, rolls back any uncommitted changes.
      */
     public void release() {
+        EntityManager em = null;
         try {
-            EntityManager em = getEntityManager(false);
+            em = getEntityManager(false);
             if (isTransactionActive(em)) {
                 em.getTransaction().rollback();
             }
-            em.close();
         } catch (Exception e) {
-            logger.debug("error during releasing database session", e);
+            logger.error("error during releasing database session", e);
         } finally {
+            if (em != null) {
+                try {
+                    em.close();
+                } catch (Exception e) {
+                    logger.debug("error during closing EntityManager", e);
+                }
+            }
             threadLocalEntityManager.remove();
         }
     }
