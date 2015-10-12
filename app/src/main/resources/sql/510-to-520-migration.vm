@@ -16,7 +16,8 @@
 #renameTable("roller_properties", "weblogger_properties")
 #renameTable("roller_user", "weblogger_user")
 #renameTable("weblogcategory", "weblog_category")
-
+#renameTable("weblog_custom_template", "weblog_template")
+#renameTable("custom_template_rendition", "weblog_template_rendition")
 
 -- Roles consolidated into the weblogger_user table.
 #addColumnNull("weblogger_user" "role"  "varchar(16)")
@@ -64,7 +65,7 @@ group by weblogid, name;
 
 -- switch websiteid columns to weblogid
 #renameColumn("weblog_ping_target", "websiteid", "weblogid", "varchar(48) not null")
-#renameColumn("weblog_custom_template", "websiteid", "weblogid", "varchar(48) not null")
+#renameColumn("weblog_template", "websiteid", "weblogid", "varchar(48) not null")
 #renameColumn("weblog_category", "websiteid", "weblogid", "varchar(48) not null")
 #renameColumn("weblog_entry", "websiteid", "weblogid", "varchar(48) not null")
 #renameColumn("roller_weblogentrytag", "websiteid", "weblogid", "varchar(48) not null")
@@ -253,6 +254,6 @@ alter table planet_subscription_entry add constraint pse_subscriptionid_fk
 #expandTimestampNotNull("weblog_entry_tag" "time")
 #expandTimestampNotNull("weblog" "datecreated")
 #expandTimestamp("weblog" "lastmodified")
-#expandTimestampNotNull("weblog_custom_template" "updatetime")
+#expandTimestampNotNull("weblog_template" "updatetime")
 #expandTimestamp("weblog_entry" "pubtime")
 #expandTimestampNotNull("weblog_entry" "updatetime")

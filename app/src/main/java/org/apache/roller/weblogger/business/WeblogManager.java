@@ -22,12 +22,10 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
@@ -187,7 +185,7 @@ public interface WeblogManager {
     /**
      * Save a custom template rendition
      */
-    void saveTemplateRendition(CustomTemplateRendition templateCode) throws WebloggerException;
+    void saveTemplateRendition(WeblogTemplateRendition templateCode) throws WebloggerException;
 
     /**
      * Get all custom templates for a weblog

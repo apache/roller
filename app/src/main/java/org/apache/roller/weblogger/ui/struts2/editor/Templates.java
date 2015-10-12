@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
@@ -175,7 +175,7 @@ public class Templates extends UIAction {
                         .saveTemplate(newTemplate);
 
                 // Create weblog template codes for available types.
-                CustomTemplateRendition standardRendition = new CustomTemplateRendition(
+                WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
                         newTemplate, RenditionType.STANDARD);
                 standardRendition.setTemplate(getText("pageForm.newTemplateContent"));
                 standardRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
@@ -183,7 +183,7 @@ public class Templates extends UIAction {
                         .saveTemplateRendition(standardRendition);
 
                 /* TBI -- need a way for user to specify dual or single template
-                CustomTemplateRendition mobileRendition = new CustomTemplateRendition(
+                WeblogTemplateRendition mobileRendition = new WeblogTemplateRendition(
                         newTemplate.getId(), RenditionType.MOBILE);
                 mobileRendition.setTemplate(newTemplate.getContents());
                 mobileRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);

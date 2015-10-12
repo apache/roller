@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
@@ -246,7 +246,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 for (RenditionType type : RenditionType.values()) {
 
                     // See if we already have some code for this template already (eg previous theme)
-                    CustomTemplateRendition weblogTemplateCode = template.getTemplateRendition(type);
+                    WeblogTemplateRendition weblogTemplateCode = template.getTemplateRendition(type);
 
                     // Get the template for the new theme
                     TemplateRendition templateCode = themeTemplate.getTemplateRendition(type);
@@ -255,7 +255,7 @@ public class ThemeManagerImpl implements ThemeManager {
                         // Check for existing template
                         if (weblogTemplateCode == null) {
                             // Does not exist so create a new one
-                            weblogTemplateCode = new CustomTemplateRendition(template, type);
+                            weblogTemplateCode = new WeblogTemplateRendition(template, type);
                         }
                         weblogTemplateCode.setType(type);
                         weblogTemplateCode.setTemplate(templateCode.getTemplate());

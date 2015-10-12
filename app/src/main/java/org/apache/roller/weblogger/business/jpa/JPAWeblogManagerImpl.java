@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
-import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
@@ -200,7 +200,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         saveWeblog(template.getWeblog());
     }
 
-    public void saveTemplateRendition(CustomTemplateRendition rendition) throws WebloggerException {
+    public void saveTemplateRendition(WeblogTemplateRendition rendition) throws WebloggerException {
         this.strategy.store(rendition);
 
         // update weblog last modified date.  date updated by saveWeblog()

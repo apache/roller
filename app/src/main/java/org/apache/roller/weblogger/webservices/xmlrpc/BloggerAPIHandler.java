@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -150,7 +150,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         
         try {
             WeblogTemplate template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(templateType);
-            CustomTemplateRendition ctr = template.getTemplateRendition(RenditionType.STANDARD);
+            WeblogTemplateRendition ctr = template.getTemplateRendition(RenditionType.STANDARD);
             if (ctr != null) {
                 ctr.setTemplate(templateData);
                 WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(ctr);
@@ -192,7 +192,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         validate(blogid, userid,password);
         
         try {
-            CustomTemplateRendition ctr = null;
+            WeblogTemplateRendition ctr = null;
             WeblogTemplate template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(templateType);
             if (template != null) {
                 ctr = template.getTemplateRendition(RenditionType.STANDARD);
