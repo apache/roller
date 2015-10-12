@@ -114,6 +114,12 @@ public final class HitCountQueue {
         if(this.worker != null) {
             log.info("stopping worker "+this.worker.getName());
             worker.interrupt();
+            try {
+                // wait 10 seconds for graceful shutdown
+                worker.join(10 * 1000);
+            } catch (InterruptedException e) {
+                log.debug("interrupted", e);
+            }
         }
         
     }
