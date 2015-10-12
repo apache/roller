@@ -207,7 +207,9 @@
         <s:text name="mediaFileView.folderName"/>: <s:text name="currentDirectory.name" />
     </p>
     <p class="pagetip">
-        <s:text name="mediaFileView.dirPageTip" />
+        <s:if test="%{currentDirectory.description != null}">
+            <s:text name="currentDirectory.description" />
+        </s:if>
     </p>
 
 </s:else>

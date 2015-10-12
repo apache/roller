@@ -25,8 +25,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.ArrayList;
@@ -37,7 +40,7 @@ import java.util.List;
  * Browse media files action.
  */
 @SuppressWarnings("serial")
-public class MediaFileImageChooser extends MediaFileBase {
+public class MediaFileImageChooser extends UIAction {
     private static Log log = LogFactory.getLog(MediaFileImageChooser.class);
 
     private String directoryId;
@@ -46,10 +49,22 @@ public class MediaFileImageChooser extends MediaFileBase {
     private List<MediaFile> childFiles;
     private MediaFileDirectory currentDirectory;
 
+    private List<MediaFileDirectory> allDirectories;
+
     public MediaFileImageChooser() {
         this.actionName = "mediaFileImageChooser";
         this.desiredMenu = "editor";
         this.pageTitle = "mediaFileImageChooser.title";
+    }
+
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
+    }
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.POST;
     }
 
     /**
@@ -82,7 +97,7 @@ public class MediaFileImageChooser extends MediaFileBase {
                 this.directoryId = directory.getId();
             }
 
-            this.childFiles = new ArrayList<MediaFile>();
+            this.childFiles = new ArrayList<>();
 
             for (MediaFile mf : directory.getMediaFiles()) {
                 this.childFiles.add(mf);
@@ -93,20 +108,7 @@ public class MediaFileImageChooser extends MediaFileBase {
             this.currentDirectory = directory;
 
             // List of available directories
-            List<MediaFileDirectory> sortedDirList = new ArrayList<MediaFileDirectory>();
-            List<MediaFileDirectory> directories = manager
-                    .getMediaFileDirectories(getActionWeblog());
-            for (MediaFileDirectory mediaFileDirectory : directories) {
-                if (!"default".equals(mediaFileDirectory.getName())
-                        && "default".equals(directory.getName())
-                        || !"default".equals(directory.getName())) {
-                    sortedDirList.add(mediaFileDirectory);
-                }
-            }
-
-            Collections.sort(sortedDirList, MediaFileDirectory.Comparator);
-            setAllDirectories(sortedDirList);
-
+            allDirectories = manager.getMediaFileDirectories(getActionWeblog());
             return SUCCESS;
 
         } catch (Exception e) {
@@ -194,6 +196,10 @@ public class MediaFileImageChooser extends MediaFileBase {
      */
     public void setCurrentDirectory(MediaFileDirectory currentDirectory) {
         this.currentDirectory = currentDirectory;
+    }
+
+    public List<MediaFileDirectory> getAllDirectories() {
+        return allDirectories;
     }
 
 }

@@ -52,37 +52,27 @@
 
 <%-- Subtitle and folder path --%>
 
-<s:if test='currentDirectory.name.equals("default")'>
+<p class="subtitle">
+    <s:if test='currentDirectory.name.equals("default")'>
+            <s:text name="mediaFileImageChooser.subtitle" >
+                <s:param value="weblog" />
+            </s:text>
+    </s:if>
+    <s:else>
+            <s:text name="mediaFileView.folderName"/>:
+            <s:iterator id="directory" value="currentDirectoryHierarchy">
+                <s:url var="getDirectoryByPathUrl" action="mediaFileImageChooser">
+                    <s:param name="directoryName" value="#directory.left" />
+                    <s:param name="weblog" value="%{actionWeblog.handle}" />
+                </s:url>
+                <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.right" /></s:a>
+            </s:iterator>
+    </s:else>
+</p>
 
-    <p class="subtitle">
-        <s:text name="mediaFileImageChooser.subtitle" >
-            <s:param value="weblog" />
-        </s:text>
-    </p>
-    </p>
-    <p class="pagetip">
-        <s:text name="mediaFileImageChooser.rootPageTip" />
-    </p>
-
-</s:if>
-
-<s:else>
-
-    <p class="subtitle">
-        <s:text name="mediaFileView.folderName"/> /
-        <s:iterator id="directory" value="currentDirectoryHierarchy">
-            <s:url var="getDirectoryByPathUrl" action="mediaFileImageChooser">
-                <s:param name="directoryName" value="#directory.left" />
-                <s:param name="weblog" value="%{actionWeblog.handle}" />
-            </s:url>
-            <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.right" /></s:a> /
-        </s:iterator>
-    </p>
-    <p class="pagetip">
-        <s:text name="mediaFileImageChooser.dirPageTip" />
-    </p>
-
-</s:else>
+<p class="pagetip">
+    <s:text name="mediaFileImageChooser.pageTip" />
+</p>
 
 
 <%-- || (pager && pager.items.size() > 0) --%>

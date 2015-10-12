@@ -19,6 +19,8 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -26,15 +28,18 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.pojos.WeblogRole;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * Edits metadata for a media file.
  */
 @SuppressWarnings("serial")
-public class MediaFileEdit extends MediaFileBase {
+public class MediaFileEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(MediaFileEdit.class);
     private MediaFileBean bean = new MediaFileBean();
@@ -55,21 +60,33 @@ public class MediaFileEdit extends MediaFileBase {
         this.pageTitle = "mediaFile.edit.title";
     }
 
+    private String mediaFileId;
+
+    private List<MediaFileDirectory> allDirectories;
+
+    @Override
+    public GlobalRole requiredGlobalRole() {
+        return GlobalRole.BLOGGER;
+    }
+
+    @Override
+    public WeblogRole requiredWeblogRole() {
+        return WeblogRole.POST;
+    }
+
     /**
      * Prepares edit action.
      */
     public void myPrepare() {
-        refreshAllDirectories();
         try {
-            MediaFileManager mgr = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
+            MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+            allDirectories = mgr.getMediaFileDirectories(getActionWeblog());
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
         }
-
     }
 
     /**
@@ -113,8 +130,7 @@ public class MediaFileEdit extends MediaFileBase {
     public String save() {
         myValidate();
         if (!hasActionErrors()) {
-            MediaFileManager manager = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             try {
                 MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
                 bean.copyTo(mediaFile);
@@ -129,12 +145,10 @@ public class MediaFileEdit extends MediaFileBase {
                 }
 
                 // Move file
-                if (!getBean().getDirectoryId().equals(
-                        mediaFile.getDirectory().getId())) {
+                if (!getBean().getDirectoryId().equals(mediaFile.getDirectory().getId())) {
                     log.debug("Processing move of " + mediaFile.getId());
-                    setSelectedMediaFiles(new String[] { mediaFile.getId() });
-                    setSelectedDirectory(getBean().getDirectoryId());
-                    doMoveSelected();
+                    MediaFileDirectory targetDirectory = manager.getMediaFileDirectory(getBean().getDirectoryId());
+                    manager.moveMediaFile(mediaFile, targetDirectory);
                 }
 
                 WebloggerFactory.getWeblogger().flush();
@@ -210,5 +224,17 @@ public class MediaFileEdit extends MediaFileBase {
      */
     public void setUploadedFileName(String uploadedFileName) {
         this.uploadedFileName = uploadedFileName;
+    }
+
+    public List<MediaFileDirectory> getAllDirectories() {
+        return allDirectories;
+    }
+
+    public String getMediaFileId() {
+        return mediaFileId;
+    }
+
+    public void setMediaFileId(String mediaFileId) {
+        this.mediaFileId = mediaFileId;
     }
 }

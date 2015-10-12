@@ -45,7 +45,7 @@ import javax.persistence.Transient;
 @Table(name="media_directory")
 @NamedQueries({
         @NamedQuery(name="MediaFileDirectory.getByWeblog",
-                query="SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1"),
+                query="SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1 order by d.name"),
         @NamedQuery(name="MediaFileDirectory.getByWeblogAndName",
                 query="SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1 AND d.name = ?2")
 })
