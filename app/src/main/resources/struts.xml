@@ -258,7 +258,6 @@
         <action name="mediaFileView!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
             <result name="success" type="tiles">.MediaFileView</result>
-            <result name="success.json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileViewLight.jsp</result>
         </action>
 
         <action name="entryAdd!*" method="{1}"
