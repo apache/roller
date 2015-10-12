@@ -55,7 +55,7 @@ import java.util.Set;
  * contains a reference to the website it is part of.
  */
 @Entity
-@Table(name="weblog_custom_template")
+@Table(name="weblog_template")
 @NamedQueries({
     @NamedQuery(name="WeblogTemplate.getByWeblog",
             query="SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1"),
@@ -181,7 +181,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.outputContentType = outputContentType;
     }
 
-    private List<CustomTemplateRendition> templateRenditions = new ArrayList<CustomTemplateRendition>();
+    private List<WeblogTemplateRendition> templateRenditions = new ArrayList<WeblogTemplateRendition>();
 
     @ManyToOne
     @JoinColumn(name="weblogid", nullable=false)
@@ -193,13 +193,13 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.weblog = website;
     }
 
-    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.CustomTemplateRendition.class,
+    @OneToMany(targetEntity=WeblogTemplateRendition.class,
             cascade=CascadeType.ALL, mappedBy="weblogTemplate")
-    public List<CustomTemplateRendition> getTemplateRenditions() {
+    public List<WeblogTemplateRendition> getTemplateRenditions() {
         return templateRenditions;
     }
 
-    public void setTemplateRenditions(List<CustomTemplateRendition> templateRenditions) {
+    public void setTemplateRenditions(List<WeblogTemplateRendition> templateRenditions) {
         this.templateRenditions = templateRenditions;
     }
 
@@ -231,8 +231,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         return (requiredTemplates.contains(getName()) || "Weblog".equals(getLink()));
     }
 
-    public CustomTemplateRendition getTemplateRendition(CustomTemplateRendition.RenditionType desiredType) throws WebloggerException {
-        for (CustomTemplateRendition rnd : templateRenditions) {
+    public WeblogTemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType desiredType) throws WebloggerException {
+        for (WeblogTemplateRendition rnd : templateRenditions) {
             if (rnd.getType().equals(desiredType)) {
                 return rnd;
             }
@@ -240,7 +240,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         return null;
     }
 
-    public void addTemplateRendition(CustomTemplateRendition newRendition) {
+    public void addTemplateRendition(WeblogTemplateRendition newRendition) {
         if (hasTemplateRendition(newRendition)) {
             throw new IllegalArgumentException("Rendition type '" + newRendition.getType()
                     + " for template '" + this.getName() + "' already exists.");
@@ -248,8 +248,8 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         templateRenditions.add(newRendition);
     }
 
-    public boolean hasTemplateRendition(CustomTemplateRendition proposed) {
-        for (CustomTemplateRendition rnd : templateRenditions) {
+    public boolean hasTemplateRendition(WeblogTemplateRendition proposed) {
+        for (WeblogTemplateRendition rnd : templateRenditions) {
             if(rnd.getType().equals(proposed.getType())) {
                 return true;
             }

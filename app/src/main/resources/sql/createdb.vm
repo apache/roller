@@ -70,7 +70,7 @@ alter table user_weblog_role add constraint uwr_weblogid_fk
 alter table user_weblog_role add constraint uwr_userid_fk
     foreign key ( username ) references weblogger_user( username ) ;
 
-create table weblog_custom_template (
+create table weblog_template (
     id              varchar(48)  not null primary key,
     name            varchar(255)  not null,
     description     varchar(255),
@@ -82,14 +82,14 @@ create table weblog_custom_template (
     outputtype      varchar(48) default null,
     #columnNotNullWithDefault('action' 'varchar(16)' 'custom')
 );
-create index wp_name_idx on weblog_custom_template(name);
-create index wp_link_idx on weblog_custom_template(link);
+create index wp_name_idx on weblog_template(name);
+create index wp_link_idx on weblog_template(link);
 
-create index wct_weblogid_idx on weblog_custom_template(weblogid);
-alter table weblog_custom_template add constraint wct_weblogid_fk
+create index wct_weblogid_idx on weblog_template(weblogid);
+alter table weblog_template add constraint wct_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
 
-create table custom_template_rendition (
+create table weblog_template_rendition (
     id           varchar(48)  not null primary key,
     templateid   varchar(48) not null,
     template     $db.TEXT_SQL_TYPE not null,
@@ -97,8 +97,8 @@ create table custom_template_rendition (
     #columnNotNullWithDefault('type' 'varchar(16)' 'STANDARD')
 );
 
-alter table custom_template_rendition add constraint ctr_templateid_fk
-    foreign key ( templateid ) references weblog_custom_template( id ) ;
+alter table weblog_template_rendition add constraint ctr_templateid_fk
+    foreign key ( templateid ) references weblog_template( id ) ;
 
 create table blogroll_link (
     id               varchar(48) not null primary key,

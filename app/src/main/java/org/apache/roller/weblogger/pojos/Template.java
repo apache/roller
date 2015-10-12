@@ -64,6 +64,6 @@ public interface Template {
      *
      * get the Template rendition object for the given type.
      */
-    TemplateRendition getTemplateRendition(CustomTemplateRendition.RenditionType type) throws WebloggerException;
+    TemplateRendition getTemplateRendition(WeblogTemplateRendition.RenditionType type) throws WebloggerException;
     
 }

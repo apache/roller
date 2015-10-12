@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -22,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -156,18 +159,18 @@ public class TemplateEditBean {
 
         if (dataHolder.getTemplateRendition(RenditionType.STANDARD) != null) {
             // if we have a template, then set it
-            CustomTemplateRendition tc = dataHolder.getTemplateRendition(RenditionType.STANDARD);
+            WeblogTemplateRendition tc = dataHolder.getTemplateRendition(RenditionType.STANDARD);
             tc.setTemplate(contentsStandard);
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         } else { 
             // otherwise create it, then set it
-            CustomTemplateRendition tc = new CustomTemplateRendition(dataHolder, RenditionType.STANDARD);
+            WeblogTemplateRendition tc = new WeblogTemplateRendition(dataHolder, RenditionType.STANDARD);
 			tc.setTemplate("");
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         }
 
         if (dataHolder.getTemplateRendition(RenditionType.MOBILE) != null) {
-            CustomTemplateRendition tc = dataHolder.getTemplateRendition(RenditionType.MOBILE);
+            WeblogTemplateRendition tc = dataHolder.getTemplateRendition(RenditionType.MOBILE);
             tc.setTemplate(contentsMobile);
             WebloggerFactory.getWeblogger().getWeblogManager().saveTemplateRendition(tc);
         }

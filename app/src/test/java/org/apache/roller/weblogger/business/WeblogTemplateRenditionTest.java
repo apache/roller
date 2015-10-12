@@ -14,6 +14,9 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
 
 package org.apache.roller.weblogger.business;
@@ -24,7 +27,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
@@ -32,23 +35,23 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
-public class CustomTemplateRenditionTest extends TestCase{
+public class WeblogTemplateRenditionTest extends TestCase{
     public static Log log = LogFactory.getLog(WeblogPageTest.class);
 
        User testUser = null;
        Weblog testWeblog = null;
        WeblogTemplate testPage = null;
-       CustomTemplateRendition standardCode = null;
-       CustomTemplateRendition mobileCode = null;
+       WeblogTemplateRendition standardCode = null;
+       WeblogTemplateRendition mobileCode = null;
 
 
-       public CustomTemplateRenditionTest(String name) {
+       public WeblogTemplateRenditionTest(String name) {
            super(name);
        }
 
 
        public static Test suite() {
-           return new TestSuite(CustomTemplateRenditionTest.class);
+           return new TestSuite(WeblogTemplateRenditionTest.class);
        }
 
 
@@ -103,12 +106,12 @@ public class CustomTemplateRenditionTest extends TestCase{
            mgr.saveTemplate(testPage);
 
            //create standard template rendition
-           CustomTemplateRendition standardTemplateCode = new CustomTemplateRendition(testPage, RenditionType.STANDARD);
+           WeblogTemplateRendition standardTemplateCode = new WeblogTemplateRendition(testPage, RenditionType.STANDARD);
            standardTemplateCode.setTemplate("standard.template.code");
            standardTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
 
            //create mobile code
-           CustomTemplateRendition mobileTemplateCode = new CustomTemplateRendition(testPage, RenditionType.MOBILE);
+           WeblogTemplateRendition mobileTemplateCode = new WeblogTemplateRendition(testPage, RenditionType.MOBILE);
            mobileTemplateCode.setTemplate("mobile.template.code");
            mobileTemplateCode.setTemplateLanguage(TemplateLanguage.VELOCITY);
 

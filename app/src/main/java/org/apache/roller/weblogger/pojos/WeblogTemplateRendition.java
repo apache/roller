@@ -40,8 +40,8 @@ import java.io.Serializable;
  * A pojo that will maintain different template codes for one template
  */
 @Entity
-@Table(name="custom_template_rendition")
-public class CustomTemplateRendition implements Serializable, TemplateRendition {
+@Table(name="weblog_template_rendition")
+public class WeblogTemplateRendition implements Serializable, TemplateRendition {
 
 	private static final long serialVersionUID = -1497618963802805151L;
 	private String id = WebloggerUtils.generateUUID();
@@ -51,13 +51,13 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	private RenditionType type = null;
 	private TemplateLanguage templateLanguage = null;
 
-	public CustomTemplateRendition(WeblogTemplate template, RenditionType type) {
+	public WeblogTemplateRendition(WeblogTemplate template, RenditionType type) {
 		this.weblogTemplate = template;
 		this.type = type;
         weblogTemplate.addTemplateRendition(this);
 	}
 
-	public CustomTemplateRendition() {
+	public WeblogTemplateRendition() {
 	}
 
 	@ManyToOne
@@ -113,10 +113,10 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 		if (other == this) {
             return true;
         }
-		if (!(other instanceof CustomTemplateRendition)) {
+		if (!(other instanceof WeblogTemplateRendition)) {
             return false;
         }
-		CustomTemplateRendition o = (CustomTemplateRendition) other;
+		WeblogTemplateRendition o = (WeblogTemplateRendition) other;
 		return new EqualsBuilder().append(getWeblogTemplate().getId(), o.getWeblogTemplate().getId())
 				.append(getTemplate(), o.getTemplate()).isEquals();
 	}
