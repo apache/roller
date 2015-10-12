@@ -24,6 +24,8 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
+import org.apache.roller.weblogger.business.Weblogger;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -153,17 +155,24 @@ public class RollerContext extends ContextLoaderListener
             buf.append("\n--------------------------------------------------------------");
             log.info(buf.toString());
         } else {
+            Weblogger weblogger = null;
+
             try {
                 // trigger bootstrapping process
                 WebloggerFactory.bootstrap();
                 
                 // trigger initialization process
-                WebloggerFactory.getWeblogger().initialize();
+                weblogger = WebloggerFactory.getWeblogger();
+                weblogger.initialize();
                 
             } catch (BootstrapException ex) {
                 log.fatal("Roller Weblogger bootstrap failed", ex);
             } catch (WebloggerException ex) {
                 log.fatal("Roller Weblogger initialization failed", ex);
+            } finally {
+                if (weblogger != null) {
+                    weblogger.release();
+                }
             }
 		}
             
