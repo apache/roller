@@ -105,6 +105,8 @@ public class JPAWebloggerImpl extends WebloggerImpl {
 
         // then let parent do its thing
         super.shutdown();
+
+        this.strategy.shutdown();
     }
 
 }

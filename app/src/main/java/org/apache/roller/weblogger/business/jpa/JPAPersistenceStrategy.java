@@ -143,12 +143,17 @@ public class JPAPersistenceStrategy {
      * Release database session, rolls back any uncommitted changes.
      */
     public void release() {
-        EntityManager em = getEntityManager(false);
-        if (isTransactionActive(em)) {
-            em.getTransaction().rollback();
+        try {
+            EntityManager em = getEntityManager(false);
+            if (isTransactionActive(em)) {
+                em.getTransaction().rollback();
+            }
+            em.close();
+        } catch (Exception e) {
+            logger.debug("error during releasing database session", e);
+        } finally {
+            threadLocalEntityManager.remove();
         }
-        em.close();
-        setThreadLocalEntityManager(null);
     }
     
     /**
@@ -263,13 +268,6 @@ public class JPAPersistenceStrategy {
     }
     
     /**
-     * Set the current ThreadLocal EntityManager
-     */
-    private void setThreadLocalEntityManager(EntityManager em) {
-        threadLocalEntityManager.set(em);
-    }
-    
-    /**
      * Get named query that won't commit changes to DB first (FlushModeType.COMMIT)
      * @param queryName the name of the query
      * @throws org.apache.roller.weblogger.WebloggerException on any error
@@ -358,4 +356,9 @@ public class JPAPersistenceStrategy {
         return em.createNamedQuery(queryName);
     }
 
+    public void shutdown() {
+        if (emf != null) {
+            emf.close();
+        }
+    }
 }
