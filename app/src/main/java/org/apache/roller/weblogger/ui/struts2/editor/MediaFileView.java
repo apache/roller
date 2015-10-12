@@ -171,14 +171,6 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
-     * Returns directory content in JSON format.
-     */
-    public String fetchDirectoryContentLight() {
-        execute();
-        return "success.json";
-    }
-
-    /**
      * Fetches and displays list of media files for the given directory. The
      * directory could be chosen by ID or path.
      * 
