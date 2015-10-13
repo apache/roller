@@ -106,15 +106,6 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileAdd.tags" /></label>
-            </td>
-            <td>
-                <s:textfield name="bean.tagsAsString" size="50" maxlength="255" style="width:30%"/>
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
                 <label for="status"><s:text name="mediaFileAdd.directory" /></label>
             </td>
             <td>

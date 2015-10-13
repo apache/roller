@@ -328,12 +328,3 @@ create table media_file (
 alter table media_file add constraint mf_mdir_id_fk
     foreign key (directoryid) references media_directory(id) ;
 
-
-create table media_file_tag (
-    id              varchar(48) not null primary key,
-    mediafile_id    varchar(48) not null,
-    name            varchar(30) not null
-);
-
-alter table media_file_tag add constraint mft_mftag_fk
-    foreign key (mediafile_id) references media_file(id) ;

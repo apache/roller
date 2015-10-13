@@ -106,16 +106,6 @@
                         </tr>
 
                         <tr>
-                            <td width="10%">
-                                <label for="tags"><s:text name="mediaFileView.tags" /></label>
-                            </td>
-                            <td>
-                                <s:textfield id="beanTags" name="bean.tags"
-                                    size="20" maxlength="50" />
-                            </td>
-                        </tr>
-
-                        <tr>
                             <td>
                                 <s:submit id="searchButton" value="%{getText('mediaFileView.search')}" cssStyle="margin:5px 0px;"/>
                             </td>
@@ -177,7 +167,6 @@ $("#searchButton").ready(function () {
 
 function maintainSearchButtonState(e) {
     if ( jQuery.trim($("#beanName").get(0).value).length == 0
-     &&  jQuery.trim($("#beanTags").get(0).value).length == 0
      && (jQuery.trim($("#beanSize").get(0).value).length == 0 || $("#beanSize").get(0).value == 0)
      && ($("#beanType").get(0).value.length == 0 || $("#beanType").get(0).value == "mediaFileView.any")) {
         $("#searchButton").attr("disabled", true);

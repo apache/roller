@@ -103,15 +103,6 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="tags"><s:text name="mediaFileEdit.tags" /></label>
-            </td>
-            <td>
-                <s:textfield name="bean.tagsAsString" size="30" maxlength="100" tabindex="3" style="width:70%"/>
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
                 <label for="copyright"><s:text name="mediaFileEdit.copyright" /></label>
             </td>
             <td>

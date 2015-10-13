@@ -187,13 +187,6 @@
                     </s:text>
                 </li>
             </s:if>
-            <s:if test="!bean.tags.isEmpty()">
-                <li>
-                    <s:text name="mediaFileView.filesTagged">
-                        <s:param value="bean.tags" />
-                    </s:text>
-                </li>
-            </s:if>
         </ul>
 
     </p>
@@ -354,11 +347,6 @@
                                 <str:truncateNicely lower="40" upper="50">
                                     <s:property value="#mediaFile.name" />
                                 </str:truncateNicely>
-
-                                <span class="button" id="addbutton-<s:property value='#mediaFile.id' />">
-                                    <img id="addbutton-img<s:property value='#mediaFile.id' />"
-                                         src="<s:url value="/images/add.png"/>" />
-                                </span>
 
                         </div>
 

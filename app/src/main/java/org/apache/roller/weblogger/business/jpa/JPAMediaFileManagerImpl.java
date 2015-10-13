@@ -31,7 +31,6 @@ import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
-import org.apache.roller.weblogger.pojos.MediaFileTag;
 import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -49,7 +48,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -513,22 +511,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             whereClause.append(" ?").append(size);
         }
 
-        if (filter.getTags() != null && filter.getTags().size() > 1) {
-            whereClause
-                    .append(" AND EXISTS (SELECT t FROM MediaFileTag t WHERE t.mediaFile = m and t.name IN (");
-            for (String tag : filter.getTags()) {
-                params.add(size++, tag);
-                whereClause.append("?").append(size).append(",");
-            }
-            whereClause.deleteCharAt(whereClause.lastIndexOf(","));
-            whereClause.append("))");
-        } else if (filter.getTags() != null && filter.getTags().size() == 1) {
-            params.add(size++, filter.getTags().get(0));
-            whereClause
-                    .append(" AND EXISTS (SELECT t FROM MediaFileTag t WHERE t.mediaFile = m and t.name = ?")
-                    .append(size).append(")");
-        }
-
         if (filter.getType() != null) {
             if (filter.getType() == MediaFileType.OTHERS) {
                 for (MediaFileType type : MediaFileType.values()) {
@@ -607,25 +589,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         // Refresh associated parent
         strategy.flush();
-    }
-
-    public void removeMediaFileTag(String name, MediaFile entry)
-            throws WebloggerException {
-
-        for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
-            MediaFileTag tag = (MediaFileTag) it.next();
-            if (tag.getName().equals(name)) {
-
-                // Call back the entity to adjust its internal state
-                entry.onRemoveTag(name);
-
-                // Refresh it from database
-                this.strategy.remove(tag);
-
-                // Refresh it from the collection
-                it.remove();
-            }
-        }
     }
 
     private void updateWeblogLastModifiedDate(Weblog weblog) throws WebloggerException {

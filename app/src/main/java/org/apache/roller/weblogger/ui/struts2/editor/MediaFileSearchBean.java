@@ -14,11 +14,11 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
@@ -51,9 +51,6 @@ public class MediaFileSearchBean {
 
     // Size unit
     private String sizeUnit;
-
-    // Tags as search criteria
-    private String tags;
 
     // Page number of results
     private int pageNum = 0;
@@ -111,14 +108,6 @@ public class MediaFileSearchBean {
 
     public void setSizeUnit(String sizeUnit) {
         this.sizeUnit = sizeUnit;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
     }
 
     public int getPageNum() {
@@ -181,14 +170,6 @@ public class MediaFileSearchBean {
                     filterSize = this.size * WebloggerUtils.ONE_MB_IN_BYTES;
             }
             dataHolder.setSize(filterSize);
-        }
-
-        if (!StringUtils.isEmpty(this.tags)) {
-            List<String> tagsSet = new ArrayList<String>();
-            for (String tag : this.tags.split(" ")) {
-                tagsSet.add(tag);
-            }
-            dataHolder.setTags(tagsSet);
         }
 
         dataHolder.setStartIndex(pageNum * PAGE_SIZE);

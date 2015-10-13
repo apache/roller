@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
@@ -182,16 +185,14 @@ public class MediaFileAdd extends UIAction {
                         mediaFile.setLength(this.uploadedFiles[i].length());
                         mediaFile.setInputStream(new FileInputStream(
                                 this.uploadedFiles[i]));
-                        mediaFile
-                                .setContentType(this.uploadedFilesContentType[i]);
+                        mediaFile.setContentType(this.uploadedFilesContentType[i]);
 
-                        // insome cases Struts2 is not able to guess the content
+                        // in some cases Struts2 is not able to guess the content
                         // type correctly and assigns the default, which is
                         // octet-stream. So in cases where we see octet-stream
                         // we double check and see if we can guess the content
                         // type via the Java MIME type facilities.
-                        mediaFile
-                                .setContentType(this.uploadedFilesContentType[i]);
+                        mediaFile.setContentType(this.uploadedFilesContentType[i]);
                         if (mediaFile.getContentType() == null
                                 || mediaFile.getContentType().endsWith(
                                         "/octet-stream")) {
