@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
@@ -30,7 +33,6 @@ public class MediaFileBean {
     private String description;
     private String contentType;
     private String copyrightText;
-    private String tagsAsString;
     private String directoryId;
     private boolean isSharedForGallery;
     private String permalink;
@@ -63,14 +65,6 @@ public class MediaFileBean {
 
     public void setCopyrightText(String copyrightText) {
         this.copyrightText = copyrightText;
-    }
-
-    public String getTagsAsString() {
-        return this.tagsAsString;
-    }
-
-    public void setTagsAsString(String tagsAsString) {
-        this.tagsAsString = tagsAsString;
     }
 
     public String getDirectoryId() {
@@ -106,7 +100,6 @@ public class MediaFileBean {
         dataHolder.setName(this.name);
         dataHolder.setDescription(this.description);
         dataHolder.setCopyrightText(this.copyrightText);
-        dataHolder.setTagsAsString(this.tagsAsString);
         dataHolder.setSharedForGallery(this.isSharedForGallery);
         dataHolder.setOriginalPath(this.originalPath);
     }
@@ -120,7 +113,6 @@ public class MediaFileBean {
         this.setName(dataHolder.getName());
         this.setDescription(dataHolder.getDescription());
         this.setCopyrightText(dataHolder.getCopyrightText());
-        this.setTagsAsString(dataHolder.getTagsAsString());
         this.setSharedForGallery(dataHolder.getSharedForGallery());
         this.setDirectoryId(dataHolder.getDirectory().getId());
         this.setPermalink(dataHolder.getPermalink());

@@ -167,8 +167,7 @@ public class MediaFileView extends UIAction {
                     allDirectories = manager.getMediaFileDirectories(getActionWeblog());
                 } else {
                     // already exists
-                    addMessage("mediaFile.directoryCreate.error.exists",
-                            this.newDirectoryName);
+                    addError("mediaFile.directoryCreate.error.exists", this.newDirectoryName);
                 }
 
             } catch (WebloggerException e) {
@@ -481,7 +480,6 @@ public class MediaFileView extends UIAction {
      */
     public boolean myValidate() {
         if (StringUtils.isEmpty(bean.getName())
-                && StringUtils.isEmpty(bean.getTags())
                 && StringUtils.isEmpty(bean.getType()) && bean.getSize() == 0) {
             addError("MediaFile.error.search.empty");
             return false;

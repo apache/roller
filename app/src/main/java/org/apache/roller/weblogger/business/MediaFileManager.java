@@ -175,12 +175,4 @@ public interface MediaFileManager {
     void removeMediaFileDirectory(MediaFileDirectory mediaFileDir)
             throws WebloggerException;
 
-    /**
-     * Remove tag with given name from given MediaFile
-     * 
-     * @param name
-     *            Name of tag to be removed
-     */
-    void removeMediaFileTag(String name, MediaFile entry)
-            throws WebloggerException;
 }

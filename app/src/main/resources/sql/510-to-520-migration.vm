@@ -12,7 +12,6 @@
 #renameTable("roller_comment", "weblog_entry_comment")
 #renameTable("roller_mediafile", "media_file")
 #renameTable("roller_mediafiledir", "media_directory")
-#renameTable("roller_mediafiletag", "media_file_tag")
 #renameTable("roller_properties", "weblogger_properties")
 #renameTable("roller_user", "weblogger_user")
 #renameTable("weblogcategory", "weblog_category")
@@ -85,6 +84,10 @@ group by weblogid, name;
 -- Task scheduling now handled by Spring (see spring.xml)
 
 #dropTableIfExists("roller_tasklock")
+
+-- No more media file tags
+
+#dropTableIfExists("roller_mediafiletag")
 
 -- enable multilangs, show all langs removed from weblog
 

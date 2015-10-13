@@ -14,11 +14,11 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
-
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
+*/
 package org.apache.roller.weblogger.pojos;
-
-import java.util.List;
 
 /**
  * Represents the search criteria for media files.
@@ -30,13 +30,13 @@ public class MediaFileFilter {
 	 * Enumeration of the ways in which size can be used to filter media files. 
 	 *
 	 */
-	public enum SizeFilterType {GT, GTE, EQ, LT, LTE};
+	public enum SizeFilterType {GT, GTE, EQ, LT, LTE}
 
 	/**
 	 * Enumeration of possible sort orders for media files. 
 	 *
 	 */
-	public enum MediaFileOrder {NAME, DATE_UPLOADED, TYPE};
+	public enum MediaFileOrder {NAME, DATE_UPLOADED, TYPE}
 
 	// Search criteria - name
 	String name;
@@ -49,9 +49,6 @@ public class MediaFileFilter {
 
 	// Search criteria - way in which media file size should be applied (greater than, less than etc)
 	SizeFilterType sizeFilterType;
-	
-	// Search criteria - list of tags
-	List<String> tags;
 	
 	// sort order for search results
 	MediaFileOrder order;
@@ -84,14 +81,6 @@ public class MediaFileFilter {
 
 	public void setType(MediaFileType type) {
 		this.type = type;
-	}
-
-	public List<String> getTags() {
-		return tags;
-	}
-
-	public void setTags(List<String> tags) {
-		this.tags = tags;
 	}
 
 	public long getSize() {

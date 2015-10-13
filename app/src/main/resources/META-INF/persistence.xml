@@ -9,10 +9,8 @@
     <class>org.apache.roller.weblogger.pojos.Subscription</class>
     <class>org.apache.roller.weblogger.pojos.SubscriptionEntry</class>
     <class>org.apache.roller.weblogger.pojos.AutoPing</class>
-    <class>org.apache.roller.weblogger.pojos.WeblogTemplateRendition</class>
     <class>org.apache.roller.weblogger.pojos.MediaFile</class>
     <class>org.apache.roller.weblogger.pojos.MediaFileDirectory</class>
-    <class>org.apache.roller.weblogger.pojos.MediaFileTag</class>
     <class>org.apache.roller.weblogger.pojos.PingTarget</class>
     <class>org.apache.roller.weblogger.pojos.RuntimeConfigProperty</class>
     <class>org.apache.roller.weblogger.pojos.User</class>
@@ -25,5 +23,6 @@
     <class>org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate</class>
     <class>org.apache.roller.weblogger.pojos.UserWeblogRole</class>
     <class>org.apache.roller.weblogger.pojos.WeblogTemplate</class>
+    <class>org.apache.roller.weblogger.pojos.WeblogTemplateRendition</class>
   </persistence-unit>
 </persistence>

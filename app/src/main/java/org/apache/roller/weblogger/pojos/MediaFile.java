@@ -24,23 +24,16 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.util.Utilities;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -48,7 +41,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -96,10 +88,6 @@ public class MediaFile implements Serializable {
 
     // TODO: anchor to be populated
     // private String anchor;
-
-    private Set<MediaFileTag> tagSet = new HashSet<MediaFileTag>();
-    private Set<String> removedTags = new HashSet<String>();
-    private Set<String> addedTags = new HashSet<String>();
 
     public MediaFile() {
     }
@@ -206,124 +194,6 @@ public class MediaFile implements Serializable {
         this.directory = dir;
     }
 
-    /**
-     * Set of tags for this media file
-     */
-    @OneToMany(targetEntity=org.apache.roller.weblogger.pojos.MediaFileTag.class,
-            cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy="mediaFile")
-    public Set<MediaFileTag> getTags() {
-        return tagSet;
-    }
-
-    private void setTags(Set<MediaFileTag> tagSet) throws WebloggerException {
-        this.tagSet = tagSet;
-        this.removedTags = new HashSet<String>();
-        this.addedTags = new HashSet<String>();
-    }
-
-    /**
-     * Roller lowercases all tags based on locale because there's not a 1:1
-     * mapping between uppercase/lowercase characters across all languages.
-     * 
-     * @param name
-     * @throws WebloggerException
-     */
-    public void addTag(String name) throws WebloggerException {
-        Locale localeObject = getWeblog() != null ? getWeblog()
-                .getLocaleInstance() : Locale.getDefault();
-        name = Utilities.normalizeTag(name, localeObject);
-        if (name.length() == 0) {
-            return;
-        }
-
-        for (MediaFileTag tag : getTags()) {
-            if (tag.getName().equals(name)) {
-                return;
-            }
-        }
-
-        MediaFileTag tag = new MediaFileTag();
-        tag.setName(name);
-        tag.setMediaFile(this);
-
-        tagSet.add(tag);
-
-        addedTags.add(name);
-    }
-
-    public void onRemoveTag(String name) throws WebloggerException {
-        removedTags.add(name);
-    }
-
-    @Transient
-    public Set getAddedTags() {
-        return addedTags;
-    }
-
-    @Transient
-    public Set getRemovedTags() {
-        return removedTags;
-    }
-
-    public void updateTags(List<String> updatedTags) throws WebloggerException {
-
-        if (updatedTags == null) {
-            return;
-        }
-
-        HashSet<String> newTags = new HashSet<String>(updatedTags.size());
-        Locale localeObject = getWeblog() != null ? getWeblog()
-                .getLocaleInstance() : Locale.getDefault();
-
-        for (String inName : updatedTags) {
-            newTags.add(Utilities.normalizeTag(inName, localeObject));
-        }
-
-        HashSet<String> removeTags = new HashSet<String>();
-
-        // remove old ones no longer passed.
-        for (MediaFileTag tag : getTags()) {
-            if (!newTags.contains(tag.getName())) {
-                removeTags.add(tag.getName());
-            } else {
-                newTags.remove(tag.getName());
-            }
-        }
-
-        MediaFileManager mediaManager = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-
-        for (String tag : removeTags) {
-            mediaManager.removeMediaFileTag(tag, this);
-        }
-
-        for (String tag : newTags) {
-            addTag(tag);
-        }
-    }
-
-    @Transient
-    public String getTagsAsString() {
-        StringBuilder sb = new StringBuilder();
-        for (MediaFileTag tag : getTags()) {
-            sb.append(tag.getName()).append(" ");
-        }
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-
-        return sb.toString();
-    }
-
-    public void setTagsAsString(String tags) throws WebloggerException {
-        if (tags == null) {
-            tagSet.clear();
-            return;
-        }
-
-        updateTags(Utilities.splitStringAsTags(tags));
-    }
-
     @Column(name="content_type", nullable=false)
     public String getContentType() {
         return contentType;
@@ -339,9 +209,9 @@ public class MediaFile implements Serializable {
     }
 
     /**
-     * Returns input stream for the underlying file in the file system.
+     * Returns underlying file in the file system.
      * 
-     * @return
+     * @return input stream of file
      */
     @Transient
     public InputStream getInputStream() {
@@ -463,10 +333,9 @@ public class MediaFile implements Serializable {
     }
 
     /**
-     * Returns input stream for the underlying thumbnail file in the file
-     * system.
-     * 
-     * @return
+     * Returns underlying thumbnail file in the file system.
+     *
+     * @return input stream of thumbnail
      */
     @Transient
     public InputStream getThumbnailInputStream() {

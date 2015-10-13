@@ -29,7 +29,6 @@ drop table weblogger_properties;
 drop table weblog_ping_target;
 drop table ping_target;
 drop table blogroll_link;
-drop table media_file_tag;
 drop table media_file;
 drop table media_directory;
 
