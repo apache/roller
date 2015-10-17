@@ -183,11 +183,11 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
             testUser = TestUtils.getManagedUser(testUser);
 
             // add some categories and entries to test with
-            WeblogCategory c1 = new WeblogCategory(testWeblog, "c1", null);
+            WeblogCategory c1 = new WeblogCategory(testWeblog, "c1");
             testWeblog.addCategory(c1);
             mgr.saveWeblogCategory(c1);
 
-            WeblogCategory dest = new WeblogCategory(testWeblog, "dest", null);
+            WeblogCategory dest = new WeblogCategory(testWeblog, "dest");
             testWeblog.addCategory(dest);
             mgr.saveWeblogCategory(dest);
 

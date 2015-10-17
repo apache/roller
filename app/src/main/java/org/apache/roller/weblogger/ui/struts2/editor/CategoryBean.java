@@ -18,25 +18,18 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 
-
 /**
  * Bean for managing category data.
  */
 public class CategoryBean {
-    
     private String id = null;
     private String name = null;
-    private String description = null;
-    private String image = null;
-    
-    
+
     public String getId() {
         return this.id;
     }
@@ -53,24 +46,12 @@ public class CategoryBean {
         this.name = name;
     }
     
-    public String getDescription() {
-        return this.description;
-    }
-    
-    public void setDescription( String description ) {
-        this.description = description;
-    }
-
     public void copyTo(WeblogCategory dataHolder) throws WebloggerException {
         dataHolder.setName(name);
-        dataHolder.setDescription(this.description);
     }
-    
     
     public void copyFrom(WeblogCategory dataHolder) {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
-        this.description = dataHolder.getDescription();
     }
-    
 }

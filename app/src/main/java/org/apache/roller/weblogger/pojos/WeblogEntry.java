@@ -110,9 +110,9 @@ public class WeblogEntry implements Serializable {
     // Simple properies
     private String    id            = WebloggerUtils.generateUUID();
     private String    title         = null;
-    private String    link          = null;
-    private String    summary       = null;
     private String    text          = null;
+    private String    summary       = null;
+    private String    notes         = null;
     private String    enclosureUrl  = null;
     private String    enclosureType = null;
     private Long      enclosureLength  = null;
@@ -151,7 +151,6 @@ public class WeblogEntry implements Serializable {
             Weblog weblog,
             User creator,
             String title,
-            String link,
             String text,
             String anchor,
             Timestamp pubTime,
@@ -161,7 +160,6 @@ public class WeblogEntry implements Serializable {
         this.weblog = weblog;
         this.creatorUserName = creator.getUserName();
         this.title = title;
-        this.link = link;
         this.text = text;
         this.anchor = anchor;
         this.pubTime = pubTime;
@@ -185,9 +183,9 @@ public class WeblogEntry implements Serializable {
         this.setWeblog(other.getWeblog());
         this.setCreatorUserName(other.getCreatorUserName());
         this.setTitle(other.getTitle());
-        this.setLink(other.getLink());
         this.setText(other.getText());
         this.setSummary(other.getSummary());
+        this.setNotes(other.getNotes());
         this.setSearchDescription(other.getSearchDescription());
         this.setAnchor(other.getAnchor());
         this.setPubTime(other.getPubTime());
@@ -316,13 +314,21 @@ public class WeblogEntry implements Serializable {
         return summary;
     }
     
-    /**
-     * Set summary for weblog entry (maps to RSS description and Atom summary).
-     */
     public void setSummary(String summary) {
         this.summary = summary;
     }
-    
+
+    /**
+     * Get blogger's notes for weblog entry
+     */
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     /**
      * Get search description for weblog entry.
      */
@@ -438,21 +444,6 @@ public class WeblogEntry implements Serializable {
     
     public void setStatus(PubStatus status) {
         this.status = status;
-    }
-    
-    /**
-     * Some weblog entries are about one specific link.
-     * @return Returns the link.
-     */
-    public String getLink() {
-        return link;
-    }
-    
-    /**
-     * @param link The link to set.
-     */
-    public void setLink(String link) {
-        this.link = link;
     }
     
     /**

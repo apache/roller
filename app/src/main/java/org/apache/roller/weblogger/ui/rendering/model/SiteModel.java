@@ -519,10 +519,8 @@ public class SiteModel implements Model {
     }
         
     /**
-     * 
-     * @param sinceDays
-     * @param length
-     * @return
+     * @param length number of tags to return
+     * @return List of most popular tags
      */
     public List<TagStat> getPopularTags(int length) {
         List results = new ArrayList();

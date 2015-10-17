@@ -69,11 +69,6 @@ public final class WeblogCategoryWrapper {
     }
     
     
-    public String getDescription() {
-        return this.pojo.getDescription();
-    }
-    
-    
     public WeblogWrapper getWebsite() {
         return WeblogWrapper.wrap(this.pojo.getWeblog(), urlStrategy);
     }

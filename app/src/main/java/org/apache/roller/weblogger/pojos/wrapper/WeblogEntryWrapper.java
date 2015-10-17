@@ -153,11 +153,6 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public String getLink() {
-        return this.pojo.getLink();
-    }
-    
-    
     public String getPlugins() {
         return this.pojo.getPlugins();
     }

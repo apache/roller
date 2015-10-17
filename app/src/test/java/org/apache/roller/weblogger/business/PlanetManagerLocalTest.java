@@ -66,7 +66,6 @@ public class PlanetManagerLocalTest extends TestCase {
 
             WeblogEntry testEntry1 = new WeblogEntry();
             testEntry1.setTitle("entryTestEntry1");
-            testEntry1.setLink("testEntryLink1");
             testEntry1.setText("blah blah entry1");
             testEntry1.setAnchor("testEntryAnchor1");
             testEntry1.setPubTime(new Timestamp(new Date().getTime()));
@@ -79,7 +78,6 @@ public class PlanetManagerLocalTest extends TestCase {
 
             WeblogEntry testEntry2 = new WeblogEntry();
             testEntry2.setTitle("entryTestEntry2");
-            testEntry2.setLink("testEntryLink2");
             testEntry2.setText("blah blah entry2");
             testEntry2.setAnchor("testEntryAnchor2");
             testEntry2.setPubTime(new Timestamp(new Date().getTime()));
@@ -92,7 +90,6 @@ public class PlanetManagerLocalTest extends TestCase {
 
             WeblogEntry testEntry3 = new WeblogEntry();
             testEntry3.setTitle("entryTestEntry3");
-            testEntry3.setLink("testEntryLink3");
             testEntry3.setText("blah blah entry3");
             testEntry3.setAnchor("testEntryAnchor3");
             testEntry3.setPubTime(new Timestamp(new Date().getTime()));
@@ -128,7 +125,7 @@ public class PlanetManagerLocalTest extends TestCase {
             PlanetManager manager = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // run sync task to fill aggregator with websites created by super
-            manager.syncAllBlogsPlanet();;
+            manager.syncAllBlogsPlanet();
 
             Planet planet = manager.getPlanet("all");
             assertEquals(1, planet.getSubscriptions().size());

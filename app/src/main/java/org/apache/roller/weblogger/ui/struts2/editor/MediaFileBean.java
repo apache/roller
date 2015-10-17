@@ -30,11 +30,12 @@ public class MediaFileBean {
 
     private String id;
     private String name;
-    private String description;
+    private String altText;
+    private String titleText;
+    private String anchor;
+    private String notes;
     private String contentType;
-    private String copyrightText;
     private String directoryId;
-    private boolean isSharedForGallery;
     private String permalink;
     private String thumbnailURL;
     private boolean isImage;
@@ -51,20 +52,12 @@ public class MediaFileBean {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCopyrightText() {
-        return copyrightText;
-    }
-
-    public void setCopyrightText(String copyrightText) {
-        this.copyrightText = copyrightText;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public String getDirectoryId() {
@@ -75,14 +68,6 @@ public class MediaFileBean {
         this.directoryId = directoryId;
     }
 
-    public boolean isSharedForGallery() {
-        return isSharedForGallery;
-    }
-
-    public void setSharedForGallery(boolean isSharedForGallery) {
-        this.isSharedForGallery = isSharedForGallery;
-    }
-
     public String getId() {
         return id;
     }
@@ -91,16 +76,40 @@ public class MediaFileBean {
         this.id = id;
     }
 
+    public String getAltText() {
+        return altText;
+    }
+
+    public void setAltText(String altText) {
+        this.altText = altText;
+    }
+
+    public String getTitleText() {
+        return titleText;
+    }
+
+    public void setTitleText(String titleText) {
+        this.titleText = titleText;
+    }
+
+    public String getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(String anchor) {
+        this.anchor = anchor;
+    }
+
     /**
      * Copies the contents of this bean to a media file object
      * 
      */
     public void copyTo(MediaFile dataHolder) throws WebloggerException {
-
         dataHolder.setName(this.name);
-        dataHolder.setDescription(this.description);
-        dataHolder.setCopyrightText(this.copyrightText);
-        dataHolder.setSharedForGallery(this.isSharedForGallery);
+        dataHolder.setAltText(this.altText);
+        dataHolder.setTitleText(this.titleText);
+        dataHolder.setAnchor(this.anchor);
+        dataHolder.setNotes(this.notes);
         dataHolder.setOriginalPath(this.originalPath);
     }
 
@@ -111,9 +120,10 @@ public class MediaFileBean {
     public void copyFrom(MediaFile dataHolder) {
         this.setId(dataHolder.getId());
         this.setName(dataHolder.getName());
-        this.setDescription(dataHolder.getDescription());
-        this.setCopyrightText(dataHolder.getCopyrightText());
-        this.setSharedForGallery(dataHolder.getSharedForGallery());
+        this.setAltText(dataHolder.getAltText());
+        this.setTitleText(dataHolder.getTitleText());
+        this.setAnchor(dataHolder.getAnchor());
+        this.setNotes(dataHolder.getNotes());
         this.setDirectoryId(dataHolder.getDirectory().getId());
         this.setPermalink(dataHolder.getPermalink());
         this.setThumbnailURL(dataHolder.getThumbnailURL());

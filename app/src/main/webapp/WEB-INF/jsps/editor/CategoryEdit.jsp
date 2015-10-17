@@ -55,11 +55,6 @@
             <td><s:textfield name="bean.name" size="70" maxlength="255" style="width:50%"/></td>
         </tr>
         
-        <tr>
-            <td><s:text name="generic.description" /></td>
-            <td><s:textfield name="bean.description" size="120" style="width:50%"/></td>
-        </tr>
-
     </table>
     
     <p>

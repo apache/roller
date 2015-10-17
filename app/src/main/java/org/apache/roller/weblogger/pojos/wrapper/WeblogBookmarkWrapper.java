@@ -65,8 +65,8 @@ public final class WeblogBookmarkWrapper {
         return this.pojo.getUrl();
     }
 
-    public Integer getPriority() {
-        return this.pojo.getPriority();
+    public Integer getPosition() {
+        return this.pojo.getPosition();
     }
 
 }

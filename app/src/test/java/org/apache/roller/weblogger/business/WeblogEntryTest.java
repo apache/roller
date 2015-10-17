@@ -116,7 +116,6 @@ public class WeblogEntryTest extends TestCase {
         
         WeblogEntry testEntry = new WeblogEntry();
         testEntry.setTitle("entryTestEntry");
-        testEntry.setLink("testEntryLink");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
@@ -356,7 +355,6 @@ public class WeblogEntryTest extends TestCase {
 
             WeblogEntry testEntry = new WeblogEntry();
             testEntry.setTitle("entryTestEntry");
-            testEntry.setLink("testEntryLink");
             testEntry.setText("blah blah entry");
             testEntry.setAnchor("testEntryAnchor");
             testEntry.setPubTime(
@@ -883,7 +881,6 @@ public class WeblogEntryTest extends TestCase {
         
         WeblogEntry testEntry = new WeblogEntry();
         testEntry.setTitle("entryTestEntry");
-        testEntry.setLink("testEntryLink");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor("testEntryAnchor");
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
