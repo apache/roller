@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   #includeTemplate($model.weblog "standard_head")
   <title>$model.weblog.name: $model.weblog.tagline</title>
+  <link rel="stylesheet" href='$url.page("custom.css")' />
 </head>
 <body>
 

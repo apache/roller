@@ -136,7 +136,7 @@ public class MediaFile implements Serializable {
      * Is media file shared for gallery
      * 
      */
-    public Boolean isSharedForGallery() {
+    public Boolean getSharedForGallery() {
         return isSharedForGallery;
     }
 

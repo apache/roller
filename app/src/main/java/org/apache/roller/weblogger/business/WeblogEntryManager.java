@@ -397,6 +397,6 @@ public interface WeblogEntryManager {
      * Get weblog entry count 
      */    
     long getEntryCount(Weblog websiteData) throws WebloggerException;
-    
+
 }
 

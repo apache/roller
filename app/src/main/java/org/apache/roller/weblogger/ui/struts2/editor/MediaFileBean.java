@@ -121,7 +121,7 @@ public class MediaFileBean {
         this.setDescription(dataHolder.getDescription());
         this.setCopyrightText(dataHolder.getCopyrightText());
         this.setTagsAsString(dataHolder.getTagsAsString());
-        this.setSharedForGallery(dataHolder.isSharedForGallery());
+        this.setSharedForGallery(dataHolder.getSharedForGallery());
         this.setDirectoryId(dataHolder.getDirectory().getId());
         this.setPermalink(dataHolder.getPermalink());
         this.setThumbnailURL(dataHolder.getThumbnailURL());

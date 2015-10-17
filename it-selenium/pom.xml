@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.1.2-SNAPSHOT</version>
+        <version>5.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,7 +33,8 @@
     <packaging>war</packaging>
 
     <properties>
-        <selenium.version>2.39.0</selenium.version>
+        <selenium.version>2.47.1</selenium.version>
+        <javamail.version>1.4.7</javamail.version>
     </properties>
 
     <!-- Process to run Selenium tests (actually no tests right now, just a skeleton)
@@ -183,6 +184,11 @@
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbyclient</artifactId>
                         <version>${derby.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mail</artifactId>
+                        <version>${javamail.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

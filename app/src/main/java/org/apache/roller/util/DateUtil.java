@@ -469,14 +469,26 @@ public abstract class DateUtil {
     public static String format8chars(Date date) {
         return format(date, get8charDateFormat());
     }
-    
-    
+
+    // convenience method returns 8 char day stamp YYYYMMDD using time zone
+    public static String format8chars(Date date, TimeZone tz) {
+        SimpleDateFormat formatter = get8charDateFormat();
+        formatter.setTimeZone(tz);
+        return format(date, formatter);
+    }
+
     // convenience method returns 6 char month stamp YYYYMM
     public static String format6chars(Date date) {
         return format(date, get6charDateFormat());
     }
-    
-    
+
+    // convenience method returns 6 char month stamp YYYYMM using time zone
+    public static String format6chars(Date date, TimeZone tz) {
+        SimpleDateFormat formatter = get6charDateFormat();
+        formatter.setTimeZone(tz);
+        return format(date, formatter);
+    }
+
     // convenience method returns long friendly formatted timestamp
     public static String formatIso8601Day(Date date) {
         return format(date, getIso8601DayDateFormat());

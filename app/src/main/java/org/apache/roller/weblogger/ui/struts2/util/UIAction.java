@@ -92,16 +92,15 @@ public abstract class UIAction extends ActionSupport
 		return salt;
 	}
 	
-	/**
-     * Sets the salt.
-     * 
-     * @param salt
-     *            the new salt
+    /**
+     * Necessary to avoid showing up "Error setting expression 'salt' with value ...".
+     * See also https://issues.apache.org/jira/browse/ROL-2068
+     * @param salt previous salt
      */
     public void setSalt(String salt) {
-        this.salt = salt;
+        // no-op
     }
-    
+
     // default action permissions, user is required
     public boolean isUserRequired() {
         return true;

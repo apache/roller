@@ -134,8 +134,10 @@ public abstract class IndexOperation implements Runnable {
                 .toString(), Field.Store.YES));
 
         // keyword
-        doc.add(new StringField(FieldConstants.PUBLISHED, data.getPubTime()
-                .toString(), Field.Store.YES));
+        if (data.getPubTime() != null) {
+            doc.add(new StringField(FieldConstants.PUBLISHED, data.getPubTime()
+                    .toString(), Field.Store.YES));
+        }
 
         // index Category, needs to be in lower case as it is used in a term
         WeblogCategory categorydata = data.getCategory();

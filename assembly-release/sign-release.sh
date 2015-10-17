@@ -1,5 +1,5 @@
 export rcstring=""
-export vstring="5.1.1"
+export vstring="5.2.0"
 
 gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-standard.tar.gz
 gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-standard.zip

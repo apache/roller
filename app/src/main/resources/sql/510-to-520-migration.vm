@@ -1,0 +1,54 @@
+#**
+ 510-to-520-migration.vm: Velocity template that generates vendor-specific database scripts
+
+ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+ **#
+
+#**
+ PostgreSQL respects original not null attribute.
+ **#
+#macro(expandTimestamp $tableName $columnName)
+#if($db.DBTYPE == "MYSQL")
+#alterColumnType($tableName $columnName 'datetime(3)')
+#elseif ($db.DBTYPE == "ORACLE")
+#alterColumnType($tableName $columnName 'timestamp(3)')
+#elseif ($db.DBTYPE == "POSTGRESQL")
+#alterColumnType($tableName $columnName 'timestamp(3) with time zone')
+#end
+#end
+
+#macro(expandTimestampNotNull $tableName $columnName)
+#if($db.DBTYPE == "MYSQL")
+#alterColumnType($tableName $columnName 'datetime(3) not null')
+#elseif ($db.DBTYPE == "ORACLE")
+#alterColumnType($tableName $columnName 'timestamp(3) not null')
+#elseif ($db.DBTYPE == "POSTGRESQL")
+#alterColumnType($tableName $columnName 'timestamp(3) with time zone')
+#end
+#end
+
+-- Expanding datetime or timestamp columns
+-- Affects only for MySQL, Oracle, PostgreSQL
+
+#expandTimestampNotNull('pingqueueentry' 'entrytime')
+#expandTimestamp('pingtarget' 'lastsuccess')
+#expandTimestampNotNull('rag_entry' 'published')
+#expandTimestamp('rag_entry' 'updated')
+#expandTimestamp('rag_subscription' 'last_updated')
+#expandTimestamp('roller_audit_log' 'change_time')
+#expandTimestampNotNull('roller_comment' 'posttime')
+#expandTimestampNotNull('roller_mediafile' 'date_uploaded')
+#expandTimestamp('roller_mediafile' 'last_updated')
+#expandTimestampNotNull('roller_oauthaccessor' 'created')
+#expandTimestampNotNull('roller_oauthaccessor' 'updated')
+#expandTimestampNotNull('roller_permission' 'datecreated')
+#expandTimestamp('roller_tasklock' 'timeacquired')
+#expandTimestamp('roller_tasklock' 'lastrun')
+#expandTimestampNotNull('roller_user' 'datecreated')
+#expandTimestampNotNull('roller_weblogentrytag' 'time')
+#expandTimestampNotNull('roller_weblogentrytagagg' 'lastused')
+#expandTimestampNotNull('weblog' 'datecreated')
+#expandTimestamp('weblog' 'lastmodified')
+#expandTimestampNotNull('weblog_custom_template' 'updatetime')
+#expandTimestamp('weblogentry' 'pubtime')
+#expandTimestampNotNull('weblogentry' 'updatetime')

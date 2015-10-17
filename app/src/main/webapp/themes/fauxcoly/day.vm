@@ -1,6 +1,6 @@
 #if(!$model.permalink)
 <div class="daybox">
-    <h4 class="dayTitle">$utils.formatDate($day, "EEEE MMM dd, yyyy")</h4>
+    <h4 class="dayTitle">$utils.formatDate($day, $text.get("macro.weblog.date.toStringFormat"))</h4>
 #end
 
     #foreach( $entry in $entries )
@@ -25,7 +25,7 @@
             $entry.creator.screenName in <span class="category">$entry.category.name</span>
 
             <a class="permalink" href="$url.entry($entry.anchor)">
-                $utils.formatDate($entry.pubTime, "hh:mma MMM dd, yyyy")</a>
+                $utils.formatDate($entry.pubTime, $text.get("macro.weblog.datetime.toStringFormat"))</a>
 
             #set($commentCount = $entry.commentCount)
             #if($entry.commentsStillAllowed || $commentCount > 0)

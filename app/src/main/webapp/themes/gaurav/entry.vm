@@ -39,19 +39,19 @@
 				<div class="panel panel-primary">
 					<div class="panel-heading">
 					<a name="comments"></a>
-					#if($entry.commentCount > 0)				
-						#if($model.commentForm.preview)
+					#if($model.commentForm.preview)
 						#set($comments = [$model.commentForm.previewComment])
 						<div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
-						#else
-						<div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
-						#set($comments = $entry.getComments(true, true))
-						#end
 					#else
-						<div class="comments-head">No one has commented yet.</div>
+						#if($entry.commentCount > 0)
+							#set($comments = $entry.getComments(true, true))
+							<div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
+						#else
+							<div class="comments-head">No one has commented yet.</div>
+						#end
 					#end
 					</div>
-					#if($entry.commentCount > 0)
+					#if($entry.commentCount > 0 || $model.commentForm.preview)
 								<div class="panel-body">
 						#foreach( $comment in $comments )
 							#if($comment.approved || $model.commentForm.preview)
@@ -81,9 +81,6 @@
 					#end
 				</div>
 
-				#if($utils.isNotEmpty($model.commentForm.preview))				
-					#showWeblogEntryComments($entry)
-					#end
 					#set($cform = $model.getCommentForm())
 					#if( $entry.commentsStillAllowed )
 					<div class="panel panel-default">
@@ -183,8 +180,8 @@
 						}
 		
 						function fixURL(theForm) {
-							if (theForm.url.value != "" &&
-								theForm.url.value.indexOf("http://") == -1) { //prepend http://
+							if (theForm.url.value != "" && !/^\S+:\/\//.test(theForm.url.value)) {
+                                // URL has no scheme so prepend http://
 								theForm.url.value = "http://"+theForm.url.value;
 							}
 							saveUserInformation(theForm);

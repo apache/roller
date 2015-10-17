@@ -15,14 +15,14 @@
 			<p class="lead">by <span style="text-transform: capitalize;">$entry.creator.screenName</span></p>
 		    
 			<hr>
-			<p><i class="icon-time"></i> Posted on $utils.formatDate($day, "EEEE MMM dd, yyyy") at $utils.formatDate($entry.pubTime, "hh:mma") in <span class="category">$entry.category.name</span> </p>
+			<p><i class="icon-time"></i> Posted on $utils.formatDate($day, $text.get("macro.weblog.date.toStringFormat")) at $utils.formatDate($entry.pubTime, $text.get("macro.weblog.time.toStringFormat")) in <span class="category">$entry.category.name</span> </p>
 			<hr>
 	
 		    <div class="entryContent">
 		        #if($model.permalink)
 		            <p>$entry.displayContent</p>
 		        #else
-		            #if($entry.summary != "")
+		            #if($utils.isNotEmpty($entry.summary))
 		                <p>$entry.summary</p>
                         <a class="btn btn-primary" href="$url.entry($entry.anchor)">Read More <i class="icon-angle-right"></i></a>
                     #else

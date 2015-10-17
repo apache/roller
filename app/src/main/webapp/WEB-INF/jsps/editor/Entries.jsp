@@ -40,9 +40,17 @@
     </div>
     <s:if test="pager.items.size() > 0">
         <div style="float:right;">
-            <s:date name="firstEntry.pubTime" format="MM/dd/yy hh:mm a" />
-            --- 
-            <s:date name="lastEntry.pubTime" format="MM/dd/yy hh:mm a" />
+            <s:if test="firstEntry.pubTime != null">
+                <s:text name="weblogEntryQuery.date.toStringFormat">
+                    <s:param value="firstEntry.pubTime" />
+                </s:text>
+            </s:if>
+            ---
+            <s:if test="lastEntry.pubTime != null">
+                <s:text name="weblogEntryQuery.date.toStringFormat">
+                    <s:param value="lastEntry.pubTime" />
+                </s:text>
+            </s:if>
         </div>
     </s:if>
     <br />
@@ -137,11 +145,19 @@
     </s:else>
     
     <td>
-        <s:date name="#post.pubTime" format="MM/dd/yy hh:mm a" />
+        <s:if test="#post.pubTime != null">
+            <s:text name="weblogEntryQuery.date.toStringFormat">
+                <s:param value="#post.pubTime" />
+            </s:text>
+        </s:if>
     </td>
     
     <td>
-        <s:date name="#post.updateTime" format="MM/dd/yy hh:mm a" />
+        <s:if test="#post.updateTime != null">
+            <s:text name="weblogEntryQuery.date.toStringFormat">
+                <s:param value="#post.updateTime" />
+            </s:text>
+        </s:if>
     </td>
     
     <td>

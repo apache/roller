@@ -178,6 +178,7 @@ public final class WebloggerStartup {
         } catch(StartupException ex) {
             LOG.warn("Failed to setup mail provider, continuing anyways.\n"
                     + "Reason: " + ex.getMessage());
+            LOG.info("The cause of setting up mail provider error was: ", ex);
         }
         
         // now we need to deal with database install/upgrade logic
