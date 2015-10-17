@@ -191,7 +191,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         try {
             FileContentManager cmgr = WebloggerFactory.getWeblogger()
                     .getFileContentManager();
-            FileContent fc = cmgr.getFileContent(mediaFile.getWeblog(),
+            FileContent fc = cmgr.getFileContent(mediaFile.getDirectory().getWeblog(),
                     mediaFile.getId());
             BufferedImage img;
 
@@ -217,7 +217,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(tmp, "png", baos);
 
-            cmgr.saveFileContent(mediaFile.getWeblog(), mediaFile.getId()
+            cmgr.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId()
                     + "_sm", new ByteArrayInputStream(baos.toByteArray()));
 
             strategy.flush();

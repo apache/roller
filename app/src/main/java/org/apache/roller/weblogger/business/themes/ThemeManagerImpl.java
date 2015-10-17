@@ -344,7 +344,6 @@ public class ThemeManagerImpl implements ThemeManager {
 				InputStream is = resource.getInputStream();
 				MediaFile mf = new MediaFile();
 				mf.setDirectory(mdir);
-				mf.setWeblog(weblog);
 				mf.setName(justName);
 				mf.setOriginalPath(justPath + "/" + justName);
 				mf.setContentType(map.getContentType(justName));

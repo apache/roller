@@ -17,21 +17,23 @@
 #renameTable("weblogcategory", "weblog_category")
 #renameTable("weblog_custom_template", "weblog_template")
 #renameTable("custom_template_rendition", "weblog_template_rendition")
+#renameTable("roller_weblogentrytag", "weblog_entry_tag")
+#renameTable("roller_permission", "user_weblog_role")
 
 -- Roles consolidated into the weblogger_user table.
 #addColumnNull("weblogger_user" "role"  "varchar(16)")
 
--- images removed from categories
+-- description and image removed from categories
+#dropColumn("weblog_category", "description")
 #dropColumn("weblog_category" "image")
 
 -- ping target condition codes no longer stored
 #dropColumn("ping_target" "conditioncode")
 
--- roller_permission revamped to user_weblog_role
-#dropColumn("roller_permission", "objecttype")
-#renameColumn("roller_permission", "objectid", "weblogid", "varchar(48)")
-#renameColumn("roller_permission", "actions", "weblog_role", "varchar(48)")
-#renameTable("roller_permission", "user_weblog_role")
+-- user_weblog_role (old roller_permission) revamped
+#dropColumn("user_weblog_role", "objecttype")
+#renameColumn("user_weblog_role", "objectid", "weblogid", "varchar(48)")
+#renameColumn("user_weblog_role", "actions", "weblog_role", "varchar(48)")
 
 update user_weblog_role uwr set weblogid = (select id
 from weblog w where w.handle = uwr.weblogid)
@@ -43,13 +45,12 @@ alter table user_weblog_role add constraint uwr_userid_fk
     foreign key ( username ) references weblogger_user( username ) ;
 
 -- weblog entry tag changes
-#renameTable("roller_weblogentrytag", "weblog_entry_tag")
 #dropIndex("weblog_entry_tag" "wet_entryid_idx")
 #dropIndex("weblog_entry_tag" "wet_weblogid_idx")
 #dropIndex("weblog_entry_tag" "wet_creator_idx")
 #dropIndex("weblog_entry_tag" "wet_name_idx")
-#dropColumn("roller_weblogentrytag", "creator")
-#dropColumn("roller_weblogentrytag", "time")
+#dropColumn("weblog_entry_tag", "creator")
+#dropColumn("weblog_entry_tag", "time")
 
 create index wtag_tagsearch_idx on weblog_entry_tag( weblogid, name, entryid );
 
@@ -71,6 +72,14 @@ group by weblogid, name;
 #renameColumn("roller_weblogentrytagagg", "websiteid", "weblogid", "varchar(48) not null")
 #renameColumn("roller_weblogentrytag", "websiteid", "weblogid", "varchar(48) not null")
 #renameColumn("media_filedir", "websiteid", "weblogid", "varchar(48) not null")
+
+-- Media File revamp
+#dropColumn("media_file", "copyright_text")
+#dropColumn("media_file", "is_public")
+#dropColumn("media_file", "weblogid")
+#renameColumn("media_file", "description", "notes", "varchar(255)")
+#addColumnNull("media_file" "alt_attr"  "varchar(255)")
+#addColumnNull("media_file" "title_attr"  "varchar(255)")
 
 -- AtomPub gone
 
@@ -96,6 +105,7 @@ group by weblogid, name;
 #dropIndex("weblog_entry", "we_locale_idx")
 #dropColumn("weblog_entry", "locale")
 
+
 -- bookmark folders removed
 
 #dropForeignKey("blogroll_link" "bm_folderid_fk")
@@ -103,6 +113,7 @@ group by weblogid, name;
 #dropColumn("blogroll_link", "feedurl")
 #dropColumn("blogroll_link", "image")
 #addColumnNull("blogroll_link" "weblogid" "varchar48")
+#renameColumn("blogroll_link", "priority", "position", "integer not null")
 update bookmark bm set weblogid = select websiteid from bookmark_folder bf where bf.id = bm.folderid;
 
 #dropColumn("blogroll_link", "folderid")
@@ -110,12 +121,15 @@ update bookmark bm set weblogid = select websiteid from bookmark_folder bf where
 alter table bookmark add constraint bm_weblogid_fk foreign key ( weblogid ) references weblog( id ) ;
 
 -- entry attributes moved into weblogentry table
-
 #dropColumn("weblog_entry", "content_type")
 #dropColumn("weblog_entry", "content_src")
 #addColumnNull("weblog_entry" "enclosure_url" "varchar(255)")
 #addColumnNull("weblog_entry" "enclosure_type" "varchar(48)")
 #addColumnNull("weblog_entry" "enclosure_length" "integer")
+
+-- weblog entries now have a notes field for the blogger
+#addColumnNull("weblog_entry" "notes" "$db.TEXT_SQL_TYPE")
+#dropColumn("weblog_entry", "link")
 
 update weblogentry we set enclosure_url =
 (select value from entryattribute where name = "att_mediacast_url" and entryid = we.id)

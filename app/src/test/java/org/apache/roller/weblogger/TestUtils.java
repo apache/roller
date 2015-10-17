@@ -213,7 +213,7 @@ public final class TestUtils {
 
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
-        WeblogCategory testCat = new WeblogCategory(weblog, name, null);
+        WeblogCategory testCat = new WeblogCategory(weblog, name);
         weblog.addCategory(testCat);
         mgr.saveWeblogCategory(testCat);
 
@@ -276,7 +276,6 @@ public final class TestUtils {
 
         WeblogEntry testEntry = new WeblogEntry();
         testEntry.setTitle(anchor);
-        testEntry.setLink("testEntryLink");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor(anchor);
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date()

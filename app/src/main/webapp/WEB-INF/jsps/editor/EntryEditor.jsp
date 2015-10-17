@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%-- This page is designed to be included in EntryEdit.jsp --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
@@ -38,6 +41,10 @@
     <h3><s:text name="weblogEdit.summary"/><tags:help key="weblogEdit.summary.tooltip"/></h3>
     <div>
         <s:textarea id="edit_summary" name="bean.summary" cols="75" rows="10" cssStyle="width: 100%" tabindex="6"/>
+    </div>
+    <h3><s:text name="weblogEdit.notes"/><tags:help key="weblogEdit.notes.tooltip"/></h3>
+    <div>
+        <s:textarea id="edit_notes" name="bean.notes" cols="75" rows="10" cssStyle="width: 100%" tabindex="7"/>
     </div>
 </div>
 

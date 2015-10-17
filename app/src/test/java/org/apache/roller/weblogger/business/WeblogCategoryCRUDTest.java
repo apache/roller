@@ -89,8 +89,8 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
-        WeblogCategory testCat = new WeblogCategory(testWeblog, null, "desc");
-        WeblogCategory testCat2 = new WeblogCategory(testWeblog, "root2", "desc2");
+        WeblogCategory testCat = new WeblogCategory(testWeblog, null);
+        WeblogCategory testCat2 = new WeblogCategory(testWeblog, "root2");
         assertFalse(testCat2.equals(testCat));
         mgr.removeWeblogCategory(testCat);
         mgr.removeWeblogCategory(testCat2);
@@ -116,7 +116,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         assertEquals(1, testWeblog.getWeblogCategories().size());
 
         // add a new category
-        WeblogCategory newCat = new WeblogCategory(testWeblog, "catTestCategory", null);
+        WeblogCategory newCat = new WeblogCategory(testWeblog, "catTestCategory");
         testWeblog.addCategory(newCat);
         mgr.saveWeblogCategory(newCat);
         TestUtils.endSession(true);
@@ -170,7 +170,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
 
         // add a category above default one
-        WeblogCategory testCat = new WeblogCategory(testWeblog, "SampleCategory", null);
+        WeblogCategory testCat = new WeblogCategory(testWeblog, "SampleCategory");
         testWeblog.addCategory(testCat);
         mgr.saveWeblogCategory(testCat);
         TestUtils.endSession(true);

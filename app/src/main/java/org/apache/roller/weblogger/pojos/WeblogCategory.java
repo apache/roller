@@ -65,8 +65,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     private String id = WebloggerUtils.generateUUID();
     // category name
     private String name = null;
-    // category description
-    private String description = null;
     // left-to-right comparative ordering of category, higher numbers go to the right
     private int position;
     // parent weblog of category
@@ -77,10 +75,8 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     
     public WeblogCategory(
             Weblog weblog,
-            String name,
-            String description) {
+            String name) {
         this.name = name;
-        this.description = description;
         this.weblog = weblog;
         calculatePosition();
     }
@@ -112,14 +108,6 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Basic(optional = false)

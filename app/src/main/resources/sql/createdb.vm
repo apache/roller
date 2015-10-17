@@ -106,7 +106,7 @@ create table blogroll_link (
     name             varchar(255) not null,
     description      varchar(255),
     url              varchar(255) not null,
-    priority         integer default 100 not null
+    position         integer not null
 );
 
 create index bl_weblogid_idx on blogroll_link( weblogid );
@@ -116,9 +116,8 @@ alter table blogroll_link add constraint bl_weblogid_fk
 create table weblog_category (
     id               varchar(48) not null primary key,
     name             varchar(255) not null,
-    description      varchar(255),
-    weblogid        varchar(48) not null,
-    position         integer default 0 not null
+    weblogid         varchar(48) not null,
+    position         integer not null
 );
 
 create index wc_weblogid_idx on weblog_category( weblogid );
@@ -133,10 +132,9 @@ create table weblog_entry (
     text            $db.TEXT_SQL_TYPE not null,
     pubtime         $db.TIMESTAMP_SQL_TYPE_NULL,
     updatetime      $db.TIMESTAMP_SQL_TYPE     not null,
-    weblogid       varchar(48)  not null,
+    weblogid        varchar(48)  not null,
     categoryid      varchar(48)  not null,
     publishentry    $db.BOOLEAN_SQL_TYPE_TRUE not null,
-    link            varchar(255),
     plugins         varchar(255),
     allowcomments   $db.BOOLEAN_SQL_TYPE_FALSE not null, 
     commentdays     integer default 7 not null,
@@ -144,6 +142,7 @@ create table weblog_entry (
     pinnedtomain    $db.BOOLEAN_SQL_TYPE_FALSE not null,
     status          varchar(20) not null,
     summary         $db.TEXT_SQL_TYPE,
+    notes           $db.TEXT_SQL_TYPE,
     search_description varchar(255),
     enclosure_url   varchar(255),
     enclosure_type  varchar(48),
@@ -308,21 +307,20 @@ alter table media_directory add constraint md_weblogid_fk
 
 create table media_file (
     id              varchar(48) not null primary key,
-    name            varchar(255) not null,
-    description     varchar(255),
-    origpath        varchar(255),
-    content_type    varchar(50)  not null,
-    copyright_text  varchar(1023),
     directoryid     varchar(48) not null,
-    weblogid        varchar(48) not null,
+    name            varchar(255) not null,
+    content_type    varchar(50) not null,
+    alt_attr        varchar(255),
+    title_attr      varchar(255),
+    anchor          varchar(255),
+    notes           varchar(255),
     width           integer,
     height          integer,
     size_in_bytes   integer,
-    date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
-    last_updated    $db.TIMESTAMP_SQL_TYPE,
-    anchor          varchar(255),
+    origpath        varchar(255),
     creator         varchar(255),
-    is_public       $db.BOOLEAN_SQL_TYPE_FALSE not null
+    date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
+    last_updated    $db.TIMESTAMP_SQL_TYPE
 );
 
 alter table media_file add constraint mf_mdir_id_fk

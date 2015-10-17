@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
@@ -84,23 +87,41 @@
             <td>
                 <s:textfield name="bean.name" size="50" maxlength="255" style="width:30%"/>
             </td>
-       </tr>
+        </tr>
+
+        <tr>
+            <td class="entryEditFormLabel">
+                <label for="status"><s:text name="mediaFileAdd.altText"/><tags:help key="mediaFileAdd.altText.tooltip"/></label>
+            </td>
+            <td>
+                <s:textfield name="bean.altText" size="50" maxlength="255" style="width:30%"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="entryEditFormLabel">
+                <label for="status"><s:text name="mediaFileAdd.titleText"/><tags:help key="mediaFileAdd.titleText.tooltip"/></label>
+            </td>
+            <td>
+                <s:textfield name="bean.titleText" size="50" maxlength="255" style="width:30%"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="entryEditFormLabel">
+                <label for="status"><s:text name="mediaFileAdd.anchor"/><tags:help key="mediaFileAdd.anchor.tooltip"/></label>
+            </td>
+            <td>
+                <s:textfield name="bean.anchor" size="50" maxlength="255" style="width:30%"/>
+            </td>
+        </tr>
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="generic.description" /></label>
+                <label for="status"><s:text name="generic.notes"/><tags:help key="mediaFileAdd.notes.tooltip"/></label>
             </td>
             <td>
-                <s:textarea name="bean.description" cols="50" rows="5" style="width:30%"/>
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileAdd.copyright" /></label>
-            </td>
-            <td>
-                <s:textarea name="bean.copyrightText" cols="50" rows="3" style="width:30%"/>
+                <s:textarea name="bean.notes" cols="50" rows="5" maxlength="255" style="width:30%"/>
             </td>
        </tr>
 
@@ -113,26 +134,6 @@
             </td>
        </tr>
 
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileAdd.includeGallery" /></label>
-            </td>
-            <td>
-                <s:checkbox name="bean.sharedForGallery" />
-                <s:text name="mediaFileEdit.includeGalleryHelp" />
-            </td>
-       </tr>
-
-       <tr>
-           <td>
-                <br />
-                <br />
-                <br />
-           </td>
-           <td>
-           </td>
-       </tr>
-
         <tr>
             <td class="entryEditFormLabel">
                 <label for="title"><s:text name="mediaFileAdd.fileLocation" /></label>
@@ -140,26 +141,6 @@
             <td>
                 <div id="fileControl0div" class="miscControl">
                     <s:file id="fileControl0" name="uploadedFiles" size="30" />
-                    <br />
-                </div>
-
-                <div id="fileControl1div" class="miscControl">
-                    <s:file id="fileControl1" name="uploadedFiles" size="30" />
-                    <br />
-                </div>
-
-                <div id="fileControl2div" class="miscControl">
-                    <s:file id="fileControl2" name="uploadedFiles" size="30" />
-                    <br />
-                </div>
-
-                <div id="fileControl3div" class="miscControl">
-                    <s:file id="fileControl3" name="uploadedFiles" size="30" />
-                    <br />
-                </div>
-
-                <div id="fileControl4div" class="miscControl">
-                    <s:file id="fileControl4" name="uploadedFiles" size="30" />
                     <br />
                 </div>
             </td>

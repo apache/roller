@@ -236,8 +236,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 }
                 WeblogCategory c = new WeblogCategory(
                         newWeblog,
-                        split,
-                        null );
+                        split);
                 if (firstCat == null) {
                     firstCat = c;
                 }

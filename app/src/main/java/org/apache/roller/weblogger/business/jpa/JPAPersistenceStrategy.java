@@ -52,7 +52,7 @@ public class JPAPersistenceStrategy {
     /**
      * The thread local EntityManager.
      */
-    private final ThreadLocal<EntityManager> threadLocalEntityManager = new ThreadLocal<EntityManager>();
+    private final ThreadLocal<EntityManager> threadLocalEntityManager = new ThreadLocal<>();
     
     /**
      * The EntityManagerFactory for this Roller instance.
@@ -227,8 +227,6 @@ public class JPAPersistenceStrategy {
 
     /**
      * Retrieve managed version of object
-     * @param clazz the class of object to retrieve
-     * @param id the id of the object to retrieve
      * @return the object retrieved
      * @throws WebloggerException on any error retrieving object
      */

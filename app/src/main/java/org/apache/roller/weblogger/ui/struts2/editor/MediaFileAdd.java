@@ -181,7 +181,6 @@ public class MediaFileAdd extends UIAction {
 
                         mediaFile.setName(fileName);
                         mediaFile.setDirectory(getDirectory());
-                        mediaFile.setWeblog(getActionWeblog());
                         mediaFile.setLength(this.uploadedFiles[i].length());
                         mediaFile.setInputStream(new FileInputStream(
                                 this.uploadedFiles[i]));

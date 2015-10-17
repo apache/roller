@@ -14,6 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
+
+  Source file modified from the original ASF source; all changes made
+  are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
@@ -59,6 +62,42 @@
             </td>
        </tr>
 
+        <tr>
+            <td class="entryEditFormLabel">
+                <label for="status"><s:text name="mediaFileAdd.altText"/><tags:help key="mediaFileAdd.altText.tooltip"/></label>
+            </td>
+            <td>
+                <s:textfield name="bean.altText" size="50" maxlength="255" style="width:30%"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="entryEditFormLabel">
+                <label for="status"><s:text name="mediaFileAdd.titleText"/><tags:help key="mediaFileAdd.titleText.tooltip"/></label>
+            </td>
+            <td>
+                <s:textfield name="bean.titleText" size="50" maxlength="255" style="width:30%"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="entryEditFormLabel">
+                <label for="status"><s:text name="mediaFileAdd.anchor"/><tags:help key="mediaFileAdd.anchor.tooltip"/></label>
+            </td>
+            <td>
+                <s:textfield name="bean.anchor" size="50" maxlength="255" style="width:30%"/>
+            </td>
+        </tr>
+
+       <tr>
+            <td class="entryEditFormLabel">
+                <label for="status"><s:text name="generic.notes" /><tags:help key="mediaFileAdd.notes.tooltip"/></label>
+            </td>
+            <td>
+                <s:textarea name="bean.notes" cols="50" rows="2" tabindex="2" style="width:70%" />
+            </td>
+       </tr>
+
        <tr>
             <td class="entryEditFormLabel">
                 <label for="fileInfo"><s:text name="mediaFileEdit.fileInfo" /></label>
@@ -94,39 +133,11 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="generic.description" /></label>
-            </td>
-            <td>
-                <s:textarea name="bean.description" cols="50" rows="2" tabindex="2" style="width:70%" />
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="copyright"><s:text name="mediaFileEdit.copyright" /></label>
-            </td>
-            <td>
-                <s:textfield name="bean.copyrightText" size="30" maxlength="100" tabindex="4" style="width:70%"/>
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
                 <label for="directoryId"><s:text name="mediaFileEdit.directory" /></label>
             </td>
             <td>
                 <s:select name="bean.directoryId" list="allDirectories"
                     listKey="id" listValue="name" tabindex="5" />
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileEdit.includeGallery" /></label>
-            </td>
-            <td>
-                <s:checkbox name="bean.sharedForGallery" tabindex="6" />
-                <s:text name="mediaFileEdit.includeGalleryHelp" />
             </td>
        </tr>
 

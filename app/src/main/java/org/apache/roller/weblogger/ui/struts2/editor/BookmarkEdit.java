@@ -103,7 +103,7 @@ public class BookmarkEdit extends UIAction {
                 getBean().copyTo(bookmark);
                 WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 if (isAdd()) {
-                    bookmark.calculatePriority();
+                    bookmark.calculatePosition();
                     getActionWeblog().addBookmark(bookmark);
                 }
                 wmgr.saveBookmark(bookmark);

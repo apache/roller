@@ -52,7 +52,7 @@ import javax.persistence.Transient;
 @Table(name="media_file")
 @NamedQueries({
         @NamedQuery(name="MediaFile.getByWeblogAndOrigpath",
-                query="SELECT f FROM MediaFile f WHERE f.weblog = ?1 AND f.originalPath = ?2")
+                query="SELECT f FROM MediaFile f WHERE f.directory.weblog = ?1 AND f.originalPath = ?2")
 })
 public class MediaFile implements Serializable {
 
@@ -64,9 +64,9 @@ public class MediaFile implements Serializable {
     private String id = WebloggerUtils.generateUUID();
 
     private String name;
-    private String description;
-    private String copyrightText;
-    private Boolean isSharedForGallery = Boolean.FALSE;
+    private String altText;
+    private String titleText;
+    private String notes;
     private long length;
     private int width = -1;
     private int height = -1;
@@ -77,7 +77,6 @@ public class MediaFile implements Serializable {
     private Timestamp dateUploaded = new Timestamp(System.currentTimeMillis());
     private Timestamp lastUpdated = new Timestamp(System.currentTimeMillis());
     private String creatorUserName;
-    private Weblog weblog;
 
     private InputStream is;
 
@@ -86,8 +85,7 @@ public class MediaFile implements Serializable {
     private FileContent content;
     private FileContent thumbnail;
 
-    // TODO: anchor to be populated
-    // private String anchor;
+    private String anchor;
 
     public MediaFile() {
     }
@@ -111,41 +109,41 @@ public class MediaFile implements Serializable {
     }
 
     /**
-     * Description for media file
+     * notes for media file
      * 
      */
-    public String getDescription() {
-        return description;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
-    /**
-     * Copyright text for media file
-     * 
-     */
-    @Column(name="copyright_text")
-    public String getCopyrightText() {
-        return copyrightText;
+    @Column(name="alt_attr")
+    public String getAltText() {
+        return altText;
     }
 
-    public void setCopyrightText(String copyrightText) {
-        this.copyrightText = copyrightText;
+    public void setAltText(String altText) {
+        this.altText = altText;
     }
 
-    /**
-     * Is media file shared for gallery
-     * 
-     */
-    @Column(name="is_public", nullable=false)
-    public Boolean getSharedForGallery() {
-        return isSharedForGallery;
+    @Column(name="title_attr")
+    public String getTitleText() {
+        return titleText;
     }
 
-    public void setSharedForGallery(Boolean isSharedForGallery) {
-        this.isSharedForGallery = isSharedForGallery;
+    public void setTitleText(String titleText) {
+        this.titleText = titleText;
+    }
+
+    public String getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(String anchor) {
+        this.anchor = anchor;
     }
 
     /**
@@ -250,7 +248,7 @@ public class MediaFile implements Serializable {
     @Transient
     public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy()
-                .getMediaFileURL(getWeblog(), this.getId(), true);
+                .getMediaFileURL(getDirectory().getWeblog(), this.getId(), true);
     }
 
     /**
@@ -260,7 +258,7 @@ public class MediaFile implements Serializable {
     @Transient
     public String getThumbnailURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy()
-                .getMediaFileThumbnailURL(getWeblog(), this.getId(), true);
+                .getMediaFileThumbnailURL(getDirectory().getWeblog(), this.getId(), true);
     }
 
     @Column(name="creator")
@@ -304,16 +302,6 @@ public class MediaFile implements Serializable {
      */
     public void setOriginalPath(String originalPath) {
         this.originalPath = originalPath;
-    }
-
-    @ManyToOne
-    @JoinColumn(name="weblogid", nullable=false)
-    public Weblog getWeblog() {
-        return weblog;
-    }
-
-    public void setWeblog(Weblog weblog) {
-        this.weblog = weblog;
     }
 
     public int getWidth() {
@@ -396,7 +384,7 @@ public class MediaFile implements Serializable {
 
     public String toString() {
         return "MediaFile [name=" + getName() + ", directory=" + getDirectory()
-                + ", weblog=" + getWeblog() + "]";
+                + ", weblog=" + getDirectory().getWeblog() + "]";
     }
 
     public boolean equals(Object other) {

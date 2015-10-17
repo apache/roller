@@ -56,8 +56,6 @@ import org.apache.xmlrpc.XmlRpcException;
  * Weblogger XML-RPC Handler for the MetaWeblog API.
  * 
  * MetaWeblog API spec can be found at http://xmlrpc.scripting.com/metaWeblogApi.html
- * 
- * @author David M Johnson
  */
 public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     
@@ -384,7 +382,6 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             // Try to save file
             MediaFile mf = new MediaFile();
             mf.setDirectory(root);
-            mf.setWeblog(website);
             mf.setName(name);
             mf.setContentType(type);
             mf.setInputStream(new ByteArrayInputStream(bits));
@@ -465,9 +462,6 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         Hashtable struct = new Hashtable();
         struct.put("title", entry.getTitle());
-        if (entry.getLink() != null) {
-            struct.put("link", Utilities.escapeHTML(entry.getLink()));
-        }
         struct.put("description", entry.getText());
         if (entry.getPubTime() != null) {
             struct.put("pubDate", entry.getPubTime());

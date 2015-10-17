@@ -42,7 +42,7 @@ import javax.persistence.Table;
 @Table(name="blogroll_link")
 @NamedQueries({
         @NamedQuery(name="Bookmark.getByWeblog",
-                query="SELECT b FROM WeblogBookmark b WHERE b.weblog = ?1 order by b.priority")
+                query="SELECT b FROM WeblogBookmark b WHERE b.weblog = ?1 order by b.position")
 })
 public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> {
     
@@ -54,7 +54,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     private String name;
     private String description;
     private String url;
-    private Integer priority;
+    private Integer position;
 
     //----------------------------------------------------------- Constructors
     
@@ -71,7 +71,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         this.name = name;
         this.description = desc;
         this.url = url;
-        calculatePriority();
+        calculatePosition();
     }
 
     @Id
@@ -84,12 +84,12 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
 
     // algorithm assumes bookmark not yet added to the weblog's list
-    public void calculatePriority() {
+    public void calculatePosition() {
         int size = weblog.getBookmarks().size();
         if (size == 0) {
-            this.priority = 0;
+            this.position = 0;
         } else {
-            this.priority = weblog.getBookmarks().get(size - 1).getPriority() + 1;
+            this.position = weblog.getBookmarks().get(size - 1).getPosition() + 1;
         }
     }
 
@@ -120,15 +120,15 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
     
     /**
-     * Priority determines order of display
+     * Position determines order of display
      */
     @Basic(optional=false)
-    public java.lang.Integer getPriority() {
-        return this.priority;
+    public java.lang.Integer getPosition() {
+        return this.position;
     }
     
-    public void setPriority(java.lang.Integer priority) {
-        this.priority = priority;
+    public void setPosition(java.lang.Integer position) {
+        this.position = position;
     }
     
 
@@ -182,7 +182,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(WeblogBookmark o) {
-        return priority.compareTo(o.getPriority());
+        return position.compareTo(o.getPosition());
     }
     
 }

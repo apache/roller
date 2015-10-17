@@ -291,12 +291,9 @@ public class MediaFileTest extends TestCase {
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setName("test4.jpg");
-        mediaFile.setDescription("This is a test image 4");
-        mediaFile.setCopyrightText("test 4 copyright text");
-        mediaFile.setSharedForGallery(false);
+        mediaFile.setNotes("This is a test image 4");
         mediaFile.setLength(3000);
         mediaFile.setDirectory(rootDirectory);
-        mediaFile.setWeblog(testWeblog);
         mediaFile.setContentType("image/jpeg");
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
 
@@ -357,12 +354,9 @@ public class MediaFileTest extends TestCase {
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setName("test.jpg");
-        mediaFile.setDescription("This is a test image");
-        mediaFile.setCopyrightText("test copyright text");
-        mediaFile.setSharedForGallery(true);
+        mediaFile.setNotes("This is a test image");
         mediaFile.setLength(2000);
         mediaFile.setDirectory(rootDirectory);
-        mediaFile.setWeblog(testWeblog);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
@@ -375,9 +369,7 @@ public class MediaFileTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         MediaFile mediaFile1 = mfMgr.getMediaFile(mediaFile.getId());
         assertEquals("test.jpg", mediaFile1.getName());
-        assertEquals("This is a test image", mediaFile1.getDescription());
-        assertEquals("test copyright text", mediaFile1.getCopyrightText());
-        assertTrue(mediaFile1.getSharedForGallery());
+        assertEquals("This is a test image", mediaFile1.getNotes());
         assertEquals(2000, mediaFile1.getLength());
 
         TestUtils.endSession(true);
@@ -407,12 +399,9 @@ public class MediaFileTest extends TestCase {
             {
                 MediaFile mf = new MediaFile();
                 mf.setName("test_work.jpg");
-                mf.setDescription("This is a test image");
-                mf.setCopyrightText("test copyright text");
-                mf.setSharedForGallery(true);
+                mf.setNotes("This is a test image");
                 mf.setLength(2000);
                 mf.setDirectory(rootDirectory);
-                mf.setWeblog(testWeblog);
                 mf.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
                 mf.setContentType("image/jpeg");
                 rootDirectory.getMediaFiles().add(mf);
@@ -433,12 +422,9 @@ public class MediaFileTest extends TestCase {
 
                 MediaFile mf = new MediaFile();
                 mf.setName("test_home.jpg");
-                mf.setDescription("This is a test image");
-                mf.setCopyrightText("test copyright text");
-                mf.setSharedForGallery(true);
+                mf.setNotes("This is a test image");
                 mf.setLength(3000);
                 mf.setDirectory(rootDirectory);
-                mf.setWeblog(testWeblog);
                 mf.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
                 mf.setContentType("image/jpeg");
                 rootDirectory.getMediaFiles().add(mf);
@@ -459,11 +445,8 @@ public class MediaFileTest extends TestCase {
 
                 MediaFile mf = new MediaFile();
                 mf.setName("test_pers.jpg");
-                mf.setDescription("This is a personal test image");
-                mf.setCopyrightText("test pers copyright text");
-                mf.setSharedForGallery(true);
+                mf.setNotes("This is a personal test image");
                 mf.setLength(4000);
-                mf.setWeblog(testWeblog);
                 mf.setDirectory(rootDirectory);
                 mf.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
                 mf.setContentType("image/jpeg");
@@ -584,11 +567,8 @@ public class MediaFileTest extends TestCase {
                 MediaFile mediaFile = new MediaFile();
                 mediaFile.setName("test_file<index>.jpg".replace("<index>", i
                         + ""));
-                mediaFile.setDescription("This is a test image");
-                mediaFile.setCopyrightText("test copyright text");
-                mediaFile.setSharedForGallery(true);
+                mediaFile.setNotes("This is a test image");
                 mediaFile.setLength(2000);
-                mediaFile.setWeblog(testWeblog);
                 mediaFile.setInputStream(getClass().getResourceAsStream(
                         TEST_IMAGE));
                 mediaFile.setContentType("image/jpeg");
@@ -676,14 +656,10 @@ public class MediaFileTest extends TestCase {
             MediaFile mediaFile = new MediaFile();
             mediaFile
                     .setName("test_file<index>.jpg".replace("<index>", i + ""));
-            mediaFile.setDescription("This is a test image");
-            mediaFile.setCopyrightText("test copyright text");
-            mediaFile.setSharedForGallery(true);
+            mediaFile.setNotes("This is a test image");
             mediaFile.setLength(2000);
             mediaFile.setDirectory(rootDirectory);
-            mediaFile.setWeblog(testWeblog);
-            mediaFile
-                    .setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
+            mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
             mediaFile.setContentType(contentTypes[i]);
 
             mediaFile.setDateUploaded(new Timestamp(cal.getTimeInMillis()));
@@ -761,12 +737,9 @@ public class MediaFileTest extends TestCase {
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setName("test5.jpg");
-        mediaFile.setDescription("This is a test image 5");
-        mediaFile.setCopyrightText("test 5 copyright text");
-        mediaFile.setSharedForGallery(false);
+        mediaFile.setNotes("This is a test image 5");
         mediaFile.setLength(3000);
         mediaFile.setDirectory(rootDirectory);
-        mediaFile.setWeblog(testWeblog);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
 
@@ -780,21 +753,16 @@ public class MediaFileTest extends TestCase {
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         MediaFile mediaFile1 = mfMgr.getMediaFile(id);
-        mediaFile1.setWeblog(testWeblog);
         mediaFile1.setName("updated.gif");
-        mediaFile1.setDescription("updated desc");
-        mediaFile1.setCopyrightText("updated copyright");
+        mediaFile1.setNotes("updated desc");
         mediaFile1.setContentType("image/gif");
-        mediaFile1.setSharedForGallery(true);
         mfMgr.updateMediaFile(testWeblog, mediaFile1);
         TestUtils.endSession(true);
 
         MediaFile mediaFile2 = mfMgr.getMediaFile(id);
         assertEquals("updated.gif", mediaFile2.getName());
-        assertEquals("updated desc", mediaFile2.getDescription());
-        assertEquals("updated copyright", mediaFile2.getCopyrightText());
+        assertEquals("updated desc", mediaFile2.getNotes());
         assertEquals("image/gif", mediaFile2.getContentType());
-        assertTrue(mediaFile2.getSharedForGallery());
 
         TestUtils.endSession(true);
         TestUtils.teardownWeblog(testWeblog.getId());
@@ -836,11 +804,8 @@ public class MediaFileTest extends TestCase {
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setDirectory(rootDirectory);
-        mediaFile.setWeblog(testWeblog);
         mediaFile.setName("test6_1.jpg");
-        mediaFile.setDescription("This is a test image 6.1");
-        mediaFile.setCopyrightText("test 6.1 copyright text");
-        mediaFile.setSharedForGallery(false);
+        mediaFile.setNotes("This is a test image 6.1");
         mediaFile.setLength(4000);
         mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
@@ -848,11 +813,8 @@ public class MediaFileTest extends TestCase {
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setDirectory(rootDirectory);
-        mediaFile2.setWeblog(testWeblog);
         mediaFile2.setName("test6_2.jpg");
-        mediaFile2.setDescription("This is a test image 6.2");
-        mediaFile2.setCopyrightText("test 6.2 copyright text");
-        mediaFile2.setSharedForGallery(true);
+        mediaFile2.setNotes("This is a test image 6.2");
         mediaFile2.setLength(4000);
         mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
@@ -926,11 +888,8 @@ public class MediaFileTest extends TestCase {
 
             MediaFile mediaFile = new MediaFile();
             mediaFile.setDirectory(rootDirectory);
-            mediaFile.setWeblog(testWeblog);
             mediaFile.setName("test7_1.jpg");
-            mediaFile.setDescription("This is a test image 7.1");
-            mediaFile.setCopyrightText("test 7.1 copyright text");
-            mediaFile.setSharedForGallery(false);
+            mediaFile.setNotes("This is a test image 7.1");
             mediaFile.setLength(4000);
             mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
             mediaFile.setContentType("image/jpeg");
@@ -938,11 +897,8 @@ public class MediaFileTest extends TestCase {
 
             MediaFile mediaFile2 = new MediaFile();
             mediaFile2.setDirectory(rootDirectory);
-            mediaFile2.setWeblog(testWeblog);
             mediaFile2.setName("test7_2.jpg");
-            mediaFile2.setDescription("This is a test image 7.2");
-            mediaFile2.setCopyrightText("test 7.2 copyright text");
-            mediaFile2.setSharedForGallery(true);
+            mediaFile2.setNotes("This is a test image 7.2");
             mediaFile2.setLength(4000);
             mediaFile2.setInputStream(getClass()
                     .getResourceAsStream(TEST_IMAGE));

@@ -53,6 +53,7 @@ public class EntryBean {
     private String categoryId = null;
     private String tagsString = null;
     private String summary = null;
+    private String notes = null;
     private String text = null;
     private String status = null;
 
@@ -87,7 +88,15 @@ public class EntryBean {
     public void setTitle( String title ) {
         this.title = title;
     }
-    
+
+    public String getText() {
+        return this.text;
+    }
+
+    public void setText( String text ) {
+        this.text = text;
+    }
+
     public String getSummary() {
         return this.summary;
     }
@@ -95,15 +104,15 @@ public class EntryBean {
     public void setSummary( String summary ) {
         this.summary = summary;
     }
-    
-    public String getText() {
-        return this.text;
+
+    public String getNotes() {
+        return notes;
     }
-    
-    public void setText( String text ) {
-        this.text = text;
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
-    
+
     public String getStatus() {
         return this.status;
     }
@@ -299,8 +308,9 @@ public class EntryBean {
         
         entry.setTitle(getTitle());
         entry.setStatus(PubStatus.valueOf(getStatus()));
-        entry.setSummary(getSummary());
         entry.setText(getText());
+        entry.setSummary(getSummary());
+        entry.setNotes(getNotes());
         entry.setTagsAsString(getTagsAsString());
         entry.setSearchDescription(getSearchDescription());
         entry.setEnclosureUrl(getEnclosureUrl());
@@ -344,12 +354,13 @@ public class EntryBean {
      * Copy values from WeblogEntry to this Form.
      */
     public void copyFrom(WeblogEntry entry, Locale locale) {
-        
+
         setId(entry.getId());
         setTitle(entry.getTitle());
         setStatus(entry.getStatus().name());
-        setSummary(entry.getSummary());
         setText(entry.getText());
+        setSummary(entry.getSummary());
+        setNotes(entry.getNotes());
         setCategoryId(entry.getCategory().getId());
         setTagsAsString(entry.getTagsAsString());
         setSearchDescription(entry.getSearchDescription());
@@ -409,6 +420,7 @@ public class EntryBean {
         buf.append("seconds = ").append(getSeconds()).append("\n");
         buf.append("text = ").append(getText()).append("\n");
         buf.append("summary = ").append(getSummary()).append("\n");
+        buf.append("notes = ").append(getNotes()).append("\n");
         buf.append("enclosure URL = ").append(getEnclosureUrl()).append("\n");
         buf.append("search description = ").append(getSearchDescription()).append("\n");
         buf.append("comments = ").append(getAllowComments()).append("\n");
