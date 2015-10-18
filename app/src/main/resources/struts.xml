@@ -239,7 +239,9 @@
     <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger">
 
         <action name="mediaFileAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+            <param name="actionName">mediaFileAdd</param>
+            <param name="pageTitle">mediaFileAdd.title</param>
             <result name="input" type="tiles">.MediaFileAdd</result>
             <result name="success" type="chain">mediaFileView</result>
             <result name="error" type="tiles">.MediaFileAdd</result>
@@ -251,6 +253,8 @@
 
         <action name="mediaFileEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+            <param name="actionName">mediaFileEdit</param>
+            <param name="pageTitle">mediaFile.edit.title</param>
             <result name="input" type="tiles">.MediaFileEdit</result>
             <result name="success" type="tiles">.MediaFileEditSuccess</result>
         </action>

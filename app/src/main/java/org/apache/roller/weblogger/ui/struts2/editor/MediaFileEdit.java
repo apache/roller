@@ -22,7 +22,8 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,15 +32,19 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
- * Edits metadata for a media file.
+ * Adds or edits a media file.
  */
 @SuppressWarnings("serial")
 public class MediaFileEdit extends UIAction {
@@ -47,25 +52,27 @@ public class MediaFileEdit extends UIAction {
     private static Log log = LogFactory.getLog(MediaFileEdit.class);
     private MediaFileBean bean = new MediaFileBean();
     private MediaFileDirectory directory;
+    private String mediaFileId;
+    private List<MediaFileDirectory> allDirectories;
 
-    // file uploaded by the user, if applicable
+    // an array of files uploaded by the user, if applicable
     private File uploadedFile = null;
 
-    // content types for upload file
+    // content type for upload file
     private String uploadedFileContentType = null;
 
-    // filename for uploaded file
-    private String uploadedFileName = null;
+    // an array of filenames for uploaded files
+    private String uploadedFileFileName = null;
+
+    private String directoryName = null;
 
     public MediaFileEdit() {
-        this.actionName = "mediaFileEdit";
         this.desiredMenu = "editor";
-        this.pageTitle = "mediaFile.edit.title";
     }
 
-    private String mediaFileId;
-
-    private List<MediaFileDirectory> allDirectories;
+    private boolean isAdd() {
+        return actionName.equals("mediaFileAdd");
+    }
 
     @Override
     public GlobalRole requiredGlobalRole() {
@@ -78,7 +85,7 @@ public class MediaFileEdit extends UIAction {
     }
 
     /**
-     * Prepares edit action.
+     * Prepares action class
      */
     public void myPrepare() {
         try {
@@ -86,21 +93,47 @@ public class MediaFileEdit extends UIAction {
             allDirectories = mgr.getMediaFileDirectories(getActionWeblog());
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
+            } else if (StringUtils.isNotEmpty(directoryName)) {
+                setDirectory(mgr.getMediaFileDirectoryByName(getActionWeblog(), directoryName));
+            } else {
+                MediaFileDirectory root = mgr.getDefaultMediaFileDirectory(getActionWeblog());
+                if (root == null) {
+                    root = mgr.createDefaultMediaFileDirectory(getActionWeblog());
+                }
+                setDirectory(root);
             }
+            directoryName = getDirectory().getName();
+            bean.setDirectoryId(getDirectory().getId());
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
+        } finally {
+            // flush
+            try {
+                WebloggerFactory.getWeblogger().flush();
+            } catch (WebloggerException e) {
+                // ignored
+            }
         }
     }
 
     /**
-     * Validates media file metadata to be updated.
+     * Validates media file to be added.
      */
     public void myValidate() {
-        MediaFile fileWithSameName = getDirectory().getMediaFile(
-                getBean().getName());
-        if (fileWithSameName != null
-                && !fileWithSameName.getId().equals(getMediaFileId())) {
-            addError("MediaFile.error.duplicateName", getBean().getName());
+        if (isAdd()) {
+            // make sure uploads are enabled
+            if (!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
+                addError("error.upload.disabled");
+            }
+            if (uploadedFile == null || !uploadedFile.exists()) {
+                addError("error.upload.nofile");
+            }
+        } else {
+            MediaFile fileWithSameName = getDirectory().getMediaFile(getBean().getName());
+            if (fileWithSameName != null
+                    && !fileWithSameName.getId().equals(getMediaFileId())) {
+                addError("MediaFile.error.duplicateName", getBean().getName());
+            }
         }
     }
 
@@ -111,17 +144,16 @@ public class MediaFileEdit extends UIAction {
      */
     @SkipValidation
     public String execute() {
-        MediaFileManager manager = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
-        try {
-            MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
-            this.bean.copyFrom(mediaFile);
-
-        } catch (Exception e) {
-            log.error("Error uploading file " + bean.getName(), e);
-            addError("uploadFiles.error.upload", bean.getName());
+        if (!isAdd()) {
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            try {
+                MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+                this.bean.copyFrom(mediaFile);
+            } catch (Exception e) {
+                log.error("Error uploading file " + bean.getName(), e);
+                addError("uploadFiles.error.upload", bean.getName());
+            }
         }
-
         return INPUT;
     }
 
@@ -132,41 +164,93 @@ public class MediaFileEdit extends UIAction {
      */
     public String save() {
         myValidate();
+        MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         if (!hasActionErrors()) {
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             try {
-                MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
-                bean.copyTo(mediaFile);
+                if (isAdd()) {
+                    MediaFile mediaFile = new MediaFile();
+                    bean.copyTo(mediaFile);
+                    String fileName = getUploadedFileFileName();
 
-                if (uploadedFile != null) {
-                    mediaFile.setLength(this.uploadedFile.length());
-                    mediaFile.setContentType(this.uploadedFileContentType);
-                    manager.updateMediaFile(getActionWeblog(), mediaFile,
-                            new FileInputStream(this.uploadedFile));
+                    // make sure fileName is valid
+                    if (fileName.indexOf('/') != -1
+                            || fileName.indexOf('\\') != -1
+                            || fileName.contains("..")
+                            || fileName.indexOf('\000') != -1) {
+                        addError("uploadFiles.error.badPath", fileName);
+                    } else {
+                        mediaFile.setName(fileName);
+                        mediaFile.setDirectory(getDirectory());
+                        mediaFile.setLength(this.uploadedFile.length());
+                        mediaFile.setInputStream(new FileInputStream(this.uploadedFile));
+                        mediaFile.setContentType(this.uploadedFileContentType);
+
+                        // in some cases Struts2 is not able to guess the content
+                        // type correctly and assigns the default, which is
+                        // octet-stream. So in cases where we see octet-stream
+                        // we double check and see if we can guess the content
+                        // type via the Java MIME type facilities.
+                        mediaFile.setContentType(this.uploadedFileContentType);
+                        if (mediaFile.getContentType() == null
+                                || mediaFile.getContentType().endsWith("/octet-stream")) {
+                            String ctype = Utilities.getContentTypeFromFileName(mediaFile.getName());
+                            if (null != ctype) {
+                                mediaFile.setContentType(ctype);
+                            }
+                        }
+
+                        RollerMessages errors = new RollerMessages();
+                        manager.createMediaFile(getActionWeblog(), mediaFile, errors);
+                        for (Iterator it = errors.getErrors(); it.hasNext(); ) {
+                            RollerMessage msg = (RollerMessage) it.next();
+                            addError(msg.getKey(), Arrays.asList(msg.getArgs()));
+                        }
+
+                        WebloggerFactory.getWeblogger().flush();
+                        // below should not be necessary as createMediaFile refreshes the directory's
+                        // file listing but caching of directory's old file listing occurring somehow.
+                        mediaFile.getDirectory().getMediaFiles().add(mediaFile);
+                    }
+
+                    if (!this.errorsExist()) {
+                        addMessage("uploadFiles.uploadedFiles");
+                        addMessage("uploadFiles.uploadedFile", mediaFile.getName());
+                        this.pageTitle = "mediaFileAddSuccess.title";
+                        return SUCCESS;
+                    }
                 } else {
-                    manager.updateMediaFile(getActionWeblog(), mediaFile);
+                    MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+                    bean.copyTo(mediaFile);
+
+                    if (uploadedFile != null) {
+                        mediaFile.setLength(this.uploadedFile.length());
+                        mediaFile.setContentType(this.uploadedFileContentType);
+                        manager.updateMediaFile(getActionWeblog(), mediaFile,
+                                new FileInputStream(this.uploadedFile));
+                    } else {
+                        manager.updateMediaFile(getActionWeblog(), mediaFile);
+                    }
+
+                    // Move file
+                    if (!getBean().getDirectoryId().equals(mediaFile.getDirectory().getId())) {
+                        log.debug("Processing move of " + mediaFile.getId());
+                        MediaFileDirectory targetDirectory = manager.getMediaFileDirectory(getBean().getDirectoryId());
+                        manager.moveMediaFile(mediaFile, targetDirectory);
+                    }
+
+                    WebloggerFactory.getWeblogger().flush();
+
+                    addMessage("mediaFile.update.success");
+                    return SUCCESS;
                 }
-
-                // Move file
-                if (!getBean().getDirectoryId().equals(mediaFile.getDirectory().getId())) {
-                    log.debug("Processing move of " + mediaFile.getId());
-                    MediaFileDirectory targetDirectory = manager.getMediaFileDirectory(getBean().getDirectoryId());
-                    manager.moveMediaFile(mediaFile, targetDirectory);
-                }
-
-                WebloggerFactory.getWeblogger().flush();
-
-                addMessage("mediaFile.update.success");
-                return SUCCESS;
-
             } catch (Exception e) {
                 log.error("Error uploading file " + bean.getName(), e);
-                addError("uploadFiles.error.upload", bean.getName());
+                addError("mediaFileAdd.errorUploading", bean.getName());
             }
-
         }
         return INPUT;
     }
+
 
     public MediaFileBean getBean() {
         return bean;
@@ -184,49 +268,36 @@ public class MediaFileEdit extends UIAction {
         this.directory = directory;
     }
 
-    /**
-     * @return the uploadedFile
-     */
     public File getUploadedFile() {
         return uploadedFile;
     }
 
-    /**
-     * @param uploadedFile
-     *            the uploadedFile to set
-     */
     public void setUploadedFile(File uploadedFile) {
         this.uploadedFile = uploadedFile;
     }
 
-    /**
-     * @return the uploadedFileContentType
-     */
     public String getUploadedFileContentType() {
         return uploadedFileContentType;
     }
 
-    /**
-     * @param uploadedFileContentType
-     *            the uploadedFileContentType to set
-     */
     public void setUploadedFileContentType(String uploadedFileContentType) {
         this.uploadedFileContentType = uploadedFileContentType;
     }
 
-    /**
-     * @return the uploadedFileName
-     */
-    public String getUploadedFileName() {
-        return uploadedFileName;
+    public String getUploadedFileFileName() {
+        return uploadedFileFileName;
     }
 
-    /**
-     * @param uploadedFileName
-     *            the uploadedFileName to set
-     */
-    public void setUploadedFileName(String uploadedFileName) {
-        this.uploadedFileName = uploadedFileName;
+    public void setUploadedFileFileName(String uploadedFileFileName) {
+        this.uploadedFileFileName = uploadedFileFileName;
+    }
+
+    public String getDirectoryName() {
+        return directoryName;
+    }
+
+    public void setDirectoryName(String directoryName) {
+        this.directoryName = directoryName;
     }
 
     public List<MediaFileDirectory> getAllDirectories() {
@@ -240,4 +311,5 @@ public class MediaFileEdit extends UIAction {
     public void setMediaFileId(String mediaFileId) {
         this.mediaFileId = mediaFileId;
     }
+
 }
