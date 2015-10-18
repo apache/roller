@@ -20,31 +20,74 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
-
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
-<s:if test="bean.isImage">
-    <div class="mediaFileThumbnail">
-        <a href='<s:property value="bean.permalink" />' target="_blank">
-            <img align="right" alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
-                 title='<s:text name="mediaFileEdit.clickToView" />' />
-        </a>
-    </div>
+<script>
+    $(document).ready(function() {
+        $("input[type='file']").change(function() {
+            var name = '';
+            var fileControls = $("input[type='file']");
+            for (var i=0; i<fileControls.size(); i++) {
+                if (jQuery.trim(fileControls.get(i).value).length > 0) {
+                    name = fileControls.get(i).value;
+                }
+            }
+            $("#entry_bean_name").get(0).disabled = false;
+            $("#entry_bean_name").get(0).value = name;
+        });
+    });
+
+    function getFileName(fullName) {
+       var backslashIndex = fullName.lastIndexOf('/');
+       var fwdslashIndex = fullName.lastIndexOf('\\');
+       var fileName;
+       if (backslashIndex >= 0) {
+           fileName = fullName.substring(backslashIndex + 1);
+       } else if (fwdslashIndex >= 0) {
+           fileName = fullName.substring(fwdslashIndex + 1);
+       }
+       else {
+           fileName = fullName;
+       }
+       return fileName;
+    }
+
+</script>
+
+<s:if test="actionName == 'mediaFileEdit'">
+    <s:set var="subtitleKey">mediaFileEdit.subtitle</s:set>
+    <s:set var="mainAction">mediaFileEdit</s:set>
+    <s:set var="pageTip">mediaFileEdit.pagetip</s:set>
+    <s:if test="bean.isImage">
+        <div class="mediaFileThumbnail">
+            <a href='<s:property value="bean.permalink" />' target="_blank">
+                <img align="right" alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
+                     title='<s:text name="mediaFileEdit.clickToView" />' />
+            </a>
+        </div>
+    </s:if>
 </s:if>
+<s:else>
+    <s:set var="subtitleKey">mediaFileAdd.title</s:set>
+    <s:set var="mainAction">mediaFileAdd</s:set>
+    <s:set var="pageTip">mediaFileAdd.pageTip</s:set>
+</s:else>
+
 
 <p class="subtitle">
-    <s:text name="mediaFileEdit.subtitle">
+    <s:text name="%{#subtitleKey}">
         <s:param value="bean.name" />
     </s:text>
 </p>
 
 <p class="pagetip">
-    <s:text name="mediaFileEdit.pagetip"  />
+    <s:text name="%{#pageTip}"/>
 </p>
 
-<s:form id="entry" action="mediaFileEdit!save" method="POST" enctype="multipart/form-data">
+<s:form id="entry" action="%{#mainAction}!save" method="POST" enctype="multipart/form-data">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
+    <s:hidden name="directoryName" />
     <s:hidden name="mediaFileId" id="mediaFileId" />
     <s:hidden name="bean.permalink" />
 
@@ -58,9 +101,9 @@
                 <label for="status"><s:text name="generic.name" /></label>
             </td>
             <td>
-                <s:textfield name="bean.name" size="35" maxlength="100" tabindex="1" />
+                <s:textfield name="bean.name" size="50" maxlength="255" style="width:30%"/>
             </td>
-       </tr>
+        </tr>
 
         <tr>
             <td class="entryEditFormLabel">
@@ -91,13 +134,13 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status"><s:text name="generic.notes" /><tags:help key="mediaFileAdd.notes.tooltip"/></label>
+                <label for="status"><s:text name="generic.notes"/></label>
             </td>
             <td>
-                <s:textarea name="bean.notes" cols="50" rows="2" tabindex="2" style="width:70%" />
+                <s:textarea name="bean.notes" cols="50" rows="5" maxlength="255" style="width:30%"/>
             </td>
        </tr>
-
+<s:if test="actionName == 'mediaFileEdit'">
        <tr>
             <td class="entryEditFormLabel">
                 <label for="fileInfo"><s:text name="mediaFileEdit.fileInfo" /></label>
@@ -130,31 +173,30 @@
                 <input type="text" id="clip_text" size="50" style="width:90%" value='<s:text name="bean.permalink" />' readonly />
             </td>
        </tr>
-
+</s:if>
        <tr>
             <td class="entryEditFormLabel">
-                <label for="directoryId"><s:text name="mediaFileEdit.directory" /></label>
+                <label for="directoryId"><s:text name="%{#mainAction}.directory" /></label>
             </td>
             <td>
                 <s:select name="bean.directoryId" list="allDirectories"
-                    listKey="id" listValue="name" tabindex="5" />
+                    listKey="id" listValue="name" />
             </td>
        </tr>
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="title"><s:text name="mediaFileEdit.updateFileContents" /></label>
+                <label for="title"><s:text name="%{#mainAction}.fileLocation" /></label>
             </td>
             <td>
                 <div id="fileControldiv" class="miscControl">
                     <s:file id="fileControl" name="uploadedFile" size="30" />
-                    <br />
                 </div>
             </td>
         </tr>
 
         <!-- original path from base URL of ctx/resources/ -->
-        <s:if test="getBooleanProp('mediafile.originalPathEdit.enabled')">
+        <s:if test="actionName == 'mediaFileEdit' && getBooleanProp('mediafile.originalPathEdit.enabled')">
         <tr>
             <td class="originalPathLabel">
                 <label for="originalPath"><s:text name="mediaFileEdit.originalPath" /></label>
@@ -170,13 +212,16 @@
 
     </table>
 
+    <br />
     <div class="control">
-       <input type="submit" tabindex="7"
-              value="<s:text name="generic.save" />" name="submit" />
-       <input type="button" tabindex="8"
-              value="<s:text name="generic.cancel" />" onClick="javascript:window.parent.onEditCancelled();" />
+        <s:if test="actionName == 'mediaFileEdit'">
+           <input type="submit" value="<s:text name="generic.save" />" name="submit" />
+           <input type="button" value="<s:text name="generic.cancel" />" onClick="javascript:window.parent.onEditCancelled();" />
+        </s:if>
+        <s:else>
+           <s:submit value="%{getText('mediaFileAdd.upload')}" action="mediaFileAdd!save" />
+           <s:submit value="%{getText('generic.cancel')}" action="mediaFileAdd!cancel" />
+        </s:else>
     </div>
 
 </s:form>
-
-
