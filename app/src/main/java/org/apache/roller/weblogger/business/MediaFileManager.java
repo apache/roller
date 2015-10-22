@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.apache.roller.weblogger.business;
 
@@ -24,7 +27,6 @@ import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
 
@@ -80,12 +82,6 @@ public interface MediaFileManager {
      */
     void removeMediaFile(Weblog weblog, MediaFile mediaFile)
             throws WebloggerException;
-
-    /**
-     * Search for media files based on the filter criteria
-     */
-    List<MediaFile> searchMediaFiles(Weblog weblog,
-            MediaFileFilter filter) throws WebloggerException;
 
     /**
      * Create default folder for media files in a weblog.
@@ -152,12 +148,6 @@ public interface MediaFileManager {
      * Move one media file to a new directory.
      */
     void moveMediaFile(MediaFile mediaFile, MediaFileDirectory directory)
-            throws WebloggerException;
-
-    /**
-     * Return recently added media files that are public.
-     */
-    List<MediaFile> fetchRecentPublicMediaFiles(int length)
             throws WebloggerException;
 
     /**

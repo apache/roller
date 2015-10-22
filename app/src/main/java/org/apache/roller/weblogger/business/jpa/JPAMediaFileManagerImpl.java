@@ -20,7 +20,6 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -30,8 +29,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.MediaFileFilter;
-import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
 
@@ -445,116 +442,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         } catch (Exception e) {
             log.debug("File to be deleted already unavailable in the file store");
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<MediaFile> fetchRecentPublicMediaFiles(int length)
-            throws WebloggerException {
-
-        String queryString = "SELECT m FROM MediaFile m WHERE m.sharedForGallery = true order by m.dateUploaded";
-        TypedQuery<MediaFile> query = strategy.getDynamicQuery(queryString, MediaFile.class);
-        query.setFirstResult(0);
-        query.setMaxResults(length);
-        return query.getResultList();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<MediaFile> searchMediaFiles(Weblog weblog,
-            MediaFileFilter filter) throws WebloggerException {
-
-        List<Object> params = new ArrayList<>();
-        int size = 0;
-        String queryString = "SELECT m FROM MediaFile m WHERE ";
-        StringBuilder whereClause = new StringBuilder();
-        StringBuilder orderBy = new StringBuilder();
-
-        params.add(size++, weblog);
-        whereClause.append("m.directory.weblog = ?").append(size);
-
-        if (!StringUtils.isEmpty(filter.getName())) {
-            String nameFilter = filter.getName();
-            nameFilter = nameFilter.trim();
-            if (!nameFilter.endsWith("%")) {
-                nameFilter = nameFilter + "%";
-            }
-            params.add(size++, nameFilter);
-            whereClause.append(" AND m.name like ?").append(size);
-        }
-
-        if (filter.getSize() > 0) {
-            params.add(size++, filter.getSize());
-            whereClause.append(" AND m.length ");
-            switch (filter.getSizeFilterType()) {
-            case GT:
-                whereClause.append(">");
-                break;
-            case GTE:
-                whereClause.append(">=");
-                break;
-            case EQ:
-                whereClause.append("=");
-                break;
-            case LT:
-                whereClause.append("<");
-                break;
-            case LTE:
-                whereClause.append("<=");
-                break;
-            default:
-                whereClause.append("=");
-                break;
-            }
-            whereClause.append(" ?").append(size);
-        }
-
-        if (filter.getType() != null) {
-            if (filter.getType() == MediaFileType.OTHERS) {
-                for (MediaFileType type : MediaFileType.values()) {
-                    if (type != MediaFileType.OTHERS) {
-                        params.add(size++, type.getContentTypePrefix() + "%");
-                        whereClause.append(" AND m.contentType not like ?")
-                                .append(size);
-                    }
-                }
-            } else {
-                params.add(size++, filter.getType().getContentTypePrefix()
-                        + "%");
-                whereClause.append(" AND m.contentType like ?").append(size);
-            }
-        }
-
-        if (filter.getOrder() != null) {
-            switch (filter.getOrder()) {
-            case NAME:
-                orderBy.append(" order by m.name");
-                break;
-            case DATE_UPLOADED:
-                orderBy.append(" order by m.dateUploaded");
-                break;
-            case TYPE:
-                orderBy.append(" order by m.contentType");
-                break;
-            default:
-            }
-        } else {
-            orderBy.append(" order by m.name");
-        }
-
-        TypedQuery<MediaFile> query = strategy.getDynamicQuery(queryString
-                + whereClause.toString() + orderBy.toString(), MediaFile.class);
-        for (int i = 0; i < params.size(); i++) {
-            query.setParameter(i + 1, params.get(i));
-        }
-
-        if (filter.getStartIndex() >= 0) {
-            query.setFirstResult(filter.getStartIndex());
-            query.setMaxResults(filter.getLength());
-        }
-        return query.getResultList();
     }
 
     public void removeAllFiles(Weblog website) throws WebloggerException {

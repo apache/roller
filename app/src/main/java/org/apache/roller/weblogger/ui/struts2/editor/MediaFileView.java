@@ -35,9 +35,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.WeblogRole;
-import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -64,28 +62,14 @@ public class MediaFileView extends UIAction {
 
     private String mediaFileId;
 
-    // Search criteria - drop-down for file type
-    private static List<Pair<String, String>> FILE_TYPES = null;
-
-    // Search criteria - drop-down for size filter
-    private static List<Pair<String, String>> SIZE_FILTER_TYPES = null;
-
-    // Search criteria - drop-down for size unit
-    private static List<Pair<String, String>> SIZE_UNITS = null;
-
     // Sort options for search results.
     private static List<Pair<String, String>> SORT_OPTIONS = null;
-
-    // Pager for displaying search results.
-    private MediaFilePager pager;
 
     // Path of new directory to be created.
     private String newDirectoryPath;
 
     // a new directory the user wishes to view
     private String viewDirectoryId = null;
-
-    private MediaFileSearchBean bean = new MediaFileSearchBean();
 
     public MediaFileView() {
         this.actionName = "mediaFileView";
@@ -107,26 +91,7 @@ public class MediaFileView extends UIAction {
      * Prepares view action
      */
     public void myPrepare() {
-        if (SIZE_FILTER_TYPES == null) {
-            SIZE_FILTER_TYPES = Arrays.asList(
-                    Pair.of("mediaFileView.gt", getText("mediaFileView.gt")),
-                    Pair.of("mediaFileView.ge", getText("mediaFileView.ge")),
-                    Pair.of("mediaFileView.eq", getText("mediaFileView.eq")),
-                    Pair.of("mediaFileView.le", getText("mediaFileView.le")),
-                    Pair.of("mediaFileView.lt", getText("mediaFileView.lt")));
-
-            FILE_TYPES = Arrays.asList(
-                    Pair.of("mediaFileView.any", getText("mediaFileView.any")),
-                    Pair.of("mediaFileView.others", getText("mediaFileView.others")),
-                    Pair.of("mediaFileView.image", getText("mediaFileView.image")),
-                    Pair.of("mediaFileView.video", getText("mediaFileView.video")),
-                    Pair.of("mediaFileView.audio", getText("mediaFileView.audio")));
-
-            SIZE_UNITS = Arrays.asList(
-                    Pair.of("mediaFileView.bytes", getText("mediaFileView.bytes")),
-                    Pair.of("mediaFileView.kb", getText("mediaFileView.kb")),
-                    Pair.of("mediaFileView.mb", getText("mediaFileView.mb")));
-
+        if (SORT_OPTIONS == null) {
             SORT_OPTIONS = Arrays.asList(
                     Pair.of("name", getText("generic.name")),
                     Pair.of("date_uploaded", getText("mediaFileView.date")),
@@ -250,44 +215,6 @@ public class MediaFileView extends UIAction {
             log.error("Error looking up directory", ex);
         }
         return execute();
-    }
-
-    /**
-     * Save a media file.
-     * 
-     * @return String The result of the action.
-     */
-    public String search() {
-
-        boolean valSuccess = myValidate();
-
-        if (valSuccess) {
-            MediaFileFilter filter = new MediaFileFilter();
-            bean.copyTo(filter);
-            MediaFileManager manager = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
-            try {
-                List<MediaFile> rawResults = manager.searchMediaFiles(
-                        getActionWeblog(), filter);
-                boolean hasMore = false;
-                List<MediaFile> results = new ArrayList<MediaFile>();
-                results.addAll(rawResults);
-                if (results.size() > MediaFileSearchBean.PAGE_SIZE) {
-                    results.remove(results.size() - 1);
-                    hasMore = true;
-                }
-
-                this.pager = new MediaFilePager(bean.getPageNum(), results,
-                        hasMore);
-
-            } catch (Exception e) {
-                log.error("Error applying search criteria", e);
-                addError("Error applying search criteria - check Roller logs");
-            }
-
-        }
-
-        return SUCCESS;
     }
 
     /**
@@ -475,48 +402,8 @@ public class MediaFileView extends UIAction {
         this.sortBy = sortBy;
     }
 
-    /**
-     * Validates search input
-     */
-    public boolean myValidate() {
-        if (StringUtils.isEmpty(bean.getName())
-                && StringUtils.isEmpty(bean.getType()) && bean.getSize() == 0) {
-            addError("MediaFile.error.search.empty");
-            return false;
-        }
-        return true;
-    }
-
-    public MediaFileSearchBean getBean() {
-        return bean;
-    }
-
-    public void setBean(MediaFileSearchBean b) {
-        this.bean = b;
-    }
-
-    public List<Pair<String, String>> getFileTypes() {
-        return FILE_TYPES;
-    }
-
-    public List<Pair<String, String>> getSizeFilterTypes() {
-        return SIZE_FILTER_TYPES;
-    }
-
-    public List<Pair<String, String>> getSizeUnits() {
-        return SIZE_UNITS;
-    }
-
     public List<Pair<String, String>> getSortOptions() {
         return SORT_OPTIONS;
-    }
-
-    public MediaFilePager getPager() {
-        return pager;
-    }
-
-    public void setPager(MediaFilePager pager) {
-        this.pager = pager;
     }
 
     public String getNewDirectoryPath() {
