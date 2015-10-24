@@ -60,6 +60,7 @@ public class MediaFile implements Serializable {
     private String name;
     private String altText;
     private String titleText;
+    private String anchor;
     private String notes;
     private long length;
     private int width = -1;
@@ -77,8 +78,6 @@ public class MediaFile implements Serializable {
 
     private FileContent content;
     private FileContent thumbnail;
-
-    private String anchor;
 
     public MediaFile() {
     }
@@ -231,8 +230,7 @@ public class MediaFile implements Serializable {
         if (getContentType() == null) {
             return false;
         }
-        return (getContentType().toLowerCase().startsWith(MediaFileType.IMAGE
-                .getContentTypePrefix().toLowerCase()));
+        return getContentType().toLowerCase().startsWith("image/");
     }
 
     /**

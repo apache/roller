@@ -142,7 +142,11 @@
 
                         <div class="mediaObject"
                              onclick="onSelectMediaFile('<s:property value="#mediaFile.name"/>',
-                             '<s:property value="%{mediaFileURL}" />','<s:property value="#mediaFile.isImageFile()"/>')" >
+                             '<s:property value="%{mediaFileURL}" />',
+                             '<s:property value="#mediaFile.altText"/>',
+                             '<s:property value="#mediaFile.titleText"/>',
+                             '<s:property value="#mediaFile.anchor"/>',
+                             '<s:property value="#mediaFile.isImageFile()"/>')" >
 
                             <s:if test="#mediaFile.imageFile">
 
@@ -179,7 +183,7 @@
 
 
 <script>
-    function onSelectMediaFile(name, url, isImage) {
-        window.parent.onSelectMediaFile(name, url, isImage);
+    function onSelectMediaFile(name, url, alt, title, anchor, isImage) {
+        window.parent.onSelectMediaFile(name, url, alt, title, anchor, isImage);
     }
 </script>
