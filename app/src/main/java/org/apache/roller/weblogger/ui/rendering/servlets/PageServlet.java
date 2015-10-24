@@ -70,7 +70,16 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Provides access to weblog pages.
+ * Rendering servlet that provides access to weblog pages.
+ *
+ * General approach of most rendering servlets, including this one:
+ * <ul>
+ * <li>Create a request object to parse the request</li>
+ * <li>Determine last modified time, return not-modified (HTTP 304) if possible</li>
+ * <li>Return content from cache if possible</li>
+ * <li>Load model objects into a map suitable for renderer</li>
+ * <li>Call most appropriate renderer to render content</li>
+ * </ul>
  */
 public class PageServlet extends HttpServlet {
 

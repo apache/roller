@@ -84,13 +84,21 @@
         $("#mediaFileEditor").attr('src','about:blank');
     }
 
-    function onSelectMediaFile(name, url, isImage) {
+    function onSelectMediaFile(name, url, alt, title, anchor, isImage) {
         $("#mediafile_edit_lightbox").dialog("close");
         $("#mediaFileEditor").attr('src','about:blank');
         if (isImage == "true") {
-            insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name+ '"></img></a>');
+            insertMediaFile(
+            (anchor ? '<a href="' + anchor + '">' : '') +
+            '<img src="' + url + '"' +
+            ' alt="' + (alt ? alt : name) + '"' +
+             (title ? ' title="' + title + '"' : '') +
+             '/>' +
+            (anchor ? '</a>' : ''));
         } else {
-            insertMediaFile('<a href="' + url + '">' + name + '</a>');
+            insertMediaFile('<a href="' + url + '"' +
+             (title ? ' title="' + title + '"' : '') +
+            '>' + (alt ? alt : name) + '</a>');
         }
     }
 </script>
