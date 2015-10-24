@@ -260,11 +260,6 @@ public class URLModel implements Model {
     }
     
     
-    public String resource(String filePath) {
-        return urlStrategy.getWeblogResourceURL(weblog, filePath, true);
-    }
-    
-    
     public String getRsd() {
         return urlStrategy.getWeblogRsdURL(weblog, true);
     }

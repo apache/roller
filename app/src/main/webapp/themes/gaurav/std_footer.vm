@@ -6,11 +6,11 @@
 		    <p>Licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/2.5/">Attribution-Noncommercial-Share Alike 2.5 Generic</a></p>
         </div>
         <div class="col-lg-4 text-right">
-            <p><img src='$url.resource("icons/asf-logo.png")' border="0" alt="Apache feather"/></p>
+            <p><img src='$url.themeResource('gaurav', "icons/asf-logo.png")' border="0" alt="Apache feather"/></p>
             <p>Powered by <a href="http://roller.apache.org">Apache Roller</a></p>
         </div>
     </div>
 </div>
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="$url.resource('js/jquery.js')"></script>
-<script src="$url.resource('js/bootstrap.js')"></script>
+<script src="$url.themeResource('gaurav', 'js/jquery.js')"></script>
+<script src="$url.themeResource('gaurav', 'js/bootstrap.js')"></script>

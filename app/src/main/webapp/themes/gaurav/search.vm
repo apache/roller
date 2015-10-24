@@ -14,7 +14,7 @@
 				searchhi_config = {ignore_site : '$url.absoluteSite'};
 			//]]>
 		</script>
-		<script type="application/x-javascript" src="$url.resource('js/searchhi.js')"></script>
+		<script type="application/x-javascript" src="$url.themeResource('gaurav', 'js/searchhi.js')"></script>
 		<script>
 			//<![CDATA[
 			function loadSearchHighlight() {

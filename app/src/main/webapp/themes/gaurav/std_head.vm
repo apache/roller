@@ -7,6 +7,6 @@
 <meta name="viewport" content="initial-scale=1.0">
 
 <!-- Bootstrap core CSS -->
-<link rel="stylesheet" href="$url.resource('css/bootstrap.css')" >
-<link rel="stylesheet" href="$url.resource('css/style.css')" />
-<link rel="stylesheet" href="$url.resource('css/font-awesome.min.css')" />
+<link rel="stylesheet" href="$url.themeResource('gaurav', 'css/bootstrap.css')" >
+<link rel="stylesheet" href="$url.themeResource('gaurav', 'css/style.css')" />
+<link rel="stylesheet" href="$url.themeResource('gaurav', 'css/font-awesome.min.css')" />

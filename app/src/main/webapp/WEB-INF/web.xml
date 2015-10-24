@@ -173,12 +173,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>ResourceServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.ResourceServlet</servlet-class>
-        <load-on-startup>5</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>MediaResourceServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.MediaResourceServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
@@ -227,12 +221,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>PreviewResourceServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PreviewResourceServlet</servlet-class>
-        <load-on-startup>9</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>SpringDispatcherServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
@@ -262,11 +250,6 @@
     <servlet-mapping>
         <servlet-name>FeedServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ResourceServlet</servlet-name>
-        <url-pattern>/roller-ui/rendering/resources/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -309,11 +292,6 @@
     <servlet-mapping>
         <servlet-name>PreviewServlet</servlet-name>
         <url-pattern>/roller-ui/authoring/preview/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>PreviewResourceServlet</servlet-name>
-        <url-pattern>/roller-ui/authoring/previewresource/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

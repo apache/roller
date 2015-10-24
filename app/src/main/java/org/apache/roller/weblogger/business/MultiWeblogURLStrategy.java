@@ -294,20 +294,6 @@ public class MultiWeblogURLStrategy implements URLStrategy {
     }
     
     /**
-     * Get url to a resource on a given weblog.
-     */
-    public String getWeblogResourceURL(Weblog weblog, String filePath, boolean absolute) {
-        String url = getWeblogURL(weblog, absolute) + "resource";
-
-        if (!filePath.startsWith("/")) {
-            url += "/";
-        }
-        url += URLUtilities.encodePath(filePath);
-
-        return url;
-    }
-
-    /**
      * Get url to rsd file on a given weblog.
      */
     public String getWeblogRsdURL(Weblog weblog, boolean absolute) {

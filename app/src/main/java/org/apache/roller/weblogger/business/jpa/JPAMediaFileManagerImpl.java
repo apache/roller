@@ -361,42 +361,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
-    public MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
-            throws WebloggerException {
-
-        try {
-            if (null == origpath) {
-                return null;
-            }
-
-            if (!origpath.startsWith("/")) {
-                origpath = "/" + origpath;
-            }
-
-            TypedQuery<MediaFile> q = this.strategy
-                    .getNamedQuery("MediaFile.getByWeblogAndOrigpath", MediaFile.class);
-            q.setParameter(1, weblog);
-            q.setParameter(2, origpath);
-            MediaFile mf;
-            try {
-                mf = q.getSingleResult();
-            } catch (NoResultException e) {
-                return null;
-            }
-            FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                    .getFileContentManager();
-            FileContent content = cmgr.getFileContent(
-                    mf.getDirectory().getWeblog(), mf.getId());
-            mf.setContent(content);
-            return mf;
-        } catch (IOException e) {
-            throw new WebloggerException(e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public MediaFileDirectory getMediaFileDirectory(String id)
             throws WebloggerException {
         return this.strategy.load(MediaFileDirectory.class, id);

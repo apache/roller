@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
@@ -61,17 +63,6 @@ public class PreviewURLModel extends URLModel {
         }
         
         super.init(initData);
-    }
-    
-    
-    /**
-     * We need resource urls to point to our custom PreviewResourceServlet
-     * because when previewing a theme the ResourceServlet has no way of
-     * knowing what theme you are previewing and thus couldn't find the
-     * resources for that theme.
-     */
-    public String resource(String filePath) {
-        return urlStrategy.getWeblogResourceURL(weblog, filePath, true);
     }
     
 }

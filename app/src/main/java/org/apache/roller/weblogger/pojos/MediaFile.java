@@ -39,8 +39,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -50,10 +48,6 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name="media_file")
-@NamedQueries({
-        @NamedQuery(name="MediaFile.getByWeblogAndOrigpath",
-                query="SELECT f FROM MediaFile f WHERE f.directory.weblog = ?1 AND f.originalPath = ?2")
-})
 public class MediaFile implements Serializable {
 
     private static final long serialVersionUID = -6704258422169734004L;
@@ -73,7 +67,6 @@ public class MediaFile implements Serializable {
     private int thumbnailHeight = -1;
     private int thumbnailWidth = -1;
     private String contentType;
-    private String originalPath;
     private Timestamp dateUploaded = new Timestamp(System.currentTimeMillis());
     private Timestamp lastUpdated = new Timestamp(System.currentTimeMillis());
     private String creatorUserName;
@@ -280,28 +273,6 @@ public class MediaFile implements Serializable {
                     + getCreatorUserName(), e);
         }
         return null;
-    }
-
-    /**
-     * For old migrated files and theme resource files, original path of file can
-     * never change.
-     * 
-     * @return the originalPath
-     */
-    @Column(name="origpath")
-    public String getOriginalPath() {
-        return originalPath;
-    }
-
-    /**
-     * For old migrated files and theme resource files, orignal path of file can
-     * never change.
-     * 
-     * @param originalPath
-     *            the originalPath to set
-     */
-    public void setOriginalPath(String originalPath) {
-        this.originalPath = originalPath;
     }
 
     public int getWidth() {

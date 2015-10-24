@@ -15,7 +15,7 @@
 <div id="banner">
         <div class="bannerBox">
            <img class="bannerlogo" 
-              src='$url.resource("roller-tan-logo.gif")' />
+              src='$url.themeResource('frontpage', "roller-tan-logo.gif")' />
         </div>
 
     <div id="bannerStatusBox">

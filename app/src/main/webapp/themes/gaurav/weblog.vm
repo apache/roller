@@ -56,7 +56,7 @@
 
 					<div id="subscribe">
 						<a href="$url.feed.entries.atom">
-							<img src='$url.resource("icons/feed-icon-28x28.png")' title="RSS/Atom feed icon" alt="RSS/Atom feed icon" /></a>&nbsp;
+							<img src='$url.themeResource('gaurav', "icons/feed-icon-28x28.png")' title="RSS/Atom feed icon" alt="RSS/Atom feed icon" /></a>&nbsp;
 						<a href="$url.feed.entries.atom">Subscribe to this blog</a>
 					</div>
 				</div>
