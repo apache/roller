@@ -19,7 +19,6 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
 <script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
 <script>
@@ -194,21 +193,6 @@
                 </div>
             </td>
         </tr>
-
-        <!-- original path from base URL of ctx/resources/ -->
-        <s:if test="actionName == 'mediaFileEdit' && getBooleanProp('mediafile.originalPathEdit.enabled')">
-        <tr>
-            <td class="originalPathLabel">
-                <label for="originalPath"><s:text name="mediaFileEdit.originalPath" /></label>
-            </td>
-            <td>
-                <div id="fileControldiv" class="miscControl">
-                    <s:textfield name="bean.originalPath" size="30" maxlength="100" tabindex="3" />
-                    <br />
-                </div>
-            </td>
-        </tr>
-        </s:if>
 
     </table>
 

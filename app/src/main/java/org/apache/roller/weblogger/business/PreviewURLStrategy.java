@@ -143,26 +143,5 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         
         return pathinfo + URLUtilities.getQueryString(params);
     }
-    
-    /**
-     * Get a url to a *preview* resource on a given weblog.
-     */
-    @Override
-    public String getWeblogResourceURL(Weblog weblog, String filePath, boolean absolute) {
-        String url = getRootURL(absolute) + "/roller-ui/authoring/previewresource/"
-                + weblog.getHandle();
-        
-        if (!filePath.startsWith("/")) {
-            url += "/";
-        }
-        url += filePath;
-        
-        Map<String, String> params = new HashMap<>();
-        if(previewTheme != null && !WeblogTheme.CUSTOM.equals(previewTheme)) {
-            params.put("theme", URLUtilities.encode(previewTheme));
-        }
-        
-        return url + URLUtilities.getQueryString(params);
-    }
-    
+
 }

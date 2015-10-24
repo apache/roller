@@ -317,7 +317,6 @@ create table media_file (
     width           integer,
     height          integer,
     size_in_bytes   integer,
-    origpath        varchar(255),
     creator         varchar(255),
     date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
     last_updated    $db.TIMESTAMP_SQL_TYPE
@@ -325,4 +324,3 @@ create table media_file (
 
 alter table media_file add constraint mf_mdir_id_fk
     foreign key (directoryid) references media_directory(id) ;
-

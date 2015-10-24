@@ -266,7 +266,7 @@ div.dayTitle {
 .mobile{
 	width:250px;
 	height: 51px;
-	background: url($url.resource("images/forward_mobile.png")) top left no-repeat;
+	background: url($url.themeResource('basicmobile', "images/forward_mobile.png")) top left no-repeat;
 	padding-top:17px;
 	padding-left:60px;
 }

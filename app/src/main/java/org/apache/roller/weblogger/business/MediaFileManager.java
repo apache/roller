@@ -120,13 +120,6 @@ public interface MediaFileManager {
             throws WebloggerException;
 
     /**
-     * Get media file by the original path by which it was stored. Required for
-     * support of old upload file URLs and for theme resources. {@inheritDoc}
-     */
-    MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
-            throws WebloggerException;
-
-    /**
      * Get the list of media file directories for the given weblog.
      */
     List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog)

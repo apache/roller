@@ -1,5 +1,5 @@
 body, html {
-    background: url($url.resource("images/faux-columns-950.png")) repeat-y scroll 0 0;
+    background: url($url.themeResource('fauxcoly', "images/faux-columns-950.png")) repeat-y scroll 0 0;
     background-position: center;
     margin: auto;
     width: 950px;
@@ -84,7 +84,7 @@ span.setup {
 /* ------------------------------------------------------------ */
 
 #header_content {
-    background-image: url($url.resource("images/background-950x250.png"));
+    background-image: url($url.themeResource('fauxcoly', "images/background-950x250.png"));
     height: 200px;
     width: 100%;
     position: relative;
@@ -178,24 +178,24 @@ li.rNavItem>span>a {
 
 a.permalink {
     padding: 2px 0px 2px 20px;
-    background: url('$url.resource("icons/icon_clock.gif")') left center no-repeat;
+    background: url('$url.themeResource('fauxcoly', "icons/icon_clock.gif")') left center no-repeat;
     font-weight: normal;
 }
 a.tagLink {
     padding: 2px 0px 2px 20px;
-    background: url('$url.resource("icons/tag_blue.png")') left center no-repeat;
+    background: url('$url.themeResource('fauxcoly', "icons/tag_blue.png")') left center no-repeat;
     font-weight: normal;
 }
 a.commentslink {
     padding: 2px 0px 2px 20px;
-    background: url('$url.resource("icons/comment.gif")') left center no-repeat;
+    background: url('$url.themeResource('fauxcoly', "icons/comment.gif")') left center no-repeat;
     font-weight: normal;
 }
 
 ul.presentationLinks li {
     list-style-type: none;
     list-style-position: outside;
-    list-style-image: url('$url.resource("icons/page_white_acrobat.png")');
+    list-style-image: url('$url.themeResource('fauxcoly', "icons/page_white_acrobat.png")');
     padding: 0.5em 0 0 0;
     margin: 0 0 0 0;
 }
@@ -228,7 +228,7 @@ ul.presentationLinks li {
 #sidebar_content li.entryLink {
     padding: 0.5em 0 0 0;
     list-style-position: outside;
-    list-style-image: url('$url.resource("icons/page_white.png")');
+    list-style-image: url('$url.themeResource('fauxcoly', "icons/page_white.png")');
 }
 ul.activities {
     margin-left: 1em;
