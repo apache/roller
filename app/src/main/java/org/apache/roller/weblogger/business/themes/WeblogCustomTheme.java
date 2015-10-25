@@ -27,7 +27,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import java.util.Date;
 import java.util.List;
 import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -136,14 +135,5 @@ public class WeblogCustomTheme extends WeblogTheme {
         }
         return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateByLink(this.weblog, link);
     }
-    
-    
-    /**
-     * Lookup the specified resource by path.
-     * Returns null if the resource cannot be found.
-     */
-    public ThemeResource getResource(String path) {
-        return null;
-    }
-    
+
 }

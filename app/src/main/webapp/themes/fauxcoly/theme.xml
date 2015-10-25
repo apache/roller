@@ -159,26 +159,4 @@
         </rendition>
     </template>
 
-    <resource path="css/cssgrids-min.css" />
-
-    <resource path="images/faux-columns-950.png" />
-    <resource path="images/background-950x250.png" />
-
-    <resource path="icons/asf-logo.png" />
-    <resource path="icons/comment.gif" />
-    <resource path="icons/delicious.gif" />
-    <resource path="icons/digman.gif" />
-    <resource path="icons/facebook-logo.png" />
-    <resource path="icons/feed-icon-14x14.png" />
-    <resource path="icons/feed-icon-28x28.png" />
-    <resource path="icons/flickr-icon.png" />
-    <resource path="icons/icon_clock.gif" />
-    <resource path="icons/linkedin-logo.jpg" />
-    <resource path="icons/page_white.png" />
-    <resource path="icons/page_white_acrobat.png" />
-    <resource path="icons/slashdot-13x13.png" />
-    <resource path="icons/tag_blue.png" />
-    <resource path="icons/technorati-16x15.png" />
-    <resource path="icons/twitter-icon.png" />
-
 </weblogtheme>

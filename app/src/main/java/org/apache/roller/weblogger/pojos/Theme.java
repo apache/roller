@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.pojos;
@@ -96,12 +99,5 @@ public interface Theme extends Comparable<Theme> {
      * Returns null if the template cannot be found.
      */
     ThemeTemplate getTemplateByLink(String link) throws WebloggerException;
-    
-    
-    /**
-     * Lookup a resource by path.
-     * Returns null if the resource cannot be found.
-     */
-    ThemeResource getResource(String path);
 
 }

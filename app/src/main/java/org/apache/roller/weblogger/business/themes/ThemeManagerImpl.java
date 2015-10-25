@@ -22,8 +22,6 @@ package org.apache.roller.weblogger.business.themes;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -39,23 +37,17 @@ import javax.activation.MimetypesFileTypeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
-import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
-import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
  * Base implementation of a ThemeManager.
@@ -79,19 +71,14 @@ public class ThemeManagerImpl implements ThemeManager {
 
 	private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
 	private final WeblogManager weblogManager;
-    private final MediaFileManager mediaFileManager;
-    private final JPAPersistenceStrategy strategy;
 
 	// directory where themes are kept
 	private String themeDir = null;
 	// the Map contains ... (theme id, Theme)
 	private Map<String, SharedTheme> themes = null;
 
-	protected ThemeManagerImpl(WeblogManager wm, MediaFileManager mfm, JPAPersistenceStrategy jpa) {
-
+	protected ThemeManagerImpl(WeblogManager wm) {
 		this.weblogManager = wm;
-        this.mediaFileManager = mfm;
-        this.strategy = jpa;
 
 		// get theme directory from config and verify it
 		this.themeDir = WebloggerConfig.getProperty("themes.dir");
@@ -161,8 +148,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 			// otherwise we are returning a WeblogSharedTheme
 		} else {
-			SharedTheme staticTheme = (SharedTheme) this.themes.get(weblog
-					.getEditorTheme());
+			SharedTheme staticTheme = this.themes.get(weblog.getEditorTheme());
 			if (staticTheme != null) {
 				weblogTheme = new WeblogSharedTheme(weblog, staticTheme);
 			} else {
@@ -180,7 +166,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getEnabledThemesList()
 	 */
 	public List<SharedTheme> getEnabledThemesList() {
-		List<SharedTheme> allThemes = new ArrayList<SharedTheme>(this.themes.values());
+		List<SharedTheme> allThemes = new ArrayList<>(this.themes.values());
 
 		// sort 'em ... default ordering for themes is by name
 		Collections.sort(allThemes);
@@ -198,7 +184,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		log.debug("Importing theme [" + theme.getName() + "] to weblog ["
 				+ weblog.getName() + "]");
 
-		Set<ComponentType> importedActionTemplates = new HashSet<ComponentType>();
+		Set<ComponentType> importedActionTemplates = new HashSet<>();
 		ThemeTemplate stylesheetTemplate = theme.getStylesheet();
 		for (ThemeTemplate themeTemplate : theme.getTemplates()) {
 			WeblogTemplate template;
@@ -216,11 +202,9 @@ public class ThemeManagerImpl implements ThemeManager {
 			}
 
 			// Weblog does not have this template, so create it.
-			boolean newTmpl = false;
 			if (template == null) {
 				template = new WeblogTemplate();
 				template.setWeblog(weblog);
-				newTmpl = true;
 			}
 
 			// update template attributes except leave existing custom stylesheets as-is
@@ -290,7 +274,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	 */
 	private Map<String, SharedTheme> loadAllThemesFromDisk() {
 
-		Map<String, SharedTheme> themeMap = new HashMap<String, SharedTheme>();
+		Map<String, SharedTheme> themeMap = new HashMap<>();
 
 		// first, get a list of the themes available
 		File themesdir = new File(this.themeDir);
@@ -313,7 +297,7 @@ public class ThemeManagerImpl implements ThemeManager {
             // now go through each theme and load it into a Theme object
             for (String themeName : themenames) {
                 try {
-                    SharedTheme theme = new SharedThemeFromDir(this.themeDir
+                    SharedTheme theme = new SharedTheme(this.themeDir
                             + File.separator + themeName);
                     themeMap.put(theme.getId(), theme);
                     log.info("Loaded theme '" + themeName + "'");
@@ -336,7 +320,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		try {
 
-            SharedTheme theme = new SharedThemeFromDir(this.themeDir + File.separator
+            SharedTheme theme = new SharedTheme(this.themeDir + File.separator
 					+ reloadTheme);
 
             Theme loadedTheme = themes.get(theme.getId());
