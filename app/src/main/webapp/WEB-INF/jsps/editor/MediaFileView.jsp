@@ -145,18 +145,10 @@
 </s:if>
 
 <s:else>
-
     <p class="subtitle">
         <s:text name="mediaFileView.folderName"/>: <s:text name="currentDirectory.name" />
     </p>
-    <p class="pagetip">
-        <s:if test="%{currentDirectory.description != null}">
-            <s:text name="currentDirectory.description" />
-        </s:if>
-    </p>
-
 </s:else>
-
 
 <s:if test="childFiles">
 

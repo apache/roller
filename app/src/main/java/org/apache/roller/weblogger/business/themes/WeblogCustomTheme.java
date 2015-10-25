@@ -14,17 +14,18 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import java.util.Date;
 import java.util.List;
-import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;

@@ -14,20 +14,59 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 
+import java.io.InputStream;
+
 /**
- * A Resource that is attached to a Theme.
+ * A file resource (image, js, css, etc.) that is provided with a Theme.
  */
-public interface ThemeResource extends Resource, Comparable<ThemeResource> {
-    
+public interface ThemeResource extends Comparable<ThemeResource> {
+
     /**
-     * Does this resource represent a directory?  True if yes, False otherwise.
+     * The short name of this resource.
+     * i.e. "some.jpg"
      *
-     * @return True if the resource is a directory, False otherwise.
+     * @return The short name for the resource.
      */
-    boolean isDirectory();
+    String getName();
+
+
+    /**
+     * The path to this resource, relative to its container.
+     * i.e. "images/some.jpg"
+     *
+     * @return The path to the resource, relative to its container.
+     */
+    String getPath();
+
+
+    /**
+     * The last-modified time for this resource.
+     *
+     * @return The last time the resource changed, as a long value.
+     */
+    long getLastModified();
+
+
+    /**
+     * The length of this resource, in bytes.
+     *
+     * @return The length of the resource in bytes.
+     */
+    long getLength();
+
+
+    /**
+     * An InputStream that the resource can be read from.
+     *
+     * @return an InputStream for the resource.
+     */
+    InputStream getInputStream();
+
 }

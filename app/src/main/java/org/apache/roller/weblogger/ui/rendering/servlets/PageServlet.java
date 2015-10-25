@@ -18,8 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
-
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +31,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.StaticThemeTemplate;
-import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -277,24 +273,7 @@ public class PageServlet extends HttpServlet {
         // figure out what template to use
         ThemeTemplate page = null;
 
-        // If this is a popup request, then deal with it specially
-        // TODO: do we really need to keep supporting this?
-        if (request.getParameter("popup") != null) {
-            try {
-                // Does user have a popupcomments page?
-                page = weblog.getTheme().getTemplateByName("_popupcomments");
-            } catch (Exception e) {
-                // ignored ... considered page not found
-            }
-
-            // User doesn't have one so return the default
-            if (page == null) {
-                page = new StaticThemeTemplate(
-                        "templates/weblog/popupcomments.vm", TemplateLanguage.VELOCITY);
-            }
-
-            // If request specified the page, then go with that
-        } else if ("page".equals(pageRequest.getContext())) {
+        if ("page".equals(pageRequest.getContext())) {
             page = pageRequest.getWeblogPage();
 
             // if we don't have this page then 404, we don't let
