@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 
 import java.util.*;
 import org.apache.roller.weblogger.pojos.Theme;
-import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -217,14 +216,5 @@ public class WeblogSharedTheme extends WeblogTheme {
 
         return template;
     }
-    
-    
-    /**
-     * Lookup the specified resource by path.
-     * Returns null if the resource cannot be found.
-     */
-    public ThemeResource getResource(String path) {
-        return this.theme.getResource(path);
-    }
-    
+
 }

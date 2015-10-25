@@ -39,8 +39,13 @@ import org.apache.struts2.interceptor.RequestAware;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
@@ -53,7 +58,31 @@ import java.util.Map;
  */
 public abstract class UIAction extends ActionSupport
         implements UIActionPreparable, UISecurityEnforced, RequestAware {
-    
+
+    private static final List LOCALES;
+    private static final List TIME_ZONES;
+
+    private static Comparator<Locale> LocaleComparator = new Comparator<Locale>() {
+        public int compare(Locale locale1, Locale locale2) {
+            int compName = locale1.getDisplayName().compareTo(locale2.getDisplayName());
+            if (compName == 0) {
+                return locale1.toString().compareTo(locale2.toString());
+            }
+            return compName;
+        }
+    };
+
+    // load up the locales and time zones lists
+    static {
+        // build locales list
+        LOCALES = Arrays.asList(Locale.getAvailableLocales());
+        Collections.sort(LOCALES, LocaleComparator);
+
+        // build time zones list
+        TIME_ZONES = Arrays.asList(TimeZone.getAvailableIDs());
+        Collections.sort(TIME_ZONES);
+    }
+
     // a result that sends the user to an access denied warning
     public static final String DENIED = "access-denied";
     
@@ -331,11 +360,11 @@ public abstract class UIAction extends ActionSupport
     }
     
     public List getLocalesList() {
-        return UIUtils.getLocales();
+        return LOCALES;
     }
-    
+
     public List getTimeZonesList() {
-        return UIUtils.getTimeZones();
+        return TIME_ZONES;
     }
     
     public List getHoursList() {

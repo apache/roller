@@ -309,7 +309,7 @@ public class ThemeEdit extends UIAction {
             temp.setId(item.getId());
             temp.setName(item.getName());
             temp.setDescription(item.getDescription());
-            temp.setPreviewPath("/themes/" + item.getId() + "/" + item.getPreviewImage().getPath());
+            temp.setPreviewPath("/themes/" + item.getId() + "/" + item.getPreviewImagePath());
             to.add(temp);
         }
         return to;

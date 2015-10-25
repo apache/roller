@@ -69,9 +69,7 @@
     </beans:bean>
 
     <beans:bean id="themeManager" class="org.apache.roller.weblogger.business.themes.ThemeManagerImpl">
-        <beans:constructor-arg ref="mediaFileManager"/>
         <beans:constructor-arg ref="weblogManager"/>
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
     <beans:bean id="threadManager" class="org.apache.roller.weblogger.business.ThreadManagerImpl"/>

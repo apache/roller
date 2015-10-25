@@ -143,8 +143,4 @@
         </rendition>
     </template>
     
-    <!-- resources -->
-    <resource path="roller-tan-logo.gif" />
-    <resource path="tan-banner.gif" />
-    
 </weblogtheme>
