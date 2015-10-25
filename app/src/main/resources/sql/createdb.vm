@@ -298,7 +298,6 @@ alter table planet_subscription_entry add constraint pse_subscriptionid_fk
 create table media_directory (
     id               varchar(48) not null primary key,
     name             varchar(255) not null,
-    description      varchar(255),
     weblogid        varchar(48) not null
 );
 

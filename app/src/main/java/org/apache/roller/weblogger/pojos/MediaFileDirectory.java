@@ -20,7 +20,6 @@
 */
 package org.apache.roller.weblogger.pojos;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,20 +52,16 @@ public class MediaFileDirectory {
 
     private String id;
     String name;
-    String description;
     Weblog weblog;
-    Set<MediaFile> mediaFiles = new HashSet<MediaFile>();
+    Set<MediaFile> mediaFiles = new HashSet<>();
 
     public MediaFileDirectory() {
     }
 
-    public MediaFileDirectory(Weblog weblog, String name,
-            String desc) {
+    public MediaFileDirectory(Weblog weblog, String name) {
 
         this.id = WebloggerUtils.generateUUID();
         this.name = name;
-        this.description = desc;
-
         this.weblog = weblog;
         weblog.getMediaFileDirectories().add(this);
     }
@@ -87,14 +82,6 @@ public class MediaFileDirectory {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @ManyToOne
@@ -173,19 +160,11 @@ public class MediaFileDirectory {
         }
         MediaFileDirectory o = (MediaFileDirectory) other;
         return new EqualsBuilder().append(getId(), o.getId())
-                .append(getName(), o.getName())
-                .append(getDescription(), o.getDescription()).isEquals();
+                .append(getName(), o.getName()).isEquals();
     }
 
     public int hashCode() {
-        return new HashCodeBuilder().append(getId()).append(getName())
-                .append(getDescription()).toHashCode();
+        return new HashCodeBuilder().append(getId()).append(getName()).toHashCode();
     }
-
-    public static Comparator<MediaFileDirectory> Comparator = new Comparator<MediaFileDirectory>() {
-        public int compare(MediaFileDirectory dir1, MediaFileDirectory dir2) {
-            return dir1.getName().compareTo(dir2.getName());
-        }
-    };
 
 }

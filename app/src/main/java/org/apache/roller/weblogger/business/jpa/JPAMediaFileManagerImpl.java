@@ -137,7 +137,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         if (weblog.hasMediaFileDirectory(requestedName)) {
             throw new WebloggerException("Directory exists");
         } else {
-            newDirectory = new MediaFileDirectory(weblog, requestedName, null);
+            newDirectory = new MediaFileDirectory(weblog, requestedName);
             log.debug("Created new Directory " + requestedName);
         }
         return newDirectory;
@@ -148,8 +148,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public MediaFileDirectory createDefaultMediaFileDirectory(Weblog weblog)
             throws WebloggerException {
-        MediaFileDirectory defaultDirectory = new MediaFileDirectory(weblog, "default",
-                "default directory");
+        MediaFileDirectory defaultDirectory = new MediaFileDirectory(weblog, "default");
         createMediaFileDirectory(defaultDirectory);
         return defaultDirectory;
     }

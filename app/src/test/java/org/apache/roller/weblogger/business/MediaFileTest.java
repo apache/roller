@@ -203,11 +203,11 @@ public class MediaFileTest extends TestCase {
                 .getMediaFileManager();
 
         MediaFileDirectory directory1 = new MediaFileDirectory(testWeblog,
-                "dir1", "directory 1" );
+                "dir1");
         mfMgr.createMediaFileDirectory(directory1);
 
         MediaFileDirectory directory2 = new MediaFileDirectory(testWeblog,
-                "dir2", "directory 2" );
+                "dir2");
         mfMgr.createMediaFileDirectory(directory2);
 
         TestUtils.endSession(true);
@@ -440,15 +440,15 @@ public class MediaFileTest extends TestCase {
                 .getDefaultMediaFileDirectory(testWeblog);
 
         MediaFileDirectory directory1 = new MediaFileDirectory(testWeblog,
-                "dir1", "directory 1");
+                "dir1");
         mfMgr.createMediaFileDirectory(directory1);
 
         MediaFileDirectory directory2 = new MediaFileDirectory(testWeblog,
-                "dir2", "directory 2");
+                "dir2");
         mfMgr.createMediaFileDirectory(directory2);
 
         MediaFileDirectory directory3 = new MediaFileDirectory(testWeblog,
-                "dir3", "directory 3");
+                "dir3");
         mfMgr.createMediaFileDirectory(directory3);
 
         TestUtils.endSession(true);
@@ -522,16 +522,16 @@ public class MediaFileTest extends TestCase {
         try {
 
             MediaFileDirectory directory1 = new MediaFileDirectory(
-                    testWeblog, "dir1", "directory 1");
+                    testWeblog, "dir1");
             mfMgr.createMediaFileDirectory(directory1);
             String dir1Id = directory1.getId();
 
             MediaFileDirectory directory2 = new MediaFileDirectory(
-                    testWeblog, "dir2", "directory 2");
+                    testWeblog, "dir2");
             mfMgr.createMediaFileDirectory(directory2);
 
             MediaFileDirectory directory3 = new MediaFileDirectory(
-                    testWeblog, "dir3", "directory 3");
+                    testWeblog, "dir3");
             mfMgr.createMediaFileDirectory(directory3);
             //rootDirectory.getChildDirectories().add(directory3);
             
@@ -609,15 +609,15 @@ public class MediaFileTest extends TestCase {
                 .getMediaFileManager();
 
         MediaFileDirectory directory1 = new MediaFileDirectory(testWeblog,
-                "dir1", "directory 1");
+                "dir1");
         mfMgr.createMediaFileDirectory(directory1);
 
         MediaFileDirectory directory2 = new MediaFileDirectory(testWeblog,
-                "dir2", "directory 2");
+                "dir2");
         mfMgr.createMediaFileDirectory(directory2);
 
         MediaFileDirectory directory3 = new MediaFileDirectory(testWeblog,
-                "dir3", "directory 3");
+                "dir3");
         mfMgr.createMediaFileDirectory(directory3);
 
         TestUtils.endSession(true);
