@@ -124,7 +124,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		// no theme? throw exception.
 		if (theme == null) {
-			throw new ThemeNotFoundException("Couldn't find theme [" + id + "]");
+			throw new IllegalArgumentException("Couldn't find theme [" + id + "]");
 		}
 
 		return theme;

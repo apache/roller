@@ -14,10 +14,15 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.pojos;
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * A Theme specific implementation of a Template.
@@ -26,13 +31,15 @@ package org.apache.roller.weblogger.pojos;
  */
 public interface ThemeTemplate extends Template {
 
+    @XmlType
+    @XmlEnum
     public enum ComponentType {
-        WEBLOG("Weblog"),
-        PERMALINK("Permalink"),
-        SEARCH("Search"),
-        TAGSINDEX("Tag Index"),
-        STYLESHEET("Stylesheet"),
-        CUSTOM("Custom");
+        @XmlEnumValue("weblog") WEBLOG("Weblog"),
+        @XmlEnumValue("permalink") PERMALINK("Permalink"),
+        @XmlEnumValue("search") SEARCH("Search"),
+        @XmlEnumValue("tagsIndex") TAGSINDEX("Tag Index"),
+        @XmlEnumValue("stylesheet") STYLESHEET("Stylesheet"),
+        @XmlEnumValue("custom") CUSTOM("Custom");
 
         private final String readableName;
 

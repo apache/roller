@@ -14,37 +14,38 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.themes;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Represents a parsed version of a theme xml metadata descriptor.
  */
+@XmlRootElement(name="weblogtheme")
 public class ThemeMetadata {
 
     private String id = null;
     private String name = null;
     private String description = null;
     private String author = null;
-    private String previewImage = null;
+    private String previewImagePath = null;
     private Boolean dualTheme = false;
     private ThemeMetadataTemplate stylesheet = null;
-    private Set<ThemeMetadataTemplate> templates = new HashSet<ThemeMetadataTemplate>();
-    private Set<String> resources = new HashSet<String>();
+    private Set<ThemeMetadataTemplate> templates = new HashSet<>();
 
     public ThemeMetadata() {
     }
 
     public void addTemplate(ThemeMetadataTemplate template) {
         this.templates.add(template);
-    }
-
-    public void addResource(String resource) {
-        this.resources.add(resource);
     }
 
     public String getId() {
@@ -71,28 +72,21 @@ public class ThemeMetadata {
         this.description = description;
     }
 
-    public String getPreviewImage() {
-        return previewImage;
+    public String getPreviewImagePath() {
+        return previewImagePath;
     }
 
-    public void setPreviewImage(String previewImage) {
-        this.previewImage = previewImage;
+    public void setPreviewImagePath(String previewImagePath) {
+        this.previewImagePath = previewImagePath;
     }
 
     public Set<ThemeMetadataTemplate> getTemplates() {
         return templates;
     }
 
+    @XmlElements(@XmlElement(name="template"))
     public void setTemplates(Set<ThemeMetadataTemplate> templates) {
         this.templates = templates;
-    }
-
-    public Set<String> getResources() {
-        return resources;
-    }
-
-    public void setResources(Set<String> resources) {
-        this.resources = resources;
     }
 
     public String getAuthor() {

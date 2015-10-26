@@ -14,14 +14,23 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,12 +48,13 @@ public class ThemeMetadataTemplate {
 
     // Hash table to keep metadata about parsed template code files
     private Map<RenditionType, ThemeMetadataTemplateRendition> templateRenditionTable
-            = new HashMap<RenditionType, ThemeMetadataTemplateRendition>();
+            = new HashMap<>();
 
     public ComponentType getAction() {
         return action;
     }
 
+    @XmlAttribute
     public void setAction(ComponentType action) {
         this.action = action;
     }
@@ -109,4 +119,32 @@ public class ThemeMetadataTemplate {
         return templateRenditionTable;
     }
 
+    @XmlJavaTypeAdapter(value=MapAdapter.class)
+    @XmlElements(@XmlElement(name="renditions"))
+    public void setTemplateRenditionTable(Map<RenditionType, ThemeMetadataTemplateRendition> templateRenditionTable) {
+        this.templateRenditionTable = templateRenditionTable;
+    }
+
+    static class MapAdapter extends XmlAdapter<MapAdapter.AdaptedMap, Map<RenditionType, ThemeMetadataTemplateRendition>> {
+
+        static class AdaptedMap {
+            @XmlElements(@XmlElement(name="rendition"))
+            public List<ThemeMetadataTemplateRendition> renditions = new ArrayList<>();
+        }
+
+        @Override
+        public Map<RenditionType, ThemeMetadataTemplateRendition> unmarshal(AdaptedMap list) throws Exception {
+            Map<RenditionType, ThemeMetadataTemplateRendition> map = new HashMap<>();
+            for(ThemeMetadataTemplateRendition item : list.renditions) {
+                map.put(item.getType(), item);
+            }
+            return map;
+        }
+
+        @Override
+        public AdaptedMap marshal(Map<RenditionType, ThemeMetadataTemplateRendition> map) throws Exception {
+            // unused
+            return null;
+        }
+    }
 }

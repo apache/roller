@@ -14,13 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
- */
-/*
- * ThemeResourceLoader.java
  *
- * Created on June 28, 2005, 12:25 PM
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.io.ByteArrayInputStream;
@@ -34,7 +31,6 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Theme;
@@ -122,11 +118,6 @@ public class ThemeResourceLoader extends ResourceLoader {
             // This rethrows as a Runtime exception after logging.
             logger.error(uex);
             throw new RuntimeException(uex);
-
-        } catch (ThemeNotFoundException tnfe) {
-            String msg = "ThemeResourceLoader Error: " + tnfe.getMessage();
-            logger.error(msg, tnfe);
-            throw new ResourceNotFoundException(msg);
 
         } catch (WebloggerException re) {
             String msg = "RollerResourceLoader Error: " + re.getMessage();

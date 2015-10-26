@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <weblogtheme>
-    
+
     <!-- YUI Grid based Roller theme -->
-    
+
     <id>fauxcoly</id>
     <name>Fauxcoly</name>
-    <author>Dave Johnson</author>
     <description>Theme built on the Yahoo! User Interface (YUI) library.</description>
+    <author>Dave Johnson</author>
 
     <!-- theme preview image -->
-    <preview-image path="images/fauxcoly-preview.png" />
+    <previewImagePath>images/fauxcoly-preview.png</previewImagePath>
 
     <!-- stylesheet -->
     <stylesheet>
@@ -17,10 +17,12 @@
         <description>Custom style sheet</description>
         <link>custom.css</link>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>custom_css.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>custom_css.vm</contentsFile>
+            </rendition>
+        </renditions>
     </stylesheet>
 
     <!-- templates -->
@@ -30,10 +32,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>weblog.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>weblog.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="permalink">
@@ -42,10 +46,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>entry.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>entry.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="tagsIndex">
@@ -54,10 +60,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>tags_index.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>tags_index.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="search">
@@ -66,10 +74,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>search.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>search.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -78,10 +88,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>day.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>day.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -91,10 +103,12 @@
         <navbar>true</navbar>
         <hidden>false</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>archives.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>archives.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -103,10 +117,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>std_head.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>std_head.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -115,10 +131,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>std_header.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>std_header.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -127,10 +145,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>std_footer.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>std_footer.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -140,10 +160,12 @@
         <navbar>false</navbar>
         <hidden>false</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>style_css.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>style_css.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -153,10 +175,12 @@
         <navbar>false</navbar>
         <hidden>false</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-           <templateLanguage>velocity</templateLanguage>
-           <contentsFile>searchhi.js</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>searchhi.js</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
 </weblogtheme>

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
@@ -15,24 +14,28 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 
-public class ThemeMetadataTemplateRendition {
-    private TemplateLanguage templateLang = null;
-    private String contentsFile = null;
-    private RenditionType type = null;
+import javax.xml.bind.annotation.XmlAttribute;
 
-    public TemplateLanguage getTemplateLang() {
-        return templateLang;
+public class ThemeMetadataTemplateRendition {
+    private TemplateLanguage templateLanguage = TemplateLanguage.VELOCITY;
+    private String contentsFile = null;
+    private RenditionType type = RenditionType.STANDARD;
+
+    public TemplateLanguage getTemplateLanguage() {
+        return templateLanguage;
     }
 
-    public void setTemplateLang(TemplateLanguage templateLang) {
-        this.templateLang = templateLang;
+    public void setTemplateLanguage(TemplateLanguage templateLanguage) {
+        this.templateLanguage = templateLanguage;
     }
 
     public String getContentsFile() {
@@ -47,6 +50,7 @@ public class ThemeMetadataTemplateRendition {
         return type;
     }
 
+    @XmlAttribute
     public void setType(RenditionType type) {
         this.type = type;
     }

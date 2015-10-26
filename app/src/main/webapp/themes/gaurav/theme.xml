@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <weblogtheme>
-    
-   <!-- Bootstrap based Roller theme -->
-    
+
+    <!-- Bootstrap based Roller theme -->
+
     <id>gaurav</id>
     <name>Gaurav</name>
     <description>Responsive Bootstrap-based theme using modern HTML5 and CSS3 design by Gaurav Saini.</description>
     <author>Gaurav Saini</author>
 
     <!-- theme preview image -->
-    <preview-image path="images/theme-gaurav.png" />
+    <previewImagePath>images/theme-gaurav.png</previewImagePath>
 
     <!-- stylesheet -->
     <stylesheet>
         <name>custom.css</name>
         <description>Custom style sheet</description>
-	    <link>custom.css</link>
+        <link>custom.css</link>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>custom_css.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>custom_css.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </stylesheet>
-    
+
     <!-- templates -->
     <template action="weblog">
         <name>Weblog</name>
@@ -30,10 +32,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>weblog.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>weblog.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="permalink">
@@ -42,10 +46,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>entry.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>entry.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="tagsIndex">
@@ -54,10 +60,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>tags_index.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>tags_index.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="search">
@@ -66,10 +74,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>search.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>search.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -78,23 +88,27 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <templateLanguage>velocity</templateLanguage>
-            <contentsFile>day.vm</contentsFile>
-        </rendition>
+        <renditions>
+            <rendition>
+                <templateLanguage>velocity</templateLanguage>
+                <contentsFile>day.vm</contentsFile>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
         <name>Archives</name>
         <description>Calendar browser and links to latest entries</description>
-	    <link>archives</link>
+        <link>archives</link>
         <navbar>true</navbar>
         <hidden>false</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>archives.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>archives.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -103,10 +117,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>std_head.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>std_head.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -115,10 +131,12 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>std_header.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>std_header.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
 
     <template action="custom">
@@ -127,11 +145,13 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>std_footer.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>std_footer.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
 </weblogtheme>
 

@@ -14,15 +14,16 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -105,8 +106,8 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
             try {
                 ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
                 theme = themeMgr.getTheme(themeName);
-            } catch(ThemeNotFoundException tnfe) {
-                // bogus theme specified ... don't worry about it
+            } catch(IllegalArgumentException tnfe) {
+                // bogus theme given in URL, return null for callee to handle
             } catch(WebloggerException re) {
                 log.error("Error looking up theme "+themeName, re);
             }

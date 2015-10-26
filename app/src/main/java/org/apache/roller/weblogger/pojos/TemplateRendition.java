@@ -14,19 +14,31 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
-
 package org.apache.roller.weblogger.pojos;
+
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * A single template of a given RenditionType.
  */
 public interface TemplateRendition {
 
-    public enum RenditionType {STANDARD, MOBILE}
+    @XmlType
+    @XmlEnum
+    public enum RenditionType {
+        @XmlEnumValue("standard") STANDARD,
+        @XmlEnumValue("mobile") MOBILE }
 
+    @XmlType
+    @XmlEnum
     public enum TemplateLanguage {
-        VELOCITY("Velocity");
+        @XmlEnumValue("velocity") VELOCITY("Velocity");
 
         private final String readableName;
 
