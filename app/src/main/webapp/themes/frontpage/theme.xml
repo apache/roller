@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <weblogtheme>
-    
+
     <id>frontpage</id>
     <name>Frontpage</name>
-    <description>Not a standard blog template; meant only as a front page accumulator of all blogs hosted by this server.</description>
+    <description>Not a standard blog template; meant only as a front page accumulator of all blogs hosted by this
+        server.
+    </description>
     <author>Dave Johnson</author>
 
     <!-- theme preview image -->
-    <preview-image path="sm-theme-frontpage.png" />
-    
+    <previewImagePath>sm-theme-frontpage.png</previewImagePath>
+
     <!-- templates -->
     <template action="weblog">
         <name>Weblog</name>
@@ -16,120 +18,140 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>weblog.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>weblog.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_blogdirectory</name>
         <description>_blogdirectory</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_blogdirectory.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_blogdirectory.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_blogprofile</name>
         <description>_blogprofile</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_blogprofile.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_blogprofile.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_blogs</name>
         <description>_blogs</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_blogs.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_blogs.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_css</name>
         <description>_css</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_css.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_css.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_day</name>
         <description>_day</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_day.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_day.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_decorator</name>
         <description>_decorator</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_decorator.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_decorator.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_entry</name>
         <description>_entry</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_entry.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_entry.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_footer</name>
         <description>_footer</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_footer.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_footer.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_header</name>
         <description>_header</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_header.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_header.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>directory</name>
         <description>weblog directory</description>
@@ -137,10 +159,12 @@
         <navbar>false</navbar>
         <hidden>false</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>directory.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>directory.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
 </weblogtheme>

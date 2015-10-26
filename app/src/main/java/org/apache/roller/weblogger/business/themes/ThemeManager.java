@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.themes;
 
 import java.util.List;
@@ -41,7 +43,7 @@ public interface ThemeManager {
      * Get the Theme object with the given id.
      *
      * @return Theme The Theme object with the given id.
-     * @throws ThemeNotFoundException
+     * @throws IllegalArgumentException
      *             If the named theme cannot be found.
      * @throws WebloggerException
      *             If there is some kind of fatal backend error.

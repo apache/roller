@@ -190,11 +190,11 @@ public interface WeblogEntryManager {
     /**
      * Get list of TagStat. There's no offset/length params just a limit.
      * @param website       Weblog or null to get for all weblogs.
-     * @param limit         Max TagStats to return (or -1 for no limit)
-     * @return List of most popular tags.
+     * @param weblog
+     *@param limit         Max TagStats to return (or -1 for no limit)  @return List of most popular tags.
      * @throws WebloggerException
      */
-    List<TagStat> getPopularTags(Weblog website, int offset, int limit)
+    List<TagStat> getPopularTags(Weblog weblog, int offset, int limit)
             throws WebloggerException;
     
     /**

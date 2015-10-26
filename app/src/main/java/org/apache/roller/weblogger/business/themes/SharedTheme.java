@@ -37,6 +37,15 @@ import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
 /**
  * The Theme object encapsulates all elements of a single weblog theme. It is
  * used mostly to contain all the templates for a theme, but does contain other
@@ -201,10 +210,24 @@ public class SharedTheme implements Theme, Serializable {
         ThemeMetadata themeMetadata;
         try {
             // lookup theme descriptor and parse it
-            ThemeMetadataParser parser = new ThemeMetadataParser();
-            InputStream is = new FileInputStream(this.themeDir + File.separator
-                    + "theme.xml");
-            themeMetadata = parser.unmarshall(is);
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = sf.newSchema(new StreamSource(
+                    SharedTheme.class.getResourceAsStream("/themes.xsd")));
+
+            InputStream is = new FileInputStream(this.themeDir + File.separator + "theme.xml");
+            JAXBContext jaxbContext = JAXBContext.newInstance(ThemeMetadata.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            jaxbUnmarshaller.setSchema(schema);
+            jaxbUnmarshaller.setEventHandler(new ValidationEventHandler() {
+                public boolean handleEvent(ValidationEvent event) {
+                    log.error("Theme parsing error: " +
+                            event.getMessage() + "; Line #" +
+                            event.getLocator().getLineNumber() + "; Column #" +
+                            event.getLocator().getColumnNumber());
+                    return false;
+                }
+            });
+            themeMetadata = (ThemeMetadata) jaxbUnmarshaller.unmarshal(is);
         } catch (Exception ex) {
             throw new WebloggerException(
                     "Unable to parse theme.xml for theme " + this.themeDir, ex);
@@ -226,13 +249,13 @@ public class SharedTheme implements Theme, Serializable {
 
         // load resource representing preview image
         File previewFile = new File(this.themeDir + File.separator
-                + themeMetadata.getPreviewImage());
+                + themeMetadata.getPreviewImagePath());
         if (!previewFile.exists() || !previewFile.canRead()) {
             log.warn("Couldn't read theme [" + this.getName()
                     + "] preview image file ["
-                    + themeMetadata.getPreviewImage() + "]");
+                    + themeMetadata.getPreviewImagePath() + "]");
         } else {
-            this.previewImagePath = themeMetadata.getPreviewImage();
+            this.previewImagePath = themeMetadata.getPreviewImagePath();
         }
 
         // available types with Roller
@@ -262,8 +285,8 @@ public class SharedTheme implements Theme, Serializable {
                 mobileTemplateCode = new ThemeMetadataTemplateRendition();
                 mobileTemplateCode.setContentsFile(standardTemplateCode
                         .getContentsFile());
-                mobileTemplateCode.setTemplateLang(standardTemplateCode
-                        .getTemplateLang());
+                mobileTemplateCode.setTemplateLanguage(standardTemplateCode
+                        .getTemplateLanguage());
                 mobileTemplateCode.setType(RenditionType.MOBILE);
 
                 stylesheetTmpl.addTemplateRendition(mobileTemplateCode);
@@ -321,6 +344,7 @@ public class SharedTheme implements Theme, Serializable {
 
         // go through templates and read in contents to a ThemeTemplate
         SharedThemeTemplate themeTemplate;
+        boolean weblogActionTemplate = false;
         for (ThemeMetadataTemplate templateMetadata : themeMetadata.getTemplates()) {
 
             // getting the template codes for available types
@@ -338,11 +362,15 @@ public class SharedTheme implements Theme, Serializable {
                 mobileTemplateCode = new ThemeMetadataTemplateRendition();
                 mobileTemplateCode.setContentsFile(standardTemplateCode
                         .getContentsFile());
-                mobileTemplateCode.setTemplateLang(standardTemplateCode
-                        .getTemplateLang());
+                mobileTemplateCode.setTemplateLanguage(standardTemplateCode
+                        .getTemplateLanguage());
                 mobileTemplateCode.setType(RenditionType.MOBILE);
 
                 templateMetadata.addTemplateRendition(mobileTemplateCode);
+            }
+
+            if(ComponentType.WEBLOG.equals(templateMetadata.getAction())) {
+                weblogActionTemplate = true;
             }
 
             // construct File object from path
@@ -386,6 +414,10 @@ public class SharedTheme implements Theme, Serializable {
             // add it to the theme
             addTemplate(themeTemplate);
 
+        }
+        if(!weblogActionTemplate) {
+            throw new WebloggerException("Theme " + themeMetadata.getName() +
+                    " has no template with 'weblog' action");
         }
     }
 
@@ -446,7 +478,7 @@ public class SharedTheme implements Theme, Serializable {
         }
         //TODO: remove templateId above
         templateRendition.setTemplate(contents);
-        templateRendition.setTemplateLanguage(templateCodeMetadata.getTemplateLang());
+        templateRendition.setTemplateLanguage(templateCodeMetadata.getTemplateLanguage());
         templateRendition.setType(templateCodeMetadata.getType());
         templateRendition.setLastModified(new Date(templateFile.lastModified()));
 

@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <weblogtheme>
-    
+
     <id>basic</id>
     <name>Basic</name>
     <description>Offers wide margins for blogging programming language source code.</description>
     <author>Roller Weblogger</author>
 
     <!-- theme preview image -->
-    <preview-image path="basic-preview.png" />
-    
+    <previewImagePath>basic-preview.png</previewImagePath>
+
     <!-- stylesheet -->
     <stylesheet>
         <name>basic-custom.css</name>
         <description>Stylesheet for Basic theme</description>
         <link>basic-custom.css</link>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>basic-custom.css</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>basic-custom.css</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </stylesheet>
-    
+
     <!-- templates -->
     <template action="weblog">
         <name>Weblog</name>
@@ -28,57 +30,67 @@
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>weblog.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>weblog.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="permalink">
         <name>permalink</name>
         <description>permalink</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>permalink.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>permalink.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="search">
         <name>searchresults</name>
         <description>searchresults</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>searchresults.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>searchresults.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>_day</name>
         <description>_day</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>_day.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>_day.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
-    
+
     <template action="custom">
         <name>sidebar</name>
         <description>sidebar</description>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <contentType>text/html</contentType>
-        <rendition>
-            <contentsFile>sidebar.vm</contentsFile>
-            <templateLanguage>velocity</templateLanguage>
-        </rendition>
+        <renditions>
+            <rendition>
+                <contentsFile>sidebar.vm</contentsFile>
+                <templateLanguage>velocity</templateLanguage>
+            </rendition>
+        </renditions>
     </template>
 </weblogtheme>

@@ -713,15 +713,15 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public List<TagStat> getPopularTags(Weblog website, int offset, int limit)
+    public List<TagStat> getPopularTags(Weblog weblog, int offset, int limit)
     throws WebloggerException {
         TypedQuery<TagStat> query;
         List queryResults;
         
-        if (website != null) {
+        if (weblog != null) {
             query = strategy.getNamedQuery(
                     "WeblogEntryTagAggregate.getPopularTagsByWeblog", TagStat.class);
-            query.setParameter(1, website);
+            query.setParameter(1, weblog);
         } else {
             query = strategy.getNamedQuery(
                     "WeblogEntryTagAggregate.getPopularTagsByWeblogNull", TagStat.class);
