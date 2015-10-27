@@ -12,7 +12,7 @@
     <previewImagePath>images/fauxcoly-preview.png</previewImagePath>
 
     <!-- stylesheet -->
-    <stylesheet>
+    <stylesheet action="stylesheet">
         <name>custom.css</name>
         <description>Custom style sheet</description>
         <link>custom.css</link>

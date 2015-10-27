@@ -22,10 +22,8 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerUtils;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -36,7 +34,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-
 /**
  * Tag aggregate data.
  */
@@ -44,36 +41,27 @@ import javax.persistence.Table;
 @Table(name="weblog_entry_tag_agg")
 @NamedQueries({
         @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblog",
-                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 GROUP BY w.name ORDER BY w.total DESC"),
+                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 " +
+                        "GROUP BY w.name ORDER BY SUM(w.total) DESC"),
         @NamedQuery(name="WeblogEntryTagAggregate.getPopularTagsByWeblogNull",
-                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w GROUP BY w.name ORDER BY w.total DESC"),
+                query="SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w GROUP BY w.name ORDER " +
+                        "BY SUM(w.total) DESC"),
 })
 public class WeblogEntryTagAggregate implements Serializable {
     
     public static final long serialVersionUID = -4343500268898106982L;
-    
-    private String id = WebloggerUtils.generateUUID();
     private String name = null;
     private Weblog weblog = null;
     private int total = 0;
-    
     
     public WeblogEntryTagAggregate() {
     }
 
     //------------------------------------------------------- Simple properties
     
-    @Id
-    public String getId() {
-        return this.id;
-    }
-    
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @ManyToOne
     @JoinColumn(name="weblogid", nullable=true)
+    @Id
     public Weblog getWeblog() {
         return this.weblog;
     }
@@ -83,6 +71,7 @@ public class WeblogEntryTagAggregate implements Serializable {
     }
 
     @Basic(optional=false)
+    @Id
     public String getName() {
         return this.name;
     }
@@ -103,7 +92,7 @@ public class WeblogEntryTagAggregate implements Serializable {
     //------------------------------------------------------- Good citizenship
     
     public String toString() {
-        return "{" + getId() + ", " + getName() + ", " + getTotal() + "}";
+        return "{" + getWeblog().getHandle() + ", " + getName() + ", " + getTotal() + "}";
     }
     
     public boolean equals(Object other) {

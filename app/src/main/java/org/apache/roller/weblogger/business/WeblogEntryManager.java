@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.Date;
@@ -189,8 +191,8 @@ public interface WeblogEntryManager {
     
     /**
      * Get list of TagStat. There's no offset/length params just a limit.
-     * @param website       Weblog or null to get for all weblogs.
-     * @param weblog
+     * @param weblog       Weblog or null to get for all weblogs.
+     * @param offset       0-based index into results
      *@param limit         Max TagStats to return (or -1 for no limit)  @return List of most popular tags.
      * @throws WebloggerException
      */

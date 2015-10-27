@@ -33,6 +33,8 @@
                             <xs:element name="contentType" type="xs:string"/>
                             <xs:element name="renditions" type="renditionsType"/>
                         </xs:sequence>
+                        <!-- requiring it as JAXB won't populate unsupplied attributes with default or fixed values -->
+                        <xs:attribute name="action" fixed="stylesheet" use="required"/>
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="template" maxOccurs="unbounded">
