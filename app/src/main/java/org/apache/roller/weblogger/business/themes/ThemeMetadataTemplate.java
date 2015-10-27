@@ -47,7 +47,7 @@ public class ThemeMetadataTemplate {
     private String contentType = null;
 
     // Hash table to keep metadata about parsed template code files
-    private Map<RenditionType, ThemeMetadataTemplateRendition> templateRenditionTable
+    private Map<RenditionType, SharedThemeTemplateRendition> templateRenditionTable
             = new HashMap<>();
 
     public ComponentType getAction() {
@@ -107,38 +107,38 @@ public class ThemeMetadataTemplate {
         this.contentType = contentType;
     }
 
-    public void addTemplateRendition(ThemeMetadataTemplateRendition templateCode) {
+    public void addTemplateRendition(SharedThemeTemplateRendition templateCode) {
         this.getTemplateRenditionTable().put(templateCode.getType(), templateCode);
     }
 
-    public Map<RenditionType, ThemeMetadataTemplateRendition> getTemplateRenditionTable() {
+    public Map<RenditionType, SharedThemeTemplateRendition> getTemplateRenditionTable() {
         return templateRenditionTable;
     }
 
     @XmlJavaTypeAdapter(value=MapAdapter.class)
     @XmlElements(@XmlElement(name="renditions"))
-    public void setTemplateRenditionTable(Map<RenditionType, ThemeMetadataTemplateRendition> templateRenditionTable) {
+    public void setTemplateRenditionTable(Map<RenditionType, SharedThemeTemplateRendition> templateRenditionTable) {
         this.templateRenditionTable = templateRenditionTable;
     }
 
-    static class MapAdapter extends XmlAdapter<MapAdapter.AdaptedMap, Map<RenditionType, ThemeMetadataTemplateRendition>> {
+    static class MapAdapter extends XmlAdapter<MapAdapter.AdaptedMap, Map<RenditionType, SharedThemeTemplateRendition>> {
 
         static class AdaptedMap {
             @XmlElements(@XmlElement(name="rendition"))
-            public List<ThemeMetadataTemplateRendition> renditions = new ArrayList<>();
+            public List<SharedThemeTemplateRendition> renditions = new ArrayList<>();
         }
 
         @Override
-        public Map<RenditionType, ThemeMetadataTemplateRendition> unmarshal(AdaptedMap list) throws Exception {
-            Map<RenditionType, ThemeMetadataTemplateRendition> map = new HashMap<>();
-            for(ThemeMetadataTemplateRendition item : list.renditions) {
+        public Map<RenditionType, SharedThemeTemplateRendition> unmarshal(AdaptedMap list) throws Exception {
+            Map<RenditionType, SharedThemeTemplateRendition> map = new HashMap<>();
+            for(SharedThemeTemplateRendition item : list.renditions) {
                 map.put(item.getType(), item);
             }
             return map;
         }
 
         @Override
-        public AdaptedMap marshal(Map<RenditionType, ThemeMetadataTemplateRendition> map) throws Exception {
+        public AdaptedMap marshal(Map<RenditionType, SharedThemeTemplateRendition> map) throws Exception {
             // unused
             return null;
         }
