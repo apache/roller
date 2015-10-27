@@ -14,6 +14,9 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 
 package org.apache.roller.weblogger.ui.struts2.editor;
@@ -26,7 +29,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.*;
+import org.apache.roller.weblogger.pojos.GlobalRole;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -69,8 +76,8 @@ public class TemplatesRemove extends UIAction {
                 WeblogManager mgr = WebloggerFactory.getWeblogger()
                         .getWeblogManager();
 
-                List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
-                WeblogTemplate template = null;
+                List<WeblogTemplate> pages = new ArrayList<>();
+                WeblogTemplate template;
 
                 String[] idsToDelete = getIdSelections();
                 if (idsToDelete != null && idsToDelete.length > 0) {
@@ -146,16 +153,16 @@ public class TemplatesRemove extends UIAction {
                                         WeblogTemplate.DEFAULT_PAGE)) {
 
                                     ThemeTemplate stylesheet = getActionWeblog()
-                                            .getTheme().getStylesheet();
+                                            .getTheme().getTemplateByAction(ComponentType.STYLESHEET);
 
                                     // Delete style sheet if the same name
                                     if (stylesheet != null
                                             && getActionWeblog().getTheme()
-                                                    .getStylesheet() != null
+                                                    .getTemplateByAction(ThemeTemplate.ComponentType.STYLESHEET) != null
                                             && stylesheet.getLink().equals(
                                                     getActionWeblog()
                                                             .getTheme()
-                                                            .getStylesheet()
+                                                            .getTemplateByAction(ComponentType.STYLESHEET)
                                                             .getLink())) {
                                         // Same so OK to delete
                                         WeblogTemplate css = mgr.getTemplateByLink(

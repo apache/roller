@@ -69,12 +69,6 @@ public interface Theme extends Comparable<Theme> {
     
     
     /**
-     * Lookup the stylesheet template for the Theme.
-     */
-    ThemeTemplate getStylesheet() throws WebloggerException;
-    
-    
-    /**
      * Lookup the default template for the Theme.
      */
     ThemeTemplate getDefaultTemplate() throws WebloggerException;

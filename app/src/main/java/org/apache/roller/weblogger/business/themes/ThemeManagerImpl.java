@@ -185,7 +185,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				+ weblog.getName() + "]");
 
 		Set<ComponentType> importedActionTemplates = new HashSet<>();
-		ThemeTemplate stylesheetTemplate = theme.getStylesheet();
+		ThemeTemplate stylesheetTemplate = theme.getTemplateByAction(ComponentType.STYLESHEET);
 		for (ThemeTemplate themeTemplate : theme.getTemplates()) {
 			WeblogTemplate template;
 
@@ -303,7 +303,7 @@ public class ThemeManagerImpl implements ThemeManager {
                     log.info("Loaded theme '" + themeName + "'");
                 } catch (Exception unexpected) {
                     // shouldn't happen, so let's learn why it did
-                    log.error("Problem processing theme '" + themeName + "':", unexpected);
+                    log.error("Unable to process theme '" + themeName + "':", unexpected);
                 }
             }
         }

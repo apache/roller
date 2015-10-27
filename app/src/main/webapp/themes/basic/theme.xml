@@ -9,10 +9,12 @@
     <!-- theme preview image -->
     <previewImagePath>basic-preview.png</previewImagePath>
 
-    <!-- stylesheet -->
-    <stylesheet action="stylesheet">
+    <!-- templates -->
+    <template action="stylesheet">
         <name>basic-custom.css</name>
         <description>Stylesheet for Basic theme</description>
+        <navbar>false</navbar>
+        <hidden>false</hidden>
         <link>basic-custom.css</link>
         <contentType>text/html</contentType>
         <renditions>
@@ -21,9 +23,8 @@
                 <templateLanguage>velocity</templateLanguage>
             </rendition>
         </renditions>
-    </stylesheet>
+    </template>
 
-    <!-- templates -->
     <template action="weblog">
         <name>Weblog</name>
         <description>weblog</description>

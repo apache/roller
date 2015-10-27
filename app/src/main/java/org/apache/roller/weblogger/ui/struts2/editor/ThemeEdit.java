@@ -93,14 +93,14 @@ public class ThemeEdit extends UIAction {
         // See if we're using a shared theme with a custom template
         try {
             if (!WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())
-                    && getActionWeblog().getTheme().getStylesheet() != null) {
+                    && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
 
                 ThemeTemplate override = WebloggerFactory
                         .getWeblogger()
                         .getWeblogManager()
                         .getTemplateByLink(
                                 getActionWeblog(),
-                                getActionWeblog().getTheme().getStylesheet()
+                                getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET)
                                         .getLink());
                 if (override != null) {
                     sharedThemeCustomStylesheet = true;
@@ -197,7 +197,7 @@ public class ThemeEdit extends UIAction {
                     WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
                     // Remove old style sheet
-                    if (!originalTheme.equals(selectedThemeId) && getActionWeblog().getTheme().getStylesheet() != null) {
+                    if (!originalTheme.equals(selectedThemeId) && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
                         WeblogTemplate stylesheet = mgr.getTemplateByAction(getActionWeblog(),
                                 ComponentType.STYLESHEET);
 

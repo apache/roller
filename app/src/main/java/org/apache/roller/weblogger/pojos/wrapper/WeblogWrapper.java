@@ -226,16 +226,15 @@ public final class WeblogWrapper {
     public Date getLastModified() {
         return this.pojo.getLastModified();
     }
-    
+
     public String getStylesheet() throws WebloggerException {
-        // custom stylesheet comes from the weblog theme
-        if(this.pojo.getTheme().getStylesheet() != null) {
-            return urlStrategy.getWeblogPageURL(this.pojo, this.pojo.getTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
+        ThemeTemplate stylesheet = this.pojo.getTheme().getTemplateByAction(ComponentType.STYLESHEET);
+        if(stylesheet != null) {
+            return urlStrategy.getWeblogPageURL(this.pojo, stylesheet.getLink(), null, null, null, null, 0, false);
         }
         return null;
     }
 
-    
     /**
      * Get path to weblog icon image if defined.
      *

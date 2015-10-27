@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -96,17 +96,15 @@ public class TemplateRemove extends UIAction {
                     if (getTemplate().getName().equals(
                             WeblogTemplate.DEFAULT_PAGE)) {
 
-                        Weblog weblog = getActionWeblog();
-
                         ThemeTemplate stylesheet = getActionWeblog().getTheme()
-                                .getStylesheet();
+                                .getTemplateByAction(ComponentType.STYLESHEET);
 
                         // Delete style sheet if the same name
                         if (stylesheet != null
-                                && getActionWeblog().getTheme().getStylesheet() != null
+                                && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null
                                 && stylesheet.getLink().equals(
                                 getActionWeblog().getTheme()
-                                        .getStylesheet().getLink())) {
+                                        .getTemplateByAction(ComponentType.STYLESHEET).getLink())) {
                             // Same so OK to delete
                             WeblogTemplate css = mgr.getTemplateByLink(
                                     getActionWeblog(), stylesheet.getLink());

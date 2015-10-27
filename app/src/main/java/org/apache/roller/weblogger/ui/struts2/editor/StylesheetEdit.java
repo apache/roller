@@ -84,7 +84,7 @@ public class StylesheetEdit extends UIAction {
 
         ThemeTemplate stylesheet = null;
         try {
-            stylesheet = getActionWeblog().getTheme().getStylesheet();
+            stylesheet = getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET);
         } catch (WebloggerException ex) {
             log.error("Error looking up stylesheet on weblog - "
                     + getActionWeblog().getHandle(), ex);
@@ -145,7 +145,7 @@ public class StylesheetEdit extends UIAction {
                 // See if we're using a shared theme with a custom stylesheet
                 if (!WeblogTheme.CUSTOM.equals(getActionWeblog()
                         .getEditorTheme())
-                        && getActionWeblog().getTheme().getStylesheet() != null) {
+                        && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
 
                     ThemeTemplate override = WebloggerFactory
                             .getWeblogger()
@@ -153,7 +153,7 @@ public class StylesheetEdit extends UIAction {
                             .getTemplateByLink(
                                     getActionWeblog(),
                                     getActionWeblog().getTheme()
-                                            .getStylesheet().getLink());
+                                            .getTemplateByAction(ComponentType.STYLESHEET).getLink());
 
                     if (override != null) {
                         sharedThemeCustomStylesheet = true;
@@ -268,7 +268,7 @@ public class StylesheetEdit extends UIAction {
                 stylesheet.setLastModified(new Date());
 
                 if (stylesheet.getTemplateRendition(RenditionType.STANDARD) != null) {
-                    TemplateRendition templateCode = theme.getStylesheet()
+                    TemplateRendition templateCode = theme.getTemplateByAction(ComponentType.STYLESHEET)
                             .getTemplateRendition(RenditionType.STANDARD);
                     // if we have a template, then set it
                     WeblogTemplateRendition existingTemplateCode = stylesheet
@@ -279,7 +279,7 @@ public class StylesheetEdit extends UIAction {
                             .saveTemplateRendition(existingTemplateCode);
                 }
                 if (stylesheet.getTemplateRendition(RenditionType.MOBILE) != null) {
-                    TemplateRendition templateCode = theme.getStylesheet()
+                    TemplateRendition templateCode = theme.getTemplateByAction(ComponentType.STYLESHEET)
                             .getTemplateRendition(RenditionType.MOBILE);
                     WeblogTemplateRendition existingTemplateCode = stylesheet
                             .getTemplateRendition(RenditionType.MOBILE);
