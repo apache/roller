@@ -81,16 +81,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         return WebloggerFactory.getWeblogger().getWeblogManager().getTemplates(this.weblog);
     }
     
-    
-    /**
-     * Lookup the stylesheet template for this theme.
-     * Returns null if no stylesheet can be found.
-     */
-    public ThemeTemplate getStylesheet() throws WebloggerException {
-        return getTemplateByAction(ComponentType.STYLESHEET);
-    }
 
-    
     /**
      * Lookup the default template.
      * Returns null if the template cannot be found.

@@ -68,17 +68,14 @@ public class SharedTheme implements Theme, Serializable {
     // the theme preview image path from the shared theme's base folder
     private String previewImagePath = null;
 
-    // the theme stylesheet
-    private ThemeTemplate stylesheet = null;
-
     // we keep templates in a Map for faster lookups by name
-    private Map<String, ThemeTemplate> templatesByName = new HashMap<String, ThemeTemplate>();
+    private Map<String, ThemeTemplate> templatesByName = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by link
-    private Map<String, ThemeTemplate> templatesByLink = new HashMap<String, ThemeTemplate>();
+    private Map<String, ThemeTemplate> templatesByLink = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by action
-    private Map<ComponentType, ThemeTemplate> templatesByAction = new HashMap<ComponentType, ThemeTemplate>();
+    private Map<ComponentType, ThemeTemplate> templatesByAction = new HashMap<>();
 
     public SharedTheme(String themeDirPath)
             throws WebloggerException {
@@ -141,14 +138,7 @@ public class SharedTheme implements Theme, Serializable {
      * Get the collection of all templates associated with this Theme.
      */
     public List<ThemeTemplate> getTemplates() {
-        return new ArrayList<ThemeTemplate>(this.templatesByName.values());
-    }
-
-    /**
-     * Lookup the stylesheet. Returns null if no stylesheet defined.
-     */
-    public ThemeTemplate getStylesheet() {
-        return this.stylesheet;
+        return new ArrayList<>(this.templatesByName.values());
     }
 
     /**
@@ -259,172 +249,82 @@ public class SharedTheme implements Theme, Serializable {
         }
 
         // available types with Roller
-        List<RenditionType> availableTypesList = new ArrayList<RenditionType>();
+        List<RenditionType> availableTypesList = new ArrayList<>();
         availableTypesList.add(RenditionType.STANDARD);
         if (themeMetadata.getDualTheme()) {
             availableTypesList.add(RenditionType.MOBILE);
         }
 
-        // load stylesheet if possible
-        if (themeMetadata.getStylesheet() != null) {
-
-            ThemeMetadataTemplate stylesheetTmpl = themeMetadata
-                    .getStylesheet();
-            // getting the template codes for available types
-            ThemeMetadataTemplateRendition standardTemplateCode = stylesheetTmpl
-                    .getTemplateRenditionTable().get(RenditionType.STANDARD);
-            ThemeMetadataTemplateRendition mobileTemplateCode = stylesheetTmpl
-                    .getTemplateRenditionTable().get(RenditionType.MOBILE);
-
-            // standardTemplateCode required
-            if (standardTemplateCode == null) {
-                throw new WebloggerException(
-                        "Cannot retrieve required standard rendition for template's stylesheet");
-            } else if (mobileTemplateCode == null && themeMetadata.getDualTheme()) {
-                // clone the standard template code if no mobile is present
-                mobileTemplateCode = new ThemeMetadataTemplateRendition();
-                mobileTemplateCode.setContentsFile(standardTemplateCode
-                        .getContentsFile());
-                mobileTemplateCode.setTemplateLanguage(standardTemplateCode
-                        .getTemplateLanguage());
-                mobileTemplateCode.setType(RenditionType.MOBILE);
-
-                stylesheetTmpl.addTemplateRendition(mobileTemplateCode);
-            }
-
-            // construct File object from path
-            // we are getting the file path from standard as the default and
-            // load it to initially.
-            File templateFile = new File(this.themeDir + File.separator
-                    + standardTemplateCode.getContentsFile());
-
-            // read stylesheet contents
-            String contents = loadTemplateFile(templateFile);
-            if (contents == null) {
-                // if we don't have any contents then skip this one
-                log.error("Couldn't load stylesheet theme [" + this.getName()
-                        + "] template file [" + templateFile + "]");
-            } else {
-
-                // construct ThemeTemplate representing this file
-                // here we set content and template language from standard
-                // template code assuming it is the default
-                SharedThemeTemplate themeTemplate = new SharedThemeTemplate(
-                        themeMetadata.getId() + ":"
-                                + stylesheetTmpl.getName(),
-                        stylesheetTmpl.getAction(), stylesheetTmpl.getName(),
-                        stylesheetTmpl.getDescription(), contents,
-                        stylesheetTmpl.getLink(), new Date(
-                                templateFile.lastModified()), false, false);
-
-                for (RenditionType type : availableTypesList) {
-                    SharedThemeTemplateRendition rendition = createRendition(
-                            themeTemplate.getId(),
-                            stylesheetTmpl.getTemplateRendition(type));
-
-                    themeTemplate.addTemplateRendition(rendition);
-
-                    // Set Last Modified
-                    Date lstModified = rendition.getLastModified();
-                    if (getLastModified() == null
-                            || lstModified.after(getLastModified())) {
-                        setLastModified(lstModified);
-                    }
-                }
-                // store it
-                this.stylesheet = themeTemplate;
-
-                // Update last modified
-                themeTemplate.setLastModified(getLastModified());
-
-                addTemplate(themeTemplate);
-            }
-
-        }
-
-        // go through templates and read in contents to a ThemeTemplate
+        // create the templates based on the theme descriptor data
         SharedThemeTemplate themeTemplate;
-        boolean weblogActionTemplate = false;
+        boolean hasWeblogTemplate = false;
         for (ThemeMetadataTemplate templateMetadata : themeMetadata.getTemplates()) {
 
-            // getting the template codes for available types
-            ThemeMetadataTemplateRendition standardTemplateCode = templateMetadata
+            // one and only one template with action "weblog" allowed
+            if (ComponentType.WEBLOG.equals(templateMetadata.getAction())) {
+                if (hasWeblogTemplate) {
+                    throw new WebloggerException("Theme has more than one template with action of 'weblog'");
+                } else {
+                    hasWeblogTemplate = true;
+                }
+            }
+
+            // get the template's available renditions
+            ThemeMetadataTemplateRendition standardRendition = templateMetadata
                     .getTemplateRenditionTable().get(RenditionType.STANDARD);
-            ThemeMetadataTemplateRendition mobileTemplateCode = templateMetadata
-                    .getTemplateRenditionTable().get(RenditionType.MOBILE);
 
-            // If no template code present for any type
-            if (standardTemplateCode == null) {
-                throw new WebloggerException(
-                        "Cannot retrieve required standard rendition for template");
-            } else if (mobileTemplateCode == null && themeMetadata.getDualTheme()) {
+            if (standardRendition == null) {
+                throw new WebloggerException("Cannot retrieve required standard rendition for template " + templateMetadata.getName());
+            } else {
+                // Check to make sure standard rendition is retrievable
+                File templateFile = new File(this.themeDir + File.separator + standardRendition.getContentsFile());
+                String contents = loadTemplateRendition(templateFile);
+                if (contents == null) {
+                    throw new WebloggerException("Couldn't load template file [" + templateFile + "]");
+                }
+            }
+
+            if (themeMetadata.getDualTheme()) {
+                ThemeMetadataTemplateRendition mobileRendition = templateMetadata
+                        .getTemplateRenditionTable().get(RenditionType.MOBILE);
+
                 // cloning the standard template code if no mobile is present
-                mobileTemplateCode = new ThemeMetadataTemplateRendition();
-                mobileTemplateCode.setContentsFile(standardTemplateCode
-                        .getContentsFile());
-                mobileTemplateCode.setTemplateLanguage(standardTemplateCode
-                        .getTemplateLanguage());
-                mobileTemplateCode.setType(RenditionType.MOBILE);
-
-                templateMetadata.addTemplateRendition(mobileTemplateCode);
-            }
-
-            if(ComponentType.WEBLOG.equals(templateMetadata.getAction())) {
-                weblogActionTemplate = true;
-            }
-
-            // construct File object from path
-            File templateFile = new File(this.themeDir + File.separator
-                    + standardTemplateCode.getContentsFile());
-
-            String contents = loadTemplateFile(templateFile);
-            if (contents == null) {
-                // if we don't have any contents then skip this one
-                throw new WebloggerException("Couldn't load theme ["
-                        + this.getName() + "] template file [" + templateFile
-                        + "]");
+                if (mobileRendition == null) {
+                    mobileRendition = new ThemeMetadataTemplateRendition();
+                    mobileRendition.setContentsFile(standardRendition.getContentsFile());
+                    mobileRendition.setTemplateLanguage(standardRendition.getTemplateLanguage());
+                    mobileRendition.setType(RenditionType.MOBILE);
+                    templateMetadata.addTemplateRendition(mobileRendition);
+                }
             }
 
             // construct ThemeTemplate representing this file
             themeTemplate = new SharedThemeTemplate(
                     themeMetadata.getId() + ":" + templateMetadata.getName(),
                     templateMetadata.getAction(), templateMetadata.getName(),
-                    templateMetadata.getDescription(), contents,
-                    templateMetadata.getLink(), new Date(
-                            templateFile.lastModified()),
+                    templateMetadata.getDescription(),
+                    templateMetadata.getLink(),
                     templateMetadata.isHidden(), templateMetadata.isNavbar());
 
             for (RenditionType type : availableTypesList) {
                 SharedThemeTemplateRendition templateCode = createRendition(
-                        themeTemplate.getId(),
-                        templateMetadata.getTemplateRendition(type));
+                        templateMetadata.getTemplateRenditionTable().get(type));
 
                 themeTemplate.addTemplateRendition(templateCode);
-
-                // Set Last Modified
-                Date lstModified = templateCode.getLastModified();
-                if (getLastModified() == null
-                        || lstModified.after(getLastModified())) {
-                    setLastModified(lstModified);
-                }
             }
-
-            themeTemplate.setLastModified(getLastModified());
 
             // add it to the theme
             addTemplate(themeTemplate);
-
         }
-        if(!weblogActionTemplate) {
-            throw new WebloggerException("Theme " + themeMetadata.getName() +
-                    " has no template with 'weblog' action");
+        if(!hasWeblogTemplate) {
+            throw new WebloggerException("Theme " + themeMetadata.getName() + " has no template with 'weblog' action");
         }
     }
 
     /**
      * Load a single template file as a string, returns null if can't read file.
      */
-    private String loadTemplateFile(File templateFile) {
+    private String loadTemplateRendition(File templateFile) {
         // Continue reading theme even if problem encountered with one file
         if (!templateFile.exists() && !templateFile.canRead()) {
             return null;
@@ -460,7 +360,7 @@ public class SharedTheme implements Theme, Serializable {
         }
     }
 
-    private SharedThemeTemplateRendition createRendition(String templateId,
+    private SharedThemeTemplateRendition createRendition(
             ThemeMetadataTemplateRendition templateCodeMetadata) {
         SharedThemeTemplateRendition templateRendition = new SharedThemeTemplateRendition();
 
@@ -469,14 +369,14 @@ public class SharedTheme implements Theme, Serializable {
                 + templateCodeMetadata.getContentsFile());
 
         // read stylesheet contents
-        String contents = loadTemplateFile(templateFile);
+        String contents = loadTemplateRendition(templateFile);
         if (contents == null) {
             // if we don't have any contents then load no string
             contents = "";
             log.error("Couldn't load stylesheet theme [" + this.getName()
                     + "] template file [" + templateFile + "]");
         }
-        //TODO: remove templateId above
+
         templateRendition.setTemplate(contents);
         templateRendition.setTemplateLanguage(templateCodeMetadata.getTemplateLanguage());
         templateRendition.setType(templateCodeMetadata.getType());

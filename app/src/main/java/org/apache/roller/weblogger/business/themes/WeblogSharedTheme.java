@@ -106,52 +106,33 @@ public class WeblogSharedTheme extends WeblogTheme {
         return new ArrayList<ThemeTemplate>(pages.values());
     }
     
-    
-    /**
-     * Lookup the stylesheet template for this theme.
-     * Returns null if no stylesheet can be found.
-     */
-     public ThemeTemplate getStylesheet() throws WebloggerException {
-        // stylesheet is handled differently than other templates because with
-        // the stylesheet we want to return the weblog custom version if it
-        // exists, otherwise we return the shared theme version
-
-        // load from theme first to see if we even support a stylesheet
-        ThemeTemplate stylesheet = this.theme.getStylesheet();
-        if (stylesheet != null) {
-            // now try getting custom version from weblog
-            ThemeTemplate override = WebloggerFactory.getWeblogger()
-                    .getWeblogManager().getTemplateByAction(this.weblog, ComponentType.STYLESHEET);
-            if (override != null) {
-                stylesheet = override;
-            }
-        }
-        return stylesheet;
-    }
-    
-    
     /**
      * Lookup the default template.
      */
     public ThemeTemplate getDefaultTemplate() throws WebloggerException {
         return this.theme.getDefaultTemplate();
     }
-    
-    
+
     /**
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getTemplateByAction(ComponentType action) throws WebloggerException {
-        
-        if (action == null) {
-            return null;
+        ThemeTemplate template = theme.getTemplateByAction(action);
+
+        if (action == ComponentType.STYLESHEET && template != null) {
+            // see if user is doing shared theme with custom stylesheet
+            ThemeTemplate override = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getTemplateByAction(this.weblog, ComponentType.STYLESHEET);
+            if (override != null) {
+                template = override;
+            }
         }
-        
-        // NOTE: we specifically do *NOT* return templates by action from the
-        // weblog's custom templates if the weblog is using a theme because we
-        // don't want old templates to take effect when using a specific theme
-        return this.theme.getTemplateByAction(action);
+
+        // NOTE except for stylesheets, we do *not* return templates by action from the
+        // weblog's custom templates if the weblog is using a shared theme because we
+        // don't want any dormant templates to take effect
+        return template;
     }
     
     
@@ -160,28 +141,11 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
-        
-        if (name == null) {
-            return null;
-        }
-        
-        ThemeTemplate template;
-        
-        // if name refers to the stylesheet then return result of getStylesheet()
-        ThemeTemplate stylesheet = getStylesheet();
-        if (stylesheet != null && name.equals(stylesheet.getName())) {
-            return stylesheet;
-        }
-        
-        // first check if this user has selected a theme
-        // if so then return the proper theme template
-        template = this.theme.getTemplateByName(name);
-        
+        ThemeTemplate template = this.theme.getTemplateByName(name);
         // if we didn't get the Template from a theme then look in the db
         if (template == null) {
             template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplateByName(this.weblog, name);
         }
-        
         return template;
     }
     
@@ -191,28 +155,22 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Returns null if the template cannot be found.
      */
      public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
+         ThemeTemplate template = this.theme.getTemplateByLink(link);
 
-        if (link == null) {
-            return null;
-        }
-
-        ThemeTemplate template;
-
-        // if name refers to the stylesheet then return result of getStylesheet()
-        ThemeTemplate stylesheet = getStylesheet();
-        if(stylesheet != null && link.equals(stylesheet.getLink())) {
-            return stylesheet;
-        }
-
-        // first check if this user has selected a theme
-        // if so then return the proper theme template
-        template = this.theme.getTemplateByLink(link);
-
-        // if we didn't get the Template from a theme then look in the db
-        if(template == null) {
-            template = WebloggerFactory.getWeblogger()
-                    .getWeblogManager().getTemplateByLink(this.weblog, link);
-        }
+         if (template != null) {
+             if (template.getAction() == ComponentType.STYLESHEET) {
+                 // see if user is using a custom stylesheet with his shared theme
+                 ThemeTemplate override = WebloggerFactory.getWeblogger()
+                         .getWeblogManager().getTemplateByAction(this.weblog, ComponentType.STYLESHEET);
+                 if (override != null) {
+                     template = override;
+                 }
+             }
+         } else {
+             // custom template not part of shared them?  Check in DB...
+             template = WebloggerFactory.getWeblogger()
+                     .getWeblogManager().getTemplateByLink(this.weblog, link);
+         }
 
         return template;
     }

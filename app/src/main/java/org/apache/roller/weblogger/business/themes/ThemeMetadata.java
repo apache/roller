@@ -38,7 +38,6 @@ public class ThemeMetadata {
     private String author = null;
     private String previewImagePath = null;
     private Boolean dualTheme = false;
-    private ThemeMetadataTemplate stylesheet = null;
     private Set<ThemeMetadataTemplate> templates = new HashSet<>();
 
     public ThemeMetadata() {
@@ -95,14 +94,6 @@ public class ThemeMetadata {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public ThemeMetadataTemplate getStylesheet() {
-        return stylesheet;
-    }
-
-    public void setStylesheet(ThemeMetadataTemplate stylesheet) {
-        this.stylesheet = stylesheet;
     }
 
     public Boolean getDualTheme() {

@@ -24,19 +24,6 @@
                 <xs:element name="author" minOccurs="0" type="xs:string"/>
                 <xs:element name="dualTheme" type="xs:boolean" minOccurs="0" default="false"/>
                 <xs:element name="previewImagePath" type="xs:string"/>
-                <xs:element name="stylesheet" minOccurs="0">
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element name="name" type="xs:string"/>
-                            <xs:element name="description" type="xs:string"/>
-                            <xs:element name="link" type="xs:string"/>
-                            <xs:element name="contentType" type="xs:string"/>
-                            <xs:element name="renditions" type="renditionsType"/>
-                        </xs:sequence>
-                        <!-- requiring it as JAXB won't populate unsupplied attributes with default or fixed values -->
-                        <xs:attribute name="action" fixed="stylesheet" use="required"/>
-                    </xs:complexType>
-                </xs:element>
                 <xs:element name="template" maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:all>
@@ -51,11 +38,12 @@
                         <xs:attribute name="action" use="required">
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">
-                                    <xs:enumeration value="weblog"/>
                                     <xs:enumeration value="custom"/>
-                                    <xs:enumeration value="tagsIndex"/>
                                     <xs:enumeration value="permalink"/>
                                     <xs:enumeration value="search"/>
+                                    <xs:enumeration value="stylesheet"/>
+                                    <xs:enumeration value="tagsIndex"/>
+                                    <xs:enumeration value="weblog"/>
                                 </xs:restriction>
                             </xs:simpleType>
                         </xs:attribute>

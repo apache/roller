@@ -53,16 +53,14 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     public SharedThemeTemplate() {}
     
     public SharedThemeTemplate(String id, ComponentType action, String name,
-            String desc, String contents, String link, Date date, 
+            String desc, String link,
             boolean hidden, boolean navbar) {
         
         this.id = id;
         this.action = action;
         this.name = name;
         this.description = desc;
-        this.contents = contents;
         this.link = link;
-        this.lastModified = date;
         this.hidden = hidden;
         this.navbar = navbar;
     }
@@ -89,14 +87,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public Date getLastModified() {

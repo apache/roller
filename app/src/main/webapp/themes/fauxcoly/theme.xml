@@ -11,10 +11,12 @@
     <!-- theme preview image -->
     <previewImagePath>images/fauxcoly-preview.png</previewImagePath>
 
-    <!-- stylesheet -->
-    <stylesheet action="stylesheet">
+    <!-- templates -->
+    <template action="stylesheet">
         <name>custom.css</name>
         <description>Custom style sheet</description>
+        <navbar>false</navbar>
+        <hidden>false</hidden>
         <link>custom.css</link>
         <contentType>text/html</contentType>
         <renditions>
@@ -23,9 +25,8 @@
                 <contentsFile>custom_css.vm</contentsFile>
             </rendition>
         </renditions>
-    </stylesheet>
+    </template>
 
-    <!-- templates -->
     <template action="weblog">
         <name>Weblog</name>
         <description>Main page of weblog</description>

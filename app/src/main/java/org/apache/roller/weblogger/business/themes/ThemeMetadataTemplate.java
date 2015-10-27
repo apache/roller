@@ -111,10 +111,6 @@ public class ThemeMetadataTemplate {
         this.getTemplateRenditionTable().put(templateCode.getType(), templateCode);
     }
 
-    public ThemeMetadataTemplateRendition getTemplateRendition(RenditionType type){
-        return this.getTemplateRenditionTable().get(type);
-    }
-
     public Map<RenditionType, ThemeMetadataTemplateRendition> getTemplateRenditionTable() {
         return templateRenditionTable;
     }
