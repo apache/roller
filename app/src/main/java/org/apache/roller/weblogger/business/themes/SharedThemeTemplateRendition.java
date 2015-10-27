@@ -14,72 +14,64 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * A pojo that maintains device-specific renditions of a single template
  */
-public class SharedThemeTemplateRendition implements Serializable, TemplateRendition {
+public class SharedThemeTemplateRendition implements TemplateRendition, Serializable {
 
+    private TemplateLanguage templateLanguage = TemplateLanguage.VELOCITY;
+    private RenditionType type = RenditionType.STANDARD;
+    private String contentsFile = null;
 	private String template = null;
-	private RenditionType type = null;
-	private TemplateLanguage templateLanguage = null;
-	private Date lastModified = null;
-
-	public SharedThemeTemplateRendition(RenditionType type) {
-		this.type = type;
-	}
 
 	public SharedThemeTemplateRendition() {
 	}
 
-	// @Override
-	public String getTemplate() {
-		return template;
-	}
+    public String getContentsFile() {
+        return contentsFile;
+    }
 
-	// @Override
-	public void setTemplate(String template) {
-		this.template = template;
-	}
+    public void setContentsFile(String contentsFile) {
+        this.contentsFile = contentsFile;
+    }
 
-	// @Override
+    @XmlAttribute
 	public RenditionType getType() {
 		return type;
 	}
 
-	// @Override
 	public void setType(RenditionType type) {
 		this.type = type;
 	}
-	
-	/**
-	 * Gets the last modified. File system date.
-	 * 
-	 * @return the last modified
-	 */
-	public Date getLastModified() {
-		return lastModified;
-	}
 
-	/**
-	 * Sets the last modified. File system date.
-	 * 
-	 * @param lastModified
-	 *            the new last modified
-	 */
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+    public TemplateLanguage getTemplateLanguage() {
+        return templateLanguage;
+    }
+
+    public void setTemplateLanguage(TemplateLanguage templateLanguage) {
+        this.templateLanguage = templateLanguage;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
+    }
 
 	// ------------------------------------------------------- Good citizenship
 
@@ -87,31 +79,16 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
         return "{" + this.template + ", [ " + this.template +"] , " + this.type + "}";
 	}
 
-	public boolean equals(Object other) {
-		if (other == this) {
-            return true;
-        }
-		if (!(other instanceof SharedThemeTemplateRendition)) {
-            return false;
-        }
-		SharedThemeTemplateRendition o = (SharedThemeTemplateRendition) other;
-		return new EqualsBuilder()
-				.append(template, o.getTemplate()).isEquals();
+	public boolean equals(SharedThemeTemplateRendition other) {
+		return other == this || new EqualsBuilder()
+				.append(template, other.getTemplate())
+                .append(templateLanguage, other.getTemplateLanguage())
+                .append(type, other.getType())
+                .isEquals();
 	}
 
 	public int hashCode() {
-		return new HashCodeBuilder()
-				.append(getTemplate()).toHashCode();
-	}
-
-	// @Override
-	public TemplateLanguage getTemplateLanguage() {
-		return templateLanguage;
-	}
-
-	// @Override
-	public void setTemplateLanguage(TemplateLanguage templateLanguage) {
-		this.templateLanguage = templateLanguage;
+		return new HashCodeBuilder().append(getTemplate()).toHashCode();
 	}
 
 }

@@ -248,13 +248,6 @@ public class SharedTheme implements Theme, Serializable {
             this.previewImagePath = themeMetadata.getPreviewImagePath();
         }
 
-        // available types with Roller
-        List<RenditionType> availableTypesList = new ArrayList<>();
-        availableTypesList.add(RenditionType.STANDARD);
-        if (themeMetadata.getDualTheme()) {
-            availableTypesList.add(RenditionType.MOBILE);
-        }
-
         // create the templates based on the theme descriptor data
         SharedThemeTemplate themeTemplate;
         boolean hasWeblogTemplate = false;
@@ -270,31 +263,14 @@ public class SharedTheme implements Theme, Serializable {
             }
 
             // get the template's available renditions
-            ThemeMetadataTemplateRendition standardRendition = templateMetadata
+            SharedThemeTemplateRendition standardRendition = templateMetadata
                     .getTemplateRenditionTable().get(RenditionType.STANDARD);
 
             if (standardRendition == null) {
                 throw new WebloggerException("Cannot retrieve required standard rendition for template " + templateMetadata.getName());
             } else {
-                // Check to make sure standard rendition is retrievable
-                File templateFile = new File(this.themeDir + File.separator + standardRendition.getContentsFile());
-                String contents = loadTemplateRendition(templateFile);
-                if (contents == null) {
-                    throw new WebloggerException("Couldn't load template file [" + templateFile + "]");
-                }
-            }
-
-            if (themeMetadata.getDualTheme()) {
-                ThemeMetadataTemplateRendition mobileRendition = templateMetadata
-                        .getTemplateRenditionTable().get(RenditionType.MOBILE);
-
-                // cloning the standard template code if no mobile is present
-                if (mobileRendition == null) {
-                    mobileRendition = new ThemeMetadataTemplateRendition();
-                    mobileRendition.setContentsFile(standardRendition.getContentsFile());
-                    mobileRendition.setTemplateLanguage(standardRendition.getTemplateLanguage());
-                    mobileRendition.setType(RenditionType.MOBILE);
-                    templateMetadata.addTemplateRendition(mobileRendition);
+                if (!loadRenditionSource(standardRendition)) {
+                    throw new WebloggerException("Couldn't load template rendition [" + standardRendition.getContentsFile() + "]");
                 }
             }
 
@@ -306,17 +282,30 @@ public class SharedTheme implements Theme, Serializable {
                     templateMetadata.getLink(),
                     templateMetadata.isHidden(), templateMetadata.isNavbar());
 
-            for (RenditionType type : availableTypesList) {
-                SharedThemeTemplateRendition templateCode = createRendition(
-                        templateMetadata.getTemplateRenditionTable().get(type));
+            themeTemplate.addTemplateRendition(standardRendition);
 
-                themeTemplate.addTemplateRendition(templateCode);
+            // see if a mobile rendition needs adding
+            if (themeMetadata.getDualTheme()) {
+                SharedThemeTemplateRendition mobileRendition = templateMetadata.getTemplateRenditionTable().get(RenditionType.MOBILE);
+
+                // cloning the standard template code if no mobile is present
+                if (mobileRendition == null) {
+                    mobileRendition = new SharedThemeTemplateRendition();
+                    mobileRendition.setContentsFile(standardRendition.getContentsFile());
+                    mobileRendition.setTemplateLanguage(standardRendition.getTemplateLanguage());
+                    mobileRendition.setType(RenditionType.MOBILE);
+                    templateMetadata.addTemplateRendition(mobileRendition);
+                }
+
+                loadRenditionSource(mobileRendition);
+                themeTemplate.addTemplateRendition(mobileRendition);
             }
 
             // add it to the theme
             addTemplate(themeTemplate);
         }
-        if(!hasWeblogTemplate) {
+
+        if (!hasWeblogTemplate) {
             throw new WebloggerException("Theme " + themeMetadata.getName() + " has no template with 'weblog' action");
         }
     }
@@ -360,29 +349,16 @@ public class SharedTheme implements Theme, Serializable {
         }
     }
 
-    private SharedThemeTemplateRendition createRendition(
-            ThemeMetadataTemplateRendition templateCodeMetadata) {
-        SharedThemeTemplateRendition templateRendition = new SharedThemeTemplateRendition();
-
-        // construct File object from path
-        File templateFile = new File(this.themeDir + File.separator
-                + templateCodeMetadata.getContentsFile());
-
-        // read stylesheet contents
-        String contents = loadTemplateRendition(templateFile);
+    private boolean loadRenditionSource(SharedThemeTemplateRendition rendition) {
+        File renditionFile = new File(this.themeDir + File.separator + rendition.getContentsFile());
+        String contents = loadTemplateRendition(renditionFile);
         if (contents == null) {
-            // if we don't have any contents then load no string
-            contents = "";
-            log.error("Couldn't load stylesheet theme [" + this.getName()
-                    + "] template file [" + templateFile + "]");
+            log.error("Couldn't load rendition file [" + renditionFile + "] for theme [" + this.getName() + "]");
+            rendition.setTemplate("");
+        } else {
+            rendition.setTemplate(contents);
         }
-
-        templateRendition.setTemplate(contents);
-        templateRendition.setTemplateLanguage(templateCodeMetadata.getTemplateLanguage());
-        templateRendition.setType(templateCodeMetadata.getType());
-        templateRendition.setLastModified(new Date(templateFile.lastModified()));
-
-        return templateRendition;
+        return contents != null;
     }
 
     public int compareTo(Theme other) {
