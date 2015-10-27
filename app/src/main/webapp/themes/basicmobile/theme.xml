@@ -13,7 +13,7 @@
     <previewImagePath>basic-preview.png</previewImagePath>
     
     <!-- stylesheet -->
-    <stylesheet>
+    <stylesheet action="stylesheet">
         <name>basic-custom.css</name>
         <description>Stylesheet for Basic theme</description>
         <link>basic-custom.css</link>
