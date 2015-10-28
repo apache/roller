@@ -16,7 +16,6 @@
         <navbar>false</navbar>
         <hidden>false</hidden>
         <link>basic-custom.css</link>
-        <contentType>text/html</contentType>
         <renditions>
             <rendition>
                 <contentsFile>basic-custom.css</contentsFile>

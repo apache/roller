@@ -202,7 +202,7 @@ public class SharedTheme implements Theme, Serializable {
             // lookup theme descriptor and parse it
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = sf.newSchema(new StreamSource(
-                    SharedTheme.class.getResourceAsStream("/themes.xsd")));
+                    SharedTheme.class.getResourceAsStream("/theme.xsd")));
 
             InputStream is = new FileInputStream(this.themeDir + File.separator + "theme.xml");
             JAXBContext jaxbContext = JAXBContext.newInstance(ThemeMetadata.class);
@@ -238,8 +238,7 @@ public class SharedTheme implements Theme, Serializable {
         setEnabled(true);
 
         // load resource representing preview image
-        File previewFile = new File(this.themeDir + File.separator
-                + themeMetadata.getPreviewImagePath());
+        File previewFile = new File(this.themeDir + File.separator + themeMetadata.getPreviewImagePath());
         if (!previewFile.exists() || !previewFile.canRead()) {
             log.warn("Couldn't read theme [" + this.getName()
                     + "] preview image file ["
@@ -249,12 +248,11 @@ public class SharedTheme implements Theme, Serializable {
         }
 
         // create the templates based on the theme descriptor data
-        SharedThemeTemplate themeTemplate;
         boolean hasWeblogTemplate = false;
-        for (ThemeMetadataTemplate templateMetadata : themeMetadata.getTemplates()) {
+        for (SharedThemeTemplate template : themeMetadata.getTemplates()) {
 
             // one and only one template with action "weblog" allowed
-            if (ComponentType.WEBLOG.equals(templateMetadata.getAction())) {
+            if (ComponentType.WEBLOG.equals(template.getAction())) {
                 if (hasWeblogTemplate) {
                     throw new WebloggerException("Theme has more than one template with action of 'weblog'");
                 } else {
@@ -263,30 +261,21 @@ public class SharedTheme implements Theme, Serializable {
             }
 
             // get the template's available renditions
-            SharedThemeTemplateRendition standardRendition = templateMetadata
-                    .getTemplateRenditionTable().get(RenditionType.STANDARD);
+            SharedThemeTemplateRendition standardRendition = template.getRenditionMap().get(RenditionType.STANDARD);
 
             if (standardRendition == null) {
-                throw new WebloggerException("Cannot retrieve required standard rendition for template " + templateMetadata.getName());
+                throw new WebloggerException("Cannot retrieve required standard rendition for template " + template.getName());
             } else {
                 if (!loadRenditionSource(standardRendition)) {
                     throw new WebloggerException("Couldn't load template rendition [" + standardRendition.getContentsFile() + "]");
                 }
             }
 
-            // construct ThemeTemplate representing this file
-            themeTemplate = new SharedThemeTemplate(
-                    themeMetadata.getId() + ":" + templateMetadata.getName(),
-                    templateMetadata.getAction(), templateMetadata.getName(),
-                    templateMetadata.getDescription(),
-                    templateMetadata.getLink(),
-                    templateMetadata.isHidden(), templateMetadata.isNavbar());
-
-            themeTemplate.addTemplateRendition(standardRendition);
+            template.setId(themeMetadata.getId() + ":" + template.getName());
 
             // see if a mobile rendition needs adding
             if (themeMetadata.getDualTheme()) {
-                SharedThemeTemplateRendition mobileRendition = templateMetadata.getTemplateRenditionTable().get(RenditionType.MOBILE);
+                SharedThemeTemplateRendition mobileRendition = template.getRenditionMap().get(RenditionType.MOBILE);
 
                 // cloning the standard template code if no mobile is present
                 if (mobileRendition == null) {
@@ -294,15 +283,14 @@ public class SharedTheme implements Theme, Serializable {
                     mobileRendition.setContentsFile(standardRendition.getContentsFile());
                     mobileRendition.setTemplateLanguage(standardRendition.getTemplateLanguage());
                     mobileRendition.setType(RenditionType.MOBILE);
-                    templateMetadata.addTemplateRendition(mobileRendition);
                 }
 
                 loadRenditionSource(mobileRendition);
-                themeTemplate.addTemplateRendition(mobileRendition);
+                template.addTemplateRendition(mobileRendition);
             }
 
             // add it to the theme
-            addTemplate(themeTemplate);
+            addTemplate(template);
         }
 
         if (!hasWeblogTemplate) {

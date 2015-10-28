@@ -32,7 +32,7 @@
                             <xs:element name="navbar" type="xs:boolean"/>
                             <xs:element name="link" type="xs:string" minOccurs="0"/>
                             <xs:element name="hidden" type="xs:boolean"/>
-                            <xs:element name="contentType" type="xs:string"/>
+                            <xs:element name="contentType" type="xs:string" minOccurs="0"/>
                             <xs:element name="renditions" type="renditionsType"/>
                         </xs:all>
                         <xs:attribute name="action" use="required">
