@@ -18,7 +18,6 @@
         <navbar>false</navbar>
         <hidden>false</hidden>
         <link>custom.css</link>
-        <contentType>text/html</contentType>
         <renditions>
             <rendition>
                 <contentsFile>custom_css.vm</contentsFile>

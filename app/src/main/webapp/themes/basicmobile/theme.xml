@@ -19,7 +19,6 @@
         <navbar>false</navbar>
         <hidden>false</hidden>
         <link>basic-custom.css</link>
-        <contentType>text/html</contentType>
         <renditions>
             <rendition type="standard">
                 <templateLanguage>velocity</templateLanguage>

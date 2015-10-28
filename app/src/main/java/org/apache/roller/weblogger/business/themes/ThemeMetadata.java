@@ -38,12 +38,12 @@ public class ThemeMetadata {
     private String author = null;
     private String previewImagePath = null;
     private Boolean dualTheme = false;
-    private Set<ThemeMetadataTemplate> templates = new HashSet<>();
+    private Set<SharedThemeTemplate> templates = new HashSet<>();
 
     public ThemeMetadata() {
     }
 
-    public void addTemplate(ThemeMetadataTemplate template) {
+    public void addTemplate(SharedThemeTemplate template) {
         this.templates.add(template);
     }
 
@@ -79,12 +79,12 @@ public class ThemeMetadata {
         this.previewImagePath = previewImagePath;
     }
 
-    public Set<ThemeMetadataTemplate> getTemplates() {
+    public Set<SharedThemeTemplate> getTemplates() {
         return templates;
     }
 
     @XmlElements(@XmlElement(name="template"))
-    public void setTemplates(Set<ThemeMetadataTemplate> templates) {
+    public void setTemplates(Set<SharedThemeTemplate> templates) {
         this.templates = templates;
     }
 
