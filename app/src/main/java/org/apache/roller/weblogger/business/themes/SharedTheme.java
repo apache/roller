@@ -20,70 +20,61 @@
  */
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.*;
 
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Theme object encapsulates all elements of a single weblog theme. It is
  * used mostly to contain all the templates for a theme, but does contain other
  * theme related attributes such as name, last modified date, etc.
  */
+@XmlRootElement(name="weblogtheme")
 public class SharedTheme implements Theme, Serializable {
 
     private String id = null;
     private String name = null;
     private String description = null;
     private String author = null;
+    // the preview image path is relative from the shared theme's base folder
+    private String previewImagePath = null;
+    private Boolean dualTheme = false;
     private Date lastModified = null;
-    private boolean enabled = false;
+    private boolean enabled = true;
+
+    // JAXB loads here; ThemeManagerImpl moves them to the three maps.
+    @XmlElements(@XmlElement(name="template"))
+    private Set<SharedThemeTemplate> tempTemplates = new HashSet<>();
+
+    public Set<SharedThemeTemplate> getTempTemplates() {
+        return tempTemplates;
+    }
 
     private static Log log = LogFactory.getLog(SharedTheme.class);
 
     // the filesystem directory where we should read this theme from
     private String themeDir = null;
 
-    // the theme preview image path from the shared theme's base folder
-    private String previewImagePath = null;
-
     // we keep templates in a Map for faster lookups by name
-    private Map<String, ThemeTemplate> templatesByName = new HashMap<>();
+    private Map<String, SharedThemeTemplate> templatesByName = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by link
-    private Map<String, ThemeTemplate> templatesByLink = new HashMap<>();
+    private Map<String, SharedThemeTemplate> templatesByLink = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by action
-    private Map<ComponentType, ThemeTemplate> templatesByAction = new HashMap<>();
+    private Map<ComponentType, SharedThemeTemplate> templatesByAction = new HashMap<>();
 
-    public SharedTheme(String themeDirPath)
-            throws WebloggerException {
-
-        this.themeDir = themeDirPath;
-
-        // load the theme elements and cache 'em
-        loadThemeFromDisk();
+    public SharedTheme() {
     }
 
     public String getId() {
@@ -118,6 +109,43 @@ public class SharedTheme implements Theme, Serializable {
         this.author = author;
     }
 
+    public String getPreviewImagePath() {
+        return previewImagePath;
+    }
+
+    public void setPreviewImagePath(String previewImagePath) {
+        this.previewImagePath = previewImagePath;
+    }
+
+    public Boolean getDualTheme() {
+        return dualTheme;
+    }
+
+    public void setDualTheme(Boolean dualTheme) {
+        this.dualTheme = dualTheme;
+    }
+
+    /**
+     * Get the collection of all templates associated with this Theme.
+     */
+    public List<SharedThemeTemplate> getTemplates() {
+        return new ArrayList<>(this.templatesByName.values());
+    }
+
+    public void setTemplates(Set<SharedThemeTemplate> templates) {
+        for (SharedThemeTemplate t : templates) {
+            addTemplate(t);
+        }
+    }
+
+    public String getThemeDir() {
+        return themeDir;
+    }
+
+    public void setThemeDir(String themeDir) {
+        this.themeDir = themeDir;
+    }
+
     public Date getLastModified() {
         return lastModified;
     }
@@ -132,13 +160,6 @@ public class SharedTheme implements Theme, Serializable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    /**
-     * Get the collection of all templates associated with this Theme.
-     */
-    public List<ThemeTemplate> getTemplates() {
-        return new ArrayList<>(this.templatesByName.values());
     }
 
     /**
@@ -173,8 +194,15 @@ public class SharedTheme implements Theme, Serializable {
         return this.templatesByAction.get(action);
     }
 
-    public String getPreviewImagePath() {
-        return previewImagePath;
+    /**
+     * Set the value for a given template name.
+     */
+    void addTemplate(SharedThemeTemplate template) {
+        this.templatesByName.put(template.getName(), template);
+        this.templatesByLink.put(template.getLink(), template);
+        if (!ComponentType.CUSTOM.equals(template.getAction())) {
+            this.templatesByAction.put(template.getAction(), template);
+        }
     }
 
     public String toString() {
@@ -188,165 +216,6 @@ public class SharedTheme implements Theme, Serializable {
         }
 
         return sb.toString();
-    }
-
-    /**
-     * Load all the elements of this theme from disk and cache them.
-     */
-    private void loadThemeFromDisk() throws WebloggerException {
-
-        log.debug("Parsing theme descriptor for " + this.themeDir);
-
-        ThemeMetadata themeMetadata;
-        try {
-            // lookup theme descriptor and parse it
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = sf.newSchema(new StreamSource(
-                    SharedTheme.class.getResourceAsStream("/theme.xsd")));
-
-            InputStream is = new FileInputStream(this.themeDir + File.separator + "theme.xml");
-            JAXBContext jaxbContext = JAXBContext.newInstance(ThemeMetadata.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            jaxbUnmarshaller.setSchema(schema);
-            jaxbUnmarshaller.setEventHandler(new ValidationEventHandler() {
-                public boolean handleEvent(ValidationEvent event) {
-                    log.error("Theme parsing error: " +
-                            event.getMessage() + "; Line #" +
-                            event.getLocator().getLineNumber() + "; Column #" +
-                            event.getLocator().getColumnNumber());
-                    return false;
-                }
-            });
-            themeMetadata = (ThemeMetadata) jaxbUnmarshaller.unmarshal(is);
-        } catch (Exception ex) {
-            throw new WebloggerException(
-                    "Unable to parse theme.xml for theme " + this.themeDir, ex);
-        }
-
-        log.debug("Loading Theme " + themeMetadata.getName());
-
-        // use parsed theme descriptor to load Theme data
-        setId(themeMetadata.getId());
-        setName(themeMetadata.getName());
-        if (StringUtils.isNotEmpty(themeMetadata.getDescription())) {
-            setDescription(themeMetadata.getDescription());
-        } else {
-            setDescription(" ");
-        }
-        setAuthor(themeMetadata.getAuthor());
-        setLastModified(null);
-        setEnabled(true);
-
-        // load resource representing preview image
-        File previewFile = new File(this.themeDir + File.separator + themeMetadata.getPreviewImagePath());
-        if (!previewFile.exists() || !previewFile.canRead()) {
-            log.warn("Couldn't read theme [" + this.getName()
-                    + "] preview image file ["
-                    + themeMetadata.getPreviewImagePath() + "]");
-        } else {
-            this.previewImagePath = themeMetadata.getPreviewImagePath();
-        }
-
-        // create the templates based on the theme descriptor data
-        boolean hasWeblogTemplate = false;
-        for (SharedThemeTemplate template : themeMetadata.getTemplates()) {
-
-            // one and only one template with action "weblog" allowed
-            if (ComponentType.WEBLOG.equals(template.getAction())) {
-                if (hasWeblogTemplate) {
-                    throw new WebloggerException("Theme has more than one template with action of 'weblog'");
-                } else {
-                    hasWeblogTemplate = true;
-                }
-            }
-
-            // get the template's available renditions
-            SharedThemeTemplateRendition standardRendition = template.getRenditionMap().get(RenditionType.STANDARD);
-
-            if (standardRendition == null) {
-                throw new WebloggerException("Cannot retrieve required standard rendition for template " + template.getName());
-            } else {
-                if (!loadRenditionSource(standardRendition)) {
-                    throw new WebloggerException("Couldn't load template rendition [" + standardRendition.getContentsFile() + "]");
-                }
-            }
-
-            template.setId(themeMetadata.getId() + ":" + template.getName());
-
-            // see if a mobile rendition needs adding
-            if (themeMetadata.getDualTheme()) {
-                SharedThemeTemplateRendition mobileRendition = template.getRenditionMap().get(RenditionType.MOBILE);
-
-                // cloning the standard template code if no mobile is present
-                if (mobileRendition == null) {
-                    mobileRendition = new SharedThemeTemplateRendition();
-                    mobileRendition.setContentsFile(standardRendition.getContentsFile());
-                    mobileRendition.setTemplateLanguage(standardRendition.getTemplateLanguage());
-                    mobileRendition.setType(RenditionType.MOBILE);
-                }
-
-                loadRenditionSource(mobileRendition);
-                template.addTemplateRendition(mobileRendition);
-            }
-
-            // add it to the theme
-            addTemplate(template);
-        }
-
-        if (!hasWeblogTemplate) {
-            throw new WebloggerException("Theme " + themeMetadata.getName() + " has no template with 'weblog' action");
-        }
-    }
-
-    /**
-     * Load a single template file as a string, returns null if can't read file.
-     */
-    private String loadTemplateRendition(File templateFile) {
-        // Continue reading theme even if problem encountered with one file
-        if (!templateFile.exists() && !templateFile.canRead()) {
-            return null;
-        }
-
-        char[] chars;
-        int length;
-        try {
-            chars = new char[(int) templateFile.length()];
-            FileInputStream stream = new FileInputStream(templateFile);
-            InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-            length = reader.read(chars);
-        } catch (Exception noprob) {
-            log.error("Exception reading theme [" + this.getName()
-                    + "] template file [" + templateFile + "]");
-            if (log.isDebugEnabled()) {
-                log.debug(noprob);
-            }
-            return null;
-        }
-
-        return new String(chars, 0, length);
-    }
-
-    /**
-     * Set the value for a given template name.
-     */
-    private void addTemplate(ThemeTemplate template) {
-        this.templatesByName.put(template.getName(), template);
-        this.templatesByLink.put(template.getLink(), template);
-        if (!ComponentType.CUSTOM.equals(template.getAction())) {
-            this.templatesByAction.put(template.getAction(), template);
-        }
-    }
-
-    private boolean loadRenditionSource(SharedThemeTemplateRendition rendition) {
-        File renditionFile = new File(this.themeDir + File.separator + rendition.getContentsFile());
-        String contents = loadTemplateRendition(renditionFile);
-        if (contents == null) {
-            log.error("Couldn't load rendition file [" + renditionFile + "] for theme [" + this.getName() + "]");
-            rendition.setTemplate("");
-        } else {
-            rendition.setTemplate(contents);
-        }
-        return contents != null;
     }
 
     public int compareTo(Theme other) {

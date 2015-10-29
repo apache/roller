@@ -214,14 +214,11 @@ public class PageServlet extends HttpServlet {
         }
 
         // Development only. Reload if theme has been modified
-        if (themeReload
-                && !weblog.getEditorTheme().equals(WeblogTheme.CUSTOM)
+        if (themeReload && !weblog.getEditorTheme().equals(WeblogTheme.CUSTOM)
                 && (pageRequest.getPathInfo() == null || !pageRequest.getPathInfo().endsWith(".css"))) {
             try {
-                ThemeManager manager = WebloggerFactory.getWeblogger()
-                        .getThemeManager();
-                boolean reloaded = manager.reLoadThemeFromDisk(weblog
-                        .getEditorTheme());
+                ThemeManager manager = WebloggerFactory.getWeblogger().getThemeManager();
+                boolean reloaded = manager.reLoadThemeFromDisk(weblog.getEditorTheme());
                 if (reloaded) {
                     if (isSiteWide) {
                         siteWideCache.clear();
