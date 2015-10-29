@@ -21,7 +21,10 @@
 package org.apache.roller.weblogger.business.themes;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -33,6 +36,14 @@ import java.util.Set;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,8 +94,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		// get theme directory from config and verify it
 		this.themeDir = WebloggerConfig.getProperty("themes.dir");
 		if (themeDir == null || themeDir.trim().length() < 1) {
-			throw new RuntimeException(
-					"couldn't get themes directory from config");
+			throw new RuntimeException("couldn't get themes directory from config");
 		} else {
 			// chop off trailing slash if it exists
 			if (themeDir.endsWith("/")) {
@@ -95,8 +105,7 @@ public class ThemeManagerImpl implements ThemeManager {
 			File themeDirFile = new File(themeDir);
 			if (!themeDirFile.exists() || !themeDirFile.isDirectory()
 					|| !themeDirFile.canRead()) {
-				throw new RuntimeException("couldn't access theme dir ["
-						+ themeDir + "]");
+				throw new RuntimeException("couldn't access theme dir [" + themeDir + "]");
 			}
 		}
 	}
@@ -281,8 +290,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		FilenameFilter filter = new FilenameFilter() {
 
 			public boolean accept(File dir, String name) {
-				File file = new File(dir.getAbsolutePath() + File.separator
-						+ name);
+				File file = new File(dir.getAbsolutePath() + File.separator + name);
 				return file.isDirectory() && !file.getName().startsWith(".");
 			}
 		};
@@ -297,8 +305,8 @@ public class ThemeManagerImpl implements ThemeManager {
             // now go through each theme and load it into a Theme object
             for (String themeName : themenames) {
                 try {
-                    SharedTheme theme = new SharedTheme(this.themeDir
-                            + File.separator + themeName);
+//                    SharedTheme theme = new SharedTheme(this.themeDir + File.separator + themeName);
+                    SharedTheme theme = loadThemeData(themeName);
                     themeMap.put(theme.getId(), theme);
                     log.info("Loaded theme '" + themeName + "'");
                 } catch (Exception unexpected) {
@@ -311,34 +319,161 @@ public class ThemeManagerImpl implements ThemeManager {
 		return themeMap;
 	}
 
+    private SharedTheme loadThemeData(String themeName) throws WebloggerException {
+        String themePath = this.themeDir + File.separator + themeName;
+        log.debug("Parsing theme descriptor for " + themePath);
+
+        //ThemeMetadata themeMetadata2;
+        SharedTheme sharedTheme;
+        try {
+            // lookup theme descriptor and parse it
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = sf.newSchema(new StreamSource(
+                    SharedTheme.class.getResourceAsStream("/theme.xsd")));
+
+            InputStream is = new FileInputStream(themePath + File.separator + "theme.xml");
+            JAXBContext jaxbContext = JAXBContext.newInstance(SharedTheme.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            jaxbUnmarshaller.setSchema(schema);
+            jaxbUnmarshaller.setEventHandler(new ValidationEventHandler() {
+                public boolean handleEvent(ValidationEvent event) {
+                    log.error("Theme parsing error: " +
+                            event.getMessage() + "; Line #" +
+                            event.getLocator().getLineNumber() + "; Column #" +
+                            event.getLocator().getColumnNumber());
+                    return false;
+                }
+            });
+            sharedTheme = (SharedTheme) jaxbUnmarshaller.unmarshal(is);
+            sharedTheme.setThemeDir(themePath);
+        } catch (Exception ex) {
+            throw new WebloggerException(
+                    "Unable to parse theme.xml for theme " + themePath, ex);
+        }
+
+        log.debug("Loading Theme " + sharedTheme.getName());
+
+        // load resource representing preview image
+        File previewFile = new File(sharedTheme.getThemeDir() + File.separator + sharedTheme.getPreviewImagePath());
+        if (!previewFile.exists() || !previewFile.canRead()) {
+            log.warn("Couldn't read theme [" + sharedTheme.getName()
+                    + "] preview image file ["
+                    + sharedTheme.getPreviewImagePath() + "]");
+        }
+
+        // create the templates based on the theme descriptor data
+        boolean hasWeblogTemplate = false;
+        for (SharedThemeTemplate template : sharedTheme.getTempTemplates()) {
+
+            // one and only one template with action "weblog" allowed
+            if (ComponentType.WEBLOG.equals(template.getAction())) {
+                if (hasWeblogTemplate) {
+                    throw new WebloggerException("Theme has more than one template with action of 'weblog'");
+                } else {
+                    hasWeblogTemplate = true;
+                }
+            }
+
+            // get the template's available renditions
+            SharedThemeTemplateRendition standardRendition = template.getRenditionMap().get(RenditionType.STANDARD);
+
+            if (standardRendition == null) {
+                throw new WebloggerException("Cannot retrieve required standard rendition for template " + template.getName());
+            } else {
+                if (!loadRenditionSource(sharedTheme.getThemeDir(), standardRendition)) {
+                    throw new WebloggerException("Couldn't load template rendition [" + standardRendition.getContentsFile() + "]");
+                }
+            }
+
+            template.setId(sharedTheme.getId() + ":" + template.getName());
+
+            // see if a mobile rendition needs adding
+            if (sharedTheme.getDualTheme()) {
+                SharedThemeTemplateRendition mobileRendition = template.getRenditionMap().get(RenditionType.MOBILE);
+
+                // cloning the standard template code if no mobile is present
+                if (mobileRendition == null) {
+                    mobileRendition = new SharedThemeTemplateRendition();
+                    mobileRendition.setContentsFile(standardRendition.getContentsFile());
+                    mobileRendition.setTemplateLanguage(standardRendition.getTemplateLanguage());
+                    mobileRendition.setType(RenditionType.MOBILE);
+                }
+
+                loadRenditionSource(sharedTheme.getThemeDir(), mobileRendition);
+                template.addTemplateRendition(mobileRendition);
+            }
+
+            // add it to the theme
+            sharedTheme.addTemplate(template);
+        }
+
+        if (!hasWeblogTemplate) {
+            throw new WebloggerException("Theme " + sharedTheme.getName() + " has no template with 'weblog' action");
+        }
+
+        sharedTheme.getTempTemplates().clear();
+        return sharedTheme;
+    }
+
+    private boolean loadRenditionSource(String themeDir, SharedThemeTemplateRendition rendition) {
+        File renditionFile = new File(themeDir + File.separator + rendition.getContentsFile());
+        String contents = loadTemplateRendition(renditionFile);
+        if (contents == null) {
+            log.error("Couldn't load rendition file [" + renditionFile + "]");
+            rendition.setTemplate("");
+        } else {
+            rendition.setTemplate(contents);
+        }
+        return contents != null;
+    }
+
+    /**
+     * Load a single template file as a string, returns null if can't read file.
+     */
+    private String loadTemplateRendition(File templateFile) {
+        // Continue reading theme even if problem encountered with one file
+        if (!templateFile.exists() && !templateFile.canRead()) {
+            return null;
+        }
+
+        char[] chars;
+        int length;
+        try {
+            chars = new char[(int) templateFile.length()];
+            FileInputStream stream = new FileInputStream(templateFile);
+            InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
+            length = reader.read(chars);
+        } catch (Exception noprob) {
+            log.error("Exception reading theme template file [" + templateFile + "]");
+            if (log.isDebugEnabled()) {
+                log.debug(noprob);
+            }
+            return null;
+        }
+
+        return new String(chars, 0, length);
+    }
+
 	/**
 	 * @see ThemeManager#reLoadThemeFromDisk(String)
 	 */
 	public boolean reLoadThemeFromDisk(String reloadTheme) {
-
 		boolean reloaded = false;
 
 		try {
-
-            SharedTheme theme = new SharedTheme(this.themeDir + File.separator
-					+ reloadTheme);
-
+            SharedTheme theme = loadThemeData(reloadTheme);
             Theme loadedTheme = themes.get(theme.getId());
 
-            if (loadedTheme != null
-                    && theme.getLastModified().after(
-                            loadedTheme.getLastModified())) {
+            if (loadedTheme != null && theme.getLastModified().after(
+                    loadedTheme.getLastModified())) {
                 themes.remove(theme.getId());
                 themes.put(theme.getId(), theme);
                 reloaded = true;
             }
-
 		} catch (Exception unexpected) {
 			// shouldn't happen, so let's learn why it did
 			log.error("Problem reloading theme " + reloadTheme, unexpected);
 		}
-
 		return reloaded;
-
 	}
 }
