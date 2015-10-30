@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.Collection;
@@ -36,7 +35,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -60,7 +58,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
     
     // the runtime config def used to populate the display
-    private ConfigDef globalConfigDef = null;
+    private RuntimeConfigDefs globalConfigDef = null;
     
     // list of comment plugins
     private List<WeblogEntryCommentPlugin> pluginsList = Collections.emptyList();
@@ -110,15 +108,8 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             addError("frontpageConfig.weblogs.error");
         }
 
-        // set config def used to draw the view
-        RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
-        List<ConfigDef> configDefs = defs.getConfigDefs();
-        for (ConfigDef configDef : configDefs) {
-            if ("global-properties".equals(configDef.getName())) {
-                setGlobalConfigDef(configDef);
-            }
-        }
-        
+        globalConfigDef = WebloggerRuntimeConfig.getRuntimeConfigDefs();
+
         // load plugins list
         PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
         setPluginsList(pmgr.getCommentPlugins());
@@ -240,12 +231,12 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         this.properties = properties;
     }
 
-    public ConfigDef getGlobalConfigDef() {
+    public RuntimeConfigDefs getGlobalConfigDef() {
         return globalConfigDef;
     }
 
-    public void setGlobalConfigDef(ConfigDef globalConfigDef) {
-        this.globalConfigDef = globalConfigDef;
+    public void setGlobalConfigDef(RuntimeConfigDefs def) {
+        this.globalConfigDef = def;
     }
     
     public List<WeblogEntryCommentPlugin> getPluginsList() {

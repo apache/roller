@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import java.io.IOException;
@@ -38,21 +37,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
-import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
-import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
-import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
 /**
@@ -64,20 +58,12 @@ public class SearchServlet extends HttpServlet {
 
     private static Log log = LogFactory.getLog(SearchServlet.class);
 
-    // Development theme reloading
-    Boolean themeReload = false;
-
     /**
      * Init method for this servlet
      */
     public void init(ServletConfig servletConfig) throws ServletException {
-
         super.init(servletConfig);
-
         log.info("Initializing SearchServlet");
-
-        // Development theme reloading
-        themeReload = WebloggerConfig.getBooleanProperty("themes.reload.mode");
     }
 
     /**
@@ -107,30 +93,6 @@ public class SearchServlet extends HttpServlet {
             log.debug("error creating weblog search request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
-        }
-
-        // Development only. Reload if theme has been modified
-        if (themeReload
-                && !weblog.getEditorTheme().equals(WeblogTheme.CUSTOM)) {
-
-            try {
-                ThemeManager manager = WebloggerFactory.getWeblogger()
-                        .getThemeManager();
-                boolean reloaded = manager.reLoadThemeFromDisk(weblog
-                        .getEditorTheme());
-                if (reloaded) {
-                    if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest
-                            .getWeblogHandle())) {
-                        SiteWideCache.getInstance().clear();
-                    } else {
-                        WeblogPageCache.getInstance().clear();
-                    }
-                    I18nMessages.reloadBundle(weblog.getLocaleInstance());
-                }
-
-            } catch (Exception ex) {
-                log.error("ERROR - reloading theme " + ex);
-            }
         }
 
         // Get the deviceType from user agent

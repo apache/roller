@@ -14,13 +14,10 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
-/*
- * RuntimeConfigDefs.java
- *
- * Created on June 4, 2005, 1:06 PM
- */
-
 package org.apache.roller.weblogger.config.runtime;
 
 import java.util.ArrayList;
@@ -33,34 +30,30 @@ import java.util.List;
  * @author Allen Gilliland
  */
 public class RuntimeConfigDefs {
-    
-    private List<ConfigDef> configDefs = null;
-    
-    
+
+    private List<DisplayGroup> displayGroups = null;
+
     public RuntimeConfigDefs() {
-        this.configDefs = new ArrayList<ConfigDef>();
+        this.displayGroups = new ArrayList<>();
     }
 
-    public RuntimeConfigDefs(List<ConfigDef> configs) {
-        this.configDefs = configs;
-    }
-    
-    
-    public boolean addConfigDef(ConfigDef config) {
-        return this.configDefs.add(config);
-    }
-    
-    public boolean removeConfigDef(ConfigDef config) {
-        return this.configDefs.remove(config);
-    }
-    
-    
-    public List<ConfigDef> getConfigDefs() {
-        return configDefs;
+    public RuntimeConfigDefs(List<DisplayGroup> displaygroups) {
+        this.displayGroups = displaygroups;
     }
 
-    public void setConfigDefs(List<ConfigDef> configDefs) {
-        this.configDefs = configDefs;
+    public boolean addDisplayGroup(DisplayGroup group) {
+        return this.displayGroups.add(group);
     }
-    
+
+    public boolean removeDisplayGroup(DisplayGroup group) {
+        return this.displayGroups.remove(group);
+    }
+
+    public List<DisplayGroup> getDisplayGroups() {
+        return displayGroups;
+    }
+
+    public void setDisplayGroups(List<DisplayGroup> displayGroups) {
+        this.displayGroups = displayGroups;
+    }
 }

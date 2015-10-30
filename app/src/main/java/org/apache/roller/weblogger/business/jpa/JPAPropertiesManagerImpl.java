@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
@@ -31,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.DisplayGroup;
 import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
@@ -165,22 +163,20 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         // iterate through all the definitions and add properties
         // that are not already in our props map
 
-        for (ConfigDef configDef : runtimeConfigDefs.getConfigDefs()) {
-            for (DisplayGroup dGroup : configDef.getDisplayGroups()) {
-                for (PropertyDef propDef : dGroup.getPropertyDefs()) {
+        for (DisplayGroup dGroup : runtimeConfigDefs.getDisplayGroups()) {
+            for (PropertyDef propDef : dGroup.getPropertyDefs()) {
 
-                    // do we already have this prop?  if not then add it
-                    if(!props.containsKey(propDef.getName())) {
-                        RuntimeConfigProperty newprop =
-                                new RuntimeConfigProperty(
-                                        propDef.getName(), propDef.getDefaultValue());
+                // do we already have this prop?  if not then add it
+                if(!props.containsKey(propDef.getName())) {
+                    RuntimeConfigProperty newprop =
+                            new RuntimeConfigProperty(
+                                    propDef.getName(), propDef.getDefaultValue());
 
-                        props.put(propDef.getName(), newprop);
+                    props.put(propDef.getName(), newprop);
 
-                        log.info("Property " + propDef.getName() +
-                            " not yet in weblogger_properties database table, will store with " +
-                            "default value of [" + propDef.getDefaultValue() + "`]");
-                    }
+                    log.info("Property " + propDef.getName() +
+                        " not yet in weblogger_properties database table, will store with " +
+                        "default value of [" + propDef.getDefaultValue() + "`]");
                 }
             }
         }

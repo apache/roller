@@ -45,8 +45,6 @@
    then be changed from the admin configuration page at ...
         /admin/rollerConfig.do
  -->
- <config-def name="global-properties">
-
    <!-- Site Settings Group -->
    <display-group name="siteSettings" key="configForm.siteSettings" >
    
@@ -264,7 +262,5 @@
          </property-def>
 
      </display-group >
-
- </config-def>
 
 </runtime-configs>

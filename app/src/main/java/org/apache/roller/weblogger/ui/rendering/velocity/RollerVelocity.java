@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.io.InputStream;
@@ -23,12 +25,10 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
-
 
 /**
  * Represents the VelocityEngine used by Roller.
@@ -57,19 +57,7 @@ public class RollerVelocity {
             
             velocityProps.load(instream);
             
-            // Development theme reloading
-            Boolean themeReload = WebloggerConfig.getBooleanProperty("themes.reload.mode");
-            
-            // Override for theme reloading
-            if (themeReload) {
-                velocityProps.setProperty("class.resource.loader.cache", "false");
-                velocityProps.setProperty("class.resource.loader.modificationCheckInterval", "2");
-                velocityProps.setProperty("webapp.resource.loader.cache", "false");
-                velocityProps.setProperty("webapp.resource.loader.modificationCheckInterval", "2");
-                velocityProps.setProperty("velocimacro.library.autoreload", "true");
-            }
-           
-            log.debug("Velocity engine props = "+velocityProps);
+            log.debug("Velocity engine props = " + velocityProps);
             
             // construct the VelocityEngine
             velocityEngine = new VelocityEngine();
