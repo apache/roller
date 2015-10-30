@@ -88,15 +88,4 @@ public interface ThemeManager {
     void importTheme(Weblog website, SharedTheme theme, boolean skipStylesheet)
             throws WebloggerException;
 
-    /**
-     * This is a development only method which reloads theme data from themes
-     * stored on the filesystem in the webapp /themes/ directory.
-     *
-     * @param reloadTheme
-     *            the reload theme
-     *
-     * @return true, if reloaded theme from disk
-     */
-    boolean reLoadThemeFromDisk(String reloadTheme);
-
 }

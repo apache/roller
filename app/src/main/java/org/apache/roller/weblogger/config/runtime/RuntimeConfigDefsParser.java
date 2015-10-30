@@ -14,13 +14,10 @@
 * limitations under the License.  For additional information regarding
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
+*
+* Source file modified from the original ASF source; all changes made
+* are also under Apache License.
 */
-/*
- * RuntimeConfigDefsParser.java
- *
- * Created on June 4, 2005, 1:57 PM
- */
-
 package org.apache.roller.weblogger.config.runtime;
 
 import java.io.IOException;
@@ -51,7 +48,7 @@ public class RuntimeConfigDefsParser {
     public RuntimeConfigDefs unmarshall(InputStream instream) 
         throws IOException, JDOMException {
         
-        if(instream == null) {
+        if (instream == null) {
             throw new IOException("InputStream is null!");
         }
         
@@ -61,27 +58,12 @@ public class RuntimeConfigDefsParser {
         Document doc = builder.build(instream);
         
         Element root = doc.getRootElement();
-        List<Element> configdefs = root.getChildren("config-def");
-        for (Element e : configdefs) {
-            configs.addConfigDef(this.elementToConfigDef(e));
-        }
-        
-        return configs;
-    }
-    
-    
-    private ConfigDef elementToConfigDef(Element element) {
-        
-        ConfigDef configdef = new ConfigDef();
-        
-        configdef.setName(element.getAttributeValue("name"));
-        
-        List<Element> displaygroups = element.getChildren("display-group");
+        List<Element> displaygroups = root.getChildren("display-group");
         for (Element e : displaygroups) {
-            configdef.addDisplayGroup(this.elementToDisplayGroup(e));
+            configs.addDisplayGroup(this.elementToDisplayGroup(e));
         }
-        
-        return configdef;
+
+        return configs;
     }
     
     
