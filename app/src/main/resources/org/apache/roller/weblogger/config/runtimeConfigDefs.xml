@@ -259,6 +259,7 @@
          </property-def>
          <property-def  name="planet.site.proxyport"  key="configForm.proxyPort">
              <type>string</type>
+             <default-value></default-value>
          </property-def>
 
      </display-group >

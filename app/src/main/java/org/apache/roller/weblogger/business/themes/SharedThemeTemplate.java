@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.pojos.TemplateRendition;
@@ -119,11 +121,11 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.hidden = hidden;
     }
 
-    @XmlElement(name="contentType")
     public String getOutputContentType() {
         return contentType;
     }
 
+    @XmlElement(name="contentType")
     public void setOutputContentType(String contentType) {
         this.contentType = contentType;
     }

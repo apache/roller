@@ -22,7 +22,7 @@ package org.apache.roller.weblogger;
 
 import java.util.UUID;
 
-public final class WebloggerUtils {
+public final class WebloggerCommon {
 
     public static final String FORMAT_6CHARS = "yyyyMM";
     public static final String FORMAT_8CHARS = "yyyyMMdd";
@@ -36,7 +36,7 @@ public final class WebloggerUtils {
     public static final int ONE_MB_IN_BYTES = ONE_KB_IN_BYTES * ONE_KB_IN_BYTES;
     public static final int TEXTWIDTH_255 = 255;
 
-    private WebloggerUtils() {
+    private WebloggerCommon() {
         // never instantiable
         throw new AssertionError();
     }
@@ -46,5 +46,32 @@ public final class WebloggerUtils {
      */
     public static String generateUUID() {
         return UUID.randomUUID().toString();
+    }
+
+    public enum AuthMethod {
+        ROLLERDB("db"),
+        LDAP("ldap"),
+        OPENID("openid");
+
+        private final String propertyName;
+
+        AuthMethod(String propertyName) {
+            this.propertyName = propertyName;
+        }
+
+        public String getPropertyName() {
+            return propertyName;
+        }
+
+        public static AuthMethod getAuthMethod(String propertyName) {
+            for (AuthMethod test : AuthMethod.values()) {
+                if (test.getPropertyName().equals(propertyName)) {
+                    return test;
+                }
+            }
+            throw new IllegalArgumentException("Unknown authentication.method property value: "
+                    + propertyName + " defined in Roller properties file.");
+        }
+
     }
 }

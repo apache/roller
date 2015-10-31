@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
+import org.apache.roller.weblogger.config.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogRole;

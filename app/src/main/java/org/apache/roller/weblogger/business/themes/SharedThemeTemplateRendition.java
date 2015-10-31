@@ -48,11 +48,11 @@ public class SharedThemeTemplateRendition implements TemplateRendition, Serializ
         this.contentsFile = contentsFile;
     }
 
-    @XmlAttribute
 	public RenditionType getType() {
 		return type;
 	}
 
+    @XmlAttribute
 	public void setType(RenditionType type) {
 		this.type = type;
 	}

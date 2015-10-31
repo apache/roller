@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -52,7 +52,7 @@ public class ExcessLinksCommentValidator implements CommentValidator {
                 return 0;
             }
         }
-        return WebloggerUtils.PERCENT_100;
+        return WebloggerCommon.PERCENT_100;
     }
     
 }

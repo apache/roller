@@ -21,10 +21,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.roller.weblogger.config.AuthMethod;
+import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;

@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -58,7 +58,7 @@ public class Planet implements Serializable, Comparable<Planet> {
     private transient String[] catArray = null;
     
     // attributes
-    private String id = WebloggerUtils.generateUUID();
+    private String id = WebloggerCommon.generateUUID();
     private String handle = null;
     private String title = null;
     private String description = null;

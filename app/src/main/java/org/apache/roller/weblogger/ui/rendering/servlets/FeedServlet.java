@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -291,7 +291,7 @@ public class FeedServlet extends HttpServlet {
         }
 
         // render content. use default size of 24K for a standard page
-        CachedContent rendererOutput = new CachedContent(WebloggerUtils.TWENTYFOUR_KB_IN_BYTES);
+        CachedContent rendererOutput = new CachedContent(WebloggerCommon.TWENTYFOUR_KB_IN_BYTES);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

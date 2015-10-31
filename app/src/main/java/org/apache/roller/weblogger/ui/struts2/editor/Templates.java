@@ -24,7 +24,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
@@ -222,7 +222,7 @@ public class Templates extends UIAction {
 		// make sure name is non-null and within proper size
 		if (StringUtils.isEmpty(getNewTmplName())) {
 			addError("Template.error.nameNull");
-		} else if (getNewTmplName().length() > WebloggerUtils.TEXTWIDTH_255) {
+		} else if (getNewTmplName().length() > WebloggerCommon.TEXTWIDTH_255) {
 			addError("Template.error.nameSize");
 		}
 

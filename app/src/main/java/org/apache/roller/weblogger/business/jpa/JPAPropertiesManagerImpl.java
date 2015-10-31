@@ -30,18 +30,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.config.runtime.DisplayGroup;
-import org.apache.roller.weblogger.config.runtime.PropertyDef;
-import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
+import org.apache.roller.weblogger.config.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
-
-/*
- * JPAPropertiesManagerImpl.java
- *
- * Created on May 29, 2006, 2:06 PM
- *
- */
 public class JPAPropertiesManagerImpl implements PropertiesManager {
     
     /** The logger instance for this class. */
@@ -101,7 +92,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      */
     public Map<String, RuntimeConfigProperty> getProperties() throws WebloggerException {
 
-        HashMap<String, RuntimeConfigProperty> props = new HashMap<String, RuntimeConfigProperty>();
+        HashMap<String, RuntimeConfigProperty> props = new HashMap<>();
         List<RuntimeConfigProperty> list = strategy.getNamedQuery("RuntimeConfigProperty.getAll",
                 RuntimeConfigProperty.class).getResultList();
         /*
@@ -147,8 +138,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      **/
     private Map initializeMissingProps(Map<String, RuntimeConfigProperty> props) {
 
-        if(props == null) {
-            props = new HashMap<String, RuntimeConfigProperty>();
+        if (props == null) {
+            props = new HashMap<>();
         }
 
         // start by getting our runtimeConfigDefs
@@ -156,15 +147,15 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
                 WebloggerRuntimeConfig.getRuntimeConfigDefs();
 
         // can't do initialization without our config defs
-        if(runtimeConfigDefs == null) {
+        if (runtimeConfigDefs == null) {
             return props;
         }
 
         // iterate through all the definitions and add properties
         // that are not already in our props map
 
-        for (DisplayGroup dGroup : runtimeConfigDefs.getDisplayGroups()) {
-            for (PropertyDef propDef : dGroup.getPropertyDefs()) {
+        for (RuntimeConfigDefs.DisplayGroup dGroup : runtimeConfigDefs.getDisplayGroups()) {
+            for (RuntimeConfigDefs.PropertyDef propDef : dGroup.getPropertyDefs()) {
 
                 // do we already have this prop?  if not then add it
                 if(!props.containsKey(propDef.getName())) {

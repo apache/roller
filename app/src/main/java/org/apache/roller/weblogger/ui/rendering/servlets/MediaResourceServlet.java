@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -138,7 +138,7 @@ public class MediaResourceServlet extends HttpServlet {
         OutputStream out;
         try {
             // ok, lets serve up the file
-            byte[] buf = new byte[WebloggerUtils.EIGHT_KB_IN_BYTES];
+            byte[] buf = new byte[WebloggerCommon.EIGHT_KB_IN_BYTES];
             int length;
             out = response.getOutputStream();
             while ((length = resourceStream.read(buf)) > 0) {

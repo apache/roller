@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.ResourceBundle;
 
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -45,7 +45,7 @@ public class ExcessSizeCommentValidator implements CommentValidator {
             messages.addError("comment.validator.excessSizeMessage", Integer.toString(threshold));
             return 0;
         }
-        return WebloggerUtils.PERCENT_100;
+        return WebloggerCommon.PERCENT_100;
     }
     
 }

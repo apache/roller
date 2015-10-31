@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -48,7 +48,7 @@ public class BlacklistCommentValidator implements CommentValidator {
             messages.addError("comment.validator.blacklistMessage");
             return 0;
         }
-        return WebloggerUtils.PERCENT_100;
+        return WebloggerCommon.PERCENT_100;
     }
 
     /**

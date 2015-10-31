@@ -25,12 +25,19 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
-import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
-import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefsParser;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 
 /**
@@ -125,30 +132,36 @@ public final class WebloggerRuntimeConfig {
         return intval;
     }
     
-    
     public static RuntimeConfigDefs getRuntimeConfigDefs() {
-        
         if(configDefs == null) {
-            
-            // unmarshall the config defs file
             try {
-                InputStream is = 
-                        WebloggerRuntimeConfig.class.getResourceAsStream(RUNTIME_CONFIG);
-                
-                RuntimeConfigDefsParser parser = new RuntimeConfigDefsParser();
-                configDefs = parser.unmarshall(is);
-                
+                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                Schema schema = sf.newSchema(new StreamSource(
+                        RuntimeConfigDefs.class.getResourceAsStream("/runtimeConfigDefs.xsd")));
+
+                InputStream is = WebloggerRuntimeConfig.class.getResourceAsStream(RUNTIME_CONFIG);
+                JAXBContext jaxbContext = JAXBContext.newInstance(RuntimeConfigDefs.class);
+                Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+                jaxbUnmarshaller.setSchema(schema);
+                jaxbUnmarshaller.setEventHandler(new ValidationEventHandler() {
+                    public boolean handleEvent(ValidationEvent event) {
+                        log.error("Parsing error: " +
+                                event.getMessage() + "; Line #" +
+                                event.getLocator().getLineNumber() + "; Column #" +
+                                event.getLocator().getColumnNumber());
+                        return false;
+                    }
+                });
+                configDefs = (RuntimeConfigDefs) jaxbUnmarshaller.unmarshal(is);
+
             } catch(Exception e) {
                 // error while parsing :(
                 log.error("Error parsing runtime config defs", e);
             }
-            
         }
-        
         return configDefs;
     }
-    
-    
+
     /**
      * Get the runtime configuration definitions XML file as a string.
      *
@@ -166,7 +179,7 @@ public final class WebloggerRuntimeConfig {
                     new InputStreamReader(WebloggerConfig.class.getResourceAsStream(RUNTIME_CONFIG));
             StringWriter configString = new StringWriter();
             
-            char[] buf = new char[WebloggerUtils.EIGHT_KB_IN_BYTES];
+            char[] buf = new char[WebloggerCommon.EIGHT_KB_IN_BYTES];
             int length = 0;
             while((length = reader.read(buf)) > 0) {
                 configString.write(buf, 0, length);

@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -55,7 +55,7 @@ public class MediaFile implements Serializable {
     private static Log log = LogFactory.getFactory().getInstance(
             MediaFile.class);
 
-    private String id = WebloggerUtils.generateUUID();
+    private String id = WebloggerCommon.generateUUID();
 
     private String name;
     private String altText;
