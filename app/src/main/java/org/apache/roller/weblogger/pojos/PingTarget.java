@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -49,7 +49,7 @@ public class PingTarget implements Serializable {
 
     public static final long serialVersionUID = -6354583200913127874L;
 
-    private String id = WebloggerUtils.generateUUID();
+    private String id = WebloggerCommon.generateUUID();
     private String name = null;
     private String pingUrl = null;
     private Timestamp lastSuccess = null;

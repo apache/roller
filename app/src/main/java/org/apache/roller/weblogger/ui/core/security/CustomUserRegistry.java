@@ -26,7 +26,7 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.roller.weblogger.config.AuthMethod;
+import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

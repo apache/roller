@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 
 
 /**
@@ -121,7 +121,7 @@ public class LRUCacheImpl implements Cache {
         // calculate efficiency
         if((misses - removes) > 0) {
             double efficiency = hits / (misses + hits);
-            stats.put("efficiency", efficiency * WebloggerUtils.PERCENT_100);
+            stats.put("efficiency", efficiency * WebloggerCommon.PERCENT_100);
         }
         
         return stats;

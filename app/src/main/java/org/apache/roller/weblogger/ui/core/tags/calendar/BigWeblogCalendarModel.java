@@ -29,7 +29,7 @@ import java.util.TimeZone;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -51,7 +51,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     public BigWeblogCalendarModel(WeblogPageRequest pRequest, String cat) {
         super(pRequest, cat);
         TimeZone tz = weblog.getTimeZoneInstance();
-        starDateFormat = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS, tz);
+        starDateFormat = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, tz);
         singleDayFormat = FastDateFormat.getInstance("dd", tz);
     }
     
@@ -148,9 +148,9 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             return null;
         }
         else if (dateString == null && !nextPrevMonthURL) {
-            dateString = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(day);
+            dateString = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(day);
         } else if (dateString == null) {
-            dateString = FastDateFormat.getInstance(WebloggerUtils.FORMAT_6CHARS, weblog.getTimeZoneInstance()).format(day);
+            dateString = FastDateFormat.getInstance(WebloggerCommon.FORMAT_6CHARS, weblog.getTimeZoneInstance()).format(day);
         }
         try {
             if (nextPrevMonthURL && pageLink != null) { 

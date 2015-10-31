@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 
 /**
  * Class for accessing static configuration properties, those in roller.properties

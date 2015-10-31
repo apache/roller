@@ -25,7 +25,7 @@ import java.util.Comparator;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -48,7 +48,7 @@ import javax.persistence.Table;
 public class WeblogEntryTag implements Serializable {
     private static final long serialVersionUID = -2602052289337573384L;
     
-    private String id = WebloggerUtils.generateUUID();
+    private String id = WebloggerCommon.generateUUID();
     private Weblog website = null;
     private WeblogEntry weblogEntry = null;
     private String name = null;

@@ -305,7 +305,6 @@ public class ThemeManagerImpl implements ThemeManager {
             // now go through each theme and load it into a Theme object
             for (String themeName : themenames) {
                 try {
-//                    SharedTheme theme = new SharedTheme(this.themeDir + File.separator + themeName);
                     SharedTheme theme = loadThemeData(themeName);
                     themeMap.put(theme.getId(), theme);
                     log.info("Loaded theme '" + themeName + "'");

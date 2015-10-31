@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -60,7 +60,7 @@ public class MediaFileDirectory {
 
     public MediaFileDirectory(Weblog weblog, String name) {
 
-        this.id = WebloggerUtils.generateUUID();
+        this.id = WebloggerCommon.generateUUID();
         this.name = name;
         this.weblog = weblog;
         weblog.getMediaFileDirectories().add(this);

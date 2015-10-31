@@ -32,8 +32,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.FileContent;
@@ -112,13 +111,13 @@ public class FileContentManagerImpl implements FileContentManager {
         File saveFile = new File(dirPath.getAbsolutePath() + File.separator
                 + fileId);
 
-        byte[] buffer = new byte[WebloggerUtils.EIGHT_KB_IN_BYTES];
+        byte[] buffer = new byte[WebloggerCommon.EIGHT_KB_IN_BYTES];
         int bytesRead;
         OutputStream bos = null;
         try {
             bos = new FileOutputStream(saveFile);
             while ((bytesRead = is.read(buffer, 0,
-                    WebloggerUtils.EIGHT_KB_IN_BYTES)) != -1) {
+                    WebloggerCommon.EIGHT_KB_IN_BYTES)) != -1) {
                 bos.write(buffer, 0, bytesRead);
             }
             log.debug("The file has been written to ["
@@ -170,7 +169,7 @@ public class FileContentManagerImpl implements FileContentManager {
         // maxDirSize in megabytes
         BigDecimal maxDirSize = new BigDecimal(maxDir);
 
-        long maxDirBytes = (long) (WebloggerUtils.ONE_MB_IN_BYTES * maxDirSize
+        long maxDirBytes = (long) (WebloggerCommon.ONE_MB_IN_BYTES * maxDirSize
                 .doubleValue());
 
         try {
@@ -204,7 +203,7 @@ public class FileContentManagerImpl implements FileContentManager {
         // second check, does upload exceed max size for file?
         BigDecimal maxFileMB = new BigDecimal(
                 WebloggerRuntimeConfig.getProperty("uploads.file.maxsize"));
-        int maxFileBytes = (int) (WebloggerUtils.ONE_MB_IN_BYTES * maxFileMB
+        int maxFileBytes = (int) (WebloggerCommon.ONE_MB_IN_BYTES * maxFileMB
                 .doubleValue());
         log.debug("max allowed file size = " + maxFileBytes);
         log.debug("attempted save file size = " + size);
@@ -217,7 +216,7 @@ public class FileContentManagerImpl implements FileContentManager {
         // third check, does file cause weblog to exceed quota?
         BigDecimal maxDirMB = new BigDecimal(
                 WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize"));
-        long maxDirBytes = (long) (WebloggerUtils.ONE_MB_IN_BYTES * maxDirMB
+        long maxDirBytes = (long) (WebloggerCommon.ONE_MB_IN_BYTES * maxDirMB
                 .doubleValue());
         try {
             File storageDirectory = this.getRealFile(weblog, null);

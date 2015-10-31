@@ -23,7 +23,7 @@ package org.apache.roller.weblogger.pojos;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -44,7 +44,7 @@ import java.io.Serializable;
 public class WeblogTemplateRendition implements Serializable, TemplateRendition {
 
 	private static final long serialVersionUID = -1497618963802805151L;
-	private String id = WebloggerUtils.generateUUID();
+	private String id = WebloggerCommon.generateUUID();
     private WeblogTemplate weblogTemplate = null;
 	// template contents
 	private String template = null;

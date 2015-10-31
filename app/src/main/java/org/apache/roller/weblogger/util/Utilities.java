@@ -52,7 +52,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -432,10 +432,10 @@ public class Utilities {
         BufferedOutputStream out = new BufferedOutputStream(output);
 
         byte[] buffer;
-        buffer = new byte[WebloggerUtils.EIGHT_KB_IN_BYTES];
+        buffer = new byte[WebloggerCommon.EIGHT_KB_IN_BYTES];
 
         for (length = byteCount; length > 0;) {
-            bytes = (int) (length > WebloggerUtils.EIGHT_KB_IN_BYTES ? WebloggerUtils.EIGHT_KB_IN_BYTES : length);
+            bytes = (int) (length > WebloggerCommon.EIGHT_KB_IN_BYTES ? WebloggerCommon.EIGHT_KB_IN_BYTES : length);
 
             try {
                 bytes = in.read(buffer, 0, bytes);
@@ -481,9 +481,9 @@ public class Utilities {
             throws IOException {
         BufferedInputStream in = new BufferedInputStream(input);
         BufferedOutputStream out = new BufferedOutputStream(output);
-        byte buffer[] = new byte[WebloggerUtils.EIGHT_KB_IN_BYTES];
+        byte buffer[] = new byte[WebloggerCommon.EIGHT_KB_IN_BYTES];
         for (int count = 0; count != -1;) {
-            count = in.read(buffer, 0, WebloggerUtils.EIGHT_KB_IN_BYTES);
+            count = in.read(buffer, 0, WebloggerCommon.EIGHT_KB_IN_BYTES);
             if (count != -1) {
                 out.write(buffer, 0, count);
             }

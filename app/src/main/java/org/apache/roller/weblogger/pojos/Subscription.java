@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -62,7 +62,7 @@ import javax.persistence.Transient;
 public class Subscription implements Serializable, Comparable<Subscription> {
     
     // attributes
-    private String id = WebloggerUtils.generateUUID();
+    private String id = WebloggerCommon.generateUUID();
     private String title;
     private String author;
     private String feedUrl;

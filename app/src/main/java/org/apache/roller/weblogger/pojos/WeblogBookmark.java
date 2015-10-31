@@ -24,7 +24,7 @@ package org.apache.roller.weblogger.pojos;
 import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -50,7 +50,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     private Weblog weblog;
     
-    private String id = WebloggerUtils.generateUUID();
+    private String id = WebloggerCommon.generateUUID();
     private String name;
     private String description;
     private String url;

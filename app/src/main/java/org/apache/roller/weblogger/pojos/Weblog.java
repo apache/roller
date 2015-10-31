@@ -26,7 +26,7 @@ import java.util.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -88,7 +88,7 @@ public class Weblog implements Serializable {
     private static final int MAX_ENTRIES = 100;
     
     // Simple properties
-    private String  id               = WebloggerUtils.generateUUID();
+    private String  id               = WebloggerCommon.generateUUID();
     private String  handle           = null;
     private String  name             = null;
     private String  tagline          = null;

@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -113,9 +113,9 @@ public class TrackbackServlet extends HttpServlet {
                 
                 if (trackbackRequest.getExcerpt() == null) {
                     trackbackRequest.setExcerpt("");
-                } else if (trackbackRequest.getExcerpt().length() >= WebloggerUtils.TEXTWIDTH_255) {
+                } else if (trackbackRequest.getExcerpt().length() >= WebloggerCommon.TEXTWIDTH_255) {
                     trackbackRequest.setExcerpt(trackbackRequest.getExcerpt().substring(0,
-                            WebloggerUtils.TEXTWIDTH_255 - 3)+"...");
+                            WebloggerCommon.TEXTWIDTH_255 - 3)+"...");
                 }
                 
                 // lookup weblog specified by comment request
@@ -167,10 +167,10 @@ public class TrackbackServlet extends HttpServlet {
                 int validationScore = commentValidationManager.validateComment(comment, messages);
                 logger.debug("Comment Validation score: " + validationScore);
                 
-                if (validationScore == WebloggerUtils.PERCENT_100 && weblog.getCommentModerationRequired()) {
+                if (validationScore == WebloggerCommon.PERCENT_100 && weblog.getCommentModerationRequired()) {
                     // Valid comments go into moderation if required
                     comment.setStatus(ApprovalStatus.PENDING);
-                } else if (validationScore == WebloggerUtils.PERCENT_100) {
+                } else if (validationScore == WebloggerCommon.PERCENT_100) {
                     // else they're approved
                     comment.setStatus(ApprovalStatus.APPROVED);
                 } else {
@@ -195,7 +195,7 @@ public class TrackbackServlet extends HttpServlet {
                     // Send email notifications
                     MailUtil.sendEmailNotification(comment, messages, 
                             I18nMessages.getMessages(trackbackRequest.getLocaleInstance()),
-                            validationScore == WebloggerUtils.PERCENT_100);
+                            validationScore == WebloggerCommon.PERCENT_100);
                     
                     if (ApprovalStatus.PENDING.equals(comment.getStatus())) {
                         pw.println(this.getSuccessResponse("Trackback submitted to moderator"));

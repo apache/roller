@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 
 
 /**
@@ -38,7 +38,7 @@ public class CachedContent implements Serializable {
         if(size > 0) {
             this.outstream = new ByteArrayOutputStream(size);
         } else {
-            this.outstream = new ByteArrayOutputStream(WebloggerUtils.EIGHT_KB_IN_BYTES);
+            this.outstream = new ByteArrayOutputStream(WebloggerCommon.EIGHT_KB_IN_BYTES);
         }
         
         // construct writer from output stream

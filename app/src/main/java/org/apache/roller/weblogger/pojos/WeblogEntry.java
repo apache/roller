@@ -45,7 +45,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerUtils;
+import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -108,7 +108,7 @@ public class WeblogEntry implements Serializable {
         WebloggerConfig.getBooleanProperty("weblogentry.title.useUnderscoreSeparator") ? '_' : '-';
 
     // Simple properies
-    private String    id            = WebloggerUtils.generateUUID();
+    private String    id            = WebloggerCommon.generateUUID();
     private String    title         = null;
     private String    text          = null;
     private String    summary       = null;
@@ -778,7 +778,7 @@ public class WeblogEntry implements Serializable {
     @Transient
     public String getDisplayTitle() {
         if ( getTitle()==null || getTitle().trim().equals("") ) {
-            return StringUtils.left(Utilities.removeHTML(getText()), WebloggerUtils.TEXTWIDTH_255);
+            return StringUtils.left(Utilities.removeHTML(getText()), WebloggerCommon.TEXTWIDTH_255);
         }
         return Utilities.removeHTML(getTitle());
     }
@@ -837,7 +837,7 @@ public class WeblogEntry implements Serializable {
         // No title or text, so instead we will use the items date
         // in YYYYMMDD format as the base anchor
         else {
-            base = FastDateFormat.getInstance(WebloggerUtils.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(getPubTime());
+            base = FastDateFormat.getInstance(WebloggerCommon.FORMAT_8CHARS, weblog.getTimeZoneInstance()).format(getPubTime());
         }
         
         return base;
