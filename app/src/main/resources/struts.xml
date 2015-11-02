@@ -245,10 +245,6 @@
             <result name="input" type="tiles">.MediaFileAdd</result>
             <result name="success" type="chain">mediaFileView</result>
             <result name="error" type="tiles">.MediaFileAdd</result>
-            <result name="cancel" type="redirectAction">
-                <param name="actionName">mediaFileView</param>
-                <param name="weblog">${weblog}</param>
-            </result>
         </action>
 
         <action name="mediaFileEdit!*" method="{1}"
@@ -256,7 +252,13 @@
             <param name="actionName">mediaFileEdit</param>
             <param name="pageTitle">mediaFile.edit.title</param>
             <result name="input" type="tiles">.MediaFileEdit</result>
-            <result name="success" type="tiles">.MediaFileEditSuccess</result>
+            <result name="success" type="chain">mediaFileView</result>
+            <result name="error" type="tiles">.MediaFileEdit</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">mediaFileView</param>
+                <param name="weblog">${weblog}</param>
+                <param name="directoryName">${directoryName}</param>
+            </result>
         </action>
 
         <action name="mediaFileView!*" method="{1}"

@@ -199,13 +199,12 @@
     <br />
     <div class="control">
         <s:if test="actionName == 'mediaFileEdit'">
-           <input type="submit" value="<s:text name="generic.save" />" name="submit" />
-           <input type="button" value="<s:text name="generic.cancel" />" onClick="javascript:window.parent.onEditCancelled();" />
+           <s:submit value="%{getText('generic.save')}" action="mediaFileEdit!save" />
         </s:if>
         <s:else>
            <s:submit value="%{getText('mediaFileAdd.upload')}" action="mediaFileAdd!save" />
-           <s:submit value="%{getText('generic.cancel')}" action="mediaFileAdd!cancel" />
         </s:else>
+        <s:submit value="%{getText('generic.cancel')}" action="mediaFileEdit!cancel" />
     </div>
 
 </s:form>
