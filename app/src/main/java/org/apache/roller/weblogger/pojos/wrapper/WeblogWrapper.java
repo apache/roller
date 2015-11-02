@@ -87,7 +87,7 @@ public final class WeblogWrapper {
     
     public List<ThemeTemplateWrapper> getTemplates() throws WebloggerException {
         List<? extends ThemeTemplate> unwrapped = this.pojo.getTheme().getTemplates();
-        List<ThemeTemplateWrapper> wrapped = new ArrayList<ThemeTemplateWrapper>(unwrapped.size());
+        List<ThemeTemplateWrapper> wrapped = new ArrayList<>(unwrapped.size());
 
         int i = 0;
         for (ThemeTemplate template : unwrapped) {
