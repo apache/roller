@@ -206,25 +206,17 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
-    <definition name=".MediaFileEdit" extends=".tiles-popuppage" >
+    <definition name=".MediaFileEdit" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
     </definition>
 
     <definition name=".MediaFileImageChooser" extends=".tiles-popuppage-only-content" >
         <put-attribute name="head"     value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content"  value="/WEB-INF/jsps/editor/MediaFileImageChooser.jsp" />
         <put-attribute name="messages" value="/WEB-INF/jsps/tiles/messages.jsp" />
-    </definition>
-
-    <definition name=".MediaFileSearchInclude" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileSearch.jsp" />
-    </definition>
-
-    <definition name=".MediaFileEditSuccess" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEditSuccess.jsp" />
     </definition>
 
     <definition name=".MediaFileView" extends=".tiles-tabbedpage" >

@@ -203,22 +203,30 @@
                     <li class="align-images"
                             onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
-                        <div class="mediaObject"
-                             onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" >
+                        <div class="mediaObject">
 
-                            <s:if test="#mediaFile.imageFile">
-                                <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
-                                     width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                     height='<s:property value="#mediaFile.thumbnailHeight"/>'
-                                     title='<s:property value="#mediaFile.name" />' />
-                            </s:if>
+                            <s:url var="editUrl" action="mediaFileEdit">
+                                <s:param name="weblog" value="%{actionWeblog.handle}" />
+                                <s:param name="directoryName" value="currentDirectory.name" />
+                                <s:param name="mediaFileId" value="#mediaFile.id" />
+                            </s:url>
 
-                            <s:else>
-                                <s:url var="mediaFileURL" value="/images/page.png"></s:url>
-                                <img border="0" src='<s:property value="%{mediaFileURL}" />'
-                                     style="padding:40px 50px;" alt="logo" />
-                            </s:else>
+                            <s:a href="%{editUrl}">
+                                <s:if test="#mediaFile.imageFile">
+                                    <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
+                                         width='<s:property value="#mediaFile.thumbnailWidth"/>'
+                                         height='<s:property value="#mediaFile.thumbnailHeight"/>'
+                                         alt='<s:property value="#mediaFile.altText" />'
+                                         title='<s:property value="#mediaFile.name" />' />
+                                </s:if>
 
+                                <s:else>
+                                    <s:url var="mediaFileURL" value="/images/page.png"></s:url>
+                                    <img border="0" src='<s:property value="%{mediaFileURL}" />'
+                                         alt='<s:property value="#mediaFile.altText" />'
+                                         style="padding:40px 50px;" />
+                                </s:else>
+                            </s:a>
                         </div>
 
                         <div class="mediaObjectInfo"
@@ -268,45 +276,6 @@
 </s:form>
 
 </s:if>
-
-
-<%-- ***************************************************************** --%>
-
-<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileEdit.popupTitle'/>" style="display:none">
-    <iframe id="mediaFileEditor"
-            style="visibility:inherit"
-            height="100%"
-            width="100%"
-            frameborder="no"
-            scrolling="auto">
-    </iframe>
-</div>
-
-<script>
-    function onClickEdit(mediaFileId) {
-        <s:url var="mediaFileEditURL" action="mediaFileEdit">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-        </s:url>
-        $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
-        $(function() {
-            $("#mediafile_edit_lightbox").dialog({
-                modal  : true,
-                width  : 600,
-                height : 630
-            });
-        });
-    }
-
-    function onEditSuccess() {
-        onEditCancelled();
-        document.mediaFileViewForm.submit();
-    }
-
-    function onEditCancelled() {
-        $("#mediafile_edit_lightbox").dialog("close");
-        $("#mediaFileEditor").attr('src','about:blank');
-    }
-</script>
 
 <br/>
 <br/>

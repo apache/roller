@@ -39,12 +39,12 @@ The availability of each menu or menu item is governed by four attributes:
         <menu-item action="bookmarks"
                    name="tabbedmenu.bookmarks.allFolders" 
                    weblogRole="OWNER"
-                   subactions="bookmarkAdd,bookmarkEdit,folderAdd,folderEdit,bookmarksImport" />
+                   subactions="bookmarkAdd,bookmarkEdit" />
 
         <menu-item action="mediaFileView"
                    name="tabbedmenu.weblog.mediaFiles"
                    weblogRole="POST"
-                   subactions="mediaFileAdd,mediaFileSearch" />
+                   subactions="mediaFileAdd,mediaFileEdit" />
 
     </menu>
     
