@@ -85,9 +85,12 @@ create table weblog_template (
 create index wp_name_idx on weblog_template(name);
 create index wp_link_idx on weblog_template(link);
 
-create index wct_weblogid_idx on weblog_template(weblogid);
 alter table weblog_template add constraint wct_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
+
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index wct_weblogid_idx on weblog_template(weblogid);
+#end
 
 create table weblog_template_rendition (
     id           varchar(48)  not null primary key,
@@ -109,9 +112,12 @@ create table blogroll_link (
     position         integer not null
 );
 
-create index bl_weblogid_idx on blogroll_link( weblogid );
 alter table blogroll_link add constraint bl_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
+
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index bl_weblogid_idx on blogroll_link( weblogid );
+#end
 
 create table weblog_category (
     id               varchar(48) not null primary key,
@@ -120,9 +126,12 @@ create table weblog_category (
     position         integer not null
 );
 
-create index wc_weblogid_idx on weblog_category( weblogid );
 alter table weblog_category add constraint wc_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
+
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index wc_weblogid_idx on weblog_category( weblogid );
+#end
 
 create table weblog_entry (
     id              varchar(48)  not null primary key,
@@ -149,13 +158,17 @@ create table weblog_entry (
     enclosure_length integer
 );
 
-create index we_weblogid_idx on weblog_entry( weblogid );
 alter table weblog_entry add constraint we_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index we_weblogid_idx on weblog_entry( weblogid );
+#end
 
-create index we_categoryid_idx on weblog_entry( categoryid );
 alter table weblog_entry add constraint we_categoryid_fk
     foreign key ( categoryid ) references weblog_category( id ) ;
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index we_categoryid_idx on weblog_entry( categoryid );
+#end
 
 create index we_pinnedtom_idx on weblog_entry(pinnedtomain);
 create index we_creator_idx on weblog_entry(creator);
@@ -203,9 +216,12 @@ create table weblog_entry_comment (
     contenttype varchar(128) default 'text/plain' not null
 );
 
-create index co_entryid_idx on weblog_entry_comment( entryid );
 alter table weblog_entry_comment add constraint co_entryid_fk
     foreign key ( entryid ) references weblog_entry( id ) ;
+
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index co_entryid_idx on weblog_entry_comment( entryid );
+#end
 
 create index co_status_idx on weblog_entry_comment( status );
 
@@ -229,13 +245,19 @@ create table weblog_ping_target (
     pingtargetid  varchar(48) not null 
 );
 
-create index ap_weblogid_idx on weblog_ping_target( weblogid );
 alter table weblog_ping_target add constraint ap_weblogid_fk
     foreign key (weblogid) references weblog(id);
 
-create index ap_pingtargetid_idx on weblog_ping_target( pingtargetid );
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index ap_weblogid_idx on weblog_ping_target( weblogid );
+#end
+
 alter table weblog_ping_target add constraint ap_pingtargetid_fk
     foreign key (pingtargetid) references ping_target(id);
+
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index ap_pingtargetid_idx on weblog_ping_target( pingtargetid );
+#end
 
 create table weblogger_properties (
     name     varchar(255) not null primary key,
@@ -269,10 +291,13 @@ create table planet_subscription (
     inbound_blogs    integer default -1
 );
 alter table planet_subscription add constraint plsb_feed_url_uq unique (planetid, feed_url);
-create index plnt_subs_idx on planet_subscription(planetid);
 
 alter table planet_subscription add constraint ps_planetid_fk
     foreign key (planetid) references planet(id);
+
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index plnt_subs_idx on planet_subscription(planetid);
+#end
 
 create table planet_subscription_entry (
     id               varchar(48) not null primary key,
@@ -287,10 +312,13 @@ create table planet_subscription_entry (
     published        $db.TIMESTAMP_SQL_TYPE not null,
     updated          $db.TIMESTAMP_SQL_TYPE    
 );
-create index plntsbent_sid_idx on planet_subscription_entry(subscription_id);
 
 alter table planet_subscription_entry add constraint pse_subscriptionid_fk
     foreign key (subscription_id) references planet_subscription(id);
+
+#if($db.FOREIGN_KEY_MAKES_INDEX == "false")
+    create index plntsbent_sid_idx on planet_subscription_entry(subscription_id);
+#end
 
 
 -- MEDIA BLOGGING
