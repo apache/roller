@@ -24,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * A Spring specific implementation of a WebloggerProvider.
  */
-public class SpringWebloggerProvider implements WebloggerProvider {
+public class SpringWebloggerProvider {
 
     // Spring Application Context
     protected ApplicationContext context;
@@ -38,25 +38,9 @@ public class SpringWebloggerProvider implements WebloggerProvider {
      */
     public SpringWebloggerProvider() {
         String contextFilename = WebloggerConfig.getProperty("spring.context.file");
+
         if(contextFilename == null) {
             throw new IllegalStateException("unable to lookup default spring module via property 'spring.context.file'");
-        }
-        configureContext(contextFilename);
-    }
-
-    /**
-     * Instantiate a new SpringWebloggerProvider using the given context file.
-     *
-     * @param contextFilename The context file's name and location relative to the classpath
-     */
-    public SpringWebloggerProvider(String contextFilename) {
-        configureContext(contextFilename);
-    }
-
-    private void configureContext(String contextFilename) {
-
-        if(contextFilename == null) {
-            throw new NullPointerException("contextFilename cannot be null");
         }
 
         try {
@@ -71,25 +55,23 @@ public class SpringWebloggerProvider implements WebloggerProvider {
         }
     }
 
-    /**
-     * @inheritDoc
-     */
     public void bootstrap() {
         try {
             if (context == null) {
                 throw new RuntimeException("Spring context not initialized, check property file configuration.");
             }
-            webloggerInstance = (Weblogger) context.getBean("webloggerBean", Weblogger.class);
+            webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
         } catch (BeansException e) {
             throw new RuntimeException("Error finding webloggerBean; exception message: " + e.getMessage(), e);
         }
     }
 
-    /**
-     * @inheritDoc
-     */
     public Weblogger getWeblogger() {
         return webloggerInstance;
     }
-    
+
+    public ApplicationContext getContext() {
+        return context;
+    }
+
 }

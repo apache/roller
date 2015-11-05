@@ -14,16 +14,17 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-
+import org.springframework.context.ApplicationContext;
 
 /**
  * Provides access to the Weblogger instance and bootstraps the business tier.
@@ -33,7 +34,7 @@ public final class WebloggerFactory {
     private static final Log LOG = LogFactory.getLog(WebloggerFactory.class);
     
     // our configured weblogger provider
-    private static WebloggerProvider webloggerProvider = null;
+    private static SpringWebloggerProvider webloggerProvider = null;
 
     // non-instantiable
     private WebloggerFactory() {
@@ -61,8 +62,15 @@ public final class WebloggerFactory {
         
         return webloggerProvider.getWeblogger();
     }
-    
-    
+
+    public static ApplicationContext getContext() {
+        if (webloggerProvider == null) {
+            throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
+        }
+
+        return webloggerProvider.getContext();
+    }
+
     /**
      * Bootstrap the Roller Weblogger business tier, uses default WebloggerProvider.
      *
@@ -81,17 +89,12 @@ public final class WebloggerFactory {
         }
         
         // lookup our default provider and instantiate it
-        WebloggerProvider defaultProvider;
-        String providerClassname = WebloggerConfig.getProperty("weblogger.provider.class");
-        if(providerClassname != null) {
-            try {
-                Class providerClass = Class.forName(providerClassname);
-                defaultProvider = (WebloggerProvider) providerClass.newInstance();
-            } catch (Exception ex) {
-                throw new WebloggerException("Error instantiating default provider: " + providerClassname + "; exception message: " + ex.getMessage(), ex);
-            }
-        } else {
-            throw new NullPointerException("No provider specified in config property 'weblogger.provider.class'");
+        SpringWebloggerProvider defaultProvider;
+
+        try {
+            defaultProvider = new SpringWebloggerProvider();
+        } catch (Exception ex) {
+            throw new WebloggerException("Error instantiating SpringWebloggerProvider; exception message: " + ex.getMessage(), ex);
         }
 
         // now just bootstrap using our default provider
@@ -106,11 +109,11 @@ public final class WebloggerFactory {
      * pieces of the business tier and wires them together so that the app is 
      * ready to run.
      *
-     * @param provider A WebloggerProvider to use for bootstrapping.
+     * @param provider A SpringWebloggerProvider to use for bootstrapping.
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws WebloggerException If an error happens during the bootstrap process.
      */
-    public static void bootstrap(WebloggerProvider provider)
+    private static void bootstrap(SpringWebloggerProvider provider)
             throws WebloggerException {
         
         // if the app hasn't been properly started so far then bail
@@ -124,8 +127,6 @@ public final class WebloggerFactory {
         
         LOG.info("Bootstrapping Roller Weblogger business tier");
         
-        LOG.info("Weblogger Provider = " + provider.getClass().getName());
-        
         // save reference to provider
         webloggerProvider = provider;
         
@@ -133,10 +134,14 @@ public final class WebloggerFactory {
         webloggerProvider.bootstrap();
         
         // make sure we are all set
+        if(webloggerProvider.getContext() == null) {
+            throw new WebloggerException("Bootstrapping failed, Spring Context is null");
+        }
+
         if(webloggerProvider.getWeblogger() == null) {
             throw new WebloggerException("Bootstrapping failed, Weblogger instance is null");
         }
-        
+
         LOG.info("Roller Weblogger business tier successfully bootstrapped");
         LOG.info("   Version: " + webloggerProvider.getWeblogger().getVersion());
         LOG.info("   Revision: " + webloggerProvider.getWeblogger().getRevision());
