@@ -1,6 +1,11 @@
 README.txt
 
-Welcome to TightBlog, which started off as a fork of Apache Roller in May 2015.  This application is not yet ready for release, the Milestone 1.0-tagged Issues must all be complete first.
+Welcome to TightBlog, which started off as a fork of Apache Roller in May 2015.  Prior to starting TightBlog I was a volunteer on the Apache Roller team for 2.5 years.  Tightblog is not yet ready for release, the Milestone 1.0-tagged Issues must all be complete first.
+
+October 2015 Update:  https://web-gmazza.rhcloud.com/blog/entry/tightblog-taking-shape
+
+As of 4 November 2015, Tightblog is steady at 18 tables compared to Roller's 33, and has
+fallen to 321 Java source files compared to Roller's 493.
 
 Differences between TightBlog and Roller can be seen from the closed issues page:
   https://github.com/gmazza/tightblog/issues?q=is%3Aissue+is%3Aclosed
@@ -8,8 +13,7 @@ Differences between TightBlog and Roller can be seen from the closed issues page
 ...and the Roller network graph:
   https://github.com/apache/roller/network
 
-...and the Git compare:
-  https://github.com/apache/roller/compare/trunk...gmazza:trunk#files_bucket
+
 
 TightBlog is made up of the following Maven projects:
 
