@@ -22,9 +22,11 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Provides access to the Weblogger instance and bootstraps the business tier.
@@ -32,23 +34,24 @@ import org.springframework.context.ApplicationContext;
 public final class WebloggerFactory {
     
     private static final Log LOG = LogFactory.getLog(WebloggerFactory.class);
-    
-    // our configured weblogger provider
-    private static SpringWebloggerProvider webloggerProvider = null;
+
+    // Spring Application Context
+    private static ApplicationContext context = null;
+
+    // maintain our own singleton instance of Weblogger
+    private static Weblogger webloggerInstance = null;
 
     // non-instantiable
     private WebloggerFactory() {
-        // hello all you beautiful people
     }
 
     /**
      * True if bootstrap process has been completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return (webloggerProvider != null);
+        return (webloggerInstance != null);
     }
-    
-    
+
     /**
      * Accessor to the Weblogger Weblogger business tier.
      * 
@@ -56,19 +59,19 @@ public final class WebloggerFactory {
      * @throws IllegalStateException If the app has not been properly bootstrapped yet.
      */
     public static Weblogger getWeblogger() {
-        if (webloggerProvider == null) {
+        if (!isBootstrapped()) {
             throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
         }
         
-        return webloggerProvider.getWeblogger();
+        return webloggerInstance;
     }
 
     public static ApplicationContext getContext() {
-        if (webloggerProvider == null) {
+        if (!isBootstrapped()) {
             throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
         }
 
-        return webloggerProvider.getContext();
+        return context;
     }
 
     /**
@@ -79,72 +82,30 @@ public final class WebloggerFactory {
      * ready to run.
      *
      * @throws IllegalStateException If the app has not been properly prepared yet.
-     * @throws WebloggerException If an error happens during the bootstrap process.
+     * @throws RuntimeException If the app cannot be bootstrapped.
      */
-    public static void bootstrap() throws WebloggerException {
+    public static void bootstrap() {
         
         // if the app hasn't been properly started so far then bail
         if (!WebloggerStartup.isPrepared()) {
             throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
         }
         
-        // lookup our default provider and instantiate it
-        SpringWebloggerProvider defaultProvider;
+        String contextFilename = WebloggerConfig.getProperty("spring.context.file");
+
+        if (contextFilename == null) {
+            throw new IllegalStateException("unable to lookup default spring module via property 'spring.context.file'");
+        }
 
         try {
-            defaultProvider = new SpringWebloggerProvider();
-        } catch (Exception ex) {
-            throw new WebloggerException("Error instantiating SpringWebloggerProvider; exception message: " + ex.getMessage(), ex);
-        }
-
-        // now just bootstrap using our default provider
-        bootstrap(defaultProvider);
-    }
-    
-    
-    /**
-     * Bootstrap the Roller Weblogger business tier, uses specified WebloggerProvider.
-     *
-     * Bootstrapping the application effectively instantiates all the necessary
-     * pieces of the business tier and wires them together so that the app is 
-     * ready to run.
-     *
-     * @param provider A SpringWebloggerProvider to use for bootstrapping.
-     * @throws IllegalStateException If the app has not been properly prepared yet.
-     * @throws WebloggerException If an error happens during the bootstrap process.
-     */
-    private static void bootstrap(SpringWebloggerProvider provider)
-            throws WebloggerException {
-        
-        // if the app hasn't been properly started so far then bail
-        if (!WebloggerStartup.isPrepared()) {
-            throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
-        }
-        
-        if (provider == null) {
-            throw new NullPointerException("WebloggerProvider is null");
-        }
-        
-        LOG.info("Bootstrapping Roller Weblogger business tier");
-        
-        // save reference to provider
-        webloggerProvider = provider;
-        
-        // bootstrap weblogger provider
-        webloggerProvider.bootstrap();
-        
-        // make sure we are all set
-        if(webloggerProvider.getContext() == null) {
-            throw new WebloggerException("Bootstrapping failed, Spring Context is null");
-        }
-
-        if(webloggerProvider.getWeblogger() == null) {
-            throw new WebloggerException("Bootstrapping failed, Weblogger instance is null");
+            context = new ClassPathXmlApplicationContext(contextFilename);
+            webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
+        } catch (BeansException e) {
+            throw new RuntimeException("Error bootstrapping Weblogger; exception message: " + e.getMessage(), e);
         }
 
         LOG.info("Roller Weblogger business tier successfully bootstrapped");
-        LOG.info("   Version: " + webloggerProvider.getWeblogger().getVersion());
-        LOG.info("   Revision: " + webloggerProvider.getWeblogger().getRevision());
+        LOG.info("   Version: " + webloggerInstance.getVersion());
+        LOG.info("   Revision: " + webloggerInstance.getRevision());
     }
-    
 }
