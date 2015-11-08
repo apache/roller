@@ -26,72 +26,111 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
 /**
- * The main entry point interface of the Weblogger business tier.
+ * Helper methods to obtain managers of the Weblogger business tier.
+ * Deprecated in favor of greater use of Spring DI
  */
-public interface Weblogger {
+public class Weblogger {
+
+    // managers
+    private final IndexManager         indexManager;
+    private final MediaFileManager     mediaFileManager;
+    private final FileContentManager   fileContentManager;
+    private final PingTargetManager    pingTargetManager;
+    private final PluginManager        pluginManager;
+    private final PropertiesManager    propertiesManager;
+    private final ThemeManager         themeManager;
+    private final UserManager          userManager;
+    private final WeblogManager        weblogManager;
+    private final WeblogEntryManager   weblogEntryManager;
+    private final FeedProcessor        feedFetcher;
+    private final PlanetManager        planetManager;
+
+    // url strategy
+    private final URLStrategy          urlStrategy;
 
     /**
-     * Get UserManager associated with this Weblogger instance.
+     * Single constructor.
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    UserManager getUserManager();
-    
-    /**
-     * Get WeblogManager associated with this Weblogger instance.
-     */
-    WeblogManager getWeblogManager();
-    
-    /**
-     * Get WeblogManager associated with this Weblogger instance.
-     */
-    WeblogEntryManager getWeblogEntryManager();
+    protected Weblogger(
+            IndexManager         indexManager,
+            MediaFileManager     mediaFileManager,
+            FileContentManager   fileContentManager,
+            PingTargetManager    pingTargetManager,
+            PluginManager        pluginManager,
+            PropertiesManager    propertiesManager,
+            ThemeManager         themeManager,
+            UserManager          userManager,
+            WeblogManager        weblogManager,
+            WeblogEntryManager   weblogEntryManager,
+            FeedProcessor feedFetcher,
+            PlanetManager        planetManager,
+            URLStrategy          urlStrategy) throws WebloggerException {
 
-    /**
-     * Get the PingTargetManager associated with this Weblogger instance.
-     */
-    PingTargetManager getPingTargetManager();
-    
-    /**
-     * Get PropertiesManager associated with this Weblogger instance.
-     */
-    PropertiesManager getPropertiesManager();
-    
-    /**
-     * Get ThreadManager associated with this Weblogger instance.
-     */
-    ThreadManager getThreadManager();
-    
-    /**
-     * Get IndexManager associated with this Weblogger instance.
-     */
-    IndexManager getIndexManager();
-    
-    /**
-     * Get ThemeManager associated with this Weblogger instance.
-     */
-    ThemeManager getThemeManager();
-    
-    /**
-     * Get PluginManager associated with this Weblogger instance.
-     */
-    PluginManager getPluginManager();
-    
-    /**
-     * Get MediaFileManager associated with this Weblogger instance.
-     */
-    MediaFileManager getMediaFileManager();
-    
-    /**
-     * Get FileContentManager associated with this Weblogger instance.
-     */
-    FileContentManager getFileContentManager();
+        this.indexManager        = indexManager;
+        this.mediaFileManager    = mediaFileManager;
+        this.fileContentManager  = fileContentManager;
+        this.pingTargetManager   = pingTargetManager;
+        this.pluginManager       = pluginManager;
+        this.propertiesManager   = propertiesManager;
+        this.themeManager        = themeManager;
+        this.userManager         = userManager;
+        this.weblogManager       = weblogManager;
+        this.weblogEntryManager  = weblogEntryManager;
+        this.urlStrategy         = urlStrategy;
+        this.feedFetcher         = feedFetcher;
+        this.planetManager       = planetManager;
+    }
 
-    /**
-     * Get the URLStrategy used to build all urls in the system.
-     */
-    URLStrategy getUrlStrategy();
-    
-	FeedProcessor getFeedFetcher();
+    public IndexManager getIndexManager() {
+        return indexManager;
+    }
 
-	PlanetManager getPlanetManager();
+    public ThemeManager getThemeManager() {
+        return themeManager;
+    }
 
+    public UserManager getUserManager() {
+        return userManager;
+    }
+
+    public MediaFileManager getMediaFileManager() {
+        return mediaFileManager;
+    }
+
+    public FileContentManager getFileContentManager() {
+        return fileContentManager;
+    }
+
+    public WeblogEntryManager getWeblogEntryManager() {
+        return weblogEntryManager;
+    }
+
+    public WeblogManager getWeblogManager() {
+        return weblogManager;
+    }
+
+    public PropertiesManager getPropertiesManager() {
+        return propertiesManager;
+    }
+
+    public PingTargetManager getPingTargetManager() {
+        return pingTargetManager;
+    }
+
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    public URLStrategy getUrlStrategy() {
+        return urlStrategy;
+    }
+
+    public FeedProcessor getFeedFetcher() {
+        return feedFetcher;
+    }
+
+    public PlanetManager getPlanetManager() {
+        return planetManager;
+    }
 }
