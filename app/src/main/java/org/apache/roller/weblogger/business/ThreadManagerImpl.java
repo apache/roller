@@ -28,8 +28,9 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 /**
  * Manage Roller's thread use.
@@ -51,10 +52,6 @@ public class ThreadManagerImpl implements ThreadManager {
         serviceScheduler = Executors.newCachedThreadPool();
     }
     
-    public void initialize() throws WebloggerException {
-                    
-    }
-
     public void executeInBackground(Runnable runnable)
             throws InterruptedException {
         serviceScheduler.submit(runnable);
@@ -72,10 +69,10 @@ public class ThreadManagerImpl implements ThreadManager {
             Thread.sleep(DateUtils.MILLIS_PER_SECOND / 2);
         }
     }
-    
-    
+
+    @Override
+    @PreDestroy
     public void shutdown() {
-        
         LOG.debug("starting shutdown sequence");
         
         // trigger an immediate shutdown of any backgrounded tasks
@@ -87,10 +84,4 @@ public class ThreadManagerImpl implements ThreadManager {
             schedulerThread.interrupt();
         }
     }
-    
-    
-    public void release() {
-        // no-op
-    }
-    
 }

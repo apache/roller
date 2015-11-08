@@ -172,7 +172,7 @@ public class UserEdit extends UIAction {
                     mgr.saveUser(user);
                 }
 
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
                 if (isAdd()) {
                     // now that user is saved we have an id value
                     // store it back in bean for use in next action

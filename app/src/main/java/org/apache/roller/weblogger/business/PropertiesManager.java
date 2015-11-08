@@ -37,12 +37,6 @@ public interface PropertiesManager {
     
     
     /**
-     * Release all resources associated with Roller session.
-     */
-    void release();
-    
-    
-    /**
      * Save a single property
      */
     void saveProperty(RuntimeConfigProperty property) throws WebloggerException;

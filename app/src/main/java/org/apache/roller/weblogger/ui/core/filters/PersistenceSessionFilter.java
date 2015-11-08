@@ -59,7 +59,7 @@ public class PersistenceSessionFilter implements Filter {
         } finally {
             if (WebloggerFactory.isBootstrapped()) {
                 log.debug("Releasing Roller Session");
-                WebloggerFactory.getWeblogger().release();
+                WebloggerFactory.release();
             }
             
         }

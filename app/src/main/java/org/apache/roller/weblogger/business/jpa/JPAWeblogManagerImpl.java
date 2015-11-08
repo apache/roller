@@ -88,11 +88,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.pingTargetManager = ptm;
         this.strategy = strat;
     }
-    
-    
-    public void release() {}
-    
-    
+
     /**
      * Update existing weblog.
      */

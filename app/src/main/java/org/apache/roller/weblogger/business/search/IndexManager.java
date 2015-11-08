@@ -50,12 +50,6 @@ public interface IndexManager
     void executeIndexOperationNow(final IndexOperation op);
 
     /**
-     * Release all resources associated with Roller session.
-     */
-    void release();
-    
-    
-    /**
      * Initialize the search system.
      *
      * @throws WebloggerException If there is a problem during initialization.

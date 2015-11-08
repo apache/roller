@@ -184,7 +184,7 @@ public class TrackbackServlet extends HttpServlet {
                     
                     WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                     mgr.saveComment(comment);
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
                     
                     // only invalidate the cache if comment isn't moderated
                     if(!weblog.getCommentModerationRequired()) {

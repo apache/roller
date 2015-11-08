@@ -87,7 +87,7 @@ public class EntryRemove extends UIAction {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
                 wmgr.removeWeblogEntry(entry);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // note to user
                 addMessage("weblogEdit.entryRemoved", entry.getTitle());

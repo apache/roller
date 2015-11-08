@@ -36,6 +36,7 @@ import java.util.Set;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
+import javax.annotation.PostConstruct;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -110,7 +111,9 @@ public class ThemeManagerImpl implements ThemeManager {
 		}
 	}
 
-	public void initialize() throws WebloggerException {
+	@Override
+    @PostConstruct
+    public void initialize() throws WebloggerException {
 
 		log.debug("Initializing Theme Manager");
 

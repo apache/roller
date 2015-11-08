@@ -20,8 +20,10 @@
              xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
+    <!-- Have JSR-250 annotations (PostConstruct, PreDestroy) honored by Spring -->
+    <beans:bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+
     <beans:bean id="webloggerBean" class="org.apache.roller.weblogger.business.jpa.JPAWebloggerImpl">
-        <beans:constructor-arg ref="jpaPersistenceStrategy"/>
         <beans:constructor-arg ref="indexManager"/>
         <beans:constructor-arg ref="mediaFileManager"/>
         <beans:constructor-arg ref="fileContentManager"/>

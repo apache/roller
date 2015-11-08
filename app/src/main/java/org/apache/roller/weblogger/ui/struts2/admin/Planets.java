@@ -103,7 +103,7 @@ public class Planets extends UIAction {
                 // save and flush
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
                 pmgr.savePlanet(aPlanet);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 addMessage("planets.success.saved");
             } catch(Exception ex) {
@@ -125,7 +125,7 @@ public class Planets extends UIAction {
             try {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
                 pmgr.deletePlanet(getPlanet());
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
                 addMessage("planets.success.deleted");
             } catch(Exception ex) {
                 log.error("Error deleting planet - "+getBean().getId());

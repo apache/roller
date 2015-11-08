@@ -309,12 +309,8 @@ public interface UserManager {
      * Convenience method to check if a user has a role equal to or more
      * powerful than a specified one
      */
-    public boolean hasEffectiveGlobalRole(User user, GlobalRole roleToCheck) throws WebloggerException;
+    boolean hasEffectiveGlobalRole(User user, GlobalRole roleToCheck) throws WebloggerException;
 
-    /**
-     * Release any resources held by manager.
-     */
-    void release();
 }
 
 

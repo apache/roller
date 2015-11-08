@@ -112,7 +112,7 @@ public class PlanetSubscriptions extends UIAction {
                     pmgr.savePlanet(planet);
 
                     // flush changes
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
 
                     // clear field after success
                     setSubUrl(null);
@@ -147,7 +147,7 @@ public class PlanetSubscriptions extends UIAction {
                 getPlanet().getSubscriptions().remove(sub);
                 pmgr.deleteSubscription(sub);
                 pmgr.savePlanet(getPlanet());
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // clear field after success
                 setSubUrl(null);

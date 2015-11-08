@@ -200,7 +200,7 @@ public class Templates extends UIAction {
                 }
 
                 // flush results to db
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // reset form fields
                 setNewTmplName(null);

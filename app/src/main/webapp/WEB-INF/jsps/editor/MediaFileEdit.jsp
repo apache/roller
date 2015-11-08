@@ -175,7 +175,7 @@
 </s:if>
        <tr>
             <td class="entryEditFormLabel">
-                <label for="directoryId"><s:text name="%{#mainAction}.directory" /></label>
+                <label for="directoryId"><s:text name="mediaFileEdit.folder" /></label>
             </td>
             <td>
                 <s:select name="bean.directoryId" list="allDirectories"

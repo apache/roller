@@ -308,13 +308,5 @@ public final class CacheManager {
         }
         return allStats;
     }
-    
-    
-    /**
-     * Place to do any cleanup tasks for cache system.
-     */
-    public static void shutdown() {
-        // no-op
-    }
-    
+
 }

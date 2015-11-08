@@ -186,7 +186,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             // save the entry
             weblogEntryMgr.saveWeblogEntry(entry);
-            roller.flush();
+            WebloggerFactory.flush();
             
             // notify cache
             flushPageCache(entry.getWeblog());
@@ -300,7 +300,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             // save the entry
             weblogEntryMgr.saveWeblogEntry(entry);
-            roller.flush();
+            WebloggerFactory.flush();
             
             // notify cache
             flushPageCache(entry.getWeblog());
@@ -395,7 +395,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                 throw new Exception(errors.toString());
             }
 
-            roller.flush();
+            WebloggerFactory.flush();
             
             Hashtable returnStruct = new Hashtable(1);
             returnStruct.put("url", fileLink);

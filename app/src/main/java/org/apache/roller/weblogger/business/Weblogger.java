@@ -90,26 +90,6 @@ public interface Weblogger {
      */
     URLStrategy getUrlStrategy();
     
-    /**
-     * Flush object states.
-     */
-    void flush() throws WebloggerException;
-    
-    /**
-     * Release all resources associated with Weblogger session.
-     */
-    void release();
-    
-    /**
-     * Initialize any resources necessary for this instance of Weblogger.
-     */
-    void initialize() throws WebloggerException;
-    
-    /**
-     * Release all resources necessary for this instance of Weblogger.
-     */
-    void shutdown();
-    
 	FeedProcessor getFeedFetcher();
 
 	PlanetManager getPlanetManager();

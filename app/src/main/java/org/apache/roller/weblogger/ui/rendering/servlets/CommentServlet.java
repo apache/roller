@@ -380,7 +380,7 @@ public class CommentServlet extends HttpServlet {
                     WeblogEntryManager mgr = WebloggerFactory.getWeblogger()
                             .getWeblogEntryManager();
                     mgr.saveComment(comment);
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
 
                     // Send email notifications only to subscribers if comment
                     // is 100% valid

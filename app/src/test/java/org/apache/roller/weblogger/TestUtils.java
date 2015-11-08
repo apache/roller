@@ -59,15 +59,7 @@ public final class TestUtils {
 
             // do application bootstrapping
             WebloggerFactory.bootstrap();
-
-            // always initialize the properties manager and flush
-            WebloggerFactory.getWeblogger().initialize();
         }
-    }
-
-    public static void shutdownWeblogger() throws Exception {
-        // trigger shutdown
-        WebloggerFactory.getWeblogger().shutdown();
     }
 
     /**
@@ -81,9 +73,9 @@ public final class TestUtils {
      */
     public static void endSession(boolean flush) throws Exception {
         if (flush) {
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.flush();
         }
-        WebloggerFactory.getWeblogger().release();
+        WebloggerFactory.release();
     }
 
     /**
@@ -111,7 +103,7 @@ public final class TestUtils {
         mgr.addUser(testUser);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query for the user to make sure we return the persisted object
         User user = mgr.getUserByUserName(userName);
@@ -136,7 +128,7 @@ public final class TestUtils {
         mgr.removeUser(user);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 
     /**
@@ -163,7 +155,7 @@ public final class TestUtils {
         mgr.addWeblog(testWeblog);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query for the new weblog and return it
         Weblog weblog = mgr.getWeblogByHandle(handle);
@@ -188,7 +180,7 @@ public final class TestUtils {
         mgr.removeWeblog(weblog);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 
     /**
@@ -202,7 +194,7 @@ public final class TestUtils {
         mgr.revokeWeblogRole(perm.getUser(), perm.getWeblog());
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 
     /**
@@ -218,7 +210,7 @@ public final class TestUtils {
         mgr.saveWeblogCategory(testCat);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query for object
         WeblogCategory cat = mgr.getWeblogCategory(testCat.getId());
@@ -243,7 +235,7 @@ public final class TestUtils {
         mgr.removeWeblogCategory(cat);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 
     /**
@@ -293,7 +285,7 @@ public final class TestUtils {
         mgr.saveWeblogEntry(testEntry);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query for object
         WeblogEntry entry = mgr.getWeblogEntry(testEntry.getId());
@@ -318,7 +310,7 @@ public final class TestUtils {
         mgr.removeWeblogEntry(entry);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 
     /**
@@ -344,7 +336,7 @@ public final class TestUtils {
         mgr.saveComment(testComment);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query for object
         WeblogEntryComment comment = mgr.getComment(testComment.getId());
@@ -370,7 +362,7 @@ public final class TestUtils {
         mgr.removeComment(comment);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 
     /**
@@ -389,7 +381,7 @@ public final class TestUtils {
         pingMgr.savePingTarget(testPing);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query for it
         PingTarget ping = pingMgr.getPingTarget(testPing.getId());
@@ -415,7 +407,7 @@ public final class TestUtils {
         pingMgr.removePingTarget(ping);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 
     /**
@@ -432,7 +424,7 @@ public final class TestUtils {
         mgr.saveAutoPing(autoPing);
 
         // flush to db
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query for it
         autoPing = mgr.getAutoPing(autoPing.getId());
@@ -492,7 +484,7 @@ public final class TestUtils {
         mgr.savePlanet(testPlanet);
 
         // flush
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query to make sure we return the persisted object
         Planet group = mgr.getPlanetById(testPlanet.getId());
@@ -517,7 +509,7 @@ public final class TestUtils {
         mgr.deletePlanet(planet);
 
         // flush
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 
     /**
@@ -538,7 +530,7 @@ public final class TestUtils {
         planet.getSubscriptions().add(testSub);
 
         // flush
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query to make sure we return the persisted object
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
@@ -563,7 +555,7 @@ public final class TestUtils {
         mgr.deleteSubscription(sub);
 
         // flush
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 
     /**
@@ -588,7 +580,7 @@ public final class TestUtils {
         mgr.saveEntry(testEntry);
 
         // flush
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
 
         // query to make sure we return the persisted object
         SubscriptionEntry entry = mgr.getEntryById(testEntry.getId());
@@ -614,6 +606,6 @@ public final class TestUtils {
         entry.getSubscription().getEntries().remove(entry);
 
         // flush
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
 }

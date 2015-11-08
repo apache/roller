@@ -18,23 +18,12 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
-
-import org.apache.roller.weblogger.WebloggerException;
 
 /**
  * Thread management for executing scheduled and asynchronous tasks.
  */
 public interface ThreadManager {
-    
-    /**
-     * Initialize the thread management system.
-     *
-     * @throws WebloggerException If there is a problem during initialization.
-     */
-    void initialize() throws WebloggerException;
-    
     
     /**
      * Execute runnable in background (asynchronously).
@@ -55,11 +44,4 @@ public interface ThreadManager {
      * Shutdown.
      */
     void shutdown();
-    
-    
-    /**
-     * Release all resources associated with Roller session.
-     */
-    void release();
-    
 }

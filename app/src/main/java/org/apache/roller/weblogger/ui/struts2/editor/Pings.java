@@ -118,7 +118,7 @@ public class Pings extends UIAction {
                 PingTargetManager manager = WebloggerFactory.getWeblogger().getPingTargetManager();
                 AutoPing autoPing = new AutoPing(getPingTarget(), getActionWeblog());
                 manager.saveAutoPing(autoPing);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
             } catch(Exception ex) {
                 log.error("Error saving auto ping for target - "+getPingTargetId(), ex);
                 addError("Error enabling auto ping");
@@ -138,7 +138,7 @@ public class Pings extends UIAction {
             try {
                 PingTargetManager manager = WebloggerFactory.getWeblogger().getPingTargetManager();
                 manager.removeAutoPing(getPingTarget(), getActionWeblog());
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
             } catch (Exception ex) {
                 log.error("Error removing auto ping for target - " + getPingTargetId(), ex);
                 addError("Error disabling auto ping");

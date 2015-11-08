@@ -135,7 +135,7 @@ public class TemplateEdit extends UIAction {
                 log.debug("Saved template: " + templateToSave.getId());
 
                 //flush
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // notify caches
                 CacheManager.invalidate(templateToSave);

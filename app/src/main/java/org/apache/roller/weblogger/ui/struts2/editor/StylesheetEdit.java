@@ -135,7 +135,7 @@ public class StylesheetEdit extends UIAction {
                     WebloggerFactory.getWeblogger().getWeblogManager()
                             .saveTemplate(stylesheetTmpl);
                     setTemplate(stylesheetTmpl);
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
 
 
                     // success message
@@ -234,7 +234,7 @@ public class StylesheetEdit extends UIAction {
                 // save template and flush
                 WebloggerFactory.getWeblogger().getWeblogManager().saveTemplate(stylesheet);
 
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // notify caches
                 CacheManager.invalidate(stylesheet);
@@ -290,7 +290,7 @@ public class StylesheetEdit extends UIAction {
                 // save template and flush
                 WebloggerFactory.getWeblogger().getWeblogManager()
                         .saveTemplate(stylesheet);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // notify caches
                 CacheManager.invalidate(stylesheet);
@@ -330,7 +330,7 @@ public class StylesheetEdit extends UIAction {
                 CacheManager.invalidate(template);
 
                 // Flush for operation
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // success message
                 addMessage("stylesheetEdit.default.success",

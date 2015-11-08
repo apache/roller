@@ -75,7 +75,7 @@ public class MainMenu extends UIAction {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             Weblog weblog = wmgr.getWeblog(getInviteId());      
             umgr.acceptWeblogInvitation(getAuthenticatedUser(), weblog);
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.flush();
 
         } catch (WebloggerException ex) {
             log.error("Error handling invitation accept weblog id - "+getInviteId(), ex);
@@ -96,7 +96,7 @@ public class MainMenu extends UIAction {
             // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
             // TODO EXCEPTIONS: better exception handling here
             umgr.declineWeblogInvitation(getAuthenticatedUser(), weblog);
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.flush();
             addMessage("yourWebsites.declined", handle);
 
         } catch (WebloggerException ex) {

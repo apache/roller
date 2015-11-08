@@ -118,7 +118,7 @@ public class TemplateRemove extends UIAction {
                     // notify cache
                     CacheManager.invalidate(getTemplate());
                     mgr.removeTemplate(getTemplate());
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
 
                     return SUCCESS;
                 } else {

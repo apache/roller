@@ -142,7 +142,7 @@ public class CreateWeblog extends UIAction {
             try {
                 // add weblog and flush
                 WebloggerFactory.getWeblogger().getWeblogManager().addWeblog(wd);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
                 
                 // tell the user their weblog was created
                 addMessage("createWebsite.created", getBean().getHandle());
