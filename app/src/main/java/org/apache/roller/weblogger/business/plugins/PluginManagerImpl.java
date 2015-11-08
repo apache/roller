@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.plugins;
 
 import java.util.ArrayList;
@@ -229,10 +228,4 @@ public class PluginManagerImpl implements PluginManager {
         }
         return false;
     }
-    
-    
-    public void release() {
-        // no op
-    }
-    
 }

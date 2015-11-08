@@ -471,7 +471,7 @@ public class FeedProcessorImpl implements FeedProcessor {
 
                 // save and flush
                 pmgr.saveSubscription(sub);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 log.debug("Added entries");
                 entries += newEntries.size();

@@ -162,7 +162,7 @@ public class WeblogConfig extends UIAction {
                 }
 
                 // flush
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 addMessage("websiteSettings.savedChanges");
 

@@ -59,7 +59,7 @@ public class BasicUserAutoProvision implements AutoProvision {
 
                 ud.setGlobalRole(GlobalRole.BLOGGER);
                 mgr.addUser(ud);
-				WebloggerFactory.getWeblogger().flush();
+				WebloggerFactory.flush();
                 return true;
 
             } catch (WebloggerException e) {

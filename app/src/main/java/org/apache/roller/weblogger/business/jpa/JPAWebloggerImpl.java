@@ -45,8 +45,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
  */
 public class JPAWebloggerImpl implements Weblogger {
 
-    private static Log log = LogFactory.getLog(JPAWebloggerImpl.class);
-
     // managers
     private final IndexManager         indexManager;
     private final MediaFileManager     mediaFileManager;
@@ -59,11 +57,8 @@ public class JPAWebloggerImpl implements Weblogger {
     private final UserManager          userManager;
     private final WeblogManager        weblogManager;
     private final WeblogEntryManager   weblogEntryManager;
-    private final FeedProcessor feedFetcher;
+    private final FeedProcessor        feedFetcher;
     private final PlanetManager        planetManager;
-
-    // a persistence utility class
-    private final JPAPersistenceStrategy strategy;
 
     // url strategy
     private final URLStrategy          urlStrategy;
@@ -73,7 +68,6 @@ public class JPAWebloggerImpl implements Weblogger {
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     protected JPAWebloggerImpl(
-        JPAPersistenceStrategy strategy,
         IndexManager         indexManager,
         MediaFileManager     mediaFileManager,
         FileContentManager   fileContentManager,
@@ -103,7 +97,6 @@ public class JPAWebloggerImpl implements Weblogger {
         this.urlStrategy         = urlStrategy;
         this.feedFetcher         = feedFetcher;
         this.planetManager       = planetManager;
-        this.strategy            = strategy;
     }
 
     /**
@@ -196,69 +189,6 @@ public class JPAWebloggerImpl implements Weblogger {
 
     public PlanetManager getPlanetManager() {
         return planetManager;
-    }
-
-    public void flush() throws WebloggerException {
-        this.strategy.flush();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public void initialize() throws WebloggerException {
-
-        log.info("Initializing Roller Weblogger business tier");
-
-        getPropertiesManager().initialize();
-        getThemeManager().initialize();
-        getThreadManager().initialize();
-        getIndexManager().initialize();
-        getMediaFileManager().initialize();
-        getPingTargetManager().initialize();
-
-        // we always need to do a flush after initialization because it's
-        // possible that some changes need to be persisted
-        try {
-            flush();
-        } catch(WebloggerException ex) {
-            throw new WebloggerException("Error flushing after initialization", ex);
-        }
-
-        log.info("Roller Weblogger business tier successfully initialized");
-    }
-
-    public void release() {
-        try {
-            mediaFileManager.release();
-            fileContentManager.release();
-            pingTargetManager.release();
-            pluginManager.release();
-            threadManager.release();
-            userManager.release();
-            weblogManager.release();
-            // tell JPA to close down
-            strategy.release();
-        } catch(Exception e) {
-            log.error("Error calling Roller.release()", e);
-        }
-    }
-
-    public void shutdown() {
-        // do our own shutdown first
-        this.release();
-
-        // then let parent do its thing
-        try {
-            if (indexManager != null) {
-                indexManager.shutdown();
-            }
-            if (threadManager != null) {
-                threadManager.shutdown();
-            }
-            this.strategy.shutdown();
-        } catch(Exception e) {
-            log.error("Error calling Roller.shutdown()", e);
-        }
     }
 
 }

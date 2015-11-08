@@ -186,7 +186,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             // save 'em and flush
             PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
             mgr.saveProperties(getProperties());
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.flush();
             
             // notify user of our success
             addMessage("generic.changes.saved");

@@ -50,7 +50,7 @@ public class SubscriptionEntryTest extends TestCase {
         TestUtils.setupEntry(testSub, "testEntry2");
 
         WebloggerFactory.getWeblogger().getPlanetManager().savePlanet(testPlanet);
-        WebloggerFactory.getWeblogger().flush();
+        WebloggerFactory.flush();
     }
     
     

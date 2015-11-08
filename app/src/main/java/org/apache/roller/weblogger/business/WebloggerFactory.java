@@ -22,10 +22,12 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -36,10 +38,12 @@ public final class WebloggerFactory {
     private static final Log LOG = LogFactory.getLog(WebloggerFactory.class);
 
     // Spring Application Context
-    private static ApplicationContext context = null;
+    private static ConfigurableApplicationContext context = null;
 
     // maintain our own singleton instance of Weblogger
     private static Weblogger webloggerInstance = null;
+
+    private static JPAPersistenceStrategy strategy = null;
 
     // non-instantiable
     private WebloggerFactory() {
@@ -66,7 +70,7 @@ public final class WebloggerFactory {
         return webloggerInstance;
     }
 
-    public static ApplicationContext getContext() {
+    public static ConfigurableApplicationContext getContext() {
         if (!isBootstrapped()) {
             throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
         }
@@ -83,8 +87,9 @@ public final class WebloggerFactory {
      *
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws RuntimeException If the app cannot be bootstrapped.
+     * @throws WebloggerException if any manager cannot be initialized
      */
-    public static void bootstrap() {
+    public static void bootstrap() throws WebloggerException {
         
         // if the app hasn't been properly started so far then bail
         if (!WebloggerStartup.isPrepared()) {
@@ -100,12 +105,24 @@ public final class WebloggerFactory {
         try {
             context = new ClassPathXmlApplicationContext(contextFilename);
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
+            strategy = context.getBean("jpaPersistenceStrategy", JPAPersistenceStrategy.class);
         } catch (BeansException e) {
             throw new RuntimeException("Error bootstrapping Weblogger; exception message: " + e.getMessage(), e);
         }
+
+        strategy.flush();
 
         LOG.info("Roller Weblogger business tier successfully bootstrapped");
         LOG.info("   Version: " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));
         LOG.info("   Revision: " + WebloggerConfig.getProperty("weblogger.revision", "Unknown"));
     }
+
+    public static void flush() throws WebloggerException {
+        strategy.flush();
+    }
+
+    public static void release() {
+        strategy.release();
+    }
+
 }

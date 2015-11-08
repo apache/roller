@@ -62,18 +62,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     }
 
     /**
-     * Initialize manager
-     */
-    public void initialize() {
-    }
-
-    /**
-     * Release resources; currently a no-op.
-     */
-    public void release() {
-    }
-
-    /**
      * {@inheritDoc}
      */
     public void moveMediaFiles(Collection<MediaFile> mediaFiles,
@@ -390,8 +378,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public void removeMediaFile(Weblog weblog, MediaFile mediaFile)
             throws WebloggerException {
-        FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                .getFileContentManager();
+        FileContentManager cmgr = WebloggerFactory.getWeblogger().getFileContentManager();
 
         this.strategy.remove(mediaFile);
 

@@ -28,6 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+
+import javax.annotation.PreDestroy;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
@@ -136,30 +138,6 @@ public class JPAPersistenceStrategy {
             em.getTransaction().commit();
         } catch (PersistenceException pe) {
             throw new WebloggerException(pe);
-        }
-    }
-    
-    /**
-     * Release database session, rolls back any uncommitted changes.
-     */
-    public void release() {
-        EntityManager em = null;
-        try {
-            em = getEntityManager(false);
-            if (isTransactionActive(em)) {
-                em.getTransaction().rollback();
-            }
-        } catch (Exception e) {
-            logger.error("error during releasing database session", e);
-        } finally {
-            if (em != null) {
-                try {
-                    em.close();
-                } catch (Exception e) {
-                    logger.debug("error during closing EntityManager", e);
-                }
-            }
-            threadLocalEntityManager.remove();
         }
     }
     
@@ -361,7 +339,34 @@ public class JPAPersistenceStrategy {
         return em.createNamedQuery(queryName);
     }
 
+    /**
+     * Release database session, rolls back any uncommitted changes.
+     */
+    public void release() {
+        EntityManager em = null;
+        try {
+            em = getEntityManager(false);
+            if (isTransactionActive(em)) {
+                em.getTransaction().rollback();
+            }
+        } catch (Exception e) {
+            logger.error("error during releasing database session", e);
+        } finally {
+            if (em != null) {
+                try {
+                    em.close();
+                } catch (Exception e) {
+                    logger.debug("error during closing EntityManager", e);
+                }
+            }
+            threadLocalEntityManager.remove();
+        }
+    }
+
+    @PreDestroy
     public void shutdown() {
+        logger.info("DB shutdown");
+        release();
         if (emf != null) {
             emf.close();
         }

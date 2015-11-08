@@ -269,7 +269,7 @@ public final class EntryEdit extends UIAction {
 
                 log.debug("Saving entry");
                 weblogEntryManager.saveWeblogEntry(weblogEntry);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // notify search of the new entry
                 if (weblogEntry.isPublished()) {

@@ -117,7 +117,7 @@ public class CategoryEdit extends UIAction {
                     getActionWeblog().addCategory(category);
                 }
                 wmgr.saveWeblogCategory(category);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // notify caches
                 CacheManager.invalidate(getActionWeblog());

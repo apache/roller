@@ -132,7 +132,7 @@ public class Members extends UIAction implements ParameterAware {
             
             if (removed > 0 || changed > 0) {
                 log.debug("Weblog permissions updated, flushing changes");                
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
             }
             
         } catch (Exception ex) {

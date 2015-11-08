@@ -147,12 +147,7 @@ public class RollerContext extends ContextLoaderListener
             log.info(buf.toString());
         } else {
             try {
-                // trigger bootstrapping process
                 WebloggerFactory.bootstrap();
-
-                // trigger initialization process
-                WebloggerFactory.getWeblogger().initialize();
-
             } catch (WebloggerException ex) {
                 log.fatal("Roller Weblogger initialization failed", ex);
             }
@@ -175,10 +170,9 @@ public class RollerContext extends ContextLoaderListener
     /** 
      * Responds to app-destroy event and triggers shutdown sequence.
      */
-    public void contextDestroyed(ServletContextEvent sce) {        
-        WebloggerFactory.getWeblogger().shutdown();        
-        // do we need a more generic mechanism for presentation layer shutdown?
-        CacheManager.shutdown();
+    public void contextDestroyed(ServletContextEvent sce) {
+        log.info("Shutting down");
+        WebloggerFactory.getContext().close();
     }
     
     

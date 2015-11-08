@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.PostConstruct;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -43,6 +44,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.OutgoingPingQueue;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.PingResult;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
@@ -152,6 +154,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     @Override
+    @PostConstruct
     public void initialize() throws WebloggerException {
         try {
             // Initialize common targets from the configuration
@@ -373,5 +376,4 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         }
     }
 
-    public void release() {}
 }

@@ -117,14 +117,14 @@ public class CategoryRemove extends UIAction {
                 if (getTargetCategoryId() != null) {
                     WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
                     wmgr.moveWeblogCategoryContents(getCategory(), target);
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
                 }
 
                 // notify cache
                 CacheManager.invalidate(getCategory());
 
                 wmgr.removeWeblogCategory(getCategory());
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
                 addMessage("categoryForm.removed", category.getName());
                 return SUCCESS;
             } catch(Exception ex) {

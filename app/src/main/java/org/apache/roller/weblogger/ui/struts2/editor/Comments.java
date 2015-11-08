@@ -417,7 +417,7 @@ public class Comments extends UIAction {
                 }
             }
 
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.flush();
 
             if (isGlobalCommentManagement()) {
                 // notify caches of changes, flush weblogs affected by changes
@@ -582,7 +582,7 @@ public class Comments extends UIAction {
                     // don't update the posttime when updating the comment
                     c.setPostTime(c.getPostTime());
                     wmgr.saveComment(c);
-                    roller.flush();
+                    WebloggerFactory.flush();
                     return getComment(id, p, response);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

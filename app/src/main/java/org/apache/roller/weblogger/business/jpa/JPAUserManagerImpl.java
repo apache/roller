@@ -53,9 +53,6 @@ public class JPAUserManagerImpl implements UserManager {
         this.strategy = strat;
     }
 
-    public void release() {}
-    
-    
     //--------------------------------------------------------------- user CRUD
  
     public void saveUser(User data) throws WebloggerException {

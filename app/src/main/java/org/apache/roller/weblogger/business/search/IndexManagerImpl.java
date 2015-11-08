@@ -53,6 +53,9 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 /**
  * Lucene implementation of IndexManager. This is the central entry point into
  * the Lucene searching API.
@@ -119,9 +122,8 @@ public class IndexManagerImpl implements IndexManager {
         indexConsistencyMarker = new File(test);
     }
 
-    /**
-     * @inheritDoc
-     */
+    @Override
+    @PostConstruct
     public void initialize() throws WebloggerException {
 
         // only initialize the index if search is enabled
@@ -384,10 +386,8 @@ public class IndexManagerImpl implements IndexManager {
         };
     }
 
-    public void release() {
-        // no-op
-    }
-
+    @Override
+    @PreDestroy
     public void shutdown() {
         if (useRAMIndex) {
             scheduleIndexOperation(getSaveIndexOperation());

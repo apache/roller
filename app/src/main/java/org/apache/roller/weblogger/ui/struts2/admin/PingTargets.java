@@ -106,7 +106,7 @@ public class PingTargets extends UIAction {
                 
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.savePingTarget(getPingTarget());
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
             } catch (Exception ex) {
                 log.error("Error saving ping target", ex);
                 addError("commonPingTargets.error.saving");
@@ -130,7 +130,7 @@ public class PingTargets extends UIAction {
                 
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.savePingTarget(getPingTarget());
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
             } catch (Exception ex) {
                 log.error("Error saving ping target", ex);
                 addError("commonPingTargets.error.saving");
@@ -167,7 +167,7 @@ public class PingTargets extends UIAction {
             try {
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.removePingTarget(getPingTarget());
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // remove deleted target from list
                 getPingTargets().remove(getPingTarget());

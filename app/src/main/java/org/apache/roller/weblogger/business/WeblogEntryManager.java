@@ -185,11 +185,6 @@ public interface WeblogEntryManager {
         throws WebloggerException;
     
     /**
-     * Release all resources held by manager.
-     */
-    void release();
-    
-    /**
      * Get list of TagStat. There's no offset/length params just a limit.
      * @param weblog       Weblog or null to get for all weblogs.
      * @param offset       0-based index into results

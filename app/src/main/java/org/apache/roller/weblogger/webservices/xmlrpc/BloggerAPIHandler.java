@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.webservices.xmlrpc;
 
 import java.sql.Timestamp;
@@ -104,7 +103,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
 
             // delete the entry
             weblogMgr.removeWeblogEntry(entry);
-            roller.flush();
+            WebloggerFactory.flush();
             
             
         } catch (Exception e) {
@@ -350,7 +349,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 
                 // save the entry
                 weblogMgr.saveWeblogEntry(entry);
-                roller.flush();
+                WebloggerFactory.flush();
                 
                 // notify cache
                 flushPageCache(entry.getWeblog());
@@ -428,7 +427,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             
             // save the entry
             weblogMgr.saveWeblogEntry(entry);
-            roller.flush();
+            WebloggerFactory.flush();
             
             // notify cache
             flushPageCache(entry.getWeblog());

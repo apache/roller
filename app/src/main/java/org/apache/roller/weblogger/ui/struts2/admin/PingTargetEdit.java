@@ -97,7 +97,7 @@ public class PingTargetEdit extends UIAction {
                 getBean().copyTo(pingTarget);
                 PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.savePingTarget(pingTarget);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 addMessage(isAdd() ? "pingTarget.created" : "pingTarget.updated",
                         pingTarget.getName());

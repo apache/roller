@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.io.File;
@@ -70,10 +69,6 @@ public class FileContentManagerImpl implements FileContentManager {
         }
 
         this.storageDir = inStorageDir.replace('/', File.separatorChar);
-
-    }
-
-    public void initialize() {
 
     }
 
@@ -182,9 +177,6 @@ public class FileContentManagerImpl implements FileContentManager {
             // rethrow as a runtime exception
             throw new RuntimeException(ex);
         }
-    }
-
-    public void release() {
     }
 
     /**

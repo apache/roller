@@ -96,7 +96,7 @@ public class Setup extends UIAction {
             aggregatedProp.setValue(aggregated.toString());
             mgr.saveProperty(aggregatedProp);
 
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.flush();
 
             addMessage("frontpageConfig.values.saved");
 

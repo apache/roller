@@ -140,7 +140,7 @@ public class MembersInvite extends UIAction {
             try {
                 umgr.grantPendingWeblogRole(user, getActionWeblog(),
                         WeblogRole.valueOf(getPermissionString()));
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 addMessage("inviteMember.userInvited");
 

@@ -98,7 +98,7 @@ public class TemplatesRemove extends UIAction {
                 setIds(Utilities.stringArrayToString(idsToDelete, ","));
 
                 // Flush for operation
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
             } catch (Exception ex) {
                 log.error("Error getting templates for weblog - "
@@ -182,7 +182,7 @@ public class TemplatesRemove extends UIAction {
                     // Save for changes
                     mgr.saveWeblog(weblog);
 
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
 
                     // notify caches
                     CacheManager.invalidate(getActionWeblog());

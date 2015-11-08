@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business;
 
 import java.util.Date;
@@ -198,12 +197,6 @@ public interface WeblogManager {
      */    
     long getWeblogCount() throws WebloggerException;
     
-    
-    /**
-     * Release any resources held by manager.
-     */
-    void release();
-
     /**
      * Get a HitCountData by weblog.
      *

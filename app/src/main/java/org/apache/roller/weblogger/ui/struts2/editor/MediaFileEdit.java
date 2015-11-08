@@ -109,7 +109,7 @@ public class MediaFileEdit extends UIAction {
         } finally {
             // flush
             try {
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
             } catch (WebloggerException e) {
                 // ignored
             }
@@ -206,7 +206,7 @@ public class MediaFileEdit extends UIAction {
                             addError(msg.getKey(), Arrays.asList(msg.getArgs()));
                         }
 
-                        WebloggerFactory.getWeblogger().flush();
+                        WebloggerFactory.flush();
                         // below should not be necessary as createMediaFile refreshes the directory's
                         // file listing but caching of directory's old file listing occurring somehow.
                         mediaFile.getDirectory().getMediaFiles().add(mediaFile);
@@ -238,7 +238,7 @@ public class MediaFileEdit extends UIAction {
                         manager.moveMediaFile(mediaFile, targetDirectory);
                     }
 
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
 
                     addMessage("mediaFile.update.success");
                     return SUCCESS;

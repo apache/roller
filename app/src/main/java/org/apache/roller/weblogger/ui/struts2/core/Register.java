@@ -206,7 +206,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 // save new user
                 mgr.addUser(ud);
 
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
 
                 // now send activation email if necessary
                 if (activationEnabled && ud.getActivationCode() != null) {
@@ -256,7 +256,7 @@ public class Register extends UIAction implements ServletRequestAware {
                     user.setEnabled(Boolean.TRUE);
                     user.setActivationCode(null);
                     mgr.saveUser(user);
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
                     
                     setActivationStatus("active");
                     

@@ -110,9 +110,4 @@ public interface FileContentManager {
             long size,
             RollerMessages messages);
 
-    /**
-     * Release all resources associated with Roller session.
-     */
-    void release();
-
 }

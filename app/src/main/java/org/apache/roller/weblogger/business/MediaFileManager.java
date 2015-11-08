@@ -39,16 +39,6 @@ public interface MediaFileManager {
     int MAX_HEIGHT = 120;
 
     /**
-     * Initialization; deal with upgrade migrations, etc.
-     */
-    void initialize();
-
-    /**
-     * Release all resources associated with Roller session.
-     */
-    void release();
-
-    /**
      * Create a media file
      */
     void createMediaFile(Weblog weblog, MediaFile mediaFile,

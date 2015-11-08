@@ -184,9 +184,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         return strategy.load(Planet.class, id);
     }        
     
-    public void release() {}
-
-    public void deleteEntries(Subscription sub) 
+    public void deleteEntries(Subscription sub)
         throws WebloggerException {
         for (Object entry : sub.getEntries()) {
             strategy.remove(entry);

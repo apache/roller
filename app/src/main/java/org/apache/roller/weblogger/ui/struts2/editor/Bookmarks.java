@@ -101,7 +101,7 @@ public class Bookmarks extends UIAction {
             }
 
             // flush changes
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.flush();
 
             // notify caches
             CacheManager.invalidate(getActionWeblog());

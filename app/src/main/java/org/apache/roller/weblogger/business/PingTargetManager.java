@@ -202,9 +202,4 @@ public interface PingTargetManager {
      */
     void initialize() throws WebloggerException;
 
-    /**
-     * Release all resources associated with Roller session.
-     */
-    void release();
-    
 }

@@ -162,7 +162,7 @@ public class ThemeEdit extends UIAction {
                     // save updated weblog and flush
                     weblog.setEditorTheme(WeblogTheme.CUSTOM);
                     WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
 
                     // make sure to flush the page cache so ppl can see the change
                     CacheManager.invalidate(weblog);
@@ -216,7 +216,7 @@ public class ThemeEdit extends UIAction {
                     // save updated weblog and flush
                     WebloggerFactory.getWeblogger().getWeblogManager()
                             .saveWeblog(weblog);
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
 
                     // make sure to flush the page cache so ppl can see the change
                     CacheManager.invalidate(weblog);

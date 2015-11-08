@@ -117,7 +117,7 @@ public class Profile extends UIAction {
                 // save the updated profile
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 mgr.saveUser(existingUser);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
                 addMessage("generic.changes.saved");
                 return SUCCESS;
             } catch (WebloggerException ex) {

@@ -690,11 +690,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public void release() {}
-    
-    /**
-     * @inheritDoc
-     */
     public void applyCommentDefaultsToEntries(Weblog weblog)
     throws WebloggerException {
         if (LOG.isDebugEnabled()) {

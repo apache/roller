@@ -95,7 +95,7 @@ public class Maintenance extends UIAction {
 
             WebloggerFactory.getWeblogger().getWeblogManager()
                     .saveWeblog(weblog);
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.flush();
 
             // also notify cache manager
             CacheManager.invalidate(weblog);
@@ -128,7 +128,7 @@ public class Maintenance extends UIAction {
 
             WebloggerFactory.getWeblogger().getWeblogManager()
                     .saveWeblog(weblog);
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.flush();
 
             // also notify cache manager
             CacheManager.invalidate(weblog);

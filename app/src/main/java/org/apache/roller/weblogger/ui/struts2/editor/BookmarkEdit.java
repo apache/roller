@@ -107,7 +107,7 @@ public class BookmarkEdit extends UIAction {
                     getActionWeblog().addBookmark(bookmark);
                 }
                 wmgr.saveBookmark(bookmark);
-                WebloggerFactory.getWeblogger().flush();
+                WebloggerFactory.flush();
                 CacheManager.invalidate(bookmark);
                 CacheManager.invalidate(bookmark.getWeblog());
                 addMessage(isAdd() ? "bookmarkForm.created" : "bookmarkForm.updated",

@@ -123,7 +123,7 @@ public class MediaFileView extends UIAction {
                     MediaFileDirectory dir = manager.createMediaFileDirectory(
                             getActionWeblog(), this.newDirectoryName);
                     // flush changes
-                    WebloggerFactory.getWeblogger().flush();
+                    WebloggerFactory.flush();
                     addMessage("mediaFile.directoryCreate.success",
                             this.newDirectoryName);
 
@@ -243,8 +243,9 @@ public class MediaFileView extends UIAction {
                     .saveWeblog(this.getActionWeblog());
 
             // flush changes
-            WebloggerFactory.getWeblogger().flush();
-            WebloggerFactory.getWeblogger().release();
+            WebloggerFactory.flush();
+            // for some reason need to release to force a refresh of media directory.
+            WebloggerFactory.release();
             addMessage("mediaFile.delete.success");
 
         } catch (WebloggerException e) {
@@ -256,7 +257,6 @@ public class MediaFileView extends UIAction {
 
     /**
      * Delete selected media file
-     * 
      */
     public String delete() {
         try {
@@ -266,8 +266,7 @@ public class MediaFileView extends UIAction {
             MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
             manager.removeMediaFile(getActionWeblog(), mediaFile);
             // flush changes
-            WebloggerFactory.getWeblogger().flush();
-            WebloggerFactory.getWeblogger().release();
+            WebloggerFactory.flush();
             addMessage("mediaFile.delete.success");
         } catch (WebloggerException e) {
             log.error("Error deleting media file", e);
@@ -295,8 +294,7 @@ public class MediaFileView extends UIAction {
                         .saveWeblog(this.getActionWeblog());
 
                 // flush changes
-                WebloggerFactory.getWeblogger().flush();
-                WebloggerFactory.getWeblogger().release();
+                WebloggerFactory.flush();
                 addMessage("mediaFile.deleteFolder.success");
 
                 // notify caches
@@ -341,8 +339,7 @@ public class MediaFileView extends UIAction {
             }
 
             // flush changes
-            WebloggerFactory.getWeblogger().flush();
-            WebloggerFactory.getWeblogger().release();
+            WebloggerFactory.flush();
             if (movedFiles > 0) {
                 addMessage("mediaFile.move.success");
             }

@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.business.plugins;
 
 import java.util.List;
@@ -25,7 +27,6 @@ import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-
 
 /**
  * Plugin management for business layer and more generally applied plugins.
@@ -78,11 +79,4 @@ public interface PluginManager {
      * @return String The transformed comment text.
      */
     String applyCommentPlugins(WeblogEntryComment comment, String text);
-    
-    
-    /**
-     * Release all resources associated with Roller session.
-     */
-    void release();
-    
 }

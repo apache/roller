@@ -33,6 +33,8 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.config.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
+import javax.annotation.PostConstruct;
+
 public class JPAPropertiesManagerImpl implements PropertiesManager {
     
     /** The logger instance for this class. */
@@ -50,10 +52,9 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         this.strategy = strategy;
     }
     
-    
-    /**
-     * @inheritDoc
-     */
+
+    @Override
+    @PostConstruct
     public void initialize() throws WebloggerException {
         
         Map<String, RuntimeConfigProperty> props;
@@ -174,8 +175,4 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
         return props;
     }
-
-
-    public void release() {}
-
 }
