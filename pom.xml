@@ -18,13 +18,12 @@
         libraries including Struts2, Velocity, ROME and EclipseLink.
     </description>
     <url>http://roller.apache.org</url>
-    <inceptionYear>2002</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/roller/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/roller/trunk</developerConnection>
-        <url>http://svn.apache.org/viewvc/roller/trunk</url>
+        <connection>scm:git:https://github.com/gmazza/tightblog.git</connection>
     </scm>
+
+    <inceptionYear>2002</inceptionYear>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

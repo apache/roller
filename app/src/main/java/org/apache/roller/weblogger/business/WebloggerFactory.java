@@ -105,7 +105,7 @@ public final class WebloggerFactory {
         }
 
         LOG.info("Roller Weblogger business tier successfully bootstrapped");
-        LOG.info("   Version: " + webloggerInstance.getVersion());
-        LOG.info("   Revision: " + webloggerInstance.getRevision());
+        LOG.info("   Version: " + WebloggerConfig.getProperty("weblogger.version", "Unknown"));
+        LOG.info("   Revision: " + WebloggerConfig.getProperty("weblogger.revision", "Unknown"));
     }
 }

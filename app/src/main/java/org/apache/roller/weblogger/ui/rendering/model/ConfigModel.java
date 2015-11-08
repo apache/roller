@@ -14,13 +14,16 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 /**
@@ -56,7 +59,7 @@ public class ConfigModel implements Model {
     public String getSiteEmail() {
         return getProperty("site.adminemail");
     }
-    
+
     public boolean getRegistrationEnabled() {
         return getBooleanProperty("users.registration.enabled");
     }
@@ -98,7 +101,7 @@ public class ConfigModel implements Model {
     public boolean getCommentEmailNotify() {
         return getBooleanProperty("users.comments.emailnotify");
     }
-    
+
     public boolean getTrackbacksEnabled() {
         return getBooleanProperty("users.trackbacks.enabled");
     }
@@ -106,19 +109,13 @@ public class ConfigModel implements Model {
     
     /** Get Roller version string */
     public String getRollerVersion() {
-        return WebloggerFactory.getWeblogger().getVersion();
+        return WebloggerConfig.getProperty("weblogger.version", "Unknown");
     }
     
     
     /** Get timestamp of Roller build */
     public String getRollerBuildTimestamp() {
-        return WebloggerFactory.getWeblogger().getBuildTime();
-    }
-    
-    
-    /** Get username who created Roller build */
-    public String getRollerBuildUser() {
-        return WebloggerFactory.getWeblogger().getBuildUser();
+        return WebloggerConfig.getProperty("weblogger.buildTime", "Unknown");
     }
 
     public String getDefaultAnalyticsTrackingCode() {

@@ -18,17 +18,13 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.config;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,11 +48,6 @@ public final class WebloggerConfig {
     private static Properties config;
 
     private static Log log = LogFactory.getLog(WebloggerConfig.class);
-
-    // The pattern for a system property.  Matches ${property.name}, with the interior matched reluctantly.
-    private static final Pattern EXPANSION_PATTERN = Pattern.compile("(\\$\\{([^}]+?)\\})",
-            java.util.regex.Pattern.MULTILINE);
-
 
     /*
      * Static block run once at class loading
@@ -119,22 +110,6 @@ public final class WebloggerConfig {
 
             } 
 
-            // Now expand system properties for properties in the config.expandedProperties list,
-            // replacing them by their expanded values.
-            String expandedPropertiesDef = (String) config.get("config.expandedProperties");
-            if (expandedPropertiesDef != null) {
-                String[] expandedProperties = expandedPropertiesDef.split(",");
-                for (int i = 0; i < expandedProperties.length; i++) {
-                    String propName = expandedProperties[i].trim();
-                    String initialValue = (String) config.get(propName);
-                    if (initialValue != null) {
-                        String expandedValue = WebloggerConfig.expandProperties(initialValue,
-                                System.getProperties());
-                        config.put(propName,expandedValue);
-                    }
-                }
-            }
-            
             // initialize logging subsystem via WebloggerConfig
             PropertyConfigurator.configure(WebloggerConfig.getPropertiesStartingWith("log4j."));
             
@@ -279,47 +254,6 @@ public final class WebloggerConfig {
      */
     public static AuthMethod getAuthMethod() {
         return AuthMethod.getAuthMethod(getProperty("authentication.method"));
-    }
-
-    /**
-     * Expand property expressions in the input.  Expands property expressions of the form <code>${propertyname}</code>
-     * in the input, replacing each such expression with the value associated to the respective key
-     * <code>propertyname</code> in the supplied map.  If for a given expression, the property is undefined (has null
-     * value) in the map supplied, that expression is left unexpanded in the resulting string.
-     * <p/>
-     * Note that expansion is not recursive.  If the value of one property contains another expression, the expression
-     * appearing in the value will not be expanded further.
-     *
-     * @param input the input string.  This may be null, in which case null is returned.
-     * @param props the map of property values to use for expansion.  This map should have <code>String</code> keys and
-     *              <code>String</code> values.  Any object of class {@link java.util.Properties} works here, as will
-     *              other implementations of such maps.
-     * @return the result of replacing property expressions with the values of the corresponding properties from the
-     *         supplied property map, null if the input string is null.
-     */
-    public static String expandProperties(String input, Map props) {
-
-        if (input == null) {
-            return null;
-        }
-
-        Matcher matcher = EXPANSION_PATTERN.matcher(input);
-
-        StringBuffer expanded = new StringBuffer(input.length());
-        while (matcher.find()) {
-            String propName = matcher.group(2);
-            String value = (String) props.get(propName);
-            // if no value is found, use a value equal to the original expression
-            if (value == null) {
-                value = matcher.group(0);
-            }
-            // Fake a literal replacement since Matcher.quoteReplacement() is not present in 1.4.
-            matcher.appendReplacement(expanded, "");
-            expanded.append(value);
-        }
-        matcher.appendTail(expanded);
-
-        return expanded.toString();
     }
 
 }

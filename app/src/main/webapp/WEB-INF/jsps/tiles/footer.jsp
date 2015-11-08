@@ -19,9 +19,9 @@
 
 
 <% request.setAttribute("version",
-      org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getVersion()); %>
+      org.apache.roller.weblogger.config.WebloggerConfig.getProperty("weblogger.version", "Unknown")); %>
 <% request.setAttribute("revision",
-      org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getRevision()); %>
+      org.apache.roller.weblogger.config.WebloggerConfig.getProperty("weblogger.revision", "Unknown")); %>
 
 <img src='<c:url value="/images/tinyfeather.png"/>' alt="ASF logo" style="vertical-align:middle" />
 <s:text name="footer.productName" >
