@@ -21,17 +21,16 @@
 
 package org.apache.roller.weblogger.business.startup;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -52,15 +51,7 @@ public class DatabaseInstaller {
     
     public DatabaseInstaller(DatabaseProvider dbProvider) {
         db = dbProvider;
-
-        Properties props = new Properties();
-        try {
-            props.load(getClass().getResourceAsStream("/roller-version.properties"));
-        } catch (IOException e) {
-            log.error("roller-version.properties not found", e);
-        }
-        
-        version = props.getProperty("ro.version", "UNKNOWN");
+        version = WebloggerConfig.getProperty("weblogger.version", "UNKNOWN");
     }
     
     

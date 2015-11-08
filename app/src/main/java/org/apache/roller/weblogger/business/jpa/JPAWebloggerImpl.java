@@ -20,6 +20,8 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.business.FeedProcessor;
 import org.apache.roller.weblogger.WebloggerException;
@@ -27,7 +29,7 @@ import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerImpl;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -37,15 +39,35 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
+
 /**
  * A JPA specific implementation of the Weblogger business layer.
  */
-public class JPAWebloggerImpl extends WebloggerImpl {
+public class JPAWebloggerImpl implements Weblogger {
+
+    private static Log log = LogFactory.getLog(JPAWebloggerImpl.class);
+
+    // managers
+    private final IndexManager         indexManager;
+    private final MediaFileManager     mediaFileManager;
+    private final FileContentManager   fileContentManager;
+    private final PingTargetManager    pingTargetManager;
+    private final PluginManager        pluginManager;
+    private final PropertiesManager    propertiesManager;
+    private final ThemeManager         themeManager;
+    private final ThreadManager        threadManager;
+    private final UserManager          userManager;
+    private final WeblogManager        weblogManager;
+    private final WeblogEntryManager   weblogEntryManager;
+    private final FeedProcessor feedFetcher;
+    private final PlanetManager        planetManager;
 
     // a persistence utility class
     private final JPAPersistenceStrategy strategy;
-    
-    
+
+    // url strategy
+    private final URLStrategy          urlStrategy;
+
     /**
      * Single constructor.
      * @throws org.apache.roller.weblogger.WebloggerException on any error
@@ -66,46 +88,177 @@ public class JPAWebloggerImpl extends WebloggerImpl {
 		FeedProcessor feedFetcher,
         PlanetManager        planetManager,
         URLStrategy          urlStrategy) throws WebloggerException {
-        
-        super(
-            indexManager,
-            mediaFileManager,
-            fileContentManager,
-            pingTargetManager,
-            pluginManager,
-            propertiesManager,
-            themeManager,
-            threadManager,
-            userManager,
-            weblogManager,
-            weblogEntryManager,
-            feedFetcher,
-            planetManager,
-            urlStrategy);
-        
-        this.strategy = strategy;
+
+        this.indexManager        = indexManager;
+        this.mediaFileManager    = mediaFileManager;
+        this.fileContentManager  = fileContentManager;
+        this.pingTargetManager   = pingTargetManager;
+        this.pluginManager       = pluginManager;
+        this.propertiesManager   = propertiesManager;
+        this.themeManager        = themeManager;
+        this.threadManager       = threadManager;
+        this.userManager         = userManager;
+        this.weblogManager       = weblogManager;
+        this.weblogEntryManager  = weblogEntryManager;
+        this.urlStrategy         = urlStrategy;
+        this.feedFetcher         = feedFetcher;
+        this.planetManager       = planetManager;
+        this.strategy            = strategy;
     }
-    
-    
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getThreadManager()
+     */
+    public ThreadManager getThreadManager() {
+        return threadManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getIndexManager()
+     */
+    public IndexManager getIndexManager() {
+        return indexManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getThemeManager()
+     */
+    public ThemeManager getThemeManager() {
+        return themeManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getUserManager()
+     */
+    public UserManager getUserManager() {
+        return userManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getMediaFileManager()
+     */
+    public MediaFileManager getMediaFileManager() {
+        return mediaFileManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getFileContentManager()
+     */
+    public FileContentManager getFileContentManager() {
+        return fileContentManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getWeblogEntryManager()
+     */
+    public WeblogEntryManager getWeblogEntryManager() {
+        return weblogEntryManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getWeblogManager()
+     */
+    public WeblogManager getWeblogManager() {
+        return weblogManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getPropertiesManager()
+     */
+    public PropertiesManager getPropertiesManager() {
+        return propertiesManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
+     */
+    public PingTargetManager getPingTargetManager() {
+        return pingTargetManager;
+    }
+
+    /**
+     * @see org.apache.roller.weblogger.business.Weblogger#getPluginManager()
+     */
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public URLStrategy getUrlStrategy() {
+        return urlStrategy;
+    }
+
+    public FeedProcessor getFeedFetcher() {
+        return feedFetcher;
+    }
+
+    public PlanetManager getPlanetManager() {
+        return planetManager;
+    }
+
     public void flush() throws WebloggerException {
         this.strategy.flush();
     }
 
-    
-    public void release() {
-        super.release();
-        // tell JPA to close down
-        this.strategy.release();
+    /**
+     * @inheritDoc
+     */
+    public void initialize() throws WebloggerException {
+
+        log.info("Initializing Roller Weblogger business tier");
+
+        getPropertiesManager().initialize();
+        getThemeManager().initialize();
+        getThreadManager().initialize();
+        getIndexManager().initialize();
+        getMediaFileManager().initialize();
+        getPingTargetManager().initialize();
+
+        // we always need to do a flush after initialization because it's
+        // possible that some changes need to be persisted
+        try {
+            flush();
+        } catch(WebloggerException ex) {
+            throw new WebloggerException("Error flushing after initialization", ex);
+        }
+
+        log.info("Roller Weblogger business tier successfully initialized");
     }
 
-    
+    public void release() {
+        try {
+            mediaFileManager.release();
+            fileContentManager.release();
+            pingTargetManager.release();
+            pluginManager.release();
+            threadManager.release();
+            userManager.release();
+            weblogManager.release();
+            // tell JPA to close down
+            strategy.release();
+        } catch(Exception e) {
+            log.error("Error calling Roller.release()", e);
+        }
+    }
+
     public void shutdown() {
         // do our own shutdown first
         this.release();
 
         // then let parent do its thing
-        super.shutdown();
-        this.strategy.shutdown();
+        try {
+            if (indexManager != null) {
+                indexManager.shutdown();
+            }
+            if (threadManager != null) {
+                threadManager.shutdown();
+            }
+            this.strategy.shutdown();
+        } catch(Exception e) {
+            log.error("Error calling Roller.shutdown()", e);
+        }
     }
 
 }

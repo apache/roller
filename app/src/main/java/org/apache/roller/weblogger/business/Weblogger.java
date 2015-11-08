@@ -25,62 +25,50 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
-
 /**
- * 
  * The main entry point interface of the Weblogger business tier.
  */
 public interface Weblogger {
 
     /**
-     * 
      * Get UserManager associated with this Weblogger instance.
      */
     UserManager getUserManager();
     
     /**
-     * 
      * Get WeblogManager associated with this Weblogger instance.
      */
     WeblogManager getWeblogManager();
     
     /**
-     * 
      * Get WeblogManager associated with this Weblogger instance.
      */
     WeblogEntryManager getWeblogEntryManager();
-    
-    
+
     /**
      * Get the PingTargetManager associated with this Weblogger instance.
      */
     PingTargetManager getPingTargetManager();
     
-    
     /**
-     * 
      * Get PropertiesManager associated with this Weblogger instance.
      */
     PropertiesManager getPropertiesManager();
-    
     
     /**
      * Get ThreadManager associated with this Weblogger instance.
      */
     ThreadManager getThreadManager();
     
-    
     /**
      * Get IndexManager associated with this Weblogger instance.
      */
     IndexManager getIndexManager();
     
-    
     /**
      * Get ThemeManager associated with this Weblogger instance.
      */
     ThemeManager getThemeManager();
-    
     
     /**
      * Get PluginManager associated with this Weblogger instance.
@@ -107,45 +95,21 @@ public interface Weblogger {
      */
     void flush() throws WebloggerException;
     
-    
     /**
      * Release all resources associated with Weblogger session.
      */
     void release();
-    
     
     /**
      * Initialize any resources necessary for this instance of Weblogger.
      */
     void initialize() throws WebloggerException;
     
-    
     /**
      * Release all resources necessary for this instance of Weblogger.
      */
     void shutdown();
     
-    
-    /**
-     * Weblogger version
-     */
-    String getVersion();
-    
-    /**
-     * Weblogger source code management revision
-     */
-    String getRevision();
-    
-    /**
-     * Weblogger build time
-     */
-    String getBuildTime();
-        
-    /**
-     * Get username that built Weblogger
-     */
-    String getBuildUser();
-
 	FeedProcessor getFeedFetcher();
 
 	PlanetManager getPlanetManager();

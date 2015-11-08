@@ -558,7 +558,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <doUpdate>false</doUpdate>
+                    <shortRevisionLength>7</shortRevisionLength>
                     <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
                 </configuration>
             </plugin>
@@ -585,20 +585,9 @@
         <resources>
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>org/**</include>
-                </includes>
-                <excludes>
-                    <exclude>**/sql/**</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <!-- ensure version gets substitution -->
-                <directory>${project.basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>roller-version.properties</include>
+                    <include>org/apache/roller/weblogger/config/roller.properties</include>
                 </includes>
             </resource>
         </resources>
