@@ -150,7 +150,7 @@ public class FeedProcessorImplTest extends TestCase {
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
 
         // update the subscription
-        FeedProcessor updater = new FeedProcessorImpl();
+        FeedProcessor updater = WebloggerFactory.getWeblogger().getFeedFetcher();
         Set<Subscription> subscriptionSet = new HashSet<>();
         subscriptionSet.add(sub);
         updater.updateSubscriptions(subscriptionSet);

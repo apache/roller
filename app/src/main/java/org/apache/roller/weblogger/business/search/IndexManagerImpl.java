@@ -65,7 +65,7 @@ public class IndexManagerImpl implements IndexManager {
     // =============================================
 
     private IndexReader reader;
-    private final WeblogEntryManager weblogEntryManager;
+    private WeblogEntryManager weblogEntryManager;
     private final ThreadManager threadManager;
 
     private final int MAX_TOKEN_COUNT = 100;
@@ -99,8 +99,7 @@ public class IndexManagerImpl implements IndexManager {
      * errors. The preferred way of getting an index is through the
      * RollerContext.
      */
-    protected IndexManagerImpl(WeblogEntryManager wem, ThreadManager tm) {
-        this.weblogEntryManager = wem;
+    protected IndexManagerImpl(ThreadManager tm) {
         this.threadManager = tm;
 
         // check config to see if the internal search is enabled
@@ -120,6 +119,10 @@ public class IndexManagerImpl implements IndexManager {
 
         String test = indexDir + File.separator + ".index-inconsistent";
         indexConsistencyMarker = new File(test);
+    }
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
     }
 
     @Override

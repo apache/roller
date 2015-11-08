@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
@@ -51,13 +50,16 @@ import java.util.Set;
 public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     private final JPAPersistenceStrategy strategy;
+    private final FileContentManager fileContentManager;
+
     private static Log log = LogFactory.getFactory().getInstance(
             JPAMediaFileManagerImpl.class);
 
     /**
      * Creates a new instance of MediaFileManagerImpl
      */
-    protected JPAMediaFileManagerImpl(JPAPersistenceStrategy persistenceStrategy) {
+    protected JPAMediaFileManagerImpl(FileContentManager fcm, JPAPersistenceStrategy persistenceStrategy) {
+        this.fileContentManager = fcm;
         this.strategy = persistenceStrategy;
     }
 
@@ -148,9 +150,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             RollerMessages errors) throws WebloggerException {
 
         try {
-            FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                    .getFileContentManager();
-            if (!cmgr.canSave(weblog, mediaFile.getName(),
+            if (!fileContentManager.canSave(weblog, mediaFile.getName(),
                     mediaFile.getContentType(), mediaFile.getLength(), errors)) {
                 return;
             }
@@ -160,7 +160,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             strategy.flush();
             strategy.refresh(mediaFile.getDirectory());
 
-            cmgr.saveFileContent(weblog, mediaFile.getId(),
+            fileContentManager.saveFileContent(weblog, mediaFile.getId(),
                     mediaFile.getInputStream());
 
             if (mediaFile.isImageFile()) {
@@ -173,9 +173,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     private void updateThumbnail(MediaFile mediaFile) {
         try {
-            FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                    .getFileContentManager();
-            FileContent fc = cmgr.getFileContent(mediaFile.getDirectory().getWeblog(),
+            FileContent fc = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
                     mediaFile.getId());
             BufferedImage img;
 
@@ -201,7 +199,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(tmp, "png", baos);
 
-            cmgr.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId()
+            fileContentManager.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId()
                     + "_sm", new ByteArrayInputStream(baos.toByteArray()));
 
             strategy.flush();
@@ -243,14 +241,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
             updateWeblogLastModifiedDate(weblog);
 
-            FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                    .getFileContentManager();
             RollerMessages msgs = new RollerMessages();
-            if (!cmgr.canSave(weblog, mediaFile.getName(),
+            if (!fileContentManager.canSave(weblog, mediaFile.getName(),
                     mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
                 throw new IOException(msgs.toString());
             }
-            cmgr.saveFileContent(weblog, mediaFile.getId(), is);
+            fileContentManager.saveFileContent(weblog, mediaFile.getId(), is);
 
             if (mediaFile.isImageFile()) {
                 updateThumbnail(mediaFile);
@@ -276,15 +272,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         try {
             MediaFile mediaFile = this.strategy.load(MediaFile.class, id);
             if (includeContent) {
-                FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                        .getFileContentManager();
-
-                FileContent content = cmgr.getFileContent(mediaFile.getDirectory()
+                FileContent content = fileContentManager.getFileContent(mediaFile.getDirectory()
                         .getWeblog(), id);
                 mediaFile.setContent(content);
 
                 try {
-                    FileContent thumbnail = cmgr.getFileContent(mediaFile
+                    FileContent thumbnail = fileContentManager.getFileContent(mediaFile
                             .getDirectory().getWeblog(), id + "_sm");
                     mediaFile.setThumbnailContent(thumbnail);
 
@@ -378,7 +371,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public void removeMediaFile(Weblog weblog, MediaFile mediaFile)
             throws WebloggerException {
-        FileContentManager cmgr = WebloggerFactory.getWeblogger().getFileContentManager();
 
         this.strategy.remove(mediaFile);
 
@@ -386,9 +378,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         strategy.refresh(mediaFile.getDirectory());
 
         try {
-            cmgr.deleteFile(weblog, mediaFile.getId());
+            fileContentManager.deleteFile(weblog, mediaFile.getId());
             // Now thumbnail
-            cmgr.deleteFile(weblog, mediaFile.getId() + "_sm");
+            fileContentManager.deleteFile(weblog, mediaFile.getId() + "_sm");
         } catch (Exception e) {
             log.debug("File to be deleted already unavailable in the file store");
         }
@@ -403,14 +395,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         if (dir == null) {
             return;
         }
-        FileContentManager cmgr = WebloggerFactory.getWeblogger()
-                .getFileContentManager();
         Set<MediaFile> files = dir.getMediaFiles();
         for (MediaFile mf : files) {
             try {
-                cmgr.deleteFile(dir.getWeblog(), mf.getId());
+                fileContentManager.deleteFile(dir.getWeblog(), mf.getId());
                 // Now thumbnail
-                cmgr.deleteFile(dir.getWeblog(), mf.getId() + "_sm");
+                fileContentManager.deleteFile(dir.getWeblog(), mf.getId() + "_sm");
             } catch (Exception e) {
                 log.debug("File to be deleted already unavailable in the file store");
             }

@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.apache.roller.weblogger.webservices.xmlrpc;
+package org.apache.roller.weblogger.webservices;
 
 import java.sql.Timestamp;
 import java.util.Date;

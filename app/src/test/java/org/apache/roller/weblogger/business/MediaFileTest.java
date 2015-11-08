@@ -55,8 +55,6 @@ public class MediaFileTest extends TestCase {
 
     public void setUp() throws Exception {
         TestUtils.setupWeblogger();
-       // assertEquals(0L, WebloggerFactory.getWeblogger().getWeblogManager()
-       //         .getWeblogCount());
     }
 
     public void tearDown() throws Exception {

@@ -156,13 +156,13 @@ public class ThemeManagerImpl implements ThemeManager {
 		// if theme is custom or null then return a WeblogCustomTheme
 		if (weblog.getEditorTheme() == null
 				|| WeblogTheme.CUSTOM.equals(weblog.getEditorTheme())) {
-			weblogTheme = new WeblogCustomTheme(weblog);
+			weblogTheme = new WeblogCustomTheme(weblogManager, weblog);
 
 			// otherwise we are returning a WeblogSharedTheme
 		} else {
 			SharedTheme staticTheme = this.themes.get(weblog.getEditorTheme());
 			if (staticTheme != null) {
-				weblogTheme = new WeblogSharedTheme(weblog, staticTheme);
+				weblogTheme = new WeblogSharedTheme(weblogManager, weblog, staticTheme);
 			} else {
 				log.warn("Unable to lookup theme " + weblog.getEditorTheme());
 			}

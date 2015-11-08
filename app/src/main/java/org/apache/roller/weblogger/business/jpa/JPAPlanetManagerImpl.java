@@ -56,13 +56,16 @@ public class JPAPlanetManagerImpl implements PlanetManager {
 
     private final WeblogManager weblogManager;
     private final URLStrategy urlStrategy;
+    private final FeedProcessor feedProcessor;
     private final JPAPersistenceStrategy strategy;
 
-    protected JPAPlanetManagerImpl(WeblogManager weblogManager, URLStrategy urlStrategy, JPAPersistenceStrategy strategy) {
+    protected JPAPlanetManagerImpl(WeblogManager weblogManager, URLStrategy urlStrategy, FeedProcessor feedProcessor,
+                                   JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Planet Manager");
         
         this.weblogManager = weblogManager;
         this.urlStrategy = urlStrategy;
+        this.feedProcessor = feedProcessor;
         this.strategy = strategy;
     }
     
@@ -279,8 +282,7 @@ public class JPAPlanetManagerImpl implements PlanetManager {
         log.debug("--- BEGIN --- Updating all subscriptions");
         long startTime = System.currentTimeMillis();
 
-        FeedProcessor updater = new FeedProcessorImpl();
-        updater.updateSubscriptions(getSubscriptions());
+        feedProcessor.updateSubscriptions(getSubscriptions());
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Updated subscriptions in "
                 + ((endTime-startTime) / DateUtils.MILLIS_PER_SECOND) + " seconds");
