@@ -21,12 +21,9 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
-import java.util.Collections;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.User;
-
 
 /**
  * Bean used by CreateUser action.
@@ -45,8 +42,7 @@ public class CreateUserBean {
     private Boolean enabled = Boolean.TRUE;
     private String activationCode = null;
     private boolean administrator = false;
-    
-    
+
     public String getId() {
         return id;
     }

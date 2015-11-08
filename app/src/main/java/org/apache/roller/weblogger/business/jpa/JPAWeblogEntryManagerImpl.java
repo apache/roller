@@ -30,7 +30,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.PingTargetManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.TagStat;
@@ -69,7 +68,12 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
     private final PingTargetManager pingTargetManager;
     private final JPAPersistenceStrategy strategy;
-    
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = new HashMap<>();
 
@@ -173,8 +177,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             int maxEntries, boolean next)
             throws WebloggerException {
 
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
 		if (current == null) {
 			LOG.debug("current WeblogEntry cannot be null");
 			return Collections.emptyList();
@@ -206,7 +208,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         if (catName != null) {
-            category = mgr.getWeblogCategoryByName(current.getWeblog(), catName);
+            category = weblogManager.getWeblogCategoryByName(current.getWeblog(), catName);
             if (category != null) {
                 params.add(size++, category);
                 whereClause.append(" AND e.category = ?").append(size);
@@ -234,11 +236,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc) throws WebloggerException {
 
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
         WeblogCategory cat = null;
         if (StringUtils.isNotEmpty(wesc.getCatName()) && wesc.getWeblog() != null) {
-            cat = mgr.getWeblogCategoryByName(wesc.getWeblog(), wesc.getCatName());
+            cat = weblogManager.getWeblogCategoryByName(wesc.getWeblog(), wesc.getCatName());
         }
 
         List<Object> params = new ArrayList<>();

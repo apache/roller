@@ -46,11 +46,12 @@
     </beans:bean>
 
     <beans:bean id="indexManager" class="org.apache.roller.weblogger.business.search.IndexManagerImpl">
-        <beans:constructor-arg ref="weblogEntryManager"/>
         <beans:constructor-arg ref="threadManager"/>
+        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
     </beans:bean>
 
     <beans:bean id="mediaFileManager" class="org.apache.roller.weblogger.business.jpa.JPAMediaFileManagerImpl">
+        <beans:constructor-arg ref="fileContentManager"/>
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 
@@ -88,13 +89,21 @@
     <beans:bean id="weblogEntryManager" class="org.apache.roller.weblogger.business.jpa.JPAWeblogEntryManagerImpl">
         <beans:constructor-arg ref="pingTargetManager"/>
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
+        <beans:property name="weblogManager" ref="weblogManager"/>
     </beans:bean>
 
-    <beans:bean id="feedFetcher" class="org.apache.roller.weblogger.business.FeedProcessorImpl"/>
+    <beans:bean id="feedFetcher" class="org.apache.roller.weblogger.business.FeedProcessorImpl">
+        <beans:property name="weblogEntryManager" ref="weblogEntryManager"/>
+        <beans:property name="weblogManager" ref="weblogManager"/>
+        <beans:property name="urlStrategy" ref="urlStrategy"/>
+        <beans:property name="pluginManager" ref="pluginManager"/>
+        <beans:property name="planetManager" ref="planetManager"/>
+    </beans:bean>
 
     <beans:bean id="planetManager" class="org.apache.roller.weblogger.business.jpa.JPAPlanetManagerImpl">
         <beans:constructor-arg ref="weblogManager"/>
         <beans:constructor-arg ref="urlStrategy"/>
+        <beans:constructor-arg ref="feedFetcher"/>
         <beans:constructor-arg ref="jpaPersistenceStrategy"/>
     </beans:bean>
 

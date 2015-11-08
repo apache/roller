@@ -19,7 +19,7 @@
  * are also under Apache License.
  */
 
-package org.apache.roller.weblogger.webservices.xmlrpc;
+package org.apache.roller.weblogger.webservices;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;

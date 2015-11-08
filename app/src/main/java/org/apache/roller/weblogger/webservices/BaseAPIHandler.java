@@ -18,7 +18,7 @@
 /*
  * Created on Apr 11, 2003
  */
-package org.apache.roller.weblogger.webservices.xmlrpc;
+package org.apache.roller.weblogger.webservices;
 
 import java.io.Serializable;
 

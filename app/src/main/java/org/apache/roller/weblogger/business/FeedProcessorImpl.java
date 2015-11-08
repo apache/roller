@@ -60,11 +60,36 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 
 public class FeedProcessorImpl implements FeedProcessor {
-    
+
+    private WeblogManager weblogManager;
+    private WeblogEntryManager weblogEntryManager;
+    private PluginManager pluginManager;
+    private PlanetManager planetManager;
+    private URLStrategy urlStrategy;
     private static Log log = LogFactory.getLog(FeedProcessorImpl.class);
     
     public FeedProcessorImpl() {
         // no-op
+    }
+
+    public void setPlanetManager(PlanetManager planetManager) {
+        this.planetManager = planetManager;
+    }
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
     }
 
     /**
@@ -195,7 +220,7 @@ public class FeedProcessorImpl implements FeedProcessor {
         // extract blog handle from our special feed url
         String weblogHandle = null;
         String[] items = feedURL.split(":", 2);
-        if(items != null && items.length > 1) {
+        if (items.length > 1) {
             weblogHandle = items[1];
         }
         
@@ -203,16 +228,14 @@ public class FeedProcessorImpl implements FeedProcessor {
         
         Weblog localWeblog;
         try {
-            localWeblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getWeblogByHandle(weblogHandle);
+            localWeblog = weblogManager.getWeblogByHandle(weblogHandle);
             if (localWeblog == null) {
-                throw new WebloggerException("Local feed - "+feedURL+" no longer exists in weblogger");
+                throw new WebloggerException("Local feed - " + feedURL + " no longer exists in weblogger");
             }
-            
         } catch (WebloggerException ex) {
             throw new WebloggerException("Problem looking up local weblog - "+weblogHandle, ex);
         }
-        
+
         // if weblog hasn't changed since last fetch then bail
         if(lastModified != null && !localWeblog.getLastModified().after(lastModified)) {
             log.debug("Skipping unmodified LOCAL weblog");
@@ -222,7 +245,7 @@ public class FeedProcessorImpl implements FeedProcessor {
         // build planet subscription from weblog
         Subscription newSub = new Subscription();
         newSub.setFeedURL(feedURL);
-        newSub.setSiteURL(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(localWeblog, true));
+        newSub.setSiteURL(urlStrategy.getWeblogURL(localWeblog, true));
         newSub.setTitle(localWeblog.getName());
         newSub.setAuthor(localWeblog.getName());
         newSub.setLastUpdated(localWeblog.getLastModified());
@@ -241,17 +264,15 @@ public class FeedProcessorImpl implements FeedProcessor {
             }
             
             // grab recent entries for this weblog
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(localWeblog);
             wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setMaxResults(entryCount);
-            List<WeblogEntry> entries = wmgr.getWeblogEntries(wesc);
+            List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
             log.debug("Found " + entries.size());
 
             // Populate subscription object with new entries
-            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
-            Map pagePlugins = ppmgr.getWeblogEntryPlugins(localWeblog);
+            Map pagePlugins = pluginManager.getWeblogEntryPlugins(localWeblog);
             for ( WeblogEntry rollerEntry : entries ) {
                 SubscriptionEntry entry = new SubscriptionEntry();
                 String content = "";
@@ -260,7 +281,7 @@ public class FeedProcessorImpl implements FeedProcessor {
                 } else {
                     content = rollerEntry.getSummary();
                 }
-                content = ppmgr.applyWeblogEntryPlugins(pagePlugins, rollerEntry, content);
+                content = pluginManager.applyWeblogEntryPlugins(pagePlugins, rollerEntry, content);
                 
                 entry.setAuthor(rollerEntry.getCreator().getScreenName());
                 entry.setTitle(rollerEntry.getTitle());
@@ -426,10 +447,7 @@ public class FeedProcessorImpl implements FeedProcessor {
         Subscription updatedSub;
         try {
             // fetch the latest version of the subscription
-            log.debug("Getting fetcher");
-            FeedProcessor fetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
-            log.debug("Using fetcher class: " + fetcher.getClass().getName());
-            updatedSub = fetcher.fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
+            updatedSub = fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
 
         } catch (WebloggerException ex) {
             throw new WebloggerException("Error fetching updated subscription", ex);
@@ -460,17 +478,15 @@ public class FeedProcessorImpl implements FeedProcessor {
         log.debug("newEntries.size() = " + newEntries.size());
         if (newEntries.size() > 0) {
             try {
-                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-
                 // clear out old entries
-                pmgr.deleteEntries(sub);
+                planetManager.deleteEntries(sub);
 
                 // add fresh entries
                 sub.getEntries().clear();
                 sub.addEntries(newEntries);
 
                 // save and flush
-                pmgr.saveSubscription(sub);
+                planetManager.saveSubscription(sub);
                 WebloggerFactory.flush();
 
                 log.debug("Added entries");
@@ -512,11 +528,10 @@ public class FeedProcessorImpl implements FeedProcessor {
     public void updateSubscriptions(Collection<Subscription> subscriptions) {
         updateProxySettings();
 
-        PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
         for (Subscription sub : subscriptions) {
             try {
                 // reattach sub.  sub gets detached as we iterate
-                sub = pmgr.getSubscriptionById(sub.getId());
+                sub = planetManager.getSubscriptionById(sub.getId());
             } catch (WebloggerException ex) {
                 log.warn("Subscription went missing while doing update: "+ex.getMessage());
             }

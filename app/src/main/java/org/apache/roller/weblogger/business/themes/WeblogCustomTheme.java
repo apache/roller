@@ -22,7 +22,7 @@
 package org.apache.roller.weblogger.business.themes;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WeblogManager;
 
 import java.util.Date;
 import java.util.List;
@@ -38,8 +38,8 @@ import org.apache.roller.weblogger.pojos.WeblogTheme;
  */
 public class WeblogCustomTheme extends WeblogTheme {
 
-    public WeblogCustomTheme(Weblog weblog) {
-        super(weblog);
+    public WeblogCustomTheme(WeblogManager manager, Weblog weblog) {
+        super(manager, weblog);
     }
 
     public String getId() {
@@ -78,7 +78,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Get the collection of all templates associated with this Theme.
      */
     public List<? extends ThemeTemplate> getTemplates() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplates(this.weblog);
+        return weblogManager.getTemplates(this.weblog);
     }
     
 
@@ -87,8 +87,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getDefaultTemplate() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager()
-                .getTemplateByAction(this.weblog, ComponentType.WEBLOG);
+        return weblogManager.getTemplateByAction(this.weblog, ComponentType.WEBLOG);
     }
     
     
@@ -100,7 +99,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         if (action == null) {
             return null;
         }
-        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateByAction(this.weblog, action);
+        return weblogManager.getTemplateByAction(this.weblog, action);
     }
     
     
@@ -112,7 +111,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         if (name == null) {
             return null;
         }
-        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateByName(this.weblog, name);
+        return weblogManager.getTemplateByName(this.weblog, name);
     }
     
     
@@ -124,7 +123,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         if (link == null) {
             return null;
         }
-        return WebloggerFactory.getWeblogger().getWeblogManager().getTemplateByLink(this.weblog, link);
+        return weblogManager.getTemplateByLink(this.weblog, link);
     }
 
 }

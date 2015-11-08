@@ -24,7 +24,7 @@ package org.apache.roller.weblogger.business.themes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WeblogManager;
 
 import java.util.*;
 import org.apache.roller.weblogger.pojos.Theme;
@@ -43,8 +43,8 @@ public class WeblogSharedTheme extends WeblogTheme {
     
     private SharedTheme theme = null;
 
-    public WeblogSharedTheme(Weblog weblog, SharedTheme theme) {
-        super(weblog);
+    public WeblogSharedTheme(WeblogManager manager, Weblog weblog, SharedTheme theme) {
+        super(manager, weblog);
         this.theme = theme;
     }
     
@@ -82,7 +82,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // first get the pages from the db
         try {
-            for (ThemeTemplate template : WebloggerFactory.getWeblogger().getWeblogManager().getTemplates(this.weblog)) {
+            for (ThemeTemplate template : weblogManager.getTemplates(this.weblog)) {
                 pages.put(template.getName(), template);
             }
         } catch(Exception e) {
@@ -122,8 +122,7 @@ public class WeblogSharedTheme extends WeblogTheme {
 
         if (action == ComponentType.STYLESHEET && template != null) {
             // see if user is doing shared theme with custom stylesheet
-            ThemeTemplate override = WebloggerFactory.getWeblogger()
-                    .getWeblogManager().getTemplateByAction(this.weblog, ComponentType.STYLESHEET);
+            ThemeTemplate override = weblogManager.getTemplateByAction(this.weblog, ComponentType.STYLESHEET);
             if (override != null) {
                 template = override;
             }
@@ -144,7 +143,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         ThemeTemplate template = this.theme.getTemplateByName(name);
         // if we didn't get the Template from a theme then look in the db
         if (template == null) {
-            template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplateByName(this.weblog, name);
+            template = weblogManager.getTemplateByName(this.weblog, name);
         }
         return template;
     }
@@ -160,19 +159,17 @@ public class WeblogSharedTheme extends WeblogTheme {
          if (template != null) {
              if (template.getAction() == ComponentType.STYLESHEET) {
                  // see if user is using a custom stylesheet with his shared theme
-                 ThemeTemplate override = WebloggerFactory.getWeblogger()
-                         .getWeblogManager().getTemplateByAction(this.weblog, ComponentType.STYLESHEET);
+                 ThemeTemplate override = weblogManager.getTemplateByAction(this.weblog, ComponentType.STYLESHEET);
                  if (override != null) {
                      template = override;
                  }
              }
          } else {
              // custom template not part of shared them?  Check in DB...
-             template = WebloggerFactory.getWeblogger()
-                     .getWeblogManager().getTemplateByLink(this.weblog, link);
+             template = weblogManager.getTemplateByLink(this.weblog, link);
          }
 
-        return template;
+         return template;
     }
 
 }
