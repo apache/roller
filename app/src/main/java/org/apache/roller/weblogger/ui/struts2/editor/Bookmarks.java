@@ -40,6 +40,12 @@ public class Bookmarks extends UIAction {
 
     private static Log log = LogFactory.getLog(Bookmarks.class);
 
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     // the weblog being viewed
     private Weblog weblogObj = null;
 
@@ -78,8 +84,6 @@ public class Bookmarks extends UIAction {
      */
     public String delete() {
 
-        WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
         try {
             WeblogBookmark bookmark;
             String bookmarks[] = getSelectedBookmarks();
@@ -92,9 +96,9 @@ public class Bookmarks extends UIAction {
                     if (log.isDebugEnabled()) {
                         log.debug("Deleting bookmark - " + bookmarks[j]);
                     }
-                    bookmark = wmgr.getBookmark(bookmarks[j]);
+                    bookmark = weblogManager.getBookmark(bookmarks[j]);
                     if (bookmark != null) {
-                        wmgr.removeBookmark(bookmark);
+                        weblogManager.removeBookmark(bookmark);
                     }
 
                 }

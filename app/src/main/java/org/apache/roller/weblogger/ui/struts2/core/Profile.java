@@ -45,11 +45,16 @@ public class Profile extends UIAction {
     private ProfileBean bean = new ProfileBean();
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     public Profile() {
         this.pageTitle = "yourProfile.title";
     }
-    
-    
+
     @Override
     public WeblogRole requiredWeblogRole() {
         return WeblogRole.NOBLOGNEEDED;
@@ -115,8 +120,7 @@ public class Profile extends UIAction {
 
             try {
                 // save the updated profile
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                mgr.saveUser(existingUser);
+                userManager.saveUser(existingUser);
                 WebloggerFactory.flush();
                 addMessage("generic.changes.saved");
                 return SUCCESS;
@@ -140,8 +144,7 @@ public class Profile extends UIAction {
         } else {
             // check that OpenID, if provided, is not taken
             try {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                User user = mgr.getUserByOpenIdUrl(bean.getOpenIdUrl());
+                User user = userManager.getUserByOpenIdUrl(bean.getOpenIdUrl());
                 if (user != null && !(user.getUserName().equals(bean.getUserName()))) {
                     addError("error.add.user.openIdInUse");
                 }

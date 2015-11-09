@@ -37,6 +37,12 @@ public class MemberResign extends UIAction {
 
     private static Log log = LogFactory.getLog(MemberResign.class);
 
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     public MemberResign() {
         this.actionName = "memberResign";
         this.desiredMenu = "editor";
@@ -65,8 +71,7 @@ public class MemberResign extends UIAction {
      */
     public String resign() {
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            umgr.revokeWeblogRole(getAuthenticatedUser(), getActionWeblog());
+            userManager.revokeWeblogRole(getAuthenticatedUser(), getActionWeblog());
             WebloggerFactory.flush();
             addMessage("yourWebsites.resigned", getWeblog());
         } catch (WebloggerException ex) {

@@ -42,8 +42,13 @@ public class Planets extends UIAction {
     
     // the planet we are working on
     private Planet planet = null;
-    
-    
+
+    private PlanetManager planetManager;
+
+    public void setPlanetManager(PlanetManager planetManager) {
+        this.planetManager = planetManager;
+    }
+
     public Planets() {
         this.actionName = "planets";
         this.desiredMenu = "admin";
@@ -60,8 +65,7 @@ public class Planets extends UIAction {
         
         if(getBean().getId() != null) {
             try {
-                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                setPlanet(pmgr.getPlanetById(getBean().getId()));
+                setPlanet(planetManager.getPlanetById(getBean().getId()));
             } catch(Exception ex) {
                 log.error("Error looking up planet - " + getBean().getId(), ex);
             }
@@ -101,8 +105,7 @@ public class Planets extends UIAction {
                 getBean().copyTo(aPlanet);
 
                 // save and flush
-                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                pmgr.savePlanet(aPlanet);
+                planetManager.savePlanet(aPlanet);
                 WebloggerFactory.flush();
 
                 addMessage("planets.success.saved");
@@ -123,8 +126,7 @@ public class Planets extends UIAction {
         
         if(getPlanet() != null) {
             try {
-                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-                pmgr.deletePlanet(getPlanet());
+                planetManager.deletePlanet(getPlanet());
                 WebloggerFactory.flush();
                 addMessage("planets.success.deleted");
             } catch(Exception ex) {
@@ -161,10 +163,8 @@ public class Planets extends UIAction {
     public List<Planet> getPlanets() {
         List<Planet> displayPlanets = new ArrayList<Planet>();
 
-        PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-
         try {
-            for (Planet planet : pmgr.getPlanets()) {
+            for (Planet planet : planetManager.getPlanets()) {
                 // The "all" planet is considered a special planet and cannot be
                 // managed independently
                 if (!planet.getHandle().equals("all")) {

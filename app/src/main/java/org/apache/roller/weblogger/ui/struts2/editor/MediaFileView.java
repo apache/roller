@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
@@ -47,6 +48,18 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class MediaFileView extends UIAction {
 
     private static Log log = LogFactory.getLog(MediaFileView.class);
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    private MediaFileManager mediaFileManager;
+
+    public void setMediaFileManager(MediaFileManager mediaFileManager) {
+        this.mediaFileManager = mediaFileManager;
+    }
 
     private String directoryId;
     private String directoryName;
@@ -99,8 +112,7 @@ public class MediaFileView extends UIAction {
         }
 
         try {
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-            allDirectories = manager.getMediaFileDirectories(getActionWeblog());
+            allDirectories = mediaFileManager.getMediaFileDirectories(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error("Error getting directory list", ex);
         }
@@ -116,11 +128,10 @@ public class MediaFileView extends UIAction {
             addError("mediaFile.error.view.dirNameInvalid");
         } else {
             try {
-                MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
                 log.debug("Creating new directory - " + this.newDirectoryName);
                 if (!getActionWeblog().hasMediaFileDirectory(this.newDirectoryName)) {
                     // Create
-                    MediaFileDirectory dir = manager.createMediaFileDirectory(
+                    MediaFileDirectory dir = mediaFileManager.createMediaFileDirectory(
                             getActionWeblog(), this.newDirectoryName);
                     // flush changes
                     WebloggerFactory.flush();
@@ -129,7 +140,7 @@ public class MediaFileView extends UIAction {
 
                     // Switch to folder
                     setDirectoryId(dir.getId());
-                    allDirectories = manager.getMediaFileDirectories(getActionWeblog());
+                    allDirectories = mediaFileManager.getMediaFileDirectories(getActionWeblog());
                 } else {
                     // already exists
                     addError("mediaFile.directoryCreate.error.exists", this.newDirectoryName);
@@ -205,11 +216,9 @@ public class MediaFileView extends UIAction {
      */
     public String view() {
         try {
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             if (!StringUtils.isEmpty(viewDirectoryId)) {
                 setDirectoryId(viewDirectoryId);
-                setCurrentDirectory(manager
-                        .getMediaFileDirectory(viewDirectoryId));
+                setCurrentDirectory(mediaFileManager.getMediaFileDirectory(viewDirectoryId));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up directory", ex);
@@ -239,8 +248,7 @@ public class MediaFileView extends UIAction {
                 }
             }
 
-            WebloggerFactory.getWeblogger().getWeblogManager()
-                    .saveWeblog(this.getActionWeblog());
+            weblogManager.saveWeblog(this.getActionWeblog());
 
             // flush changes
             WebloggerFactory.flush();
@@ -290,8 +298,7 @@ public class MediaFileView extends UIAction {
                         .getMediaFileDirectory(directoryId);
                 manager.removeMediaFileDirectory(mediaFileDir);
                 allDirectories = manager.getMediaFileDirectories(getActionWeblog());
-                WebloggerFactory.getWeblogger().getWeblogManager()
-                        .saveWeblog(this.getActionWeblog());
+                weblogManager.saveWeblog(this.getActionWeblog());
 
                 // flush changes
                 WebloggerFactory.flush();
@@ -322,17 +329,16 @@ public class MediaFileView extends UIAction {
         String[] fileIds = getSelectedMediaFiles();
         try {
             int movedFiles = 0;
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
 
             if (fileIds != null && fileIds.length > 0) {
                 log.debug("Processing move of " + fileIds.length
                         + " media files.");
-                MediaFileDirectory targetDirectory = manager.getMediaFileDirectory(getSelectedDirectory());
+                MediaFileDirectory targetDirectory = mediaFileManager.getMediaFileDirectory(getSelectedDirectory());
                 for (String fileId : fileIds) {
                     log.debug("Moving media file - " + fileId + " to directory - " + getSelectedDirectory());
-                    MediaFile mediaFile = manager.getMediaFile(fileId);
+                    MediaFile mediaFile = mediaFileManager.getMediaFile(fileId);
                     if (mediaFile != null && !mediaFile.getDirectory().getId().equals(targetDirectory.getId())) {
-                        manager.moveMediaFile(mediaFile, targetDirectory);
+                        mediaFileManager.moveMediaFile(mediaFile, targetDirectory);
                         movedFiles++;
                     }
                 }

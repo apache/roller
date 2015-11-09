@@ -42,15 +42,26 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 public class MainMenu extends UIAction {
     
     private static Log log = LogFactory.getLog(MainMenu.class);
-    
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     private String websiteId = null;
     private String inviteId = null;
-    
-    
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     public MainMenu() {
         this.pageTitle = "yourWebsites.title";
     }
-    
+
     
     @Override
     public WeblogRole requiredWeblogRole() {
@@ -71,10 +82,8 @@ public class MainMenu extends UIAction {
     public String accept() {
         
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            Weblog weblog = wmgr.getWeblog(getInviteId());      
-            umgr.acceptWeblogInvitation(getAuthenticatedUser(), weblog);
+            Weblog weblog = weblogManager.getWeblog(getInviteId());
+            userManager.acceptWeblogInvitation(getAuthenticatedUser(), weblog);
             WebloggerFactory.flush();
 
         } catch (WebloggerException ex) {
@@ -89,13 +98,11 @@ public class MainMenu extends UIAction {
     public String decline() {
         
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            Weblog weblog = wmgr.getWeblog(getInviteId());
+            Weblog weblog = weblogManager.getWeblog(getInviteId());
             String handle = weblog.getHandle();                       
             // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
             // TODO EXCEPTIONS: better exception handling here
-            umgr.declineWeblogInvitation(getAuthenticatedUser(), weblog);
+            userManager.declineWeblogInvitation(getAuthenticatedUser(), weblog);
             WebloggerFactory.flush();
             addMessage("yourWebsites.declined", handle);
 
@@ -109,8 +116,7 @@ public class MainMenu extends UIAction {
 
     public List<UserWeblogRole> getExistingPermissions() {
         try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            return mgr.getWeblogRoles(getAuthenticatedUser());
+            return userManager.getWeblogRoles(getAuthenticatedUser());
         } catch(Exception e) {
             return Collections.emptyList();
         }
@@ -118,8 +124,7 @@ public class MainMenu extends UIAction {
     
     public List<UserWeblogRole> getPendingPermissions() {
         try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            return mgr.getPendingWeblogRoles(getAuthenticatedUser());
+            return userManager.getPendingWeblogRoles(getAuthenticatedUser());
         } catch(Exception e) {
             return Collections.emptyList();
         }
@@ -141,5 +146,11 @@ public class MainMenu extends UIAction {
     public void setInviteId(String inviteId) {
         this.inviteId = inviteId;
     }
-    
+
+    public boolean isUserIsAdmin() {
+        try {
+            return userManager.isGlobalAdmin(getAuthenticatedUser());
+        } catch (Exception e) {}
+        return false;
+    }
 }

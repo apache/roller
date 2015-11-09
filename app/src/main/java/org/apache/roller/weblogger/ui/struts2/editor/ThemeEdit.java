@@ -56,6 +56,12 @@ public class ThemeEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(Templates.class);
 
+    private ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
+    }
+
     // list of available themes
     private List<SharedTheme> themes = Collections.emptyList();
 
@@ -73,6 +79,12 @@ public class ThemeEdit extends UIAction {
 
     // Are we using a shared theme with a custom stylesheet
     private boolean sharedThemeCustomStylesheet = false;
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
 
     public ThemeEdit() {
         this.actionName = "themeEdit";
@@ -140,13 +152,12 @@ public class ThemeEdit extends UIAction {
             // do theme import if requested
             if (importTheme) {
                 try {
-                    ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
                     if (!StringUtils.isEmpty(selectedThemeId)) {
-                        SharedTheme t = themeMgr.getTheme(selectedThemeId);
+                        SharedTheme t = themeManager.getTheme(selectedThemeId);
                         // if moving from shared w/custom SS to custom import of same shared theme,
                         // keep the custom stylesheet.
                         boolean skipStylesheet = (sharedThemeCustomStylesheet && selectedThemeId.equals(weblog.getEditorTheme()));
-                        themeMgr.importTheme(getActionWeblog(), t, skipStylesheet);
+                        themeManager.importTheme(getActionWeblog(), t, skipStylesheet);
                         addMessage("themeEditor.setCustomTheme.success", t.getName());
                     }
                 } catch (Exception re) {
@@ -161,7 +172,7 @@ public class ThemeEdit extends UIAction {
                 try {
                     // save updated weblog and flush
                     weblog.setEditorTheme(WeblogTheme.CUSTOM);
-                    WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
+                    weblogManager.saveWeblog(weblog);
                     WebloggerFactory.flush();
 
                     // make sure to flush the page cache so ppl can see the change
@@ -183,8 +194,7 @@ public class ThemeEdit extends UIAction {
             Theme newTheme = null;
 
             try {
-                ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-                newTheme = themeMgr.getTheme(selectedThemeId);
+                newTheme = themeManager.getTheme(selectedThemeId);
             } catch (Exception ex) {
                 log.warn(ex);
                 addError("Theme not found");
@@ -194,16 +204,14 @@ public class ThemeEdit extends UIAction {
                 try {
                     String originalTheme = weblog.getEditorTheme();
 
-                    WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
                     // Remove old style sheet
                     if (!originalTheme.equals(selectedThemeId) && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
-                        WeblogTemplate stylesheet = mgr.getTemplateByAction(getActionWeblog(),
+                        WeblogTemplate stylesheet = weblogManager.getTemplateByAction(getActionWeblog(),
                                 ComponentType.STYLESHEET);
 
                         if (stylesheet != null) {
                             // Remove template and its renditions
-                            mgr.removeTemplate(stylesheet);
+                            weblogManager.removeTemplate(stylesheet);
                             sharedThemeCustomStylesheet = false;
                         }
                     }
@@ -214,8 +222,7 @@ public class ThemeEdit extends UIAction {
                             + weblog.getHandle());
 
                     // save updated weblog and flush
-                    WebloggerFactory.getWeblogger().getWeblogManager()
-                            .saveWeblog(weblog);
+                    weblogManager.saveWeblog(weblog);
                     WebloggerFactory.flush();
 
                     // make sure to flush the page cache so ppl can see the change
@@ -301,8 +308,7 @@ public class ThemeEdit extends UIAction {
 
     @RequestMapping(value = "/themes", method = RequestMethod.GET)
     public List<SharedThemeData> getSharedThemes() {
-        ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-        List<SharedTheme> list = themeMgr.getEnabledThemesList();
+        List<SharedTheme> list = themeManager.getEnabledThemesList();
         List<SharedThemeData> to = new ArrayList<>();
         for (SharedTheme item : list) {
             SharedThemeData temp = new SharedThemeData();

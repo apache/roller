@@ -24,8 +24,6 @@ package org.apache.roller.weblogger.ui.struts2.util;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -418,13 +416,4 @@ public abstract class UIAction extends ActionSupport
         return StringEscapeUtils.escapeHtml4(s);
     }
 
-    // convenience function for JSPs wishing to enable certain functionality if
-    // user has the Global Admin role.
-    public boolean isUserIsAdmin() {
-        try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            return umgr.isGlobalAdmin(getAuthenticatedUser());
-        } catch (Exception e) {}
-        return false;
-    }
 }

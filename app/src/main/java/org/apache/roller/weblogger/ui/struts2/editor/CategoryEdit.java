@@ -48,6 +48,12 @@ public class CategoryEdit extends UIAction {
     // the (new or already existing) category we are editing
     private WeblogCategory category = null;
 
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     public CategoryEdit() {
         this.desiredMenu = "editor";
     }
@@ -75,8 +81,7 @@ public class CategoryEdit extends UIAction {
             category.setWeblog(getActionWeblog());
         } else {
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-                category = wmgr.getWeblogCategory(getBean().getId());
+                category = weblogManager.getWeblogCategory(getBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up category", ex);
             }
@@ -111,12 +116,11 @@ public class CategoryEdit extends UIAction {
                 // copy updated attributes
                 getBean().copyTo(category);
                 // save changes
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 if (isAdd()) {
                     category.calculatePosition();
                     getActionWeblog().addCategory(category);
                 }
-                wmgr.saveWeblogCategory(category);
+                weblogManager.saveWeblogCategory(category);
                 WebloggerFactory.flush();
 
                 // notify caches

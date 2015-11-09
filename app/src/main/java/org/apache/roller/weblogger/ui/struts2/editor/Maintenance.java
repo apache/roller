@@ -42,6 +42,12 @@ public class Maintenance extends UIAction {
 
     private static Log log = LogFactory.getLog(Maintenance.class);
 
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     public Maintenance() {
         this.actionName = "maintenance";
         this.desiredMenu = "editor";
@@ -93,8 +99,7 @@ public class Maintenance extends UIAction {
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());
 
-            WebloggerFactory.getWeblogger().getWeblogManager()
-                    .saveWeblog(weblog);
+            weblogManager.saveWeblog(weblog);
             WebloggerFactory.flush();
 
             // also notify cache manager
@@ -126,8 +131,7 @@ public class Maintenance extends UIAction {
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());
 
-            WebloggerFactory.getWeblogger().getWeblogManager()
-                    .saveWeblog(weblog);
+            weblogManager.saveWeblog(weblog);
             WebloggerFactory.flush();
 
             // also notify cache manager

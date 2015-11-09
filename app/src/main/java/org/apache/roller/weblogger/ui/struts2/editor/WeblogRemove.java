@@ -23,6 +23,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
@@ -36,6 +37,12 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 public class WeblogRemove extends UIAction {
 
     private static Log log = LogFactory.getLog(WeblogRemove.class);
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
 
     public WeblogRemove() {
         this.actionName = "weblogRemove";
@@ -62,7 +69,7 @@ public class WeblogRemove extends UIAction {
 
         try {
             // remove website
-            WebloggerFactory.getWeblogger().getWeblogManager().removeWeblog(getActionWeblog());
+            weblogManager.removeWeblog(getActionWeblog());
             WebloggerFactory.flush();
 
             CacheManager.invalidate(getActionWeblog());

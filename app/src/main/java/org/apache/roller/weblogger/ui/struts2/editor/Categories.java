@@ -40,7 +40,13 @@ public class Categories extends UIAction {
 
 	private static Log log = LogFactory.getLog(Categories.class);
 
-	// all categories from the action weblog
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    // all categories from the action weblog
 	private List<WeblogCategory> allCategories;
 
 	public Categories() {
@@ -61,8 +67,7 @@ public class Categories extends UIAction {
 
 	public String execute() {
 		try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-			allCategories = wmgr.getWeblogCategories(getActionWeblog());
+			allCategories = weblogManager.getWeblogCategories(getActionWeblog());
 		} catch (WebloggerException ex) {
 			log.error("Error building categories list", ex);
 			addError("Error building categories list");

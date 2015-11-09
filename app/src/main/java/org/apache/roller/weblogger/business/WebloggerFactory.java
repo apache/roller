@@ -27,7 +27,7 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.springframework.beans.BeansException;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -38,7 +38,7 @@ public final class WebloggerFactory {
     private static final Log LOG = LogFactory.getLog(WebloggerFactory.class);
 
     // Spring Application Context
-    private static ConfigurableApplicationContext context = null;
+    private static ApplicationContext context = null;
 
     // maintain our own singleton instance of Weblogger
     private static Weblogger webloggerInstance = null;
@@ -70,7 +70,7 @@ public final class WebloggerFactory {
         return webloggerInstance;
     }
 
-    public static ConfigurableApplicationContext getContext() {
+    public static ApplicationContext getContext() {
         if (!isBootstrapped()) {
             throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
         }
@@ -79,33 +79,39 @@ public final class WebloggerFactory {
     }
 
     /**
-     * Bootstrap the Roller Weblogger business tier, uses default WebloggerProvider.
+     * Bootstrap the Roller Weblogger business tier
      *
-     * Bootstrapping the application effectively instantiates all the necessary
-     * pieces of the business tier and wires them together so that the app is 
-     * ready to run.
+     * There are two possible application contexts, the web-level defined in web.xml
+     * (activated when running the WAR) and the unit tests which use the spring.context.file
+     * in roller.properties.  In the former case, the application passes in the webContext
+     * and this method will use that.
      *
+     * @param  webContext - ApplicationContext to use if provided
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws RuntimeException If the app cannot be bootstrapped.
      * @throws WebloggerException if any manager cannot be initialized
      */
-    public static void bootstrap() throws WebloggerException {
+    public static void bootstrap(ApplicationContext webContext) throws WebloggerException {
         
         // if the app hasn't been properly started so far then bail
         if (!WebloggerStartup.isPrepared()) {
             throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
         }
         
-        String contextFilename = WebloggerConfig.getProperty("spring.context.file");
-
-        if (contextFilename == null) {
-            throw new IllegalStateException("unable to lookup default spring module via property 'spring.context.file'");
-        }
-
         try {
-            context = new ClassPathXmlApplicationContext(contextFilename);
+            if (webContext == null) {
+                String contextFilename = WebloggerConfig.getProperty("spring.context.file");
+                if (contextFilename == null) {
+                    throw new IllegalStateException("unable to lookup default spring module via property 'spring.context.file'");
+                }
+                context = new ClassPathXmlApplicationContext(contextFilename);
+            } else {
+                context = webContext;
+            }
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
             strategy = context.getBean("jpaPersistenceStrategy", JPAPersistenceStrategy.class);
+            // TODO:  Move below to @PostConstruct in IndexManagerImpl (presently requires webloggerInstance to be active)
+            webloggerInstance.getIndexManager().initialize();
         } catch (BeansException e) {
             throw new RuntimeException("Error bootstrapping Weblogger; exception message: " + e.getMessage(), e);
         }

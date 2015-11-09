@@ -77,6 +77,18 @@ public class Comments extends UIAction {
 
     private static Log log = LogFactory.getLog(Comments.class);
 
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
+    private IndexManager indexManager;
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
     // number of comments to show per page
     private static final int COUNT = 30;
 
@@ -440,9 +452,8 @@ public class Comments extends UIAction {
 
             // if we've got entries to reindex then do so
             if (!reindexList.isEmpty()) {
-                IndexManager imgr = WebloggerFactory.getWeblogger().getIndexManager();
                 for (WeblogEntry entry : reindexList) {
-                    imgr.addEntryReIndexOperation(entry);
+                    indexManager.addEntryReIndexOperation(entry);
                 }
             }
 
@@ -541,8 +552,7 @@ public class Comments extends UIAction {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to view comments
-                UserManager mgr = weblogger.getUserManager();
-                User authenticatedUser = mgr.getUserByUserName(p.getName());
+                User authenticatedUser = userManager.getUserByUserName(p.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
                 if (weblog.userHasWeblogRole(authenticatedUser, WeblogRole.POST)) {
                     CommentData cd = new CommentData();
@@ -573,8 +583,7 @@ public class Comments extends UIAction {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to edit comments
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                User authenticatedUser = mgr.getUserByUserName(p.getName());
+                User authenticatedUser = userManager.getUserByUserName(p.getName());
                 Weblog weblog = c.getWeblogEntry().getWeblog();
                 if (weblog.userHasWeblogRole(authenticatedUser, WeblogRole.POST)) {
                     String content = Utilities.streamToString(request.getInputStream());

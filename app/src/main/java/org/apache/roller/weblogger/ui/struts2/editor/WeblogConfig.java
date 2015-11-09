@@ -52,7 +52,25 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class WeblogConfig extends UIAction {
     
     private static Log log = LogFactory.getLog(WeblogConfig.class);
-    
+
+    private WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    private PluginManager pluginManager;
+
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+
     // bean for managing submitted data
     private WeblogConfigBean bean = new WeblogConfigBean();
     
@@ -81,10 +99,8 @@ public class WeblogConfig extends UIAction {
     public void myPrepare() {
         
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            
             // set categories list
-            setWeblogCategories(wmgr.getWeblogCategories(getActionWeblog()));
+            setWeblogCategories(weblogManager.getWeblogCategories(getActionWeblog()));
             
             // set the Editor Page list
             UIPluginManager pmgr = RollerContext.getUIPluginManager();
@@ -94,8 +110,7 @@ public class WeblogConfig extends UIAction {
             }
             
             // set plugins list
-            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
-            Map<String, WeblogEntryPlugin> pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
+            Map<String, WeblogEntryPlugin> pluginsMap = pluginManager.getWeblogEntryPlugins(getActionWeblog());
             List<WeblogEntryPlugin> plugins = new ArrayList<>();
             for (WeblogEntryPlugin entryPlugin : pluginsMap.values()) {
                 plugins.add(entryPlugin);
@@ -130,9 +145,6 @@ public class WeblogConfig extends UIAction {
         
         if(!hasActionErrors()) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-                WeblogEntryManager wemgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-
                 Weblog weblog = getActionWeblog();
 
                 if (getBean().getAnalyticsCode() != null) {
@@ -144,7 +156,7 @@ public class WeblogConfig extends UIAction {
                 // if blogger category changed then lookup new cat and set it
                 if(getBean().getBloggerCategoryId() != null &&
                         !weblog.getBloggerCategory().getId().equals(getBean().getBloggerCategoryId())) {
-                    weblog.setBloggerCategory(wmgr.getWeblogCategory(getBean().getBloggerCategoryId()));
+                    weblog.setBloggerCategory(weblogManager.getWeblogCategory(getBean().getBloggerCategoryId()));
                 }
 
                 // ROL-485: comments not allowed on inactive weblogs
@@ -154,11 +166,11 @@ public class WeblogConfig extends UIAction {
                 }
 
                 // save config
-                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
+                weblogManager.saveWeblog(weblog);
 
                 // ROL-1050: apply comment defaults to existing entries
                 if(getBean().getApplyCommentDefaults()) {
-                    wemgr.applyCommentDefaultsToEntries(weblog);
+                    weblogEntryManager.applyCommentDefaultsToEntries(weblog);
                 }
 
                 // flush

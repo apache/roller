@@ -40,6 +40,12 @@ public class EntryRemove extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryRemove.class);
 
+    private IndexManager indexManager;
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
     // id of entry to remove
     private String removeId = null;
 
@@ -73,11 +79,10 @@ public class EntryRemove extends UIAction {
         if (getRemoveEntry() != null) {
             try {
                 WeblogEntry entry = getRemoveEntry();
-                IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
 
                 // remove from search index
                 if (entry.isPublished()) {
-                    manager.removeEntryIndexOperation(entry);
+                    indexManager.removeEntryIndexOperation(entry);
                 }
 
                 // flush caches

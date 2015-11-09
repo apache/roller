@@ -40,7 +40,13 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 public class PingTargets extends UIAction {
     
     private static Log log = LogFactory.getLog(PingTargets.class);
-    
+
+    private PingTargetManager pingTargetManager;
+
+    public void setPingTargetManager(PingTargetManager pingTargetManager) {
+        this.pingTargetManager = pingTargetManager;
+    }
+
     public PingTargets() {
         this.actionName = "commonPingTargets";
         this.desiredMenu = "admin";
@@ -63,8 +69,7 @@ public class PingTargets extends UIAction {
 
     public void loadPingTargets() {
         try {
-            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-            setPingTargets(pingTargetMgr.getCommonPingTargets());
+            setPingTargets(pingTargetManager.getCommonPingTargets());
         } catch (WebloggerException ex) {
             log.error("Error loading common ping targets", ex);
             addError("commonPingTargets.error.loading");
@@ -80,8 +85,7 @@ public class PingTargets extends UIAction {
         // load specified ping target if possible
         if(!StringUtils.isEmpty(getPingTargetId())) {
             try {
-                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-                setPingTarget(pingTargetMgr.getPingTarget(getPingTargetId()));
+                setPingTarget(pingTargetManager.getPingTarget(getPingTargetId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up ping target - " + getPingTargetId(), ex);
             }
@@ -103,9 +107,7 @@ public class PingTargets extends UIAction {
         if(getPingTarget() != null) {
             try {
                 getPingTarget().setAutoEnabled(true);
-                
-                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-                pingTargetMgr.savePingTarget(getPingTarget());
+                pingTargetManager.savePingTarget(getPingTarget());
                 WebloggerFactory.flush();
             } catch (Exception ex) {
                 log.error("Error saving ping target", ex);
@@ -127,9 +129,7 @@ public class PingTargets extends UIAction {
         if(getPingTarget() != null) {
             try {
                 getPingTarget().setAutoEnabled(false);
-                
-                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-                pingTargetMgr.savePingTarget(getPingTarget());
+                pingTargetManager.savePingTarget(getPingTarget());
                 WebloggerFactory.flush();
             } catch (Exception ex) {
                 log.error("Error saving ping target", ex);
@@ -165,8 +165,7 @@ public class PingTargets extends UIAction {
     public String delete() {
         if(getPingTarget() != null) {
             try {
-                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-                pingTargetMgr.removePingTarget(getPingTarget());
+                pingTargetManager.removePingTarget(getPingTarget());
                 WebloggerFactory.flush();
 
                 // remove deleted target from list

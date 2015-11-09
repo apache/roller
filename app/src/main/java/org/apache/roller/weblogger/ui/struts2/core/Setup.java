@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -39,14 +40,32 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Page used to display Roller install instructions.
  */
 public class Setup extends UIAction {
-    
+
     private static final Log LOG = LogFactory.getLog(Setup.class);
-    
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     private long userCount = 0;
     private long blogCount = 0;
 
     private String frontpageBlog;
     private Boolean aggregated;
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
 
     // weblogs for frontpage blog chooser
     private Collection<Weblog> weblogs;
@@ -68,16 +87,15 @@ public class Setup extends UIAction {
     public String execute() {
         
         try {
-            WeblogManager mgr =  WebloggerFactory.getWeblogger().getWeblogManager();
-            setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
+            setWeblogs(weblogManager.getWeblogs(true, null, null, null, 0, -1));
         } catch (WebloggerException ex) {
             LOG.error("Error getting weblogs", ex);
             addError("frontpageConfig.weblogs.error");
         }
 
         try {
-            setUserCount(WebloggerFactory.getWeblogger().getUserManager().getUserCount());
-            setBlogCount(WebloggerFactory.getWeblogger().getWeblogManager().getWeblogCount());
+            setUserCount(userManager.getUserCount());
+            setBlogCount(weblogManager.getWeblogCount());
         } catch (WebloggerException ex) {
             LOG.error("Error getting user/weblog counts", ex);
         }
@@ -86,15 +104,14 @@ public class Setup extends UIAction {
     }
 
     public String save() {
-        PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
         try {
-            RuntimeConfigProperty frontpageBlogProp = mgr.getProperty("site.frontpage.weblog.handle");
+            RuntimeConfigProperty frontpageBlogProp = propertiesManager.getProperty("site.frontpage.weblog.handle");
             frontpageBlogProp.setValue(frontpageBlog);
-            mgr.saveProperty(frontpageBlogProp);
+            propertiesManager.saveProperty(frontpageBlogProp);
 
-            RuntimeConfigProperty aggregatedProp = mgr.getProperty("site.frontpage.weblog.aggregated");
+            RuntimeConfigProperty aggregatedProp = propertiesManager.getProperty("site.frontpage.weblog.aggregated");
             aggregatedProp.setValue(aggregated.toString());
-            mgr.saveProperty(aggregatedProp);
+            propertiesManager.saveProperty(aggregatedProp);
 
             WebloggerFactory.flush();
 
