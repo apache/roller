@@ -38,6 +38,12 @@ public class PingTargetEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(PingTargetEdit.class);
 
+    private PingTargetManager pingTargetManager;
+
+    public void setPingTargetManager(PingTargetManager pingTargetManager) {
+        this.pingTargetManager = pingTargetManager;
+    }
+
     // a bean for managing submitted data
     private PingTargetBean bean = new PingTargetBean();
 
@@ -59,12 +65,10 @@ public class PingTargetEdit extends UIAction {
     }
 
     public void myPrepare() {
-        PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-
         if (!StringUtils.isEmpty(getBean().getId())) {
             // edit case
             try {
-                pingTarget = pingTargetMgr.getPingTarget(getBean().getId());
+                pingTarget = pingTargetManager.getPingTarget(getBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up ping target - " + getBean().getId());
             }
@@ -95,8 +99,7 @@ public class PingTargetEdit extends UIAction {
             try {
                 // copy data from form into ping target
                 getBean().copyTo(pingTarget);
-                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-                pingTargetMgr.savePingTarget(pingTarget);
+                pingTargetManager.savePingTarget(pingTarget);
                 WebloggerFactory.flush();
 
                 addMessage(isAdd() ? "pingTarget.created" : "pingTarget.updated",
@@ -117,12 +120,11 @@ public class PingTargetEdit extends UIAction {
      */
     protected void myValidate() {
         try {
-            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             if (StringUtils.isEmpty(bean.getName())) {
                 addError("pingTarget.nameMissing");
             } else {
                 if (isAdd() || !pingTarget.getName().equals(bean.getName())) {
-                    if (pingTargetMgr.targetNameExists(bean.getName())) {
+                    if (pingTargetManager.targetNameExists(bean.getName())) {
                         addError("pingTarget.nameNotUnique");
                     }
                 }
@@ -130,9 +132,9 @@ public class PingTargetEdit extends UIAction {
             if (StringUtils.isEmpty(bean.getPingUrl())) {
                 addError("pingTarget.pingUrlMissing");
             } else {
-                if (!pingTargetMgr.isUrlWellFormed(bean.getPingUrl())) {
+                if (!pingTargetManager.isUrlWellFormed(bean.getPingUrl())) {
                     addError("pingTarget.malformedUrl");
-                } else if (!pingTargetMgr.isHostnameKnown(bean.getPingUrl())) {
+                } else if (!pingTargetManager.isHostnameKnown(bean.getPingUrl())) {
                     addError("pingTarget.unknownHost");
                 }
             }

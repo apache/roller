@@ -51,6 +51,7 @@ import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 
@@ -64,6 +65,7 @@ public class RollerContext extends ContextLoaderListener
     
     private static ServletContext servletContext = null;
 
+    private WebApplicationContext context = null;
     
     public RollerContext() {
         super();
@@ -98,12 +100,25 @@ public class RollerContext extends ContextLoaderListener
 
         // Keep a reference to ServletContext object
         RollerContext.servletContext = sce.getServletContext();
-        
+
+        // try setting the themes path to <context>/themes
+        // NOTE: this should go away at some point
+        // we leave it here for now to allow users to keep using
+        // themes in their webapp context, but this is a bad idea
+        //
+        // also, the WebloggerConfig.setThemesDir() method is smart
+        // enough to disregard this call unless the themes.dir
+        // is set to ${webapp.context}
+        WebloggerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
+
         // Call Spring's context ContextLoaderListener to initialize all the
         // context files specified in web.xml. This is necessary because
         // listeners don't initialize in the order specified in 2.3 containers
         super.contextInitialized(sce);
-        
+
+        context = WebApplicationContextUtils.getRequiredWebApplicationContext(
+                RollerContext.servletContext);
+
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");
         if (ctxPath == null) {
@@ -115,17 +130,6 @@ public class RollerContext extends ContextLoaderListener
         } else {
             ctxPath += "resources";
         }
-        
-        // try setting the themes path to <context>/themes
-        // NOTE: this should go away at some point
-        // we leave it here for now to allow users to keep using
-        // themes in their webapp context, but this is a bad idea
-        //
-        // also, the WebloggerConfig.setThemesDir() method is smart
-        // enough to disregard this call unless the themes.dir
-        // is set to ${webapp.context}
-        WebloggerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
-        
         
         // Now prepare the core services of the app so we can bootstrap
         try {
@@ -146,7 +150,7 @@ public class RollerContext extends ContextLoaderListener
             log.info(buf.toString());
         } else {
             try {
-                WebloggerFactory.bootstrap();
+                WebloggerFactory.bootstrap(context);
             } catch (WebloggerException ex) {
                 log.fatal("Roller Weblogger initialization failed", ex);
             }
@@ -171,7 +175,7 @@ public class RollerContext extends ContextLoaderListener
      */
     public void contextDestroyed(ServletContextEvent sce) {
         log.info("Shutting down");
-        WebloggerFactory.getContext().close();
+        closeWebApplicationContext(servletContext);
     }
     
     

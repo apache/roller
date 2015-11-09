@@ -50,7 +50,25 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 public class GlobalConfig extends UIAction implements ParameterAware, ServletRequestAware {
     
     private static Log log = LogFactory.getLog(GlobalConfig.class);
-    
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    private PropertiesManager propertiesManager;
+
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+
+    private PluginManager pluginManager;
+
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+
     // the request parameters
     private Map<String, String[]> params = Collections.emptyMap();
     
@@ -93,16 +111,14 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     public void myPrepare() {
         try {
             // just grab our properties map and make it available to the action
-            PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-            setProperties(mgr.getProperties());
+            setProperties(propertiesManager.getProperties());
         } catch (WebloggerException ex) {
             log.error("Error getting runtime properties map", ex);
             addError("Unexpected error accessing Roller properties");
         }
         
         try {
-            WeblogManager mgr =  WebloggerFactory.getWeblogger().getWeblogManager();
-            setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
+            setWeblogs(weblogManager.getWeblogs(true, null, null, null, 0, -1));
         } catch (WebloggerException ex) {
             log.error("Error getting weblogs", ex);
             addError("frontpageConfig.weblogs.error");
@@ -111,8 +127,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         globalConfigDef = WebloggerRuntimeConfig.getRuntimeConfigDefs();
 
         // load plugins list
-        PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
-        setPluginsList(pmgr.getCommentPlugins());
+        setPluginsList(pluginManager.getCommentPlugins());
     }
     
     
@@ -184,8 +199,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             
         try {
             // save 'em and flush
-            PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-            mgr.saveProperties(getProperties());
+            propertiesManager.saveProperties(getProperties());
             WebloggerFactory.flush();
             
             // notify user of our success

@@ -42,6 +42,12 @@ public class BookmarkEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(BookmarkEdit.class);
 
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     // bean for managing form data
     private BookmarkBean bean = new BookmarkBean();
 
@@ -75,8 +81,7 @@ public class BookmarkEdit extends UIAction {
         } else {
             // existing bookmark, retrieve its info from DB
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-                bookmark = wmgr.getBookmark(getBean().getId());
+                bookmark = weblogManager.getBookmark(getBean().getId());
             } catch (WebloggerException ex) {
                 addError("generic.error.check.logs");
                 log.error("Error looking up bookmark" + getBean().getId(), ex);
@@ -101,12 +106,11 @@ public class BookmarkEdit extends UIAction {
         if(!hasActionErrors()) {
             try {
                 getBean().copyTo(bookmark);
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 if (isAdd()) {
                     bookmark.calculatePosition();
                     getActionWeblog().addBookmark(bookmark);
                 }
-                wmgr.saveBookmark(bookmark);
+                weblogManager.saveBookmark(bookmark);
                 WebloggerFactory.flush();
                 CacheManager.invalidate(bookmark);
                 CacheManager.invalidate(bookmark.getWeblog());

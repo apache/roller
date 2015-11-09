@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -48,8 +49,25 @@ public class CreateWeblog extends UIAction {
     private static Log log = LogFactory.getLog(CreateWeblog.class);
     private static final String DISABLED_RETURN_CODE = "disabled";
 
+    private ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
+    }
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     private CreateWeblogBean bean = new CreateWeblogBean();
-    
 
     public CreateWeblog() {
         this.pageTitle = "createWebsite.title";
@@ -78,8 +96,7 @@ public class CreateWeblog extends UIAction {
 
         try {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                List<UserWeblogRole> permissions = mgr.getWeblogRoles(user);
+                List<UserWeblogRole> permissions = userManager.getWeblogRoles(user);
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled
@@ -107,8 +124,7 @@ public class CreateWeblog extends UIAction {
         User user = getAuthenticatedUser();
         try {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                List<UserWeblogRole> permissions = mgr.getWeblogRoles(user);
+                List<UserWeblogRole> permissions = userManager.getWeblogRoles(user);
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled
@@ -141,7 +157,7 @@ public class CreateWeblog extends UIAction {
 
             try {
                 // add weblog and flush
-                WebloggerFactory.getWeblogger().getWeblogManager().addWeblog(wd);
+                weblogManager.addWeblog(wd);
                 WebloggerFactory.flush();
                 
                 // tell the user their weblog was created
@@ -179,8 +195,7 @@ public class CreateWeblog extends UIAction {
         // make sure handle isn't already taken
         if(!StringUtils.isEmpty(getBean().getHandle())) {
             try {
-                if (WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getWeblogByHandle(getBean().getHandle()) != null) {
+                if (weblogManager.getWeblogByHandle(getBean().getHandle()) != null) {
                     addError("createWeblog.error.handleExists");
                     // reset handle
                     getBean().setHandle(null);
@@ -194,8 +209,7 @@ public class CreateWeblog extends UIAction {
     
     
     public List getThemes() {
-        ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
-        return themeMgr.getEnabledThemesList();
+        return themeManager.getEnabledThemesList();
     }
 
     public CreateWeblogBean getBean() {

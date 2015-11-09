@@ -47,8 +47,13 @@ public class Members extends UIAction implements ParameterAware {
     
     // raw parameters from request
     private Map parameters = Collections.EMPTY_MAP;
-    
-    
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     public Members() {
         log.debug("Instantiating members action");
         
@@ -71,8 +76,7 @@ public class Members extends UIAction implements ParameterAware {
         int changed = 0;
         List<UserWeblogRole> permsList = new ArrayList<UserWeblogRole>();
         try {
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();   
-            List<UserWeblogRole> permsFromDB = userMgr.getWeblogRolesIncludingPending(getActionWeblog());
+            List<UserWeblogRole> permsFromDB = userManager.getWeblogRolesIncludingPending(getActionWeblog());
 
             // we have to copy the permissions list so that when we remove permissions
             // below we don't get ConcurrentModificationExceptions
@@ -116,13 +120,13 @@ public class Members extends UIAction implements ParameterAware {
                 if (sval != null) {
                     if (!error && !perms.getWeblogRole().name().equals(sval)) {
                         if ("-1".equals(sval)) {
-                             userMgr.revokeWeblogRole(
+                            userManager.revokeWeblogRole(
                                      perms.getUser(), perms.getWeblog());
                             removed++;
                         } else {
-                            userMgr.revokeWeblogRole(
+                            userManager.revokeWeblogRole(
                                     perms.getUser(), perms.getWeblog());
-                            userMgr.grantWeblogRole(
+                            userManager.grantWeblogRole(
                                     perms.getUser(), perms.getWeblog(), WeblogRole.valueOf(sval));
                             changed++;
                         }
@@ -184,7 +188,7 @@ public class Members extends UIAction implements ParameterAware {
 
     public List<UserWeblogRole> getWeblogRoles() {
         try {
-            return WebloggerFactory.getWeblogger().getUserManager().getWeblogRolesIncludingPending(getActionWeblog());
+            return userManager.getWeblogRolesIncludingPending(getActionWeblog());
         } catch (WebloggerException ex) {
             // serious problem, but not much we can do here
             log.error("ERROR getting weblog roles", ex);

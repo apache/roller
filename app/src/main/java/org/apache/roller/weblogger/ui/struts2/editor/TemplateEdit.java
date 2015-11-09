@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
@@ -46,6 +47,12 @@ public class TemplateEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(TemplateEdit.class);
 
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     // form bean for collection all template properties
     private TemplateEditBean bean = new TemplateEditBean();
 
@@ -65,7 +72,7 @@ public class TemplateEdit extends UIAction {
 
     public void myPrepare() {
         try {
-            setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(getBean().getId()));
+            setTemplate(weblogManager.getTemplate(getBean().getId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up template - " + getBean().getId(), ex);
         }
@@ -131,7 +138,7 @@ public class TemplateEdit extends UIAction {
                 }
 
                 // save template
-                WebloggerFactory.getWeblogger().getWeblogManager().saveTemplate(templateToSave);
+                weblogManager.saveTemplate(templateToSave);
                 log.debug("Saved template: " + templateToSave.getId());
 
                 //flush
@@ -158,8 +165,7 @@ public class TemplateEdit extends UIAction {
         // if name changed make sure there isn't a conflict
         if (!getTemplate().getName().equals(getBean().getName())) {
             try {
-                if (WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getTemplateByName(getActionWeblog(), getBean().getName()) != null) {
+                if (weblogManager.getTemplateByName(getActionWeblog(), getBean().getName()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getName());
                 }
             } catch (WebloggerException ex) {
@@ -171,8 +177,7 @@ public class TemplateEdit extends UIAction {
         if (!StringUtils.isEmpty(getBean().getLink()) &&
                 !getBean().getLink().equals(getTemplate().getLink())) {
             try {
-                if (WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getTemplateByLink(getActionWeblog(), getBean().getLink()) != null) {
+                if (weblogManager.getTemplateByLink(getActionWeblog(), getBean().getLink()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getLink());
                 }
             } catch (WebloggerException ex) {

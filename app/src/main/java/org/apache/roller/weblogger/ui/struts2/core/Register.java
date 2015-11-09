@@ -59,6 +59,12 @@ public class Register extends UIAction implements ServletRequestAware {
     private static final String DISABLED_RETURN_CODE = "disabled";
     public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
 
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     // this is a no-no, we should not need this
     private HttpServletRequest servletRequest = null;
 
@@ -94,7 +100,7 @@ public class Register extends UIAction implements ServletRequestAware {
         try {
             if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
                 // unless there are 0 users (need to allow creation of first user)
-                && WebloggerFactory.getWeblogger().getUserManager().getUserCount() != 0) {
+                && userManager.getUserCount() != 0) {
                 addError("Register.disabled");
                 return DISABLED_RETURN_CODE;
             }
@@ -134,7 +140,7 @@ public class Register extends UIAction implements ServletRequestAware {
         try {
             if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")
                 // unless there are 0 users (need to allow creation of first user)
-                && WebloggerFactory.getWeblogger().getUserManager().getUserCount() != 0) {
+                && userManager.getUserCount() != 0) {
                 return DISABLED_RETURN_CODE;
             }
         } catch (Exception e) {
@@ -146,9 +152,6 @@ public class Register extends UIAction implements ServletRequestAware {
         
         if (!hasActionErrors()) {
             try {
-
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-
                 // copy form data into new user pojo
                 User ud = new User();
                 // copyTo skips password
@@ -174,14 +177,14 @@ public class Register extends UIAction implements ServletRequestAware {
                     // Create & save the activation data
                     String inActivationCode = UUID.randomUUID().toString();
 
-                    if (mgr.getUserByActivationCode(inActivationCode) != null) {
+                    if (userManager.getUserByActivationCode(inActivationCode) != null) {
                         // In the *extremely* unlikely event that we generate an
                         // activation code that is already used, we'll retry 3 times.
                         int numOfRetries = 3;
 
                         for (int i = 0; i < numOfRetries; i++) {
                             inActivationCode = UUID.randomUUID().toString();
-                            if (mgr.getUserByActivationCode(inActivationCode) == null) {
+                            if (userManager.getUserByActivationCode(inActivationCode) == null) {
                                 break;
                             } else {
                                 inActivationCode = null;
@@ -204,7 +207,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 }
 
                 // save new user
-                mgr.addUser(ud);
+                userManager.addUser(ud);
 
                 WebloggerFactory.flush();
 
@@ -244,18 +247,16 @@ public class Register extends UIAction implements ServletRequestAware {
     public String activate() {
         
         try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            
             if (getActivationCode() == null) {
                 addError("error.activate.user.missingActivationCode");
             } else {
-                User user = mgr.getUserByActivationCode(getActivationCode());
+                User user = userManager.getUserByActivationCode(getActivationCode());
                 
                 if (user != null) {
                     // enable user account
                     user.setEnabled(Boolean.TRUE);
                     user.setActivationCode(null);
-                    mgr.saveUser(user);
+                    userManager.saveUser(user);
                     WebloggerFactory.flush();
                     
                     setActivationStatus("active");
@@ -335,8 +336,7 @@ public class Register extends UIAction implements ServletRequestAware {
         // check that username is not taken
         if (!StringUtils.isEmpty(getBean().getUserName())) {
             try {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                if (mgr.getUserByUserName(getBean().getUserName(), null) != null) {
+                if (userManager.getUserByUserName(getBean().getUserName(), null) != null) {
                     addError("error.add.user.userNameInUse");
                     // reset user name
                     getBean().setUserName(null);
@@ -350,8 +350,7 @@ public class Register extends UIAction implements ServletRequestAware {
         // check that OpenID, if provided, is not taken
         if (!StringUtils.isEmpty(getBean().getOpenIdUrl())) {
             try {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                if (mgr.getUserByOpenIdUrl(getBean().getOpenIdUrl()) != null) {
+                if (userManager.getUserByOpenIdUrl(getBean().getOpenIdUrl()) != null) {
                     addError("error.add.user.openIdInUse");
                     // reset OpenID URL
                     getBean().setOpenIdUrl(null);

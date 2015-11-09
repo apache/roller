@@ -55,6 +55,12 @@ public class MediaFileEdit extends UIAction {
     private String mediaFileId;
     private List<MediaFileDirectory> allDirectories;
 
+    private MediaFileManager mediaFileManager;
+
+    public void setMediaFileManager(MediaFileManager mediaFileManager) {
+        this.mediaFileManager = mediaFileManager;
+    }
+
     // an array of files uploaded by the user, if applicable
     private File uploadedFile = null;
 
@@ -89,16 +95,15 @@ public class MediaFileEdit extends UIAction {
      */
     public void myPrepare() {
         try {
-            MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-            allDirectories = mgr.getMediaFileDirectories(getActionWeblog());
+            allDirectories = mediaFileManager.getMediaFileDirectories(getActionWeblog());
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
-                setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
+                setDirectory(mediaFileManager.getMediaFileDirectory(bean.getDirectoryId()));
             } else if (StringUtils.isNotEmpty(directoryName)) {
-                setDirectory(mgr.getMediaFileDirectoryByName(getActionWeblog(), directoryName));
+                setDirectory(mediaFileManager.getMediaFileDirectoryByName(getActionWeblog(), directoryName));
             } else {
-                MediaFileDirectory root = mgr.getDefaultMediaFileDirectory(getActionWeblog());
+                MediaFileDirectory root = mediaFileManager.getDefaultMediaFileDirectory(getActionWeblog());
                 if (root == null) {
-                    root = mgr.createDefaultMediaFileDirectory(getActionWeblog());
+                    root = mediaFileManager.createDefaultMediaFileDirectory(getActionWeblog());
                 }
                 setDirectory(root);
             }
@@ -145,9 +150,8 @@ public class MediaFileEdit extends UIAction {
     @SkipValidation
     public String execute() {
         if (!isAdd()) {
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             try {
-                MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+                MediaFile mediaFile = mediaFileManager.getMediaFile(getMediaFileId());
                 this.bean.copyFrom(mediaFile);
             } catch (Exception e) {
                 log.error("Error uploading file " + bean.getName(), e);
@@ -164,7 +168,6 @@ public class MediaFileEdit extends UIAction {
      */
     public String save() {
         myValidate();
-        MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         if (!hasActionErrors()) {
             try {
                 if (isAdd()) {
@@ -200,7 +203,7 @@ public class MediaFileEdit extends UIAction {
                         }
 
                         RollerMessages errors = new RollerMessages();
-                        manager.createMediaFile(getActionWeblog(), mediaFile, errors);
+                        mediaFileManager.createMediaFile(getActionWeblog(), mediaFile, errors);
                         for (Iterator it = errors.getErrors(); it.hasNext(); ) {
                             RollerMessage msg = (RollerMessage) it.next();
                             addError(msg.getKey(), Arrays.asList(msg.getArgs()));
@@ -219,23 +222,23 @@ public class MediaFileEdit extends UIAction {
                         return SUCCESS;
                     }
                 } else {
-                    MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+                    MediaFile mediaFile = mediaFileManager.getMediaFile(getMediaFileId());
                     bean.copyTo(mediaFile);
 
                     if (uploadedFile != null) {
                         mediaFile.setLength(this.uploadedFile.length());
                         mediaFile.setContentType(this.uploadedFileContentType);
-                        manager.updateMediaFile(getActionWeblog(), mediaFile,
+                        mediaFileManager.updateMediaFile(getActionWeblog(), mediaFile,
                                 new FileInputStream(this.uploadedFile));
                     } else {
-                        manager.updateMediaFile(getActionWeblog(), mediaFile);
+                        mediaFileManager.updateMediaFile(getActionWeblog(), mediaFile);
                     }
 
                     // Move file
                     if (!getBean().getDirectoryId().equals(mediaFile.getDirectory().getId())) {
                         log.debug("Processing move of " + mediaFile.getId());
-                        MediaFileDirectory targetDirectory = manager.getMediaFileDirectory(getBean().getDirectoryId());
-                        manager.moveMediaFile(mediaFile, targetDirectory);
+                        MediaFileDirectory targetDirectory = mediaFileManager.getMediaFileDirectory(getBean().getDirectoryId());
+                        mediaFileManager.moveMediaFile(mediaFile, targetDirectory);
                     }
 
                     WebloggerFactory.flush();

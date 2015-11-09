@@ -53,7 +53,13 @@ import java.util.List;
 public class MembersInvite extends UIAction {
     
     private static Log log = LogFactory.getLog(MembersInvite.class);
-    
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     // user being invited
     private String userName = null;
     
@@ -101,12 +107,10 @@ public class MembersInvite extends UIAction {
         
         log.debug("Attempting to process weblog invitation");
         
-        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-        
         // user being invited
         User user = null;
         try {
-            user = umgr.getUserByUserName(getUserName());
+            user = userManager.getUserByUserName(getUserName());
             if (user == null) {
                 addError("inviteMember.error.userNotFound");
             }
@@ -122,7 +126,7 @@ public class MembersInvite extends UIAction {
         
         // check for existing permissions or invitation
         try {
-            UserWeblogRole perm = umgr.getWeblogRoleIncludingPending(user, getActionWeblog());
+            UserWeblogRole perm = userManager.getWeblogRoleIncludingPending(user, getActionWeblog());
 
             if (perm != null && perm.isPending()) {
                 addError("inviteMember.error.userAlreadyInvited");
@@ -138,7 +142,7 @@ public class MembersInvite extends UIAction {
         // if no errors then send the invitation
         if(!hasActionErrors()) {
             try {
-                umgr.grantPendingWeblogRole(user, getActionWeblog(),
+                userManager.grantPendingWeblogRole(user, getActionWeblog(),
                         WeblogRole.valueOf(getPermissionString()));
                 WebloggerFactory.flush();
 
@@ -200,8 +204,7 @@ public class MembersInvite extends UIAction {
                             HttpServletResponse response) throws ServletException {
         try {
             Weblogger weblogger = WebloggerFactory.getWeblogger();
-            UserManager mgr = weblogger.getUserManager();
-            User authenticatedUser = mgr.getUserByUserName(p.getName());
+            User authenticatedUser = userManager.getUserByUserName(p.getName());
             if (authenticatedUser.hasEffectiveGlobalRole(GlobalRole.BLOGGER)) {
                 String startsWith = request.getParameter("startsWith");
                 Boolean enabledOnly = null;
@@ -223,8 +226,7 @@ public class MembersInvite extends UIAction {
                 }
 
                 try {
-                    UserManager umgr = weblogger.getUserManager();
-                    List<User> users = umgr.getUsersStartingWith(startsWith,
+                    List<User> users = userManager.getUsersStartingWith(startsWith,
                             enabledOnly, offset, length);
                     List<UserData> userDataList = new ArrayList<>();
                     for (User user : users) {

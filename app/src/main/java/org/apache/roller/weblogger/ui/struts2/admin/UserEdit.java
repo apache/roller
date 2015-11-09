@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon.AuthMethod;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -51,6 +52,12 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class UserEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(UserEdit.class);
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
 
     // a bean to store our form data
     private CreateUserBean bean = new CreateUserBean();
@@ -87,13 +94,12 @@ public class UserEdit extends UIAction {
         } else {
             try {
                 // load the user object we are modifying
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 if (bean.getId() != null) {
                     // action came from CreateUser or return from ModifyUser
-                    user = mgr.getUser(getBean().getId());
+                    user = userManager.getUser(getBean().getId());
                 } else if (bean.getUserName() != null) {
                     // action came from UserAdmin screen.
-                    user = mgr.getUserByUserName(getBean().getUserName(), null);
+                    user = userManager.getUserByUserName(getBean().getUserName(), null);
                 }
             } catch (Exception e) {
                 log.error("Error looking up user (id/username) :" + bean.getId() + "/" + bean.getUserName(), e);
@@ -155,21 +161,20 @@ public class UserEdit extends UIAction {
             }
 
             try {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 if (isAdd()) {
                     // fields not copied over from above copyTo():
                     user.setUserName(getBean().getUserName());
                     user.setDateCreated(new java.util.Date());
                     user.setGlobalRole(getBean().isAdministrator() ? GlobalRole.ADMIN : GlobalRole.BLOGGER);
                     // save new user
-                    mgr.addUser(user);
+                    userManager.addUser(user);
                 } else {
                     if (!isUserEditingSelf()) {
                         user.setGlobalRole(getBean().isAdministrator() ? GlobalRole.ADMIN : GlobalRole.BLOGGER);
-                    } else if (mgr.isGlobalAdmin(user) != getBean().isAdministrator()) {
+                    } else if (userManager.isGlobalAdmin(user) != getBean().isAdministrator()) {
                         addError("userAdmin.cantChangeOwnRole");
                     }
-                    mgr.saveUser(user);
+                    userManager.saveUser(user);
                 }
 
                 WebloggerFactory.flush();
@@ -225,8 +230,7 @@ public class UserEdit extends UIAction {
         // check that OpenID, if provided, is not taken
         if (!StringUtils.isEmpty(getBean().getOpenIdUrl())) {
             try {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                User user = mgr.getUserByOpenIdUrl(bean.getOpenIdUrl());
+                User user = userManager.getUserByOpenIdUrl(bean.getOpenIdUrl());
                 if (user != null && !(user.getUserName().equals(bean.getUserName()))) {
                     addError("error.add.user.openIdInUse");
                 }
@@ -251,7 +255,7 @@ public class UserEdit extends UIAction {
 
     public List<UserWeblogRole> getPermissions() {
         try {
-            return WebloggerFactory.getWeblogger().getUserManager().getWeblogRoles(user);
+            return userManager.getWeblogRoles(user);
         } catch (WebloggerException ex) {
             log.error("ERROR getting permissions for user " + user.getUserName(), ex);
         }

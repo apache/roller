@@ -35,9 +35,9 @@
         <task:scheduled ref="weblogManager" method="resetAllHitCounts" cron="0 0 0 * * *"/>
         <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0/4 * * * *"/>
         <task:scheduled ref="planetManager" method="syncAllBlogsPlanet" cron="0 0 0 * * *"/>
-        <task:scheduled ref="planetManager" method="updateSubscriptions" fixed-delay="3600000"/>
-        <task:scheduled ref="pingTargetManager" method="sendPings" fixed-delay="900000"/>
-        <task:scheduled ref="weblogManager" method="updateHitCounters" fixed-delay="180000"/>
+        <task:scheduled ref="planetManager" method="updateSubscriptions" initial-delay="300000" fixed-delay="3600000"/>
+        <task:scheduled ref="pingTargetManager" method="sendPings" initial-delay="300000" fixed-delay="900000"/>
+        <task:scheduled ref="weblogManager" method="updateHitCounters" initial-delay="300000" fixed-delay="180000"/>
     </task:scheduled-tasks>
 
 </beans:beans>

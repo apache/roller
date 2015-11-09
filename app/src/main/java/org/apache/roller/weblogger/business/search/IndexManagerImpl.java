@@ -126,7 +126,6 @@ public class IndexManagerImpl implements IndexManager {
     }
 
     @Override
-    @PostConstruct
     public void initialize() throws WebloggerException {
 
         // only initialize the index if search is enabled

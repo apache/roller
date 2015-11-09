@@ -27,6 +27,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -79,6 +80,24 @@ import java.util.Map;
 public final class EntryEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryEdit.class);
+
+    private WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
 
     // Max Tags to show for autocomplete
     private static final int MAX_TAGS = WebloggerConfig.getIntProperty("services.tagdata.max", 20);
@@ -233,8 +252,7 @@ public final class EntryEdit extends UIAction {
                 }
 
                 // if user is an admin then apply pinned to main value as well
-                if (WebloggerFactory.getWeblogger().getUserManager()
-                        .isGlobalAdmin(getAuthenticatedUser())) {
+                if (userManager.isGlobalAdmin(getAuthenticatedUser())) {
                     weblogEntry.setPinnedToMain(getBean().getPinnedToMain());
                 }
 
@@ -426,8 +444,7 @@ public final class EntryEdit extends UIAction {
      */
     public List<WeblogCategory> getCategories() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            return wmgr.getWeblogCategories(getActionWeblog());
+            return weblogManager.getWeblogCategories(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error(
                     "Error getting category list for weblog - " + getWeblog(),
@@ -506,8 +523,7 @@ public final class EntryEdit extends UIAction {
             wesc.setMaxResults(20);
             wesc.setStatus(pubStatus);
             wesc.setSortBy(sortBy);
-            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager()
-                    .getWeblogEntries(wesc);
+            entries = weblogEntryManager.getWeblogEntries(wesc);
         } catch (WebloggerException ex) {
             log.error("Error getting entries list", ex);
         }

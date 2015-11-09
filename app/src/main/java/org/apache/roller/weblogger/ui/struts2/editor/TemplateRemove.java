@@ -53,6 +53,12 @@ public class TemplateRemove extends UIAction {
 		this.pageTitle = "editPages.title.removeOK";
 	}
 
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     @Override
     public GlobalRole requiredGlobalRole() {
         return GlobalRole.BLOGGER;
@@ -61,8 +67,7 @@ public class TemplateRemove extends UIAction {
 	public void myPrepare() {
 		if (getRemoveId() != null) {
             try {
-                setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getTemplate(getRemoveId()));
+                setTemplate(weblogManager.getTemplate(getRemoveId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up template by id - " + getRemoveId(),
                         ex);

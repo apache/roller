@@ -155,7 +155,7 @@ public class Install extends UIAction {
 
         try {
             // trigger bootstrapping process
-            WebloggerFactory.bootstrap();
+            WebloggerFactory.bootstrap(null);
 
             // also need to do planet if it's configured
             if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {

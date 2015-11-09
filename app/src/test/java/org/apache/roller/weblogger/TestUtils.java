@@ -58,7 +58,7 @@ public final class TestUtils {
             WebloggerStartup.prepare();
 
             // do application bootstrapping
-            WebloggerFactory.bootstrap();
+            WebloggerFactory.bootstrap(null);
         }
     }
 

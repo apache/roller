@@ -48,7 +48,13 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 public class Pings extends UIAction {
     
     private static Log log = LogFactory.getLog(Pings.class);
-    
+
+    private PingTargetManager pingTargetManager;
+
+    public void setPingTargetManager(PingTargetManager pingTargetManager) {
+        this.pingTargetManager = pingTargetManager;
+    }
+
     // ping target id to work on
     private String pingTargetId = null;
     
@@ -75,12 +81,10 @@ public class Pings extends UIAction {
 
     public void myPrepare() {
         
-        PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-        
         // load selected ping target, if possible
         if(getPingTargetId() != null) {
             try {
-                setPingTarget(pingTargetMgr.getPingTarget(getPingTargetId()));
+                setPingTarget(pingTargetManager.getPingTarget(getPingTargetId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up ping target - "+getPingTargetId(), ex);
             }
@@ -88,7 +92,7 @@ public class Pings extends UIAction {
         
         try {
             // load common ping targets list
-            setCommonPingTargets(pingTargetMgr.getCommonPingTargets());
+            setCommonPingTargets(pingTargetManager.getCommonPingTargets());
         } catch (WebloggerException ex) {
             log.error("Error loading ping target lists for weblog - "+getActionWeblog().getHandle(), ex);
             addError("Error loading ping targets");
@@ -115,9 +119,8 @@ public class Pings extends UIAction {
         
         if(getPingTarget() != null) {
             try {
-                PingTargetManager manager = WebloggerFactory.getWeblogger().getPingTargetManager();
                 AutoPing autoPing = new AutoPing(getPingTarget(), getActionWeblog());
-                manager.saveAutoPing(autoPing);
+                pingTargetManager.saveAutoPing(autoPing);
                 WebloggerFactory.flush();
             } catch(Exception ex) {
                 log.error("Error saving auto ping for target - "+getPingTargetId(), ex);
@@ -136,8 +139,7 @@ public class Pings extends UIAction {
         
         if(getPingTarget() != null) {
             try {
-                PingTargetManager manager = WebloggerFactory.getWeblogger().getPingTargetManager();
-                manager.removeAutoPing(getPingTarget(), getActionWeblog());
+                pingTargetManager.removeAutoPing(getPingTarget(), getActionWeblog());
                 WebloggerFactory.flush();
             } catch (Exception ex) {
                 log.error("Error removing auto ping for target - " + getPingTargetId(), ex);
@@ -155,13 +157,12 @@ public class Pings extends UIAction {
     public String pingNow() {
         
         if(getPingTarget() != null) {
-            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             try {
                 if (WebloggerRuntimeConfig.getBooleanProperty("pings.suspendPingProcessing")) {
                     log.debug("Ping processing is disabled.");
                     addError("ping.pingProcessingIsSuspended");
                 } else {
-                    PingResult pingResult = pingTargetMgr.sendPing(getPingTarget(), getActionWeblog());
+                    PingResult pingResult = pingTargetManager.sendPing(getPingTarget(), getActionWeblog());
                     if (pingResult.isError()) {
                         log.debug("Ping Result: " + pingResult);
                         if (pingResult.getMessage() != null && pingResult.getMessage().trim().length() > 0) {
@@ -206,14 +207,12 @@ public class Pings extends UIAction {
      */
     private void buildIsEnabledMap() {
         
-        PingTargetManager autoPingMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
-        
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
         Map<String, Boolean> isEnabled = new HashMap<String, Boolean>();
         
         List<AutoPing> autoPings = Collections.emptyList();
         try {
-            autoPings = autoPingMgr.getAutoPingsByWeblog(getActionWeblog());
+            autoPings = pingTargetManager.getAutoPingsByWeblog(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error("Error looking up auto pings for weblog - "+getActionWeblog().getHandle(), ex);
         }

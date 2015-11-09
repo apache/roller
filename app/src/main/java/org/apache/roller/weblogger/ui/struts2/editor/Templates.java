@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogTemplateRendition;
 import org.apache.roller.weblogger.pojos.GlobalRole;
@@ -60,7 +61,13 @@ public class Templates extends UIAction {
 	private String newTmplName = null;
 	private ComponentType newTmplAction = null;
 
-	public Templates() {
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    public Templates() {
 		this.actionName = "templates";
 		this.desiredMenu = "editor";
 		this.pageTitle = "pagesForm.title";
@@ -171,32 +178,28 @@ public class Templates extends UIAction {
                 }
 
                 // save the new Template
-                WebloggerFactory.getWeblogger().getWeblogManager()
-                        .saveTemplate(newTemplate);
+                weblogManager.saveTemplate(newTemplate);
 
                 // Create weblog template codes for available types.
                 WeblogTemplateRendition standardRendition = new WeblogTemplateRendition(
                         newTemplate, RenditionType.STANDARD);
                 standardRendition.setTemplate(getText("pageForm.newTemplateContent"));
                 standardRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
-                WebloggerFactory.getWeblogger().getWeblogManager()
-                        .saveTemplateRendition(standardRendition);
+                weblogManager.saveTemplateRendition(standardRendition);
 
                 /* TBI -- need a way for user to specify dual or single template
                 WeblogTemplateRendition mobileRendition = new WeblogTemplateRendition(
                         newTemplate.getId(), RenditionType.MOBILE);
                 mobileRendition.setTemplate(newTemplate.getContents());
                 mobileRendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
-                WebloggerFactory.getWeblogger().getWeblogManager()
-                        .saveTemplateRendition(mobileRendition);
+                weblogManager.saveTemplateRendition(mobileRendition);
                 */
 
                 // if this person happened to create a Weblog template from
                 // scratch then make sure and set the defaultPageId. What does
                 // this do????
                 if (WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
-                    WebloggerFactory.getWeblogger().getWeblogManager()
-                            .saveWeblog(getActionWeblog());
+                    weblogManager.saveWeblog(getActionWeblog());
                 }
 
                 // flush results to db

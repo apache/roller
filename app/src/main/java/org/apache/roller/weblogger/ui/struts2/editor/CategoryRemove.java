@@ -41,9 +41,15 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * Remove a category.
  */
 public class CategoryRemove extends UIAction {
-    
+
     private static Log log = LogFactory.getLog(CategoryRemove.class);
-    
+
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     // id of category to remove
     private String removeId = null;
     
@@ -75,9 +81,8 @@ public class CategoryRemove extends UIAction {
 
     public void myPrepare() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             if(!StringUtils.isEmpty(getRemoveId())) {
-                setCategory(wmgr.getWeblogCategory(getRemoveId()));
+                setCategory(weblogManager.getWeblogCategory(getRemoveId()));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up category", ex);
@@ -91,8 +96,7 @@ public class CategoryRemove extends UIAction {
     public String execute() {
         try {
             // Build list of categories that the removed category's blog entries (if any) can be moved to
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog());
+            List<WeblogCategory> cats = weblogManager.getWeblogCategories(getActionWeblog());
             for (WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getRemoveId())) {
                     allCategories.add(cat);
@@ -112,18 +116,16 @@ public class CategoryRemove extends UIAction {
         
         if(getCategory() != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-
                 if (getTargetCategoryId() != null) {
-                    WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
-                    wmgr.moveWeblogCategoryContents(getCategory(), target);
+                    WeblogCategory target = weblogManager.getWeblogCategory(getTargetCategoryId());
+                    weblogManager.moveWeblogCategoryContents(getCategory(), target);
                     WebloggerFactory.flush();
                 }
 
                 // notify cache
                 CacheManager.invalidate(getCategory());
 
-                wmgr.removeWeblogCategory(getCategory());
+                weblogManager.removeWeblogCategory(getCategory());
                 WebloggerFactory.flush();
                 addMessage("categoryForm.removed", category.getName());
                 return SUCCESS;
