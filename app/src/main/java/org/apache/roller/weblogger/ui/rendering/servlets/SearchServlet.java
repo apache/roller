@@ -37,14 +37,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
-import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
+import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
@@ -133,14 +132,14 @@ public class SearchServlet extends HttpServlet {
         response.setContentType("text/html; charset=utf-8");
 
         // looks like we need to render content
-        Map model = new HashMap();
+        Map<String, Object> model;
         try {
             PageContext pageContext = JspFactory.getDefaultFactory()
                     .getPageContext(this, request, response, "", false, WebloggerCommon.EIGHT_KB_IN_BYTES,
                             true);
 
             // populate the rendering model
-            Map initData = new HashMap();
+            Map<String, Object> initData = new HashMap<>();
             initData.put("request", request);
             initData.put("pageContext", pageContext);
 
@@ -164,15 +163,11 @@ public class SearchServlet extends HttpServlet {
                     .getUrlStrategy());
 
             // Load models for pages
-            String searchModels = WebloggerConfig
-                    .getProperty("rendering.searchModels");
-            ModelLoader.loadModels(searchModels, model, initData, true);
+            model = Model.getModelMap("searchModelSet", initData);
 
             // Load special models for site-wide blog
             if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-                String siteModels = WebloggerConfig
-                        .getProperty("rendering.siteModels");
-                ModelLoader.loadModels(siteModels, model, initData, true);
+                model.putAll(Model.getModelMap("siteModelSet", initData));
             }
 
         } catch (WebloggerException ex) {

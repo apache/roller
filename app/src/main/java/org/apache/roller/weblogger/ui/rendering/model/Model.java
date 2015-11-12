@@ -18,8 +18,12 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -37,5 +41,16 @@ public interface Model {
      * Initialize.
      */
     void init(Map params) throws WebloggerException;
-    
+
+    static Map<String, Object> getModelMap(String modelBean, Map<String, Object> initData) throws WebloggerException {
+        HashMap<String, Object> modelMap = new HashMap<>();
+        Set modelSet = (Set) WebloggerFactory.getContext().getBean(modelBean);
+        for (Object obj : modelSet) {
+            Model m = (Model) obj;
+            m.init(initData);
+            modelMap.put(m.getModelName(), m);
+        }
+        return modelMap;
+    }
+
 }

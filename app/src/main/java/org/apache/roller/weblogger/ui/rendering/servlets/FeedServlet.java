@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import java.io.IOException;
@@ -35,19 +34,17 @@ import org.apache.roller.weblogger.WebloggerCommon;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
-import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
-import org.apache.roller.weblogger.ui.rendering.model.SearchResultsFeedModel;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
@@ -211,7 +208,7 @@ public class FeedServlet extends HttpServlet {
         }
 
         // looks like we need to render content
-        HashMap<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model;
         String pageId;
         try {
             // determine what template to render with
@@ -234,24 +231,16 @@ public class FeedServlet extends HttpServlet {
             initData.put("urlStrategy", WebloggerFactory.getWeblogger()
                     .getUrlStrategy());
 
-            // Load models for feeds
-            String feedModels = WebloggerConfig
-                    .getProperty("rendering.feedModels");
-            ModelLoader.loadModels(feedModels, model, initData, true);
+            model = Model.getModelMap("feedModelSet", initData);
 
             // Load special models for site-wide blog
-
-            if (siteWide) {
-                String siteModels = WebloggerConfig
-                        .getProperty("rendering.siteModels");
-                ModelLoader.loadModels(siteModels, model, initData, true);
+            if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+                model.putAll(Model.getModelMap("siteModelSet", initData));
             }
 
             // Load search models if search feed
-            if ("entries".equals(feedRequest.getType())
-                    && feedRequest.getTerm() != null) {
-                ModelLoader.loadModels(SearchResultsFeedModel.class.getName(),
-                        model, initData, true);
+            if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
+                model.putAll(Model.getModelMap("searchFeedModel", initData));
             }
 
         } catch (WebloggerException ex) {
