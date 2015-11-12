@@ -72,6 +72,6 @@ public final class WebloggerCommon {
             throw new IllegalArgumentException("Unknown authentication.method property value: "
                     + propertyName + " defined in Roller properties file.");
         }
-
     }
+
 }

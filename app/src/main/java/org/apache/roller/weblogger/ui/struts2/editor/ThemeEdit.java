@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,6 +57,7 @@ public class ThemeEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(Templates.class);
 
+    @Autowired
     private ThemeManager themeManager;
 
     public void setThemeManager(ThemeManager themeManager) {

@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import org.apache.roller.weblogger.WebloggerCommon;
@@ -31,12 +30,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
+import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
@@ -204,7 +202,7 @@ public class PreviewServlet extends HttpServlet {
         }
         
         // looks like we need to render content
-        Map<String, Object> model = new HashMap<>();
+        Map<String, Object> model;
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", false, WebloggerCommon.EIGHT_KB_IN_BYTES, true);
@@ -219,15 +217,13 @@ public class PreviewServlet extends HttpServlet {
             
             // define url strategy
             initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy().getPreviewURLStrategy(previewRequest.getThemeName()));
-            
+
             // Load models for page previewing
-            String pageModels = WebloggerConfig.getProperty("rendering.previewModels");
-            ModelLoader.loadModels(pageModels, model, initData, true);
-            
+            model = Model.getModelMap("previewModelSet", initData);
+
             // Load special models for site-wide blog
             if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-                String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
-                ModelLoader.loadModels(siteModels, model, initData, true);
+                model.putAll(Model.getModelMap("siteModelSet", initData));
             }
 
         } catch (WebloggerException ex) {

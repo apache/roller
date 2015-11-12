@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
+import org.apache.roller.weblogger.ui.rendering.model.Model;
 import org.apache.roller.weblogger.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
@@ -381,7 +381,7 @@ public class PageServlet extends HttpServlet {
             }
         }
 
-        HashMap<String, Object> model = new HashMap<>();
+        Map<String, Object> model;
         try {
             PageContext pageContext = JspFactory.getDefaultFactory()
                     .getPageContext(this, request, response, "", false,
@@ -407,15 +407,11 @@ public class PageServlet extends HttpServlet {
                 initData.put("commentForm", commentForm);
             }
 
-            // Load models for pages
-            String pageModels = WebloggerConfig
-                    .getProperty("rendering.pageModels");
-            ModelLoader.loadModels(pageModels, model, initData, true);
+            model = Model.getModelMap("pageModelSet", initData);
+
             // Load special models for site-wide blog
             if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-                String siteModels = WebloggerConfig
-                        .getProperty("rendering.siteModels");
-                ModelLoader.loadModels(siteModels, model, initData, true);
+                model.putAll(Model.getModelMap("siteModelSet", initData));
             }
 
         } catch (WebloggerException ex) {
