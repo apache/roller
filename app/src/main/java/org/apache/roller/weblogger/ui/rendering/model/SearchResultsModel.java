@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
 */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.io.IOException;
@@ -38,10 +37,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
@@ -65,7 +61,6 @@ public class SearchResultsModel extends PageModel {
 
 	// the original search request
 	WeblogSearchRequest searchRequest = null;
-	private URLStrategy urlStrategy = null;
 
 	// the actual search results mapped by Day -> Set of entries
     private Map<Date, TreeSet<WeblogEntryWrapper>> results
@@ -80,20 +75,24 @@ public class SearchResultsModel extends PageModel {
 	private Set categories = new TreeSet();
 	private boolean websiteSpecificSearch = true;
 	private String errorMessage = null;
+    private WeblogEntryManager weblogEntryManager;
+    private IndexManager indexManager;
 
-	public void init(Map initData) throws WebloggerException {
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
+    public void init(Map initData) throws WebloggerException {
 
 		// we expect the init data to contain a searchRequest object
 		searchRequest = (WeblogSearchRequest) initData.get("searchRequest");
 		if (searchRequest == null) {
 			throw new WebloggerException(
 					"expected searchRequest from init data");
-		}
-
-		// look for url strategy
-		urlStrategy = (URLStrategy) initData.get("urlStrategy");
-		if (urlStrategy == null) {
-			urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
 		}
 
 		// let parent initialize
@@ -107,10 +106,7 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		// setup the search
-		IndexManager indexMgr = WebloggerFactory.getWeblogger()
-				.getIndexManager();
-
-		SearchOperation search = new SearchOperation(indexMgr);
+		SearchOperation search = new SearchOperation(indexManager);
 		search.setTerm(searchRequest.getQuery());
 
 		if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest
@@ -125,7 +121,7 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		// execute search
-		indexMgr.executeIndexOperationNow(search);
+        indexManager.executeIndexOperationNow(search);
 
 		if (search.getResultsCount() == -1) {
 			// this means there has been a parsing (or IO) error
@@ -192,8 +188,6 @@ public class SearchResultsModel extends PageModel {
 
 		try {
 			TreeSet<String> categorySet = new TreeSet<>();
-			Weblogger roller = WebloggerFactory.getWeblogger();
-			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
 			WeblogEntry entry;
 			Document doc;
@@ -204,7 +198,7 @@ public class SearchResultsModel extends PageModel {
 				handle = doc.getField(FieldConstants.WEBSITE_HANDLE)
 						.stringValue();
 
-                entry = weblogMgr.getWeblogEntry(doc.getField(
+                entry = weblogEntryManager.getWeblogEntry(doc.getField(
                         FieldConstants.ID).stringValue());
 
                 if (!(websiteSpecificSearch && handle.equals(searchRequest.getWeblogHandle()))

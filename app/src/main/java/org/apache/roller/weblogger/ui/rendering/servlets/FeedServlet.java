@@ -227,10 +227,6 @@ public class FeedServlet extends HttpServlet {
             Map<String, Object> initData = new HashMap<String, Object>();
             initData.put("parsedRequest", feedRequest);
 
-            // define url strategy
-            initData.put("urlStrategy", WebloggerFactory.getWeblogger()
-                    .getUrlStrategy());
-
             model = Model.getModelMap("feedModelSet", initData);
 
             // Load special models for site-wide blog
@@ -240,7 +236,7 @@ public class FeedServlet extends HttpServlet {
 
             // Load search models if search feed
             if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
-                model.putAll(Model.getModelMap("searchFeedModel", initData));
+                model.putAll(Model.getModelMap("searchFeedModelSet", initData));
             }
 
         } catch (WebloggerException ex) {

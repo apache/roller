@@ -57,6 +57,12 @@ public class StylesheetEdit extends UIAction {
         this.weblogManager = weblogManager;
     }
 
+    private ThemeManager themeManager;
+
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
+    }
+
     // the template we are working on
     private WeblogTemplate template = null;
 
@@ -149,13 +155,10 @@ public class StylesheetEdit extends UIAction {
                         .getEditorTheme())
                         && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
 
-                    ThemeTemplate override = WebloggerFactory
-                            .getWeblogger()
-                            .getWeblogManager()
-                            .getTemplateByLink(
-                                    getActionWeblog(),
-                                    getActionWeblog().getTheme()
-                                            .getTemplateByAction(ComponentType.STYLESHEET).getLink());
+                    ThemeTemplate override = weblogManager.getTemplateByLink(
+                            getActionWeblog(),
+                            getActionWeblog().getTheme()
+                                    .getTemplateByAction(ComponentType.STYLESHEET).getLink());
 
                     if (override != null) {
                         sharedThemeCustomStylesheet = true;
@@ -260,9 +263,7 @@ public class StylesheetEdit extends UIAction {
                 WeblogTemplate stylesheet = getTemplate();
 
                 // lookup the theme used by this weblog
-                ThemeManager tmgr = WebloggerFactory.getWeblogger()
-                        .getThemeManager();
-                Theme theme = tmgr.getTheme(getActionWeblog().getEditorTheme());
+                Theme theme = themeManager.getTheme(getActionWeblog().getEditorTheme());
 
                 stylesheet.setLastModified(new Date());
 
@@ -312,16 +313,14 @@ public class StylesheetEdit extends UIAction {
         if (template != null && sharedTheme && !hasActionErrors()) {
             try {
                 // Delete template and flush
-                WeblogManager mgr = WebloggerFactory.getWeblogger()
-                        .getWeblogManager();
 
                 // Remove template and page codes
-                mgr.removeTemplate(template);
+                weblogManager.removeTemplate(template);
 
                 Weblog weblog = getActionWeblog();
 
                 // save updated weblog and flush
-                mgr.saveWeblog(weblog);
+                weblogManager.saveWeblog(weblog);
 
                 // notify caches
                 CacheManager.invalidate(template);

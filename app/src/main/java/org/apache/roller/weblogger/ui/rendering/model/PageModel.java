@@ -29,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
@@ -54,13 +53,16 @@ public class PageModel implements Model {
     private static Log log = LogFactory.getLog(PageModel.class);
     
     private WeblogPageRequest pageRequest = null;
-    private URLStrategy urlStrategy = null;
+    protected URLStrategy urlStrategy = null;
     private WeblogEntryCommentForm commentForm = null;
     private Map requestParameters = null;
     private Weblog weblog = null;
     private DeviceType deviceType = null;
-    
-    
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
     /**
      * 
      * Creates an un-initialized new instance, Weblogger calls init() to complete
@@ -102,12 +104,6 @@ public class PageModel implements Model {
         
         // custom request parameters
         this.requestParameters = (Map)initData.get("requestParameters");
-        
-        // look for url strategy
-        urlStrategy = (URLStrategy) initData.get("urlStrategy");
-        if(urlStrategy == null) {
-            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
-        }
         
         // extract weblog object
         weblog = pageRequest.getWeblog();

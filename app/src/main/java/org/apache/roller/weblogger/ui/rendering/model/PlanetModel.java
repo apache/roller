@@ -31,7 +31,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PlanetManager;
 import org.apache.roller.weblogger.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -53,6 +52,17 @@ public class PlanetModel implements Model {
     private Weblog         weblog = null;
     
     private URLStrategy    urlStrategy = null;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
+    private PlanetManager planetManager;
+
+    public void setPlanetManager(PlanetManager planetManager) {
+        this.planetManager = planetManager;
+    }
+
 
     public String getModelName() {
         return "planet";
@@ -76,12 +86,6 @@ public class PlanetModel implements Model {
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
         }  
         
-        // look for url strategy
-        urlStrategy = (URLStrategy) initData.get("urlStrategy");
-        if(urlStrategy == null) {
-            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
-        }
-
         // extract weblog object
         weblog = weblogRequest.getWeblog();
     } 
@@ -172,7 +176,6 @@ public class PlanetModel implements Model {
     public List<Subscription> getRankedSubscriptions(String planetHandle, int sinceDays, int length) {
         List<Subscription> list = new ArrayList<Subscription>();
         try {
-            PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
             Planet planet = planetManager.getPlanet(planetHandle);
             List<Subscription> subs = planetManager.getTopSubscriptions(planet, 0, length);
             for (Subscription sub : subs) {
@@ -193,7 +196,6 @@ public class PlanetModel implements Model {
     public List<Planet> getPlanets() {
         List<Planet> list = new ArrayList<>();
         try {
-            PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
             list = planetManager.getPlanets();
         } catch (Exception e) {
             log.error("ERROR: getting groups", e);
@@ -209,7 +211,6 @@ public class PlanetModel implements Model {
     public Planet getPlanet(String groupHandle) {
         Planet group = null;
         try {
-            PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
             group = planetManager.getPlanet(groupHandle);
         } catch (Exception e) {
             log.error("ERROR: getting group", e);

@@ -84,8 +84,7 @@ public class Templates extends UIAction {
 		try {
 
 			// get current list of templates, minus custom stylesheet
-			List<WeblogTemplate> raw = WebloggerFactory.getWeblogger()
-					.getWeblogManager().getTemplates(getActionWeblog());
+			List<WeblogTemplate> raw = weblogManager.getTemplates(getActionWeblog());
 			List<WeblogTemplate> pages = new ArrayList<>();
 			pages.addAll(raw);
 			// Remove style sheet from list so not to show when theme is
@@ -236,9 +235,8 @@ public class Templates extends UIAction {
 
 		// check if template by that name already exists
 		try {
-			WeblogTemplate existingPage = WebloggerFactory.getWeblogger()
-					.getWeblogManager()
-					.getTemplateByName(getActionWeblog(), getNewTmplName());
+			WeblogTemplate existingPage = weblogManager.getTemplateByName(getActionWeblog(),
+                    getNewTmplName());
 			if (existingPage != null) {
 				addError("pagesForm.error.alreadyExists", getNewTmplName());
 			}

@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -27,10 +26,10 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
@@ -57,6 +56,7 @@ import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Trackback;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -81,6 +81,7 @@ public final class EntryEdit extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryEdit.class);
 
+    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
     public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
@@ -93,10 +94,29 @@ public final class EntryEdit extends UIAction {
         this.userManager = userManager;
     }
 
+    @Autowired
     private WeblogManager weblogManager;
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
+    }
+
+    private IndexManager indexManager;
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
+    private PluginManager pluginManager;
+
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+
+    private URLStrategy urlStrategy;
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
     }
 
     // Max Tags to show for autocomplete
@@ -140,9 +160,7 @@ public final class EntryEdit extends UIAction {
             // already saved entry
             try {
                 // retrieve from DB WeblogEntry based on ID
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                        .getWeblogEntryManager();
-                setEntry(wmgr.getWeblogEntry(getBean().getId()));
+                setEntry(weblogEntryManager.getWeblogEntry(getBean().getId()));
             } catch (WebloggerException ex) {
                 log.error(
                         "Error looking up entry by id - " + getBean().getId(),
@@ -229,12 +247,6 @@ public final class EntryEdit extends UIAction {
     private String save() {
         if (!hasActionErrors()) {
             try {
-                WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger()
-                        .getWeblogEntryManager();
-
-                IndexManager indexMgr = WebloggerFactory.getWeblogger()
-                        .getIndexManager();
-
                 WeblogEntry weblogEntry = getEntry();
 
                 // set updatetime & pubtime
@@ -291,9 +303,9 @@ public final class EntryEdit extends UIAction {
 
                 // notify search of the new entry
                 if (weblogEntry.isPublished()) {
-                    indexMgr.addEntryReIndexOperation(entry);
+                    indexManager.addEntryReIndexOperation(entry);
                 } else if ("entryEdit".equals(actionName)) {
-                    indexMgr.removeEntryIndexOperation(entry);
+                    indexManager.removeEntryIndexOperation(entry);
                 }
 
                 // notify caches
@@ -367,10 +379,7 @@ public final class EntryEdit extends UIAction {
     }
 
     public String getPreviewURL() {
-        return WebloggerFactory
-                .getWeblogger()
-                .getUrlStrategy()
-                .getPreviewURLStrategy(null)
+        return urlStrategy.getPreviewURLStrategy(null)
                 .getWeblogEntryURL(getActionWeblog(),
                         getEntry().getAnchor(), true);
     }
@@ -456,9 +465,7 @@ public final class EntryEdit extends UIAction {
     public List<WeblogEntryPlugin> getEntryPlugins() {
         List<WeblogEntryPlugin> availablePlugins = Collections.emptyList();
         try {
-            PluginManager ppmgr = WebloggerFactory.getWeblogger()
-                    .getPluginManager();
-            Map<String, WeblogEntryPlugin> plugins = ppmgr
+            Map<String, WeblogEntryPlugin> plugins = pluginManager
                     .getWeblogEntryPlugins(getActionWeblog());
 
             if (plugins.size() > 0) {
@@ -537,11 +544,8 @@ public final class EntryEdit extends UIAction {
         List<TagStat> tags;
 
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager wmgr = roller.getWeblogManager();
-            WeblogEntryManager emgr = roller.getWeblogEntryManager();
-            Weblog weblog = wmgr.getWeblogByHandle(handle);
-            tags = emgr.getTags(weblog, null, prefix, 0, MAX_TAGS);
+            Weblog weblog = weblogManager.getWeblogByHandle(handle);
+            tags = weblogEntryManager.getTags(weblog, null, prefix, 0, MAX_TAGS);
 
             WeblogTagData wtd = new WeblogTagData();
             wtd.setWeblog(handle);

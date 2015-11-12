@@ -94,9 +94,6 @@ public class TemplateRemove extends UIAction {
                         || !WeblogTheme.CUSTOM.equals(getActionWeblog()
                         .getEditorTheme())) {
 
-                    WeblogManager mgr = WebloggerFactory.getWeblogger()
-                            .getWeblogManager();
-
                     // if weblog template remove custom style sheet also
                     if (getTemplate().getName().equals(
                             WeblogTemplate.DEFAULT_PAGE)) {
@@ -111,18 +108,18 @@ public class TemplateRemove extends UIAction {
                                 getActionWeblog().getTheme()
                                         .getTemplateByAction(ComponentType.STYLESHEET).getLink())) {
                             // Same so OK to delete
-                            WeblogTemplate css = mgr.getTemplateByLink(
+                            WeblogTemplate css = weblogManager.getTemplateByLink(
                                     getActionWeblog(), stylesheet.getLink());
 
                             if (css != null) {
-                                mgr.removeTemplate(css);
+                                weblogManager.removeTemplate(css);
                             }
                         }
                     }
 
                     // notify cache
                     CacheManager.invalidate(getTemplate());
-                    mgr.removeTemplate(getTemplate());
+                    weblogManager.removeTemplate(getTemplate());
                     WebloggerFactory.flush();
 
                     return SUCCESS;

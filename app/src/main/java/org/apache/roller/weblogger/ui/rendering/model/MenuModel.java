@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.ui.core.util.menu.Menu;
 import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -42,8 +42,13 @@ public class MenuModel implements Model {
     private static Log logger = LogFactory.getLog(MenuModel.class);
     
     private WeblogPageRequest pageRequest = null;
-    
-    
+
+    private UserManager userManager;
+
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+
     /** Template context name to be used for model */
     public String getModelName() {
         return "menuModel";
@@ -76,8 +81,7 @@ public class MenuModel implements Model {
     public Menu getAdminMenu() {
         try {
             if (pageRequest.isLoggedIn()) {
-                boolean isAdmin = WebloggerFactory.getWeblogger().getUserManager()
-                        .isGlobalAdmin(pageRequest.getUser());
+                boolean isAdmin = userManager.isGlobalAdmin(pageRequest.getUser());
                 if (isAdmin) {
                     return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
                 }
