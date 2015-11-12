@@ -23,8 +23,6 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
@@ -39,9 +37,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 public class PreviewPageModel extends PageModel {
     
     private WeblogPreviewRequest previewRequest = null;
-    private URLStrategy urlStrategy = null;
-    
-    
+
     /** 
      * Init model.
      */
@@ -60,12 +56,6 @@ public class PreviewPageModel extends PageModel {
         } else {
             throw new WebloggerException("weblogRequest is not a WeblogPreviewRequest."+
                     "  PreviewPageModel only supports preview requests.");
-        }
-        
-        // look for url strategy
-        urlStrategy = (URLStrategy) initData.get("urlStrategy");
-        if(urlStrategy == null) {
-            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
         
         super.init(initData);

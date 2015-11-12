@@ -46,6 +46,12 @@ public class EntryRemove extends UIAction {
         this.indexManager = indexManager;
     }
 
+    private WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
     // id of entry to remove
     private String removeId = null;
 
@@ -61,9 +67,7 @@ public class EntryRemove extends UIAction {
     public void myPrepare() {
         if (getRemoveId() != null) {
             try {
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                        .getWeblogEntryManager();
-                setRemoveEntry(wmgr.getWeblogEntry(getRemoveId()));
+                setRemoveEntry(weblogEntryManager.getWeblogEntry(getRemoveId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up entry by id - " + getRemoveId(), ex);
             }
@@ -89,9 +93,7 @@ public class EntryRemove extends UIAction {
                 CacheManager.invalidate(entry);
 
                 // remove entry itself
-                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                        .getWeblogEntryManager();
-                wmgr.removeWeblogEntry(entry);
+                weblogEntryManager.removeWeblogEntry(entry);
                 WebloggerFactory.flush();
 
                 // note to user

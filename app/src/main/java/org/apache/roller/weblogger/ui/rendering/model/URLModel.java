@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Arrays;
@@ -28,14 +27,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
-
 
 /**
  * Provides access to URL building functionality.
@@ -54,11 +51,19 @@ public class URLModel implements Model {
     
     private static Log log = LogFactory.getLog(URLModel.class);
     
-    protected Weblog weblog = null;
+    protected Weblog weblog;
 
-    protected URLStrategy urlStrategy = null;
-    
-    
+    private WeblogEntryManager weblogEntryManager;
+    protected URLStrategy urlStrategy;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
     public URLModel() {}
     
     public String getModelName() {
@@ -66,7 +71,6 @@ public class URLModel implements Model {
     }
     
     public void init(Map initData) throws WebloggerException {
-        
         // need a weblog request so that we can know the weblog and locale
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
@@ -74,12 +78,6 @@ public class URLModel implements Model {
         }
         
         this.weblog = weblogRequest.getWeblog();
-
-        // look for url strategy
-        urlStrategy = (URLStrategy) initData.get("urlStrategy");
-        if(urlStrategy == null) {
-            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
-        }
     }
     
     
@@ -274,8 +272,7 @@ public class URLModel implements Model {
     public String editEntry(String anchor) {
         try {
             // need to determine entryId from anchor
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-            WeblogEntry entry = wmgr.getWeblogEntryByAnchor(weblog, anchor);
+            WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, anchor);
             if(entry != null) {
                 return urlStrategy.getEntryEditURL(weblog.getHandle(), entry.getId(), false);
             }

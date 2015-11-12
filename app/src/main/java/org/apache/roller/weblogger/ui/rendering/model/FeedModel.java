@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
@@ -48,8 +47,11 @@ public class FeedModel implements Model {
     private WeblogFeedRequest feedRequest = null;
     private URLStrategy urlStrategy = null;
     private Weblog weblog = null;
-    
-    
+
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
     public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
@@ -65,12 +67,6 @@ public class FeedModel implements Model {
         } else {
             throw new WebloggerException("weblogRequest is not a WeblogFeedRequest."+
                     "  FeedModel only supports feed requests.");
-        }
-        
-        // look for url strategy
-        urlStrategy = (URLStrategy) initData.get("urlStrategy");
-        if(urlStrategy == null) {
-            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
         
         // extract weblog object

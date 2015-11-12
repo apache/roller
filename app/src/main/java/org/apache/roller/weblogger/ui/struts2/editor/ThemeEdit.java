@@ -100,22 +100,15 @@ public class ThemeEdit extends UIAction {
     }
 
     public void myPrepare() {
-        ThemeManager themeMgr = WebloggerFactory.getWeblogger()
-                .getThemeManager();
-        themes = themeMgr.getEnabledThemesList();
+        themes = themeManager.getEnabledThemesList();
 
         // See if we're using a shared theme with a custom template
         try {
             if (!WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())
                     && getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET) != null) {
 
-                ThemeTemplate override = WebloggerFactory
-                        .getWeblogger()
-                        .getWeblogManager()
-                        .getTemplateByLink(
-                                getActionWeblog(),
-                                getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET)
-                                        .getLink());
+                ThemeTemplate override = weblogManager.getTemplateByLink(getActionWeblog(),
+                                getActionWeblog().getTheme().getTemplateByAction(ComponentType.STYLESHEET).getLink());
                 if (override != null) {
                     sharedThemeCustomStylesheet = true;
                 }
@@ -252,11 +245,7 @@ public class ThemeEdit extends UIAction {
     // has this weblog had a custom theme before?
     public boolean isFirstCustomization() {
         try {
-            return (WebloggerFactory
-                    .getWeblogger()
-                    .getWeblogManager()
-                    .getTemplateByAction(getActionWeblog(),
-                            ComponentType.WEBLOG) == null);
+            return (weblogManager.getTemplateByAction(getActionWeblog(), ComponentType.WEBLOG) == null);
         } catch (WebloggerException ex) {
             log.error("Error looking up weblog template", ex);
         }

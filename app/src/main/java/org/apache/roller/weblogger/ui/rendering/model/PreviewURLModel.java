@@ -22,9 +22,6 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 
@@ -33,11 +30,6 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  * generated to make them work for previewing mode.
  */
 public class PreviewURLModel extends URLModel {
-    
-    private Weblog weblog = null;
-
-    private URLStrategy urlStrategy = null;
-    
     
     public void init(Map initData) throws WebloggerException {
         
@@ -56,12 +48,6 @@ public class PreviewURLModel extends URLModel {
         
         this.weblog = weblogRequest.getWeblog();
 
-        // look for url strategy
-        urlStrategy = (URLStrategy) initData.get("urlStrategy");
-        if(urlStrategy == null) {
-            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
-        }
-        
         super.init(initData);
     }
     

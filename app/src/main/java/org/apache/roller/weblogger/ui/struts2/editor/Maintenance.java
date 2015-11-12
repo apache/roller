@@ -48,6 +48,12 @@ public class Maintenance extends UIAction {
         this.weblogManager = weblogManager;
     }
 
+    private IndexManager indexManager;
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
     public Maintenance() {
         this.actionName = "maintenance";
         this.desiredMenu = "editor";
@@ -75,10 +81,7 @@ public class Maintenance extends UIAction {
     public String index() {
 
         try {
-            IndexManager manager = WebloggerFactory.getWeblogger()
-                    .getIndexManager();
-            manager.rebuildWeblogIndex(getActionWeblog());
-
+            indexManager.rebuildWeblogIndex(getActionWeblog());
             addMessage("maintenance.message.indexed");
         } catch (Exception ex) {
             log.error("Error doing index rebuild", ex);
@@ -123,10 +126,7 @@ public class Maintenance extends UIAction {
 
         try {
             Weblog weblog = getActionWeblog();
-
-            WeblogManager mgr = WebloggerFactory.getWeblogger()
-                    .getWeblogManager();
-            mgr.resetHitCount(weblog);
+            weblogManager.resetHitCount(weblog);
 
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());

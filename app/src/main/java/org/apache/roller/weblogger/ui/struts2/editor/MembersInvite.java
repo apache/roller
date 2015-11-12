@@ -24,7 +24,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -34,6 +33,7 @@ import org.apache.roller.weblogger.pojos.UserWeblogRole;
 import org.apache.roller.weblogger.pojos.WeblogRole;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +54,7 @@ public class MembersInvite extends UIAction {
     
     private static Log log = LogFactory.getLog(MembersInvite.class);
 
+    @Autowired
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
@@ -203,7 +204,6 @@ public class MembersInvite extends UIAction {
     public List<UserData> getUserList(Principal p, HttpServletRequest request,
                             HttpServletResponse response) throws ServletException {
         try {
-            Weblogger weblogger = WebloggerFactory.getWeblogger();
             User authenticatedUser = userManager.getUserByUserName(p.getName());
             if (authenticatedUser.hasEffectiveGlobalRole(GlobalRole.BLOGGER)) {
                 String startsWith = request.getParameter("startsWith");

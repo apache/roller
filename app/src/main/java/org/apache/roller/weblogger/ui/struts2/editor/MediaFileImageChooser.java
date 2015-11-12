@@ -24,7 +24,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalRole;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
@@ -50,6 +49,12 @@ public class MediaFileImageChooser extends UIAction {
     private MediaFileDirectory currentDirectory;
 
     private List<MediaFileDirectory> allDirectories;
+
+    private MediaFileManager mediaFileManager;
+
+    public void setMediaFileManager(MediaFileManager mediaFileManager) {
+        this.mediaFileManager = mediaFileManager;
+    }
 
     public MediaFileImageChooser() {
         this.actionName = "mediaFileImageChooser";
@@ -81,19 +86,16 @@ public class MediaFileImageChooser extends UIAction {
      */
     @SkipValidation
     public String execute() {
-        MediaFileManager manager = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
         try {
             MediaFileDirectory directory;
             if (this.directoryId != null) {
-                directory = manager.getMediaFileDirectory(this.directoryId);
+                directory = mediaFileManager.getMediaFileDirectory(this.directoryId);
             } else if (this.directoryName != null) {
-                directory = manager.getMediaFileDirectoryByName(
+                directory = mediaFileManager.getMediaFileDirectoryByName(
                         getActionWeblog(), this.directoryName);
                 this.directoryId = directory.getId();
             } else {
-                directory = manager
-                        .getDefaultMediaFileDirectory(getActionWeblog());
+                directory = mediaFileManager.getDefaultMediaFileDirectory(getActionWeblog());
                 this.directoryId = directory.getId();
             }
 
@@ -108,7 +110,7 @@ public class MediaFileImageChooser extends UIAction {
             this.currentDirectory = directory;
 
             // List of available directories
-            allDirectories = manager.getMediaFileDirectories(getActionWeblog());
+            allDirectories = mediaFileManager.getMediaFileDirectories(getActionWeblog());
             return SUCCESS;
 
         } catch (Exception e) {

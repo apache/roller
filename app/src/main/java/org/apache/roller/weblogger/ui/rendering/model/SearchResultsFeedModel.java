@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.io.IOException;
@@ -38,8 +37,6 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
@@ -63,9 +60,11 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class SearchResultsFeedModel implements Model {
 
-	private WeblogFeedRequest feedRequest = null;
-	private URLStrategy urlStrategy = null;
-	private Weblog weblog = null;
+	private WeblogFeedRequest feedRequest;
+	private URLStrategy urlStrategy;
+	private Weblog weblog;
+    private WeblogEntryManager weblogEntryManager;
+    private IndexManager indexManager;
 
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsFeedPager pager = null;
@@ -82,7 +81,19 @@ public class SearchResultsFeedModel implements Model {
 
 	private int entryCount = 0;
 
-	public String getModelName() {
+    public void setUrlStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+    }
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
+    public String getModelName() {
 		return "model";
 	}
 
@@ -102,12 +113,6 @@ public class SearchResultsFeedModel implements Model {
 			throw new WebloggerException(
 					"weblogRequest is not a WeblogFeedRequest."
 							+ "  FeedModel only supports feed requests.");
-		}
-
-		// look for url strategy
-		urlStrategy = (URLStrategy) initData.get("urlStrategy");
-		if (urlStrategy == null) {
-			urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
 		}
 
 		// extract weblog object
@@ -130,10 +135,7 @@ public class SearchResultsFeedModel implements Model {
 				.getIntProperty("site.newsfeeds.defaultEntries");
 
 		// setup the search
-		IndexManager indexMgr = WebloggerFactory.getWeblogger()
-				.getIndexManager();
-
-		SearchOperation search = new SearchOperation(indexMgr);
+		SearchOperation search = new SearchOperation(indexManager);
 		search.setTerm(feedRequest.getTerm());
 
 		if (WebloggerRuntimeConfig.isSiteWideWeblog(feedRequest
@@ -148,7 +150,7 @@ public class SearchResultsFeedModel implements Model {
 		}
 
 		// execute search
-		indexMgr.executeIndexOperationNow(search);
+        indexManager.executeIndexOperationNow(search);
 
 		if (search.getResultsCount() > -1) {
 
@@ -197,8 +199,6 @@ public class SearchResultsFeedModel implements Model {
 
 		try {
 			TreeSet<String> categorySet = new TreeSet<>();
-			Weblogger roller = WebloggerFactory.getWeblogger();
-			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
 			WeblogEntry entry;
 			Document doc;
@@ -209,7 +209,7 @@ public class SearchResultsFeedModel implements Model {
 				handle = doc.getField(FieldConstants.WEBSITE_HANDLE)
 						.stringValue();
 
-                entry = weblogMgr.getWeblogEntry(doc.getField(
+                entry = weblogEntryManager.getWeblogEntry(doc.getField(
                         FieldConstants.ID).stringValue());
 
 				if (!(websiteSpecificSearch && handle.equals(feedRequest.getWeblogHandle()))

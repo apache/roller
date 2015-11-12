@@ -162,20 +162,17 @@ public class MediaFileView extends UIAction {
      */
     @SkipValidation
     public String execute() {
-        MediaFileManager manager = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
         try {
             MediaFileDirectory directory;
             if (StringUtils.isNotEmpty(this.directoryId)) {
-                directory = manager.getMediaFileDirectory(this.directoryId);
+                directory = mediaFileManager.getMediaFileDirectory(this.directoryId);
 
             } else if (StringUtils.isNotEmpty(this.directoryName)) {
-                directory = manager.getMediaFileDirectoryByName(
+                directory = mediaFileManager.getMediaFileDirectoryByName(
                         getActionWeblog(), this.directoryName);
 
             } else {
-                directory = manager
-                        .getDefaultMediaFileDirectory(getActionWeblog());
+                directory = mediaFileManager.getDefaultMediaFileDirectory(getActionWeblog());
             }
             this.directoryId = directory.getId();
             this.directoryName = directory.getName();
@@ -233,17 +230,14 @@ public class MediaFileView extends UIAction {
     public String deleteSelected() {
         String[] fileIds = getSelectedMediaFiles();
         try {
-            MediaFileManager manager = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
-
             if (fileIds != null && fileIds.length > 0) {
                 log.debug("Processing delete of " + fileIds.length
                         + " media files.");
                 for (String fileId : fileIds) {
                     log.debug("Deleting media file - " + fileId);
-                    MediaFile mediaFile = manager.getMediaFile(fileId);
+                    MediaFile mediaFile = mediaFileManager.getMediaFile(fileId);
                     if (mediaFile != null) {
-                        manager.removeMediaFile(getActionWeblog(), mediaFile);
+                        mediaFileManager.removeMediaFile(getActionWeblog(), mediaFile);
                     }
                 }
             }
@@ -269,10 +263,8 @@ public class MediaFileView extends UIAction {
     public String delete() {
         try {
             log.debug("Processing delete of file id - " + getMediaFileId());
-            MediaFileManager manager = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
-            MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
-            manager.removeMediaFile(getActionWeblog(), mediaFile);
+            MediaFile mediaFile = mediaFileManager.getMediaFile(getMediaFileId());
+            mediaFileManager.removeMediaFile(getActionWeblog(), mediaFile);
             // flush changes
             WebloggerFactory.flush();
             addMessage("mediaFile.delete.success");
@@ -289,15 +281,12 @@ public class MediaFileView extends UIAction {
     public String deleteFolder() {
 
         try {
-            MediaFileManager manager = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
             if (directoryId != null) {
                 log.debug("Deleting media file folder - " + directoryId + " ("
                         + directoryName + ")");
-                MediaFileDirectory mediaFileDir = manager
-                        .getMediaFileDirectory(directoryId);
-                manager.removeMediaFileDirectory(mediaFileDir);
-                allDirectories = manager.getMediaFileDirectories(getActionWeblog());
+                MediaFileDirectory mediaFileDir = mediaFileManager.getMediaFileDirectory(directoryId);
+                mediaFileManager.removeMediaFileDirectory(mediaFileDir);
+                allDirectories = mediaFileManager.getMediaFileDirectories(getActionWeblog());
                 weblogManager.saveWeblog(this.getActionWeblog());
 
                 // flush changes
@@ -308,8 +297,7 @@ public class MediaFileView extends UIAction {
                 CacheManager.invalidate(getActionWeblog());
 
                 // re-route to default folder
-                mediaFileDir = manager
-                        .getDefaultMediaFileDirectory(getActionWeblog());
+                mediaFileDir = mediaFileManager.getDefaultMediaFileDirectory(getActionWeblog());
                 setDirectoryId(mediaFileDir.getId());
                 setDirectoryName(mediaFileDir.getName());
             } else {

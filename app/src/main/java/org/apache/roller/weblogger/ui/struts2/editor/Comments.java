@@ -89,6 +89,12 @@ public class Comments extends UIAction {
         this.indexManager = indexManager;
     }
 
+    private WeblogEntryManager weblogEntryManager;
+
+    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
+        this.weblogEntryManager = weblogEntryManager;
+    }
+
     // number of comments to show per page
     private static final int COUNT = 30;
 
@@ -135,12 +141,9 @@ public class Comments extends UIAction {
         List<WeblogEntryComment> comments = Collections.emptyList();
         boolean hasMore = false;
         try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                    .getWeblogEntryManager();
-
             // lookup weblog entry if necessary
             if (!StringUtils.isEmpty(getBean().getEntryId())) {
-                setQueryEntry(wmgr.getWeblogEntry(getBean().getEntryId()));
+                setQueryEntry(weblogEntryManager.getWeblogEntry(getBean().getEntryId()));
             }
 
             CommentSearchCriteria csc = new CommentSearchCriteria();
@@ -155,7 +158,7 @@ public class Comments extends UIAction {
             csc.setOffset(getBean().getPage() * COUNT);
             csc.setMaxResults(COUNT + 1);
 
-            List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
+            List<WeblogEntryComment> rawComments = weblogEntryManager.getComments(csc);
             comments = new ArrayList<>();
             comments.addAll(rawComments);
 
@@ -232,9 +235,6 @@ public class Comments extends UIAction {
         getBean().loadCheckboxes(getPager().getItems());
 
         try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                    .getWeblogEntryManager();
-
             CommentSearchCriteria csc = new CommentSearchCriteria();
             if (!isGlobalCommentManagement()) {
                 csc.setWeblog(getActionWeblog());
@@ -244,7 +244,7 @@ public class Comments extends UIAction {
             csc.setEndDate(getBean().getEndDate());
             csc.setStatus(getBean().getStatus());
 
-            List<WeblogEntryComment> allMatchingComments = wmgr.getComments(csc);
+            List<WeblogEntryComment> allMatchingComments = weblogEntryManager.getComments(csc);
             if (allMatchingComments.size() > COUNT) {
                 setBulkDeleteCount(allMatchingComments.size());
             }
@@ -263,10 +263,7 @@ public class Comments extends UIAction {
     public String delete() {
 
         try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                    .getWeblogEntryManager();
-
-            int deleted = wmgr.removeMatchingComments(
+            int deleted = weblogEntryManager.removeMatchingComments(
                     isGlobalCommentManagement() ? null : getActionWeblog(),
                     null,
                     getBean().getSearchString(),
@@ -289,7 +286,7 @@ public class Comments extends UIAction {
                     csc.setEndDate(getBean().getEndDate());
                     csc.setStatus(getBean().getStatus());
 
-                    List<WeblogEntryComment> targetted = wmgr.getComments(csc);
+                    List<WeblogEntryComment> targetted = weblogEntryManager.getComments(csc);
                     for (WeblogEntryComment comment : targetted) {
                         reindexEntries.add(comment.getWeblogEntry());
                     }
@@ -297,10 +294,8 @@ public class Comments extends UIAction {
 
                 // if we've got entries to reindex then do so
                 if (!reindexEntries.isEmpty()) {
-                    IndexManager imgr = WebloggerFactory.getWeblogger()
-                            .getIndexManager();
                     for (WeblogEntry entry : reindexEntries) {
-                        imgr.addEntryReIndexOperation(entry);
+                        indexManager.addEntryReIndexOperation(entry);
                     }
                 }
             }
@@ -336,9 +331,6 @@ public class Comments extends UIAction {
     public String update() {
 
         try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
-                    .getWeblogEntryManager();
-
             // Global Management: update weblogs
             HashSet<Weblog> flushWeblogSet = new HashSet<>();
 
@@ -354,9 +346,9 @@ public class Comments extends UIAction {
 
                 WeblogEntryComment deleteComment;
                 for (String deleteId : deletes) {
-                    deleteComment = wmgr.getComment(deleteId);
+                    deleteComment = weblogEntryManager.getComment(deleteId);
                     flushWeblogSet.add(deleteComment.getWeblogEntry().getWeblog());
-                    wmgr.removeComment(deleteComment);
+                    weblogEntryManager.removeComment(deleteComment);
 
                     // make sure comment is tied to action weblog
                     if (isGlobalCommentManagement() || getActionWeblog().equals(
@@ -388,7 +380,7 @@ public class Comments extends UIAction {
                     continue;
                 }
 
-                WeblogEntryComment comment = wmgr.getComment(id);
+                WeblogEntryComment comment = weblogEntryManager.getComment(id);
 
                 // for non-Global, make sure comment is tied to action weblog
                 if (isGlobalCommentManagement() || getActionWeblog().equals(comment.getWeblogEntry().getWeblog())) {
@@ -403,7 +395,7 @@ public class Comments extends UIAction {
 
                             log.debug("Marking as approved - " + comment.getId());
                             comment.setStatus(ApprovalStatus.APPROVED);
-                            wmgr.saveComment(comment);
+                            weblogEntryManager.saveComment(comment);
 
                             flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
                             reindexList.add(comment.getWeblogEntry());
@@ -412,7 +404,7 @@ public class Comments extends UIAction {
                         if (!ApprovalStatus.SPAM.equals(comment.getStatus())) {
                             log.debug("Marking as spam - " + comment.getId());
                             comment.setStatus(ApprovalStatus.SPAM);
-                            wmgr.saveComment(comment);
+                            weblogEntryManager.saveComment(comment);
 
                             flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
                             reindexList.add(comment.getWeblogEntry());
@@ -421,7 +413,7 @@ public class Comments extends UIAction {
                             && !(isGlobalCommentManagement() && ApprovalStatus.APPROVED.equals(comment.getStatus()))) {
                         log.debug("Marking as disapproved - " + comment.getId());
                         comment.setStatus(ApprovalStatus.DISAPPROVED);
-                        wmgr.saveComment(comment);
+                        weblogEntryManager.saveComment(comment);
 
                         flushWeblogSet.add(comment.getWeblogEntry().getWeblog());
                         reindexList.add(comment.getWeblogEntry());
@@ -545,9 +537,7 @@ public class Comments extends UIAction {
     public CommentData getComment(@PathVariable String id, Principal p, HttpServletResponse response)
     throws ServletException {
         try {
-            Weblogger weblogger = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = weblogger.getWeblogEntryManager();
-            WeblogEntryComment c = wmgr.getComment(id);
+            WeblogEntryComment c = weblogEntryManager.getComment(id);
             if (c == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
@@ -576,9 +566,7 @@ public class Comments extends UIAction {
                                      HttpServletResponse response)
             throws ServletException {
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            WeblogEntryComment c = wmgr.getComment(id);
+            WeblogEntryComment c = weblogEntryManager.getComment(id);
             if (c == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
@@ -590,7 +578,7 @@ public class Comments extends UIAction {
                     c.setContent(content);
                     // don't update the posttime when updating the comment
                     c.setPostTime(c.getPostTime());
-                    wmgr.saveComment(c);
+                    weblogEntryManager.saveComment(c);
                     WebloggerFactory.flush();
                     return getComment(id, p, response);
                 } else {

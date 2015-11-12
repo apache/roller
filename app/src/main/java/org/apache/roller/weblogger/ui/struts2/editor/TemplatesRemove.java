@@ -55,6 +55,12 @@ public class TemplatesRemove extends UIAction {
     // list of templates to display
     private List<WeblogTemplate> templates = Collections.emptyList();
 
+    private WeblogManager weblogManager;
+
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
     public TemplatesRemove() {
         this.actionName = "templatesRemove";
         this.desiredMenu = "editor";
@@ -72,10 +78,6 @@ public class TemplatesRemove extends UIAction {
 
             // query for templates list
             try {
-
-                WeblogManager mgr = WebloggerFactory.getWeblogger()
-                        .getWeblogManager();
-
                 List<WeblogTemplate> pages = new ArrayList<>();
                 WeblogTemplate template;
 
@@ -84,7 +86,7 @@ public class TemplatesRemove extends UIAction {
 
                     for (String id : idsToDelete) {
                         if (!id.equals("")) {
-                            template = mgr.getTemplate(id);
+                            template = weblogManager.getTemplate(id);
                             if (template != null) {
                                 pages.add(template);
                             }
@@ -135,15 +137,12 @@ public class TemplatesRemove extends UIAction {
                         ",");
                 if (idsToDelete != null && idsToDelete.length > 0) {
 
-                    WeblogManager mgr = WebloggerFactory.getWeblogger()
-                            .getWeblogManager();
-
                     Weblog weblog = getActionWeblog();
                     WeblogTemplate template;
 
                     for (String id : idsToDelete) {
                         if (!id.equals("")) {
-                            template = mgr.getTemplate(id);
+                            template = weblogManager.getTemplate(id);
                             if (!template.isRequired()
                                     || !"custom".equals(getActionWeblog().getEditorTheme())) {
 
@@ -165,22 +164,22 @@ public class TemplatesRemove extends UIAction {
                                                             .getTemplateByAction(ComponentType.STYLESHEET)
                                                             .getLink())) {
                                         // Same so OK to delete
-                                        WeblogTemplate css = mgr.getTemplateByLink(
+                                        WeblogTemplate css = weblogManager.getTemplateByLink(
                                                 getActionWeblog(),
                                                 stylesheet.getLink());
 
                                         if (css != null) {
-                                            mgr.removeTemplate(css);
+                                            weblogManager.removeTemplate(css);
                                         }
                                     }
                                 }
-                                mgr.removeTemplate(template);
+                                weblogManager.removeTemplate(template);
                             }
                         }
                     }
 
                     // Save for changes
-                    mgr.saveWeblog(weblog);
+                    weblogManager.saveWeblog(weblog);
 
                     WebloggerFactory.flush();
 
