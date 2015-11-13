@@ -22,6 +22,7 @@
 package org.apache.roller.weblogger.ui.struts2.util;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -55,7 +56,7 @@ import java.util.TimeZone;
  * getText(key) on the param passed into setError() and setSuccess().
  */
 public abstract class UIAction extends ActionSupport
-        implements UIActionPreparable, UISecurityEnforced, RequestAware {
+        implements Preparable, UISecurityEnforced, RequestAware {
 
     private static final List LOCALES;
     private static final List TIME_ZONES;
@@ -110,7 +111,7 @@ public abstract class UIAction extends ActionSupport
 
     protected String salt = null;
     
-    public void myPrepare() {
+    public void prepare() {
         // no-op
     }
 	

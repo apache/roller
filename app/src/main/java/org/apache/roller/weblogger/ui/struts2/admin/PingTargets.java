@@ -77,7 +77,7 @@ public class PingTargets extends UIAction {
     }
 
     // prepare method needs to set ping targets list
-    public void myPrepare() {
+    public void prepare() {
 
         // load list of ping targets
         loadPingTargets();

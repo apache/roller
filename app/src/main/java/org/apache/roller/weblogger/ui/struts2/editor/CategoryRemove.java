@@ -79,7 +79,7 @@ public class CategoryRemove extends UIAction {
         return WeblogRole.POST;
     }
 
-    public void myPrepare() {
+    public void prepare() {
         try {
             if(!StringUtils.isEmpty(getRemoveId())) {
                 setCategory(weblogManager.getWeblogCategory(getRemoveId()));

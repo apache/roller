@@ -64,7 +64,7 @@ public class PingTargetEdit extends UIAction {
         return WeblogRole.NOBLOGNEEDED;
     }
 
-    public void myPrepare() {
+    public void prepare() {
         if (!StringUtils.isEmpty(getBean().getId())) {
             // edit case
             try {

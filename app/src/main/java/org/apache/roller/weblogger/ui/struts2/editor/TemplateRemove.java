@@ -64,7 +64,7 @@ public class TemplateRemove extends UIAction {
         return GlobalRole.BLOGGER;
     }
 
-	public void myPrepare() {
+	public void prepare() {
 		if (getRemoveId() != null) {
             try {
                 setTemplate(weblogManager.getTemplate(getRemoveId()));

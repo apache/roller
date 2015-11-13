@@ -53,7 +53,7 @@ public class CacheInfo extends UIAction {
         return WeblogRole.NOBLOGNEEDED;
     }
     
-    public void myPrepare() {
+    public void prepare() {
         Map cacheStats = CacheManager.getStats();
         setStats(cacheStats);
     }
@@ -81,7 +81,7 @@ public class CacheInfo extends UIAction {
         }
         
         // update stats after clear
-        myPrepare();
+        prepare();
         
         return SUCCESS;
     }

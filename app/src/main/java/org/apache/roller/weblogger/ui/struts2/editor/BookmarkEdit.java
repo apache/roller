@@ -73,7 +73,7 @@ public class BookmarkEdit extends UIAction {
         this.pageTitle = pageTitle;
     }
 
-    public void myPrepare() {
+    public void prepare() {
         if (StringUtils.isEmpty(bean.getId())) {
             // Create and initialize new, not-yet-saved WeblogBookmark
             bookmark = new WeblogBookmark();

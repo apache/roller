@@ -64,7 +64,7 @@ public class EntryRemove extends UIAction {
         this.pageTitle = "weblogEdit.deleteEntry";
     }
 
-    public void myPrepare() {
+    public void prepare() {
         if (getRemoveId() != null) {
             try {
                 setRemoveEntry(weblogEntryManager.getWeblogEntry(getRemoveId()));

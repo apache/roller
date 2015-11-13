@@ -150,7 +150,7 @@ public final class EntryEdit extends UIAction {
         return WeblogRole.EDIT_DRAFT;
     }
 
-    public void myPrepare() {
+    public void prepare() {
         if (getBean().getId() == null) {
             // Create and initialize new, not-yet-saved Weblog Entry
             entry = new WeblogEntry();

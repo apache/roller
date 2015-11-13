@@ -103,7 +103,7 @@ public class MediaFileView extends UIAction {
     /**
      * Prepares view action
      */
-    public void myPrepare() {
+    public void prepare() {
         if (SORT_OPTIONS == null) {
             SORT_OPTIONS = Arrays.asList(
                     Pair.of("name", getText("generic.name")),

@@ -87,7 +87,7 @@ public class UserEdit extends UIAction {
     }
 
     // prepare for action by loading user object we are modifying
-    public void myPrepare() {
+    public void prepare() {
         if (isAdd()) {
             // create new User
             user = new User();
