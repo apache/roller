@@ -72,7 +72,7 @@ public class TemplatesRemove extends UIAction {
         return GlobalRole.BLOGGER;
     }
 
-    public void myPrepare() {
+    public void prepare() {
 
         if (getIdSelections() != null) {
 

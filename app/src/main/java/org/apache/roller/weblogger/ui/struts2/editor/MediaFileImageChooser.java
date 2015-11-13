@@ -75,7 +75,7 @@ public class MediaFileImageChooser extends UIAction {
     /**
      * Prepares view action
      */
-    public void myPrepare() {
+    public void prepare() {
     }
 
     /**

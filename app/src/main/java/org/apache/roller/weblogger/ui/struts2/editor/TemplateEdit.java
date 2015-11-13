@@ -70,7 +70,7 @@ public class TemplateEdit extends UIAction {
         return GlobalRole.BLOGGER;
     }
 
-    public void myPrepare() {
+    public void prepare() {
         try {
             setTemplate(weblogManager.getTemplate(getBean().getId()));
         } catch (WebloggerException ex) {

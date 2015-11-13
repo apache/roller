@@ -96,7 +96,7 @@ public class WeblogConfig extends UIAction {
         return GlobalRole.BLOGGER;
     }
 
-    public void myPrepare() {
+    public void prepare() {
         
         try {
             // set categories list

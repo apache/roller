@@ -75,7 +75,7 @@ public class PlanetSubscriptions extends UIAction {
     }
 
     @Override
-    public void myPrepare() {
+    public void prepare() {
         try {
             setPlanet(planetManager.getPlanet(getPlanetHandle()));
         } catch (WebloggerException ex) {

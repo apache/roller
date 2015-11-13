@@ -93,7 +93,7 @@ public class MediaFileEdit extends UIAction {
     /**
      * Prepares action class
      */
-    public void myPrepare() {
+    public void prepare() {
         try {
             allDirectories = mediaFileManager.getMediaFileDirectories(getActionWeblog());
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {

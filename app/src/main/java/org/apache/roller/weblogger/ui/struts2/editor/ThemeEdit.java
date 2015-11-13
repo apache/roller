@@ -99,7 +99,7 @@ public class ThemeEdit extends UIAction {
         return GlobalRole.BLOGGER;
     }
 
-    public void myPrepare() {
+    public void prepare() {
         themes = themeManager.getEnabledThemesList();
 
         // See if we're using a shared theme with a custom template

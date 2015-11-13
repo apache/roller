@@ -74,7 +74,7 @@ public class CategoryEdit extends UIAction {
     }
 
 
-    public void myPrepare() {
+    public void prepare() {
         if (StringUtils.isEmpty(bean.getId())) {
             // Create and initialize new, not-yet-saved category
             category = new WeblogCategory();

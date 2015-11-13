@@ -79,7 +79,7 @@ public class Pings extends UIAction {
         return GlobalRole.BLOGGER;
     }
 
-    public void myPrepare() {
+    public void prepare() {
         
         // load selected ping target, if possible
         if(getPingTargetId() != null) {

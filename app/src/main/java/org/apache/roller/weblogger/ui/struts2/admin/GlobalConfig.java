@@ -108,7 +108,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
      * Prepare action by loading runtime properties map.
      */
     @Override
-    public void myPrepare() {
+    public void prepare() {
         try {
             // just grab our properties map and make it available to the action
             setProperties(propertiesManager.getProperties());

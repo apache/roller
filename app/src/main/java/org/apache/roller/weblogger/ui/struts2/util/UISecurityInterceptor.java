@@ -60,8 +60,7 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
             // are we requiring an authenticated user?
             if (theAction.requiredGlobalRole() != GlobalRole.NOAUTHNEEDED) {
 
-                User authenticatedUser = ((UIAction) theAction)
-                        .getAuthenticatedUser();
+                User authenticatedUser = ((UIAction) theAction).getAuthenticatedUser();
                 if (authenticatedUser == null) {
                     if (log.isDebugEnabled()) {
                         log.debug("DENIED: required user not found");

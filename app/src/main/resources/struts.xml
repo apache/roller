@@ -53,10 +53,12 @@
                 <interceptor-ref name="UISecurityInterceptor">
                     <param name="excludeMethods">cancel</param>
                 </interceptor-ref>
-                <interceptor-ref name="UIActionPrepareInterceptor">
+                <!-- prepare interceptor placed later in the stack so weblog and userid can
+                     be populated by the UIActionInterceptor. -->
+                <interceptor-ref name="prepare">
                     <param name="excludeMethods">cancel</param>
                 </interceptor-ref>
-                
+
                 <!-- validation interceptors, MUST come after our custom interceptors -->
                 <interceptor-ref name="validation">
                     <param name="excludeMethods">input,back,cancel,browse</param>

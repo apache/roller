@@ -61,7 +61,7 @@ public class Planets extends UIAction {
     }
 
     @Override
-    public void myPrepare() {
+    public void prepare() {
         
         if(getBean().getId() != null) {
             try {

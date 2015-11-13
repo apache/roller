@@ -90,7 +90,7 @@ public class StylesheetEdit extends UIAction {
     }
 
     @Override
-    public void myPrepare() {
+    public void prepare() {
         sharedTheme = !WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme());
         sharedStylesheetDeleted = false;
 

@@ -68,7 +68,7 @@ public class Bookmarks extends UIAction {
         return WeblogRole.OWNER;
     }
 
-    public void myPrepare() {
+    public void prepare() {
         setWeblogObj(getActionWeblog());
     }
 
