@@ -153,7 +153,6 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     @Override
-    @PostConstruct
     public void initialize() throws WebloggerException {
         try {
             // Initialize common targets from the configuration

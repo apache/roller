@@ -241,11 +241,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
         }
 
-        // Use first category as default for Blogger API
-        if (firstCat != null) {
-            newWeblog.setBloggerCategory(firstCat);
-        }
-
         this.strategy.store(newWeblog);
 
         // add default bookmarks
@@ -805,14 +800,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
 
         cat.getWeblog().getWeblogCategories().remove(cat);
-
-        // remove cat
         this.strategy.remove(cat);
-
-        if(cat.equals(cat.getWeblog().getBloggerCategory())) {
-            cat.getWeblog().setBloggerCategory(null);
-            this.strategy.store(cat.getWeblog());
-        }
     }
 
     /**
@@ -831,13 +819,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             entry.setCategory(destCat);
             entry.setWeblog(website);
             this.strategy.store(entry);
-        }
-
-        // Update Blogger API category if applicable
-        WeblogCategory bloggerCategory = srcCat.getWeblog().getBloggerCategory();
-        if (bloggerCategory != null && bloggerCategory.getId().equals(srcCat.getId())) {
-            srcCat.getWeblog().setBloggerCategory(destCat);
-            this.strategy.store(srcCat.getWeblog());
         }
     }
 
@@ -893,9 +874,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public boolean isWeblogCategoryInUse(WeblogCategory cat)
             throws WebloggerException {
-        if (cat.getWeblog().getBloggerCategory().equals(cat)) {
-            return true;
-        }
         TypedQuery<WeblogEntry> q = strategy.getNamedQuery("WeblogEntry.getByCategory", WeblogEntry.class);
         q.setParameter(1, cat);
         int entryCount = q.getResultList().size();

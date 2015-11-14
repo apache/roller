@@ -104,12 +104,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public void saveWeblogEntry(WeblogEntry entry) throws WebloggerException {
 
         if (entry.getCategory() == null) {
-            // Entry is invalid without category, so use weblog client cat
-            WeblogCategory cat = entry.getWeblog().getBloggerCategory();
-            if (cat == null) {
-                // Still no category, so use first one found
-                cat = entry.getWeblog().getWeblogCategories().iterator().next();
-            }
+            // Entry is invalid without category, so use first one found if not provided
+            WeblogCategory cat = entry.getWeblog().getWeblogCategories().iterator().next();
             entry.setCategory(cat);
         }
 

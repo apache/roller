@@ -111,7 +111,9 @@ public final class WebloggerFactory {
             webloggerInstance = context.getBean("webloggerBean", Weblogger.class);
             strategy = context.getBean("jpaPersistenceStrategy", JPAPersistenceStrategy.class);
             // TODO:  Move below to @PostConstruct in IndexManagerImpl (presently requires webloggerInstance to be active)
+            webloggerInstance.getPropertiesManager().initialize();
             webloggerInstance.getIndexManager().initialize();
+            webloggerInstance.getPingTargetManager().initialize();
         } catch (BeansException e) {
             throw new RuntimeException("Error bootstrapping Weblogger; exception message: " + e.getMessage(), e);
         }

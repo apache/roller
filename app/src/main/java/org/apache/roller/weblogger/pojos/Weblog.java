@@ -92,7 +92,6 @@ public class Weblog implements Serializable {
     private String  handle           = null;
     private String  name             = null;
     private String  tagline          = null;
-    private Boolean enableBloggerApi = Boolean.TRUE;
     private String  editorPage       = null;
     private String  blacklist        = null;
     private Boolean allowComments    = Boolean.TRUE;
@@ -117,8 +116,6 @@ public class Weblog implements Serializable {
     private int     hitsToday        = 0;
 
     // Associated objects
-    private WeblogCategory bloggerCategory = null;
-
     private Map<String, WeblogEntryPlugin> initializedPlugins = null;
 
     private List<WeblogCategory> weblogCategories = new ArrayList<>();
@@ -244,24 +241,6 @@ public class Weblog implements Serializable {
         creator = creatorUserName;
     }
 
-
-    @Basic(optional=false)
-    public Boolean getEnableBloggerApi() {
-        return this.enableBloggerApi;
-    }
-    
-    public void setEnableBloggerApi(Boolean enableBloggerApi) {
-        this.enableBloggerApi = enableBloggerApi;
-    }
-
-    @ManyToOne
-    @JoinColumn(name="bloggercatid")
-    public WeblogCategory getBloggerCategory() { return bloggerCategory; }
-    
-    public void setBloggerCategory(WeblogCategory bloggerCategory) {
-        this.bloggerCategory = bloggerCategory;
-    }
-    
     public String getEditorPage() {
         return this.editorPage;
     }
@@ -395,8 +374,6 @@ public class Weblog implements Serializable {
         this.setHandle(other.getHandle());
         this.setTagline(other.getTagline());
         this.setCreatorUserName(other.getCreatorUserName());
-        this.setEnableBloggerApi(other.getEnableBloggerApi());
-        this.setBloggerCategory(other.getBloggerCategory());
         this.setEditorPage(other.getEditorPage());
         this.setBlacklist(other.getBlacklist());
         this.setAllowComments(other.getAllowComments());

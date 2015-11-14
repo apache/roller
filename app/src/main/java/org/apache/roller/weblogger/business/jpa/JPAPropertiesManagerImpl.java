@@ -54,7 +54,6 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     
 
     @Override
-    @PostConstruct
     public void initialize() throws WebloggerException {
         
         Map<String, RuntimeConfigProperty> props;

@@ -83,10 +83,6 @@
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
-      <property-def name="webservices.enableXmlRpc"  key="configForm.enableXmlRpc">
-         <type>boolean</type>
-         <default-value>false</default-value>
-      </property-def>
    </display-group >
 
    <!-- User Settings Group -->

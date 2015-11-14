@@ -120,14 +120,6 @@ public final class WeblogWrapper {
         return UserWrapper.wrap(this.pojo.getCreator());
     }
     
-    public Boolean getEnableBloggerApi() {
-        return this.pojo.getEnableBloggerApi();
-    }
-
-    public WeblogCategoryWrapper getBloggerCategory() {
-        return WeblogCategoryWrapper.wrap(this.pojo.getBloggerCategory(), urlStrategy);
-    }
-    
     public String getEditorPage() {
         return this.pojo.getEditorPage();
     }

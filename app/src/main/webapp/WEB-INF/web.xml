@@ -197,12 +197,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>RSDServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.RSDServlet</servlet-class>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>PlanetFeedServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PlanetFeedServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
@@ -226,18 +220,6 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>/WEB-INF/spring-servlet.xml</param-value>
-        </init-param>
-    </servlet>
-
-    <servlet>
-        <servlet-name>XmlRpcServlet</servlet-name>
-        <servlet-class>org.apache.xmlrpc.webserver.XmlRpcServlet</servlet-class>
-        <init-param>
-            <description>
-                Sets whether the servlet supports vendor extensions for XML-RPC.
-            </description>
-            <param-name>enabledForExtensions</param-name>
-            <param-value>true</param-value>
         </init-param>
     </servlet>
 
@@ -268,11 +250,6 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>RSDServlet</servlet-name>
-        <url-pattern>/roller-ui/rendering/rsd/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>SearchServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/search/*</url-pattern>
     </servlet-mapping>
@@ -297,12 +274,6 @@
     <servlet-mapping>
         <servlet-name>SpringDispatcherServlet</servlet-name>
         <url-pattern>/roller-ui/authoring/rest/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- Web Service Servlets -->
-    <servlet-mapping>
-        <servlet-name>XmlRpcServlet</servlet-name>
-        <url-pattern>/roller-services/xmlrpc</url-pattern>
     </servlet-mapping>
 
     <session-config>
