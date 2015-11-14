@@ -103,6 +103,9 @@ group by weblogid, name;
 
 #dropColumn("weblog", "enablemultilang")
 #dropColumn("weblog", "showalllangs")
+#dropColumn("weblog", "enablebloggerapi")
+#dropColumn("weblog", "bloggercatid")
+
 #dropIndex("weblog_entry", "we_locale_idx")
 #dropColumn("weblog_entry", "locale")
 

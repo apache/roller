@@ -159,26 +159,6 @@
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
 
-    <%-- ***** Blogger API setting settings ***** --%>
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.bloggerApi" /></h2></td>
-    </tr>
-
-    <tr>
-        <td class="label"><s:text name="websiteSettings.enableBloggerApi" /></td>
-        <td class="field"><s:checkbox name="bean.enableBloggerApi" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-
-    <tr>
-        <td class="label"><s:text name="websiteSettings.bloggerApiCategory" /></td>
-        <td class="field">
-            <s:select name="bean.bloggerCategoryId" list="weblogCategories" size="1" listKey="id" listValue="name" />
-        </td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-
     <%-- ***** Plugins "formatting" settings ***** --%>
 
     <tr>

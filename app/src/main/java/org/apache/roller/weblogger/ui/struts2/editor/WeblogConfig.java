@@ -153,12 +153,6 @@ public class WeblogConfig extends UIAction {
 
                 getBean().copyTo(weblog);
 
-                // if blogger category changed then lookup new cat and set it
-                if(getBean().getBloggerCategoryId() != null &&
-                        !weblog.getBloggerCategory().getId().equals(getBean().getBloggerCategoryId())) {
-                    weblog.setBloggerCategory(weblogManager.getWeblogCategory(getBean().getBloggerCategoryId()));
-                }
-
                 // ROL-485: comments not allowed on inactive weblogs
                 if(!weblog.isActive()) {
                     weblog.setAllowComments(Boolean.FALSE);

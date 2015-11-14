@@ -33,7 +33,6 @@ public class WeblogConfigBean {
     private String handle = null;
     private String name = null;
     private String tagline = null;
-    private boolean enableBloggerApi = false;
     private String editorPage = null;
     private String blacklist = null;
     private boolean allowComments = false;
@@ -53,7 +52,6 @@ public class WeblogConfigBean {
 
     private String analyticsCode = null;
     
-    private String bloggerCategoryId = null;
     private String[] defaultPluginsArray = null;
     private boolean applyCommentDefaults = false;
     
@@ -80,14 +78,6 @@ public class WeblogConfigBean {
     
     public void setTagline( String tagline ) {
         this.tagline = tagline;
-    }
-    
-    public boolean getEnableBloggerApi() {
-        return this.enableBloggerApi;
-    }
-    
-    public void setEnableBloggerApi( boolean enableBloggerApi ) {
-        this.enableBloggerApi = enableBloggerApi;
     }
     
     public String getEditorPage() {
@@ -202,14 +192,6 @@ public class WeblogConfigBean {
         this.about = about;
     }
     
-    public String getBloggerCategoryId() {
-        return bloggerCategoryId;
-    }
-    
-    public void setBloggerCategoryId(String bloggerCategoryId) {
-        this.bloggerCategoryId = bloggerCategoryId;
-    }
-
     public String[] getDefaultPluginsArray() {
         return defaultPluginsArray;
     }
@@ -246,7 +228,6 @@ public class WeblogConfigBean {
         this.handle = dataHolder.getHandle();
         this.name = dataHolder.getName();
         this.tagline = dataHolder.getTagline();
-        this.enableBloggerApi = dataHolder.getEnableBloggerApi();
         this.editorPage = dataHolder.getEditorPage();
         this.blacklist = dataHolder.getBlacklist();
         this.allowComments = dataHolder.getAllowComments();
@@ -264,9 +245,6 @@ public class WeblogConfigBean {
         this.analyticsCode = dataHolder.getAnalyticsCode();
         setIcon(dataHolder.getIconPath());
         setAbout(dataHolder.getAbout());
-        if (dataHolder.getBloggerCategory() != null) {
-            bloggerCategoryId = dataHolder.getBloggerCategory().getId();
-        }
         if (dataHolder.getDefaultPlugins() != null) {
             defaultPluginsArray = StringUtils.split(dataHolder.getDefaultPlugins(), ",");
         }
@@ -276,7 +254,6 @@ public class WeblogConfigBean {
     public void copyTo(Weblog dataHolder) {
         dataHolder.setName(this.name);
         dataHolder.setTagline(this.tagline);
-        dataHolder.setEnableBloggerApi(this.enableBloggerApi);
         dataHolder.setEditorPage(this.editorPage);
         dataHolder.setBlacklist(this.blacklist);
         dataHolder.setAllowComments(this.allowComments);

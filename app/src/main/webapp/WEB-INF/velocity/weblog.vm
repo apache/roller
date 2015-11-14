@@ -81,10 +81,6 @@ Parse and include page template from weblog.
 Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 *#
 #macro(showAutodiscoveryLinks $weblog)
-    #if ($weblog.enableBloggerApi)
-       <link rel="EditURI"   type="application/rsd+xml" title="RSD" href="$url.rsd"/>
-    #end
-    
     ## main feed urls are always available
     #if (!$model.searchResults)
     <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  href="$url.feed.entries.atom" />
