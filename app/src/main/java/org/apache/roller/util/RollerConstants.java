@@ -36,6 +36,9 @@ public final class RollerConstants {
 
     public static final int TEXTWIDTH_255 = 255;
 
+    public static final int GRACEFUL_SHUTDOWN_WAIT_IN_SECONDS = 20;
+    public static final int GRACEFUL_SHUTDOWN_WAIT_IN_MILLISECONDS = GRACEFUL_SHUTDOWN_WAIT_IN_SECONDS * SEC_IN_MS;
+
     private RollerConstants() {
         // never instantiable
         throw new AssertionError();
