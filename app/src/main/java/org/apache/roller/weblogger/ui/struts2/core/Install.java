@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.io.PrintWriter;
@@ -155,7 +154,7 @@ public class Install extends UIAction {
 
         try {
             // trigger bootstrapping process
-            WebloggerFactory.bootstrap(null);
+            WebloggerFactory.bootstrap();
 
             // also need to do planet if it's configured
             if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {

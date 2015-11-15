@@ -14,8 +14,10 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
-
 package org.apache.roller.weblogger.ui.core.filters;
 
 import java.io.IOException;
@@ -52,8 +54,8 @@ public class BootstrapFilter implements Filter {
         
         log.debug("Entered "+request.getRequestURI());
         
-        if ("auto".equals(WebloggerConfig.getProperty("installation.type"))
-                && !WebloggerFactory.isBootstrapped() 
+        if (!WebloggerFactory.isBootstrapped()
+                && "auto".equals(WebloggerConfig.getProperty("installation.type"))
                 && !isInstallUrl(request.getRequestURI())) {
                     
             log.debug("Forwarding to install page");
